@@ -9,6 +9,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- `AI-INTEGRATION-GUIDE.md`: the contract an agent or a script relies on - the safe command sequence, what
+  `--yes` never covers, exit codes, the `--json` line, output paths and the guarantees. It ships in the npm
+  package and is mirrored on the documentation site.
+- A documentation site at `windowsweep-docs.aoneahsan.com` (Docusaurus on GitHub Pages), mirroring `docs/`.
+
 ### Changed
 
 - Self-test: ten more checks cover the argument parser, section lists, docker size text, the layout-guard leaf

@@ -13,7 +13,7 @@
 [![node](https://img.shields.io/node/v/windowsweep.svg)](https://nodejs.org)
 [![platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0078d4?logo=windows&logoColor=white)](https://github.com/aoneahsan/windowsweep#platform-support)
 
-[Docs](https://github.com/aoneahsan/windowsweep/blob/main/docs/README.md) · [npm](https://www.npmjs.com/package/windowsweep) · [GitHub](https://github.com/aoneahsan/windowsweep) · [Changelog](https://github.com/aoneahsan/windowsweep/blob/main/CHANGELOG.md) · [Contributing](https://github.com/aoneahsan/windowsweep/blob/main/CONTRIBUTING.md) · [Support](https://github.com/aoneahsan/windowsweep/issues)
+[Docs](https://github.com/aoneahsan/windowsweep/blob/main/docs/README.md) · [AI Guide](https://github.com/aoneahsan/windowsweep/blob/main/AI-INTEGRATION-GUIDE.md) · [npm](https://www.npmjs.com/package/windowsweep) · [GitHub](https://github.com/aoneahsan/windowsweep) · [Changelog](https://github.com/aoneahsan/windowsweep/blob/main/CHANGELOG.md) · [Contributing](https://github.com/aoneahsan/windowsweep/blob/main/CONTRIBUTING.md) · [Support](https://github.com/aoneahsan/windowsweep/issues)
 
 </div>
 
@@ -407,6 +407,7 @@ More: [FAQ](https://github.com/aoneahsan/windowsweep/blob/main/docs/faq.md).
 | [CLI reference](https://github.com/aoneahsan/windowsweep/blob/main/docs/cli-reference.md) | you need an exact flag, exit code or variable |
 | [Admin sections and elevation](https://github.com/aoneahsan/windowsweep/blob/main/docs/admin-and-elevation.md) | before running the system profile or touching the hibernation file |
 | [Reports and logs](https://github.com/aoneahsan/windowsweep/blob/main/docs/reports-and-logs.md) | parsing the JSON or finding a log |
+| [AI integration guide](https://github.com/aoneahsan/windowsweep/blob/main/AI-INTEGRATION-GUIDE.md) | an agent or a script runs it for you |
 | [Troubleshooting](https://github.com/aoneahsan/windowsweep/blob/main/docs/troubleshooting.md) | something failed |
 | [Roadmap and remaining work](https://github.com/aoneahsan/windowsweep/blob/main/remaining-work-summary.md) | you want to know what is verified, what is planned (1.1, the docs site) and what is still open |
 

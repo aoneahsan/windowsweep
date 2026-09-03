@@ -24,7 +24,8 @@
     "LICENSE",
     "CHANGELOG.md",
     "SECURITY.md",
-    "VERSION"
+    "VERSION",
+    "AI-INTEGRATION-GUIDE.md"
   ],
   "engines": {
     "node": ">=14"

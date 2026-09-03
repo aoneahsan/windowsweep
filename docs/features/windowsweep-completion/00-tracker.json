@@ -181,14 +181,14 @@
     {
       "id": "P3",
       "title": "Docs site and AI guide",
-      "status": "pending",
+      "status": "in_progress",
       "completedAt": null,
       "subTasks": [
         {
           "id": "P3.RW-040",
           "title": "aoneahsan/windowsweep-docs: Docusaurus site, Pages workflow, CNAME, content mirror, governance; write-back after the 200 probe",
-          "status": "pending",
-          "note": "owner rows: DNS CNAME, Pages custom domain + HTTPS",
+          "status": "in_progress",
+          "note": "aoneahsan/windowsweep-docs created and deployed (Pages run 33785107915, 201 built files); ruleset 22211229 active, wiki off, CNAME pinned. Awaiting the owner DNS row 11 and Pages HTTPS row 12; the README, package.json homepage and constants WS_DOCS switch only after the domain probes 200",
           "awaitingUser": false
         },
         {
@@ -201,8 +201,8 @@
         {
           "id": "P3.RW-041",
           "title": "AI-INTEGRATION-GUIDE.md at the root, in files, in the README link row, mirrored on the site",
-          "status": "pending",
-          "note": "",
+          "status": "complete",
+          "note": "AI-INTEGRATION-GUIDE.md at the repo root, in the files allowlist, linked from the README header row and both documentation indexes, and mirrored on the site; every command in it was run read-only before it shipped",
           "awaitingUser": false
         }
       ]
@@ -437,6 +437,12 @@
       "date": "2026-09-03",
       "phase": "P2",
       "summary": "Self-test groups [13] and [14]: argument parser, section-id list, docker size text, the cache-leaf guard, the --json shape, superseded versions, the Chromium layout, workspace storage, stale artefacts and the report exporters. Test-KnownCacheLeaf and Get-JsonSummary refactored out for direct exercise. 114 -> 124 checks; all six plants proved red, and the stale-artefact fixture was rebuilt after its first plant stayed green (it was half-oriented)",
+      "commit": "pending"
+    },
+    {
+      "date": "2026-09-03",
+      "phase": "P3",
+      "summary": "Documentation site aoneahsan/windowsweep-docs built from the linux-cleanup-docs template: 15 mirrored pages with front matter, lime palette, JSON-LD rewritten for Windows/PowerShell, Pages workflow with an owner-only-file sweep (proved failing on a planted pattern), ruleset copied, CNAME pinned. Three real defects fixed on the way: the inherited lockfile entry was unsorted (YN0028), robots.txt still advertised the linux-cleanup sitemap, and unquoted front-matter descriptions containing a colon broke the YAML parse. AI-INTEGRATION-GUIDE.md written, verified command by command, shipped in the tarball and mirrored",
       "commit": "pending"
     }
   ],

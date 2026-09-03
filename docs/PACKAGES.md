@@ -39,16 +39,16 @@ are missing.
 | `main` | absent | A CLI has no importable surface; omitting it avoids declaring an entry point that would be a major change to remove later |
 | `engines.node` | `>=14` | The launcher uses no syntax or API newer than Node 14 |
 | `os` | `["win32"]` | npm refuses to install elsewhere; the launcher independently exits 2 on any other platform |
-| `files` | allowlist of 10 entries | An allowlist, never `.npmignore`; verified against `npm pack --dry-run` |
+| `files` | allowlist of 11 entries | An allowlist, never `.npmignore`; verified against `npm pack --dry-run` |
 | `publishConfig.access` | `public` | Unscoped public package |
 | `preferGlobal` | `true` | Harmless legacy hint |
 
 ## Published contents
 
 `npm pack` emits the launcher, `lib/`, `modules/`, both entry files, `README.md`, `LICENSE`, `CHANGELOG.md`,
-`SECURITY.md`, `VERSION` and `package.json` - 38 files, 81.4 kB packed, 273.1 kB unpacked (`npm pack`,
-2026-09-03, the 1.0.1 release tarball; 1.0.0 packed 37 files at 78.1 kB / 263.2 kB, and the extra file is
-`modules/self_test_extra.ps1`). `docs/` is not shipped; the README links every page by absolute URL. The three
+`SECURITY.md`, `VERSION`, `AI-INTEGRATION-GUIDE.md` and `package.json`. The 1.0.1 release tarball was 38
+files, 81.4 kB packed and 273.1 kB unpacked; `main` since then adds the AI guide, so the next release packs
+39 files (1.0.0 packed 37 files at 78.1 kB / 263.2 kB). `docs/` is not shipped; the README links every page by absolute URL. The three
 root planning files (`remaining-work.md`, `remaining-work-summary.md`, `what-this-project-consists-of.md`),
 `PENDING-TASKS.md` and the portfolio-info copy are outside the allowlist and never ship; CI asserts each by
 name.

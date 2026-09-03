@@ -24,6 +24,7 @@ The [README](https://github.com/aoneahsan/windowsweep#readme) is the elevator pi
 | [Profiles](./profiles.md) | The named bundles: `dev`, `minimal`, `cache-only`, `system`, `deep`, `audit` |
 | [Admin sections and elevation](./admin-and-elevation.md) | What needs Administrator rights, how `--elevate` works, the hibernation decision |
 | [Reports and logs](./reports-and-logs.md) | What a run writes under `~\.windowsweep`, the JSON schema, exports |
+| [AI integration guide](../AI-INTEGRATION-GUIDE.md) | The contract for an agent or a script: `--json`, exit codes, guarantees |
 
 ## When something is off
 

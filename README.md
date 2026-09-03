@@ -128,9 +128,9 @@ security scanner or a registry cleaner. It reclaims disk space, nothing else.
 
 | Platform | Supported | Notes |
 |---|---|---|
-| Windows 11 | ✅ | Windows PowerShell 5.1 or PowerShell 7 |
-| Windows 10 (1809 and later) | ✅ | The primary development target |
-| Windows Server 2019+ | ⚠️ | Uses nothing newer than 1809, but Server is not in the test matrix |
+| Windows 11 | ✅ | Same engine and PowerShell hosts; a real run on Windows 11 is on the verification list ([roadmap](https://github.com/aoneahsan/windowsweep/blob/main/remaining-work-summary.md)) |
+| Windows 10 (1809 and later) | ✅ | The primary development target; every real run so far |
+| Windows Server 2019+ | ⚠️ | Uses nothing newer than 1809; CI runs the self-test and a dry-run on Windows Server (`windows-latest`) on every push, but no real cleanup has been run on Server |
 | Linux | ❌ | `os: ["win32"]` makes npm refuse to install; use [linux-cleanup](https://github.com/aoneahsan/linux-cleanup) |
 | macOS | ❌ | Use [macleanup](https://github.com/aoneahsan/macleanup) |
 
@@ -408,6 +408,7 @@ More: [FAQ](https://github.com/aoneahsan/windowsweep/blob/main/docs/faq.md).
 | [Admin sections and elevation](https://github.com/aoneahsan/windowsweep/blob/main/docs/admin-and-elevation.md) | before running the system profile or touching the hibernation file |
 | [Reports and logs](https://github.com/aoneahsan/windowsweep/blob/main/docs/reports-and-logs.md) | parsing the JSON or finding a log |
 | [Troubleshooting](https://github.com/aoneahsan/windowsweep/blob/main/docs/troubleshooting.md) | something failed |
+| [Roadmap and remaining work](https://github.com/aoneahsan/windowsweep/blob/main/remaining-work-summary.md) | you want to know what is verified, what is planned (1.1, the docs site) and what is still open |
 
 <a id="changelog"></a>
 ## 🔄 Changelog&nbsp;[#](#changelog)

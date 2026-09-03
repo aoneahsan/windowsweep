@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [Unreleased]
+
+### Changed
+
+- Internal rename `Write-Log` -> `Write-LogLine` (18 call sites) so PSScriptAnalyzer's
+  `PSAvoidOverwritingBuiltInCmdlets` passes under PowerShell 7 in CI. No behaviour change. Ships as 1.0.1
+  together with the fixes listed in `remaining-work.md` (P0).
+
 ## [1.0.0] - 2026-09-03
 
 First release. The Windows member of the cleanup family beside

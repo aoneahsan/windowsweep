@@ -8,8 +8,20 @@ launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macl
 
 - Durable identity and owner decisions: `docs/PROJECT-CONTEXT.md`
 - Owner-only tasks (never ticked off by an agent): `docs/MANUAL-TASKS.md`
-- Resumable state: `docs/features/windowsweep-v1/00-tracker.json` (read it first, resume the first pending sub-task)
+- Resumable state: `docs/features/windowsweep-completion/00-tracker.json` (read it first, resume the first
+  pending sub-task; the 1.0.0 tracker `docs/features/windowsweep-v1/00-tracker.json` is closed)
+- The specification of every open item: `remaining-work.md` (root); the one-page view:
+  `remaining-work-summary.md`; what exists today: `what-this-project-consists-of.md`
 - Dependency and manifest record: `docs/PACKAGES.md`
+
+## Current state (audit of 2026-09-03)
+
+1.0.0 is published on npm and live on GitHub. `main` is ahead of the npm tarball by one internal rename
+(`Write-Log` -> `Write-LogLine`); 1.0.1 ships it together with the P0 fixes. Owner decisions of 2026-09-03:
+"feature-complete" means the 1.0 catalogue plus the family-parity features shipped as 1.1 (sections 22-26,
+new target rows, `--notify`); the docs site `windowsweep-docs.aoneahsan.com` is in scope; a Windows desktop
+app (Tauri wrapper) is a later, separate phase; distribution stays npm and git clone only. Known HIGH defect
+until P0 lands: `--yes` pre-selects every item of sections 17-19 in the interactive modes (RW-002).
 
 ## Per-Project Stack Override (binding)
 
@@ -18,9 +30,9 @@ launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macl
 | Language / runtime | Windows PowerShell 5.1-compatible scripts (`windowsweep.ps1`, `lib/`, `modules/`) that also run on PowerShell 7. `bin/windowsweep.js` is a Node >=14 launcher with zero dependencies; `windowsweep.cmd` is the no-Node launcher |
 | Package manager | nothing at runtime; `npm` only for `npm pack` and publishing |
 | Gates | `node bin\windowsweep.js --self-test --no-color` (fixture-based, exit 0), `npm run version:check`, `npm pack --dry-run` shows the `files` allowlist only, PSScriptAnalyzer with `PSScriptAnalyzerSettings.psd1`. CI job `ci` (windows-latest) runs the self-test and a dry-run on both hosts |
-| Tests | the self-test fixtures are the test suite (real junction, nested junction, dry-run hash, stale prune, keep-newest, long path, extension-leftover plan). No Vitest, no Jest |
+| Tests | the self-test fixtures are the test suite (real junction, nested junction, dry-run hash, stale prune, keep-newest, long path, extension-leftover plan). No Vitest, no Jest. New checks for pure logic are pre-approved (P2 in `remaining-work.md`) |
 | Typecheck / lint / build | no build output, so the fleet source-map rule is satisfied by construction; PSScriptAnalyzer is the lint |
-| UI rules | none apply - this is a CLI with no frontend, i18n surface, theme, plans or admin panel |
+| UI rules | none apply - this is a CLI with no frontend, i18n surface, theme, plans or admin panel. They would apply to the desktop app (P6), which lives in its own plan |
 
 ## IRON rules for this repository
 
@@ -33,22 +45,24 @@ launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macl
    `New-Target` row in its section's `Get-TargetsNN`; layout kinds (`chromium`, `firefox`, `electron`,
    `editor`) may only clear the cache folder names allowlisted in `lib/actions.ps1`. The protected lists only
    grow. Self-test check [6] asserts no declared target sits inside a protected path - run it after any change.
+   Interactive sections (17, 18, 19 and any new one) present a selection that `--yes` never answers.
 3. **Everything honours `--dry-run`.** Deletion helpers short-circuit; destructive external commands go
    through `Invoke-External -Destructive`; dry-run output aggregates per folder. Self-test check [7c]
    (tree hash unchanged) stays.
-4. **Section numbers 0-21 are frozen.** Retire a section as a no-op that says so; never reuse a number. The
-   catalogue, safe batch and profiles live in `lib/constants.ps1`; `docs/sections.md`, `docs/cli-reference.md`,
-   `docs/profiles.md` and the README section table must agree with it.
+4. **Section numbers 0-21 are frozen; new sections start at 22.** Retire a section as a no-op that says so;
+   never reuse a number. The catalogue, safe batch and profiles live in `lib/constants.ps1`; `docs/sections.md`,
+   `docs/cli-reference.md`, `docs/profiles.md` and the README section table must agree with it.
 5. **No network code.** Self-test check [9] greps for HTTP and socket calls. `Start-Process <url>` opens the
    user's browser only in `--report-issue`, `--feedback` and the reports manager, after the user asks.
 6. **Files stay under 500 lines**, functions carry a `.SYNOPSIS`, verbs are PowerShell-approved.
 7. **Version cascade, all together:** `package.json`, `VERSION`, `WS_VERSION_FALLBACK` in `lib/constants.ps1`,
    a `CHANGELOG.md` entry, the README at-a-glance row and changelog line. `npm run version:check` asserts the
-   first three. Deletion behaviour changes are documented in the changelog and in `docs/sections.md`.
+   first three. Deletion behaviour changes are documented in the changelog and in `docs/sections.md`. Every
+   release from 1.0.1 on gets an annotated tag `vX.Y.Z` and a GitHub Release.
 8. **Public repository.** No secrets, no credentials, no machine-specific paths beyond the owner's records in
    `docs/PROJECT-CONTEXT.md` and `docs/MANUAL-TASKS.md`. The author block is name, site, GitHub, LinkedIn and
    the public email; never a phone number. The tarball is the `files` allowlist only (`.github/`, `docs/`,
-   `temp/`, `CLAUDE.md`, `AGENTS.md` never ship).
+   `temp/`, `CLAUDE.md`, `AGENTS.md` and the three root planning files never ship).
 9. **Governance.** `main` is protected by a ruleset (owner-only bypass, required check `ci`); the owner pushes
    directly, everyone else through a reviewed PR (`CONTRIBUTING.md`). Publishing follows the gate in
    `~/.claude/rules/publishing-compliance.md`; a bad release is deprecated, never unpublished.
@@ -71,7 +85,7 @@ skill-less. (Owner directive 2026-07-11; full text in `~/.claude/CLAUDE.md`.)
 2. **Skills always:** before any task, scan the available-skills list and invoke EVERY relevant skill
    (`aoneahsan-cccs-coding-standards`, `-nodejs`, `-javascript`, `-npm-package`, `-npm-package-readme`,
    `-markdown`, `-copywriting`, `-documentation`, `-git-workflow`, `-packages-up-to-date`, `-verification`
-   are the usual loadout here).
+   are the usual loadout here; `-docusaurus` for the docs site, `-tauri*` for the desktop phase).
 3. **Model workflow:** PLAN and REVIEW on **Fable 5**; EXECUTE the approved plan on **Opus 5 or newer**. The
    global model floor (Fable 5 / Opus 5, never Opus 4.8 or older) applies here as everywhere. Plans live in
    `~/.claude/plans/`; the tracker above is resumed, never re-planned from zero.

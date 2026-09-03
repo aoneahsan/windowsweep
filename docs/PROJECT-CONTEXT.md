@@ -1,14 +1,19 @@
 # Project Context - windowsweep
 
 Last Updated: 2026-09-03
-Verified Against: commits ac72188 and 70c6738 on `main`, 2026-09-03 (1.0.0 release)
+Verified Against: commit 84c732f on `main`, 2026-09-03 (1.0.0 released the same day; full audit the same day)
 
 ## Identity and outcome
 - Purpose: safe, developer-aware disk and cache cleanup CLI for Windows; the Windows member of the family with
   `linux-cleanup` (Bash) and `macleanup` (Bash).
 - Primary users: developers and power users on Windows 10/11 who want to see and control every deletion.
 - Current status: 1.0.0 released; public GitHub repo `aoneahsan/windowsweep`; published on npm as `windowsweep`.
+  `main` is ahead of the npm tarball by one internal rename (`Write-Log` -> `Write-LogLine`, commit `84c732f`);
+  1.0.1 ships it with the P0 fixes (`remaining-work.md` RW-001).
 - Distribution: `npx windowsweep`, `npm install -g windowsweep`, or a clone run through `windowsweep.cmd`.
+  No other channel (owner decision 2026-09-03).
+- What is open, with evidence and acceptance criteria: `remaining-work.md` (root); status:
+  `docs/features/windowsweep-completion/00-tracker.json`.
 
 ## Chosen architecture
 - Runtime: Windows PowerShell 5.1-compatible scripts (also run on PowerShell 7), dot-sourced `lib/` + `modules/`,
@@ -28,19 +33,31 @@ Verified Against: commits ac72188 and 70c6738 on `main`, 2026-09-03 (1.0.0 relea
 - npm publish of 1.0.0 approved by the owner on 2026-09-03 "to secure the spot"; token comes from the FilesHub
   developer-accounts vault (`aoneahsan-npm-pat`), never stored in the repo.
 - Author block carries name, site, GitHub, LinkedIn and the public email only; no phone number (2026-09-03).
-- Section numbers 0-21 are frozen from 1.0.0; a retired section stays as a no-op.
+- Section numbers 0-21 are frozen from 1.0.0; a retired section stays as a no-op; new sections start at 22.
 - Developer mode semantics (owner requirement): developer = idle gate (100 days) + keep-newest on sections 1-5;
   non-developer = clear those caches. Non-interactive with no saved answer defaults to developer on.
 - Idle age = newest of write/access/creation time, because Windows disables last-access updates on most
   volumes; the rule may only make files look fresher (conservative). Accepted trade-off 2026-09-03.
 - Personal sections (17, 18, 19) are interactive-only and use the Recycle Bin; Downloads is the only personal
-  root scanned; Desktop stays a protected root.
+  root scanned; Desktop stays a protected root. `--yes` never selects items in them (RW-002 restores this).
 - Prefetch, `Windows\Installer`, WinSxS (except via DISM), NTUSER/UsrClass, hiberfil (except via powercfg) are
   never touched by design.
 - On the owner's machine (2026-09-03): hibernation to be disabled fully (`--hiberfil off`) in the admin step;
   the real run in the build session covered the safe batch in developer mode only.
 - The repo folder on the build machine stays `D:\work\windows-cleanup` until the owner renames it
   (renaming the working directory mid-session breaks the session).
+- **Scope of "feature-complete" (2026-09-03):** the 1.0 catalogue plus the family-parity features shipped as
+  1.1 - a read-only globals audit (22), an orphaned-AppData scan (23), an installed-programs idle report (24),
+  a startup-items audit (25), driver/upgrade installer leftovers (26, admin), new target rows in sections 1, 8
+  and 9, and a `--notify` toast. Sibling features deliberately not adopted: TUI, doctor, check-update, restore
+  points, font caches (`remaining-work.md` RW-069).
+- **Docs site (2026-09-03):** in scope - `aoneahsan/windowsweep-docs` at `windowsweep-docs.aoneahsan.com`,
+  Docusaurus on GitHub Pages like the two siblings. The DNS record and the Pages domain are owner rows.
+- **Desktop app (2026-09-03):** a later, separate phase (P6): a Tauri wrapper that runs this same script and
+  reimplements no cleanup logic, like `macleanup/desktop`. Not counted toward CLI completion. Its account model
+  (free local GUI vs sign-in with plans) is decided when the phase opens.
+- **Releases (2026-09-03):** every release from 1.0.1 on gets an annotated tag `vX.Y.Z` and a GitHub Release;
+  `v1.0.0` is tagged retroactively on `70c6738`, the commit the published tarball was built from.
 
 ## Constraints and non-goals
 - Must: honour `--dry-run` in every destructive helper and external command; route every deletion through
@@ -48,8 +65,9 @@ Verified Against: commits ac72188 and 70c6738 on `main`, 2026-09-03 (1.0.0 relea
   keep source ASCII-only; make no network calls; ship only the `files` allowlist.
 - Must not: add dependencies; follow reparse points; delete inside a protected root under any flag; auto-run
   deep or interactive sections in batch mode; store credentials or machine-specific paths in the repo.
-- Explicitly out of scope: registry cleaning, startup-item management, driver or service changes, undo for
-  caches, a GUI.
+- Explicitly out of scope for the CLI: registry cleaning, changing startup items (section 25 only reports),
+  driver or service changes (section 26 removes installer leftovers, never drivers), undo for caches, running
+  an uninstaller (section 24 only reports). A GUI is not part of the CLI; the desktop app is phase P6.
 
 ## Key paths and contracts
 - `lib/safety.ps1` - the chokepoint and the protected lists; every change here is a safety change.
@@ -67,8 +85,21 @@ Verified Against: commits ac72188 and 70c6738 on `main`, 2026-09-03 (1.0.0 relea
 - Gate proof (2026-09-03): two planted defects of different shapes each turned `--self-test` red (exit 1) -
   a protected path declared as a section 9 target (check [6]) and an unclosed function in a module (check [3]);
   both removed, files byte-identical, 108/108 again.
+- CI history: the first three runs on `main` failed on PSScriptAnalyzer under PowerShell 7
+  (`PSAvoidOverwritingBuiltInCmdlets` lists `Write-Log` for the core target); `84c732f` renamed the function
+  and run 33739406904 succeeded. Windows Server (`windows-latest`) is therefore dry-run-tested on every push.
+- Audit (2026-09-03, `what-this-project-consists-of.md`): every documented promise checked against the code.
+  Findings, all recorded in `remaining-work.md` P0 and none fixed yet: `--yes` pre-selects every item of
+  sections 17-19 in the walkthrough and menu and section 17 then deletes without a human choice (RW-002, HIGH);
+  section 19's title names Desktop (RW-003); sections 18/19 print the tier "permanent" (RW-004);
+  `--purge-all` is documented as asking once more (RW-005); a running editor's VSIX cache is documented as
+  cleared but is guarded (RW-006); `--install-task`/`--install-alias` under npx register the evictable npx-cache
+  path (RW-007); exit code 130 comes only from the Node launcher (RW-008); `--uninstall-data --yes` asks
+  nothing (RW-010); 13 keywords (RW-011).
 
-## Real run on the build machine (2026-09-03, safe batch, developer mode, not elevated)
+## Verified runs
+
+### 2026-09-03 - safe batch, developer mode, not elevated (build machine, Windows 10 Pro for Workstations 19045)
 - Drive C: free space 2,033,340,416 -> 25,746,153,472 bytes (+22.08 GB); the run's own report counted
   21,319,077,118 bytes in 11m 31s over 11 sections, plus about 1.5 GB removed by an interrupted first pass.
 - Per section: 1 package caches 12.16 GB (yarn v1 alone 10.8 GB in 340,734 files idle 100+ days), 6 editors
@@ -86,15 +117,25 @@ Verified Against: commits ac72188 and 70c6738 on `main`, 2026-09-03 (1.0.0 relea
   self-test guards green), and the run restarted. Keep the guard table-driven; never reintroduce per-call
   path resolution there.
 
+### Not yet run for real (P1 in `remaining-work.md`)
+Sections 12-16 and 20 (elevation), `--elevate` itself, section 4 (no idle AVD), 5 (daemon off), 7 for Chrome,
+8 for Slack and Granola, 17-19 (interactive), the weekly Scheduled Task, any Windows 11 machine, the `--pwsh`
+path on a machine with PowerShell 7. Record each here with numbers when it happens.
+
 ## Release record
 - 2026-09-03: `ac72188` (first commit, 72 files) and `70c6738` pushed to `main`; repo created public with
   `gh repo create`, Issues enabled, ruleset 22181256 "Protect main (PR + approval; owner bypass)" active
   (deletion, non-fast-forward, PR with 1 approval, required check `ci`; bypass = Repository admin). Direct
   owner pushes report `Bypassed rule violations for refs/heads/main` - expected, never `--force`/`--admin`.
 - 2026-09-03T09:15:18Z: `windowsweep@1.0.0` published to npm by `aoneahsan` (37 files, 263,214 bytes
-  unpacked); verified with `npm view` and `npx -y windowsweep@1.0.0 --version` from a fresh cache.
+  unpacked; built from `70c6738`); verified with `npm view` and `npx -y windowsweep@1.0.0 --version` from a
+  fresh cache.
+- 2026-09-03: `5109557` (tracker close-out, real-run and publish records, WH001) and `84c732f` (the
+  `Write-LogLine` rename that made CI green) pushed to `main`; not yet on npm.
 - Verify a published version from a directory OUTSIDE this repo: inside it, npx resolves the same-named local
   package and reports `'windowsweep' is not recognized` (`docs/troubleshooting.md`).
+- GitHub state after the audit: no topics, no homepage, wiki enabled, no tags, no Releases (RW-050).
 
 ## Open material unknowns
-- None.
+- None for the CLI. The desktop app's account model (free local GUI vs sign-in with plans and an admin
+  panel) is decided when phase P6 opens.

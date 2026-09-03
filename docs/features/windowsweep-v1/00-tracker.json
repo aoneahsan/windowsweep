@@ -1,6 +1,6 @@
 {
   "$schema": "windowsweep-v1-tracker",
-  "description": "Resumable tracker. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on.",
+  "description": "Resumable tracker for the 1.0.0 build. CLOSED on 2026-09-03: every phase is complete and 1.0.0 is published. Open work continues in docs/features/windowsweep-completion/00-tracker.json (specification: remaining-work.md at the repository root).",
   "module": "windowsweep-v1",
   "createdAt": "2026-09-03",
   "lastUpdated": "2026-09-03",
@@ -58,7 +58,8 @@
   "runHistory": [
     { "date": "2026-09-03", "phase": "phaseA-D", "summary": "Engine, sections, docs built in one session; two dry-runs on the owner's machine (21.4 GB estimate); self-test 108/108", "commit": "" },
     { "date": "2026-09-03", "phase": "phaseD.3-E", "summary": "CLAUDE/AGENTS pair, overview, analyzer clean, two planted defects red then green, guard hot-path fix, real run: C: 1.89 GB -> 23.98 GB free (+22.08 GB), 11 sections, protected paths untouched", "commit": "ac72188" },
-    { "date": "2026-09-03", "phase": "phaseF-H", "summary": "Public repo aoneahsan/windowsweep created and pushed, ruleset 22181256, npm publish 1.0.0 as aoneahsan verified from the registry and via npx, records written", "commit": "70c6738 (size record) + the record commit that follows it on main" }
+    { "date": "2026-09-03", "phase": "phaseF-H", "summary": "Public repo aoneahsan/windowsweep created and pushed, ruleset 22181256, npm publish 1.0.0 as aoneahsan verified from the registry and via npx, records written", "commit": "70c6738 (size record), 5109557 (tracker close-out, records, WH001)" },
+    { "date": "2026-09-03", "phase": "post-release", "summary": "ci: Write-Log renamed to Write-LogLine (18 call sites, no behaviour change) so PSScriptAnalyzer passes under PowerShell 7; the three earlier CI runs had failed on that rule; not yet on npm - ships as 1.0.1 (completion tracker RW-001)", "commit": "84c732f" }
   ],
-  "resumeInstructions": "1) Read planFile + this tracker. 2) Find the first pending sub-task. 3) Do that phase only. 4) Update statuses + append a runHistory row. 5) One commit."
+  "resumeInstructions": "This tracker is closed. Read docs/features/windowsweep-completion/00-tracker.json and remaining-work.md for the open work."
 }

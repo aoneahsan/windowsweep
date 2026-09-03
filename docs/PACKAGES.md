@@ -47,8 +47,10 @@ are missing.
 
 `npm pack` emits the launcher, `lib/`, `modules/`, both entry files, `README.md`, `LICENSE`, `CHANGELOG.md`,
 `SECURITY.md`, `VERSION` and `package.json` - 37 files, 78.1 kB packed, 263.2 kB unpacked (`npm pack`,
-2026-09-03, the 1.0.0 release tarball). `docs/` is not shipped;
-the README links every page by absolute URL.
+2026-09-03, the 1.0.0 release tarball). `main` after the 2026-09-03 audit commit packs 78.4 kB / 264.0 kB / 37 files (the
+`Write-LogLine` rename plus the README roadmap rows); the 1.0.1 release refreshes this row and the README. `docs/` is not shipped;
+the README links every page by absolute URL. The three root planning files (`remaining-work.md`,
+`remaining-work-summary.md`, `what-this-project-consists-of.md`) are outside the allowlist and never ship.
 
 Confirmed absent from the tarball: `CLAUDE.md`, `AGENTS.md`, `docs/`, `temp/`, `.github/`, `.npmrc`, `.env*`,
 logs, reports, bundles.

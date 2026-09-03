@@ -38,6 +38,9 @@ The [README](https://github.com/aoneahsan/windowsweep#readme) is the elevator pi
 |---|---|
 | [Author](./author.md) | Who built this, the sibling tools, how to support the work |
 | [Packages](./PACKAGES.md) | The dependency and manifest record (there are no dependencies) |
+| [What the project consists of](../what-this-project-consists-of.md) | Every part of the project with its evidence, as audited on 2026-09-03 |
+| [Remaining work](../remaining-work.md) | The specification of every open item: evidence, success criteria, acceptance points |
+| [Remaining work, one page](../remaining-work-summary.md) | Percentages, the next ten actions, the owner-only rows |
 
 ## Quick contact
 

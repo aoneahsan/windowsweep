@@ -38,8 +38,9 @@ Every Windows machine has PowerShell 5.1, so there is no runtime to install and 
 is readable in an afternoon and the self-test runs on your machine.
 
 **Does it run on Windows Server?**
-The engine uses nothing newer than Windows 10 1809 / Server 2019. It is tested on Windows 10 and 11
-workstations; Server is not part of the test matrix.
+The engine uses nothing newer than Windows 10 1809 / Server 2019. CI runs the self-test and a dry-run of
+the safe batch on Windows Server (GitHub's `windows-latest`) on every push. Real cleanups have been verified
+on Windows 10 so far; a Windows 11 run is on the verification list.
 
 **Where are the logs?**
 `%USERPROFILE%\.windowsweep\logs\`. Reports are beside them; `windowsweep --reports` browses them.

@@ -1,0 +1,41 @@
+# Reference clones of the sibling tools (linux-cleanup, macleanup) - never part of this repo
+temp/
+
+# Runtime output - logs and reports always contain paths from a real machine
+logs/
+reports/
+feedback/
+*.log
+
+# Secrets and local overrides - never commit these
+.env
+.env.*
+.npmrc
+*.pem
+*.p12
+*.pfx
+*.keystore
+*.jks
+*.token
+secrets/
+credentials/
+
+# npm / yarn
+node_modules/
+npm-debug.log*
+*.tgz
+.pnp.*
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+
+# Editor / OS cruft
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+Thumbs.db
+desktop.ini
+*.bak
+*.orig

@@ -1,0 +1,29 @@
+name: Contributor access request
+description: Request collaborator (write) access for ongoing contributions.
+title: "[access] "
+labels: ["access-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        You do **not** need write access to contribute - anyone can fork and open a pull request. Use this only
+        for ongoing collaborator access. Write access still cannot bypass pull-request review on `main`.
+  - type: input
+    id: handle
+    attributes:
+      label: Who you are
+      description: GitHub handle plus a short intro.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: What you would like to work on
+      description: The sections or areas of windowsweep you plan to contribute to.
+    validations:
+      required: true
+  - type: textarea
+    id: prior
+    attributes:
+      label: Prior work (optional)
+      description: Links to PRs you already opened here or relevant work elsewhere.

@@ -1,0 +1,36 @@
+name: Feature request
+description: Suggest a new cache target, section, flag or behaviour change.
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: Describe the use case before the implementation. Real workflows beat speculative options.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would you clean or do, and why?
+      description: Name the path or tool. For a cache, say what regenerates it and roughly how large it gets.
+    validations:
+      required: true
+  - type: textarea
+    id: gap
+    attributes:
+      label: Why do the existing sections not cover it?
+      description: Which section is closest, and where does it fall short?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behaviour (optional)
+      description: Flag name, default, prompts, which safety gate (idle window, keep-newest, running-app guard) applies.
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirm
+      options:
+        - label: I searched existing issues.
+          required: true
+        - label: I understand the maintainer accepts features at their discretion.
+          required: true

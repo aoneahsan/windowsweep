@@ -1,0 +1,63 @@
+{
+  "$schema": "windowsweep-v1-tracker",
+  "description": "Resumable tracker. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on.",
+  "module": "windowsweep-v1",
+  "createdAt": "2026-09-03",
+  "lastUpdated": "2026-09-03",
+  "planFile": "C:/Users/PC/.claude/plans/this-system-windows-based-floofy-sparrow.md",
+  "userDecisions": {
+    "name": "windowsweep - chosen by the owner 2026-09-03 from a shortlist verified free on npm and GitHub",
+    "npmPublish": "publish 1.0.0 in the build session as aoneahsan (first-publish approval given 2026-09-03); token from the FilesHub developer-accounts vault, never in the repo",
+    "github": "public repo aoneahsan/windowsweep, remote o, branch main, Issues on, main ruleset with owner-only bypass and required check ci",
+    "realRunScope": "safe batch in developer mode only (sections 0,1,2,3,5,6,7,8,9,10,21); admin and personal sections left to the owner",
+    "hibernation": "disable fully (powercfg /hibernate off) in the owner's admin step; tool default asks / needs --hiberfil in batch",
+    "authorBlock": "name, site, GitHub, LinkedIn, public email; no phone number",
+    "folderRename": "D:/work/windows-cleanup stays until the owner renames it to windowsweep"
+  },
+  "knownRisks": [
+    "Idle age uses the newest of write/access/creation time; a stray access-time refresh keeps a whole tool version (conservative direction).",
+    "PowerShell 5.1 ConvertFrom-Json returns a top-level array as one object; guarded in editors.ps1 (Read-JsonFile) and covered by self-test 7h.",
+    "cleanmgr (section 13) cannot preview sizes; its dry-run lists handlers only."
+  ],
+  "phases": [
+    { "id": "phaseA", "title": "Scaffold, lib, entry, launcher, shim", "status": "complete", "completedAt": "2026-09-03",
+      "subTasks": [
+        { "id": "phaseA.1", "title": "constants, ui, log, fs, safety, config, scan, actions", "status": "complete", "note": "ASCII-only, PS 5.1; junction-safe walker; chokepoint with -Within; measured: .NET enumeration follows junctions, so the walker checks ReparsePoint itself", "awaitingUser": false },
+        { "id": "phaseA.2", "title": "windowsweep.ps1 arg parsing + dispatch, bin/windowsweep.js, windowsweep.cmd", "status": "complete", "note": "$args parsing (no param block); launcher prefers Windows PowerShell 5.1, --pwsh selects 7; the first .cmd had a printf \\v escape bug, rewritten", "awaitingUser": false },
+        { "id": "phaseA.3", "title": "self-test green", "status": "complete", "note": "108 checks: syntax, ASCII, guards, junction + nested junction, dry-run hash (files only - NTFS updates folder timestamps lazily), stale prune, keep-newest, long path, refusals, extension-leftover plan", "awaitingUser": false }
+      ] },
+    { "id": "phaseB", "title": "User-level sections 0-10, 21", "status": "complete", "completedAt": "2026-09-03",
+      "subTasks": [
+        { "id": "phaseB.1", "title": "health, pkg_managers, build_tools, test_runners, android_avd, docker, editors, browsers, app_caches, windows_user, disk_usage", "status": "complete", "note": "Target-list engine (New-Target + Invoke-TargetList); layout kinds resolve to known cache folder names only; dry-run on the owner's machine estimated 21.4 GB", "awaitingUser": false },
+        { "id": "phaseB.2", "title": "Dry-run review fixes", "status": "complete", "note": "hiberfil via FileInfo (Get-Item fails unelevated); dry-run aggregation per folder; extensions.json as the source of truth for leftovers after the JSON-array quirk proposed deleting all 18 extension folders; @() wraps for scalar Count", "awaitingUser": false }
+      ] },
+    { "id": "phaseC", "title": "Admin sections, projects, personal, walkthrough, menu, reports", "status": "complete", "completedAt": "2026-09-03",
+      "subTasks": [
+        { "id": "phaseC.1", "title": "system_admin (12-16), docker s20, projects (17), personal (18-19)", "status": "complete", "note": "Admin sections skip with the --elevate hint when not elevated (verified); section 17 found one 193-day-idle artefact under D:\\work; 18/19 found nothing in Downloads", "awaitingUser": false },
+        { "id": "phaseC.2", "title": "walkthrough, menu, reports, --json, --stats, --export, bundles, task, alias", "status": "complete", "note": "All modes exercised in dry-run; walkthrough/menu refuse a non-interactive console with exit 2; deep refusal exits 3", "awaitingUser": false }
+      ] },
+    { "id": "phaseD", "title": "Docs, README, package files, CI, logo, project records", "status": "complete", "completedAt": "2026-09-03",
+      "subTasks": [
+        { "id": "phaseD.1", "title": "README (canonical pattern), CHANGELOG, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, LICENSE, issue templates, FUNDING, ci.yml, logos", "status": "complete", "note": "", "awaitingUser": false },
+        { "id": "phaseD.2", "title": "docs/ (13 pages), PROJECT-CONTEXT, MANUAL-TASKS, PACKAGES", "status": "complete", "note": "", "awaitingUser": false },
+        { "id": "phaseD.3", "title": "CLAUDE.md = AGENTS.md mirror pair, 00-overview.md, measured tarball sizes in README + PACKAGES", "status": "complete", "note": "written on resume 2026-09-03; the pause on 2026-09-03 landed just before these files, and the tracker had wrongly marked D.2 as covering them", "awaitingUser": false }
+      ] },
+    { "id": "phaseE", "title": "Verify on this machine, then the real run", "status": "complete", "completedAt": "2026-09-03",
+      "subTasks": [
+        { "id": "phaseE.1", "title": "Two planted defects (protected path leaked into a target list; syntax error in a module) make --self-test fail, verified applied, then removed", "status": "complete", "note": "Plant A (Documents as a Get-Targets09 target) -> check [6] red, exit 1; plant B (unclosed function appended to menu.ps1) -> check [3] red, exit 1; both files restored byte-identical; clean run 108/108, no crash bundle left behind", "awaitingUser": false },
+        { "id": "phaseE.2", "title": "Real run: --all --yes --developer; before/after free space; protected paths untouched", "status": "complete", "note": "C: free 2,033,340,416 -> 25,746,153,472 bytes (+22.08 GB). Report total 21,319,077,118 bytes in 11m31s plus ~1.5 GB from an interrupted first pass (see E.3). Sections: 1 = 12.16 GB (yarn v1 10.8 GB / 340,734 files), 6 = 4.30 GB, 10 = 3.35 GB, 8 = 0.92 GB, 7 = 0.46 GB, 9 = 87 MB, 2 = 40 MB. Skipped because running: Chrome, Slack, Granola; Docker Desktop was not running. Protected spot-check unchanged: .ssh 4 files, Documents 90 files + newest mtime, AVDs 2, gradle dists 2, installed VS Code extensions 16 (folders 18 -> 16 = the two uninstalled leftovers), Android SDK, Desktop", "awaitingUser": false },
+        { "id": "phaseE.3", "title": "PSScriptAnalyzer clean locally; guard hot-path fix found by the real run", "status": "complete", "note": "3 PSReviewUnusedParameter warnings fixed for real (Remove-PathSafe/Invoke-External log their Label; Remove-StaleUnits honours -Within with the same guards as Remove-StaleFiles). First real pass deleted ~22 files/s because Get-ProtectionReason ran Test-PathWithin (two path resolutions) for ~70 subtrees plus 50 wildcard compiles per file = 10.6 ms/file, 4+ hours for the yarn cache; stopped it, rewrote the guard over pre-normalized prefixes and precompiled WildcardPattern objects (0.58 ms/file, identical verdicts on 35 probe paths, self-test [5]/[6] green), restarted", "awaitingUser": false }
+      ] },
+    { "id": "phaseF", "title": "Git commit, GitHub repo, ruleset", "status": "pending",
+      "subTasks": [ { "id": "phaseF.1", "title": "one commit; gh repo create --public; Issues; main ruleset (owner bypass, check ci)", "status": "pending", "note": "", "awaitingUser": false } ] },
+    { "id": "phaseG", "title": "npm publish 1.0.0", "status": "pending",
+      "subTasks": [ { "id": "phaseG.1", "title": "gate: clean+pushed, self-test, 404 on registry, pack sweep, smoke install, vault token, npm whoami = aoneahsan, publish, verify from registry", "status": "pending", "note": "", "awaitingUser": false } ] },
+    { "id": "phaseH", "title": "Final report and owner rows", "status": "pending",
+      "subTasks": [ { "id": "phaseH.1", "title": "docs/MANUAL-TASKS.md rows; report numbers to the owner", "status": "pending", "note": "", "awaitingUser": true } ] }
+  ],
+  "runHistory": [
+    { "date": "2026-09-03", "phase": "phaseA-D", "summary": "Engine, sections, docs built in one session; two dry-runs on the owner's machine (21.4 GB estimate); self-test 108/108", "commit": "" },
+    { "date": "2026-09-03", "phase": "phaseD.3-E", "summary": "CLAUDE/AGENTS pair, overview, analyzer clean, two planted defects red then green, guard hot-path fix, real run: C: 1.89 GB -> 23.98 GB free (+22.08 GB), 11 sections, protected paths untouched", "commit": "" }
+  ],
+  "resumeInstructions": "1) Read planFile + this tracker. 2) Find the first pending sub-task. 3) Do that phase only. 4) Update statuses + append a runHistory row. 5) One commit."
+}

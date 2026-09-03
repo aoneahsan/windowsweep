@@ -1,0 +1,59 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    name: ci
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Launcher syntax and version
+        shell: pwsh
+        run: |
+          node -c bin/windowsweep.js
+          node bin/windowsweep.js --version
+          npm run --silent version:check
+
+      - name: Self-test on Windows PowerShell 5.1
+        shell: cmd
+        run: powershell.exe -NoProfile -NoLogo -ExecutionPolicy Bypass -File windowsweep.ps1 --self-test --no-color --no-report
+
+      - name: Self-test on PowerShell 7
+        shell: pwsh
+        run: ./windowsweep.ps1 --self-test --no-color --no-report
+
+      - name: Dry-run of the safe batch (both hosts)
+        shell: cmd
+        run: |
+          powershell.exe -NoProfile -NoLogo -ExecutionPolicy Bypass -File windowsweep.ps1 --dry-run --all --yes --no-color --no-report
+          pwsh -NoProfile -File windowsweep.ps1 --dry-run --all --yes --no-color --no-report
+
+      - name: Section catalogue and targets
+        shell: pwsh
+        run: |
+          node bin/windowsweep.js --list
+          node bin/windowsweep.js --list-targets --no-color --no-report
+
+      - name: PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
+          Invoke-ScriptAnalyzer -Path . -Recurse -Settings PSScriptAnalyzerSettings.psd1 -EnableExit
+
+      - name: Tarball contents are the allowlist only
+        shell: pwsh
+        run: |
+          $listing = npm pack --dry-run 2>&1 | Out-String
+          Write-Host $listing
+          foreach ($forbidden in 'CLAUDE.md', 'AGENTS.md', 'docs/', 'temp/', '.npmrc', '.env') {
+            if ($listing -match [regex]::Escape($forbidden)) { throw "tarball would ship $forbidden" }
+          }

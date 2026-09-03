@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/aoneahsan/windowsweep/blob/main/SECURITY.md
+    about: Email aoneahsan@gmail.com privately. Do not file public issues for security bugs.
+  - name: Email the maintainer
+    url: mailto:aoneahsan@gmail.com
+    about: Prefer email over a public tracker? Reach the maintainer directly.
+  - name: Support the project
+    url: https://aoneahsan.com/payment?project-id=windowsweep&project-identifier=windowsweep
+    about: If windowsweep saved you time, you can support the work here.

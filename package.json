@@ -1,0 +1,73 @@
+{
+  "name": "windowsweep",
+  "version": "1.0.0",
+  "description": "Safe-by-default Windows cleanup CLI - developer-aware, dry-run first, zero install via npx.",
+  "bin": {
+    "windowsweep": "bin/windowsweep.js"
+  },
+  "scripts": {
+    "start": "node bin/windowsweep.js",
+    "test": "node bin/windowsweep.js --self-test --no-color",
+    "dry-run": "node bin/windowsweep.js --dry-run --all --yes --no-color --no-report",
+    "list": "node bin/windowsweep.js --list",
+    "lint:syntax": "node -c bin/windowsweep.js && node bin/windowsweep.js --self-test --no-color --no-report",
+    "version:check": "node -e \"const fs=require('fs');const v=require('./package.json').version;const c=fs.readFileSync('lib/constants.ps1','utf8');const f=fs.readFileSync('VERSION','utf8').trim();if(!c.includes(\\\"WS_VERSION_FALLBACK = '\\\"+v+\\\"'\\\")||f!==v){console.error('version mismatch: package.json '+v+' VERSION '+f);process.exit(1)}console.log('version parity OK: '+v)\"",
+    "prepublishOnly": "npm run --silent version:check && node -c bin/windowsweep.js"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "modules/",
+    "windowsweep.ps1",
+    "windowsweep.cmd",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "VERSION"
+  ],
+  "engines": {
+    "node": ">=14"
+  },
+  "os": [
+    "win32"
+  ],
+  "keywords": [
+    "windows",
+    "cleanup",
+    "disk-cleanup",
+    "cache-cleanup",
+    "disk-space",
+    "temp-files",
+    "node-modules",
+    "npm-cache",
+    "yarn-cache",
+    "developer-tools",
+    "powershell",
+    "cli",
+    "dry-run"
+  ],
+  "author": {
+    "name": "Ahsan Mahmood",
+    "email": "aoneahsan@gmail.com",
+    "url": "https://aoneahsan.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/aoneahsan/windowsweep",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aoneahsan/windowsweep.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aoneahsan/windowsweep/issues",
+    "email": "aoneahsan@gmail.com"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://aoneahsan.com/payment?project-id=windowsweep&project-identifier=windowsweep"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "preferGlobal": true
+}

@@ -1,6 +1,6 @@
 # windowsweep - Project Rules
 
-Last Updated: 2026-09-03 · Context pass: 2026-09-03 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
+Last Updated: 2026-09-03 (session 1: 1.0.1 published, docs site, records) · Context pass: 2026-09-03 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
 
 Safe, developer-aware Windows cleanup CLI: a Windows PowerShell 5.1 engine behind a dependency-free Node
 launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macleanup` (Bash). Public repo
@@ -13,15 +13,28 @@ launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macl
 - The specification of every open item: `remaining-work.md` (root); the one-page view:
   `remaining-work-summary.md`; what exists today: `what-this-project-consists-of.md`
 - Dependency and manifest record: `docs/PACKAGES.md`
+- Follow-ups the agent owes this project: `PENDING-TASKS.md` (root)
 
-## Current state (audit of 2026-09-03)
+## Current state (end of session 1, 2026-09-03)
 
-1.0.0 is published on npm and live on GitHub. `main` is ahead of the npm tarball by one internal rename
-(`Write-Log` -> `Write-LogLine`); 1.0.1 ships it together with the P0 fixes. Owner decisions of 2026-09-03:
-"feature-complete" means the 1.0 catalogue plus the family-parity features shipped as 1.1 (sections 22-26,
-new target rows, `--notify`); the docs site `windowsweep-docs.aoneahsan.com` is in scope; a Windows desktop
-app (Tauri wrapper) is a later, separate phase; distribution stays npm and git clone only. Known HIGH defect
-until P0 lands: `--yes` pre-selects every item of sections 17-19 in the interactive modes (RW-002).
+**1.0.1 is published on npm and equals `main`'s engine.** It closed every P0 defect from the launch-day
+audit, including the HIGH one: `--yes` no longer selects anything in sections 17, 18 and 19. Tags `v1.0.0`
+and `v1.0.1` exist with GitHub Releases, and every release from here gets both. The self-test runs
+**124 checks**; each new one was proved red on a planted defect. A documentation site lives at
+`aoneahsan/windowsweep-docs` (Docusaurus on GitHub Pages, deployed and green) - its domain does not resolve
+yet, so `package.json` `homepage`, the README links and `WS_DOCS` still point at GitHub and switch only after
+the domain probes 200. `AI-INTEGRATION-GUIDE.md` ships in the package.
+
+Open: **P5** (the 1.1 family-parity features: sections 22-26, new target rows, `--notify`, and the two GUI
+prerequisites RW-071 `--select` and RW-072 the `--json` additions) and **P6** (the desktop app). Phase P1 is
+entirely owner-run.
+
+Owner decisions of 2026-09-03, recorded in full in `docs/PROJECT-CONTEXT.md`: "feature-complete" means the
+1.0 catalogue plus the 1.1 family-parity features; the docs site is in scope; the desktop app is a Tauri
+wrapper in `desktop/` with **optional Google sign-in for sync only and runs always free** (no paid tier, no
+plan set - an explicit exemption), **full fleet observability behind a first-run consent dialog** while the
+CLI keeps zero network calls; distribution stays npm and git clone only; and **no toolchain or dependency
+downloads happen on this machine until he gives the go-ahead** (`PENDING-TASKS.md` TASK-001).
 
 ## Per-Project Stack Override (binding)
 
@@ -32,7 +45,9 @@ until P0 lands: `--yes` pre-selects every item of sections 17-19 in the interact
 | Gates | `node bin\windowsweep.js --self-test --no-color` (fixture-based, exit 0), `npm run version:check`, `npm pack --dry-run` shows the `files` allowlist only, PSScriptAnalyzer with `PSScriptAnalyzerSettings.psd1`. CI job `ci` (windows-latest) runs the self-test and a dry-run on both hosts |
 | Tests | the self-test fixtures are the test suite (real junction, nested junction, dry-run hash, stale prune, keep-newest, long path, extension-leftover plan). No Vitest, no Jest. New checks for pure logic are pre-approved (P2 in `remaining-work.md`) |
 | Typecheck / lint / build | no build output, so the fleet source-map rule is satisfied by construction; PSScriptAnalyzer is the lint |
-| UI rules | none apply - this is a CLI with no frontend, i18n surface, theme, plans or admin panel. They would apply to the desktop app (P6), which lives in its own plan |
+| UI rules | none apply to the CLI - no frontend, i18n surface, theme, plans or admin panel. They apply to the desktop app (P6) |
+| Docs site | `aoneahsan/windowsweep-docs` at `D:\work\windowsweep-docs`: Docusaurus 3 + React 19 + TS ~6.0.3 + yarn 4, GitHub Pages only, ports 5972/5973. Its pages MIRROR `docs/` - fix a wording error here first, then re-mirror |
+| Desktop app (P6) | `desktop/` in this repo: Tauri 2 + React 19 + Vite + Tailwind v4 + React Aria, port 5974, identifier `com.aoneahsan.windowsweep`. It runs the bundled script with `--json` and reimplements no cleanup logic |
 
 ## IRON rules for this repository
 

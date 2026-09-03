@@ -210,21 +210,21 @@
     {
       "id": "P4",
       "title": "Repository hygiene and owner records",
-      "status": "pending",
+      "status": "in_progress",
       "completedAt": null,
       "subTasks": [
         {
           "id": "P4.RW-050",
           "title": "Topics, homepage, wiki off, annotated tag v1.0.0 on 70c6738 + GitHub Release; tags from 1.0.1 on",
-          "status": "pending",
-          "note": "v1.0.0 (on 70c6738) and v1.0.1 tags plus both GitHub Releases done 2026-09-03; topics and wiki remain for P4",
+          "status": "complete",
+          "note": "Topics (8) set, wiki off, issues on; tags v1.0.0 and v1.0.1 with GitHub Releases done earlier today. The homepage stays the repository until windowsweep-docs.aoneahsan.com probes 200",
           "awaitingUser": false
         },
         {
           "id": "P4.RW-051",
           "title": "Portfolio-info file (notebook + root copy), master links JSON entry, ORCID .bib + CLAUDE/AGENTS ORCID block",
-          "status": "pending",
-          "note": "owner: JSON review and ORCID import (MANUAL-TASKS rows 5, 13)",
+          "status": "complete",
+          "note": "Portfolio file in the notebook apps/ folder with a byte-identical copy at the repo root (cmp verified, outside the npm allowlist); master links entry added with ownerReview empty; windowsweep.bib written and appended to the combined file (24 entries, pure ASCII); ORCID block in CLAUDE.md and AGENTS.md. Owner rows 5 (JSON review) and 13 (ORCID import + retype) remain",
           "awaitingUser": false
         },
         {
@@ -443,6 +443,12 @@
       "date": "2026-09-03",
       "phase": "P3",
       "summary": "Documentation site aoneahsan/windowsweep-docs built from the linux-cleanup-docs template: 15 mirrored pages with front matter, lime palette, JSON-LD rewritten for Windows/PowerShell, Pages workflow with an owner-only-file sweep (proved failing on a planted pattern), ruleset copied, CNAME pinned. Three real defects fixed on the way: the inherited lockfile entry was unsorted (YN0028), robots.txt still advertised the linux-cleanup sitemap, and unquoted front-matter descriptions containing a colon broke the YAML parse. AI-INTEGRATION-GUIDE.md written, verified command by command, shipped in the tarball and mirrored",
+      "commit": "pending"
+    },
+    {
+      "date": "2026-09-03",
+      "phase": "P4",
+      "summary": "Repository hygiene and the owner records: 8 topics, wiki off; FilesHub project 60 (slug windowsweep) created for the phase-P6 vault; palette hue 128 (lime) registered with the no-free-arc reasoning recorded, and ports 5972/5973/5974 claimed; portfolio-info file plus an identical root copy, the master links entry, windowsweep.bib and the combined refresh, and the ORCID block in both instruction files",
       "commit": "pending"
     }
   ],

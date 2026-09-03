@@ -92,6 +92,24 @@ Derived from those decisions by the agent, under the standing rules:
   mark keeps its sky-blue gradient. Free treatments: `sky` (231) and `plum` (320).
 - Registered ports: 5972 (docs site start), 5973 (docs site serve), 5974 (desktop Vite dev URL).
 
+## External records and registrations
+
+- **FilesHub project id 60** (`slug: windowsweep`, public id `01M1M5FCY6TMM6KGC0W6GE79KY`), created 2026-09-03.
+  Its credential vault is empty by design until phase P6 seeds the desktop app's Firebase and telemetry keys.
+- **Palette registry:** primary hue **128** (lime), light `#4d7c0f`, dark `#a3e635` with dark on-accent text.
+  Registered 2026-09-03 in `~/.claude/palettes/project-palettes.json`.
+- **Dev ports:** 5972 (docs site start), 5973 (docs site serve), 5974 (desktop Vite dev URL), in
+  `~/.dev-ports.json`.
+- **Portfolio:** `apps/WINDOWSWEEP_portfolio-info_2026-09-03.md` in the notebook, with a byte-identical copy at
+  this repository's root (outside the npm `files` allowlist). Entry added to the master links JSON with
+  `ownerReview` empty.
+- **ORCID:** `windowsweep.bib` (`aoneahsan-windowsweep-2026`) in the notebook's ORCID folder and appended to
+  `aoneahsan-all-works.bib`; the import and the work-type retype are owner rows in that folder's
+  `MANUAL-TASKS.md` (row 24).
+- **Documentation site:** `aoneahsan/windowsweep-docs`, deployed to GitHub Pages and green. The domain
+  `windowsweep-docs.aoneahsan.com` does not resolve yet; `package.json` `homepage`, the README links and
+  `WS_DOCS` in `lib/constants.ps1` switch only after it probes 200.
+
 ## Constraints and non-goals
 - Must: honour `--dry-run` in every destructive helper and external command; route every deletion through
   `Remove-PathSafe` / `Send-ToRecycleBin` with a declared `-Within` root; keep every file under 500 lines;

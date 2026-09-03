@@ -18,6 +18,7 @@
 | Cypress/Playwright kept a version I expected to go | One file inside it was touched within the window, or it is the newest of its kind | Lower `--days`, or remove the version by hand |
 | A crash bundle appeared | The run exited with an unexpected error | Inspect `~\.windowsweep\feedback\crash-*.zip`, then `windowsweep --report-issue` |
 | `npm ERR! notsup Unsupported platform` | Installing on Linux or macOS | This package is Windows-only: use `npx linux-cleanup` or `npx macleanup` |
+| `'windowsweep' is not recognized as an internal or external command` from `npx windowsweep` | You ran it inside a clone of this repository, whose own `package.json` is named `windowsweep`; npx picks that local package and finds no installed bin | Run `npx windowsweep` from any other directory, or `node bin\windowsweep.js` inside the clone |
 
 Every skipped or refused path is in the session log at `~\.windowsweep\logs\` with its reason.
 

@@ -1,7 +1,7 @@
 # Project Context - windowsweep
 
 Last Updated: 2026-09-03
-Verified Against: first release commit, 2026-09-03
+Verified Against: commits ac72188 and 70c6738 on `main`, 2026-09-03 (1.0.0 release)
 
 ## Identity and outcome
 - Purpose: safe, developer-aware disk and cache cleanup CLI for Windows; the Windows member of the family with
@@ -85,6 +85,16 @@ Verified Against: first release commit, 2026-09-03
   prefixes and precompiled `WildcardPattern` objects (0.58 ms/call, identical verdicts on 35 probe paths,
   self-test guards green), and the run restarted. Keep the guard table-driven; never reintroduce per-call
   path resolution there.
+
+## Release record
+- 2026-09-03: `ac72188` (first commit, 72 files) and `70c6738` pushed to `main`; repo created public with
+  `gh repo create`, Issues enabled, ruleset 22181256 "Protect main (PR + approval; owner bypass)" active
+  (deletion, non-fast-forward, PR with 1 approval, required check `ci`; bypass = Repository admin). Direct
+  owner pushes report `Bypassed rule violations for refs/heads/main` - expected, never `--force`/`--admin`.
+- 2026-09-03T09:15:18Z: `windowsweep@1.0.0` published to npm by `aoneahsan` (37 files, 263,214 bytes
+  unpacked); verified with `npm view` and `npx -y windowsweep@1.0.0 --version` from a fresh cache.
+- Verify a published version from a directory OUTSIDE this repo: inside it, npx resolves the same-named local
+  package and reports `'windowsweep' is not recognized` (`docs/troubleshooting.md`).
 
 ## Open material unknowns
 - None.

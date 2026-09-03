@@ -39,7 +39,7 @@ It is the Windows member of a family with [linux-cleanup](https://github.com/aon
 | **Node** | `>=14` (launcher only) |
 | **Runtime** | Windows PowerShell 5.1 (built in) or PowerShell 7 |
 | **Platforms** | Windows 10 (1809+) and Windows 11 |
-| **Install size** | ~78 kB packed · ~261 kB unpacked · 37 files · no dependencies |
+| **Install size** | ~78 kB packed · ~263 kB unpacked · 37 files · no dependencies |
 | **Undo** | Recycle Bin for personal files; none for caches (they regenerate) |
 | **Status** | Stable · actively maintained |
 

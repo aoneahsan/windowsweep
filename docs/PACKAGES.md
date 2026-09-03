@@ -46,8 +46,8 @@ are missing.
 ## Published contents
 
 `npm pack` emits the launcher, `lib/`, `modules/`, both entry files, `README.md`, `LICENSE`, `CHANGELOG.md`,
-`SECURITY.md`, `VERSION` and `package.json` - 37 files, 77.5 kB packed, 261.4 kB unpacked (`npm pack --dry-run`,
-2026-09-03). `docs/` is not shipped;
+`SECURITY.md`, `VERSION` and `package.json` - 37 files, 78.1 kB packed, 263.2 kB unpacked (`npm pack`,
+2026-09-03, the 1.0.0 release tarball). `docs/` is not shipped;
 the README links every page by absolute URL.
 
 Confirmed absent from the tarball: `CLAUDE.md`, `AGENTS.md`, `docs/`, `temp/`, `.github/`, `.npmrc`, `.env*`,

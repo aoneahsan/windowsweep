@@ -28,9 +28,9 @@ delete files (subject to every guard in the [safety model](./safety-model.md)).
 | Feedback | `--feedback` | How to report a bug; nothing is sent |
 | Report issue | `--report-issue` | Opens a pre-filled GitHub issue in your browser after confirming |
 | Debug bundle | `--debug-bundle` | Zips the latest log, report and a manifest under `~\.windowsweep\feedback` |
-| Scheduled task | `--install-task`, `--uninstall-task` | Weekly `--all --yes` on Sundays at 03:00, as your user |
-| Profile alias | `--install-alias`, `--uninstall-alias` | A `cleanup` function in your PowerShell profile |
-| Uninstall data | `--uninstall-data` | Removes `~\.windowsweep` after confirming |
+| Scheduled task | `--install-task`, `--uninstall-task` | Weekly `--all --yes` on Sundays at 03:00, as your user (refused under `npx`; install globally first) |
+| Profile alias | `--install-alias`, `--uninstall-alias` | A `cleanup` function in your PowerShell profile (refused under `npx`; install globally first) |
+| Uninstall data | `--uninstall-data` | Removes `~\.windowsweep` after a confirmation that `--yes` never answers |
 | Version | `-V`, `--version` | Version and author |
 | Help | `-h`, `--help` | The flag list |
 
@@ -44,7 +44,7 @@ delete files (subject to every guard in the [safety model](./safety-model.md)).
 | `--elevate` | off | Relaunch elevated through a UAC prompt; the elevated run writes its own log |
 | `-d N`, `--days N` | 100 | Idle window for caches: a file goes when its newest timestamp is N+ days old |
 | `--temp-days N` | 3 | Idle window for temp folders (sections 10 and 12) |
-| `--purge-all` | off | 🔥 Clear cache targets completely instead of pruning idle files |
+| `--purge-all` | off | 🔥 Clear cache targets completely instead of pruning idle files (a console run asks for a typed `purge` once; `--yes` confirms in batch) |
 | `--developer` / `--not-developer` | saved answer | Override developer mode for this run only |
 | `--forget-developer` | - | Ask the developer question again |
 | `--scan-roots "P1;P2"` | auto-detected | Project roots for section 17 (semicolon-separated) |
@@ -72,8 +72,8 @@ Options may also be written `--days=30`.
 | 0 | Success |
 | 1 | A section failed, or the self-test found a failure |
 | 2 | Usage error, or an interactive mode was started without a console |
-| 3 | A section named in `--only` was refused (deep without `--i-understand-deep`, or interactive-only) |
-| 130 | Interrupted with Ctrl-C |
+| 3 | A section named in `--only` was refused (deep without `--i-understand-deep`, or interactive-only), or an installer was started from `npx` |
+| 130 | Interrupted with Ctrl-C (the engine exits 130 from its exit handler; the Node launcher also returns 130 when it forwards the signal) |
 
 ## Environment variables
 

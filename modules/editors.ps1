@@ -13,7 +13,8 @@ function Get-Targets06 {
   $t = @()
   foreach ($e in $Script:WS_EDITORS) {
     $root = Join-Path $P.A $e.Root
-    $t += (New-Target 6 "$($e.Name) caches" $root -Kind editor -Guard $e.Proc -Note 'Cache, CachedData, Code Cache, GPUCache, VSIX cache, crash reports')
+    $t += (New-Target 6 "$($e.Name) caches" $root -Kind editor -Guard $e.Proc -Note 'Cache, CachedData, Code Cache, GPUCache, crash reports; skipped while the editor runs')
+    $t += (New-Target 6 "$($e.Name) VSIX download cache" (Join-Path $root 'CachedExtensionVSIXs') -Mode clear -Note 'extension installers already unpacked; safe while the editor runs')
     $t += (New-Target 6 "$($e.Name) logs" (Join-Path $root 'logs') -Mode clear-old -Days 7)
     $t += (New-Target 6 "$($e.Name) stale workspace storage" (Join-Path $root 'User\workspaceStorage') -Kind cmd -Guard $e.Proc -Note 'entries whose folder no longer exists')
     $t += (New-Target 6 "$($e.Name) superseded extension versions" (Join-Path $P.U "$($e.Ext)\extensions") -Kind cmd -Guard $e.Proc -Note 'older versions and .obsolete entries; newest kept')

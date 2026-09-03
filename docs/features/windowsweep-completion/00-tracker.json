@@ -4,7 +4,7 @@
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
   "lastUpdated": "2026-09-03",
-  "planFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-melodic-unicorn.md",
+  "planFile": "C:/Users/PC/.claude/plans/please-plan-and-get-agile-fairy.md",
   "overview": "docs/features/windowsweep-completion/00-overview.md",
   "specification": "remaining-work.md",
   "userDecisions": {
@@ -13,7 +13,13 @@
     "desktopApp": "a later, separate phase (P6): Tauri wrapper around the same script, like macleanup/desktop; not counted toward CLI completion; account model decided when the phase opens (owner, 2026-09-03)",
     "distribution": "npm and git clone only; no winget, Scoop, Chocolatey or PowerShell Gallery (owner, 2026-09-03)",
     "sectionNumbers": "0-21 frozen; new sections start at 22",
-    "releases": "every release from 1.0.1 on gets an annotated git tag vX.Y.Z and a GitHub Release; v1.0.0 is tagged retroactively on 70c6738"
+    "releases": "every release from 1.0.1 on gets an annotated git tag vX.Y.Z and a GitHub Release; v1.0.0 is tagged retroactively on 70c6738",
+    "accountModel": "desktop app: optional Google sign-in for sync only (email, settings, run history); runs are never gated, no paid tier, no plan set - explicit owner exemption (owner, 2026-09-03)",
+    "telemetry": "desktop app: full fleet observability (GA4 + Amplitude + Clarity + Sentry) behind a first-run consent dialog, every provider off until accepted; the CLI keeps zero network calls (owner, 2026-09-03)",
+    "toolchainDownloads": "no toolchain or dependency-tree downloads on this machine until the owner's go-ahead; CI compiles meanwhile (owner, 2026-09-03) - PENDING-TASKS.md TASK-001, MANUAL-TASKS row 14",
+    "desktopLocation": "desktop/ in this repository (macleanup pattern); releases desktop-vX.Y.Z with latest.json; identifier com.aoneahsan.windowsweep (permanent); app version equals the bundled CLI version",
+    "palette": "primary hue 128 (lime): light #4d7c0f, dark #a3e635 with dark on-accent text; 24 degrees from taxease 104 and wakalat 152, the widest gap left; success moves to 158; free treatments sky 231 and plum 320; the logo mark keeps its sky-blue gradient",
+    "adminSurface": "user emails and run history are administered in the Firebase console for phase P6; a web admin panel is a later separate phase (recorded deviation from the platform-admin rule)"
   },
   "knownRisks": [
     "RW-002: sections 17-19 pre-select every item under --yes in the interactive modes, and section 17 then deletes without a human choice; fix before any real run of section 17 with --yes.",
@@ -22,68 +28,405 @@
     "The docs site domain depends on an owner DNS row; README links switch only after a 200 probe."
   ],
   "phases": [
-    { "id": "P0", "title": "Release sync and known defects (1.0.1)", "status": "pending", "completedAt": null,
+    {
+      "id": "P0",
+      "title": "Release sync and known defects (1.0.1)",
+      "status": "in_progress",
+      "completedAt": null,
       "subTasks": [
-        { "id": "P0.RW-002", "title": "Section 17 auto-selects every artefact under --yes: Read-MultiSelect -NoAutoYes for 17/18/19, section 17 confirm never auto-answered, self-test check, docs", "status": "pending", "note": "HIGH - safety promise", "awaitingUser": false },
-        { "id": "P0.RW-003", "title": "Section 19 title says (Downloads, Desktop); only Downloads is scanned", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P0.RW-004", "title": "Sections 18/19 tier 'permanent' in constants; docs say Recycle Bin - add tier 'recycle'", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P0.RW-005", "title": "--purge-all documented as asking once more; implement the typed confirmation in interactive runs and fix the sentence", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P0.RW-006", "title": "VSIX cache documented as cleared under a running editor but guarded - split it into an unguarded target", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P0.RW-007", "title": "--install-task / --install-alias under npx register the evictable npx-cache path - refuse with the global-install hint", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P0.RW-008", "title": "Exit code 130 only from the Node launcher - make doc and engine agree", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P0.RW-010", "title": "--uninstall-data --yes removes history unattended - -NoAutoYes", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P0.RW-011", "title": "13 keywords vs the 5-12 rule - drop temp-files in package.json and README", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P0.RW-001", "title": "Publish 1.0.1 (cascade, CHANGELOG [1.0.1], publish gate, registry verify, tag + Release)", "status": "pending", "note": "last in the phase; carries every fix above", "awaitingUser": false }
-      ] },
-    { "id": "P1", "title": "Verification of paths that have never run for real", "status": "pending", "completedAt": null,
+        {
+          "id": "P0.RW-002",
+          "title": "Section 17 auto-selects every artefact under --yes: Read-MultiSelect -NoAutoYes for 17/18/19, section 17 confirm never auto-answered, self-test check, docs",
+          "status": "complete",
+          "note": "HIGH - safety promise",
+          "awaitingUser": false
+        },
+        {
+          "id": "P0.RW-003",
+          "title": "Section 19 title says (Downloads, Desktop); only Downloads is scanned",
+          "status": "complete",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P0.RW-004",
+          "title": "Sections 18/19 tier 'permanent' in constants; docs say Recycle Bin - add tier 'recycle'",
+          "status": "complete",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P0.RW-005",
+          "title": "--purge-all documented as asking once more; implement the typed confirmation in interactive runs and fix the sentence",
+          "status": "complete",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P0.RW-006",
+          "title": "VSIX cache documented as cleared under a running editor but guarded - split it into an unguarded target",
+          "status": "complete",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P0.RW-007",
+          "title": "--install-task / --install-alias under npx register the evictable npx-cache path - refuse with the global-install hint",
+          "status": "complete",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P0.RW-008",
+          "title": "Exit code 130 only from the Node launcher - make doc and engine agree",
+          "status": "complete",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P0.RW-010",
+          "title": "--uninstall-data --yes removes history unattended - -NoAutoYes",
+          "status": "complete",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P0.RW-011",
+          "title": "13 keywords vs the 5-12 rule - drop temp-files in package.json and README",
+          "status": "complete",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P0.RW-001",
+          "title": "Publish 1.0.1 (cascade, CHANGELOG [1.0.1], publish gate, registry verify, tag + Release)",
+          "status": "in_progress",
+          "note": "last in the phase; carries every fix above",
+          "awaitingUser": false
+        }
+      ]
+    },
+    {
+      "id": "P1",
+      "title": "Verification of paths that have never run for real",
+      "status": "pending",
+      "completedAt": null,
       "subTasks": [
-        { "id": "P1.RW-020", "title": "First real elevated run of sections 12-15 (16 and 20 separately), then record the outcome and fix what it exposes", "status": "blocked", "note": "MANUAL-TASKS row 1; owner runs, agent records", "awaitingUser": true },
-        { "id": "P1.RW-021", "title": "Windows 11: self-test, dry-run, one real safe batch; record the build number", "status": "blocked", "note": "MANUAL-TASKS row 8", "awaitingUser": true },
-        { "id": "P1.RW-022", "title": "Windows Server wording in README and FAQ: CI dry-runs on windows-latest; real runs verified on Windows 10 only", "status": "complete", "note": "done in the audit commit of 2026-09-03 (README platform table, docs/faq.md)", "awaitingUser": false },
-        { "id": "P1.RW-023", "title": "Sections 4, 17, 18, 19 run for real by the owner (after RW-002)", "status": "blocked", "note": "MANUAL-TASKS row 3", "awaitingUser": true },
-        { "id": "P1.RW-024", "title": "Sections 5, 7, 8 with Docker started and Chrome, Slack, Granola closed", "status": "blocked", "note": "MANUAL-TASKS rows 2, 6, 7", "awaitingUser": true },
-        { "id": "P1.RW-025", "title": "Weekly Scheduled Task observed running once (after RW-007, from a global install)", "status": "blocked", "note": "MANUAL-TASKS row 9", "awaitingUser": true },
-        { "id": "P1.RW-026", "title": "PowerShell 7 path on a machine with pwsh installed (optional)", "status": "blocked", "note": "MANUAL-TASKS row 10; optional", "awaitingUser": true }
-      ] },
-    { "id": "P2", "title": "Self-test coverage of the pure logic", "status": "pending", "completedAt": null,
+        {
+          "id": "P1.RW-020",
+          "title": "First real elevated run of sections 12-15 (16 and 20 separately), then record the outcome and fix what it exposes",
+          "status": "blocked",
+          "note": "MANUAL-TASKS row 1; owner runs, agent records",
+          "awaitingUser": true
+        },
+        {
+          "id": "P1.RW-021",
+          "title": "Windows 11: self-test, dry-run, one real safe batch; record the build number",
+          "status": "blocked",
+          "note": "MANUAL-TASKS row 8",
+          "awaitingUser": true
+        },
+        {
+          "id": "P1.RW-022",
+          "title": "Windows Server wording in README and FAQ: CI dry-runs on windows-latest; real runs verified on Windows 10 only",
+          "status": "complete",
+          "note": "done in the audit commit of 2026-09-03 (README platform table, docs/faq.md)",
+          "awaitingUser": false
+        },
+        {
+          "id": "P1.RW-023",
+          "title": "Sections 4, 17, 18, 19 run for real by the owner (after RW-002)",
+          "status": "blocked",
+          "note": "MANUAL-TASKS row 3",
+          "awaitingUser": true
+        },
+        {
+          "id": "P1.RW-024",
+          "title": "Sections 5, 7, 8 with Docker started and Chrome, Slack, Granola closed",
+          "status": "blocked",
+          "note": "MANUAL-TASKS rows 2, 6, 7",
+          "awaitingUser": true
+        },
+        {
+          "id": "P1.RW-025",
+          "title": "Weekly Scheduled Task observed running once (after RW-007, from a global install)",
+          "status": "blocked",
+          "note": "MANUAL-TASKS row 9",
+          "awaitingUser": true
+        },
+        {
+          "id": "P1.RW-026",
+          "title": "PowerShell 7 path on a machine with pwsh installed (optional)",
+          "status": "blocked",
+          "note": "MANUAL-TASKS row 10; optional",
+          "awaitingUser": true
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "title": "Self-test coverage of the pure logic",
+      "status": "pending",
+      "completedAt": null,
       "subTasks": [
-        { "id": "P2.RW-030", "title": "About ten new checks (parser, section-list, size text, superseded versions, layout guard, workspace storage, artefact finder, report export, --json shape, prompt asymmetry); each proved red on a plant", "status": "pending", "note": "keep every file under 500 lines (new module if needed)", "awaitingUser": false }
-      ] },
-    { "id": "P3", "title": "Docs site and AI guide", "status": "pending", "completedAt": null,
+        {
+          "id": "P2.RW-030",
+          "title": "About ten new checks (parser, section-list, size text, superseded versions, layout guard, workspace storage, artefact finder, report export, --json shape, prompt asymmetry); each proved red on a plant",
+          "status": "pending",
+          "note": "keep every file under 500 lines (new module if needed)",
+          "awaitingUser": false
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "title": "Docs site and AI guide",
+      "status": "pending",
+      "completedAt": null,
       "subTasks": [
-        { "id": "P3.RW-040", "title": "aoneahsan/windowsweep-docs: Docusaurus site, Pages workflow, CNAME, content mirror, governance; write-back after the 200 probe", "status": "pending", "note": "owner rows: DNS CNAME, Pages custom domain + HTTPS", "awaitingUser": false },
-        { "id": "P3.RW-040-dns", "title": "Owner: Hostinger CNAME windowsweep-docs -> aoneahsan.github.io; GitHub Pages custom domain + Enforce HTTPS", "status": "blocked", "note": "MANUAL-TASKS rows 11-12", "awaitingUser": true },
-        { "id": "P3.RW-041", "title": "AI-INTEGRATION-GUIDE.md at the root, in files, in the README link row, mirrored on the site", "status": "pending", "note": "", "awaitingUser": false }
-      ] },
-    { "id": "P4", "title": "Repository hygiene and owner records", "status": "pending", "completedAt": null,
+        {
+          "id": "P3.RW-040",
+          "title": "aoneahsan/windowsweep-docs: Docusaurus site, Pages workflow, CNAME, content mirror, governance; write-back after the 200 probe",
+          "status": "pending",
+          "note": "owner rows: DNS CNAME, Pages custom domain + HTTPS",
+          "awaitingUser": false
+        },
+        {
+          "id": "P3.RW-040-dns",
+          "title": "Owner: Hostinger CNAME windowsweep-docs -> aoneahsan.github.io; GitHub Pages custom domain + Enforce HTTPS",
+          "status": "blocked",
+          "note": "MANUAL-TASKS rows 11-12",
+          "awaitingUser": true
+        },
+        {
+          "id": "P3.RW-041",
+          "title": "AI-INTEGRATION-GUIDE.md at the root, in files, in the README link row, mirrored on the site",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "title": "Repository hygiene and owner records",
+      "status": "pending",
+      "completedAt": null,
       "subTasks": [
-        { "id": "P4.RW-050", "title": "Topics, homepage, wiki off, annotated tag v1.0.0 on 70c6738 + GitHub Release; tags from 1.0.1 on", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P4.RW-051", "title": "Portfolio-info file (notebook + root copy), master links JSON entry, ORCID .bib + CLAUDE/AGENTS ORCID block", "status": "pending", "note": "owner: JSON review and ORCID import (MANUAL-TASKS rows 5, 13)", "awaitingUser": false },
-        { "id": "P4.RW-052", "title": "Owner: rename D:\\work\\windows-cleanup to D:\\work\\windowsweep; agent updates PROJECT-CONTEXT and the memory note", "status": "blocked", "note": "MANUAL-TASKS row 4", "awaitingUser": true },
-        { "id": "P4.RW-053", "title": "CI tarball sweep names the three root planning files as forbidden and AI-INTEGRATION-GUIDE.md as allowed", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P4.RW-054", "title": "README Documentation row and docs/README Meta rows for the planning files", "status": "complete", "note": "done in the audit commit of 2026-09-03", "awaitingUser": false }
-      ] },
-    { "id": "P5", "title": "1.1 family-parity features (release 1.1.0)", "status": "pending", "completedAt": null,
+        {
+          "id": "P4.RW-050",
+          "title": "Topics, homepage, wiki off, annotated tag v1.0.0 on 70c6738 + GitHub Release; tags from 1.0.1 on",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P4.RW-051",
+          "title": "Portfolio-info file (notebook + root copy), master links JSON entry, ORCID .bib + CLAUDE/AGENTS ORCID block",
+          "status": "pending",
+          "note": "owner: JSON review and ORCID import (MANUAL-TASKS rows 5, 13)",
+          "awaitingUser": false
+        },
+        {
+          "id": "P4.RW-052",
+          "title": "Owner: rename D:\\work\\windows-cleanup to D:\\work\\windowsweep; agent updates PROJECT-CONTEXT and the memory note",
+          "status": "blocked",
+          "note": "MANUAL-TASKS row 4",
+          "awaitingUser": true
+        },
+        {
+          "id": "P4.RW-053",
+          "title": "CI tarball sweep names the three root planning files as forbidden and AI-INTEGRATION-GUIDE.md as allowed",
+          "status": "complete",
+          "note": "done in the 1.0.1 commit; CI also asserts AI-INTEGRATION-GUIDE.md once it exists",
+          "awaitingUser": false
+        },
+        {
+          "id": "P4.RW-054",
+          "title": "README Documentation row and docs/README Meta rows for the planning files",
+          "status": "complete",
+          "note": "done in the audit commit of 2026-09-03",
+          "awaitingUser": false
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "title": "1.1 family-parity features (release 1.1.0)",
+      "status": "pending",
+      "completedAt": null,
       "subTasks": [
-        { "id": "P5.RW-060", "title": "Section 22: global packages audit, read-only (npm, pnpm, yarn, bun, deno; uninstall commands printed)", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P5.RW-061", "title": "Section 23: orphaned application data under AppData, interactive, Recycle Bin, fail-closed exclusions", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P5.RW-062", "title": "Section 24: installed programs idle N+ days, report-only with winget/UninstallString hints", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P5.RW-063", "title": "Section 25: startup items audit, report-only", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P5.RW-064", "title": "Sections 8/9 target rows: Telegram, WhatsApp (Store), Office file cache (prune, Office guards), Steam shadercache, WebView2 caches, wsreset - paths verified first", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P5.RW-065", "title": "Section 1 target rows: Hugging Face hub, torch, conda clean; document Chocolatey/winget/Metro as already covered", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P5.RW-066", "title": "Section 26: driver and upgrade installer leftovers (admin, opt-in): C:\\NVIDIA, NVIDIA Downloader, C:\\AMD, C:\\Intel, C:\\ESD", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P5.RW-067", "title": "Section 17 artefact list additions (.nx .mypy_cache .ruff_cache .tox .eggs .output .serverless; .cache with a marker)", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P5.RW-068", "title": "--notify toast (WinRT on 5.1, NotifyIcon balloon on pwsh), wired into --install-task", "status": "pending", "note": "", "awaitingUser": false },
-        { "id": "P5.RW-069", "title": "Record the sibling features deliberately not adopted (tui, doctor, check-update, restore points, font caches)", "status": "complete", "note": "recorded in remaining-work.md section 10", "awaitingUser": false },
-        { "id": "P5.release", "title": "1.1.0: cascade, CHANGELOG, README + docs tables for sections 22-26, publish gate, tag + Release", "status": "pending", "note": "", "awaitingUser": false }
-      ] },
-    { "id": "P6", "title": "Windows desktop app (later phase, separate plan and tracker; excluded from the completion percentage)", "status": "pending", "completedAt": null,
+        {
+          "id": "P5.RW-060",
+          "title": "Section 22: global packages audit, read-only (npm, pnpm, yarn, bun, deno; uninstall commands printed)",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P5.RW-061",
+          "title": "Section 23: orphaned application data under AppData, interactive, Recycle Bin, fail-closed exclusions",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P5.RW-062",
+          "title": "Section 24: installed programs idle N+ days, report-only with winget/UninstallString hints",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P5.RW-063",
+          "title": "Section 25: startup items audit, report-only",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P5.RW-064",
+          "title": "Sections 8/9 target rows: Telegram, WhatsApp (Store), Office file cache (prune, Office guards), Steam shadercache, WebView2 caches, wsreset - paths verified first",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P5.RW-065",
+          "title": "Section 1 target rows: Hugging Face hub, torch, conda clean; document Chocolatey/winget/Metro as already covered",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P5.RW-066",
+          "title": "Section 26: driver and upgrade installer leftovers (admin, opt-in): C:\\NVIDIA, NVIDIA Downloader, C:\\AMD, C:\\Intel, C:\\ESD",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P5.RW-067",
+          "title": "Section 17 artefact list additions (.nx .mypy_cache .ruff_cache .tox .eggs .output .serverless; .cache with a marker)",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P5.RW-068",
+          "title": "--notify toast (WinRT on 5.1, NotifyIcon balloon on pwsh), wired into --install-task",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P5.RW-069",
+          "title": "Record the sibling features deliberately not adopted (tui, doctor, check-update, restore points, font caches)",
+          "status": "complete",
+          "note": "recorded in remaining-work.md section 10",
+          "awaitingUser": false
+        },
+        {
+          "id": "P5.RW-071",
+          "title": "--select L and --select-file P: scripted selection for sections 17/18/19/23; lifts the batch refusal when present",
+          "status": "pending",
+          "note": "GUI prerequisite",
+          "awaitingUser": false
+        },
+        {
+          "id": "P5.RW-072",
+          "title": "--json additions: candidates[], targets[] in scan, ##windowsweep progress lines; --list --json catalogue",
+          "status": "pending",
+          "note": "GUI prerequisite",
+          "awaitingUser": false
+        },
+        {
+          "id": "P5.release",
+          "title": "1.1.0: cascade, CHANGELOG, README + docs tables for sections 22-26, publish gate, tag + Release",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        }
+      ]
+    },
+    {
+      "id": "P6",
+      "title": "Windows desktop app (Tauri 2 wrapper in desktop/; excluded from the CLI completion percentage)",
+      "status": "pending",
+      "completedAt": null,
       "subTasks": [
-        { "id": "P6.RW-070", "title": "Write the desktop-app plan when the owner opens the phase: Tauri 2 wrapper, CLI --select prerequisite, the account-model decision (free local GUI vs sign-in + plans)", "status": "blocked", "note": "opens only when P0-P5 are closed or the owner says so", "awaitingUser": true }
-      ] }
+        {
+          "id": "P6.RW-070",
+          "title": "Desktop plan written on 2026-09-03: optional sign-in for sync, runs free, full observability, Tauri 2 in desktop/",
+          "status": "complete",
+          "note": "owner decisions recorded in docs/PROJECT-CONTEXT.md and the plan file",
+          "awaitingUser": false
+        },
+        {
+          "id": "P6.design-dummy",
+          "title": "Design argument and static click dummy for every desktop screen, three treatments, light and dark",
+          "status": "pending",
+          "note": "owner reviews: MANUAL-TASKS row 17",
+          "awaitingUser": false
+        },
+        {
+          "id": "P6.firebase-vault",
+          "title": "Firebase project, Google provider, Firestore rules and indexes, FilesHub vault seeded",
+          "status": "pending",
+          "note": "owner rows 15 and 16 supply the OAuth client id and the telemetry keys",
+          "awaitingUser": false
+        },
+        {
+          "id": "P6.code-ci",
+          "title": "desktop/ app written and compiled by CI (desktop-ci.yml, desktop-release.yml)",
+          "status": "pending",
+          "note": "no local dependency tree until TASK-001",
+          "awaitingUser": false
+        },
+        {
+          "id": "P6.ui",
+          "title": "UI implemented against the approved dummy, with the parity check",
+          "status": "pending",
+          "note": "follows the dummy review",
+          "awaitingUser": false
+        },
+        {
+          "id": "P6.records",
+          "title": "README section, docs-site desktop page, PROJECT-CONTEXT, CLAUDE/AGENTS rows",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P6.toolchain",
+          "title": "Install rustup and the C++ Build Tools, yarn install both trees, commit the lockfiles",
+          "status": "blocked",
+          "note": "MANUAL-TASKS row 14 / PENDING-TASKS TASK-001",
+          "awaitingUser": true
+        },
+        {
+          "id": "P6.verify-release",
+          "title": "Local gates, run-to-verify over WebView2, updater keypair, first desktop-v release",
+          "status": "pending",
+          "note": "needs P6.toolchain",
+          "awaitingUser": false
+        }
+      ]
+    }
   ],
   "runHistory": [
-    { "date": "2026-09-03", "phase": "audit", "summary": "Full audit of main at 84c732f against the plan, the siblings and npm; owner decisions on scope, docs site, desktop app and distribution; remaining-work.md, remaining-work-summary.md, what-this-project-consists-of.md and this tracker written; records refreshed", "commit": "3ae3c4d (audit), followed by the SHA-record commit" }
+    {
+      "date": "2026-09-03",
+      "phase": "audit",
+      "summary": "Full audit of main at 84c732f against the plan, the siblings and npm; owner decisions on scope, docs site, desktop app and distribution; remaining-work.md, remaining-work-summary.md, what-this-project-consists-of.md and this tracker written; records refreshed",
+      "commit": "3ae3c4d (audit), followed by the SHA-record commit"
+    },
+    {
+      "date": "2026-09-03",
+      "phase": "P0",
+      "summary": "RW-002 to RW-011 fixed (--yes never selects in sections 17-19, recycle tier, purge-all typed confirm, VSIX cache split out, npx installer refusal, engine exit 130, uninstall-data always asks, 12 keywords); new modules/self_test_extra.ps1 group [12] with 4 checks, self-test 108 -> 114; RW-053 CI tarball sweep; session-3 decisions recorded. Release commit for 1.0.1",
+      "commit": "pending"
+    }
   ],
   "resumeInstructions": "1) Read CLAUDE.md, remaining-work.md and this tracker. 2) Find the first pending sub-task (owner rows are blocked + awaitingUser: prepare, never execute). 3) Do that item or phase only, obeying the IRON rules. 4) Run the item's gates. 5) Flip the sub-task in the same commit as the work, bump lastUpdated, append a runHistory row with the SHA. 6) One commit, push to o main, quote any 'Bypassed rule violations' line."
 }

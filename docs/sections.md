@@ -30,7 +30,8 @@ path each section can reach on your machine.
 | 21 | Disk usage report | report | - | safe |
 
 "Developer-gated" means the idle gate applies in developer mode and the cache is cleared completely otherwise
-([Developer mode](./developer-mode.md)). Every section honours `--dry-run`.
+([Developer mode](./developer-mode.md)). Every section honours `--dry-run`. Tier `recycle` means the item goes
+to the Recycle Bin (`--list` shows `recycle`).
 
 ## 0 - System health report
 
@@ -156,18 +157,20 @@ Scans project roots (auto-detected folders such as `~\source\repos`, `~\Projects
 `.pytest_cache`, `.dart_tool`, `.angular` and `bin`/`obj` beside a `.csproj`. A folder is listed only when its
 parent looks like a project and the project's source files have been idle for the window. You select what goes.
 Refuses to scan a whole drive or the profile root; never enters `.git`, AppData or toolchain folders. Writes
-`stale-builds-<stamp>.txt` even in dry-run. Interactive only.
+`stale-builds-<stamp>.txt` even in dry-run. Interactive only. `--yes` never selects here: the prompt appears
+even with `--yes`, Enter selects nothing, and the final question is never auto-answered.
 
 ## 18 - Partial downloads
 
 `.crdownload`, `.part`, `.partial`, `.fdmdownload`, `.opdownload`, `.!ut`, `.aria2`, `.download`, `.bc!`
 and `.tmp` files in Downloads (4 levels deep). You select; selected files go to the Recycle Bin. Interactive
-only; `--yes` does not apply.
+only; `--yes` never selects and never answers the final question.
 
 ## 19 - Large stale personal files
 
 Files of `--large-file-mb`+ MB (default 100) in Downloads that nothing touched for the window, largest first.
-You select; selected files go to the Recycle Bin (`--permanent` deletes instead). Interactive only.
+You select; selected files go to the Recycle Bin (`--permanent` deletes instead). Interactive only; `--yes`
+never selects and never answers the final question.
 
 ## 20 - Disk-image compaction (admin)
 

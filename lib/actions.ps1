@@ -4,7 +4,7 @@
 $Script:WS_CHROMIUM_PROFILE_CACHES = @('Cache', 'Code Cache', 'GPUCache', 'DawnCache', 'DawnGraphiteCache', 'DawnWebGPUCache', 'GrShaderCache', 'ShaderCache', 'Service Worker\ScriptCache')
 $Script:WS_CHROMIUM_ROOT_CACHES = @('ShaderCache', 'GrShaderCache', 'GraphiteDawnCache', 'Crashpad\completed', 'Crashpad\reports', 'SwReporter')
 $Script:WS_ELECTRON_CACHES = @('Cache', 'Code Cache', 'GPUCache', 'DawnCache', 'DawnGraphiteCache', 'DawnWebGPUCache', 'GrShaderCache', 'ShaderCache', 'Service Worker\CacheStorage', 'Service Worker\ScriptCache', 'Crashpad\completed', 'Crashpad\reports')
-$Script:WS_EDITOR_CACHES = @('Cache', 'CachedData', 'CachedProfilesData', 'CachedExtensionVSIXs', 'Code Cache', 'GPUCache', 'DawnCache', 'DawnGraphiteCache', 'DawnWebGPUCache', 'Service Worker\CacheStorage', 'Service Worker\ScriptCache', 'Crashpad\completed', 'Crashpad\reports')
+$Script:WS_EDITOR_CACHES = @('Cache', 'CachedData', 'CachedProfilesData', 'Code Cache', 'GPUCache', 'DawnCache', 'DawnGraphiteCache', 'DawnWebGPUCache', 'Service Worker\CacheStorage', 'Service Worker\ScriptCache', 'Crashpad\completed', 'Crashpad\reports')
 $Script:WS_FIREFOX_CACHES = @('cache2', 'startupCache', 'thumbnails', 'jumpListCache', 'OfflineCache', 'shader-cache')
 
 function Get-ChromiumProfileDirs {

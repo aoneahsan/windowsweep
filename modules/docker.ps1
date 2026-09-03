@@ -69,7 +69,7 @@ function Invoke-Section20 {
   foreach ($img in $images) { Write-UiLine ("  {0,3}  {1,10}  {2}" -f $i, (Format-Bytes $img.Length), $img.FullName) 'Gray'; $i++ }
   if (-not (Test-CommandPresent 'diskpart.exe')) { Write-Warn 'diskpart.exe not found - skipped'; return }
   $picks = @()
-  if ($ws.Yes) { $picks = @(1..$images.Count) } else { $picks = Read-MultiSelect -Total $images.Count }
+  if ($ws.Yes) { $picks = @(1..$images.Count) } else { $picks = @(Read-MultiSelect -Total $images.Count -NoAutoYes) }
   if ($picks.Count -eq 0) { Write-Info 'nothing selected'; return }
   if (-not (Confirm-Section 'Stop Docker Desktop and WSL now and compact the selected disks?' 'n')) { Write-Info 'skipped'; return }
   if ($ws.DryRun) { foreach ($k in $picks) { Write-DryRun "would compact $($images[$k - 1].FullName)" }; return }

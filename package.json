@@ -1,6 +1,6 @@
 {
   "name": "windowsweep",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Safe-by-default Windows cleanup CLI - developer-aware, dry-run first, zero install via npx.",
   "bin": {
     "windowsweep": "bin/windowsweep.js"
@@ -38,7 +38,6 @@
     "disk-cleanup",
     "cache-cleanup",
     "disk-space",
-    "temp-files",
     "node-modules",
     "npm-cache",
     "yarn-cache",

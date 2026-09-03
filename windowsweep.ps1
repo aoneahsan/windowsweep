@@ -275,7 +275,7 @@ if ($Script:WS.Elevate -and -not $Script:WS.IsAdmin) {
 }
 if ($Script:WS.Elevate -and $Script:WS.IsAdmin) { Write-Note 'already elevated; --elevate is a no-op' }
 
-if ($Script:WS.Mode -in @('walkthrough', 'menu', 'all', 'only')) { Resolve-DeveloperMode }
+if ($Script:WS.Mode -in @('walkthrough', 'menu', 'all', 'only')) { Resolve-DeveloperMode; Confirm-PurgeAllOnce }
 
 try {
   Invoke-Main
@@ -287,6 +287,10 @@ try {
   Restore-Ui
   if ($Script:WS.CleanupLogs -and $Script:WS.LogFile -and (Test-Path -LiteralPath $Script:WS.LogFile)) {
     try { Remove-Item -LiteralPath $Script:WS.LogFile -Force -ErrorAction SilentlyContinue } catch { $null = $_ }
+  }
+  if (-not $Script:WS.Finished -and $Script:WS.ExitCode -eq 0) {
+    Write-LogLine 'run interrupted before it finished (Ctrl-C or host stop) - exit 130'
+    exit $Script:WS_EXIT_INTERRUPT
   }
 }
 exit $Script:WS.ExitCode

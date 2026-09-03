@@ -129,9 +129,12 @@ function Invoke-Section17 {
     $out = Join-Path $ws.ReportsDir ('stale-builds-' + $ws.Stamp + '.txt')
     try { [IO.File]::WriteAllLines($out, $reportLines); Write-Note "list saved: $out" } catch { $null = $_ }
   }
-  $picks = Read-MultiSelect -Total ([math]::Min($found.Count, 200))
+  $picks = @(Read-MultiSelect -Total ([math]::Min($found.Count, 200)) -NoAutoYes)
   if ($picks.Count -eq 0) { Write-Info 'nothing selected'; return }
-  if (-not (Confirm-Section "Remove $($picks.Count) artefact folder(s)? (rebuild with the project's install/build command)" 'n')) { Write-Info 'skipped'; return }
+  if (-not $ws.DryRun) {
+    # Project artefacts never auto-confirm: --yes does not apply, and the walkthrough's step answer is not a selection.
+    if (-not (Confirm-Ui -Prompt "Remove $($picks.Count) artefact folder(s)? (rebuild with the project's install/build command)" -Default 'n' -NoAutoYes)) { Write-Info 'skipped'; return }
+  }
   foreach ($k in $picks) {
     $f = $found[$k - 1]
     $r = Remove-PathSafe -Path $f.Path -Within $f.Root -Label (Split-Path -Leaf $f.Path)

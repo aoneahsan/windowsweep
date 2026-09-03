@@ -7,9 +7,9 @@ Verified Against: commit 84c732f on `main`, 2026-09-03 (1.0.0 released the same 
 - Purpose: safe, developer-aware disk and cache cleanup CLI for Windows; the Windows member of the family with
   `linux-cleanup` (Bash) and `macleanup` (Bash).
 - Primary users: developers and power users on Windows 10/11 who want to see and control every deletion.
-- Current status: 1.0.0 released; public GitHub repo `aoneahsan/windowsweep`; published on npm as `windowsweep`.
-  `main` is ahead of the npm tarball by one internal rename (`Write-Log` -> `Write-LogLine`, commit `84c732f`);
-  1.0.1 ships it with the P0 fixes (`remaining-work.md` RW-001).
+- Current status: **1.0.1 released** (2026-09-03) - it carries the internal `Write-LogLine` rename plus every
+  P0 fix (RW-002 to RW-011). The self-test runs 114 checks. The docs site and the 1.1 feature set are the open
+  work; `remaining-work.md` holds the specification and the tracker holds the status.
 - Distribution: `npx windowsweep`, `npm install -g windowsweep`, or a clone run through `windowsweep.cmd`.
   No other channel (owner decision 2026-09-03).
 - What is open, with evidence and acceptance criteria: `remaining-work.md` (root); status:
@@ -58,6 +58,39 @@ Verified Against: commit 84c732f on `main`, 2026-09-03 (1.0.0 released the same 
   (free local GUI vs sign-in with plans) is decided when the phase opens.
 - **Releases (2026-09-03):** every release from 1.0.1 on gets an annotated tag `vX.Y.Z` and a GitHub Release;
   `v1.0.0` is tagged retroactively on `70c6738`, the commit the published tarball was built from.
+
+### Session 3 decisions (2026-09-03) - the desktop app, downloads and telemetry
+
+Recorded verbatim; they govern phase P6 and every session until the owner changes them.
+
+- **Desktop account model.** *"implement auth, just so we can have user emails info, provide ability to store
+  run results and settig etc and revert setting state when logged in, so actual features, but keep runs free,
+  so they get best value"* -> the desktop app gets **optional Google sign-in for sync**: the account stores the
+  user's email, settings and run history and restores settings on sign-in. **Runs are never gated, there is no
+  paid tier and no plan set for this app** - an explicit owner exemption from the fleet plan-set rule, revisited
+  only when he says so.
+- **Toolchain downloads.** *"add that as pending task, i will ask you to download all that you need, and when i
+  does, then please download and setup that part, for now do not download on this net please"* -> no toolchain
+  or dependency-tree download happens on this machine until he gives the go-ahead: `PENDING-TASKS.md` TASK-001
+  and `docs/MANUAL-TASKS.md` row 14. CI does every install and build that needs a dependency tree meanwhile.
+- **Desktop telemetry.** Full fleet observability (GA4, Amplitude, Clarity and Sentry) in the desktop app,
+  behind a first-run consent dialog with every provider off until accepted. **The CLI keeps its zero-network
+  promise unchanged**; the desktop README, the docs site and the README disclose what the app sends.
+- **Model workflow.** Fable 5.1 plans and reviews; Opus 5 executes the saved plan without re-planning. The
+  Session 1 plan is `C:/Users/PC/.claude/plans/please-plan-and-get-agile-fairy.md`.
+
+Derived from those decisions by the agent, under the standing rules:
+
+- The desktop app lives in `desktop/` of this repository (the macleanup pattern), releases as `desktop-vX.Y.Z`
+  with a `latest.json` updater manifest, carries the permanent identifier `com.aoneahsan.windowsweep`, and its
+  version equals the CLI version it bundles.
+- The admin surface for user emails is the Firebase console for this phase; a web admin panel is a later,
+  separate phase. This is a recorded deviation from the fleet platform-admin rule.
+- Registered palette: **primary hue 128 (lime)**, light accent `#4d7c0f`, dark accent `#a3e635` with dark
+  on-accent text. The registry had no free 25-degree arc; 128 is 24 degrees from taxease (104) and wakalat
+  (152), the widest gap available. Success moves to hue 158 so brand and success stay distinguishable. The logo
+  mark keeps its sky-blue gradient. Free treatments: `sky` (231) and `plum` (320).
+- Registered ports: 5972 (docs site start), 5973 (docs site serve), 5974 (desktop Vite dev URL).
 
 ## Constraints and non-goals
 - Must: honour `--dry-run` in every destructive helper and external command; route every deletion through

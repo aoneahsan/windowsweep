@@ -580,6 +580,36 @@ binaries and lock state). Update `docs/sections.md` section 17 and the README ro
   unchanged; `--quiet` still notifies (it is the point of the flag); no network; documented in
   `docs/cli-reference.md` and the README options table.
 
+### RW-071 - `--select L` and `--select-file P`: scripted selection for the interactive sections (agent, 2 h)
+
+- **What.** The interactive sections (17, 18, 19 and 23 when it lands) can only be driven by a person typing
+  indexes. A GUI, and any script, needs a way to pass the selection in. `--select L` queues index lists
+  consumed once per interactive prompt in the order the prompts appear; `--select-file P` reads a UTF-8 file
+  of one full path per line, matched case-insensitively against the candidate paths that prompt is offering
+  (`Read-MultiSelect -Candidates $paths`), warning about every line that matches nothing.
+- **Why.** It is the prerequisite that lets the desktop app list candidates with `--dry-run --only 17 --json`
+  and then remove exactly the user's picks. Without it a GUI would have to re-implement the finders.
+- **Success criteria.** Either flag lifts the batch refusal for interactive sections, because a person did
+  choose - the refusal exists to stop unattended deletion, not scripted deletion. Neither flag makes `--yes`
+  select anything (RW-002 stands).
+- **Acceptance points.** Self-test: `--select 1,3` against 5 candidates returns `1,3`; a `--select-file` with
+  one matching and one bogus path returns one index and warns once. Documented in `docs/cli-reference.md`
+  under "Scripting the interactive sections", in `docs/sections.md`, `docs/safety-model.md` and the AI guide.
+
+### RW-072 - `--json` additions and `--list --json` (agent, 2 h)
+
+- **What.** In `--json` mode the interactive sections collect `candidates[]`
+  (`section`, `index`, `path`, `bytes`, `idle_days`, `project`), scan mode emits `targets[]`
+  (`section`, `label`, `path`, `bytes`), and every section brackets itself on stderr with
+  `##windowsweep section=NN event=start|end status=<status> freed_bytes=<n>` so a caller can show progress.
+  `--list --json` prints the catalogue: `sections[]` (id, key, title, tier, admin, batch, dev), `safe_batch`,
+  `safe_batch_admin`, `profiles`, `walkthrough`.
+- **Why.** The same GUI prerequisite as RW-071: a front end reads the catalogue rather than hard-coding it,
+  and shows progress from the machine channel rather than parsing the human log.
+- **Acceptance points.** The self-test parses each shape; the progress lines appear only in `--json` mode, so
+  the human log is unchanged; `bin/windowsweep.js` passes the flags through untouched.
+
+
 ### RW-069 - Sibling features deliberately not adopted (record, no work)
 
 | Sibling feature | Why not |
@@ -590,35 +620,44 @@ binaries and lock state). Update `docs/sections.md` section 17 and the README ro
 | `macleanup` System Restore-style permanent sections (Time Machine snapshots) | Windows restore points are a recovery mechanism; deleting them is out of scope |
 | `macleanup` section 27 (font/QuickLook caches) | the Windows font cache is a system service store; clearing it is a repair step, not cleanup |
 
-## 11. Phase P6 - Windows desktop app (later phase; not counted toward CLI completion)
+## 11. Phase P6 - Windows desktop app (decided 2026-09-03; not counted toward CLI completion)
 
-### RW-070 - Scope statement for the desktop plan (agent writes the plan when the owner opens the phase)
+The owner opened this phase on 2026-09-03 and settled its three open questions. The decisions are recorded
+verbatim in `docs/PROJECT-CONTEXT.md` ("Session 3 decisions"); this section is the specification derived from
+them. The execution plan is `C:/Users/PC/.claude/plans/please-plan-and-get-agile-fairy.md` section 8.
 
-- **Reference.** `temp/macleanup/desktop`: Tauri 2 + React 18 + Vite, `src-tauri/src/main.rs` spawns the
-  bundled script with `--json --no-color`, streams stderr lines to the UI as events, parses the JSON
-  summary from stdout, forced updater through GitHub Releases (`desktop-v*` tags, `tauri-action`, a minisign
-  key kept as an Actions secret), an unsigned build, and a Google sign-in + free-run gate through Firebase.
-- **Windows shape.** `desktop/` in this repository or `aoneahsan/windowsweep-desktop` (decide at plan time;
-  the CLI's `files` allowlist must exclude it either way); the Rust core runs
-  `powershell.exe -NoProfile -ExecutionPolicy Bypass -File windowsweep.ps1 --json --no-color ...` from the
-  app's resources; elevation for sections 12-16/20 through `--elevate` (the engine relaunches through UAC
-  itself); WebView2 is present on Windows 10/11, so the bundle stays small; installer `.msi`/`.exe` from
-  `tauri build`; no code-signing certificate exists (SmartScreen warning documented, like macleanup's
-  Gatekeeper note).
-- **CLI prerequisites (add to P5 or the desktop phase).** A scripted selection flag for the interactive
-  sections (`--select "1,3-5"` consumed once per section by 17, 18, 19, 23) so a GUI can list with
-  `--dry-run --only 17` and then remove the user's picks; a stable `--json` progress line per section (today
-  the human log on stderr is the only progress channel; macleanup's app works the same way, so this is
-  optional).
-- **The decision that sizes the phase.** With sign-in and a free-run gate (macleanup's model) the fleet's
-  product rules apply in full: a plan set with a paid tier, plan administration, an admin panel, the theme
-  control, the i18n mechanism, analytics and error tracking - weeks of work. Without accounts (a free local
-  GUI over the CLI) it is days. The owner decides at plan time; this file records both readings so nobody
-  re-derives them.
-- **Estimate.** 3 sessions (free local GUI) to 8+ sessions (accounts, plans, admin). Not included in the
-  P0-P5 totals.
-- **Do not.** Do not start it before P0-P5 are closed unless the owner says so; do not reimplement any
-  cleanup logic outside the script.
+### RW-070 - The decided scope
+
+| Question | Decision |
+|---|---|
+| Account model | **Optional Google sign-in, for sync only.** The account stores the user's email, their settings and their run history, and restores settings on sign-in. **Runs are never gated**, there is no paid tier and no plan set - an explicit owner exemption from the fleet plan-set rule |
+| Telemetry | **Full fleet observability** - GA4, Amplitude, Clarity and Sentry - behind a first-run consent dialog with every provider off until accepted. The CLI keeps its zero-network promise; the desktop app discloses what it sends in its README, the docs site and the root README |
+| Location | `desktop/` in this repository (the macleanup pattern), excluded from the npm `files` allowlist and asserted absent by CI |
+| Identity | Identifier `com.aoneahsan.windowsweep` (permanent once released); product name `windowsweep`; the app version equals the CLI version it bundles |
+| Releases | Tag `desktop-vX.Y.Z`, built by `tauri-action`, NSIS + MSI + `.sig` + `latest.json` on a GitHub Release; the in-app updater reads that manifest |
+| Admin surface | The Firebase console for this phase (Authentication -> Users, Firestore). A web admin panel is a later, separate phase - a recorded deviation from the platform-admin rule |
+| Toolchain | 🔴 **No download happens on this machine until the owner gives the go-ahead** (`PENDING-TASKS.md` TASK-001, `docs/MANUAL-TASKS.md` row 14). CI compiles the Rust core meanwhile |
+
+### The two sub-phases
+
+- **P6-A (no downloads).** The design argument and a static click dummy of every screen for the owner to
+  react to; the Firebase project, its Google provider, Firestore rules and indexes, and the FilesHub vault
+  entries; the `desktop/` application written in full and compiled by CI (`desktop-ci.yml`); the records.
+  The CLI prerequisites RW-071 and RW-072 ship first, in 1.1.0.
+- **P6-B (after the go-ahead).** rustup and the C++ Build Tools, `yarn install` for both trees, the lockfiles
+  committed, the local gates, run-to-verify over the app's own WebView2, the updater keypair into
+  `~/.secrets/tauri/` and the repository Actions secrets, and the first `desktop-v` release.
+
+### Do not
+
+- Do not reimplement any cleanup logic in the desktop app: it runs the bundled `windowsweep.ps1` with
+  `--json --no-color` and nothing else.
+- Do not gate a run behind sign-in, add a paid tier, or add a plan set to this app without a new owner
+  decision.
+- Do not enable any telemetry provider before the consent dialog is accepted, and never send a filesystem
+  path, host name or user name in a synced run summary.
+- Do not download a toolchain or a dependency tree before the owner's go-ahead.
+
 
 ## 12. What "100%" looks like at the end
 

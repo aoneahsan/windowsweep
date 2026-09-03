@@ -88,3 +88,12 @@ function Resolve-DeveloperMode {
   $ws.DeveloperSource = 'default'
   Write-Note 'developer question not asked (non-interactive run) - defaulting to developer mode ON, the conservative choice; pass --not-developer to override'
 }
+
+function Confirm-PurgeAllOnce {
+  <# .SYNOPSIS --purge-all from a console asks for a typed word once per run; --yes is the confirmation in batch runs. #>
+  $ws = $Script:WS
+  if (-not $ws.PurgeAll -or $ws.DryRun -or $ws.Yes) { return }
+  if (Confirm-Typed -Prompt 'FULL PURGE: --purge-all empties every cache target completely, including files you used yesterday.' -Word 'purge') { Write-Ok 'purge-all confirmed for this run'; return }
+  $ws.PurgeAll = $false
+  Write-Info 'purge-all declined - this run prunes by the idle window instead'
+}

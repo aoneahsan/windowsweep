@@ -31,7 +31,8 @@ fight for room), so getting out of that zone helps a lot. Beyond that, disk clea
 
 **Is a weekly Scheduled Task safe?**
 `--install-task` schedules `--all --yes`: the safe batch only, under your account, no admin sections, no
-personal files, no deep sections. Review the first run's report before scheduling.
+personal files, no deep sections. Review the first run's report before scheduling. Install globally first
+(`npm install -g windowsweep`); from `npx` the installer refuses because that cache is evicted.
 
 **Why PowerShell rather than an .exe?**
 Every Windows machine has PowerShell 5.1, so there is no runtime to install and no binary to trust. The source

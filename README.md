@@ -34,12 +34,12 @@ It is the Windows member of a family with [linux-cleanup](https://github.com/aon
 
 | | |
 |---|---|
-| **Version** | `1.0.0` |
+| **Version** | `1.0.1` |
 | **License** | MIT |
 | **Node** | `>=14` (launcher only) |
 | **Runtime** | Windows PowerShell 5.1 (built in) or PowerShell 7 |
 | **Platforms** | Windows 10 (1809+) and Windows 11 |
-| **Install size** | ~78 kB packed · ~263 kB unpacked · 37 files · no dependencies |
+| **Install size** | ~81 kB packed · ~273 kB unpacked · 38 files · no dependencies |
 | **Undo** | Recycle Bin for personal files; none for caches (they regenerate) |
 | **Status** | Stable · actively maintained |
 
@@ -119,8 +119,8 @@ security scanner or a registry cleaner. It reclaims disk space, nothing else.
 - **Running-app guard** - an open browser, editor or app keeps its caches; the tool tells you which to close.
 - **Session reports** - schema-versioned JSON, exportable to Markdown or a self-contained HTML page, plus
   `--json` for scripts.
-- **Self-test** - proves the guards on your machine with a real junction, a 400-character path and a dry-run
-  fixture before you trust it.
+- **Self-test** - 114 checks prove the guards on your machine with a real junction, a 400-character path and
+  a dry-run fixture before you trust it.
 - **Offline by design** - zero network calls, no telemetry, no update check. Crash bundles stay on disk.
 
 <a id="platform-support"></a>
@@ -195,8 +195,8 @@ section with `a` run / `s` skip / `q` quit and a running total.
 ### The sections
 
 **Tier** says what happens to the data: *report* deletes nothing, *rebuilds* comes back on its own, *slow*
-comes back but costs minutes, *Recycle Bin* is recoverable until you empty it, *permanent* is not, *config*
-changes a setting.
+comes back but costs minutes, *Recycle Bin* is recoverable until you empty it (`--list` shows this tier as
+`recycle`), *permanent* is not, *config* changes a setting.
 
 | # | Section | Tier | Admin | Batch |
 |---|---|---|:-:|---|
@@ -413,7 +413,8 @@ More: [FAQ](https://github.com/aoneahsan/windowsweep/blob/main/docs/faq.md).
 <a id="changelog"></a>
 ## 🔄 Changelog&nbsp;[#](#changelog)
 
-Latest release: **`1.0.0`** - first release: 22 sections, developer mode, the deletion chokepoint, dry-run, reports.
+Latest release: **`1.0.1`** - `--yes` never selects personal or project items; installers refuse under npx;
+exit 130 from the engine; documentation fixes.
 Full history: [CHANGELOG.md](https://github.com/aoneahsan/windowsweep/blob/main/CHANGELOG.md).
 
 <a id="contributing"></a>
@@ -479,5 +480,5 @@ this tool deletes files, so review what it proposes before confirming.
 <a id="keywords"></a>
 ## 🏷️ Keywords&nbsp;[#](#keywords)
 
-*windows · cleanup · disk-cleanup · cache-cleanup · disk-space · temp-files · node-modules · npm-cache ·
+*windows · cleanup · disk-cleanup · cache-cleanup · disk-space · node-modules · npm-cache ·
 yarn-cache · developer-tools · powershell · cli · dry-run*

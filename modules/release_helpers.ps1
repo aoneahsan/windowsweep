@@ -241,6 +241,12 @@ function Invoke-SelfTest {
     try { $probe = Join-Path $d ('.write-test-' + [guid]::NewGuid().ToString('N')); Set-Content -LiteralPath $probe -Value 'x'; Remove-Item -LiteralPath $probe -Force; Write-Ok "$d writable" } catch { Write-Err "$d not writable"; $fails++ }
   }
 
+  if (Get-Command Invoke-SelfTestExtra -ErrorAction SilentlyContinue) {
+    $extra = Invoke-SelfTestExtra
+    $checks += [int]$extra.Checks
+    $fails += [int]$extra.Fails
+  }
+
   Write-Separator
   if ($fails -eq 0) { Write-Ok "all $checks checks passed - $Script:WS_NAME is ready"; return $Script:WS_EXIT_OK }
   Write-Err "$fails of $checks checks FAILED"
@@ -317,8 +323,21 @@ function Get-LaunchCommand {
   return [pscustomobject]@{ Exe = "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe"; Args = @('-NoProfile', '-NoLogo', '-ExecutionPolicy', 'Bypass', '-File', "`"$($ws.ScriptPath)`"") }
 }
 
+function Test-NpxInstallerRefusal {
+  <# .SYNOPSIS Under npx the package lives in a cache npm evicts; a task or alias pointing there would break later. #>
+  param([string] $Flag)
+  if (-not $Script:WS.Npx) { return $false }
+  Write-Err "$Flag is refused under npx: it would point at the npx cache, which npm evicts."
+  Write-Plain '  Install once, then register from the global command:'
+  Write-Plain '    npm install -g windowsweep'
+  Write-Plain "    windowsweep $Flag"
+  $Script:WS.ExitCode = $Script:WS_EXIT_REFUSED
+  return $true
+}
+
 function Install-WeeklyTask {
   Write-Box 'Install weekly Scheduled Task' "$Script:WS_TASK_NAME - Sundays 03:00, safe batch, no prompts"
+  if (Test-NpxInstallerRefusal '--install-task') { return }
   if (Get-ScheduledTask -TaskName $Script:WS_TASK_NAME -ErrorAction SilentlyContinue) { Write-Info 'task already exists'; return }
   $lc = Get-LaunchCommand
   $argLine = (@($lc.Args) + @('--all', '--yes', '--quiet', '--no-color')) -join ' '
@@ -347,6 +366,7 @@ $Script:WS_ALIAS_MARK = '# windowsweep alias'
 
 function Install-ProfileAlias {
   Write-Box 'Install profile alias' "Adds a 'cleanup' function to your PowerShell profile"
+  if (Test-NpxInstallerRefusal '--install-alias') { return }
   $profilePath = $PROFILE.CurrentUserAllHosts
   $lc = Get-LaunchCommand
   $line = "function cleanup { & `"$($lc.Exe)`" $($lc.Args -join ' ') @args }"
@@ -388,7 +408,7 @@ function Remove-ToolData {
   $bytes = Get-DirectoryBytes $ws.Home
   Write-Info ("$($ws.Home) holds " + (Format-Bytes $bytes) + ' of logs, reports, bundles and config')
   if ($ws.DryRun) { Write-DryRun "would remove $($ws.Home)"; return }
-  if (-not (Confirm-Ui -Prompt 'Delete it all (logs, reports, your developer answer)?' -Default 'n')) { Write-Info 'skipped'; return }
+  if (-not (Confirm-Ui -Prompt 'Delete it all (logs, reports, your developer answer)?' -Default 'n' -NoAutoYes)) { Write-Info 'skipped'; return }
   $ws.LogFile = $null
   try { [IO.Directory]::Delete((Get-LongPath $ws.Home), $true); Write-Ok 'removed' } catch { Write-Err "could not remove: $($_.Exception.Message)" }
 }

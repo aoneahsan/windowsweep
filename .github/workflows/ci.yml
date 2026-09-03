@@ -54,6 +54,7 @@ jobs:
         run: |
           $listing = npm pack --dry-run 2>&1 | Out-String
           Write-Host $listing
-          foreach ($forbidden in 'CLAUDE.md', 'AGENTS.md', 'docs/', 'temp/', '.npmrc', '.env') {
+          foreach ($forbidden in 'CLAUDE.md', 'AGENTS.md', 'docs/', 'temp/', 'desktop/', '.npmrc', '.env', 'remaining-work.md', 'remaining-work-summary.md', 'what-this-project-consists-of.md', 'PENDING-TASKS.md', 'portfolio-info') {
             if ($listing -match [regex]::Escape($forbidden)) { throw "tarball would ship $forbidden" }
           }
+          if ((Test-Path 'AI-INTEGRATION-GUIDE.md') -and -not ($listing -match 'AI-INTEGRATION-GUIDE\.md')) { throw 'AI-INTEGRATION-GUIDE.md exists but is not in the tarball' }

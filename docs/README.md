@@ -50,4 +50,4 @@ The [README](https://github.com/aoneahsan/windowsweep#readme) is the elevator pi
 | **Author** | [Ahsan Mahmood](https://aoneahsan.com) - [aoneahsan@gmail.com](mailto:aoneahsan@gmail.com) |
 | **Support the work** | https://aoneahsan.com/payment?project-id=windowsweep&project-identifier=windowsweep |
 
-Last Updated: 2026-09-03 - tool version 1.0.0
+Last Updated: 2026-09-03 - tool version 1.0.1

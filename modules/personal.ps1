@@ -84,7 +84,7 @@ function Invoke-PersonalPicker {
   $dest = 'the Recycle Bin'
   if ($ws.Permanent) { $dest = 'PERMANENT deletion (--permanent)' }
   Write-Note "selected files go to $dest"
-  $picks = Read-MultiSelect -Total $Rows.Count
+  $picks = @(Read-MultiSelect -Total $Rows.Count -NoAutoYes)
   if ($picks.Count -eq 0) { Write-Info 'nothing selected'; return }
   if (-not $ws.DryRun) {
     # Personal files never auto-confirm: --yes does not apply here.

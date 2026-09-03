@@ -46,11 +46,12 @@ are missing.
 ## Published contents
 
 `npm pack` emits the launcher, `lib/`, `modules/`, both entry files, `README.md`, `LICENSE`, `CHANGELOG.md`,
-`SECURITY.md`, `VERSION` and `package.json` - 37 files, 78.1 kB packed, 263.2 kB unpacked (`npm pack`,
-2026-09-03, the 1.0.0 release tarball). `main` after the 2026-09-03 audit commit packs 78.4 kB / 264.0 kB / 37 files (the
-`Write-LogLine` rename plus the README roadmap rows); the 1.0.1 release refreshes this row and the README. `docs/` is not shipped;
-the README links every page by absolute URL. The three root planning files (`remaining-work.md`,
-`remaining-work-summary.md`, `what-this-project-consists-of.md`) are outside the allowlist and never ship.
+`SECURITY.md`, `VERSION` and `package.json` - 38 files, 81.4 kB packed, 273.1 kB unpacked (`npm pack`,
+2026-09-03, the 1.0.1 release tarball; 1.0.0 packed 37 files at 78.1 kB / 263.2 kB, and the extra file is
+`modules/self_test_extra.ps1`). `docs/` is not shipped; the README links every page by absolute URL. The three
+root planning files (`remaining-work.md`, `remaining-work-summary.md`, `what-this-project-consists-of.md`),
+`PENDING-TASKS.md` and the portfolio-info copy are outside the allowlist and never ship; CI asserts each by
+name.
 
 Confirmed absent from the tarball: `CLAUDE.md`, `AGENTS.md`, `docs/`, `temp/`, `.github/`, `.npmrc`, `.env*`,
 logs, reports, bundles.
@@ -60,5 +61,5 @@ logs, reports, bundles.
 ```powershell
 npm pack --dry-run                                   # the allowlist only
 npm run version:check                                # package.json == VERSION == lib/constants.ps1
-node bin/windowsweep.js --self-test --no-color       # 108 checks
+node bin/windowsweep.js --self-test --no-color       # 114 checks
 ```

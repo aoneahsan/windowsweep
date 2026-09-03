@@ -187,10 +187,13 @@ function Confirm-Typed {
 }
 
 function Read-MultiSelect {
-  <# .SYNOPSIS Parse "1,3,5-7" / all / none into a sorted unique list of 1-based indexes. #>
-  param([int] $Total)
+  <# .SYNOPSIS Parse "1,3,5-7" / all / none into a sorted unique list of 1-based indexes.
+     --yes answers "all" only for callers that do not pass -NoAutoYes. The personal and project pickers pass
+     it, so under --yes they still ask when a console is present and select nothing when it is not. #>
+  param([int] $Total, [switch] $NoAutoYes)
   if ($Total -le 0) { return @() }
-  if ($Script:WS.Yes) { return @(1..$Total) }
+  if ($Script:WS.Yes -and -not $NoAutoYes) { return @(1..$Total) }
+  if (-not $Script:WS.Interactive) { Write-Note 'non-interactive session: nothing selected (a person has to pick these)'; return @() }
   Write-UiLine "  Selection: 1,3,5-10 | all | none (Enter = none)" 'DarkGray' -NoLog
   $reply = Read-Line ("  Select items (1..$Total): ")
   return (ConvertTo-IndexList -Text $reply -Total $Total)

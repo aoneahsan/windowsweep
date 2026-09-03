@@ -30,7 +30,7 @@ developer's day fast.
 |---|---|
 | `--developer` / `--not-developer` | Override the saved answer for this run |
 | `--forget-developer` | Ask the question again on the next interactive run |
-| `--purge-all` | Clear the cache targets completely even in developer mode; it asks once more first |
+| `--purge-all` | Clear the cache targets completely even in developer mode. From a console it asks you to type `purge` once per run; in batch runs `--yes` is the confirmation |
 | `-d N`, `--days N` | Move the idle window (a lower number is more aggressive) |
 
 A non-interactive run with no saved answer (a Scheduled Task on a fresh machine, `--json`) defaults to

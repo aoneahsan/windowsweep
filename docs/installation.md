@@ -18,6 +18,9 @@ Nothing else is installed. The tool has no npm dependencies and makes no network
 npx windowsweep --scan
 ```
 
+The weekly task and the profile alias need the global install: under `npx` the installers refuse (exit 3)
+because the npx cache is evicted.
+
 ## Global install
 
 ```powershell

@@ -66,7 +66,9 @@ a cache is pruned by the idle gate or cleared completely.
 | deep | 11, 15, 16, 20 | refused without `--i-understand-deep`; `--dry-run` previews are allowed |
 | interactive | 17, 18, 19 | never; they need a person selecting items |
 
-`--yes` never applies to personal files. Sections 18 and 19 ask a separate question that `--yes` does not answer.
+`--yes` never applies to personal or project files: sections 17, 18 and 19 show their selection prompt even
+with `--yes`, default to none, and ask a final question `--yes` does not answer. Section 20's disk picker is
+the documented exception (deep-gated, `--yes` selects every disk).
 
 ## Running programs
 

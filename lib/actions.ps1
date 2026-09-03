@@ -99,6 +99,13 @@ function Confirm-Section {
   return (Confirm-Ui -Prompt $Prompt -Default $Default)
 }
 
+function Test-KnownCacheLeaf {
+  <# .SYNOPSIS Second guard for the layout kinds: only a folder whose leaf name is a declared cache name may be cleared. #>
+  param([string] $Path)
+  $known = @($Script:WS_CHROMIUM_PROFILE_CACHES + $Script:WS_CHROMIUM_ROOT_CACHES + $Script:WS_ELECTRON_CACHES + $Script:WS_EDITOR_CACHES + $Script:WS_FIREFOX_CACHES | ForEach-Object { [IO.Path]::GetFileName($_) })
+  return ($known -contains [IO.Path]::GetFileName($Path))
+}
+
 function Invoke-TargetList {
   <# .SYNOPSIS Run every target with its mode under the dry-run, developer, purge and running-app policies. Returns bytes freed/estimated. #>
   param([pscustomobject[]] $Targets)
@@ -117,11 +124,7 @@ function Invoke-TargetList {
     if ($t.Kind -in 'chromium', 'firefox', 'electron', 'editor') {
       $mode = 'clear'
       # Second guard: a layout target may only ever clear a known cache folder, never a profile or app root.
-      $known = @($Script:WS_CHROMIUM_PROFILE_CACHES + $Script:WS_CHROMIUM_ROOT_CACHES + $Script:WS_ELECTRON_CACHES + $Script:WS_EDITOR_CACHES + $Script:WS_FIREFOX_CACHES | ForEach-Object { [IO.Path]::GetFileName($_) })
-      $paths = @($paths | Where-Object {
-          $leaf = [IO.Path]::GetFileName($_)
-          if ($known -contains $leaf) { $true } else { Write-Err "REFUSE (not a known cache folder for a $($t.Kind) layout): $_"; $false }
-        })
+      $paths = @($paths | Where-Object { if (Test-KnownCacheLeaf $_) { $true } else { Write-Err "REFUSE (not a known cache folder for a $($t.Kind) layout): $_"; $false } })
     }
     if ($ws.PurgeAll -and $mode -in 'prune', 'units') { $mode = 'clear' }
     if ($t.Dev -and $ws.Developer -eq $false -and $mode -in 'prune', 'units') { $mode = 'clear' }

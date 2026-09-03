@@ -176,15 +176,19 @@ function Show-SessionSummary {
   if ($ws.JsonMode) { Write-JsonSummary }
 }
 
-function Write-JsonSummary {
-  <# .SYNOPSIS --json: the only line written to stdout. #>
+function Get-JsonSummary {
+  <# .SYNOPSIS The --json document (ordered), kept apart from the printer so the self-test can parse it. #>
   $ws = $Script:WS
-  $doc = [ordered]@{
+  return [ordered]@{
     tool = $Script:WS_NAME; version = (Get-ToolVersion); mode = $ws.Mode; dry_run = [bool]$ws.DryRun
     elevated = [bool]$ws.IsAdmin; developer = $ws.Developer
     freed_bytes = [long]$ws.TotalFreed; estimated_bytes = [long]$ws.TotalEstimated
     sections = @($ws.Report.steps | ForEach-Object { [ordered]@{ section = $_.section; status = $_.status; freed_bytes = $_.freed_bytes } })
     refusals = @($ws.Refusals); log_file = $ws.LogFile; report_file = $ws.ReportFile
   }
-  [Console]::Out.WriteLine(($doc | ConvertTo-Json -Depth 5 -Compress))
+}
+
+function Write-JsonSummary {
+  <# .SYNOPSIS --json: the only line written to stdout. #>
+  [Console]::Out.WriteLine(((Get-JsonSummary) | ConvertTo-Json -Depth 5 -Compress))
 }

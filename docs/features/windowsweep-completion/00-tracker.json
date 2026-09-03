@@ -166,14 +166,14 @@
     {
       "id": "P2",
       "title": "Self-test coverage of the pure logic",
-      "status": "pending",
-      "completedAt": null,
+      "status": "complete",
+      "completedAt": "2026-09-03",
       "subTasks": [
         {
           "id": "P2.RW-030",
           "title": "About ten new checks (parser, section-list, size text, superseded versions, layout guard, workspace storage, artefact finder, report export, --json shape, prompt asymmetry); each proved red on a plant",
-          "status": "pending",
-          "note": "keep every file under 500 lines (new module if needed)",
+          "status": "complete",
+          "note": "10 checks added in modules/self_test_extra.ps1 groups [13] and [14]; self-test 114 -> 124; each proved red on its own plant",
           "awaitingUser": false
         }
       ]
@@ -431,6 +431,12 @@
       "date": "2026-09-03",
       "phase": "P0",
       "summary": "windowsweep@1.0.1 published to npm (38 files, 81.4 kB packed, 273.1 kB unpacked, built from edaa5cf); publish gate ran in full including a content-regression diff against the 1.0.0 tarball (no file lost, one added) and a smoke-install of the packed tarball (114/114). Verified with npm view = 1.0.1 and npx -y windowsweep@1.0.1 from %TEMP%. Annotated tags v1.0.0 (70c6738) and v1.0.1 (edaa5cf) pushed with GitHub Releases for both",
+      "commit": "pending"
+    },
+    {
+      "date": "2026-09-03",
+      "phase": "P2",
+      "summary": "Self-test groups [13] and [14]: argument parser, section-id list, docker size text, the cache-leaf guard, the --json shape, superseded versions, the Chromium layout, workspace storage, stale artefacts and the report exporters. Test-KnownCacheLeaf and Get-JsonSummary refactored out for direct exercise. 114 -> 124 checks; all six plants proved red, and the stale-artefact fixture was rebuilt after its first plant stayed green (it was half-oriented)",
       "commit": "pending"
     }
   ],

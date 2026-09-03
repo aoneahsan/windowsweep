@@ -119,7 +119,7 @@ security scanner or a registry cleaner. It reclaims disk space, nothing else.
 - **Running-app guard** - an open browser, editor or app keeps its caches; the tool tells you which to close.
 - **Session reports** - schema-versioned JSON, exportable to Markdown or a self-contained HTML page, plus
   `--json` for scripts.
-- **Self-test** - 114 checks prove the guards on your machine with a real junction, a 400-character path and
+- **Self-test** - 124 checks prove the guards on your machine with a real junction, a 400-character path and
   a dry-run fixture before you trust it.
 - **Offline by design** - zero network calls, no telemetry, no update check. Crash bundles stay on disk.
 

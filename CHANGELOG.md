@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [Unreleased]
+
+### Changed
+
+- Self-test: ten more checks cover the argument parser, section lists, docker size text, the layout-guard leaf
+  test, the `--json` shape, superseded versions, the Chromium layout, workspace storage, stale artefacts and
+  the report exporters (124 checks). `Test-KnownCacheLeaf` and `Get-JsonSummary` were split out of
+  `Invoke-TargetList` and `Write-JsonSummary` so the logic can be exercised directly; no behaviour changed.
+
 ## [1.0.1] - 2026-09-03
 
 ### Fixed

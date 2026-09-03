@@ -165,6 +165,15 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
   fresh cache.
 - 2026-09-03: `5109557` (tracker close-out, real-run and publish records, WH001) and `84c732f` (the
   `Write-LogLine` rename that made CI green) pushed to `main`; not yet on npm.
+- 2026-09-03T17:00Z: `windowsweep@1.0.1` published to npm by `aoneahsan` (38 files, 81.4 kB packed,
+  273.1 kB unpacked; built from `edaa5cf`). The publish gate ran in full: clean pushed tree, CI green on both
+  PowerShell hosts, registry at 1.0.0, tarball allowlist verified, a content-regression diff against the 1.0.0
+  tarball (no file lost, `modules/self_test_extra.ps1` added), a smoke-install of the packed tarball into a
+  temporary prefix (`--version`, `--list`, `--self-test` 114/114), then `npm view` = 1.0.1 and
+  `npx -y windowsweep@1.0.1 --version` from `%TEMP%`.
+- 2026-09-03: annotated tags `v1.0.0` (on `70c6738`, the commit the 1.0.0 tarball was built from) and `v1.0.1`
+  (on `edaa5cf`) pushed, with a GitHub Release for each carrying its changelog entry. Every release from here
+  on gets both.
 - Verify a published version from a directory OUTSIDE this repo: inside it, npx resolves the same-named local
   package and reports `'windowsweep' is not recognized` (`docs/troubleshooting.md`).
 - GitHub state after the audit: no topics, no homepage, wiki enabled, no tags, no Releases (RW-050).

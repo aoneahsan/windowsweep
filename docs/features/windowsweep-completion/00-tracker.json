@@ -31,8 +31,8 @@
     {
       "id": "P0",
       "title": "Release sync and known defects (1.0.1)",
-      "status": "in_progress",
-      "completedAt": null,
+      "status": "complete",
+      "completedAt": "2026-09-03",
       "subTasks": [
         {
           "id": "P0.RW-002",
@@ -100,7 +100,7 @@
         {
           "id": "P0.RW-001",
           "title": "Publish 1.0.1 (cascade, CHANGELOG [1.0.1], publish gate, registry verify, tag + Release)",
-          "status": "in_progress",
+          "status": "complete",
           "note": "last in the phase; carries every fix above",
           "awaitingUser": false
         }
@@ -217,7 +217,7 @@
           "id": "P4.RW-050",
           "title": "Topics, homepage, wiki off, annotated tag v1.0.0 on 70c6738 + GitHub Release; tags from 1.0.1 on",
           "status": "pending",
-          "note": "",
+          "note": "v1.0.0 (on 70c6738) and v1.0.1 tags plus both GitHub Releases done 2026-09-03; topics and wiki remain for P4",
           "awaitingUser": false
         },
         {
@@ -425,6 +425,12 @@
       "date": "2026-09-03",
       "phase": "P0",
       "summary": "RW-002 to RW-011 fixed (--yes never selects in sections 17-19, recycle tier, purge-all typed confirm, VSIX cache split out, npx installer refusal, engine exit 130, uninstall-data always asks, 12 keywords); new modules/self_test_extra.ps1 group [12] with 4 checks, self-test 108 -> 114; RW-053 CI tarball sweep; session-3 decisions recorded. Release commit for 1.0.1",
+      "commit": "edaa5cf"
+    },
+    {
+      "date": "2026-09-03",
+      "phase": "P0",
+      "summary": "windowsweep@1.0.1 published to npm (38 files, 81.4 kB packed, 273.1 kB unpacked, built from edaa5cf); publish gate ran in full including a content-regression diff against the 1.0.0 tarball (no file lost, one added) and a smoke-install of the packed tarball (114/114). Verified with npm view = 1.0.1 and npx -y windowsweep@1.0.1 from %TEMP%. Annotated tags v1.0.0 (70c6738) and v1.0.1 (edaa5cf) pushed with GitHub Releases for both",
       "commit": "pending"
     }
   ],

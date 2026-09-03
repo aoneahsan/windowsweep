@@ -73,8 +73,8 @@ function Invoke-CrashBundle {
   $ws = $Script:WS
   $msg = $ErrorRecord.Exception.Message
   $where = $ErrorRecord.InvocationInfo.PositionMessage
-  Write-Log "CRASH: $msg"
-  Write-Log $ErrorRecord.ScriptStackTrace
+  Write-LogLine "CRASH: $msg"
+  Write-LogLine $ErrorRecord.ScriptStackTrace
   $extra = @("=== Error ===", $msg, $where, '', '=== Stack ===', $ErrorRecord.ScriptStackTrace) -join "`r`n"
   $zip = New-BundleZip -Prefix 'crash' -Manifest (New-SystemManifest -Kind 'CRASH REPORT' -Extra $extra)
   Write-UiLine '' 'Gray'

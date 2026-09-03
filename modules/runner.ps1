@@ -86,7 +86,7 @@ function Invoke-SectionById {
   } catch {
     $status = 'failed'
     Write-Err "section $Id failed: $($_.Exception.Message)"
-    Write-Log ("section $Id error: " + $_.ScriptStackTrace)
+    Write-LogLine ("section $Id error: " + $_.ScriptStackTrace)
     $ws.ExitCode = $Script:WS_EXIT_FAIL
   }
   $after = Get-SystemDriveFree

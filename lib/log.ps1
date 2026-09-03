@@ -29,7 +29,7 @@ function Initialize-Log {
   try { [IO.File]::WriteAllLines($ws.LogFile, $header) } catch { $ws.LogFile = $null }
 }
 
-function Write-Log {
+function Write-LogLine {
   <# .SYNOPSIS Append one timestamped line to the run log; never throws. #>
   param([string] $Text)
   $f = $Script:WS.LogFile

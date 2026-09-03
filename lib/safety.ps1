@@ -155,7 +155,7 @@ function Remove-TreeInternal {
     try {
       if ($isLink) {
         if ($isDir) { [IO.Directory]::Delete($e.FullName, $false) } else { [IO.File]::Delete($e.FullName) }
-        Write-Log ("removed link (not followed): " + (Remove-LongPrefix $e.FullName))
+        Write-LogLine ("removed link (not followed): " + (Remove-LongPrefix $e.FullName))
       } elseif ($isDir) {
         if (-not (Remove-TreeInternal -Path $e.FullName -Result $Result)) { $allClear = $false }
       } else {
@@ -206,24 +206,24 @@ function Remove-PathSafe {
     if ($isLink) {
       if ($isDir) { [IO.Directory]::Delete($lp, $false) } else { [IO.File]::Delete($lp) }
       $r.Removed = $true
-      Write-Log "removed link (not followed): $p$tag"
+      Write-LogLine "removed link (not followed): $p$tag"
     } elseif ($isDir) {
       $r.Removed = Remove-TreeInternal -Path $p -Result $r
       $r.Bytes = [math]::Max([long]0, $bytes - $r.SkippedBytes)
       if ($r.Skipped -gt 0) { Write-Note "$($r.Skipped) item(s) in use or inaccessible, left in place under $p" }
-      Write-Log ("removed dir: $p ($($r.Bytes) bytes, skipped $($r.Skipped))$tag")
+      Write-LogLine ("removed dir: $p ($($r.Bytes) bytes, skipped $($r.Skipped))$tag")
     } else {
       Remove-ReadOnlyAttribute $lp
       [IO.File]::Delete($lp)
       $r.Removed = $true; $r.Bytes = $bytes; $r.Files = 1
-      Write-Log "removed file: $p ($bytes bytes)$tag"
+      Write-LogLine "removed file: $p ($bytes bytes)$tag"
     }
     Add-Freed $r.Bytes
   } catch {
     $r.Skipped++
     $r.Reason = 'in use or access denied'
     Write-Note "in use or inaccessible, skipped: $p"
-    Write-Log "skip (locked): $p - $($_.Exception.Message)"
+    Write-LogLine "skip (locked): $p - $($_.Exception.Message)"
   }
   return $r
 }
@@ -272,7 +272,7 @@ function Remove-StaleFiles {
     } catch { $null = $_ }
   }
   Add-Freed $out.Freed
-  Write-Log ("pruned $($out.Files) files ($($out.Freed) bytes) idle $Days+ days from $root; skipped $($out.Skipped)")
+  Write-LogLine ("pruned $($out.Files) files ($($out.Freed) bytes) idle $Days+ days from $root; skipped $($out.Skipped)")
   Write-Ok ("$Label - pruned {0} in {1} files idle {2}+ days ({3} skipped in use)" -f (Format-Bytes $out.Freed), $out.Files, $Days, $out.Skipped)
   return $out
 }
@@ -405,7 +405,7 @@ function Send-ToRecycleBin {
     }
     $r.Removed = $true; $r.Bytes = $bytes
     Add-Freed $bytes
-    Write-Log "recycled: $p ($bytes bytes)"
+    Write-LogLine "recycled: $p ($bytes bytes)"
     Write-Ok ("moved to Recycle Bin: {0} ({1})" -f $p, (Format-Bytes $bytes))
   } catch {
     $r.Skipped++; $r.Reason = $_.Exception.Message
@@ -424,14 +424,14 @@ function Invoke-External {
     Write-DryRun "would run: $display"
     return [pscustomobject]@{ Ran = $false; ExitCode = 0; Output = @() }
   }
-  Write-Log "run${tag}: $display"
+  Write-LogLine "run${tag}: $display"
   $lines = @()
   try {
     $raw = & $FilePath @ArgumentList 2>&1
     foreach ($l in $raw) {
       $s = [string]$l
       $lines += $s
-      if (-not $Quiet) { Write-Note $s } else { Write-Log $s }
+      if (-not $Quiet) { Write-Note $s } else { Write-LogLine $s }
     }
     $code = $LASTEXITCODE
     if ($null -eq $code) { $code = 0 }
@@ -439,7 +439,7 @@ function Invoke-External {
     $lines += $_.Exception.Message
     $code = 1
   }
-  Write-Log "exit $code$tag : $display"
+  Write-LogLine "exit $code$tag : $display"
   return [pscustomobject]@{ Ran = $true; ExitCode = $code; Output = $lines }
 }
 

@@ -37,7 +37,7 @@ function Write-UiLine {
   <# .SYNOPSIS Print one line (coloured when allowed) and append it to the log. #>
   param([string] $Text = '', [string] $Color = 'Gray', [switch] $NoLog, [switch] $NoNewline)
   $ws = $Script:WS
-  if (-not $NoLog) { Write-Log $Text }
+  if (-not $NoLog) { Write-LogLine $Text }
   if ($ws.Mute) { return }
   if ($ws.JsonMode) { [Console]::Error.WriteLine($Text); return }
   if ($ws.Color) {
@@ -49,7 +49,7 @@ function Write-UiLine {
 
 function Write-Info {
   param([string] $Text)
-  if ($Script:WS.Quiet) { Write-Log "INFO $Text"; return }
+  if ($Script:WS.Quiet) { Write-LogLine "INFO $Text"; return }
   Write-UiLine ("$($Script:WS.Glyph.info) $Text") 'Cyan'
 }
 
@@ -70,7 +70,7 @@ function Write-Err {
 
 function Write-Note {
   param([string] $Text)
-  if ($Script:WS.Quiet) { Write-Log "NOTE $Text"; return }
+  if ($Script:WS.Quiet) { Write-LogLine "NOTE $Text"; return }
   Write-UiLine ("    $Text") 'DarkGray'
 }
 
@@ -154,7 +154,7 @@ function Read-Line {
   if ($Prompt) { Write-UiLine $Prompt 'White' -NoNewline -NoLog }
   try { $line = [Console]::In.ReadLine() } catch { return $null }
   if ($null -eq $line) { return $null }
-  Write-Log ("> $line")
+  Write-LogLine ("> $line")
   return $line
 }
 

@@ -69,7 +69,8 @@ then the small fixes, then 1.0.1).
 
 ## Session metrics
 
-Self-test 108/108 before and after; 0 source files changed; 16 files written or edited; one commit.
+Self-test 108/108 before and after; 0 source files changed; 16 files written or edited; the audit commit
+`3ae3c4d` plus one record commit that writes this SHA into the completion tracker.
 
 ## Continuation prompt
 

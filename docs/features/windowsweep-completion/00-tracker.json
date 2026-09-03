@@ -83,7 +83,7 @@
       ] }
   ],
   "runHistory": [
-    { "date": "2026-09-03", "phase": "audit", "summary": "Full audit of main at 84c732f against the plan, the siblings and npm; owner decisions on scope, docs site, desktop app and distribution; remaining-work.md, remaining-work-summary.md, what-this-project-consists-of.md and this tracker written; records refreshed", "commit": "pending" }
+    { "date": "2026-09-03", "phase": "audit", "summary": "Full audit of main at 84c732f against the plan, the siblings and npm; owner decisions on scope, docs site, desktop app and distribution; remaining-work.md, remaining-work-summary.md, what-this-project-consists-of.md and this tracker written; records refreshed", "commit": "3ae3c4d (audit), followed by the SHA-record commit" }
   ],
   "resumeInstructions": "1) Read CLAUDE.md, remaining-work.md and this tracker. 2) Find the first pending sub-task (owner rows are blocked + awaitingUser: prepare, never execute). 3) Do that item or phase only, obeying the IRON rules. 4) Run the item's gates. 5) Flip the sub-task in the same commit as the work, bump lastUpdated, append a runHistory row with the SHA. 6) One commit, push to o main, quote any 'Bypassed rule violations' line."
 }

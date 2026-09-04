@@ -1,0 +1,110 @@
+/* ============================================================================
+   Gallery chrome - the playground panel and the specimen grid.
+
+   Deliberately NOT part of components.css: none of this ships in the app. The
+   component layer promotes into desktop/src/styles/; this file stops here.
+   ============================================================================ */
+
+/* --- the index of the eight files, on every gallery page ------------------ */
+.gnav { display: flex; flex-wrap: wrap; gap: var(--sp-1); }
+.gnav a {
+  padding: var(--sp-1) var(--sp-3); border-radius: var(--r-pill);
+  border: 1px solid var(--c-line); font-size: var(--fs-xs); font-weight: 600;
+  color: var(--c-ink-2); text-decoration: none;
+}
+@media (hover: hover) { .gnav a:hover { border-color: var(--c-accent); color: var(--c-accent-ink); } }
+.gnav a:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+.gnav a[aria-current="page"] {
+  background: var(--c-accent-soft); border-color: var(--c-accent); color: var(--c-accent-ink);
+}
+
+/* --- the playground ------------------------------------------------------- */
+.pg {
+  border: 1px solid var(--c-accent);
+  border-radius: var(--r-lg);
+  background: var(--c-panel);
+  box-shadow: var(--wm-panel-shadow);
+  overflow: hidden;
+}
+.pg-hd {
+  display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap;
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--c-accent-soft); color: var(--c-accent-ink);
+  border-bottom: 1px solid var(--c-line);
+}
+.pg-hd .caps { color: inherit; opacity: .8; }
+.pg-acts { margin-inline-start: auto; display: flex; gap: var(--sp-2); }
+.pg-dials {
+  display: grid; gap: var(--sp-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
+  padding: var(--sp-4); border-bottom: 1px solid var(--c-line);
+}
+.pg-dial { display: flex; align-items: center; gap: var(--sp-3); min-width: 0; }
+.pg-dial-l {
+  flex: none; width: 5.5rem; text-align: end;
+  font-size: var(--fs-xs); font-weight: 600; color: var(--c-ink-3);
+}
+.pg-dial .seg { flex-wrap: wrap; min-width: 0; }
+.pg-stage {
+  display: grid; place-items: center; min-height: 12rem;
+  padding: var(--sp-6) var(--sp-4);
+  background:
+    linear-gradient(45deg, var(--c-hover) 25%, transparent 25%, transparent 75%, var(--c-hover) 75%) 0 0/16px 16px,
+    linear-gradient(45deg, var(--c-hover) 25%, transparent 25%, transparent 75%, var(--c-hover) 75%) 8px 8px/16px 16px,
+    var(--c-app);
+}
+.pg-mount { width: 100%; max-width: 42rem; display: flex; flex-direction: column; gap: var(--sp-3); align-items: center; }
+.pg-mount > * { max-width: 100%; }
+
+/* --- specimen rows -------------------------------------------------------- */
+.spec { display: flex; flex-direction: column; gap: var(--sp-3); }
+.spec-hd { display: flex; align-items: baseline; gap: var(--sp-3); flex-wrap: wrap; }
+.spec-hd h3 { font-size: var(--fs-md); font-weight: 700; }
+.spec-hd .spec-use { font-size: var(--fs-xs); color: var(--c-ink-3); }
+.spec-row {
+  display: flex; flex-wrap: wrap; gap: var(--sp-4);
+  padding: var(--sp-4); border: 1px solid var(--c-line); border-radius: var(--r-md);
+  background: var(--c-panel);
+}
+.spec-row[data-stack] { flex-direction: column; align-items: stretch; }
+.spec-cell { display: flex; flex-direction: column; gap: var(--sp-2); align-items: flex-start; min-width: 0; }
+.spec-cell > .caps { color: var(--c-ink-3); }
+.spec-grid {
+  display: grid; gap: var(--sp-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+}
+.spec-note {
+  font-size: var(--fs-xs); color: var(--c-ink-3);
+  border-inline-start: 2px solid var(--c-line-strong); padding-inline-start: var(--sp-3);
+}
+.spec-trim {
+  display: flex; flex-direction: column; gap: var(--sp-1);
+  font-size: var(--fs-xs); color: var(--c-ink-3);
+}
+.spec-trim b { color: var(--c-ink-2); }
+
+/* the line every gallery page carries, so nobody takes the demo for the spec */
+.rac-note {
+  display: flex; gap: var(--sp-2); align-items: flex-start;
+  font-size: var(--fs-xs); color: var(--c-ink-2);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px dashed var(--c-line-strong); border-radius: var(--r-md);
+  background: var(--c-well);
+}
+
+/* --- legibility: gallery annotations are PROSE, and the 15px paragraph floor
+       applies to them too. The owner's round-4 note was about reading, and a
+       page of 13px commentary about legible components fails its own point.
+       These never ship, so raising them costs nothing but the reading is
+       better - and it keeps the rendered-DOM type audit honest across all
+       nineteen files instead of carving out an exemption for the ones I wrote
+       last. ------------------------------------------------------------------ */
+.spec-note,
+.spec-trim,
+.spec-trim p,
+.rac-note,
+.pg-mount p,
+.pg-stage p { font-size: var(--fs-sm); }
+
+.spec-note { line-height: 1.55; }
+.spec-trim { gap: var(--sp-2); }

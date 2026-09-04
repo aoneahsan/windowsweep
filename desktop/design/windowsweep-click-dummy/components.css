@@ -1,0 +1,633 @@
+/* ============================================================================
+   windowsweep desktop - the COMPONENT layer (click-dummy A3 / GATE 2)
+
+   Loaded after shared.css on every page. shared.css owns the app shell, bands
+   and each screen's own furniture; this file owns the reusable vocabulary that
+   every page from A4 on is composed from.
+
+   THE ANATOMY IS REACT ARIA'S, NOT OURS.
+
+   Every widget RAC owns is styled through BOTH selectors:
+
+       .btn, .react-aria-Button          { ... }
+       .btn:active, .btn[data-pressed]   { ... }
+
+   The dummy renders the plain element and drives just enough behaviour to be
+   judged; the app renders the RAC component. Because the selector list carries
+   both, THIS FILE MOVES INTO THE APP UNCHANGED and only the behaviour is
+   deleted. A hand-rolled listbox would be discarded in translation and the
+   effort with it - so the internal DOM of an interactive widget is never
+   invented here.
+
+   RAC state attributes are used in place of CSS pseudo-classes wherever the two
+   differ in behaviour: [data-hovered] [data-pressed] [data-focus-visible]
+   [data-selected] [data-disabled] [data-invalid] [data-expanded] [data-open].
+   They are modality-correct - data-hovered does not stick after a tap, which
+   :hover does on touch.
+
+   Rules binding every block below:
+     - semantic tokens only; a grep for -[ returns nothing
+     - hover behind @media (hover: hover) so a tap leaves no stuck state
+     - :focus-visible, never :focus - a mouse click must not leave a ring
+     - anything numeric multiplies --density or --type-scale, so a theme axis
+       cannot miss it
+   ============================================================================ */
+
+
+/* ============================================================================
+   1. ACTIONS
+   ============================================================================ */
+
+.react-aria-Button {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--sp-2);
+  min-height: calc(2.25rem * var(--density));
+  padding: var(--sp-2) var(--sp-4);
+  border: 1px solid var(--c-line-strong);
+  border-radius: var(--r-md);
+  background: color-mix(in oklab, var(--c-ink) 4%, transparent);
+  font-size: var(--fs-sm); font-weight: 500;
+  transition: background var(--d-instant) var(--ease-mech),
+              border-color var(--d-instant) var(--ease-mech),
+              transform var(--d-instant) var(--ease-mech);
+}
+
+@media (hover: hover) {
+  .btn:hover:not(:disabled):not([data-disabled]),
+  .react-aria-Button[data-hovered] {
+    background: color-mix(in oklab, var(--c-ink) 9%, transparent);
+    border-color: var(--c-accent);
+  }
+}
+.btn:active:not(:disabled), .btn[data-pressed],
+.react-aria-Button[data-pressed] { transform: translateY(1px); }
+
+.btn:focus-visible, .react-aria-Button[data-focus-visible],
+.react-aria-Button:focus-visible {
+  outline: 2px solid var(--c-accent); outline-offset: 2px;
+}
+
+/* Disabled still explains itself: `disabled` removes a control from the tab
+   order AND from screen readers, so a bare greyed-out button is invisible to
+   some users and inexplicable to the rest. Every disabled control in this
+   product carries a reason in `title` or an adjacent description. */
+.btn:disabled, .btn[data-disabled], .react-aria-Button[data-disabled] {
+  opacity: .45; cursor: not-allowed; transform: none;
+}
+
+/* Pending lands ON the control that was pressed, never only in a toast. */
+.btn[data-state="pending"] { position: relative; color: transparent !important; pointer-events: none; }
+.btn[data-state="pending"]::after {
+  content: ""; position: absolute; inset: 0; margin: auto;
+  width: 1em; height: 1em; border-radius: 50%;
+  border: 2px solid color-mix(in oklab, currentColor 25%, transparent);
+  border-top-color: var(--c-ink-2);
+  animation: ws-spin .7s linear infinite;
+}
+.btn-primary[data-state="pending"]::after { border-top-color: var(--c-on-accent); }
+@keyframes ws-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .btn[data-state="pending"]::after { animation-duration: 2.4s; } }
+:root[data-motion="reduced"] .btn[data-state="pending"]::after { animation-duration: 2.4s; }
+
+.btn-block { width: 100%; }
+.btn-icon { padding: var(--sp-2); min-width: calc(2.25rem * var(--density)); aspect-ratio: 1; }
+
+.btn[aria-pressed="true"], .react-aria-ToggleButton[data-selected] {
+  background: var(--c-accent-soft); border-color: var(--c-accent); color: var(--c-accent-ink);
+}
+
+.btn-group { display: inline-flex; }
+.btn-group > .btn { border-radius: 0; margin-inline-start: -1px; }
+.btn-group > .btn:first-child {
+  border-start-start-radius: var(--r-md); border-end-start-radius: var(--r-md); margin-inline-start: 0;
+}
+.btn-group > .btn:last-child { border-start-end-radius: var(--r-md); border-end-end-radius: var(--r-md); }
+.btn-group > .btn[aria-pressed="true"] { position: relative; z-index: 1; }
+
+/* Menu - RAC Menu / MenuItem anatomy */
+.menu, .react-aria-Menu {
+  min-width: 13rem; padding: var(--sp-1);
+  background: var(--c-panel); color: var(--c-ink);
+  border: 1px solid var(--c-line-strong); border-radius: var(--r-md);
+  box-shadow: var(--wm-raise-shadow);
+}
+.menu-item, .react-aria-MenuItem {
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3); border-radius: var(--r-sm);
+  font-size: var(--fs-sm); cursor: default; outline: none; width: 100%;
+  background: none; border: 0; color: inherit; text-align: start;
+}
+@media (hover: hover) {
+  .menu-item:hover:not([aria-disabled="true"]), .react-aria-MenuItem[data-hovered] { background: var(--c-hover); }
+}
+.menu-item[data-focused], .react-aria-MenuItem[data-focused] { background: var(--c-hover); }
+.menu-item:focus-visible, .react-aria-MenuItem[data-focus-visible] {
+  outline: 2px solid var(--c-accent); outline-offset: -2px;
+}
+.menu-item.is-danger { color: var(--c-danger); }
+.menu-item[aria-disabled="true"], .react-aria-MenuItem[data-disabled] { opacity: .45; }
+.menu-item .kbd { margin-inline-start: auto; }
+.menu-sep { height: 1px; margin: var(--sp-1) 0; background: var(--c-line); border: 0; }
+.menu-label {
+  padding: var(--sp-2) var(--sp-3) var(--sp-1);
+  font-size: var(--fs-2xs); font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--c-ink-3);
+}
+.menu-check { width: 1em; flex: none; opacity: 0; }
+.menu-item[aria-checked="true"] .menu-check { opacity: 1; }
+
+.lnk {
+  color: var(--c-accent-ink); text-decoration: underline;
+  text-underline-offset: 2px; text-decoration-thickness: 1px; border-radius: var(--r-xs);
+}
+@media (hover: hover) { .lnk:hover { text-decoration-thickness: 2px; } }
+.lnk:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+
+.kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0 var(--sp-1); min-width: 1.5em; height: 1.5em;
+  border: 1px solid var(--c-line-strong); border-bottom-width: 2px; border-radius: var(--r-xs);
+  background: var(--c-well); font-family: var(--ff-mono); font-size: var(--fs-2xs); color: var(--c-ink-2);
+}
+
+
+/* ============================================================================
+   2. FORMS - field structure first, because it is what makes an error visible
+   ============================================================================ */
+
+/* A field wrapper carries label, required marker, description, error and count.
+   RAC derives aria-describedby from Text/FieldError children, so the anatomy is
+   Label > Input > Text[slot=description] > FieldError - not a pile of divs. */
+.fw { display: flex; flex-direction: column; gap: var(--sp-1); }
+.fw-lbl, .react-aria-Label {
+  font-size: var(--fs-xs); font-weight: 600; color: var(--c-ink-2);
+  display: flex; align-items: center; gap: var(--sp-1);
+}
+.fw-req { color: var(--c-danger); }
+.fw-desc, .react-aria-Text[slot="description"] { font-size: var(--fs-xs); color: var(--c-ink-3); }
+.fw-err, .react-aria-FieldError {
+  font-size: var(--fs-xs); color: var(--c-danger); font-weight: 500;
+  display: flex; align-items: center; gap: var(--sp-1);
+}
+/* The message never animates in - the user needs to read it now. */
+.fw-err { animation: none !important; }
+.fw-count { font-size: var(--fs-2xs); color: var(--c-ink-3); margin-inline-start: auto; }
+.fw-count[data-over="true"] { color: var(--c-danger); font-weight: 700; }
+.fw-row { display: flex; align-items: baseline; gap: var(--sp-2); }
+
+.react-aria-Input, .react-aria-TextField input, .react-aria-SearchField input {
+  width: 100%; padding: var(--sp-2) var(--sp-3);
+  background: var(--c-well); color: var(--c-ink);
+  border: 1px solid var(--c-line-strong); border-radius: var(--r-md);
+  font: inherit; font-size: var(--fs-sm);
+}
+.field:focus-visible, .react-aria-Input[data-focused], .react-aria-Input:focus-visible {
+  outline: 2px solid var(--c-accent); outline-offset: 1px; border-color: var(--c-accent);
+}
+.field::placeholder { color: var(--c-ink-3); opacity: 1; }
+.field:disabled, .field[data-disabled] { opacity: .5; cursor: not-allowed; }
+/* read-only is visibly different from disabled: it is legible and selectable. */
+.field[readonly], .field[data-readonly] {
+  background: transparent; border-style: dashed; opacity: 1; color: var(--c-ink-2);
+}
+.field[aria-invalid="true"], .field[data-invalid], .react-aria-Input[data-invalid] {
+  border-color: var(--c-danger);
+  background: color-mix(in oklab, var(--c-danger) 7%, var(--c-well));
+}
+.field-mono { font-family: var(--ff-mono); font-size: var(--fs-xs); }
+
+/* affix wrapper - password reveal, search clear, number stepper */
+.fx { position: relative; display: flex; align-items: center; }
+.fx > .field { padding-inline-end: calc(2.1rem * var(--density)); }
+.fx-btn {
+  position: absolute; inset-inline-end: var(--sp-1);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: calc(1.7rem * var(--density)); height: calc(1.7rem * var(--density));
+  border: 0; border-radius: var(--r-sm); background: none; color: var(--c-ink-3); cursor: pointer;
+}
+@media (hover: hover) { .fx-btn:hover { color: var(--c-ink); background: var(--c-hover); } }
+.fx-btn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: -2px; }
+.fx-step { display: flex; flex-direction: column; position: absolute; inset-inline-end: var(--sp-1); }
+.fx-step .fx-btn { position: static; height: calc(.9rem * var(--density)); }
+
+/* Rich text. THERE IS NO <textarea> IN A SHIPPED PRODUCT - every multi-line
+   input is an editor. This is tiptap-SHAPED over contenteditable: the real
+   toolbar and the real states, with tiptap itself arriving in the app. */
+.rt { border: 1px solid var(--c-line-strong); border-radius: var(--r-md); background: var(--c-well); }
+.rt:focus-within { outline: 2px solid var(--c-accent); outline-offset: 1px; border-color: var(--c-accent); }
+.rt-bar {
+  display: flex; flex-wrap: wrap; gap: var(--sp-1); padding: var(--sp-1);
+  border-bottom: 1px solid var(--c-line);
+}
+.rt-btn {
+  min-width: calc(1.7rem * var(--density)); height: calc(1.7rem * var(--density));
+  border: 0; border-radius: var(--r-sm); background: none; color: var(--c-ink-2);
+  font-size: var(--fs-xs); font-weight: 700; cursor: pointer;
+}
+@media (hover: hover) { .rt-btn:hover { background: var(--c-hover); color: var(--c-ink); } }
+.rt-btn[aria-pressed="true"] { background: var(--c-accent-soft); color: var(--c-accent-ink); }
+.rt-btn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: -2px; }
+.rt-body {
+  min-height: 5.5rem; padding: var(--sp-3); font-size: var(--fs-sm); line-height: 1.55; outline: none;
+}
+.rt-body:empty::before { content: attr(data-placeholder); color: var(--c-ink-3); }
+.rt-body p { margin: 0 0 var(--sp-2); }
+.rt-body p:last-child { margin-bottom: 0; }
+.rt-ft {
+  display: flex; padding: var(--sp-1) var(--sp-3); border-top: 1px solid var(--c-line);
+  font-size: var(--fs-2xs); color: var(--c-ink-3);
+}
+
+/* Choice */
+.chk, .react-aria-Checkbox, .rad, .react-aria-Radio {
+  display: inline-flex; align-items: flex-start; gap: var(--sp-2);
+  font-size: var(--fs-sm); cursor: pointer;
+}
+.chk-box, .rad-box {
+  flex: none; width: calc(1.05rem * var(--density)); height: calc(1.05rem * var(--density));
+  margin-block-start: .15em;
+  border: 1.5px solid var(--c-line-strong); background: var(--c-well);
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background var(--d-instant) var(--ease-mech), border-color var(--d-instant) var(--ease-mech);
+}
+.chk-box { border-radius: var(--r-xs); }
+.rad-box { border-radius: 50%; }
+.chk-box svg { width: 80%; height: 80%; opacity: 0; color: var(--c-on-accent); }
+.rad-dot { width: 45%; height: 45%; border-radius: 50%; background: var(--c-on-accent); opacity: 0; }
+.chk input, .rad input {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.chk input:checked ~ .chk-box, .react-aria-Checkbox[data-selected] .chk-box,
+.rad input:checked ~ .rad-box, .react-aria-Radio[data-selected] .rad-box {
+  background: var(--c-accent); border-color: var(--c-accent);
+}
+.chk input:checked ~ .chk-box svg, .react-aria-Checkbox[data-selected] .chk-box svg,
+.rad input:checked ~ .rad-box .rad-dot, .react-aria-Radio[data-selected] .rad-box .rad-dot { opacity: 1; }
+.chk input:indeterminate ~ .chk-box { background: var(--c-accent); border-color: var(--c-accent); }
+.chk input:indeterminate ~ .chk-box::after {
+  content: ""; width: 60%; height: 2px; background: var(--c-on-accent); border-radius: 1px;
+}
+.chk input:focus-visible ~ .chk-box, .rad input:focus-visible ~ .rad-box,
+.react-aria-Checkbox[data-focus-visible] .chk-box, .react-aria-Radio[data-focus-visible] .rad-box {
+  outline: 2px solid var(--c-accent); outline-offset: 2px;
+}
+.chk input:disabled ~ *, .rad input:disabled ~ * { opacity: .45; }
+.chk[data-invalid] .chk-box, .rad[data-invalid] .rad-box { border-color: var(--c-danger); }
+.chk-grp, .rad-grp, .react-aria-RadioGroup, .react-aria-CheckboxGroup {
+  display: flex; flex-direction: column; gap: var(--sp-2);
+}
+.chk-grp[data-row], .rad-grp[data-row] { flex-direction: row; flex-wrap: wrap; gap: var(--sp-4); }
+
+/* switch base is in shared.css; here are the states */
+.switch[aria-checked="true"], .react-aria-Switch[data-selected] .switch { background: var(--c-accent); }
+.switch:focus-visible, .react-aria-Switch[data-focus-visible] .switch {
+  outline: 2px solid var(--c-accent); outline-offset: 2px;
+}
+.switch[aria-disabled="true"], .switch:disabled { opacity: .45; cursor: not-allowed; }
+
+/* segmented control - one tab stop, arrows within, so RadioGroup not buttons */
+.seg, .react-aria-RadioGroup[data-segmented] {
+  display: inline-flex; padding: 2px; gap: 2px;
+  background: var(--c-well); border: 1px solid var(--c-line); border-radius: var(--r-md);
+}
+.seg-opt {
+  position: relative; padding: var(--sp-1) var(--sp-3); border-radius: calc(var(--r-md) - 2px);
+  font-size: var(--fs-xs); font-weight: 600; color: var(--c-ink-3); cursor: pointer; white-space: nowrap;
+}
+.seg-opt input { position: absolute; opacity: 0; width: 100%; height: 100%; inset: 0; margin: 0; cursor: pointer; }
+.seg-opt:has(input:checked), .react-aria-Radio[data-selected].seg-opt {
+  background: var(--c-panel); color: var(--c-ink); box-shadow: var(--wm-panel-shadow);
+}
+.seg-opt:has(input:focus-visible) { outline: 2px solid var(--c-accent); outline-offset: 1px; }
+
+/* select + combobox - the trigger and the popover are ours; the listbox DOM is RAC's */
+.sel-btn, .react-aria-Select .react-aria-Button {
+  display: flex; align-items: center; gap: var(--sp-2); width: 100%;
+  padding: var(--sp-2) var(--sp-3); min-height: calc(2.25rem * var(--density));
+  background: var(--c-well); color: var(--c-ink);
+  border: 1px solid var(--c-line-strong); border-radius: var(--r-md);
+  font-size: var(--fs-sm); text-align: start;
+}
+.sel-btn > .sel-val { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sel-btn > .sel-caret { flex: none; color: var(--c-ink-3); transition: transform var(--d-quick) var(--ease-mech); }
+.sel-btn[aria-expanded="true"] > .sel-caret { transform: rotate(180deg); }
+.sel-btn[aria-expanded="true"], .sel-btn:focus-visible { border-color: var(--c-accent); }
+.sel-btn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 1px; }
+.lbox, .react-aria-ListBox {
+  max-height: 15rem; overflow: auto; padding: var(--sp-1);
+  background: var(--c-panel); border: 1px solid var(--c-line-strong);
+  border-radius: var(--r-md); box-shadow: var(--wm-raise-shadow);
+}
+.lbox-item, .react-aria-ListBoxItem {
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3); border-radius: var(--r-sm);
+  font-size: var(--fs-sm); cursor: default; outline: none;
+}
+@media (hover: hover) { .lbox-item:hover, .react-aria-ListBoxItem[data-hovered] { background: var(--c-hover); } }
+.lbox-item[data-focused], .react-aria-ListBoxItem[data-focused] { background: var(--c-hover); }
+.lbox-item[aria-selected="true"], .react-aria-ListBoxItem[data-selected] {
+  background: var(--c-accent-soft); color: var(--c-accent-ink); font-weight: 600;
+}
+.lbox-empty { padding: var(--sp-4); text-align: center; color: var(--c-ink-3); font-size: var(--fs-xs); }
+
+/* tag / multi-select input */
+.tags {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-1);
+  padding: var(--sp-1) var(--sp-2); min-height: calc(2.25rem * var(--density));
+  background: var(--c-well); border: 1px solid var(--c-line-strong); border-radius: var(--r-md);
+}
+.tags:focus-within { outline: 2px solid var(--c-accent); outline-offset: 1px; border-color: var(--c-accent); }
+.tag {
+  display: inline-flex; align-items: center; gap: var(--sp-1);
+  padding: 1px var(--sp-1) 1px var(--sp-2); border-radius: var(--r-sm);
+  background: var(--c-accent-soft); color: var(--c-accent-ink);
+  font-size: var(--fs-2xs); font-weight: 600;
+}
+.tag-x { border: 0; background: none; color: inherit; cursor: pointer; line-height: 1; padding: 0 2px; }
+.tag-x:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 1px; }
+.tags-in { flex: 1; min-width: 5rem; border: 0; background: none; color: inherit; font: inherit; font-size: var(--fs-sm); outline: none; }
+
+/* slider - RAC SliderTrack / SliderThumb anatomy */
+.sld, .react-aria-Slider { display: flex; flex-direction: column; gap: var(--sp-1); }
+.sld-track, .react-aria-SliderTrack {
+  position: relative; height: calc(1.1rem * var(--density)); display: flex; align-items: center; cursor: pointer;
+}
+.sld-track::before {
+  content: ""; position: absolute; inset-inline: 0; height: 4px;
+  border-radius: var(--r-pill); background: var(--c-line-strong);
+}
+.sld-fill { position: absolute; inset-inline-start: 0; height: 4px; border-radius: var(--r-pill); background: var(--c-accent); }
+.sld-thumb, .react-aria-SliderThumb {
+  position: absolute; width: calc(.95rem * var(--density)); height: calc(.95rem * var(--density));
+  border-radius: 50%; background: var(--c-panel); border: 2px solid var(--c-accent);
+  box-shadow: var(--wm-panel-shadow); transform: translateX(-50%);
+}
+.sld-thumb:focus-visible, .react-aria-SliderThumb[data-focus-visible] {
+  outline: 2px solid var(--c-accent); outline-offset: 2px;
+}
+.sld input[type="range"] {
+  position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; margin: 0; cursor: pointer;
+}
+
+/* file upload. Rule 2: an upload field carries an info affordance stating
+   purpose, types, max size and an example BEFORE the pick - and the numbers it
+   shows are the numbers that are enforced. */
+.drop {
+  display: flex; flex-direction: column; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-6); text-align: center;
+  border: 1.5px dashed var(--c-line-strong); border-radius: var(--r-md); background: var(--c-well);
+  transition: border-color var(--d-quick) var(--ease-mech), background var(--d-quick) var(--ease-mech);
+}
+.drop[data-state="dragging"] { border-color: var(--c-accent); background: var(--c-accent-soft); }
+.drop[data-state="rejected"] { border-color: var(--c-danger); background: color-mix(in oklab, var(--c-danger) 7%, var(--c-well)); }
+.drop[data-state="done"] { border-style: solid; border-color: var(--c-ok); }
+/* A hint under an upload field is prose, not a label: it obeys the 15px floor. */
+.drop-hint { font-size: var(--fs-sm); color: var(--c-ink-3); }
+
+/* stepper / multi-step */
+.steps { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; }
+.step { display: flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-xs); color: var(--c-ink-3); }
+.step-n {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: calc(1.5rem * var(--density)); height: calc(1.5rem * var(--density));
+  border-radius: 50%; border: 1.5px solid var(--c-line-strong);
+  font-size: var(--fs-2xs); font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.step[data-state="current"] { color: var(--c-ink); font-weight: 700; }
+.step[data-state="current"] .step-n { border-color: var(--c-accent); background: var(--c-accent-soft); color: var(--c-accent-ink); }
+.step[data-state="done"] .step-n { background: var(--c-ok); border-color: var(--c-ok); color: var(--c-on-accent); }
+.step-bar { flex: 1; min-width: var(--sp-4); height: 1.5px; background: var(--c-line); }
+
+
+/* ============================================================================
+   3. NAVIGATION
+   ============================================================================ */
+
+.tabs, .react-aria-Tabs { display: flex; flex-direction: column; gap: var(--sp-3); }
+.tablist, .react-aria-TabList {
+  display: flex; gap: var(--sp-1); border-bottom: 1px solid var(--c-line); overflow-x: auto;
+}
+.tab, .react-aria-Tab {
+  position: relative; padding: var(--sp-2) var(--sp-3);
+  font-size: var(--fs-sm); font-weight: 600; color: var(--c-ink-3);
+  border: 0; background: none; cursor: pointer; white-space: nowrap; outline: none;
+}
+@media (hover: hover) { .tab:hover, .react-aria-Tab[data-hovered] { color: var(--c-ink); } }
+.tab[aria-selected="true"], .react-aria-Tab[data-selected] { color: var(--c-accent-ink); }
+.tab[aria-selected="true"]::after, .react-aria-Tab[data-selected]::after {
+  content: ""; position: absolute; inset-inline: var(--sp-2); bottom: -1px; height: 2px;
+  background: var(--c-accent); border-radius: var(--r-pill);
+}
+.tab:focus-visible, .react-aria-Tab[data-focus-visible] { outline: 2px solid var(--c-accent); outline-offset: -2px; }
+.tab[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+.tablist[data-vertical] { flex-direction: column; border-bottom: 0; border-inline-end: 1px solid var(--c-line); }
+
+.crumbs, .react-aria-Breadcrumbs {
+  display: flex; align-items: center; gap: var(--sp-1); flex-wrap: wrap;
+  font-size: var(--fs-xs); color: var(--c-ink-3);
+}
+.crumbs li { display: flex; align-items: center; gap: var(--sp-1); }
+.crumbs li + li::before { content: "/"; color: var(--c-ink-3); opacity: .6; }
+.crumbs [aria-current="page"] { color: var(--c-ink); font-weight: 600; }
+.crumb-trunc { max-width: 9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.pager { display: flex; align-items: center; gap: var(--sp-1); flex-wrap: wrap; }
+.pager .btn[aria-current="page"] {
+  background: var(--c-accent); border-color: var(--c-accent); color: var(--c-on-accent);
+}
+.pager-gap { padding-inline: var(--sp-1); color: var(--c-ink-3); }
+
+/* command palette - 26 sections earn a Ctrl+K */
+.cmdk-scrim {
+  position: fixed; inset: 0; z-index: 60;
+  background: var(--c-scrim);
+  display: flex; align-items: flex-start; justify-content: center; padding-top: 12vh;
+}
+.cmdk {
+  width: min(34rem, calc(100vw - var(--sp-8)));
+  background: var(--c-panel); border: 1px solid var(--c-line-strong);
+  border-radius: var(--r-lg); box-shadow: var(--wm-modal-shadow); overflow: hidden;
+}
+.cmdk-in {
+  width: 100%; padding: var(--sp-4); border: 0; border-bottom: 1px solid var(--c-line);
+  background: none; color: var(--c-ink); font: inherit; font-size: var(--fs-md); outline: none;
+}
+.cmdk-list { max-height: 22rem; overflow: auto; padding: var(--sp-1); }
+
+
+/* ============================================================================
+   4. OVERLAYS
+   ============================================================================ */
+
+.scrim {
+  position: fixed; inset: 0; z-index: 50;
+  background: var(--c-scrim);
+  display: flex; align-items: center; justify-content: center; padding: var(--sp-4);
+}
+.dlg, .react-aria-Dialog {
+  display: flex; flex-direction: column; max-height: min(85vh, 44rem);
+  width: min(30rem, 100%);
+  background: var(--c-panel); color: var(--c-ink);
+  border: 1px solid var(--c-line-strong); border-radius: var(--r-lg);
+  box-shadow: var(--wm-modal-shadow); outline: none;
+}
+.dlg-sm { width: min(22rem, 100%); }
+.dlg-lg { width: min(46rem, 100%); }
+.dlg-hd {
+  display: flex; align-items: flex-start; gap: var(--sp-3);
+  padding: var(--sp-5) var(--sp-5) var(--sp-3); border-bottom: 1px solid var(--c-line);
+}
+.dlg-bd { padding: var(--sp-5); overflow: auto; flex: 1; }
+.dlg-ft {
+  display: flex; gap: var(--sp-2); justify-content: flex-end;
+  padding: var(--sp-3) var(--sp-5) var(--sp-5); border-top: 1px solid var(--c-line);
+  position: sticky; bottom: 0; background: var(--c-panel);
+}
+.dlg-danger .dlg-hd { border-bottom-color: var(--c-danger); }
+.dlg-icon {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: calc(2rem * var(--density)); height: calc(2rem * var(--density));
+  border-radius: var(--r-md); background: var(--c-accent-soft); color: var(--c-accent-ink);
+}
+.dlg-danger .dlg-icon { background: color-mix(in oklab, var(--c-danger) 15%, transparent); color: var(--c-danger); }
+
+.pop, .react-aria-Popover {
+  padding: var(--sp-3); max-width: 20rem;
+  background: var(--c-panel); color: var(--c-ink);
+  border: 1px solid var(--c-line-strong); border-radius: var(--r-md); box-shadow: var(--wm-raise-shadow);
+  font-size: var(--fs-xs);
+}
+.tip, .react-aria-Tooltip {
+  padding: var(--sp-1) var(--sp-2); max-width: 16rem;
+  background: var(--c-bleed); color: var(--c-bleed-ink);
+  border-radius: var(--r-sm); font-size: var(--fs-2xs); box-shadow: var(--wm-raise-shadow);
+}
+
+
+/* ============================================================================
+   5. DISPLAY
+   ============================================================================ */
+
+.card {
+  display: flex; flex-direction: column;
+  background: var(--c-panel); border: 1px solid var(--c-line);
+  border-radius: var(--r-md); overflow: hidden;
+}
+.card-bd { padding: var(--sp-4); flex: 1; }
+.card-ft { padding: var(--sp-3) var(--sp-4); border-top: 1px solid var(--c-line); display: flex; gap: var(--sp-2); }
+.card-media { aspect-ratio: 16/9; background: var(--c-well); display: grid; place-items: center; color: var(--c-ink-3); }
+a.card, .card[tabindex] { text-decoration: none; color: inherit; transition: transform var(--d-quick) var(--ease-mech), border-color var(--d-quick) var(--ease-mech); }
+@media (hover: hover) { a.card:hover, .card[tabindex]:hover { transform: translateY(-2px); border-color: var(--c-accent); } }
+a.card:focus-visible, .card[tabindex]:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+
+.stat { display: flex; flex-direction: column; gap: var(--sp-1); }
+.stat-v { font-family: var(--ff-display); font-weight: 700; font-size: var(--fs-xl); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.stat-l { font-size: var(--fs-xs); color: var(--c-ink-3); }
+.stat-d { display: inline-flex; align-items: center; gap: 2px; font-size: var(--fs-xs); font-weight: 600; }
+.stat-d[data-dir="up"] { color: var(--c-ok); }
+.stat-d[data-dir="down"] { color: var(--c-danger); }
+.stat-d[data-dir="flat"] { color: var(--c-ink-3); }
+
+.lst { display: flex; flex-direction: column; }
+.lst-i {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-3); border-bottom: 1px solid var(--c-line); font-size: var(--fs-sm);
+}
+.lst-i:last-child { border-bottom: 0; }
+@media (hover: hover) { .lst-i[data-interactive]:hover { background: var(--c-hover); } }
+.lst-i[aria-selected="true"] { background: var(--c-accent-soft); }
+.lst-i .lst-x { margin-inline-start: auto; display: flex; gap: var(--sp-1); }
+
+.ava {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: calc(2rem * var(--density)); height: calc(2rem * var(--density));
+  border-radius: 50%; background: var(--c-accent-soft); color: var(--c-accent-ink);
+  font-size: var(--fs-xs); font-weight: 700; overflow: hidden;
+}
+.ava img { width: 100%; height: 100%; object-fit: cover; }
+.ava-lg { width: calc(3rem * var(--density)); height: calc(3rem * var(--density)); font-size: var(--fs-md); }
+
+.ring-w { position: relative; display: inline-grid; place-items: center; }
+.ring-w > .ring-t {
+  position: absolute; font-family: var(--ff-display); font-weight: 700;
+  font-size: var(--fs-sm); font-variant-numeric: tabular-nums;
+}
+
+.skel {
+  background: linear-gradient(90deg,
+    var(--c-well) 25%, color-mix(in oklab, var(--c-ink) 7%, var(--c-well)) 37%, var(--c-well) 63%);
+  background-size: 400% 100%;
+  border-radius: var(--r-sm);
+  animation: ws-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes ws-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+@media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
+:root[data-motion="reduced"] .skel { animation: none; }
+.skel-l { height: 1em; margin-block: .25em; }
+.skel-l[data-w="60"] { width: 60%; } .skel-l[data-w="80"] { width: 80%; } .skel-l[data-w="40"] { width: 40%; }
+
+.empty {
+  display: flex; flex-direction: column; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-8) var(--sp-4); text-align: center;
+}
+.empty-ico { color: var(--c-ink-3); opacity: .5; }
+.empty h3 { font-size: var(--fs-md); font-weight: 700; }
+.empty p { font-size: var(--fs-sm); color: var(--c-ink-3); max-width: 26rem; }
+
+.note {
+  display: flex; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--c-line-strong); border-inline-start-width: 3px;
+  border-radius: var(--r-md); font-size: var(--fs-sm); background: var(--c-well);
+}
+.note-info { border-inline-start-color: var(--c-info); }
+.note-ok { border-inline-start-color: var(--c-ok); }
+.note-warn { border-inline-start-color: var(--c-warn); }
+.note-danger { border-inline-start-color: var(--c-danger); }
+.note-x { margin-inline-start: auto; border: 0; background: none; color: var(--c-ink-3); cursor: pointer; }
+
+.tl { display: flex; flex-direction: column; }
+.tl-i { display: flex; gap: var(--sp-3); padding-bottom: var(--sp-4); position: relative; }
+.tl-i:not(:last-child)::before {
+  content: ""; position: absolute; inset-block: calc(1rem * var(--density)) 0;
+  inset-inline-start: calc(.4rem * var(--density)); width: 1px; background: var(--c-line);
+}
+.tl-dot {
+  flex: none; width: calc(.8rem * var(--density)); height: calc(.8rem * var(--density));
+  border-radius: 50%; background: var(--c-accent); margin-top: .35em; z-index: 1;
+}
+.tl-i[data-tone="muted"] .tl-dot { background: var(--c-line-strong); }
+
+hr.rule { border: 0; border-top: 1px solid var(--c-line); margin: var(--sp-4) 0; }
+.spinner {
+  display: inline-block; width: 1em; height: 1em; border-radius: 50%;
+  border: 2px solid color-mix(in oklab, currentColor 25%, transparent);
+  border-top-color: currentColor; animation: ws-spin .7s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2.4s; } }
+:root[data-motion="reduced"] .spinner { animation-duration: 2.4s; }
+
+
+/* ============================================================================
+   6. CHARTS - frame stability is the rule that matters
+      The rendered box must NOT change with the data. Grow the domain, never the
+      range: a chart that resizes as values arrive is layout shift in costume.
+   ============================================================================ */
+
+.chart { position: relative; }
+.chart svg { display: block; overflow: visible; }
+.chart-empty, .chart-load {
+  display: grid; place-items: center; text-align: center;
+  color: var(--c-ink-3); font-size: var(--fs-xs);
+}
+.chart-tip {
+  position: absolute; pointer-events: none; z-index: 5;
+  padding: var(--sp-1) var(--sp-2); border-radius: var(--r-sm);
+  background: var(--c-bleed); color: var(--c-bleed-ink);
+  font-size: var(--fs-2xs); font-family: var(--ff-mono); white-space: nowrap; box-shadow: var(--wm-raise-shadow);
+}
+.chart-lg { display: flex; flex-wrap: wrap; gap: var(--sp-3); font-size: var(--fs-2xs); color: var(--c-ink-2); }
+.chart-lg > span { display: inline-flex; align-items: center; gap: var(--sp-1); }
+/* Never colour alone: every legend swatch carries a shape glyph too. */
+.chart-sw { width: .7em; height: .7em; border-radius: 2px; flex: none; }
+.chart-ax { font-size: var(--fs-2xs); fill: var(--c-ink-3); }
+.chart-grid line { stroke: var(--c-line); stroke-width: 1; }

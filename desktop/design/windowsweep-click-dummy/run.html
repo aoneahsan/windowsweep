@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>windowsweep - Run</title>
+<meta name="description" content="windowsweep desktop, click dummy - a run in progress. Per-section progress from the engine's own ##windowsweep lines.">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="shared.css">
+<script src="app.js"></script>
+</head>
+<body>
+
+<div class="app">
+  <header class="titlebar" data-ws-titlebar></header>
+
+  <div class="shell">
+    <nav class="rail" data-ws-rail aria-label="Main"></nav>
+
+    <main class="content">
+
+      <!-- the run's own readout - counts UP as sections finish -->
+      <section class="band band-app">
+        <div class="wrap readout rise">
+          <div>
+            <p class="caps ink-3" data-ws-text="runState">Ready to run</p>
+            <p class="hero-num">
+              <span data-ws-hero-n>0</span><span class="unit" data-ws-hero-u>B</span>
+            </p>
+            <p class="hero-sub">
+              <span class="num" data-ws-text="runDone">0</span> of
+              <span class="num" data-ws-text="runTotal">0</span> sections
+              &middot; <span data-ws-text="runElapsed">not started</span>
+            </p>
+          </div>
+          <div style="display:flex;gap:var(--sp-2);margin-inline-start:auto;align-items:center">
+            <button class="btn" data-ws-action="runCancel" disabled><span class="btn-label">Cancel</span></button>
+            <button class="btn btn-primary btn-lg" data-ws-action="runStart"><span class="btn-label">Start the safe run</span></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- the map DRAINS as the run proceeds: the one memorable moment -->
+      <section class="band band-well">
+        <div class="wrap rise">
+          <div class="zone-label">
+            <span class="caps">What is going</span>
+            <span class="t-2xs ink-3" style="flex:none">tiles leave as each section reports</span>
+          </div>
+          <div data-ws-map style="min-height:240px"></div>
+        </div>
+      </section>
+
+      <section class="band band-app">
+        <div class="wrap g12">
+
+          <div class="c5 rise">
+            <div class="zone-label"><span class="caps">Per section</span></div>
+            <div class="panel pad" data-ws-runlist style="display:flex;flex-direction:column;gap:var(--sp-3)"></div>
+          </div>
+
+          <div class="c7 rise">
+            <div class="zone-label">
+              <span class="caps">Log</span>
+              <span class="t-2xs ink-3" style="flex:none">never animates - this is the surface you watch while something irreversible happens</span>
+            </div>
+            <div class="logview" data-ws-log aria-live="off" role="log"></div>
+            <p class="t-2xs ink-3" style="margin-top:var(--sp-2)">
+              Progress comes from the engine's own machine-readable lines
+              (<code class="mono">##windowsweep section=NN event=end status=… freed_bytes=…</code> on stderr,
+              added in 1.1.0 for exactly this). The GUI reimplements no cleanup logic.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="band band-well band-tight" data-ws-finish hidden>
+        <div class="wrap g12 rise">
+          <div class="c7">
+            <div class="zone-label"><span class="caps">Drives after the run</span></div>
+            <div class="panel pad" data-ws-drives></div>
+          </div>
+          <div class="c5">
+            <div class="zone-label"><span class="caps">Report</span></div>
+            <div class="panel pad">
+              <p class="t-sm state-ok"><span data-ws-text="finishLine">Run finished.</span></p>
+              <p class="t-2xs ink-3 mono" style="margin-top:var(--sp-2);word-break:break-all"
+                 data-ws-text="reportPath">%USERPROFILE%\.windowsweep\reports\run-…json</p>
+              <div style="display:flex;gap:var(--sp-2);margin-top:var(--sp-3);flex-wrap:wrap">
+                <button class="btn btn-sm" data-ws-action="soon">Open report</button>
+                <button class="btn btn-sm" data-ws-action="soon">Export HTML</button>
+                <a class="btn btn-sm btn-ghost" href="index.html">Back to home</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div style="height:var(--sp-8)"></div>
+    </main>
+  </div>
+
+  <footer class="statusbar">
+    <span class="dot" aria-hidden="true"></span>
+    <span>engine <span class="mono" data-ws-text="engineVersion">1.1.0</span></span>
+    <span class="only-wide mono" style="opacity:.8" data-ws-text="runCmd">windowsweep --all --yes --json</span>
+    <span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span>
+  </footer>
+</div>
+
+<script src="vendor/d3-color.js"></script>
+<script src="vendor/d3-interpolate.js"></script>
+<script src="vendor/d3-array.js"></script>
+<script src="vendor/d3-path.js"></script>
+<script src="vendor/d3-format.js"></script>
+<script src="vendor/d3-time.js"></script>
+<script src="vendor/d3-time-format.js"></script>
+<script src="vendor/d3-scale.js"></script>
+<script src="vendor/d3-shape.js"></script>
+<script src="vendor/d3-hierarchy.js"></script>
+<script src="seed.js"></script>
+<script src="db.js"></script>
+<script src="reclaim-map.js"></script>
+<script src="page-run.js"></script>
+<script src="wire.js"></script>
+<script src="demo.js"></script>
+</body>
+</html>

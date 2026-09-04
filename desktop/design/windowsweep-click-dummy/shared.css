@@ -1,0 +1,656 @@
+/* ============================================================================
+   windowsweep desktop - shared component + layout layer
+   Reads ONLY tokens from tokens.css. A hardcoded colour, radius, spacing or
+   family here would be invisible to the theme control, which is the bug the ten
+   axes exist to surface.
+   ============================================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* 🔴 The `hidden` ATTRIBUTE loses to any explicit `display`. The UA rule is
+   `[hidden] { display: none }` at specificity (0,0,0), so `.sheet { display: flex }`
+   at (0,1,0) beats it - and the theme panel, its scrim and the review-tools panel
+   all shipped VISIBLE on first paint while their JS believed they were hidden.
+   Nothing errors; it is only visible by looking at the render. */
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--c-app);
+  color: var(--c-ink);
+  font-family: var(--ff-ui);
+  font-size: var(--fs-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+}
+:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+::selection { background: var(--c-accent); color: var(--c-on-accent); }
+h1, h2, h3, h4 { margin: 0; font-family: var(--ff-display); font-weight: 600; letter-spacing: -0.01em; }
+p { margin: 0; }
+button { font: inherit; color: inherit; }
+
+/* 🔴 A component used as a <button> strips its own UA chrome in the SHARED layer,
+   so no page has to - click-dummy pitfall 12. */
+button, [role='button'] {
+  background: none; border: 0; padding: 0; margin: 0;
+  text-align: inherit; cursor: pointer; -webkit-appearance: none; appearance: none;
+}
+
+.mono { font-family: var(--ff-mono); font-variant-ligatures: none; }
+.num  { font-family: var(--ff-display); font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1; }
+/* 🔴 The width axis IS the hierarchy device. Archivo carries wdth 62-125. */
+.wide     { font-stretch: 118%; font-variation-settings: 'wdth' 118; }
+.narrow   { font-stretch: 84%;  font-variation-settings: 'wdth' 84; }
+.caps     { text-transform: uppercase; letter-spacing: .10em; font-size: var(--fs-2xs); font-weight: 600; }
+.t-2xs { font-size: var(--fs-2xs); }  .t-xs { font-size: var(--fs-xs); }
+.t-sm  { font-size: var(--fs-sm); }   .t-md { font-size: var(--fs-md); }
+.t-lg  { font-size: var(--fs-lg); }   .t-xl { font-size: var(--fs-xl); }
+.ink-2 { color: var(--c-ink-2); }     .ink-3 { color: var(--c-ink-3); }
+.accent-ink { color: var(--c-accent-ink); }
+
+/* ---------------------------------------------------------------------------
+   THE WINDOW SHELL - frameless, because we draw the chrome
+   --------------------------------------------------------------------------- */
+/* 🔴 minmax(0, 1fr), not the default auto. An `auto` grid column sizes to
+   MAX-CONTENT, so the title bar's flex row grew the whole window to 454px inside
+   a 390px viewport and 226 elements overflowed - while documentElement.scrollWidth
+   still read 390, which is precisely why the gate walks elements instead. */
+.app { display: grid; grid-template-rows: auto 1fr auto; grid-template-columns: minmax(0, 1fr); height: 100vh; }
+
+.titlebar {
+  display: flex; align-items: center; gap: var(--sp-3);
+  height: calc(2.5rem * var(--density));
+  padding-inline: var(--sp-3);
+  background: var(--c-bleed);
+  border-bottom: 1px solid var(--c-line);
+  user-select: none; -webkit-app-region: drag;
+  position: relative; z-index: 30; min-width: 0;
+}
+.titlebar .tb-interactive { -webkit-app-region: no-drag; }
+.tb-mark { width: 18px; height: 18px; display: block; }
+.tb-title {
+  font-family: var(--ff-display); font-size: var(--fs-sm); font-weight: 600; letter-spacing: .02em;
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.tb-sep { width: 1px; height: 14px; background: var(--c-line); }
+
+.wincontrols { display: flex; margin-inline-start: auto; gap: 0; }
+.wc {
+  width: calc(2.7rem * var(--density)); height: calc(2.5rem * var(--density));
+  display: grid; place-items: center;
+  transition: background var(--d-instant) var(--ease-mech);
+}
+.wc:hover { background: color-mix(in oklab, var(--c-ink) 12%, transparent); }
+.wc-close:hover { background: var(--c-danger); color: var(--c-on-semantic); }
+
+.shell { display: grid; grid-template-columns: auto minmax(0, 1fr); min-height: 0; min-width: 0; }
+
+.rail {
+  width: calc(13.5rem * var(--density));
+  display: flex; flex-direction: column; gap: var(--sp-1);
+  padding: var(--sp-3) var(--sp-2);
+  background: var(--c-well);
+  border-inline-end: 1px solid var(--c-line);
+  overflow-y: auto;
+}
+.rail-group { margin-top: var(--sp-4); padding-inline: var(--sp-2); color: var(--c-ink-3); }
+.rail-item {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-md);
+  color: var(--c-ink-2); font-size: var(--fs-sm);
+  position: relative;
+  transition: background var(--d-instant) var(--ease-mech), color var(--d-instant) var(--ease-mech);
+}
+.rail-item:hover { background: color-mix(in oklab, var(--c-ink) 7%, transparent); color: var(--c-ink); }
+.rail-item[aria-current='page'] { background: var(--c-accent-soft); color: var(--c-accent-ink); font-weight: 600; }
+.rail-item[aria-current='page']::before {
+  content: ''; position: absolute; inset-inline-start: calc(var(--sp-1) * -1); top: 20%; bottom: 20%;
+  width: 3px; border-radius: var(--r-pill); background: var(--c-accent);
+}
+.rail-item svg { width: 16px; height: 16px; flex: none; }
+.rail-badge {
+  margin-inline-start: auto; font-size: var(--fs-2xs); font-weight: 600;
+  padding: 1px var(--sp-2); border-radius: var(--r-pill);
+  background: var(--c-warn-soft); color: var(--c-warn-ink);
+}
+
+.content { overflow-y: auto; overflow-x: hidden; min-width: 0; max-width: 100%; scroll-behavior: smooth; }
+
+.statusbar {
+  display: flex; align-items: center; gap: var(--sp-4);
+  height: calc(1.75rem * var(--density));
+  padding-inline: var(--sp-3);
+  background: var(--c-bleed);
+  border-top: 1px solid var(--c-line);
+  font-size: var(--fs-2xs); color: var(--c-ink-3);
+}
+.statusbar .dot { width: 6px; height: 6px; border-radius: var(--r-pill); background: var(--c-ok); }
+
+/* ---------------------------------------------------------------------------
+   BANDS - the rhythm system. 🔴 Consecutive zones differ in at least two of
+   {band, width, internal layout}, so no two adjacent zones share a shape
+   (click-dummy pitfall 14, which is what direction 01 shipped eight of).
+   --------------------------------------------------------------------------- */
+.band { padding-block: var(--sp-6); padding-inline: var(--sp-6); }
+.band-app   { background: var(--c-app); }
+.band-well  { background: color-mix(in oklab, var(--c-well) calc(var(--surface-alpha) * 100%), transparent); }
+.band-bleed { background: var(--c-bleed); color: var(--c-ink); border-block: 1px solid var(--c-line); }
+.band-tight { padding-block: var(--sp-4); }
+.band + .band { border-top: 1px solid color-mix(in oklab, var(--c-line) 55%, transparent); }
+.wrap        { max-width: 78rem; margin-inline: auto; }
+.wrap-narrow { max-width: 52rem; margin-inline: auto; }
+
+.g12 { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--sp-4); }
+.c3 { grid-column: span 3; } .c4 { grid-column: span 4; } .c5 { grid-column: span 5; }
+.c6 { grid-column: span 6; } .c7 { grid-column: span 7; } .c8 { grid-column: span 8; }
+.c9 { grid-column: span 9; } .c12 { grid-column: span 12; }
+
+.zone-label {
+  display: flex; align-items: center; gap: var(--sp-3);
+  margin-bottom: var(--sp-3); color: var(--c-ink-3);
+}
+.zone-label::after { content: ''; flex: 1; height: 1px; background: var(--c-line); }
+
+/* ---------------------------------------------------------------------------
+   SURFACES - alpha composed, never overridden
+   --------------------------------------------------------------------------- */
+.panel {
+  background: color-mix(in oklab, var(--c-panel) calc(var(--surface-alpha) * 100%), transparent);
+  backdrop-filter: blur(var(--surface-blur));
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--wm-panel-shadow);
+}
+.well {
+  background: color-mix(in oklab, var(--c-well) calc(var(--surface-alpha) * 100%), transparent);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+}
+.pad   { padding: var(--sp-5); }
+.pad-s { padding: var(--sp-3); }
+.panel-hd {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--c-line);
+}
+.panel-ft {
+  padding: var(--sp-2) var(--sp-4);
+  border-top: 1px solid var(--c-line);
+  font-size: var(--fs-xs); color: var(--c-ink-3);
+}
+
+/* ---------------------------------------------------------------------------
+   CONTROLS - every one visibly answers hover, press and focus (§12a floor)
+   --------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--sp-2);
+  min-height: calc(2.25rem * var(--density));
+  padding: var(--sp-2) var(--sp-4);
+  border: 1px solid var(--c-line-strong);
+  border-radius: var(--r-md);
+  background: color-mix(in oklab, var(--c-ink) 4%, transparent);
+  font-size: var(--fs-sm); font-weight: 500;
+  transition: background var(--d-instant) var(--ease-mech),
+              border-color var(--d-instant) var(--ease-mech),
+              transform var(--d-instant) var(--ease-mech);
+}
+.btn:hover { background: color-mix(in oklab, var(--c-ink) 10%, transparent); border-color: var(--c-ink-3); }
+.btn:active { transform: translateY(1px); }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+.btn svg { width: 15px; height: 15px; flex: none; }
+
+.btn-primary {
+  background: var(--c-accent); color: var(--c-on-accent);
+  border-color: transparent; font-weight: 600;
+  box-shadow: 0 0 0 0 var(--c-glow);
+}
+.btn-primary:hover {
+  background: color-mix(in oklab, var(--c-accent) 88%, var(--c-ink));
+  box-shadow: 0 0 0 4px var(--c-glow);
+}
+.btn-danger { background: var(--c-danger); color: var(--c-on-semantic); border-color: transparent; font-weight: 600; }
+.btn-ghost  { background: none; border-color: transparent; color: var(--c-ink-2); }
+.btn-ghost:hover { background: color-mix(in oklab, var(--c-ink) 8%, transparent); color: var(--c-ink); }
+.btn-sm { min-height: calc(1.75rem * var(--density)); padding: var(--sp-1) var(--sp-3); font-size: var(--fs-xs); }
+.btn-lg { min-height: calc(2.75rem * var(--density)); padding: var(--sp-3) var(--sp-6); font-size: var(--fs-md); }
+
+/* pending / success states live ON the control the user pressed, never in a toast */
+.btn[data-state='pending'] { pointer-events: none; }
+.btn[data-state='pending'] .btn-label { opacity: .55; }
+.btn[data-state='pending']::after {
+  content: ''; width: 13px; height: 13px; border-radius: var(--r-pill);
+  border: 2px solid currentColor; border-top-color: transparent;
+  animation: spin .7s linear infinite;
+}
+.btn[data-state='done']::after { content: '\2713'; font-weight: 700; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.switch {
+  --sw-w: calc(2.4rem * var(--density));
+  position: relative; width: var(--sw-w); height: calc(var(--sw-w) * 0.56);
+  border-radius: var(--r-pill); background: var(--c-line-strong);
+  border: 1px solid transparent; flex: none;
+  transition: background var(--d-quick) var(--ease-mech);
+}
+.switch::after {
+  content: ''; position: absolute; top: 50%; inset-inline-start: 2px;
+  width: calc(var(--sw-w) * 0.40); aspect-ratio: 1; border-radius: var(--r-pill);
+  background: var(--c-panel); translate: 0 -50%;
+  transition: translate var(--d-quick) var(--ease-mech), inset-inline-start var(--d-quick) var(--ease-mech);
+}
+.switch[aria-checked='true'] { background: var(--c-accent); }
+.switch[aria-checked='true']::after { inset-inline-start: calc(100% - var(--sw-w) * 0.40 - 2px); }
+
+.field {
+  width: 100%; padding: var(--sp-2) var(--sp-3);
+  background: var(--c-well); color: var(--c-ink);
+  border: 1px solid var(--c-line-strong); border-radius: var(--r-md);
+  font: inherit; font-size: var(--fs-sm);
+}
+
+/* ---------------------------------------------------------------------------
+   BADGES + TIER CHIPS - colour is never the only channel; the name is always there
+   --------------------------------------------------------------------------- */
+.badge {
+  display: inline-flex; align-items: center; gap: var(--sp-1);
+  padding: 1px var(--sp-2); border-radius: var(--r-sm);
+  font-size: var(--fs-2xs); font-weight: 600; letter-spacing: .03em;
+  border: 1px solid transparent; white-space: nowrap;
+}
+.badge-neutral   { background: color-mix(in oklab, var(--c-ink) 9%, transparent); color: var(--c-ink-2); }
+/* 🔴 --c-on-accent-soft, NOT --c-accent-ink. A badge carries its own light background,
+   so on a bleed band it would otherwise take the band's INVERTED ink and land at
+   1.3:1 - light text on a light chip. Measured on all three treatments in light
+   appearance; the band around it was perfectly legible the whole time. */
+.badge-accent    { background: var(--c-accent-soft); color: var(--c-on-accent-soft); }
+.badge-warn      { background: var(--c-warn-soft); color: var(--c-warn-ink); }
+.badge-danger    { background: var(--c-danger-soft); color: var(--c-danger-ink); }
+.badge-ok        { background: var(--c-ok-soft); color: var(--c-ok-ink); }
+.badge-outline   { border-color: var(--c-line-strong); color: var(--c-ink-3); }
+
+.tier { display: inline-flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-2xs); }
+.tier::before { content: ''; width: 8px; height: 8px; border-radius: 2px; background: var(--tier-c, var(--c-ink-3)); flex: none; }
+.tier-config    { --tier-c: var(--c-tier-config); }
+.tier-report    { --tier-c: var(--c-tier-report); }
+.tier-rebuilds  { --tier-c: var(--c-tier-rebuilds); }
+.tier-slow      { --tier-c: var(--c-tier-slow); }
+.tier-recycle   { --tier-c: var(--c-tier-recycle); }
+.tier-permanent { --tier-c: var(--c-tier-permanent); }
+/* second channel for the one tier that cannot be undone */
+.tier-permanent::before { background-image: repeating-linear-gradient(45deg, transparent 0 2px, oklch(0 0 0 / .45) 2px 3px); }
+
+/* 🔴 `success` never renders without its glyph - the accent is 22 degrees away
+   and chroma alone is not allowed to be the only separator. */
+.state-ok { color: var(--c-ok-ink); display: inline-flex; align-items: center; gap: var(--sp-1); }
+.state-ok::before { content: '\2713'; font-weight: 700; }
+
+/* ---------------------------------------------------------------------------
+   ZONE 2 - the reclaim readout
+   --------------------------------------------------------------------------- */
+.readout { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--sp-8) var(--sp-10); }
+.hero-num {
+  font-family: var(--ff-display); font-weight: 700;
+  font-stretch: 118%; font-variation-settings: 'wdth' 118;
+  font-size: var(--fs-hero); line-height: .85; letter-spacing: -0.035em;
+  color: var(--c-accent-ink);
+  display: flex; align-items: baseline; gap: var(--sp-2);
+}
+.hero-num .unit {
+  font-size: var(--fs-lg); font-weight: 600; letter-spacing: 0;
+  font-stretch: 100%; font-variation-settings: 'wdth' 100;
+  color: var(--c-ink-2);
+}
+.hero-sub { margin-top: var(--sp-3); color: var(--c-ink-3); font-size: var(--fs-xs); }
+.link-q {
+  color: var(--c-accent-ink); text-decoration: underline;
+  text-decoration-style: dotted; text-underline-offset: 3px;
+}
+.link-q:hover { text-decoration-style: solid; }
+
+/* ---------------------------------------------------------------------------
+   ZONE 3 - THE RECLAIM MAP (the signature element)
+   --------------------------------------------------------------------------- */
+.tm-frame {
+  position: relative;
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  background: var(--c-well);
+  overflow: hidden;
+}
+.tm-svg { display: block; width: 100%; height: auto; }
+.tm-tile {
+  cursor: pointer;
+  transition: opacity var(--d-quick) var(--ease-mech);
+}
+.tm-tile rect.fill { transition: filter var(--d-instant) var(--ease-mech); }
+.tm-tile:hover rect.fill { filter: brightness(1.22); }
+.tm-tile:focus-visible rect.fill { stroke: var(--c-ink); stroke-width: 2; }
+.tm-tile[data-excluded='true'] { opacity: .22; }
+.tm-tile[data-excluded='true'] rect.fill { filter: saturate(.15); }
+.tm-tile[data-draining='true'] { opacity: 0; transition: opacity var(--d-mod) var(--ease-exit); }
+.tm-label { pointer-events: none; font-family: var(--ff-ui); font-weight: 600; }
+.tm-sub   { pointer-events: none; font-family: var(--ff-mono); }
+.tm-empty-note {
+  position: absolute; inset: 0; display: grid; place-content: center; gap: var(--sp-2);
+  text-align: center; padding: var(--sp-6);
+}
+.tm-tip {
+  position: absolute; z-index: 5; pointer-events: none;
+  background: var(--c-bleed); color: var(--c-ink);
+  border: 1px solid var(--c-line-strong); border-radius: var(--r-md);
+  padding: var(--sp-2) var(--sp-3); font-size: var(--fs-xs);
+  box-shadow: var(--wm-raise-shadow);
+  max-width: 32rem;
+}
+.tm-legend { display: flex; flex-wrap: wrap; gap: var(--sp-2) var(--sp-4); align-items: center; }
+
+/* the accessible table that carries the same data (d3-charts: not a consolation prize) */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px;
+  padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   ZONE 4 - drive capacity rails. One stacked bar per drive showing the
+   RECLAIMABLE slice, which three separate cards could never show.
+   --------------------------------------------------------------------------- */
+.drive { display: grid; grid-template-columns: auto 1fr auto; gap: var(--sp-3); align-items: center; }
+.drive + .drive { margin-top: var(--sp-4); }
+.drive-name { font-family: var(--ff-display); font-weight: 700; font-size: var(--fs-md); width: 2.2em; }
+.cap {
+  position: relative; height: calc(0.85rem * var(--density));
+  border-radius: var(--r-sm); overflow: hidden;
+  background: color-mix(in oklab, var(--c-ink) 10%, transparent);
+  display: flex;
+}
+.cap-seg { height: 100%; transition: width var(--d-mod) var(--ease-mech); }
+.cap-used  { background: color-mix(in oklab, var(--c-ink) 34%, transparent); }
+.cap-recl  { background: var(--c-accent); }
+.cap-free  { background: transparent; }
+.cap-recl.pulse { animation: capPulse 2.4s var(--ease-mech) infinite; }
+@keyframes capPulse { 0%,100% { opacity: 1; } 50% { opacity: .70; } }
+
+/* ---------------------------------------------------------------------------
+   ZONE 5 - the safe-run ladder. A rail with an accumulating total, not a table.
+   --------------------------------------------------------------------------- */
+.ladder { position: relative; padding-inline-start: var(--sp-6); }
+.ladder::before {
+  content: ''; position: absolute; inset-inline-start: calc(var(--sp-2) + 1px); top: .7em; bottom: .9em;
+  width: 2px; background: linear-gradient(to bottom, var(--c-accent), color-mix(in oklab, var(--c-accent) 15%, transparent));
+}
+.rung { position: relative; display: grid; grid-template-columns: 1fr auto; gap: var(--sp-2) var(--sp-4); align-items: baseline; padding-block: var(--sp-2); }
+.rung + .rung { border-top: 1px dashed color-mix(in oklab, var(--c-line) 80%, transparent); }
+.rung::before {
+  content: ''; position: absolute; inset-inline-start: calc(var(--sp-6) * -1 + var(--sp-2) - 2px); top: .75em;
+  width: 8px; height: 8px; border-radius: var(--r-pill);
+  background: var(--c-accent); box-shadow: 0 0 0 3px var(--c-app);
+}
+.rung-bar { grid-column: 1 / -1; height: 3px; border-radius: var(--r-pill); background: color-mix(in oklab, var(--c-ink) 12%, transparent); overflow: hidden; }
+.rung-bar > i { display: block; height: 100%; background: var(--c-accent); border-radius: inherit; }
+.ladder-total {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-top: var(--sp-4); padding-top: var(--sp-3); border-top: 1px solid var(--c-line);
+}
+
+/* ---------------------------------------------------------------------------
+   ZONE 7 - the chokepoint, drawn
+   --------------------------------------------------------------------------- */
+.choke { display: grid; grid-template-columns: 1fr auto 1fr; gap: var(--sp-6); align-items: center; }
+.choke-svg { width: 100%; height: auto; max-width: 15rem; }
+.choke-col { display: flex; flex-direction: column; gap: var(--sp-2); }
+.choke-out { display: flex; flex-direction: column; gap: var(--sp-3); }
+.choke-out-row { display: flex; gap: var(--sp-3); align-items: flex-start; }
+
+/* ---------------------------------------------------------------------------
+   ZONE 8 - the protected-path chip field
+   --------------------------------------------------------------------------- */
+.chipfield { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.chip {
+  font-family: var(--ff-mono); font-size: var(--fs-2xs);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--c-line);
+  background: color-mix(in oklab, var(--c-ink) 5%, transparent);
+  color: var(--c-ink-2);
+  transition: border-color var(--d-instant) var(--ease-mech), color var(--d-instant) var(--ease-mech);
+}
+.chip:hover { border-color: var(--c-danger); color: var(--c-danger-ink); }
+
+/* ---------------------------------------------------------------------------
+   DENSE TABLE (the cockpit regime - sections, picker, history)
+   --------------------------------------------------------------------------- */
+.tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--fs-sm); }
+.tbl thead th {
+  position: sticky; top: 0; z-index: 2;
+  background: var(--c-well);
+  border-bottom: 1px solid var(--c-line-strong);
+  padding: var(--sp-2) var(--sp-3);
+  text-align: start; font-size: var(--fs-2xs); font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--c-ink-3);
+  white-space: nowrap;
+}
+.tbl tbody td { padding: var(--sp-2) var(--sp-3); border-bottom: 1px solid color-mix(in oklab, var(--c-line) 65%, transparent); vertical-align: middle; }
+.tbl tbody tr { transition: background var(--d-instant) var(--ease-mech); }
+.tbl tbody tr:hover { background: color-mix(in oklab, var(--c-ink) 5%, transparent); }
+/* A selected row is its own surface: it paints --c-accent-soft, so the faint tone
+   measured 4.46:1 inside it against a 4.5 bar. Rebinding one token on the subtree
+   raises every descendant at once - the same technique as the bleed band, and the
+   same reason. Found only because a flow test left two rows selected; the unselected
+   table had passed cleanly all along. */
+.tbl tbody tr[data-selected='true'] { background: var(--c-accent-soft); --c-ink-3: var(--c-ink-2); }
+.tbl tbody tr[data-selected='true'] td:first-child { box-shadow: inset 3px 0 0 0 var(--c-accent); }
+.tbl .num-cell { text-align: end; font-family: var(--ff-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tbl tr.detail-row > td { background: var(--c-well); padding: var(--sp-4); }
+
+.filters { display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center; }
+.fchip {
+  padding: var(--sp-1) var(--sp-3); border-radius: var(--r-pill);
+  border: 1px solid var(--c-line-strong); font-size: var(--fs-xs);
+  color: var(--c-ink-2);
+  transition: background var(--d-instant) var(--ease-mech), color var(--d-instant) var(--ease-mech), border-color var(--d-instant) var(--ease-mech);
+}
+.fchip:hover { border-color: var(--c-ink-3); color: var(--c-ink); }
+.fchip[aria-pressed='true'] { background: var(--c-accent); border-color: transparent; color: var(--c-on-accent); font-weight: 600; }
+
+/* 🔴 fixed, not sticky. As a direct child of the .app grid it claimed a row even
+   when empty - translate moved it visually but the row stayed, so the status bar was
+   pushed out of the window and a slice of the empty bar sat on screen. */
+.selbar {
+  position: fixed; inset-inline: 0; bottom: calc(1.75rem * var(--density)); z-index: 20;
+  display: flex; align-items: center; gap: var(--sp-4);
+  padding: var(--sp-3) var(--sp-5);
+  background: var(--c-bleed); border-top: 1px solid var(--c-line-strong);
+  box-shadow: var(--wm-raise-shadow);
+  translate: 0 0; transition: translate var(--d-mod) var(--ease-mech);
+}
+.selbar[hidden] { display: flex !important; translate: 0 110%; pointer-events: none; }
+
+/* ---------------------------------------------------------------------------
+   PROGRESS - determinate, always. "How far along" is the question being asked.
+   --------------------------------------------------------------------------- */
+.prog { height: 6px; border-radius: var(--r-pill); background: color-mix(in oklab, var(--c-ink) 12%, transparent); overflow: hidden; }
+.prog-fill { height: 100%; width: 0; border-radius: inherit; background: var(--c-accent); transition: width var(--d-quick) linear; }
+.prog-fill[data-tone='ok'] { background: var(--c-ok); }
+.prog-fill[data-tone='warn'] { background: var(--c-warn); }
+
+/* 🔴 The run log NEVER animates - it is the one surface watched while something
+   irreversible happens. */
+.logview {
+  font-family: var(--ff-mono); font-size: var(--fs-xs); line-height: 1.55;
+  background: var(--c-well); border: 1px solid var(--c-line); border-radius: var(--r-md);
+  padding: var(--sp-3); height: 18rem; overflow-y: auto; white-space: pre-wrap; word-break: break-all;
+}
+.logview .l-ok   { color: var(--c-ok-ink); }
+.logview .l-warn { color: var(--c-warn-ink); }
+.logview .l-err  { color: var(--c-danger-ink); }
+.logview .l-dim  { color: var(--c-ink-3); }
+
+/* ---------------------------------------------------------------------------
+   ENTRANCE - staggered on FIRST PAINT of a screen only, never on a list
+   --------------------------------------------------------------------------- */
+.rise { opacity: 0; translate: 0 10px; animation: rise var(--d-enter) var(--ease-enter) forwards; }
+.rise:nth-child(1) { animation-delay: 0ms; }   .rise:nth-child(2) { animation-delay: 55ms; }
+.rise:nth-child(3) { animation-delay: 110ms; } .rise:nth-child(4) { animation-delay: 165ms; }
+.rise:nth-child(n+5) { animation-delay: 210ms; }
+@keyframes rise { to { opacity: 1; translate: 0 0; } }
+/* neutralise MOVEMENT, keep opacity - never a global off-switch */
+[data-motion='reduced'] .rise { animation-duration: 1ms; translate: 0 0; }
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='full']) .rise { animation-duration: 1ms; translate: 0 0; }
+}
+
+/* ---------------------------------------------------------------------------
+   THE ONE THEME PANEL - anchored popover >=640px, full-height sheet below
+   --------------------------------------------------------------------------- */
+.sheet-scrim { position: fixed; inset: 0; z-index: 40; background: oklch(0 0 0 / .45); }
+.sheet {
+  position: fixed; z-index: 41; inset-block: 0; inset-inline-end: 0;
+  width: min(24rem, 100vw);
+  display: flex; flex-direction: column;
+  background: var(--c-panel); border-inline-start: 1px solid var(--c-line);
+  box-shadow: var(--wm-raise-shadow);
+  animation: sheetIn var(--d-mod) var(--ease-mech);
+}
+@keyframes sheetIn { from { translate: 100% 0; } to { translate: 0 0; } }
+.sheet-hd { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-4); border-bottom: 1px solid var(--c-line); }
+.sheet-bd { overflow-y: auto; padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-5); }
+.axis-name { display: block; margin-bottom: var(--sp-2); color: var(--c-ink-2); }
+.cards { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+
+/* 🔴 Card selectors, never dropdowns - and each card PREVIEWS its own value */
+.card-sel {
+  min-width: calc(4.2rem * var(--density));
+  padding: var(--sp-2); border: 1px solid var(--c-line-strong);
+  border-radius: var(--r-md); background: var(--c-well);
+  font-size: var(--fs-2xs); text-align: center; color: var(--c-ink-2);
+  display: flex; flex-direction: column; align-items: center; gap: var(--sp-2);
+  transition: border-color var(--d-instant) var(--ease-mech), background var(--d-instant) var(--ease-mech);
+}
+.card-sel:hover { border-color: var(--c-ink-3); }
+.card-sel[aria-checked='true'] { border-color: var(--c-accent); background: var(--c-accent-soft); color: var(--c-accent-ink); font-weight: 600; }
+.prev { width: 100%; height: 22px; display: grid; place-items: center; overflow: hidden; }
+.prev-radius { width: 26px; height: 18px; border: 2px solid currentColor; }
+.prev-swatch { display: flex; gap: 3px; }
+.prev-swatch i { width: 10px; height: 16px; border-radius: 2px; display: block; }
+.prev-density { display: flex; flex-direction: column; width: 24px; }
+.prev-density i { display: block; height: 2px; background: currentColor; border-radius: 1px; }
+.prev-appearance { width: 26px; height: 18px; border: 1px solid currentColor; border-radius: 2px; display: flex; overflow: hidden; }
+.prev-appearance i { flex: 1; }
+
+/* ---------------------------------------------------------------------------
+   TOASTS - the FALLBACK channel, for what happens elsewhere. Never the default.
+   --------------------------------------------------------------------------- */
+.toasts { position: fixed; z-index: 50; inset-block-end: var(--sp-6); inset-inline-end: var(--sp-6); display: flex; flex-direction: column; gap: var(--sp-2); }
+.toast {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--c-bleed); color: var(--c-ink);
+  border: 1px solid var(--c-line-strong); border-radius: var(--r-md);
+  box-shadow: var(--wm-raise-shadow); font-size: var(--fs-sm);
+  animation: toastIn var(--d-mod) var(--ease-mech);
+  max-width: 26rem;
+}
+@keyframes toastIn { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
+.toast .undo { margin-inline-start: auto; }
+
+/* ---------------------------------------------------------------------------
+   THE CUSTOM CURSOR - a theme axis with an off switch (§1a / OD-18)
+
+   🔴 Showing the replacement and suppressing the native one are ONE decision, so
+   they are gated together on the layer ACTUALLY BEING PRESENT. Written as two
+   independent rules, a page missing the layer has no pointer at all.
+   --------------------------------------------------------------------------- */
+@media (hover: hover) and (pointer: fine) {
+  :root[data-cursor='custom']:has(.cursor) { cursor: none; }
+  :root[data-cursor='custom']:has(.cursor) a,
+  :root[data-cursor='custom']:has(.cursor) button,
+  :root[data-cursor='custom']:has(.cursor) [role='button'] { cursor: none; }
+}
+.cursor {
+  position: fixed; z-index: 60; top: 0; left: 0; pointer-events: none;
+  width: 26px; height: 26px; margin: -13px 0 0 -13px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--cur-ink, var(--c-ink));
+  transition: width var(--d-quick) var(--ease-mech), height var(--d-quick) var(--ease-mech),
+              margin var(--d-quick) var(--ease-mech), border-color var(--d-instant) var(--ease-mech),
+              opacity var(--d-quick) var(--ease-mech);
+}
+.cursor-dot {
+  position: fixed; z-index: 61; top: 0; left: 0; pointer-events: none;
+  width: 4px; height: 4px; margin: -2px 0 0 -2px;
+  border-radius: var(--r-pill); background: var(--cur-ink, var(--c-ink));
+}
+.cursor[data-over='interactive'] { width: 40px; height: 40px; margin: -20px 0 0 -20px; border-color: var(--c-accent); }
+:root[data-cursor='off'] .cursor, :root[data-cursor='off'] .cursor-dot { display: none; }
+
+/* 🔴 THE OVERLAY-CONTRAST RULE (§16). The cursor is position:fixed on <body>, a
+   SIBLING of the bands - so no custom property set on a band can ever reach it by
+   inheritance, and the obvious fix cannot work. The surface under the pointer is
+   resolved on a BOUNDARY event and stamped here, and each rule takes that
+   surface's OWN on-surface ink token rather than a hand-picked colour.
+   Every class that PAINTS a background needs a row. app.js gates that. */
+.cursor[data-surface='app'],    .cursor-dot[data-surface='app']    { --cur-ink: var(--c-ink); }
+.cursor[data-surface='panel'],  .cursor-dot[data-surface='panel']  { --cur-ink: var(--c-ink); }
+.cursor[data-surface='well'],   .cursor-dot[data-surface='well']   { --cur-ink: var(--c-ink-2); }
+.cursor[data-surface='bleed'],  .cursor-dot[data-surface='bleed']  { --cur-ink: var(--c-accent); }
+.cursor[data-surface='accent'], .cursor-dot[data-surface='accent'] { --cur-ink: var(--c-on-accent); }
+
+/* under reduced motion the cursor loses its LAG, not its existence - removing the
+   layer would leave the native pointer hidden by the guard's other half */
+[data-motion='reduced'] .cursor { transition-duration: 1ms; }
+
+/* ---------------------------------------------------------------------------
+   RESPONSIVE - 320 first. One navigation method per viewport (§4).
+   --------------------------------------------------------------------------- */
+.only-wide { display: none; }
+@media (min-width: 900px) { .only-wide { display: initial; } }
+
+@media (max-width: 640px) {
+  .titlebar .badge { display: none; }
+  .wc { width: calc(2.2rem * var(--density)); }
+}
+
+@media (max-width: 899px) {
+  .rail { position: fixed; z-index: 42; inset-block: 0; inset-inline-start: 0; translate: -100% 0; transition: translate var(--d-mod) var(--ease-mech); }
+  :root[data-drawer='open'] .rail { translate: 0 0; box-shadow: var(--wm-raise-shadow); }
+  .shell { grid-template-columns: 1fr; }
+  .band { padding-inline: var(--sp-4); }
+  .g12 > [class*='c'] { grid-column: span 12; }
+  .c6-m { grid-column: span 6; }
+  .readout { gap: var(--sp-5); }
+  :root { --fs-hero: calc(3.25rem * var(--type-scale)); }
+  .sheet { width: 100vw; }
+}
+@media (min-width: 900px) { .drawer-btn { display: none; } }
+
+/* wide content scrolls inside its own container, never the page body */
+.xscroll { overflow-x: auto; }
+
+/* ---------------------------------------------------------------------------
+   🔴 THE BLEED BAND'S OWN INK SET.
+
+   A bleed band inverts the SURFACE. Before this block it did not invert the INK,
+   so in light appearance a dark band carried dark text - measured 1.05:1 on the
+   window title, the protected chips, the chokepoint copy and the selection bar,
+   on all three treatments. The dark appearance passed cleanly the whole time,
+   which is exactly the shape of "a treatment that only works in dark is not a
+   treatment, it is an unfinished one".
+
+   Rebinding the semantic tokens on the subtree fixes every descendant at once
+   rather than patching elements one at a time - and unlike the fixed cursor
+   layer (§16), inheritance genuinely reaches here, because these ARE ancestors.
+   --------------------------------------------------------------------------- */
+.band-bleed, .titlebar, .statusbar, .selbar, .toast, .tm-tip {
+  --c-ink: var(--c-bleed-ink);
+  --c-ink-2: var(--c-bleed-ink-2);
+  --c-ink-3: var(--c-bleed-ink-3);
+  --c-accent-ink: var(--c-bleed-accent-ink);
+  color: var(--c-ink);
+}

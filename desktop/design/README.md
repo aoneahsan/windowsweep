@@ -1,186 +1,222 @@
 # windowsweep desktop - the design argument
 
-Last Updated: 2026-09-04 · Phase P6-A, gate 1 pending
+Last Updated: 2026-09-04 · Direction **02, "Reclaim"** · Phase P6-A, gate 1 pending
 
-This is the reasoning behind the click dummy in `click-dummy/`. It is written so the owner can disagree with
+The reasoning behind the click dummy in `windowsweep-click-dummy/`. Written so the owner can disagree with
 the *argument* rather than only with the pixels. Nothing here was put to him as a choice; the decisions are
-made and defended.
+made and defended, per `~/.claude/rules/frontend-ui-standards.md` §8.
+
+**Direction 01 was rejected on 2026-09-04.** Its post-mortem, its own words and the archived page are at
+`windowsweep-click-dummy/_rejected/01-instrument-panel-2026-09-04/`. This document does not repeat that; it
+starts from what replaced it.
 
 ---
 
-## 1. What this product actually is, and what that costs the design
+## 1. The design read, and the one mistake that mattered
 
-windowsweep deletes files. Every screen is therefore in service of one job: **the user must know what will go
-before it goes, and must never be surprised afterwards.** That single sentence decides more than any
-aesthetic preference.
+The anti-slop method's first step is a one-line read, before any markup:
 
-It has three consequences the rest of this document follows from:
+> **Reading this as: a desktop utility's primary screen, for developers and power users on their own Windows
+> machine, in a confident "workshop instrument" language - dark-first, high-contrast, with a live data
+> visualisation as the hero and mechanical motion.**
 
-1. **Evidence before action.** No screen offers a destructive action without the measurement beside it. The
-   Clean button never appears without the number it would remove and the list it would touch.
-2. **Restraint reads as competence here.** The fleet's design bar is *unique, playful, creative, cheerful* -
-   and the rule that sets it also says decoration is rich on marketing surfaces and **restrained in product
-   ones** (`frontend-ui-standards.md` §1a). A cleanup tool that feels playful while asking to delete 40 GB
-   feels *untrustworthy*. The personality goes into the copy, the information design and the motion
-   discipline, not into ornament.
-3. **The CLI's safety model must be visible, not re-explained.** Tier and batch policy are the whole safety
-   argument, and in the terminal they are a table nobody reads twice. In the GUI they are a badge on every
-   section, always on screen. That is the single most important information-design decision in this app.
+Direction 01 got that line wrong, and everything downstream followed. It read windowsweep-desktop as a
+**dashboard / trust-first regulated surface** and set the dials to VARIANCE 3-5 · MOTION 2-4 · DENSITY 7-8.
+Those are the dials for an internal tool somebody stares at for eight hours; they cannot produce an attractive
+page, and no amount of execution quality recovers from them.
 
-**The desktop app never reimplements cleanup logic.** It runs the bundled script with `--json`, reads
-`candidates[]`, `targets[]` and the `##windowsweep` progress lines, and drives the interactive sections with
-`--select-file`. Anything the GUI could get wrong is something the CLI already gets right.
+This is not that. It is a **premium consumer utility opened for two minutes a month**, where being impressive
+*is* the product - which is the entire reason people pay for CleanMyMac rather than using the free
+alternatives that do the same deletions.
 
-## 2. Direction: an instrument, not an app store app
+### 🔴 The dials are set per REGIME, and that split is the structural fix
 
-The chosen direction is **"instrument panel"** - the app reads like a well-made measuring device.
+| Regime | Screens | VARIANCE | MOTION | DENSITY |
+|---|---|---|---|---|
+| **Moment** | Home, Run, Splash, Consent, Account, Elevation | 7 | 6 | 3 |
+| **Cockpit** | Sections, Picker, History, Settings, Report | 5 | 4 | 7 |
 
-- One large primary readout dominates Home: **reclaimable space**, with its freshness stated ("measured 4
-  minutes ago") because a stale measurement is worse than none.
-- Everything measured is set in **tabular monospace numerals**, so two figures in a column can be compared by
-  eye without reading them.
-- Paths are monospace too. A path is an identifier read character by character, not prose.
-- The accent colour is spent on exactly three things: the primary action, a measured value, and the selected
-  navigation item. Spending it anywhere else would make the one number that matters stop standing out.
+Same tokens, different composition. `anti-slop.md`'s scope-honesty clause is honoured rather than ignored -
+high variance in a data table is a defect, so it is not applied there. Direction 01's error was applying the
+second row to *everything*, including the screen the user sees first.
 
-**What this rejects:** a dashboard of equal-weight cards (nothing dominates, so nothing is read); a wizard
-(the user is not a beginner being led, they are an operator choosing); and a "storage doughnut" hero, which
-looks like every cleaner on the Microsoft Store and says less than one honest number.
+The independent corroboration: `ext-taste-design-taste-frontend`'s own preset table gives
+**Premium consumer = 7 / 6 / 3**, arrived at from a different direction.
 
-## 3. Colour
+## 2. The signature element - "The Reclaim Map"
 
-**Registered primary: hue 128, lime.** Claimed 2026-09-03 in `~/.claude/palettes/project-palettes.json`. The
-registry had no free 25° arc left; 128 sits at the midpoint of the widest gap (104 taxease ↔ 152 wakalat), 24°
-from each. That shortfall is recorded rather than hidden.
+Every reclaimable target as one tile: **sized by bytes, hue by tier, lightness by staleness, grouped by
+section.** Real `d3.treemap()`, vendored, not SVG assembled from strings.
 
-| Role | Light | Dark | Why |
-|---|---|---|---|
-| Accent (primary action, measured value, selected nav) | `lime-700` `#4d7c0f` (4.9:1 on white) | `lime-400` `#a3e635` with **dark on-accent text** | white on `#a3e635` is ~1.7:1 and must never be used |
-| Success | hue **158** | hue 158 | 🔴 at 128 the default success green reads as the accent, so a "done" state would be indistinguishable from the brand |
-| Warning | hue 75 amber | hue 75 amber | reserved for a gate the user must pass, never for a result |
-| Danger | hue 25 red | hue 25 red | reserved for permanent, irreversible tiers. **Never the accent** |
+**Why this and not a storage doughnut.** The product's whole thesis is one sentence - *the user must know what
+will go before it goes.* A treemap is that sentence, drawn. It is also the only way 26 sections and hundreds
+of targets become legible at a glance, and nothing else in this category does it on Windows.
 
-**Three treatments, three genuinely different hues** (per the click-dummy rule; only the registered hue is
-held apart from other projects, so the other two may overlap anything):
+- **Hover** a tile: full path, size, idle days, tier.
+- **Click** a tile: keep it. The readout above re-totals live, and the toast carries **undo**.
+- **Clean**: the tiles *drain* and the drive rails fill. One memorable, deliberate moment beats twelve
+  ambient loops.
+- 🔴 **The zero state was designed first, not last.** A clean machine draws the same object from the
+  **protected** list, dimmed - *"every location behind these tiles is protected or in use"* - which is true,
+  informative, and still recognisably the product. A signature element that renders as a blank rectangle
+  destroys the argument on first paint, and that is a recorded failure elsewhere in the fleet.
 
-| Treatment | Hue | Mood | Why it earns a slot |
-|---|---|---|---|
-| **Lime** (default) | 128 | cool green, technical, calm | the registered identity |
-| **Sky** | 231 | cold blue, systems-tool | matches the **shipped logo mark**, which is a sky-blue gradient `#38bdf8 → #1e3a8a`. An icon may legitimately differ from the UI accent, and repainting a shipped mark is the owner's call - so the app offers a treatment that agrees with it instead |
-| **Plum** | 320 | warm magenta, low-glare | the only warm option far from both, and the most comfortable of the three in a dark room |
+### Two channels, two variables, each canonical
 
-**The neutral hue moves with the accent.** Surfaces carry a trace of the treatment's hue at very low chroma
-(0.004-0.010), so switching treatment changes the whole room rather than repainting one button. A grey that
-stays grey while the accent moves is the tell of a recoloured, not re-themed, interface.
-
-## 4. Surfaces, depth and density
-
-Three depths, no more: **app** (window chrome and rail), **panel** (cards), **sunken** (the run log, tables
-and any scrolling region). Depth is carried by value and a 1px border, not by shadow - shadows on a dense
-tool read as clutter, and they disappear in dark mode anyway.
-
-**Radius is small on purpose**: 6px on panels, 4px on controls. Large radii read as consumer-friendly; this
-app wants to read as precise. `--radius` is a theme axis, so a user who disagrees can change it.
-
-**Density is an axis** (`comfortable` / `compact`) implemented as a `calc()` multiplier on the spacing scale,
-not as per-property overrides - the failure mode being that a hand-written override misses tokens and the
-layout goes half-dense.
-
-## 5. Typography
-
-| Role | Stack | Why |
-|---|---|---|
-| UI and display | `Inter`, then `Segoe UI Variable Text`, `Segoe UI` | Inter's tall x-height survives the small sizes a dense tool needs; the Segoe fallbacks mean the app looks native before any font loads, which matters for a desktop binary |
-| Numerals, paths, log | `JetBrains Mono`, then `Cascadia Code`, `Consolas` | tabular figures so a column of sizes aligns; a path is an identifier, not prose |
-
-Text size is a theme axis and multiplies the type scale, so a user at 125% Windows scaling plus "large" here
-still gets a layout that holds.
-
-## 6. Motion
-
-- State change ≤ **180ms**, entrance ≤ **500ms**, staggered only on first paint of a screen.
-- 🔴 **The run log never animates.** Streaming text with motion on it is unreadable, and this is the one
-  surface a user watches while something irreversible happens.
-- Progress is a determinate bar per section driven by the `##windowsweep` lines - never an indeterminate
-  spinner, because "how far along" is exactly the question being asked.
-- `prefers-reduced-motion` removes all of it, and there is a **motion axis** in the theme panel as well, so
-  the preference is reachable without changing an OS setting.
-
-## 7. Decoration - where the life goes
-
-Restrained, and only in three places:
-
-1. A **sweep arc** SVG behind the primary readout at 10% opacity - the product's one visual metaphor.
-2. **Empty states** get the same arc plus a sentence with personality ("Nothing to sweep. Your disk is
-   cleaner than most.").
-3. **Tier badges** are the ornament that earns its place: they are colour, shape and information at once.
-
-No decorative SVG on cards, no animated background, no magnetic hover, no custom cursor. Those belong on
-marketing surfaces, and this product has none.
-
-## 8. Consent and privacy - a design surface, not a legal one
-
-The CLI makes **zero network calls** and that is advertised. The desktop app can send analytics and errors
-**only after the user accepts**, and the first-run dialog says so in those words. All four providers (GA4,
-Amplitude, Clarity, Sentry) are **off until accepted**, individually listed, and individually revocable in
-Settings.
-
-Sign-in is **optional and for sync only** - it stores the email, settings and run history, and restores
-settings on a new machine. 🔴 **Runs are never gated. There is no paid tier and no plan set** (an explicit
-owner exemption from the fleet plan-set rule). The Account screen states that in one line, because a sign-in
-button in a free tool invites exactly the opposite assumption.
-
-Synced run history carries **no file paths, no host name and no user name** - only section ids, statuses and
-byte counts. That is a design decision with a UI consequence: the History screen labels cloud rows
-"summary only" so nobody expects to find a path there.
-
-## 9. The elevated run
-
-Admin sections need a UAC prompt, which the app cannot answer. The design is honest about it: an
-**Elevation** card explains that a second, elevated window opens with its own log, and the main window then
-follows that run's report file rather than pretending to own it. The SmartScreen note lives here too, because
-an unsigned binary's first launch is a real user experience and hiding it costs more trust than admitting it.
-
-## 10. Screens
-
-| Screen | Job |
+| Channel | Means |
 |---|---|
-| Splash / update gate | version check, `notifyAppReady`, nothing else |
-| **Home** | the primary readout, the safe run, last run, drives, developer mode |
-| Sections | the catalogue with tier and gate badges; select, preview, run |
-| Picker | candidates for 17 / 18 / 19 / 23, with size and idle days |
-| Run | per-section progress and the streaming log |
-| History | local runs, and cloud runs when signed in |
-| Account | optional Google sign-in, exactly what is stored |
-| Settings | developer mode, idle windows, scan roots, notifications, consent, the theme panel |
-| Consent | first-run dialog, all providers off until accepted |
-| Elevation | what an elevated run does, and the SmartScreen note |
+| **Hue** | tier - how risky removing it is (`config` -> `permanent`) |
+| **Lightness** | idle days - how stale it is |
 
-## 11. What the dummy does not decide
+The first version used hue alone. On a developer machine eight of eight sections are `rebuilds`, so the map
+painted one flat green and told the reader nothing the total did not already say. Staleness is the variable
+the product actually reasons about, so it earns the second channel rather than a decorative stripe. **The
+idle domain is the reachable range, re-solved per render**, so a machine whose oldest cache is 60 days still
+gets the full ramp. Both channels are named in the on-screen legend.
 
-Per the click-dummy contract: the **DOM of interactive widgets** belongs to React Aria Components - the dummy
-gives the visual specification only. It also does not decide routes, the data model, or which features exist.
+## 3. Typography - hierarchy carried by the WIDTH axis
 
-## 12. Deviations from the standard dummy process, and why
+**Inter is retired** - it is item 5 on the anti-default list, and it was direction 01's UI face.
 
-- **No 12-15 section marketing home page.** That floor is written for a web product's landing page. This is a
-  desktop application window; its "home" is the app's primary screen. Building a 15-section marketing page
-  here would specify a surface the product does not have.
-- **State persists through plain `localStorage` behind a `wsStore` wrapper**, not `strata-storage`. The dummy
-  is static HTML with no bundler, and no dependency may be downloaded on this network until the owner's
-  go-ahead (`PENDING-TASKS.md` TASK-001). The wrapper has the same shape, so the real app swaps the
-  implementation and nothing else.
-- **Tailwind arrives from the play CDN** for the same reason. The `@theme` token block is authored exactly as
-  the real app's `tokens.css` will be, and is promoted into the app in one direction at implementation time.
+| Role | Stack |
+|---|---|
+| Display + numerals | **Archivo Expanded** -> `Segoe UI Variable Display`, `Segoe UI`, system-ui |
+| UI text | **Archivo** (same family, normal width) |
+| Paths, log, sizes | **JetBrains Mono** -> `Cascadia Code`, `Consolas` |
 
-## 13. Gates
+🔴 **The deliberate idea: hierarchy by width, not only by size and weight.** Archivo is a variable grotesque
+carrying `wdth 62-125`; one family at two widths gives a hierarchy device almost no UI uses, which is exactly
+why it reads as chosen. `42.7 GB` in Archivo Expanded 700 is a different object from Inter 600.
+
+What was rejected, from the catalogued pairings in `ext-uiuxpm-ui-ux-pro-max`'s typography database:
+JetBrains-Mono-only (too extreme for an app shell), Space Mono (brutalist, wrong register), **Inter** (the
+anti-default), and IBM Plex Sans + JetBrains Mono (correct family *shape*, no width axis). The last is the
+nearest catalogued neighbour and Archivo replaces it for the axis alone.
+
+Both faces are **self-hosted** (`vendor/fonts/`, latin subsets, 121 KB), so the dummy has zero network
+dependencies and renders offline exactly as reviewed.
+
+## 4. Layout - a bento grid, three bands, real elevation
+
+Direction 01 was a single column of eight identical `rounded-panel border bg-panel` cards at one width. This
+is a **12-column grid** with asymmetric spans (7/5, 8/4, full-bleed, inset) and **three band treatments** -
+`panel` raised, `well` sunken, `bleed` edge-to-edge inverted.
+
+🔴 **No two adjacent zones share a shape**, and consecutive zones differ in at least two of {band, content
+width, internal layout}. 🔴 **Elevation is a genuine lightness step plus a border plus inner light on dark /
+a real shadow on light** - two or three points of lightness collapse into mud and read as "flat" without a
+reviewer being able to say why, which is a fair description of part of what "very basic" meant.
+
+### The 14 zones of Home, named so the count is checkable
+
+1 window chrome (frameless - we draw it) · 2 the reclaim readout · **3 the Reclaim Map** · 4 drive capacity
+rails · 5 the safe-run ladder · 6 developer mode with its live consequence · 7 "these need a person" ·
+8 the chokepoint, drawn · 9 the protected-path chip field · 10 the last eight runs, with a sparkline ·
+11 schedule · 12 sections that need admin · 13 what leaves this machine · 14 the status bar.
+
+`home-page.md`'s 12-15 floor is **honoured**, expressed as app zones rather than marketing bands. Direction
+01 waived it outright; that waiver is withdrawn, because the floor's purpose is "do not ship something that
+reads as templated" and eight identical cards is exactly what it exists to catch.
+
+**Zone 4 is not three cards.** One stacked rail per drive showing used / **reclaimable** / free - three
+separate percentage cards, which is what direction 01 shipped, cannot show the reclaimable slice at all.
+
+## 5. Colour
+
+**Registered primary: hue 128, lime.** Re-read the registry immediately before authoring (it has parallel
+writers): 12 claims, and 128 still sits in the widest usable gap - taxease 104 and wakalat 152, 24 degrees
+each side. The only wider gaps land on semantic hues. **The hue was never what was wrong**, so it is not
+re-registered.
+
+| Treatment | Accent | Neutral | Mood |
+|---|---|---|---|
+| **lime** (default) | 128 | 128 | technical, signal, alive |
+| **sky** | 231 | 225 cold slate | night, systems - agrees with the shipped logo mark |
+| **plum** | 320 | 315 warm | low-glare, late, saturated |
+
+Spread 103 / 89 / 168 degrees. 🔴 **The neutral hue moves with the accent** - a grey that stays grey while
+the accent moves is the tell of a recoloured rather than a re-themed interface.
+
+**Three semantic colours, constant across all treatments:** danger 27 · warning 85 · success 150.
+🔴 `info` (240) is deliberately **not declared** - windowsweep has no informational state, so there is
+nothing for a blue to mean, and declaring an unused token would have collided with the sky accent at 9
+degrees.
+
+### 🔴 The one real collision, stated rather than rounded away
+
+The registered accent (128) is **22 degrees** from success (150). The rule asks for 40 where possible; 40 is
+not possible without moving either the registered hue or a semantic one. Direction 01 moved success to 158,
+which bought 8 degrees and broke *"semantic colours stay constant"*. Instead the separation is carried by two
+other channels, both mandatory: **chroma** (accent .150-.190 against success .085-.090, roughly half) and **a
+glyph** - `.state-ok` never renders without its tick. The honest floor, 22, is written into `tokens.css` with
+the arithmetic beside it.
+
+## 6. Motion - "shutter and drain"
+
+`--ease-mech: cubic-bezier(.2, .9, .25, 1)`. Things move on one axis and stop sharply, like a mechanism.
+Nothing springs, nothing bounces. State change <=180 ms · entrance <=500 ms, staggered on a screen's first
+paint only, never on a list · determinate per-section progress from the engine's own `##windowsweep` lines,
+never an indeterminate spinner · 🔴 **the run log never animates**, because it is the one surface a person
+watches while something irreversible happens · `prefers-reduced-motion` honoured at the token layer **and**
+a motion axis in the panel, consulted through one helper that reads both.
+
+## 7. The one theme control - ten axes
+
+appearance · colour treatment · corner radius · density · text size · typeface · panel background · custom
+cursor · motion · sound. One header icon, one panel, card selectors that **preview their own value**.
+🔴 Stamped on `<html>` **pre-paint from one table iterated once** - appearance applied late is a flash,
+density or text size applied late is a reflow. `sound` is the only axis defaulting off.
+
+Numeric axes are `calc()` multipliers on a single unit, so an axis cannot reach some tokens and miss others.
+The surface-style axis **composes** into its own token rather than trying to out-specify the palette block.
+
+**Default appearance is `dark`, not `system`.** The theming skill recommends `system` in the absence of a
+decision; this is a decision, and an approved artefact outranks a skill default.
+
+## 8. Consent, privacy, and the account
+
+The CLI makes **zero network calls** and its own test suite asserts it. The desktop app can send analytics and
+crash reports and sends nothing until accepted - all four providers listed individually and individually
+revocable. Sign-in is **optional and for sync only**; 🔴 **runs are never gated, there is no paid tier and no
+plan set** (an explicit owner exemption from the fleet plan-set rule, 2026-09-03). Synced run history carries
+no paths, host name or user name, so the History screen labels cloud rows "summary only".
+
+## 9. What the dummy does not decide
+
+The **DOM of interactive widgets** belongs to React Aria Components - this gives the visual specification and
+working behaviour, not the anatomy. Also not the dummy's: routes, the data model, or which features exist.
+
+## 10. Deviations, each with its authority
+
+| Deviation | Why |
+|---|---|
+| **No pricing page**, though `page-inventory.md` calls it mandatory | The owner's explicit 2026-09-03 decision for this app: runs always free, no paid tier, no plan set. His current instruction outranks a skill default. Recorded, not silently dropped |
+| **No admin batch** | A local utility with optional sync has no platform surface; the derived admin surface is the Firebase console (recorded 2026-09-03) |
+| **Plain CSS, no Tailwind CDN** | `tokens.css` is authored in exactly the shape the app's `@theme inline` will wrap, so it still promotes in one direction - and the dummy gains zero network dependencies, which a design specification should have |
+| **`wsStore` wrapper, not `strata-storage`** | Vendoring strata is a download, gated on `PENDING-TASKS.md` TASK-001. Same shape and the same `namespace` semantics, verified by reading a physical key |
+| **Three screens at A1, not one** | One direction, **not a menu** - which is what "A1 delivers ONE home page" forbids. The two extra screens are the dense regime where direction 01 actually failed. Owner-approved scope |
+
+## 11. Gates
 
 | Gate | State |
 |---|---|
-| **1 - direction** (home page + three treatments) | 🟡 **awaiting the owner** - `docs/MANUAL-TASKS.md` row 17 |
+| **1 - direction** (home + three treatments) | 🟡 **awaiting the owner** - `docs/MANUAL-TASKS.md` row 17 |
 | 2 - vocabulary (component library) | not started |
 | 3 - the phase (every page, wired, persisting) | not started |
 | 4 - parity (the built app matching, page by page) | not started - closes after the app exists |
 
 🔴 **Nothing is created under `desktop/` beyond this design folder until gate 3 is recorded.** No app
 scaffold, no `package.json`, no `src-tauri/`.
+
+## 12. How to review it
+
+Open `windowsweep-click-dummy/index.html` by double-click. It works offline.
+
+- The **theme icon** in the title bar opens all ten axes. Every card previews its own value.
+- **Click tiles** on the map to keep them - the total re-totals and the toast offers undo.
+- Drag the **idle window** slider and watch the map and the held-back figure move together.
+- **`review tools`**, bottom left (or Ctrl+Alt+D): the storage backend actually in use, the four gates, and a
+  button that **plants each defect on purpose** so you can watch a gate go red rather than take its word.
+- A link can carry a look without saving it: `index.html?palette=plum&theme=light`.
+- `sections.html` is the cockpit regime; `run.html` is the moment, and its Start button drives the whole
+  thing from simulated `##windowsweep` lines.

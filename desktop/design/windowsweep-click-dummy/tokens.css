@@ -1,0 +1,424 @@
+/* ============================================================================
+   windowsweep desktop - design tokens
+   Direction 02, "Reclaim". 2026-09-04.
+
+   PROMOTION CONTRACT: this file moves into the app ONCE, in ONE direction, at
+   implementation time. The app wraps these same custom properties in a Tailwind v4
+   `@theme inline { --color-app: var(--c-app); ... }` block - `inline` is required
+   because every token references another variable. Nothing here is re-authored on
+   the app side and nothing is ever synced back.
+
+   THREE LAYERS, and a feature only ever names the third:
+     primitive   raw OKLCH ramps                 - never used by a component
+     semantic    --c-ink, --c-panel, --c-accent  - what markup may name
+     component   --wm-*                          - only where a primitive needs a knob
+
+   🔴 Defaults are written FIRST, overrides after. `:root` and `:root[data-x]` are
+   both specificity (0,1,0), so a default written last silently defeats every
+   override (click-dummy pitfall 3).
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   0 - FONTS, self-hosted. The dummy has ZERO network dependencies: it opens by
+   double-click, offline, and renders exactly as reviewed. A specification that
+   needs fonts.googleapis.com is a specification that changes when a CDN does -
+   and a blocking font request is what made a headless render hang for minutes.
+   Latin subsets only; provenance in vendor/README.md.
+
+   🔴 Archivo is loaded as a VARIABLE font with its width axis intact
+   (font-stretch 62%-125%), because hierarchy-by-width is the typographic idea
+   here and a static instance would silently drop it.
+   --------------------------------------------------------------------------- */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  src: url('vendor/fonts/archivo-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('vendor/fonts/jetbrainsmono-latin.woff2') format('woff2');
+}
+
+/* ---------------------------------------------------------------------------
+   1 - AXES. Ten of them, and every one is a multiplier or an attribute, never a
+   per-property override. §11b: an axis implemented property-by-property misses
+   tokens and the layout goes half-dense.
+   --------------------------------------------------------------------------- */
+:root {
+  --density: 1;        /* compact .84 | comfortable 1 | spacious 1.16   */
+  --type-scale: 1;     /* small .92   | medium 1      | large 1.14      */
+  --rk: 1;             /* radius multiplier                             */
+  --mo: 1;             /* motion multiplier - 0.001 kills travel        */
+  --surface-alpha: 1;  /* solid 1 | translucent .78                     */
+  --surface-blur: 0px;
+}
+
+[data-density='compact']    { --density: .84; }
+[data-density='comfortable']{ --density: 1; }
+[data-density='spacious']   { --density: 1.16; }
+
+[data-type-scale='small']   { --type-scale: .92; }
+[data-type-scale='medium']  { --type-scale: 1; }
+[data-type-scale='large']   { --type-scale: 1.14; }
+
+[data-radius='none']   { --rk: 0; }
+[data-radius='small']  { --rk: .55; }
+[data-radius='medium'] { --rk: 1; }
+[data-radius='large']  { --rk: 1.9; }
+[data-radius='full']   { --rk: 3.2; }
+
+/* 🔴 The axis gets its OWN token and the surface classes COMPOSE it. A
+   [data-surface-style] rule is (0,2,0) and loses SILENTLY to the
+   [data-palette][data-appearance] block below at (0,2,0)-plus-source-order.
+   Composing sidesteps the specificity race entirely. */
+[data-surface-style='translucent'] { --surface-alpha: .78; --surface-blur: 14px; }
+
+/* ---------------------------------------------------------------------------
+   2 - SPACE, TYPE, RADIUS. Everything derives from one unit, so no axis can
+   reach some tokens and miss others.
+   --------------------------------------------------------------------------- */
+:root {
+  --u: calc(0.25rem * var(--density));
+  --sp-1: var(--u);            --sp-2: calc(var(--u) * 2);
+  --sp-3: calc(var(--u) * 3);  --sp-4: calc(var(--u) * 4);
+  --sp-5: calc(var(--u) * 5);  --sp-6: calc(var(--u) * 6);
+  --sp-8: calc(var(--u) * 8);  --sp-10: calc(var(--u) * 10);
+  --sp-12: calc(var(--u) * 12);--sp-16: calc(var(--u) * 16);
+  --sp-20: calc(var(--u) * 20);
+
+  --fs-2xs:  calc(0.6875rem * var(--type-scale));
+  --fs-xs:   calc(0.75rem   * var(--type-scale));
+  --fs-sm:   calc(0.8125rem * var(--type-scale));
+  --fs-base: calc(0.9375rem * var(--type-scale));
+  --fs-md:   calc(1.0625rem * var(--type-scale));
+  --fs-lg:   calc(1.375rem  * var(--type-scale));
+  --fs-xl:   calc(1.875rem  * var(--type-scale));
+  --fs-2xl:  calc(2.75rem   * var(--type-scale));
+  --fs-hero: calc(5rem      * var(--type-scale));
+
+  --r-sm:  calc(4px * var(--rk));
+  --r-md:  calc(7px * var(--rk));
+  --r-lg:  calc(12px * var(--rk));
+  --r-pill: 999px;
+
+  /* Typeface axis. Two families actually loaded, plus a genuinely good native
+     fallback so an offline open degrades to Segoe UI Variable, never to Times.
+     🔴 The deliberate idea: hierarchy is carried by the WIDTH axis, not only by
+     size and weight. Archivo is a variable grotesque with wdth 62-125; almost no
+     UI uses width as a hierarchy device, which is exactly why it reads as chosen.
+     The catalogued alternatives (ext-uiuxpm typography.csv) were JetBrains-Mono-
+     only, Space Mono, Inter - the anti-default - and IBM Plex + JetBrains. None
+     of the four offers a width axis. */
+  --ff-display: 'Archivo', 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
+  --ff-ui:      'Archivo', 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+  --ff-mono:    'JetBrains Mono', 'Cascadia Code', Consolas, ui-monospace, monospace;
+}
+
+[data-font='native'] {
+  --ff-display: 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
+  --ff-ui:      'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ---------------------------------------------------------------------------
+   3 - MOTION. "Shutter and drain": one axis, sharp stop, nothing springs.
+   --------------------------------------------------------------------------- */
+:root {
+  --ease-mech:  cubic-bezier(.2, .9, .25, 1);
+  --ease-enter: cubic-bezier(0, 0, 0, 1);
+  --ease-exit:  cubic-bezier(.3, 0, 1, 1);
+
+  --d-instant: calc(100ms * var(--mo));
+  --d-quick:   calc(180ms * var(--mo));
+  --d-mod:     calc(320ms * var(--mo));
+  --d-enter:   calc(480ms * var(--mo));
+}
+[data-motion='reduced'] { --mo: .001; }
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='full']) { --mo: .001; }
+}
+
+/* ============================================================================
+   4 - COLOUR
+
+   REGISTERED PRIMARY: hue 128 (lime), claimed 2026-09-03 in
+   ~/.claude/palettes/project-palettes.json. Re-read 2026-09-04 before this file
+   was written (the registry has parallel writers): 12 claims, and 128 still sits
+   in the widest usable gap - taxease 104 and wakalat 152, 24 degrees each side.
+   The only wider gaps land on semantic hues (the 40-degree wrap gap midpoints on
+   ~12, beside danger 27; the 234.6-259.8 gap midpoints on ~247, beside info 240).
+   The hue was never what was wrong with direction 01, so it is not re-registered.
+
+   THREE TREATMENTS, three genuinely different hues, temperatures and moods. Only
+   the registered hue is held apart from other projects; the other two are free
+   and may overlap anything.
+
+     lime  128  neutral 128   technical, signal, alive     - registered, default
+     sky   231  neutral 225   night, systems, cold         - agrees with the shipped mark
+     plum  320  neutral 315   low-glare, late, saturated
+
+   Spread 103 / 89 / 168 degrees. 🔴 The NEUTRAL hue moves with the accent - a grey
+   that stays grey while the accent moves is the tell of a recoloured rather than a
+   re-themed interface.
+
+   SEMANTIC HUES ARE CONSTANT across all three treatments; only lightness re-solves
+   per appearance. This product declares THREE:
+
+     danger 27 . warning 85 . success 150
+
+   🔴 `info` (240) is deliberately NOT declared. windowsweep has no informational
+   state - a section is ran, skipped, refused, or needs a person - so there is
+   nothing for a blue to mean. Declaring it unused would have collided with the
+   sky treatment's accent at 9 degrees, and an unused token is not worth that.
+
+   🔴 THE ONE REAL COLLISION, STATED HONESTLY RATHER THAN ROUNDED AWAY.
+   The registered accent (128) is 22 degrees from success (150). The rule asks for
+   40 where possible; 40 is NOT possible here without either moving the registered
+   hue or moving a semantic one. Direction 01 moved success to 158, which bought 8
+   degrees and broke "semantic colours stay constant". The arithmetic:
+
+       |150 - 128| = 22 degrees        <- the honest floor. Not 30, not 40.
+
+   So the separation is carried by TWO other channels instead, both mandatory:
+     - CHROMA. Accent runs C .150-.190; success runs C .085-.090, roughly half.
+       A saturated lime and a muted sage do not read as the same colour even at
+       22 degrees.
+     - A GLYPH. `.state-ok` never renders without its tick. Colour is never the
+       only channel carrying "this succeeded".
+   ============================================================================ */
+
+/* --- defaults first (pitfall 3), = the lime/dark values ------------------- */
+:root {
+  --c-app: oklch(0.168 0.010 128);
+  --c-panel: oklch(0.222 0.012 128);
+  --c-well: oklch(0.133 0.009 128);
+  --c-bleed: oklch(0.262 0.016 128);
+  --c-line: oklch(0.318 0.014 128);
+  --c-line-strong: oklch(0.430 0.018 128);
+  --c-ink: oklch(0.962 0.008 128);
+  --c-ink-2: oklch(0.775 0.012 128);
+  --c-ink-3: oklch(0.668 0.012 128);
+  --c-accent: oklch(0.820 0.185 128);
+  --c-accent-ink: oklch(0.845 0.175 128);
+  --c-on-accent-soft: oklch(0.845 0.175 128);   /* never rebound by a band - see .badge-accent */
+  --c-accent-soft: oklch(0.300 0.055 128);
+  --c-on-accent: oklch(0.185 0.030 128);
+  --c-glow: oklch(0.820 0.185 128 / 0.16);
+  --c-bleed-ink: oklch(0.962 0.008 128);
+  --c-bleed-ink-2: oklch(0.775 0.012 128);
+  --c-bleed-ink-3: oklch(0.668 0.012 128);
+  --c-bleed-accent-ink: oklch(0.845 0.175 128);
+}
+
+/* --- lime ----------------------------------------------------------------- */
+[data-palette='lime'][data-appearance='light'] {
+  /* the bleed band INVERTS its surface, so it needs its own ink set - dark text on a
+     dark band measured 1.05:1 before this existed, on every page, in light mode */
+  --c-bleed-ink: oklch(0.968 0.009 128);
+  --c-bleed-ink-2: oklch(0.800 0.013 128);
+  --c-bleed-ink-3: oklch(0.700 0.013 128);
+  --c-bleed-accent-ink: oklch(0.840 0.170 128);
+  --c-app: oklch(0.973 0.007 128);
+  --c-panel: oklch(1 0 0);
+  --c-well: oklch(0.941 0.010 128);
+  --c-bleed: oklch(0.212 0.016 128);
+  --c-line: oklch(0.886 0.011 128);
+  --c-line-strong: oklch(0.788 0.016 128);
+  --c-ink: oklch(0.232 0.017 128);
+  --c-ink-2: oklch(0.462 0.015 128);
+  --c-ink-3: oklch(0.508 0.014 128);
+  --c-accent: oklch(0.512 0.145 128);
+  --c-accent-ink: oklch(0.462 0.145 128);
+  --c-on-accent-soft: oklch(0.462 0.145 128);   /* never rebound by a band - see .badge-accent */
+  --c-accent-soft: oklch(0.930 0.055 128);
+  --c-on-accent: oklch(0.995 0.005 128);
+  --c-glow: oklch(0.512 0.145 128 / 0.12);
+}
+[data-palette='lime'][data-appearance='dark'] {
+  /* the bleed band INVERTS its surface, so it needs its own ink set - dark text on a
+     dark band measured 1.05:1 before this existed, on every page, in light mode */
+  --c-bleed-ink: oklch(0.962 0.008 128);
+  --c-bleed-ink-2: oklch(0.775 0.012 128);
+  --c-bleed-ink-3: oklch(0.668 0.012 128);
+  --c-bleed-accent-ink: oklch(0.845 0.175 128);
+  --c-app: oklch(0.168 0.010 128);
+  --c-panel: oklch(0.222 0.012 128);
+  --c-well: oklch(0.133 0.009 128);
+  --c-bleed: oklch(0.262 0.016 128);
+  --c-line: oklch(0.318 0.014 128);
+  --c-line-strong: oklch(0.430 0.018 128);
+  --c-ink: oklch(0.962 0.008 128);
+  --c-ink-2: oklch(0.775 0.012 128);
+  --c-ink-3: oklch(0.668 0.012 128);
+  --c-accent: oklch(0.820 0.185 128);
+  --c-accent-ink: oklch(0.845 0.175 128);
+  --c-on-accent-soft: oklch(0.845 0.175 128);   /* never rebound by a band - see .badge-accent */
+  --c-accent-soft: oklch(0.300 0.055 128);
+  --c-on-accent: oklch(0.185 0.030 128);
+  --c-glow: oklch(0.820 0.185 128 / 0.16);
+}
+
+/* --- sky ------------------------------------------------------------------ */
+[data-palette='sky'][data-appearance='light'] {
+  /* the bleed band INVERTS its surface, so it needs its own ink set - dark text on a
+     dark band measured 1.05:1 before this existed, on every page, in light mode */
+  --c-bleed-ink: oklch(0.966 0.011 225);
+  --c-bleed-ink-2: oklch(0.798 0.017 225);
+  --c-bleed-ink-3: oklch(0.698 0.017 225);
+  --c-bleed-accent-ink: oklch(0.812 0.128 231);
+  --c-app: oklch(0.972 0.008 225);
+  --c-panel: oklch(1 0 0);
+  --c-well: oklch(0.938 0.012 225);
+  --c-bleed: oklch(0.208 0.030 225);
+  --c-line: oklch(0.882 0.014 225);
+  --c-line-strong: oklch(0.780 0.020 225);
+  --c-ink: oklch(0.228 0.024 225);
+  --c-ink-2: oklch(0.458 0.020 225);
+  --c-ink-3: oklch(0.505 0.019 225);
+  --c-accent: oklch(0.508 0.140 231);
+  --c-accent-ink: oklch(0.462 0.140 231);
+  --c-on-accent-soft: oklch(0.462 0.140 231);   /* never rebound by a band - see .badge-accent */
+  --c-accent-soft: oklch(0.928 0.045 231);
+  --c-on-accent: oklch(0.995 0.003 231);
+  --c-glow: oklch(0.508 0.140 231 / 0.12);
+}
+[data-palette='sky'][data-appearance='dark'] {
+  /* the bleed band INVERTS its surface, so it needs its own ink set - dark text on a
+     dark band measured 1.05:1 before this existed, on every page, in light mode */
+  --c-bleed-ink: oklch(0.960 0.010 225);
+  --c-bleed-ink-2: oklch(0.772 0.018 225);
+  --c-bleed-ink-3: oklch(0.665 0.018 225);
+  --c-bleed-accent-ink: oklch(0.820 0.130 231);
+  --c-app: oklch(0.162 0.016 225);
+  --c-panel: oklch(0.218 0.020 225);
+  --c-well: oklch(0.126 0.014 225);
+  --c-bleed: oklch(0.258 0.026 225);
+  --c-line: oklch(0.315 0.022 225);
+  --c-line-strong: oklch(0.428 0.028 225);
+  --c-ink: oklch(0.960 0.010 225);
+  --c-ink-2: oklch(0.772 0.018 225);
+  --c-ink-3: oklch(0.665 0.018 225);
+  --c-accent: oklch(0.790 0.135 231);
+  --c-accent-ink: oklch(0.820 0.130 231);
+  --c-on-accent-soft: oklch(0.820 0.130 231);   /* never rebound by a band - see .badge-accent */
+  --c-accent-soft: oklch(0.298 0.058 231);
+  --c-on-accent: oklch(0.175 0.035 231);
+  --c-glow: oklch(0.790 0.135 231 / 0.16);
+}
+
+/* --- plum ----------------------------------------------------------------- */
+[data-palette='plum'][data-appearance='light'] {
+  /* the bleed band INVERTS its surface, so it needs its own ink set - dark text on a
+     dark band measured 1.05:1 before this existed, on every page, in light mode */
+  --c-bleed-ink: oklch(0.967 0.011 315);
+  --c-bleed-ink-2: oklch(0.799 0.017 315);
+  --c-bleed-ink-3: oklch(0.699 0.017 315);
+  --c-bleed-accent-ink: oklch(0.822 0.140 320);
+  --c-app: oklch(0.972 0.008 315);
+  --c-panel: oklch(1 0 0);
+  --c-well: oklch(0.940 0.012 315);
+  --c-bleed: oklch(0.212 0.028 315);
+  --c-line: oklch(0.884 0.014 315);
+  --c-line-strong: oklch(0.784 0.020 315);
+  --c-ink: oklch(0.232 0.024 315);
+  --c-ink-2: oklch(0.462 0.020 315);
+  --c-ink-3: oklch(0.505 0.019 315);
+  --c-accent: oklch(0.518 0.172 320);
+  --c-accent-ink: oklch(0.470 0.172 320);
+  --c-on-accent-soft: oklch(0.470 0.172 320);   /* never rebound by a band - see .badge-accent */
+  --c-accent-soft: oklch(0.932 0.050 320);
+  --c-on-accent: oklch(0.996 0.004 320);
+  --c-glow: oklch(0.518 0.172 320 / 0.12);
+}
+[data-palette='plum'][data-appearance='dark'] {
+  /* the bleed band INVERTS its surface, so it needs its own ink set - dark text on a
+     dark band measured 1.05:1 before this existed, on every page, in light mode */
+  --c-bleed-ink: oklch(0.962 0.010 315);
+  --c-bleed-ink-2: oklch(0.776 0.018 315);
+  --c-bleed-ink-3: oklch(0.668 0.018 315);
+  --c-bleed-accent-ink: oklch(0.812 0.145 320);
+  --c-app: oklch(0.166 0.016 315);
+  --c-panel: oklch(0.222 0.020 315);
+  --c-well: oklch(0.130 0.014 315);
+  --c-bleed: oklch(0.262 0.026 315);
+  --c-line: oklch(0.318 0.022 315);
+  --c-line-strong: oklch(0.432 0.028 315);
+  --c-ink: oklch(0.962 0.010 315);
+  --c-ink-2: oklch(0.776 0.018 315);
+  --c-ink-3: oklch(0.668 0.018 315);
+  --c-accent: oklch(0.782 0.150 320);
+  --c-accent-ink: oklch(0.812 0.145 320);
+  --c-on-accent-soft: oklch(0.812 0.145 320);   /* never rebound by a band - see .badge-accent */
+  --c-accent-soft: oklch(0.302 0.062 320);
+  --c-on-accent: oklch(0.180 0.035 320);
+  --c-glow: oklch(0.782 0.150 320 / 0.16);
+}
+
+/* --- semantic: CONSTANT hues, lightness re-solved per appearance ----------- */
+:root,
+[data-appearance='dark'] {
+  --c-danger: oklch(0.705 0.180 27);
+  --c-danger-soft: oklch(0.298 0.070 27);
+  --c-danger-ink: oklch(0.800 0.130 27);
+  --c-warn: oklch(0.788 0.140 85);
+  --c-warn-soft: oklch(0.300 0.055 85);
+  --c-warn-ink: oklch(0.855 0.115 85);
+  /* 🔴 chroma .090 against the accent's .185 - half. See the collision note above. */
+  --c-ok: oklch(0.762 0.090 150);
+  --c-ok-soft: oklch(0.288 0.040 150);
+  --c-ok-ink: oklch(0.828 0.078 150);
+  --c-on-semantic: oklch(0.165 0.020 27);
+}
+[data-appearance='light'] {
+  --c-danger: oklch(0.528 0.196 27);
+  --c-danger-soft: oklch(0.945 0.036 27);
+  --c-danger-ink: oklch(0.478 0.180 27);
+  --c-warn: oklch(0.560 0.130 85);
+  --c-warn-soft: oklch(0.948 0.052 85);
+  --c-warn-ink: oklch(0.472 0.108 85);
+  /* 🔴 chroma .085 against the accent's .145 - see the collision note above. */
+  --c-ok: oklch(0.502 0.085 150);
+  --c-ok-soft: oklch(0.942 0.038 150);
+  --c-ok-ink: oklch(0.448 0.080 150);
+  --c-on-semantic: oklch(0.996 0.003 27);
+}
+
+/* ---------------------------------------------------------------------------
+   5 - THE TIER RAMP. One canonical scale per metric (d3-charts): tier colour
+   means the same thing on a treemap tile, a badge and a table row, because all
+   three read these tokens.
+
+   It is ORDINAL, not categorical - the tiers form a real risk ladder from
+   "nothing is deleted" to "gone for good" - so it is built from the semantic
+   colours plus the accent rather than from six arbitrary hues. Colour is never
+   the only channel: every tier also carries its NAME in a badge, and `permanent`
+   additionally carries a hatch pattern on its tiles.
+   --------------------------------------------------------------------------- */
+:root {
+  --c-tier-config:    var(--c-ink-3);        /* settings only, deletes nothing  */
+  --c-tier-report:    var(--c-line-strong);  /* reports only, deletes nothing   */
+  --c-tier-rebuilds:  var(--c-accent);       /* regenerates on next use         */
+  --c-tier-slow:      var(--c-accent-soft);  /* regenerates, but slowly         */
+  --c-tier-recycle:   var(--c-warn);         /* recoverable from the bin        */
+  --c-tier-permanent: var(--c-danger);       /* gone                            */
+}
+
+/* ---------------------------------------------------------------------------
+   6 - ELEVATION. 🔴 A genuine step PLUS a border PLUS inner light on dark and a
+   real shadow on light (pitfall 15). Two or three points of lightness collapse
+   into mud and every reviewer reads it as "flat" without being able to say why -
+   which is a fair description of half of what "very basic" meant.
+   --------------------------------------------------------------------------- */
+:root {
+  --wm-panel-shadow: 0 1px 0 0 oklch(1 0 0 / .04) inset, 0 1px 2px oklch(0 0 0 / .30), 0 8px 24px -12px oklch(0 0 0 / .45);
+  --wm-raise-shadow: 0 1px 0 0 oklch(1 0 0 / .06) inset, 0 4px 10px oklch(0 0 0 / .34), 0 18px 40px -18px oklch(0 0 0 / .55);
+}
+[data-appearance='light'] {
+  --wm-panel-shadow: 0 1px 2px oklch(0 0 0 / .05), 0 4px 14px -6px oklch(0 0 0 / .10);
+  --wm-raise-shadow: 0 2px 6px oklch(0 0 0 / .07), 0 16px 34px -14px oklch(0 0 0 / .17);
+}

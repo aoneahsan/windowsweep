@@ -368,7 +368,7 @@
           "id": "P6.design-dummy",
           "title": "Design argument and static click dummy for every desktop screen, three treatments, light and dark",
           "status": "in_progress",
-          "note": "A1 + A2 delivered: desktop/design/README.md (the written design argument) and desktop/design/click-dummy/home.html - the app's primary screen with all three colour treatments (lime 128 registered, sky 231 matching the shipped mark, plum 320) in light and dark, the one theme control covering six axes applied pre-paint and persisted, and a ?treatment=&appearance= override so a specific look can be linked. GATE 1 is the owner's: MANUAL-TASKS row 17. A3 (component library) and A4 (the remaining pages, wired) follow his reply. Nothing else is created under desktop/ until gate 3 is recorded",
+          "note": "Direction 01 (\"instrument panel\") was REJECTED by the owner on 2026-09-04: \"very basic and not attractive at all... i do not like it at all\". Archived byte-identical at desktop/design/windowsweep-click-dummy/_rejected/01-instrument-panel-2026-09-04/ with a five-point post-mortem - the root cause was a wrong design read (dashboard dials on a premium-consumer surface) plus the two skills whose omission is a recorded cause of exactly this rejection. Direction 02 \"Reclaim\" now stands: 3 screens (Home 14 zones, Sections, Run) x 3 treatments x light/dark, a D3 treemap as the signature element, Archivo's width axis as the hierarchy device, 10-axis pre-paint theme control, fully offline. Verified: 5,160 text nodes measured for contrast across 18 combinations -> 0 failures (after fixing 3 real root causes it found), 4 gates green at 1440 and 390 with each proven red on its own planted defect, 6 interactive flows driven end to end. GATE 1 is the owner's: MANUAL-TASKS row 17. Nothing is created under desktop/ beyond design/ until gate 3 is recorded",
           "awaitingUser": false
         },
         {
@@ -476,7 +476,13 @@
       "phase": "P6-A",
       "summary": "Design argument and click-dummy A1+A2: the desktop Home screen in three treatments, light and dark, with the six-axis theme control applied pre-paint and persisted through a wsStore wrapper. Rendered and verified in the automation Chrome. Stopped at GATE 1 - the click-dummy contract makes the owner's written approval the only thing that advances it, and forbids any app scaffold under desktop/ before gate 3",
       "commit": "pending"
+    },
+    {
+      "date": "2026-09-04",
+      "phase": "P6-A",
+      "summary": "Desktop click dummy direction 01 rejected and archived; direction 02 \"Reclaim\" built and verified - 3 screens, 3 treatments, light and dark, offline, with the mandatory external design-craft set copied into the project first",
+      "commit": "pending"
     }
   ],
-  "resumeInstructions": "1) Read CLAUDE.md, remaining-work.md and this tracker. 2) Find the first pending sub-task (owner rows are blocked + awaitingUser: prepare, never execute). 3) Do that item or phase only, obeying the IRON rules. 4) Run the item's gates. 5) Flip the sub-task in the same commit as the work, bump lastUpdated, append a runHistory row with the SHA. 6) One commit, push to o main, quote any \"Bypassed rule violations\" line. SESSION 1 (2026-09-03) closed P0 and P2 and published 1.0.1. SESSION 2 (2026-09-04) closed P5 and published 1.1.0: sections 22-25, --select/--select-file, --notify, the --json additions and --list --json; self-test 124 -> 151. RW-064 and RW-065 stay in_progress and RW-066 is blocked, all three waiting on the owner's candidate-path probe (MANUAL-TASKS row 20). SESSION 3 STARTS AT P6.design-dummy and follows section 12 Block N of C:/Users/PC/.claude/plans/please-plan-and-get-agile-fairy.md; P6.firebase-vault stays blocked because provisioning needs npx firebase-tools, which is a download gated on TASK-001."
+  "resumeInstructions": "P6.design-dummy is at GATE 1 with direction 02. Only the owner's written words advance it (MANUAL-TASKS row 17). On approval: A3 the component library (8 gallery files, each with a playground), then A4+ the remaining screens wired. On rejection: archive to _rejected/02-reclaim-<date>/ with his words verbatim and build a genuinely new direction. Nothing under desktop/ beyond design/ until gate 3 is recorded."
 }

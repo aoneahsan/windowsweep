@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>windowsweep - Sections</title>
+<meta name="description" content="windowsweep desktop, click dummy - the section catalogue. The cockpit density regime.">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="shared.css">
+<script src="app.js"></script>
+</head>
+<body>
+
+<div class="app">
+  <header class="titlebar" data-ws-titlebar></header>
+
+  <div class="shell">
+    <nav class="rail" data-ws-rail aria-label="Main"></nav>
+
+    <main class="content">
+
+      <!-- The COCKPIT regime: VARIANCE 5 / MOTION 4 / DENSITY 7. The same tokens
+           as Home, composed tighter. High variance in a data table is a defect,
+           not personality - so it is not applied here. -->
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <div style="display:flex;flex-wrap:wrap;gap:var(--sp-4);align-items:flex-end">
+            <div>
+              <h1 class="t-xl wide">Sections</h1>
+              <p class="t-xs ink-3">The catalogue is a frozen public contract - a number is never reused,
+                and a retired section becomes a no-op that says so.</p>
+            </div>
+            <div style="margin-inline-start:auto;text-align:end">
+              <p class="num t-xl wide accent-ink" data-ws-text="catalogueTotal">0 B</p>
+              <p class="t-2xs ink-3">reclaimable across every section</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band band-well band-tight" style="position:sticky;top:0;z-index:4">
+        <div class="wrap">
+          <div class="filters">
+            <span class="caps ink-3" style="margin-inline-end:var(--sp-2)">Show</span>
+            <button class="fchip" data-ws-filter="all" aria-pressed="true">All 26</button>
+            <button class="fchip" data-ws-filter="safe" aria-pressed="false">Safe batch</button>
+            <button class="fchip" data-ws-filter="interactive" aria-pressed="false">Needs a person</button>
+            <button class="fchip" data-ws-filter="admin" aria-pressed="false">Needs admin</button>
+            <button class="fchip" data-ws-filter="deep" aria-pressed="false">Deep</button>
+            <button class="fchip" data-ws-filter="report" aria-pressed="false">Report only</button>
+            <button class="fchip" data-ws-filter="dev" aria-pressed="false">Developer</button>
+            <input class="field" type="search" placeholder="Filter by name or key"
+                   data-ws-search style="max-width:16rem;margin-inline-start:auto">
+          </div>
+        </div>
+      </section>
+
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <div class="panel xscroll" style="overflow:visible">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th style="width:2.4rem"><span class="visually-hidden">Select</span></th>
+                  <th style="width:3rem">#</th>
+                  <th>Section</th>
+                  <th style="width:7.5rem">Tier</th>
+                  <th style="width:6rem">Batch</th>
+                  <th style="width:5rem">Needs</th>
+                  <th style="width:6rem" class="num-cell">Reclaimable</th>
+                  <th style="width:2.5rem"><span class="visually-hidden">Expand</span></th>
+                </tr>
+              </thead>
+              <tbody data-ws-sections></tbody>
+            </table>
+          </div>
+          <p class="t-2xs ink-3" style="margin-top:var(--sp-3)">
+            <strong>Batch policy</strong> decides what <code class="mono">--all --yes</code> is allowed to do.
+            <code class="mono">safe</code> runs unattended &middot;
+            <code class="mono">optin</code> needs the section named &middot;
+            <code class="mono">deep</code> needs <code class="mono">--i-understand-deep</code> as well &middot;
+            <code class="mono">interactive</code> needs a person, or a selection passed with
+            <code class="mono">--select-file</code>.
+          </p>
+        </div>
+      </section>
+
+      <div style="height:var(--sp-16)"></div>
+    </main>
+  </div>
+
+  <div class="selbar" data-ws-selbar hidden>
+    <span class="num t-md wide" data-ws-text="selCount">0</span>
+    <span class="t-sm ink-2">sections selected</span>
+    <span class="tb-sep"></span>
+    <span class="num t-md wide accent-ink" data-ws-text="selBytes">0 B</span>
+    <span class="t-xs ink-3 only-wide" data-ws-text="selWarn"></span>
+    <div style="margin-inline-start:auto;display:flex;gap:var(--sp-2)">
+      <button class="btn btn-sm" data-ws-action="selClear">Clear</button>
+      <button class="btn btn-sm" data-ws-action="selDry">Dry run</button>
+      <button class="btn btn-sm btn-primary" data-ws-action="selRun">Run selected</button>
+    </div>
+  </div>
+
+  <footer class="statusbar">
+    <span class="dot" aria-hidden="true"></span>
+    <span>engine <span class="mono" data-ws-text="engineVersion">1.1.0</span></span>
+    <span class="only-wide"><span class="num" data-ws-text="shownCount">26</span> of 26 shown</span>
+    <span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span>
+  </footer>
+</div>
+
+<script src="vendor/d3-color.js"></script>
+<script src="vendor/d3-interpolate.js"></script>
+<script src="vendor/d3-array.js"></script>
+<script src="vendor/d3-path.js"></script>
+<script src="vendor/d3-format.js"></script>
+<script src="vendor/d3-time.js"></script>
+<script src="vendor/d3-time-format.js"></script>
+<script src="vendor/d3-scale.js"></script>
+<script src="vendor/d3-shape.js"></script>
+<script src="vendor/d3-hierarchy.js"></script>
+<script src="seed.js"></script>
+<script src="db.js"></script>
+<script src="reclaim-map.js"></script>
+<script src="page-sections.js"></script>
+<script src="wire.js"></script>
+<script src="demo.js"></script>
+</body>
+</html>

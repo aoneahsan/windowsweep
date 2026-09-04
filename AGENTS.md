@@ -1,6 +1,6 @@
 # windowsweep - Project Rules
 
-Last Updated: 2026-09-04 (session 2: 1.1.0 published - sections 22-25, scripted selection, the JSON contract) · Context pass: 2026-09-03 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
+Last Updated: 2026-09-04 (session 3: desktop click dummy direction 01 rejected and archived; direction 02 "Reclaim" built and at GATE 1) · Context pass: 2026-09-03 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
 
 Safe, developer-aware Windows cleanup CLI: a Windows PowerShell 5.1 engine behind a dependency-free Node
 launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macleanup` (Bash). Public repo
@@ -15,30 +15,38 @@ launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macl
 - Dependency and manifest record: `docs/PACKAGES.md`
 - Follow-ups the agent owes this project: `PENDING-TASKS.md` (root)
 
-## Current state (end of session 2, 2026-09-04)
+## Current state (session 3, 2026-09-04)
 
 **1.1.0 is published on npm and equals `main`'s engine** (built from `3c4d54e`; tags `v1.0.0`, `v1.0.1`,
-`v1.1.0`, each with a GitHub Release, and every release from here gets both). It added four sections -
-**22** global packages audit, **23** orphaned application data, **24** installed programs not modified for
-N+ days, **25** startup items - plus `--select` / `--select-file`, `--notify`, `candidates[]` / `targets[]`
-and `##windowsweep` progress lines in `--json`, and `--list --json`. The self-test runs **151 checks**; each
-new one was proved red on a planted defect. A documentation site lives at `aoneahsan/windowsweep-docs`
-(Docusaurus on GitHub Pages, deployed and green) - its domain still returns 000, so `package.json`
-`homepage`, the README links and `WS_DOCS` still point at GitHub and switch only after it probes 200.
+`v1.1.0`, each with a GitHub Release, and every release from here gets both). Sections 0-25, `--select` /
+`--select-file`, `--notify`, `candidates[]` / `targets[]` and `##windowsweep` progress lines in `--json`,
+`--list --json`. The self-test runs **151 checks**. A documentation site lives at `aoneahsan/windowsweep-docs`
+(Docusaurus on GitHub Pages, deployed and green) - its domain still returns 000, so `package.json` `homepage`,
+the README links and `WS_DOCS` still point at GitHub and switch only after it probes 200.
 
-Open: **P6**, the desktop app (P6-A now; P6-B behind the download go-ahead). Phase P1 is entirely owner-run.
+Open: **P6**, the desktop app. 🔴 **Its click dummy is at GATE 1 with direction 02, "Reclaim".** Direction 01
+was rejected by the owner on 2026-09-04 (*"very basic and not attractive at all"*) and is archived
+byte-identical, with a five-point post-mortem, at
+`desktop/design/windowsweep-click-dummy/_rejected/01-instrument-panel-2026-09-04/`. The root cause was a wrong
+design read - dashboard dials on what is really a premium-consumer surface - plus the two craft skills whose
+omission is a recorded cause of exactly that rejection. Direction 02 is three screens (Home in 14 zones,
+Sections, Run) x three treatments x light and dark, fully interactive, **entirely offline**, with a D3 treemap
+as the signature element. **Only the owner's written words advance it** (`docs/MANUAL-TASKS.md` row 17), and
+nothing is created under `desktop/` beyond `design/` until gate 3 is recorded.
+
 🔴 **P5 is closed but two of its rows are not:** RW-064 and RW-065 shipped only their verified halves and
 RW-066 was **deferred, not shipped**, because that software is not installed on this machine. What is
 outstanding is a documented candidate table in `docs/sections.md` plus one owner probe (`MANUAL-TASKS`
 row 20) - not code. **Section 26 is still free.** `C:\Intel` was inspected and **rejected**: it holds
 `Thunderbolt` and driver support content, not extraction leftovers.
 
-Owner decisions of 2026-09-03, recorded in full in `docs/PROJECT-CONTEXT.md`: "feature-complete" means the
-1.0 catalogue plus the 1.1 family-parity features; the docs site is in scope; the desktop app is a Tauri
-wrapper in `desktop/` with **optional Google sign-in for sync only and runs always free** (no paid tier, no
-plan set - an explicit exemption), **full fleet observability behind a first-run consent dialog** while the
-CLI keeps zero network calls; distribution stays npm and git clone only; and **no toolchain or dependency
-downloads happen on this machine until he gives the go-ahead** (`PENDING-TASKS.md` TASK-001).
+Phase P1 is entirely owner-run. Owner decisions of 2026-09-03, recorded in full in
+`docs/PROJECT-CONTEXT.md`: "feature-complete" means the 1.0 catalogue plus the 1.1 family-parity features;
+the docs site is in scope; the desktop app is a Tauri wrapper in `desktop/` with **optional Google sign-in for
+sync only and runs always free** (no paid tier, no plan set - an explicit exemption), **full fleet
+observability behind a first-run consent dialog** while the CLI keeps zero network calls; distribution stays
+npm and git clone only; and **no toolchain or dependency downloads happen on this machine until he gives the
+go-ahead** (`PENDING-TASKS.md` TASK-001).
 
 ## Per-Project Stack Override (binding)
 
@@ -51,7 +59,7 @@ downloads happen on this machine until he gives the go-ahead** (`PENDING-TASKS.m
 | Typecheck / lint / build | no build output, so the fleet source-map rule is satisfied by construction; PSScriptAnalyzer is the lint |
 | UI rules | none apply to the CLI - no frontend, i18n surface, theme, plans or admin panel. They apply to the desktop app (P6) |
 | Docs site | `aoneahsan/windowsweep-docs` at `D:\work\windowsweep-docs`: Docusaurus 3 + React 19 + TS ~6.0.3 + yarn 4, GitHub Pages only, ports 5972/5973. Its pages MIRROR `docs/` - fix a wording error here first, then re-mirror |
-| Desktop app (P6) | `desktop/` in this repo: Tauri 2 + React 19 + Vite + Tailwind v4 + React Aria, port 5974, identifier `com.aoneahsan.windowsweep`. It runs the bundled script with `--json` and reimplements no cleanup logic |
+| Desktop app (P6) | `desktop/` in this repo: Tauri 2 + React 19 + Vite + Tailwind v4 + React Aria, port 5974, identifier `com.aoneahsan.windowsweep`. It runs the bundled script with `--json` and reimplements no cleanup logic. Only `desktop/design/` exists so far - the argument in its `README.md` and the click dummy in `windowsweep-click-dummy/` (plain CSS + vendored D3, zero network, `tokens.css` promotes into the app in ONE direction). External design-craft skills are vendored per-project in `.claude/skills/` - see `EXTERNAL-SKILLS.md` |
 
 ## IRON rules for this repository
 

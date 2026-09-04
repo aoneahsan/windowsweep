@@ -77,6 +77,33 @@ Verified Against: commit 84c732f on `main`, 2026-09-03 (1.0.0 released the same 
 - **After 1.1.0, continue straight into P6-A** on Opus - the design argument, the click dummy, the `desktop/`
   code and its CI workflows - with no review round in between.
 
+### Session 5 decision (2026-09-04, later the same day) - the desktop UI direction
+
+**Direction 01 of the desktop click dummy was REJECTED**, the same day it was delivered. His words, verbatim:
+
+> *"about the desktop app the UI UX is very basic and not attractive at all, please plan and create a great
+> UI UX for the desktop app, use click-dummy custom skill, create a new version, this one is rejected, i do
+> not likeit at all"*
+
+The page is archived byte-identical at
+`desktop/design/windowsweep-click-dummy/_rejected/01-instrument-panel-2026-09-04/` with a five-point
+post-mortem. The durable lesson, recorded because it will apply to the next design phase too:
+
+- 🔴 **The design read is the decision that matters, and it was wrong.** windowsweep-desktop was read as a
+  dashboard / trust-first surface and given VARIANCE 3-5 / MOTION 2-4 / DENSITY 7-8. It is a **premium
+  consumer utility opened for two minutes a month**, where being impressive *is* the product. The correct
+  dials are 7 / 6 / 3 on the moment screens, with cockpit density confined to the catalogue and the picker.
+- 🔴 **The external design-craft set is mandatory before a design phase and was not copied.**
+  `-design-process` and `-cloned-skills-library` were both skipped, and their omission is a *recorded* cause
+  of this exact rejection elsewhere in the fleet. They now live in `.claude/skills/` (`EXTERNAL-SKILLS.md`).
+
+**Direction 02, "Reclaim", now stands** and is at GATE 1: three screens x three treatments x light/dark,
+a D3 treemap as the signature element, Archivo's width axis as the hierarchy device, a ten-axis pre-paint
+theme control, and **zero network dependencies** - it opens by double-click, offline. Argument:
+`desktop/design/README.md`. The registered hue (128, lime) was re-checked and kept; the hue was never the
+problem. `info` is deliberately not declared as a semantic colour, and the accent/success separation is
+22 degrees carried by chroma and a glyph, with the honest floor written into `tokens.css`.
+
 ### Session 3 decisions (2026-09-03) - the desktop app, downloads and telemetry
 
 Recorded verbatim; they govern phase P6 and every session until the owner changes them.

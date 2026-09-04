@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="en" data-treatment="lime" data-appearance="light" data-density="comfortable" data-radius="small" data-text="normal" data-motion="on">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>windowsweep desktop - Home</title>
+
+<!--
+  A1 + A2 of the click dummy: the app's primary screen, plus all three colour treatments in light and dark
+  and the one theme control that switches every axis. The reasoning is in ../README.md.
+
+  The state layer is a wsStore wrapper over localStorage rather than strata-storage: this is static HTML with
+  no bundler, and no dependency may be downloaded on this network until the owner's go-ahead. The wrapper has
+  the same shape, so the real app swaps the implementation and nothing else changes.
+-->
+
+<script>
+  // PRE-PAINT. Both attributes are always written explicitly, never left to a default, so every rule can be
+  // an equal-specificity [data-treatment][data-appearance] pair. Relying on cascade order between two
+  // (0,2,0) selectors is the silent theming failure this avoids.
+  (function () {
+    var KEY = 'windowsweep.dummy.v1';
+    var d = {};
+    try { d = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { d = {}; }
+    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // A query string wins over the stored value and is then stored, so a specific look can be linked:
+    //   home.html?treatment=sky&appearance=dark
+    try {
+      var q = new URLSearchParams(location.search);
+      ['treatment', 'appearance', 'density', 'radius', 'text', 'motion'].forEach(function (k) {
+        if (q.has(k)) { d[k] = q.get(k); }
+      });
+      if (location.search) { localStorage.setItem(KEY, JSON.stringify(d)); }
+    } catch (e) { /* a file:// origin with storage disabled still renders the defaults */ }
+    var appearance = d.appearance || 'system';
+    var root = document.documentElement;
+    root.setAttribute('data-treatment', d.treatment || 'lime');
+    root.setAttribute('data-appearance', appearance === 'system' ? (prefersDark ? 'dark' : 'light') : appearance);
+    root.setAttribute('data-appearance-pref', appearance);
+    root.setAttribute('data-density', d.density || 'comfortable');
+    root.setAttribute('data-radius', d.radius || 'small');
+    root.setAttribute('data-text', d.text || 'normal');
+    root.setAttribute('data-motion', reduce ? 'off' : (d.motion || 'on'));
+  })();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+<style type="text/tailwindcss">
+  @custom-variant dark (&:where([data-appearance=dark], [data-appearance=dark] *));
+
+  /* --------------------------------------------------------------------------------------------------
+     Semantic vocabulary. @theme inline resolves one level further, so every utility dereferences the
+     --v-* variable and a whole treatment is one scoped block below.
+     -------------------------------------------------------------------------------------------------- */
+  @theme inline {
+    --font-sans: 'Inter', 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Cascadia Code', Consolas, ui-monospace, monospace;
+
+    --spacing: calc(0.25rem * var(--density-scale));
+    --radius-panel: calc(0.375rem * var(--radius-scale));
+    --radius-control: calc(0.25rem * var(--radius-scale));
+    --radius-pill: 9999px;
+
+    /* Two sizes below Tailwind's xs recur throughout a dense tool, so they are tokens, not
+       arbitrary values. Same for the caps tracking used on every section eyebrow. */
+    --text-2xs: 0.6875rem;
+    --text-2xs--line-height: 1.05rem;
+    --text-3xs: 0.625rem;
+    --text-3xs--line-height: 0.95rem;
+    --tracking-caps: 0.12em;
+
+    --color-app: var(--v-app);
+    --color-panel: var(--v-panel);
+    --color-raised: var(--v-raised);
+    --color-sunken: var(--v-sunken);
+    --color-line: var(--v-line);
+    --color-line-strong: var(--v-line-strong);
+    --color-ink: var(--v-ink);
+    --color-muted: var(--v-muted);
+    --color-faint: var(--v-faint);
+    --color-accent: var(--v-accent);
+    --color-accent-hi: var(--v-accent-hi);
+    --color-accent-soft: var(--v-accent-soft);
+    --color-on-accent: var(--v-on-accent);
+    --color-ok: var(--v-ok);
+    --color-ok-soft: var(--v-ok-soft);
+    --color-warn: var(--v-warn);
+    --color-warn-soft: var(--v-warn-soft);
+    --color-danger: var(--v-danger);
+    --color-danger-soft: var(--v-danger-soft);
+
+    --ease-out-soft: cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+
+  /* Axes. Numeric axes are calc() multipliers so they reach every token they govern structurally,
+     rather than per-property where one is always missed. */
+  :root { --density-scale: 1; --radius-scale: 1; --text-scale: 1; --motion-scale: 1; }
+  :root[data-density='compact']    { --density-scale: 0.82; }
+  :root[data-radius='none']        { --radius-scale: 0; }
+  :root[data-radius='round']       { --radius-scale: 2.4; }
+  :root[data-text='large']         { --text-scale: 1.12; }
+  :root[data-text='larger']        { --text-scale: 1.25; }
+  :root[data-motion='off']         { --motion-scale: 0; }
+  html { font-size: calc(16px * var(--text-scale)); }
+
+  /* ---- LIME (registered, hue 128) ------------------------------------------------------------------ */
+  :root[data-treatment='lime'][data-appearance='light'] {
+    --v-app: oklch(0.972 0.006 128);   --v-panel: oklch(0.998 0.003 128);  --v-raised: oklch(0.986 0.005 128);
+    --v-sunken: oklch(0.951 0.008 128); --v-line: oklch(0.906 0.010 128);  --v-line-strong: oklch(0.828 0.014 128);
+    --v-ink: oklch(0.238 0.018 128);   --v-muted: oklch(0.478 0.016 128);  --v-faint: oklch(0.622 0.012 128);
+    --v-accent: oklch(0.552 0.145 128); --v-accent-hi: oklch(0.482 0.140 128); --v-accent-soft: oklch(0.940 0.050 128);
+    --v-on-accent: oklch(0.995 0.010 128);
+    --v-ok: oklch(0.520 0.120 158);    --v-ok-soft: oklch(0.942 0.045 158);
+    --v-warn: oklch(0.600 0.140 75);   --v-warn-soft: oklch(0.950 0.055 75);
+    --v-danger: oklch(0.528 0.190 25); --v-danger-soft: oklch(0.950 0.045 25);
+  }
+  :root[data-treatment='lime'][data-appearance='dark'] {
+    --v-app: oklch(0.170 0.010 128);   --v-panel: oklch(0.216 0.011 128);  --v-raised: oklch(0.248 0.012 128);
+    --v-sunken: oklch(0.134 0.010 128); --v-line: oklch(0.310 0.013 128);  --v-line-strong: oklch(0.422 0.016 128);
+    --v-ink: oklch(0.940 0.010 128);   --v-muted: oklch(0.722 0.014 128);  --v-faint: oklch(0.578 0.014 128);
+    --v-accent: oklch(0.855 0.190 128); --v-accent-hi: oklch(0.905 0.200 128); --v-accent-soft: oklch(0.292 0.055 128);
+    --v-on-accent: oklch(0.190 0.030 128);   /* DARK on-accent: white on lime-400 is about 1.7:1 */
+    --v-ok: oklch(0.782 0.150 158);    --v-ok-soft: oklch(0.272 0.050 158);
+    --v-warn: oklch(0.822 0.150 75);   --v-warn-soft: oklch(0.292 0.055 75);
+    --v-danger: oklch(0.702 0.180 25); --v-danger-soft: oklch(0.292 0.060 25);
+  }
+
+  /* ---- SKY (hue 231 - agrees with the shipped logo mark) -------------------------------------------- */
+  :root[data-treatment='sky'][data-appearance='light'] {
+    --v-app: oklch(0.972 0.006 231);   --v-panel: oklch(0.998 0.003 231);  --v-raised: oklch(0.986 0.005 231);
+    --v-sunken: oklch(0.951 0.009 231); --v-line: oklch(0.906 0.012 231);  --v-line-strong: oklch(0.828 0.017 231);
+    --v-ink: oklch(0.238 0.022 231);   --v-muted: oklch(0.478 0.020 231);  --v-faint: oklch(0.622 0.016 231);
+    --v-accent: oklch(0.522 0.152 231); --v-accent-hi: oklch(0.452 0.148 231); --v-accent-soft: oklch(0.938 0.048 231);
+    --v-on-accent: oklch(0.995 0.008 231);
+    --v-ok: oklch(0.520 0.120 158);    --v-ok-soft: oklch(0.942 0.045 158);
+    --v-warn: oklch(0.600 0.140 75);   --v-warn-soft: oklch(0.950 0.055 75);
+    --v-danger: oklch(0.528 0.190 25); --v-danger-soft: oklch(0.950 0.045 25);
+  }
+  :root[data-treatment='sky'][data-appearance='dark'] {
+    --v-app: oklch(0.168 0.012 231);   --v-panel: oklch(0.214 0.014 231);  --v-raised: oklch(0.246 0.016 231);
+    --v-sunken: oklch(0.132 0.012 231); --v-line: oklch(0.308 0.017 231);  --v-line-strong: oklch(0.420 0.021 231);
+    --v-ink: oklch(0.940 0.012 231);   --v-muted: oklch(0.722 0.018 231);  --v-faint: oklch(0.578 0.018 231);
+    --v-accent: oklch(0.800 0.140 231); --v-accent-hi: oklch(0.856 0.148 231); --v-accent-soft: oklch(0.290 0.062 231);
+    --v-on-accent: oklch(0.172 0.030 231);
+    --v-ok: oklch(0.782 0.150 158);    --v-ok-soft: oklch(0.272 0.050 158);
+    --v-warn: oklch(0.822 0.150 75);   --v-warn-soft: oklch(0.292 0.055 75);
+    --v-danger: oklch(0.702 0.180 25); --v-danger-soft: oklch(0.292 0.060 25);
+  }
+
+  /* ---- PLUM (hue 320 - the warm, low-glare option) -------------------------------------------------- */
+  :root[data-treatment='plum'][data-appearance='light'] {
+    --v-app: oklch(0.973 0.007 320);   --v-panel: oklch(0.998 0.003 320);  --v-raised: oklch(0.987 0.005 320);
+    --v-sunken: oklch(0.952 0.010 320); --v-line: oklch(0.907 0.013 320);  --v-line-strong: oklch(0.830 0.018 320);
+    --v-ink: oklch(0.240 0.023 320);   --v-muted: oklch(0.480 0.021 320);  --v-faint: oklch(0.624 0.017 320);
+    --v-accent: oklch(0.500 0.192 320); --v-accent-hi: oklch(0.432 0.186 320); --v-accent-soft: oklch(0.940 0.050 320);
+    --v-on-accent: oklch(0.996 0.008 320);
+    --v-ok: oklch(0.520 0.120 158);    --v-ok-soft: oklch(0.942 0.045 158);
+    --v-warn: oklch(0.600 0.140 75);   --v-warn-soft: oklch(0.950 0.055 75);
+    --v-danger: oklch(0.528 0.190 25); --v-danger-soft: oklch(0.950 0.045 25);
+  }
+  :root[data-treatment='plum'][data-appearance='dark'] {
+    --v-app: oklch(0.170 0.013 320);   --v-panel: oklch(0.216 0.016 320);  --v-raised: oklch(0.248 0.018 320);
+    --v-sunken: oklch(0.134 0.013 320); --v-line: oklch(0.310 0.019 320);  --v-line-strong: oklch(0.422 0.024 320);
+    --v-ink: oklch(0.942 0.013 320);   --v-muted: oklch(0.724 0.020 320);  --v-faint: oklch(0.580 0.020 320);
+    --v-accent: oklch(0.780 0.160 320); --v-accent-hi: oklch(0.836 0.168 320); --v-accent-soft: oklch(0.292 0.070 320);
+    --v-on-accent: oklch(0.174 0.034 320);
+    --v-ok: oklch(0.782 0.150 158);    --v-ok-soft: oklch(0.272 0.050 158);
+    --v-warn: oklch(0.822 0.150 75);   --v-warn-soft: oklch(0.292 0.055 75);
+    --v-danger: oklch(0.702 0.180 25); --v-danger-soft: oklch(0.292 0.060 25);
+  }
+
+  /* Fallback so a page opened before the pre-paint script runs is never unstyled. */
+  :root { --v-app: oklch(0.972 0.006 128); --v-panel: oklch(0.998 0.003 128); --v-raised: oklch(0.986 0.005 128);
+          --v-sunken: oklch(0.951 0.008 128); --v-line: oklch(0.906 0.010 128); --v-line-strong: oklch(0.828 0.014 128);
+          --v-ink: oklch(0.238 0.018 128); --v-muted: oklch(0.478 0.016 128); --v-faint: oklch(0.622 0.012 128);
+          --v-accent: oklch(0.552 0.145 128); --v-accent-hi: oklch(0.482 0.140 128); --v-accent-soft: oklch(0.940 0.050 128);
+          --v-on-accent: oklch(0.995 0.010 128); --v-ok: oklch(0.520 0.120 158); --v-ok-soft: oklch(0.942 0.045 158);
+          --v-warn: oklch(0.600 0.140 75); --v-warn-soft: oklch(0.950 0.055 75);
+          --v-danger: oklch(0.528 0.190 25); --v-danger-soft: oklch(0.950 0.045 25); }
+
+  /* --duration-* has no utility family in v4, so the token is wrapped once and used as a class. */
+  @utility dur-state { transition-duration: calc(180ms * var(--motion-scale)); }
+  @utility dur-enter { transition-duration: calc(500ms * var(--motion-scale)); }
+
+  @layer base {
+    body { background: var(--color-app); color: var(--color-ink); font-family: var(--font-sans); }
+    .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+    [data-motion='off'] * { animation: none !important; transition: none !important; }
+    @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .rise { animation: rise calc(420ms * var(--motion-scale)) var(--ease-out-soft) both; }
+  }
+</style>
+</head>
+
+<body class="h-screen overflow-hidden flex flex-col antialiased">
+
+<!-- =========================================================================================
+     Title bar. In the real app this is a Tauri custom decoration; here the window controls are
+     visual only, which is the one place the dummy is allowed to be inert.
+     ========================================================================================= -->
+<header class="flex items-center gap-3 bg-panel border-b border-line px-3 h-11 shrink-0 select-none">
+  <svg viewBox="0 0 32 32" class="h-5 w-5 shrink-0" aria-hidden="true">
+    <defs><linearGradient id="mark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#38bdf8" /><stop offset="1" stop-color="#1e3a8a" />
+    </linearGradient></defs>
+    <rect x="2" y="2" width="28" height="28" rx="7" fill="url(#mark)" />
+    <path d="M9 20c4.5 0 6-8 10.5-8 2 0 3.5 1.4 3.5 3.4" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" />
+    <circle cx="10.5" cy="12.5" r="1.7" fill="#fff" />
+  </svg>
+  <span class="font-semibold tracking-tight text-sm">windowsweep</span>
+  <span class="num text-2xs text-muted border border-line rounded-pill px-2 py-0.5">1.1.0</span>
+
+  <div class="flex-1"></div>
+
+  <span class="hidden sm:inline-flex items-center gap-1.5 text-xs text-muted">
+    <span class="h-1.5 w-1.5 rounded-pill bg-warn"></span> not elevated
+  </span>
+
+  <button type="button" data-open-theme
+          class="inline-flex items-center gap-1.5 rounded-control border border-line px-2.5 py-1 text-xs hover:bg-raised hover:border-line-strong dur-state transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+    <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+      <circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4" stroke-linecap="round" />
+    </svg>
+    Appearance
+  </button>
+
+  <div class="flex items-center gap-1 pl-1" aria-hidden="true">
+    <span class="h-3 w-3 rounded-pill border border-line-strong"></span>
+    <span class="h-3 w-3 rounded-pill border border-line-strong"></span>
+    <span class="h-3 w-3 rounded-pill border border-danger bg-danger-soft"></span>
+  </div>
+</header>
+
+<div class="flex flex-1 min-h-0">
+
+  <!-- =======================================================================================
+       Left rail
+       ======================================================================================= -->
+  <nav class="w-52 shrink-0 overflow-y-auto border-r border-line bg-panel hidden md:flex md:flex-col">
+    <ul class="p-2 space-y-0.5 text-sm">
+      <li><a href="#" aria-current="page" class="flex items-center gap-2.5 rounded-control px-2.5 py-2 bg-accent-soft text-accent font-medium">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" stroke-linejoin="round"/></svg>
+        Home</a></li>
+      <li><a href="./sections.html" class="flex items-center gap-2.5 rounded-control px-2.5 py-2 text-muted hover:bg-raised hover:text-ink dur-state transition">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg>
+        Sections <span class="num ml-auto text-2xs text-faint">26</span></a></li>
+      <li><a href="./picker.html" class="flex items-center gap-2.5 rounded-control px-2.5 py-2 text-muted hover:bg-raised hover:text-ink dur-state transition">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h7" stroke-linecap="round"/><path d="M17 15l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Review picks <span class="num ml-auto text-2xs rounded-pill bg-warn-soft text-warn px-1.5">31</span></a></li>
+      <li><a href="./run.html" class="flex items-center gap-2.5 rounded-control px-2.5 py-2 text-muted hover:bg-raised hover:text-ink dur-state transition">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 5l11 7-11 7z" stroke-linejoin="round"/></svg>
+        Run</a></li>
+      <li><a href="./history.html" class="flex items-center gap-2.5 rounded-control px-2.5 py-2 text-muted hover:bg-raised hover:text-ink dur-state transition">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2" stroke-linecap="round"/></svg>
+        History</a></li>
+    </ul>
+    <div class="mt-auto p-2 space-y-0.5 text-sm border-t border-line">
+      <a href="./account.html" class="flex items-center gap-2.5 rounded-control px-2.5 py-2 text-muted hover:bg-raised hover:text-ink dur-state transition">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-3.6 4-5 7-5s5.8 1.4 7 5" stroke-linecap="round"/></svg>
+        Account <span class="ml-auto text-2xs text-faint">signed out</span></a>
+      <a href="./settings.html" class="flex items-center gap-2.5 rounded-control px-2.5 py-2 text-muted hover:bg-raised hover:text-ink dur-state transition">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6" stroke-linecap="round"/></svg>
+        Settings</a>
+      <p class="px-2.5 pt-2 text-2xs leading-relaxed text-faint">
+        The cleanup engine makes <span class="text-ink">no network calls</span>. Sign-in and analytics are the
+        app's, and both are off until you turn them on.
+      </p>
+    </div>
+  </nav>
+
+  <!-- =======================================================================================
+       Main
+       ======================================================================================= -->
+  <main class="flex-1 min-w-0 overflow-y-auto px-4 sm:px-6 py-5 space-y-5">
+
+    <!-- 1. Primary readout ---------------------------------------------------------------- -->
+    <section class="rise relative overflow-hidden rounded-panel border border-line bg-panel p-5 sm:p-7">
+      <svg viewBox="0 0 400 200" class="pointer-events-none absolute -right-10 -top-14 h-56 w-96 opacity-10 text-accent" aria-hidden="true">
+        <path d="M-10 150 C 80 150, 90 40, 180 40 S 300 130, 410 60" fill="none" stroke="currentColor" stroke-width="26" stroke-linecap="round"/>
+        <path d="M-10 190 C 90 190, 100 90, 200 90 S 320 170, 410 110" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+      </svg>
+
+      <div class="relative flex flex-wrap items-end gap-x-10 gap-y-5">
+        <div>
+          <p class="text-xs uppercase tracking-caps text-muted">Reclaimable now</p>
+          <p class="num mt-1 text-5xl sm:text-6xl font-semibold leading-none text-accent">42.7<span class="ml-1.5 text-2xl text-muted">GB</span></p>
+          <p class="mt-2 text-xs text-faint">
+            measured <span class="num text-muted">4</span> minutes ago across
+            <span class="num text-muted">11</span> safe sections -
+            <button type="button" class="underline decoration-dotted underline-offset-2 hover:text-ink dur-state transition">re-scan</button>
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 ml-auto">
+          <button type="button" data-toast="Read-only scan started. Nothing will be deleted."
+                  class="rounded-control border border-line px-3.5 py-2 text-sm hover:bg-raised hover:border-line-strong dur-state transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+            Scan again
+          </button>
+          <button type="button" data-toast="Dry run: 42.7 GB across 11 sections. Nothing was deleted."
+                  class="rounded-control border border-line px-3.5 py-2 text-sm hover:bg-raised hover:border-line-strong dur-state transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+            Preview a safe run
+          </button>
+          <button type="button" data-toast="A real run would start here. This is a design dummy."
+                  class="rounded-control bg-accent px-4 py-2 text-sm font-semibold text-on-accent hover:bg-accent-hi dur-state transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+            Clean 42.7 GB
+          </button>
+        </div>
+      </div>
+
+      <p class="relative mt-4 text-xs text-muted border-t border-line pt-3">
+        A safe run removes caches that rebuild themselves. It never touches your documents, your browser
+        profiles, your credentials or anything in
+        <span class="num">Downloads</span> - those need you to pick, item by item.
+      </p>
+    </section>
+
+    <!-- 2. Drives -------------------------------------------------------------------------- -->
+    <section class="grid gap-3 sm:grid-cols-3">
+      <article class="rounded-panel border border-line bg-panel p-4">
+        <div class="flex items-baseline justify-between">
+          <p class="num text-sm font-semibold">C:</p>
+          <p class="num text-xs text-danger">92% used</p>
+        </div>
+        <div class="mt-2.5 h-1.5 w-full rounded-pill bg-sunken overflow-hidden"><div class="h-full rounded-pill bg-danger" style="width:92%"></div></div>
+        <p class="num mt-2 text-xs text-muted">21.0 GB free of 272.9 GB</p>
+      </article>
+      <article class="rounded-panel border border-line bg-panel p-4">
+        <div class="flex items-baseline justify-between">
+          <p class="num text-sm font-semibold">D:</p>
+          <p class="num text-xs text-warn">73% used</p>
+        </div>
+        <div class="mt-2.5 h-1.5 w-full rounded-pill bg-sunken overflow-hidden"><div class="h-full rounded-pill bg-warn" style="width:73%"></div></div>
+        <p class="num mt-2 text-xs text-muted">55.8 GB free of 203.4 GB</p>
+      </article>
+      <article class="rounded-panel border border-line bg-panel p-4">
+        <div class="flex items-baseline justify-between">
+          <p class="num text-sm font-semibold">E:</p>
+          <p class="num text-xs text-ok">60% used</p>
+        </div>
+        <div class="mt-2.5 h-1.5 w-full rounded-pill bg-sunken overflow-hidden"><div class="h-full rounded-pill bg-ok" style="width:60%"></div></div>
+        <p class="num mt-2 text-xs text-muted">188.8 GB free of 476.4 GB</p>
+      </article>
+    </section>
+
+    <!-- 3. What a safe run would do --------------------------------------------------------- -->
+    <section class="rounded-panel border border-line bg-panel">
+      <header class="flex items-baseline gap-3 border-b border-line px-4 py-3">
+        <h2 class="text-sm font-semibold">What a safe run would do</h2>
+        <span class="text-xs text-muted">11 sections, largest first</span>
+        <a href="./sections.html" class="ml-auto text-xs text-accent hover:underline">All 26 sections</a>
+      </header>
+      <ul class="divide-y divide-line text-sm">
+        <li class="flex items-center gap-3 px-4 py-2.5">
+          <span class="num w-6 text-xs text-faint">01</span>
+          <span class="flex-1 truncate">Package-manager caches</span>
+          <span class="rounded-pill bg-ok-soft text-ok px-2 py-0.5 text-3xs font-medium">rebuilds</span>
+          <span class="rounded-pill border border-line text-faint px-2 py-0.5 text-3xs">developer-gated</span>
+          <span class="num w-20 text-right text-accent">18.4 GB</span>
+        </li>
+        <li class="flex items-center gap-3 px-4 py-2.5">
+          <span class="num w-6 text-xs text-faint">07</span>
+          <span class="flex-1 truncate">Browser caches, every profile</span>
+          <span class="rounded-pill bg-ok-soft text-ok px-2 py-0.5 text-3xs font-medium">rebuilds</span>
+          <span class="num w-20 text-right text-accent">9.1 GB</span>
+        </li>
+        <li class="flex items-center gap-3 px-4 py-2.5">
+          <span class="num w-6 text-xs text-faint">02</span>
+          <span class="flex-1 truncate">Build-tool caches (Gradle, Maven, Android)</span>
+          <span class="rounded-pill bg-ok-soft text-ok px-2 py-0.5 text-3xs font-medium">rebuilds</span>
+          <span class="rounded-pill border border-line text-faint px-2 py-0.5 text-3xs">developer-gated</span>
+          <span class="num w-20 text-right text-accent">7.8 GB</span>
+        </li>
+        <li class="flex items-center gap-3 px-4 py-2.5">
+          <span class="num w-6 text-xs text-faint">10</span>
+          <span class="flex-1 truncate">User temp files idle 3+ days</span>
+          <span class="rounded-pill bg-ok-soft text-ok px-2 py-0.5 text-3xs font-medium">rebuilds</span>
+          <span class="num w-20 text-right text-accent">4.2 GB</span>
+        </li>
+        <li class="flex items-center gap-3 px-4 py-2.5 text-muted">
+          <span class="num w-6 text-xs text-faint">06</span>
+          <span class="flex-1 truncate">Editor caches - <span class="text-warn">Code is running, so it is skipped</span></span>
+          <span class="rounded-pill bg-warn-soft text-warn px-2 py-0.5 text-3xs font-medium">skipped</span>
+          <span class="num w-20 text-right">1.9 GB</span>
+        </li>
+      </ul>
+      <footer class="border-t border-line px-4 py-2.5 text-xs text-muted">
+        Close VS Code and re-run section 6 to recover another <span class="num text-ink">1.9 GB</span>.
+      </footer>
+    </section>
+
+    <!-- 4. Needs a person -------------------------------------------------------------------- -->
+    <section class="rounded-panel border border-warn/40 bg-panel">
+      <header class="flex items-center gap-3 border-b border-line px-4 py-3">
+        <svg viewBox="0 0 24 24" class="h-4 w-4 text-warn" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M12 4l9 16H3z" stroke-linejoin="round"/><path d="M12 10v4M12 17h.01" stroke-linecap="round"/>
+        </svg>
+        <h2 class="text-sm font-semibold">These need you to choose</h2>
+        <a href="./picker.html" class="ml-auto rounded-control bg-warn-soft text-warn px-3 py-1.5 text-xs font-medium hover:brightness-95 dur-state transition">Review 31 items</a>
+      </header>
+      <ul class="divide-y divide-line text-sm">
+        <li class="flex items-center gap-3 px-4 py-2.5">
+          <span class="num w-6 text-xs text-faint">17</span>
+          <span class="flex-1 truncate">Stale project build artefacts</span>
+          <span class="rounded-pill bg-ok-soft text-ok px-2 py-0.5 text-3xs font-medium">rebuilds</span>
+          <span class="num text-muted text-xs">12 found</span>
+          <span class="num w-20 text-right">14.6 GB</span>
+        </li>
+        <li class="flex items-center gap-3 px-4 py-2.5">
+          <span class="num w-6 text-xs text-faint">19</span>
+          <span class="flex-1 truncate">Large stale files in Downloads</span>
+          <span class="rounded-pill bg-accent-soft text-accent px-2 py-0.5 text-3xs font-medium">Recycle Bin</span>
+          <span class="num text-muted text-xs">9 found</span>
+          <span class="num w-20 text-right">6.3 GB</span>
+        </li>
+        <li class="flex items-center gap-3 px-4 py-2.5">
+          <span class="num w-6 text-xs text-faint">23</span>
+          <span class="flex-1 truncate">Orphaned application data</span>
+          <span class="rounded-pill bg-accent-soft text-accent px-2 py-0.5 text-3xs font-medium">Recycle Bin</span>
+          <span class="num text-muted text-xs">10 found</span>
+          <span class="num w-20 text-right">120.0 MB</span>
+        </li>
+      </ul>
+      <footer class="border-t border-line px-4 py-2.5 text-xs text-muted">
+        Nothing here is ever included in a safe run, and nothing goes without you selecting it. Files land in
+        the Recycle Bin, so Windows keeps the undo.
+      </footer>
+    </section>
+
+    <!-- 5 + 6. Last run and developer mode ---------------------------------------------------- -->
+    <div class="grid gap-5 lg:grid-cols-2">
+      <section class="rounded-panel border border-line bg-panel p-4">
+        <div class="flex items-baseline justify-between">
+          <h2 class="text-sm font-semibold">Last run</h2>
+          <a href="./history.html" class="text-xs text-accent hover:underline">History</a>
+        </div>
+        <p class="num mt-3 text-2xl font-semibold text-ok">11.2 GB<span class="ml-1.5 text-sm font-normal text-muted">reclaimed</span></p>
+        <dl class="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
+          <dt class="text-muted">When</dt><dd class="num text-right">Sun 03:00</dd>
+          <dt class="text-muted">Mode</dt><dd class="num text-right">weekly task, safe batch</dd>
+          <dt class="text-muted">Sections</dt><dd class="num text-right">11 run, 0 skipped</dd>
+          <dt class="text-muted">Report</dt><dd class="text-right"><a href="#" class="text-accent hover:underline">open JSON</a></dd>
+        </dl>
+      </section>
+
+      <section class="rounded-panel border border-line bg-panel p-4">
+        <div class="flex items-baseline justify-between">
+          <h2 class="text-sm font-semibold">Developer mode</h2>
+          <span class="rounded-pill bg-accent-soft text-accent px-2 py-0.5 text-3xs font-medium">on</span>
+        </div>
+        <p class="mt-2.5 text-xs leading-relaxed text-muted">
+          Package, build and test-runner caches you have used in the last
+          <span class="num text-ink">100</span> days are kept, and the newest version of every tool cache
+          survives. Turn it off and those caches are cleared completely.
+        </p>
+        <div class="mt-3 flex items-center gap-2">
+          <button type="button" data-dev="on"
+                  class="js-dev rounded-control border border-accent bg-accent-soft text-accent px-3 py-1.5 text-xs font-medium dur-state transition">Keep recent caches</button>
+          <button type="button" data-dev="off"
+                  class="js-dev rounded-control border border-line px-3 py-1.5 text-xs hover:bg-raised dur-state transition">Clear them all</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- 7 + 8. Guardrails and privacy ---------------------------------------------------------- -->
+    <div class="grid gap-5 lg:grid-cols-2">
+      <section class="rounded-panel border border-line bg-sunken p-4">
+        <h2 class="text-sm font-semibold">What it will never touch</h2>
+        <ul class="mt-2.5 space-y-1.5 text-xs text-muted">
+          <li class="flex gap-2"><span class="text-ok">-</span> Documents, Pictures, Desktop, and every cloud-synced folder</li>
+          <li class="flex gap-2"><span class="text-ok">-</span> Browser profiles: logins, cookies, history, bookmarks, extensions</li>
+          <li class="flex gap-2"><span class="text-ok">-</span> Credentials and keys: <span class="num">.ssh</span>, <span class="num">.gnupg</span>, <span class="num">.aws</span>, <span class="num">.secrets</span></li>
+          <li class="flex gap-2"><span class="text-ok">-</span> Toolchains: nvm, npm globals, corepack, cargo, Go</li>
+          <li class="flex gap-2"><span class="text-ok">-</span> Junctions and symlinks are removed as links, never followed</li>
+        </ul>
+        <p class="mt-3 border-t border-line pt-2.5 text-xs text-faint">No flag bypasses this list, and it only ever grows.</p>
+      </section>
+
+      <section class="rounded-panel border border-line bg-panel p-4">
+        <h2 class="text-sm font-semibold">Privacy</h2>
+        <ul class="mt-2.5 space-y-2 text-xs">
+          <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-pill bg-ok"></span><span class="flex-1 text-muted">Cleanup engine</span><span class="text-ok">no network calls</span></li>
+          <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-pill bg-faint"></span><span class="flex-1 text-muted">Usage analytics</span><span class="text-faint">off</span></li>
+          <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-pill bg-faint"></span><span class="flex-1 text-muted">Crash reports</span><span class="text-faint">off</span></li>
+          <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-pill bg-faint"></span><span class="flex-1 text-muted">Account sync</span><span class="text-faint">signed out</span></li>
+        </ul>
+        <p class="mt-3 border-t border-line pt-2.5 text-xs text-muted">
+          Everything above stays off until you switch it on, and runs are never gated on any of it -
+          <span class="text-ink">windowsweep is free and has no paid tier</span>.
+        </p>
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- Status bar -->
+<footer class="flex items-center gap-4 border-t border-line bg-panel px-3 h-8 shrink-0 text-2xs text-muted">
+  <span>developer mode <span class="text-ink js-dev-label">on</span></span>
+  <span class="hidden sm:inline">not elevated - <a href="./elevate.html" class="text-accent hover:underline">run admin sections</a></span>
+  <span class="num ml-auto truncate hidden md:inline text-faint">~\.windowsweep\logs\windowsweep-2026-09-04_1301.log</span>
+</footer>
+
+<!-- =========================================================================================
+     THE theme control. One icon in the title bar, one panel, every appearance axis, applied
+     pre-paint from one table and persisted. A2 lives here.
+     ========================================================================================= -->
+<div data-theme-panel hidden class="fixed inset-0 z-50">
+  <div data-close-theme class="absolute inset-0 bg-black/40"></div>
+  <aside role="dialog" aria-modal="true" aria-label="Appearance"
+         class="absolute right-0 top-0 h-full w-full max-w-sm overflow-y-auto border-l border-line bg-panel p-5 space-y-5 shadow-2xl">
+    <div class="flex items-center justify-between">
+      <h2 class="text-sm font-semibold">Appearance</h2>
+      <button type="button" data-close-theme class="rounded-control border border-line px-2 py-1 text-xs hover:bg-raised dur-state transition">Close</button>
+    </div>
+
+    <fieldset>
+      <legend class="text-xs uppercase tracking-caps text-muted">Light or dark</legend>
+      <div class="mt-2 grid grid-cols-3 gap-2" data-axis="appearance">
+        <button type="button" data-value="light" class="js-axis rounded-control border border-line px-2 py-2 text-xs">Light</button>
+        <button type="button" data-value="dark" class="js-axis rounded-control border border-line px-2 py-2 text-xs">Dark</button>
+        <button type="button" data-value="system" class="js-axis rounded-control border border-line px-2 py-2 text-xs">System</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend class="text-xs uppercase tracking-caps text-muted">Colour treatment</legend>
+      <div class="mt-2 space-y-2" data-axis="treatment">
+        <button type="button" data-value="lime" class="js-axis flex w-full items-center gap-3 rounded-control border border-line p-2.5 text-left">
+          <span class="h-7 w-7 shrink-0 rounded-control" style="background:oklch(0.552 0.145 128)"></span>
+          <span class="min-w-0"><span class="block text-xs font-medium">Lime</span><span class="block text-2xs text-muted truncate">the registered identity</span></span>
+        </button>
+        <button type="button" data-value="sky" class="js-axis flex w-full items-center gap-3 rounded-control border border-line p-2.5 text-left">
+          <span class="h-7 w-7 shrink-0 rounded-control" style="background:oklch(0.522 0.152 231)"></span>
+          <span class="min-w-0"><span class="block text-xs font-medium">Sky</span><span class="block text-2xs text-muted truncate">agrees with the app icon</span></span>
+        </button>
+        <button type="button" data-value="plum" class="js-axis flex w-full items-center gap-3 rounded-control border border-line p-2.5 text-left">
+          <span class="h-7 w-7 shrink-0 rounded-control" style="background:oklch(0.500 0.192 320)"></span>
+          <span class="min-w-0"><span class="block text-xs font-medium">Plum</span><span class="block text-2xs text-muted truncate">warm, easiest in a dark room</span></span>
+        </button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend class="text-xs uppercase tracking-caps text-muted">Density</legend>
+      <div class="mt-2 grid grid-cols-2 gap-2" data-axis="density">
+        <button type="button" data-value="comfortable" class="js-axis rounded-control border border-line px-2 py-2 text-xs">Comfortable</button>
+        <button type="button" data-value="compact" class="js-axis rounded-control border border-line px-2 py-2 text-xs">Compact</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend class="text-xs uppercase tracking-caps text-muted">Corners</legend>
+      <div class="mt-2 grid grid-cols-3 gap-2" data-axis="radius">
+        <button type="button" data-value="none" class="js-axis rounded-control border border-line px-2 py-2 text-xs">Square</button>
+        <button type="button" data-value="small" class="js-axis rounded-control border border-line px-2 py-2 text-xs">Small</button>
+        <button type="button" data-value="round" class="js-axis rounded-control border border-line px-2 py-2 text-xs">Round</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend class="text-xs uppercase tracking-caps text-muted">Text size</legend>
+      <div class="mt-2 grid grid-cols-3 gap-2" data-axis="text">
+        <button type="button" data-value="normal" class="js-axis rounded-control border border-line px-2 py-2 text-xs">Normal</button>
+        <button type="button" data-value="large" class="js-axis rounded-control border border-line px-2 py-2 text-xs">Large</button>
+        <button type="button" data-value="larger" class="js-axis rounded-control border border-line px-2 py-2 text-xs">Larger</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend class="text-xs uppercase tracking-caps text-muted">Motion</legend>
+      <div class="mt-2 grid grid-cols-2 gap-2" data-axis="motion">
+        <button type="button" data-value="on" class="js-axis rounded-control border border-line px-2 py-2 text-xs">On</button>
+        <button type="button" data-value="off" class="js-axis rounded-control border border-line px-2 py-2 text-xs">Off</button>
+      </div>
+      <p class="mt-2 text-2xs text-faint">Your system's reduce-motion setting always wins over this.</p>
+    </fieldset>
+
+    <p class="border-t border-line pt-3 text-2xs text-faint">
+      Every choice here is stored on this machine and applied before the window paints, so the app never
+      flashes the wrong theme on start.
+    </p>
+  </aside>
+</div>
+
+<div data-toast-host class="fixed bottom-14 left-1/2 z-50 -translate-x-1/2 space-y-2"></div>
+
+<script>
+/* ----------------------------------------------------------------------------------------------------
+   wsStore - the same shape strata-storage exposes, over localStorage. The real app swaps the
+   implementation; nothing that calls it changes.
+   ---------------------------------------------------------------------------------------------------- */
+var wsStore = (function () {
+  var KEY = 'windowsweep.dummy.v1';
+  function all() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
+  return {
+    get: function (k, fallback) { var v = all()[k]; return v === undefined ? fallback : v; },
+    set: function (k, v) { var d = all(); d[k] = v; try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {} },
+    clear: function () { try { localStorage.removeItem(KEY); } catch (e) {} }
+  };
+})();
+
+(function () {
+  var root = document.documentElement;
+  var mqDark = window.matchMedia('(prefers-color-scheme: dark)');
+  var mqMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function applyAxis(axis, value) {
+    if (axis === 'appearance') {
+      root.setAttribute('data-appearance-pref', value);
+      root.setAttribute('data-appearance', value === 'system' ? (mqDark.matches ? 'dark' : 'light') : value);
+    } else if (axis === 'motion') {
+      root.setAttribute('data-motion', mqMotion.matches ? 'off' : value);
+    } else {
+      root.setAttribute('data-' + axis, value);
+    }
+    wsStore.set(axis, value);
+    paintAxisButtons();
+  }
+
+  function currentValue(axis) {
+    if (axis === 'appearance') { return root.getAttribute('data-appearance-pref') || 'system'; }
+    return root.getAttribute('data-' + axis) || '';
+  }
+
+  function paintAxisButtons() {
+    document.querySelectorAll('[data-axis]').forEach(function (group) {
+      var axis = group.getAttribute('data-axis');
+      var active = currentValue(axis);
+      group.querySelectorAll('.js-axis').forEach(function (btn) {
+        var on = btn.getAttribute('data-value') === active;
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        btn.classList.toggle('border-accent', on);
+        btn.classList.toggle('bg-accent-soft', on);
+        btn.classList.toggle('text-accent', on);
+        btn.classList.toggle('font-medium', on);
+      });
+    });
+  }
+
+  document.querySelectorAll('.js-axis').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      applyAxis(btn.closest('[data-axis]').getAttribute('data-axis'), btn.getAttribute('data-value'));
+    });
+  });
+
+  mqDark.addEventListener('change', function () {
+    if (currentValue('appearance') === 'system') { applyAxis('appearance', 'system'); }
+  });
+
+  /* Theme panel */
+  var panel = document.querySelector('[data-theme-panel]');
+  function openPanel() { panel.hidden = false; paintAxisButtons(); }
+  function closePanel() { panel.hidden = true; }
+  document.querySelectorAll('[data-open-theme]').forEach(function (b) { b.addEventListener('click', openPanel); });
+  document.querySelectorAll('[data-close-theme]').forEach(function (b) { b.addEventListener('click', closePanel); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !panel.hidden) { closePanel(); } });
+
+  /* Developer-mode toggle - persisted, because the finished dummy remembers */
+  function paintDev() {
+    var on = wsStore.get('developer', 'on') === 'on';
+    document.querySelectorAll('.js-dev').forEach(function (btn) {
+      var active = (btn.getAttribute('data-dev') === 'on') === on;
+      btn.classList.toggle('border-accent', active);
+      btn.classList.toggle('bg-accent-soft', active);
+      btn.classList.toggle('text-accent', active);
+      btn.classList.toggle('font-medium', active);
+      btn.classList.toggle('border-line', !active);
+    });
+    document.querySelectorAll('.js-dev-label').forEach(function (el) { el.textContent = on ? 'on' : 'off'; });
+  }
+  document.querySelectorAll('.js-dev').forEach(function (btn) {
+    btn.addEventListener('click', function () { wsStore.set('developer', btn.getAttribute('data-dev')); paintDev(); });
+  });
+
+  /* Toasts - every control answers a press, which is the interaction floor */
+  var host = document.querySelector('[data-toast-host]');
+  document.querySelectorAll('[data-toast]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var t = document.createElement('div');
+      t.className = 'rise rounded-control border border-line bg-raised px-3.5 py-2 text-xs shadow-lg';
+      t.setAttribute('role', 'status');
+      t.textContent = btn.getAttribute('data-toast');
+      host.appendChild(t);
+      setTimeout(function () { t.remove(); }, 3200);
+    });
+  });
+
+  paintAxisButtons();
+  paintDev();
+})();
+</script>
+</body>
+</html>

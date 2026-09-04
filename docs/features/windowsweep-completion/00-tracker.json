@@ -354,7 +354,7 @@
     {
       "id": "P6",
       "title": "Windows desktop app (Tauri 2 wrapper in desktop/; excluded from the CLI completion percentage)",
-      "status": "pending",
+      "status": "in_progress",
       "completedAt": null,
       "subTasks": [
         {
@@ -367,29 +367,29 @@
         {
           "id": "P6.design-dummy",
           "title": "Design argument and static click dummy for every desktop screen, three treatments, light and dark",
-          "status": "pending",
-          "note": "owner reviews: MANUAL-TASKS row 17",
+          "status": "in_progress",
+          "note": "A1 + A2 delivered: desktop/design/README.md (the written design argument) and desktop/design/click-dummy/home.html - the app's primary screen with all three colour treatments (lime 128 registered, sky 231 matching the shipped mark, plum 320) in light and dark, the one theme control covering six axes applied pre-paint and persisted, and a ?treatment=&appearance= override so a specific look can be linked. GATE 1 is the owner's: MANUAL-TASKS row 17. A3 (component library) and A4 (the remaining pages, wired) follow his reply. Nothing else is created under desktop/ until gate 3 is recorded",
           "awaitingUser": false
         },
         {
           "id": "P6.firebase-vault",
           "title": "Firebase project, Google provider, Firestore rules and indexes, FilesHub vault seeded",
-          "status": "pending",
-          "note": "owner rows 15 and 16 supply the OAuth client id and the telemetry keys",
-          "awaitingUser": false
+          "status": "blocked",
+          "note": "BLOCKED on a download, not on a decision: provisioning needs npx firebase-tools, which is gated by PENDING-TASKS.md TASK-001. The OAuth client is MANUAL-TASKS row 15 and the telemetry keys row 16",
+          "awaitingUser": true
         },
         {
           "id": "P6.code-ci",
           "title": "desktop/ app written and compiled by CI (desktop-ci.yml, desktop-release.yml)",
           "status": "pending",
-          "note": "no local dependency tree until TASK-001",
+          "note": "no local dependency tree until TASK-001 | Held until click-dummy gate 3 is recorded: nothing is created under desktop/ beyond design/ before the owner approves the dummy",
           "awaitingUser": false
         },
         {
           "id": "P6.ui",
           "title": "UI implemented against the approved dummy, with the parity check",
           "status": "pending",
-          "note": "follows the dummy review",
+          "note": "follows the dummy review | Held until click-dummy gate 3 is recorded: nothing is created under desktop/ beyond design/ before the owner approves the dummy",
           "awaitingUser": false
         },
         {
@@ -469,6 +469,12 @@
       "date": "2026-09-04",
       "phase": "P5",
       "summary": "windowsweep@1.1.0 published, tagged v1.1.0 and released; documentation site re-mirrored and deployed green. The domain still returns 000, so the README, package.json homepage and WS_DOCS still point at GitHub - the write-back waits on MANUAL-TASKS row 11",
+      "commit": "pending"
+    },
+    {
+      "date": "2026-09-04",
+      "phase": "P6-A",
+      "summary": "Design argument and click-dummy A1+A2: the desktop Home screen in three treatments, light and dark, with the six-axis theme control applied pre-paint and persisted through a wsStore wrapper. Rendered and verified in the automation Chrome. Stopped at GATE 1 - the click-dummy contract makes the owner's written approval the only thing that advances it, and forbids any app scaffold under desktop/ before gate 3",
       "commit": "pending"
     }
   ],

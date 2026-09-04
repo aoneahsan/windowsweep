@@ -61,6 +61,28 @@ Verified Against: commit 84c732f on `main`, 2026-09-03 (1.0.0 released the same 
 - **Releases (2026-09-03):** every release from 1.0.1 on gets an annotated tag `vX.Y.Z` and a GitHub Release;
   `v1.0.0` is tagged retroactively on `70c6738`, the commit the published tarball was built from.
 
+### Session 6 decisions (2026-09-05) - the dummy approved, both gates pre-authorised, downloads lifted
+
+- **Click dummy GATE 1 approved.** Owner, verbatim: *"approved, looks great, get all remaining work fully
+  done now"*. Direction 02 "Reclaim" is the desktop app's design language: the Reclaim Map treemap as the
+  signature element, Archivo's width axis carrying hierarchy, the ten-axis pre-paint theme control, three
+  treatments (lime 128 registered, sky 231, plum 320) in light and dark, and progressive disclosure so the
+  default view stays short.
+- **GATES 2 and 3 are approved IN ADVANCE.** Asked where to stop - at the gallery, at the finished dummy, or
+  straight through - he chose **"Straight through to the app"**. This is the record that satisfies the
+  click-dummy rule *"nothing is created under `desktop/` beyond `design/` until gate 3 is recorded"*; nothing
+  else authorises it, and no later reader should infer the agent self-approved. He reviews the design once,
+  translated into the app. **GATE 4 (parity) still closes only after the app exists.**
+- **TASK-001 lifted in full.** Asked whether to lift the download gate, he chose **"Lift it fully"**: rustup
+  plus Visual Studio 2022 Build Tools with the C++ workload (his UAC click, `MANUAL-TASKS` row 22), the
+  `yarn install` trees for `desktop/` and `windowsweep-docs`, and `firebase-tools`. This supersedes the
+  2026-09-03 directive *"for now do not download on this net please"* for this machine. `PENDING-TASKS.md`
+  TASK-001 is closed to `docs/DONE-TASKS.md`.
+- **What the lift does not change:** the CLI still makes zero network calls and its self-test still asserts
+  it; no real (non `--dry-run`) cleanup and no admin section is ever run from an agent session; the Google
+  OAuth desktop client (row 15) and the four telemetry keys (row 16) remain Cloud-Console clicks, so sign-in
+  and analytics ship compiled and dormant until he provides them.
+
 ### Session 4 decisions (2026-09-04) - unverified target paths, and what follows 1.1.0
 
 - **Unverified target paths: verified only.** A path becomes a target only once it has been seen on a real

@@ -3,7 +3,7 @@
   "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md at the repository root; this file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-09-04",
+  "lastUpdated": "2026-09-05",
   "planFile": "C:/Users/PC/.claude/plans/please-plan-and-get-agile-fairy.md",
   "overview": "docs/features/windowsweep-completion/00-overview.md",
   "specification": "remaining-work.md",
@@ -16,12 +16,13 @@
     "releases": "every release from 1.0.1 on gets an annotated git tag vX.Y.Z and a GitHub Release; v1.0.0 is tagged retroactively on 70c6738",
     "accountModel": "desktop app: optional Google sign-in for sync only (email, settings, run history); runs are never gated, no paid tier, no plan set - explicit owner exemption (owner, 2026-09-03)",
     "telemetry": "desktop app: full fleet observability (GA4 + Amplitude + Clarity + Sentry) behind a first-run consent dialog, every provider off until accepted; the CLI keeps zero network calls (owner, 2026-09-03)",
-    "toolchainDownloads": "no toolchain or dependency-tree downloads on this machine until the owner's go-ahead; CI compiles meanwhile (owner, 2026-09-03) - PENDING-TASKS.md TASK-001, MANUAL-TASKS row 14",
+    "toolchainDownloads": "LIFTED 2026-09-05: asked whether to lift the download gate the owner answered \"Lift it fully\" - rustup, VS 2022 Build Tools with the C++ workload, the yarn install trees for desktop/ and windowsweep-docs, and firebase-tools. Supersedes the 2026-09-03 \"do not download on this net\" directive for this machine. PENDING-TASKS TASK-001 closed to docs/DONE-TASKS.md; the Build Tools UAC click remains MANUAL-TASKS row 22 because an agent session must never raise UAC",
     "desktopLocation": "desktop/ in this repository (macleanup pattern); releases desktop-vX.Y.Z with latest.json; identifier com.aoneahsan.windowsweep (permanent); app version equals the bundled CLI version",
     "palette": "primary hue 128 (lime): light #4d7c0f, dark #a3e635 with dark on-accent text; 24 degrees from taxease 104 and wakalat 152, the widest gap left; success moves to 158; free treatments sky 231 and plum 320; the logo mark keeps its sky-blue gradient",
     "adminSurface": "user emails and run history are administered in the Firebase console for phase P6; a web admin panel is a later separate phase (recorded deviation from the platform-admin rule)",
     "unverifiedTargets": "verified only: a path becomes a target once it has been seen on a real machine; everything unverifiable is a documented candidate table in docs/sections.md plus one MANUAL-TASKS probe row (owner, 2026-09-04)",
-    "sessionOrder": "after 1.1.0 ships, continue straight into P6-A on Opus - no review round in between (owner, 2026-09-04)"
+    "sessionOrder": "after 1.1.0 ships, continue straight into P6-A on Opus - no review round in between (owner, 2026-09-04)",
+    "clickDummyGates": "GATE 1 approved 2026-09-05: \"approved, looks great, get all remaining work fully done now\". GATES 2 and 3 approved IN ADVANCE in the same message - asked where to stop he chose \"Straight through to the app\", which is the sole authority for creating anything under desktop/ beyond design/. GATE 4 (parity) still closes only after the app exists"
   },
   "knownRisks": [
     "RW-002: sections 17-19 pre-select every item under --yes in the interactive modes, and section 17 then deletes without a human choice; fix before any real run of section 17 with --yes.",
@@ -368,28 +369,28 @@
           "id": "P6.design-dummy",
           "title": "Design argument and static click dummy for every desktop screen, three treatments, light and dark",
           "status": "in_progress",
-          "note": "Direction 01 (\"instrument panel\") was REJECTED by the owner on 2026-09-04: \"very basic and not attractive at all... i do not like it at all\". Archived byte-identical at desktop/design/windowsweep-click-dummy/_rejected/01-instrument-panel-2026-09-04/ with a five-point post-mortem - the root cause was a wrong design read (dashboard dials on a premium-consumer surface) plus the two skills whose omission is a recorded cause of exactly this rejection. Direction 02 \"Reclaim\" now stands: 3 screens (Home 14 zones, Sections, Run) x 3 treatments x light/dark, a D3 treemap as the signature element, Archivo's width axis as the hierarchy device, 10-axis pre-paint theme control, fully offline. Verified: 5,160 text nodes measured for contrast across 18 combinations -> 0 failures (after fixing 3 real root causes it found), 4 gates green at 1440 and 390 with each proven red on its own planted defect, 6 interactive flows driven end to end. GATE 1 is the owner's: MANUAL-TASKS row 17. Nothing is created under desktop/ beyond design/ until gate 3 is recorded | ROUND 3 (2026-09-04, same day): owner said \"okay it's better but still not final, improve it make it better and more beautiful\" - neither a rejection nor a keep-and-branch, so direction 02 was refined IN PLACE and nothing was archived. Changed: the tier ramp given a two-ended range per tier so the accent stops being spent across half the viewport (it was aliased to --c-accent and 8/8 sections are `rebuilds`); an atmosphere layer - ambient accent fields, 1.6% grain, panel sheen, faded band seams, hero glow and the sweep metaphor; the CAPACITY RING, three d3 arcs per drive, which fills the hero's dead right half and gives the page its only circle; treemap frame 420->340 and PORTRAIT below 700px; typographic correctness on visible copy only. \ud83d\udd34 And one instrument gap closed: the contrast sweep had never measured the treemap's 56 SVG labels because SVG text paints with `fill`, not `color` - it reported 0 failures while never looking at the map.",
+          "note": "Direction 01 (\"instrument panel\") was REJECTED by the owner on 2026-09-04: \"very basic and not attractive at all... i do not like it at all\". Archived byte-identical at desktop/design/windowsweep-click-dummy/_rejected/01-instrument-panel-2026-09-04/ with a five-point post-mortem - the root cause was a wrong design read (dashboard dials on a premium-consumer surface) plus the two skills whose omission is a recorded cause of exactly this rejection. Direction 02 \"Reclaim\" now stands: 3 screens (Home 14 zones, Sections, Run) x 3 treatments x light/dark, a D3 treemap as the signature element, Archivo's width axis as the hierarchy device, 10-axis pre-paint theme control, fully offline. Verified: 5,160 text nodes measured for contrast across 18 combinations -> 0 failures (after fixing 3 real root causes it found), 4 gates green at 1440 and 390 with each proven red on its own planted defect, 6 interactive flows driven end to end. GATE 1 is the owner's: MANUAL-TASKS row 17. Nothing is created under desktop/ beyond design/ until gate 3 is recorded | ROUND 3 (2026-09-04, same day): owner said \"okay it's better but still not final, improve it make it better and more beautiful\" - neither a rejection nor a keep-and-branch, so direction 02 was refined IN PLACE and nothing was archived. Changed: the tier ramp given a two-ended range per tier so the accent stops being spent across half the viewport (it was aliased to --c-accent and 8/8 sections are `rebuilds`); an atmosphere layer - ambient accent fields, 1.6% grain, panel sheen, faded band seams, hero glow and the sweep metaphor; the CAPACITY RING, three d3 arcs per drive, which fills the hero's dead right half and gives the page its only circle; treemap frame 420->340 and PORTRAIT below 700px; typographic correctness on visible copy only. 🔴 And one instrument gap closed: the contrast sweep had never measured the treemap's 56 SVG labels because SVG text paints with `fill`, not `color` - it reported 0 failures while never looking at the map. | GATE 1 APPROVED 2026-09-05 (owner, verbatim): \"approved, looks great, get all remaining work fully done now\". Gates 2 and 3 pre-authorised in the same message. Remaining inside this sub-task: A3 the eight-file component library with a playground each, A4 the eight remaining screens, the wiring batch, and the verification sweep across all 19 files",
           "awaitingUser": false
         },
         {
           "id": "P6.firebase-vault",
           "title": "Firebase project, Google provider, Firestore rules and indexes, FilesHub vault seeded",
-          "status": "blocked",
-          "note": "BLOCKED on a download, not on a decision: provisioning needs npx firebase-tools, which is gated by PENDING-TASKS.md TASK-001. The OAuth client is MANUAL-TASKS row 15 and the telemetry keys row 16",
-          "awaitingUser": true
+          "status": "pending",
+          "note": "UNBLOCKED 2026-09-05: TASK-001 lifted, so npx firebase-tools is allowed. The Google OAuth desktop client (MANUAL-TASKS row 15) and the four telemetry keys (row 16) remain his Cloud-Console clicks; the app reads them from config and an absent key skips that provider, so sign-in and analytics ship compiled and dormant rather than blocking the release",
+          "awaitingUser": false
         },
         {
           "id": "P6.code-ci",
           "title": "desktop/ app written and compiled by CI (desktop-ci.yml, desktop-release.yml)",
           "status": "pending",
-          "note": "no local dependency tree until TASK-001 | Held until click-dummy gate 3 is recorded: nothing is created under desktop/ beyond design/ before the owner approves the dummy",
+          "note": "no local dependency tree until TASK-001 | UNBLOCKED 2026-09-05: gate 3 is recorded (owner pre-authorised it), so desktop/ may now hold app code",
           "awaitingUser": false
         },
         {
           "id": "P6.ui",
           "title": "UI implemented against the approved dummy, with the parity check",
           "status": "pending",
-          "note": "follows the dummy review | Held until click-dummy gate 3 is recorded: nothing is created under desktop/ beyond design/ before the owner approves the dummy",
+          "note": "follows the dummy review | UNBLOCKED 2026-09-05: gate 3 is recorded (owner pre-authorised it), so desktop/ may now hold app code",
           "awaitingUser": false
         },
         {
@@ -402,9 +403,9 @@
         {
           "id": "P6.toolchain",
           "title": "Install rustup and the C++ Build Tools, yarn install both trees, commit the lockfiles",
-          "status": "blocked",
-          "note": "MANUAL-TASKS row 14 / PENDING-TASKS TASK-001",
-          "awaitingUser": true
+          "status": "in_progress",
+          "note": "TASK-001 lifted 2026-09-05. rustup installed per-user via rustup-init.exe - rustc/cargo 1.98.1 verified. NOTE: winget install --id Rustlang.Rustup --scope user exits 0 having installed nothing (\"No applicable installer found\"), which reads exactly like success. Visual Studio 2022 Build Tools needs a UAC click and is MANUAL-TASKS row 22; until it lands nothing Rust-side links here and the Tauri half is CI-verified only. yarn install for both trees follows once desktop/package.json exists",
+          "awaitingUser": false
         },
         {
           "id": "P6.verify-release",
@@ -488,7 +489,13 @@
       "phase": "P6-A",
       "summary": "Click dummy direction 02 round 3 - accent reclaimed from the treemap, atmosphere and depth layer, the capacity ring, responsive portrait map, typography pass, and the SVG-text gap in the contrast sweep closed",
       "commit": "pending"
+    },
+    {
+      "date": "2026-09-05",
+      "phase": "P6-A",
+      "summary": "GATE 1 approved and gates 2-3 pre-authorised by the owner; TASK-001 lifted in full. Records updated (PROJECT-CONTEXT session-6 block, MANUAL-TASKS rows 14 and 17 completed and row 22 added for the Build Tools UAC click, TASK-001 closed to a new docs/DONE-TASKS.md, the design README gates table). rustup installed per-user after winget --scope user exited 0 having installed nothing",
+      "commit": "pending"
     }
   ],
-  "resumeInstructions": "P6.design-dummy is at GATE 1 with direction 02. Only the owner's written words advance it (MANUAL-TASKS row 17). On approval: A3 the component library (8 gallery files, each with a playground), then A4+ the remaining screens wired. On rejection: archive to _rejected/02-reclaim-<date>/ with his words verbatim and build a genuinely new direction. Nothing under desktop/ beyond design/ until gate 3 is recorded."
+  "resumeInstructions": "P6.design-dummy resumes at Block P of plan section 18: A3, the eight-file component library, each file carrying a live playground. Then Block Q (the eight remaining screens), Block R (wiring), Block S (verification), then T-Z build and release the app. Gates 1-3 are recorded; GATE 4 parity closes after the app exists. Nothing waits on the owner except MANUAL-TASKS rows 15, 16 and 22."
 }

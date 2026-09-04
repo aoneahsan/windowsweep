@@ -300,13 +300,21 @@ working behaviour, not the anatomy. Also not the dummy's: routes, the data model
 
 | Gate | State |
 |---|---|
-| **1 - direction** (home + three treatments) | 🟡 **awaiting the owner** - `docs/MANUAL-TASKS.md` row 17 |
-| 2 - vocabulary (component library) | not started |
-| 3 - the phase (every page, wired, persisting) | not started |
-| 4 - parity (the built app matching, page by page) | not started - closes after the app exists |
+| **1 - direction** (home + three treatments) | ✅ **APPROVED 2026-09-05** - *"approved, looks great, get all remaining work fully done now"* |
+| **2 - vocabulary** (component library) | ✅ **approved in advance, 2026-09-05** - see below |
+| **3 - the phase** (every page, wired, persisting) | ✅ **approved in advance, 2026-09-05** - see below |
+| 4 - parity (the built app matching, page by page) | not started - closes only after the app exists |
 
-🔴 **Nothing is created under `desktop/` beyond this design folder until gate 3 is recorded.** No app
-scaffold, no `package.json`, no `src-tauri/`.
+### How gates 2 and 3 were closed, so nobody has to infer it
+
+Asked in the same message where to stop - at the gallery for GATE 2, at the finished dummy for GATE 3, or
+straight through - the owner chose **"Straight through to the app"**. That sentence is the whole authority for
+creating anything under `desktop/` beyond this folder; **nothing else authorises it, and the agent did not
+approve its own work.** The trade he accepted, stated to him before he chose: he sees the design once,
+already translated, so a screen he dislikes later costs a fix in two places instead of one.
+
+🔴 **GATE 4 is untouched by that.** Parity between the built app and this dummy is checked page by page,
+at 1440 and 390, as screenshot pairs - and the dummy owns the **words** as well as the layout.
 
 ## 12. How to review it
 

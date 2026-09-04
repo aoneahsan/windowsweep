@@ -345,8 +345,8 @@
         {
           "id": "P5.release",
           "title": "1.1.0: cascade, CHANGELOG, README + docs tables for sections 22-26, publish gate, tag + Release",
-          "status": "pending",
-          "note": "",
+          "status": "complete",
+          "note": "windowsweep@1.1.0 published 2026-09-04 from 3c4d54e (44 files, 109.0 kB packed, 365.6 kB unpacked); publish gate ran in full including a content-regression diff against the 1.0.1 tarball (no file lost, six added). Tag v1.1.0 and a GitHub Release; docs site re-mirrored (Pages run 33857426599 green)",
           "awaitingUser": false
         }
       ]
@@ -463,8 +463,14 @@
       "date": "2026-09-04",
       "phase": "P5",
       "summary": "Sections 22-25 added (globals audit, orphaned AppData, idle programs, startup items); --select/--select-file, --notify, candidates[]/targets[]/progress lines and --list --json; the Hugging Face and wsreset rows and seven artefact-dir additions. Target collection is driven by the catalogue instead of a literal 0..21. Self-test 124 -> 151, every new check proved red on its own plant. Three real defects the new checks found: a HashSet returned unrolled made the section-23 exclusions case-sensitive, section 24 measured last-access so it could never report anything, and a $p/$P case collision nulled the roots table",
+      "commit": "3c4d54e"
+    },
+    {
+      "date": "2026-09-04",
+      "phase": "P5",
+      "summary": "windowsweep@1.1.0 published, tagged v1.1.0 and released; documentation site re-mirrored and deployed green. The domain still returns 000, so the README, package.json homepage and WS_DOCS still point at GitHub - the write-back waits on MANUAL-TASKS row 11",
       "commit": "pending"
     }
   ],
-  "resumeInstructions": "1) Read CLAUDE.md, remaining-work.md and this tracker. 2) Find the first pending sub-task (owner rows are blocked + awaitingUser: prepare, never execute). 3) Do that item or phase only, obeying the IRON rules. 4) Run the item's gates. 5) Flip the sub-task in the same commit as the work, bump lastUpdated, append a runHistory row with the SHA. 6) One commit, push to o main, quote any 'Bypassed rule violations' line. SESSION 1 (2026-09-03) closed P0 and P2 and published 1.0.1; P3 needs only the DNS write-back and P4 only the owner's folder rename. SESSION 2 STARTS AT P5.RW-060 after Fable's review; the session-1 execution log is section 9 of C:/Users/PC/.claude/plans/please-plan-and-get-agile-fairy.md and its section 8 outlines P5 and P6."
+  "resumeInstructions": "1) Read CLAUDE.md, remaining-work.md and this tracker. 2) Find the first pending sub-task (owner rows are blocked + awaitingUser: prepare, never execute). 3) Do that item or phase only, obeying the IRON rules. 4) Run the item's gates. 5) Flip the sub-task in the same commit as the work, bump lastUpdated, append a runHistory row with the SHA. 6) One commit, push to o main, quote any \"Bypassed rule violations\" line. SESSION 1 (2026-09-03) closed P0 and P2 and published 1.0.1. SESSION 2 (2026-09-04) closed P5 and published 1.1.0: sections 22-25, --select/--select-file, --notify, the --json additions and --list --json; self-test 124 -> 151. RW-064 and RW-065 stay in_progress and RW-066 is blocked, all three waiting on the owner's candidate-path probe (MANUAL-TASKS row 20). SESSION 3 STARTS AT P6.design-dummy and follows section 12 Block N of C:/Users/PC/.claude/plans/please-plan-and-get-agile-fairy.md; P6.firebase-vault stays blocked because provisioning needs npx firebase-tools, which is a download gated on TASK-001."
 }

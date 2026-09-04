@@ -33,7 +33,9 @@ Verified Against: commit 84c732f on `main`, 2026-09-03 (1.0.0 released the same 
 - npm publish of 1.0.0 approved by the owner on 2026-09-03 "to secure the spot"; token comes from the FilesHub
   developer-accounts vault (`aoneahsan-npm-pat`), never stored in the repo.
 - Author block carries name, site, GitHub, LinkedIn and the public email only; no phone number (2026-09-03).
-- Section numbers 0-21 are frozen from 1.0.0; a retired section stays as a no-op; new sections start at 22.
+- Section numbers are frozen from the release that introduced them; a retired section stays as a no-op and a
+  number is never reused. 0-21 shipped in 1.0.0, 22-25 in 1.1.0; the next new section starts at 26 (which is
+  free because RW-066's driver-leftover section was deferred, not shipped).
 - Developer mode semantics (owner requirement): developer = idle gate (100 days) + keep-newest on sections 1-5;
   non-developer = clear those caches. Non-interactive with no saved answer defaults to developer on.
 - Idle age = newest of write/access/creation time, because Windows disables last-access updates on most
@@ -58,6 +60,22 @@ Verified Against: commit 84c732f on `main`, 2026-09-03 (1.0.0 released the same 
   (free local GUI vs sign-in with plans) is decided when the phase opens.
 - **Releases (2026-09-03):** every release from 1.0.1 on gets an annotated tag `vX.Y.Z` and a GitHub Release;
   `v1.0.0` is tagged retroactively on `70c6738`, the commit the published tarball was built from.
+
+### Session 4 decisions (2026-09-04) - unverified target paths, and what follows 1.1.0
+
+- **Unverified target paths: verified only.** A path becomes a target only once it has been seen on a real
+  machine holding regenerable data, exactly as `remaining-work.md` requires. Anything unverifiable becomes a
+  documented "candidate targets awaiting verification" table in `docs/sections.md`, plus one
+  `docs/MANUAL-TASKS.md` row (20) carrying a paste-ready read-only probe the owner runs where those apps
+  exist. The rows land in a follow-up release once he pastes the output. Consequences of that choice, all
+  recorded rather than quietly absorbed: RW-064 and RW-065 shipped only their verified halves and stay
+  `in_progress`; **section 26 was not created at all**, so the number is still free.
+- 🔴 **`C:\Intel` was inspected and REJECTED, not deferred.** It exists on the build machine but holds
+  `Thunderbolt`, `Logs` and a hidden `GfxCPLBatchFiles` - driver support content, not installer extraction
+  leftovers. It will not become a target. This is exactly the failure the verification rule exists to catch:
+  the path was in the specification, it exists, and clearing it would have been wrong.
+- **After 1.1.0, continue straight into P6-A** on Opus - the design argument, the click dummy, the `desktop/`
+  code and its CI workflows - with no review round in between.
 
 ### Session 3 decisions (2026-09-03) - the desktop app, downloads and telemetry
 
@@ -192,6 +210,16 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
 - 2026-09-03: annotated tags `v1.0.0` (on `70c6738`, the commit the 1.0.0 tarball was built from) and `v1.0.1`
   (on `edaa5cf`) pushed, with a GitHub Release for each carrying its changelog entry. Every release from here
   on gets both.
+- 2026-09-04T09:12Z: `windowsweep@1.1.0` published to npm by `aoneahsan` (44 files, 109.0 kB packed,
+  365.6 kB unpacked; built from `3c4d54e`). The publish gate ran in full: clean pushed tree, CI run
+  33856301415 green on both PowerShell hosts, registry at 1.0.1, tarball allowlist verified, a
+  content-regression diff against the 1.0.1 tarball (**no file lost**; six added - the AI guide and the five
+  new modules), a smoke-install of the packed tarball into a temporary prefix (`--version` 1.1.0, `--list`
+  26 sections, `--self-test` 151/151), then `npm view --prefer-online` = 1.1.0 and
+  `npx -y windowsweep@1.1.0 --version` from `%TEMP%`. Annotated tag `v1.1.0` on `3c4d54e` with a GitHub
+  Release. 🔴 The `tar` on PATH here is Git Bash's, which reads `C:\...` as a remote host - the diff step
+  uses `%SystemRoot%\System32\tar.exe` explicitly and refuses to compare fewer than 30 extracted files, so a
+  failed extraction can never read as "nothing disappeared".
 - Verify a published version from a directory OUTSIDE this repo: inside it, npx resolves the same-named local
   package and reports `'windowsweep' is not recognized` (`docs/troubleshooting.md`).
 - GitHub state after the audit: no topics, no homepage, wiki enabled, no tags, no Releases (RW-050).

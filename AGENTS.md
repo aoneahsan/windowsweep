@@ -1,6 +1,6 @@
 # windowsweep - Project Rules
 
-Last Updated: 2026-09-03 (session 1: 1.0.1 published, docs site, records) · Context pass: 2026-09-03 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
+Last Updated: 2026-09-04 (session 2: 1.1.0 published - sections 22-25, scripted selection, the JSON contract) · Context pass: 2026-09-03 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
 
 Safe, developer-aware Windows cleanup CLI: a Windows PowerShell 5.1 engine behind a dependency-free Node
 launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macleanup` (Bash). Public repo
@@ -15,19 +15,23 @@ launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macl
 - Dependency and manifest record: `docs/PACKAGES.md`
 - Follow-ups the agent owes this project: `PENDING-TASKS.md` (root)
 
-## Current state (end of session 1, 2026-09-03)
+## Current state (end of session 2, 2026-09-04)
 
-**1.0.1 is published on npm and equals `main`'s engine.** It closed every P0 defect from the launch-day
-audit, including the HIGH one: `--yes` no longer selects anything in sections 17, 18 and 19. Tags `v1.0.0`
-and `v1.0.1` exist with GitHub Releases, and every release from here gets both. The self-test runs
-**124 checks**; each new one was proved red on a planted defect. A documentation site lives at
-`aoneahsan/windowsweep-docs` (Docusaurus on GitHub Pages, deployed and green) - its domain does not resolve
-yet, so `package.json` `homepage`, the README links and `WS_DOCS` still point at GitHub and switch only after
-the domain probes 200. `AI-INTEGRATION-GUIDE.md` ships in the package.
+**1.1.0 is published on npm and equals `main`'s engine** (built from `3c4d54e`; tags `v1.0.0`, `v1.0.1`,
+`v1.1.0`, each with a GitHub Release, and every release from here gets both). It added four sections -
+**22** global packages audit, **23** orphaned application data, **24** installed programs not modified for
+N+ days, **25** startup items - plus `--select` / `--select-file`, `--notify`, `candidates[]` / `targets[]`
+and `##windowsweep` progress lines in `--json`, and `--list --json`. The self-test runs **151 checks**; each
+new one was proved red on a planted defect. A documentation site lives at `aoneahsan/windowsweep-docs`
+(Docusaurus on GitHub Pages, deployed and green) - its domain still returns 000, so `package.json`
+`homepage`, the README links and `WS_DOCS` still point at GitHub and switch only after it probes 200.
 
-Open: **P5** (the 1.1 family-parity features: sections 22-26, new target rows, `--notify`, and the two GUI
-prerequisites RW-071 `--select` and RW-072 the `--json` additions) and **P6** (the desktop app). Phase P1 is
-entirely owner-run.
+Open: **P6**, the desktop app (P6-A now; P6-B behind the download go-ahead). Phase P1 is entirely owner-run.
+🔴 **P5 is closed but two of its rows are not:** RW-064 and RW-065 shipped only their verified halves and
+RW-066 was **deferred, not shipped**, because that software is not installed on this machine. What is
+outstanding is a documented candidate table in `docs/sections.md` plus one owner probe (`MANUAL-TASKS`
+row 20) - not code. **Section 26 is still free.** `C:\Intel` was inspected and **rejected**: it holds
+`Thunderbolt` and driver support content, not extraction leftovers.
 
 Owner decisions of 2026-09-03, recorded in full in `docs/PROJECT-CONTEXT.md`: "feature-complete" means the
 1.0 catalogue plus the 1.1 family-parity features; the docs site is in scope; the desktop app is a Tauri
@@ -64,9 +68,13 @@ downloads happen on this machine until he gives the go-ahead** (`PENDING-TASKS.m
 3. **Everything honours `--dry-run`.** Deletion helpers short-circuit; destructive external commands go
    through `Invoke-External -Destructive`; dry-run output aggregates per folder. Self-test check [7c]
    (tree hash unchanged) stays.
-4. **Section numbers 0-21 are frozen; new sections start at 22.** Retire a section as a no-op that says so;
-   never reuse a number. The catalogue, safe batch and profiles live in `lib/constants.ps1`; `docs/sections.md`,
-   `docs/cli-reference.md`, `docs/profiles.md` and the README section table must agree with it.
+4. **Section numbers are frozen; a number is never reused.** 0-21 shipped in 1.0.0, 22-25 in 1.1.0, so the
+   next new section is 26. Retire a section as a no-op that says so. The catalogue, safe batch and profiles
+   live in `lib/constants.ps1`; `docs/sections.md`, `docs/cli-reference.md`, `docs/profiles.md` and the README
+   section table must agree with it. 🔴 **Nothing may iterate a literal section range** - `Get-AllTargets` and
+   the menu prompt derive theirs from `WS_SECTIONS`, and self-test check 15a fails if that regresses.
+   🔴 **A path becomes a target only once it has been seen on a real machine**; anything else goes in the
+   "candidate targets awaiting verification" table in `docs/sections.md`, never into a `New-Target` row.
 5. **No network code.** Self-test check [9] greps for HTTP and socket calls. `Start-Process <url>` opens the
    user's browser only in `--report-issue`, `--feedback` and the reports manager, after the user asks.
 6. **Files stay under 500 lines**, functions carry a `.SYNOPSIS`, verbs are PowerShell-approved.

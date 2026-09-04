@@ -23,6 +23,45 @@
 | 16 | Create or hand over the desktop app's telemetry keys: GA4 measurement id, Amplitude API key, Clarity project id, Sentry DSN (into the FilesHub vault `windowsweep`) | the vault holds these blank by decision | phase P6 | Not started |
 | 17 | Review the desktop click dummy when the agent posts it (`desktop/design/click-dummy/`); reply "ok" or say what you dislike | design authority: you judge | phase P6 | Not started |
 | 18 | Optional analytics keys as Actions secrets on `aoneahsan/windowsweep-docs` (`GA_MEASUREMENT_ID`, `CLARITY_PROJECT_ID`, `AMPLITUDE_API_KEY`, `SENTRY_DSN`); an unset key skips that provider | repository secrets | `windowsweep-docs/.env.example` | Not started |
+| 19 | Dry-run review of the four new sections on your machine: `windowsweep --profile audit` (22, 24, 25 - all read-only) then `windowsweep --only 23 --dry-run`. Confirm section 23 lists nothing that belongs to a program you still have installed | it is your machine's data and your judgement of what is genuinely orphaned | `remaining-work.md` RW-061, `docs/sections.md` section 23 | Not started |
+| 20 | Run the candidate-path probe below on any machine that has Telegram, WhatsApp, Office, Steam **with games**, an NVIDIA or AMD driver, conda or PyTorch, and paste the output. It settles the whole "candidate targets awaiting verification" table in one go | those apps are not installed on the build machine, and a path becomes a target only once it has been seen | `docs/sections.md` -> Candidate targets awaiting verification | Not started |
+| 21 | See `--notify` once on each host: `windowsweep --scan --notify` on Windows PowerShell 5.1 (a toast) and `windowsweep --pwsh --scan --notify` on PowerShell 7 (a tray balloon) | a notification has to be seen by a person | `remaining-work.md` RW-068 | Not started |
+
+### Runbook for row 20 - the candidate-path probe
+
+Read-only. It writes nothing, deletes nothing, and touches no registry. Paste the whole block into a normal
+PowerShell window and send back everything it prints.
+
+```powershell
+$P = @{ A = $env:APPDATA; L = $env:LOCALAPPDATA; U = $env:USERPROFILE; SD = $env:SystemDrive }
+$candidates = @(
+  @('Telegram cache',        "$($P.A)\Telegram Desktop\tdata\user_data\cache"),
+  @('Telegram media_cache',  "$($P.A)\Telegram Desktop\tdata\user_data\media_cache"),
+  @('Office file cache',     "$($P.L)\Microsoft\Office\16.0\OfficeFileCache"),
+  @('PyTorch hub cache',     "$($P.U)\.cache\torch"),
+  @('NVIDIA extraction',     "$($P.SD)\NVIDIA"),
+  @('NVIDIA downloader',     "$env:ProgramData\NVIDIA Corporation\Downloader"),
+  @('AMD extraction',        "$($P.SD)\AMD"),
+  @('Windows upgrade ESD',   "$($P.SD)\ESD")
+)
+foreach ($c in $candidates) {
+  $exists = Test-Path -LiteralPath $c[1]
+  $size = ''
+  if ($exists) { $size = '{0:N1} MB' -f ((Get-ChildItem -LiteralPath $c[1] -Recurse -File -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum / 1MB) }
+  '{0,-22} {1,-6} {2,12}  {3}' -f $c[0], $exists, $size, $c[1]
+}
+'--- WhatsApp (Store) package, if installed ---'
+Get-ChildItem -LiteralPath "$($P.L)\Packages" -Directory -ErrorAction SilentlyContinue |
+  Where-Object { $_.Name -like '*WhatsApp*' } |
+  ForEach-Object { $_.FullName; Get-ChildItem -LiteralPath "$($_.FullName)\LocalCache" -Directory -ErrorAction SilentlyContinue | ForEach-Object { '   ' + $_.Name } }
+'--- Steam shader caches, if any game is installed ---'
+Get-ChildItem -Path "$($P.L)\Steam", "${env:ProgramFiles(x86)}\Steam" -Directory -ErrorAction SilentlyContinue |
+  ForEach-Object { Get-ChildItem -Path "$($_.FullName)\steamapps\shadercache" -Directory -ErrorAction SilentlyContinue | Select-Object -First 3 -ExpandProperty FullName }
+'--- WebView2 host apps ---'
+Get-ChildItem -Path "$($P.L)\*\EBWebView" -Directory -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
+'--- conda ---'
+if (Get-Command conda -ErrorAction SilentlyContinue) { 'conda present: ' + (Get-Command conda).Source } else { 'conda: not installed' }
+```
 
 ## Completed
 (move rows here with the date)

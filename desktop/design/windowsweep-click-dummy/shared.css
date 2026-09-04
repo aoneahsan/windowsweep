@@ -47,7 +47,9 @@ button, [role='button'] {
 /* 🔴 The width axis IS the hierarchy device. Archivo carries wdth 62-125. */
 .wide     { font-stretch: 118%; font-variation-settings: 'wdth' 118; }
 .narrow   { font-stretch: 84%;  font-variation-settings: 'wdth' 84; }
-.caps     { text-transform: uppercase; letter-spacing: .10em; font-size: var(--fs-2xs); font-weight: 600; }
+/* 🔴 .caps was on --fs-2xs and used 21 times, which is most of why the page read
+   at 11px. Uppercase also needs MORE size than lowercase to stay legible, not less. */
+.caps     { text-transform: uppercase; letter-spacing: .085em; font-size: var(--fs-xs); font-weight: 600; }
 .t-2xs { font-size: var(--fs-2xs); }  .t-xs { font-size: var(--fs-xs); }
 .t-sm  { font-size: var(--fs-sm); }   .t-md { font-size: var(--fs-md); }
 .t-lg  { font-size: var(--fs-lg); }   .t-xl { font-size: var(--fs-xl); }
@@ -307,7 +309,7 @@ button, [role='button'] {
   font-stretch: 100%; font-variation-settings: 'wdth' 100;
   color: var(--c-ink-2);
 }
-.hero-sub { margin-top: var(--sp-3); color: var(--c-ink-3); font-size: var(--fs-xs); }
+.hero-sub { margin-top: var(--sp-3); color: var(--c-ink-3); font-size: var(--fs-sm); }
 .link-q {
   color: var(--c-accent-ink); text-decoration: underline;
   text-decoration-style: dotted; text-underline-offset: 3px;
@@ -446,6 +448,7 @@ button, [role='button'] {
    table had passed cleanly all along. */
 .tbl tbody tr[data-selected='true'] { background: var(--c-accent-soft); --c-ink-3: var(--c-ink-2); }
 .tbl tbody tr[data-selected='true'] td:first-child { box-shadow: inset 3px 0 0 0 var(--c-accent); }
+.tbl td.mono { font-size: var(--fs-xs); }
 .tbl .num-cell { text-align: end; font-family: var(--ff-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .tbl tr.detail-row > td { background: var(--c-well); padding: var(--sp-4); }
 
@@ -798,4 +801,100 @@ body::after {
   .zone-label::after { display: none; }
   .hero-actions { width: 100%; }
   .hero-actions .btn-lg { flex: 1 1 100%; }
+}
+
+/* ============================================================================
+   PROGRESSIVE DISCLOSURE - round 4
+
+   "too much we are trying to explain to end user, make it easy for end user, with
+   option to see details if he wants."
+
+   Measured before cutting: 263 of Home's 444 words - 59% - sat in the two blocks
+   he quoted. So the fix is concentrated, not a rewrite: each of those blocks keeps
+   ONE plain sentence visible and puts the argument behind a disclosure.
+
+   Native <details>/<summary>: keyboard operation, the expanded/collapsed state and
+   the screen-reader announcement all come free and correct. A div with a click
+   handler would have to re-earn every one of them.
+   ============================================================================ */
+.disclose {
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  background: color-mix(in oklab, var(--c-well) calc(var(--surface-alpha) * 100%), transparent);
+}
+.disclose + .disclose { margin-top: var(--sp-3); }
+
+.disclose > summary {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5);
+  cursor: pointer; list-style: none;
+  border-radius: inherit;
+  transition: background var(--d-instant) var(--ease-mech);
+}
+.disclose > summary::-webkit-details-marker { display: none; }
+.disclose > summary:hover { background: color-mix(in oklab, var(--c-ink) 4%, transparent); }
+.disclose > summary:focus-visible { outline: 2px solid var(--c-accent); outline-offset: -2px; }
+
+.disclose-line { flex: 1; min-width: 0; font-size: var(--fs-base); }
+.disclose-more {
+  flex: none; display: inline-flex; align-items: center; gap: var(--sp-2);
+  font-size: var(--fs-xs); font-weight: 600; color: var(--c-accent-ink);
+  white-space: nowrap;
+}
+.disclose-more::after {
+  content: ''; width: 7px; height: 7px; flex: none;
+  border-inline-end: 1.8px solid currentColor; border-block-end: 1.8px solid currentColor;
+  rotate: 45deg; translate: 0 -2px;
+  transition: rotate var(--d-quick) var(--ease-mech);
+}
+.disclose[open] > summary .disclose-more::after { rotate: -135deg; translate: 0 2px; }
+.disclose[open] > summary { border-bottom: 1px solid var(--c-line); border-end-start-radius: 0; border-end-end-radius: 0; }
+.disclose-body { padding: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-5); }
+
+/* the reassurance a nervous user actually needs, before any argument for it */
+.assure {
+  display: flex; align-items: flex-start; gap: var(--sp-3);
+  font-size: var(--fs-md); line-height: 1.45;
+}
+.assure svg { flex: none; width: 22px; height: 22px; color: var(--c-ok); margin-top: 1px; }
+
+/* supporting prose sits at 15px, never below - it is the paragraph floor */
+.disclose-body p, .lede { font-size: var(--fs-sm); line-height: 1.55; color: var(--c-ink-2); }
+.lede { max-width: 62ch; }
+
+/* the ladder's overflow, so the column stops being twice its neighbour's height */
+.ladder-more { margin-top: var(--sp-3); }
+.ladder-more > summary {
+  display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-3);
+  cursor: pointer; list-style: none;
+  padding: var(--sp-2) 0; font-size: var(--fs-sm); color: var(--c-ink-2);
+  border-top: 1px dashed var(--c-line);
+}
+.ladder-more > summary::-webkit-details-marker { display: none; }
+.ladder-more > summary:hover { color: var(--c-ink); }
+.ladder-more[open] > summary { color: var(--c-ink); }
+.rung-mini {
+  display: flex; justify-content: space-between; gap: var(--sp-3);
+  padding: var(--sp-1) 0;
+}
+
+/* 🔴 A COMPONENT THAT PAINTS ITS OWN BACKGROUND RESTORES THE BASE INKS.
+
+   The bleed band rebinds --c-ink and friends on its whole subtree, which is right
+   for bare text sitting on the inverted band. It is WRONG for anything carrying a
+   surface of its own: that surface stays light, takes the band's light ink, and
+   lands at 1.09:1.
+
+   This is the second time - `.badge-accent` hit it in round 3 and was fixed with a
+   single never-rebound token. Fixing it per component does not scale, so the reset
+   is general and every future surface inherits the correct behaviour. */
+.band-bleed .disclose,
+.band-bleed .panel,
+.band-bleed .well,
+.band-bleed .card-sel {
+  --c-ink: var(--c-base-ink);
+  --c-ink-2: var(--c-base-ink-2);
+  --c-ink-3: var(--c-base-ink-3);
+  --c-accent-ink: var(--c-base-accent-ink);
+  color: var(--c-ink);
 }

@@ -1,6 +1,6 @@
 # windowsweep desktop - the design argument
 
-Last Updated: 2026-09-04 (round 3) · Direction **02, "Reclaim"** · Phase P6-A, gate 1 pending
+Last Updated: 2026-09-04 (round 4) · Direction **02, "Reclaim"** · Phase P6-A, gate 1 pending
 
 The reasoning behind the click dummy in `windowsweep-click-dummy/`. Written so the owner can disagree with
 the *argument* rather than only with the pixels. Nothing here was put to him as a choice; the decisions are
@@ -123,6 +123,56 @@ reading `color` returned an inherited value and silently skipped 56 text nodes -
 text on the page. It reported 0 failures while never looking at the map. Corrected, then *proved* corrected
 by showing `fill` genuinely differs from `color` on 9 of those nodes. A sweep is only as good as the property
 it reads.
+
+
+## 2b. Round 4 - legibility and progressive disclosure
+
+> *"too dense … text too small and hard to read, and i think too much we are trying to explain to end user,
+> make it easy for end user, with option to see details if he wants"*
+
+Measured before changing anything, because "too dense" has causes and they are countable:
+
+| | |
+|---|---|
+| Sized elements set at 11-13px | **37 of 39.** `.caps` resolved to 11px and was used 21 times; `t-2xs` 16 more |
+| The floor that was violated | `home-page.md`: *body text >= 16px*. The base was 15px and almost nothing used it |
+| Visible copy on Home | **444 words** |
+| Where it actually was | **263 words - 59% - in exactly the two blocks he quoted** |
+
+**The type scale went up and, more importantly, elements stopped reaching for the bottom of it.** Retuning
+tokens is half the job; a scale nobody uses the top of is not a scale. Base is now 16px, supporting prose
+15px, and 12px is reserved for badges and chips. `.caps` moved up two steps - uppercase needs *more* size to
+stay legible, not less.
+
+**Progressive disclosure, built on native `<details>`** so keyboard operation, state and the screen-reader
+announcement are correct for free. Each collapsed block keeps one plain sentence visible: *"Your documents,
+photos, keys and saved passwords are never touched"* in place of a 106-word essay on the deletion chokepoint;
+*"Six sections need Windows to ask your permission first"*; *"Nothing leaves this machine unless you turn it
+on."* **Nothing was deleted - the page stopped leading with it.** Home's default view went from 444 words to
+**208**, and the safe-run ladder now shows four rungs with the rest one click away, which also closed the
+dead space beside it.
+
+**Our vocabulary left the default view.** `Remove-PathSafe`, `-Within <root>`, `--yes` and the batch-policy
+taxonomy are inside the disclosures. The run history reads `Yesterday · 5 sections · packages and editors`
+rather than `yesterday – only 1,2,6 – 5 sections`. What stays is the *user's* domain - `npm cache`,
+`Gradle caches` are real things on their disk, and this is a developer-aware tool.
+
+**A new gate, and it caught two regressions immediately.** A rendered-DOM type audit: nothing below 12px,
+no paragraph below 15px - measured from the page, not from `tokens.css`, because the tokens were never the
+problem. Proven by planting an 11px paragraph and a 10px label and watching each fail. It then caught the
+hidden expandable rows in `sections.html` that it could *not* see (they start hidden - the blind spot is
+recorded), and the new `.disclose` component shipped at **1.09:1** in light mode.
+
+🔴 That last one was **the same defect class as round 3's badge**: a component painting its own background
+inside the inverted bleed band inherits the band's ink. Fixing it per component does not scale, so the base
+inks are now never-rebound tokens and any surface inside a bleed band restores them. The next component
+inherits the correct behaviour instead of the bug.
+
+### Deviation recorded
+
+`home-page.md`'s 12-15 section floor exists so a page does not read as templated. The owner has said the page
+shows too much. **His instruction outranks a skill default.** The 14 zones remain and remain distinct - they
+are progressively disclosed, not removed.
 
 ## 3. Typography - hierarchy carried by the WIDTH axis
 

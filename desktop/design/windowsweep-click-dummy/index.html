@@ -70,7 +70,7 @@
         <div class="wrap rise">
           <div class="zone-label">
             <span class="caps">The reclaim map</span>
-            <span class="t-2xs ink-3" style="flex:none">every target, sized by what it holds &middot; click a tile to keep it</span>
+            <span class="t-xs ink-3" style="flex:none">Bigger tile, more space. Click one to keep it.</span>
           </div>
 
           <div data-ws-map></div>
@@ -78,7 +78,7 @@
           <div style="display:flex;flex-wrap:wrap;gap:var(--sp-4);align-items:center;margin-top:var(--sp-3)">
             <div class="tm-legend" data-ws-legend></div>
             <div style="margin-inline-start:auto;display:flex;gap:var(--sp-2);align-items:center">
-              <span class="t-2xs ink-3" data-ws-text="excludedNote">nothing excluded</span>
+              <span class="t-xs ink-3" data-ws-text="excludedNote">nothing excluded</span>
               <button class="btn btn-sm btn-ghost" data-ws-action="clearExclusions">Reset choices</button>
             </div>
           </div>
@@ -110,9 +110,8 @@
                 <button class="switch" role="switch" aria-checked="true" data-ws-action="devMode" aria-label="Developer mode"></button>
                 <div>
                   <p class="t-sm" data-ws-text="devState">On – keeping anything used recently</p>
-                  <p class="t-xs ink-3" style="margin-top:var(--sp-1)">
-                    Package, build and test-runner caches you have touched inside the idle window are
-                    left alone, so your next install is not a cold one.
+                  <p class="t-sm ink-3" style="margin-top:var(--sp-1)">
+                    Caches you have used recently are left alone, so your next build is not a cold one.
                   </p>
                 </div>
               </div>
@@ -120,13 +119,13 @@
                 <div>
                   <p class="caps ink-3">Held back right now</p>
                   <p class="num t-lg wide" data-ws-text="devHeld">0 B</p>
-                  <p class="t-2xs ink-3"><span class="num" data-ws-text="devHeldN">0</span> caches newer than
+                  <p class="t-xs ink-3"><span class="num" data-ws-text="devHeldN">0</span> caches used in the last
                     <span class="num" data-ws-text="idleDays">100</span> days</p>
                 </div>
                 <div style="flex:1;min-width:11rem">
                   <label class="caps ink-3" for="idle">Idle window</label>
                   <input id="idle" class="field" type="range" min="7" max="365" step="1" value="100" data-ws-action="idleDays">
-                  <p class="t-2xs ink-3">Lower it and more comes back into the map – live.</p>
+                  <p class="t-sm ink-3">Lower it to sweep more.</p>
                 </div>
               </div>
             </div>
@@ -151,65 +150,61 @@
         <div class="wrap rise">
           <div class="zone-label">
             <span class="caps" style="color:var(--c-warn-ink)">These need a person</span>
-            <span class="t-2xs ink-3" style="flex:none">a safe run never touches them, and <code class="mono">--yes</code> never answers them</span>
+            <span class="t-xs ink-3" style="flex:none">A safe run never touches these &mdash; you pick, item by item.</span>
           </div>
           <div class="g12" data-ws-needs></div>
         </div>
       </section>
 
-      <!-- ============ ZONES 7 + 8 - the chokepoint, and what it refuses = -->
-      <section class="band band-bleed">
-        <div class="wrap">
+      <!-- ============ ZONES 7 + 8 - safety: one line, argument on request ====
+           These two carried 106 of Home's 444 words. What a nervous user needs is
+           the promise; the proof is for whoever asks for it. -->
+      <section class="band band-bleed band-tight">
+        <div class="wrap rise">
+          <p class="assure">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 3 4 6.5v5c0 4.6 3.2 8.6 8 9.5 4.8-.9 8-4.9 8-9.5v-5z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+            <span>Your documents, photos, keys and saved passwords are never touched &mdash;
+              whatever you click here.</span>
+          </p>
 
-          <div class="rise">
-            <div class="zone-label"><span class="caps">Every deletion goes through one door</span></div>
-            <div class="choke">
-              <div class="choke-col">
-                <p class="t-sm ink-2">26 sections. Hundreds of targets. One function.</p>
-                <p class="t-xs ink-3">Nothing in this product deletes anything except by calling
-                  <code class="mono">Remove-PathSafe</code> or <code class="mono">Send-ToRecycleBin</code>
-                  with a declared root. There is no second path, which is why the protected list below can
-                  be trusted.</p>
-              </div>
-
-              <svg class="choke-svg" viewBox="0 0 200 150" fill="none" aria-hidden="true">
-                <path d="M12 14 h176 l-58 62 v46 l-60 26 v-72 z"
-                      stroke="var(--c-accent)" stroke-width="2" fill="var(--c-accent)" fill-opacity=".08"/>
-                <path d="M40 30 h120M56 46 h88M72 62 h56" stroke="var(--c-ink-3)" stroke-width="2" stroke-linecap="round" opacity=".55"/>
-                <circle cx="100" cy="112" r="7" fill="var(--c-accent)"/>
-                <text x="100" y="141" text-anchor="middle" font-size="11" fill="var(--c-ink-3)"
-                      font-family="var(--ff-mono)">-Within &lt;root&gt;</text>
-              </svg>
+          <details class="disclose" style="margin-top:var(--sp-4)">
+            <summary>
+              <span class="disclose-line">How that is guaranteed</span>
+              <span class="disclose-more">Details</span>
+            </summary>
+            <div class="disclose-body">
+              <p>Every deletion in the product goes through one function, and that function is given a
+                folder it is allowed to work inside. There is no second route, so a path outside that
+                folder cannot be reached even by mistake.</p>
 
               <div class="choke-out">
                 <div class="choke-out-row">
-                  <span class="badge badge-danger">refused</span>
-                  <span class="t-xs ink-2">the path is protected, or outside the declared root – it does not matter which flag you passed</span>
+                  <span class="badge badge-danger">Refused</span>
+                  <span class="t-sm ink-2">Protected, or outside the allowed folder</span>
                 </div>
                 <div class="choke-out-row">
-                  <span class="badge badge-warn">recycle bin</span>
-                  <span class="t-xs ink-2">anything personal – recoverable until you empty it</span>
+                  <span class="badge badge-warn">Recycle Bin</span>
+                  <span class="t-sm ink-2">Anything personal, so you can get it back</span>
                 </div>
                 <div class="choke-out-row">
-                  <span class="badge badge-accent">deleted</span>
-                  <span class="t-xs ink-2">caches that rebuild themselves on next use</span>
-                </div>
-                <div class="choke-out-row">
-                  <span class="badge badge-neutral">dry run</span>
-                  <span class="t-xs ink-2">the same walk, and the helper returns before it removes anything</span>
+                  <span class="badge badge-accent">Deleted</span>
+                  <span class="t-sm ink-2">Caches that rebuild themselves next time you need them</span>
                 </div>
               </div>
+
+              <div>
+                <p class="caps ink-3" style="margin-bottom:var(--sp-3)">Never touched</p>
+                <div class="chipfield" data-ws-protected></div>
+              </div>
             </div>
-          </div>
-
-          <div class="rise" style="margin-top:var(--sp-8)">
-            <div class="zone-label"><span class="caps">It will never touch these</span>
-              <span class="t-2xs ink-3" style="flex:none">the list only ever grows</span></div>
-            <div class="chipfield" data-ws-protected></div>
-          </div>
-
+          </details>
         </div>
       </section>
+
 
       <!-- ============ ZONES 10 + 11 - last runs | schedule ============= -->
       <section class="band band-well band-tight">
@@ -219,7 +214,7 @@
             <div class="panel pad" style="display:flex;gap:var(--sp-6);align-items:center;flex-wrap:wrap">
               <div>
                 <p class="num t-xl wide accent-ink" data-ws-text="lastFreed">0 B</p>
-                <p class="t-2xs ink-3" data-ws-text="lastWhen">-</p>
+                <p class="t-sm ink-3" data-ws-text="lastWhen">-</p>
               </div>
               <div style="flex:1;min-width:14rem" data-ws-spark></div>
               <a class="btn btn-sm" href="#reports" data-ws-action="soon">Open the report</a>
@@ -231,56 +226,53 @@
               <button class="switch" role="switch" aria-checked="false" data-ws-action="schedule" aria-label="Weekly scheduled run"></button>
               <div>
                 <p class="t-sm" data-ws-text="scheduleState">Off</p>
-                <p class="t-2xs ink-3">A weekly Scheduled Task running the safe batch, with a toast when it
-                  finishes. It never runs the sections that need a person.</p>
+                <p class="t-sm ink-3">Runs the safe sweep once a week and tells you what it freed. Never the
+                  ones that need you.</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ============ ZONES 12 + 13 - elevation | privacy ============== -->
+      <!-- ============ ZONES 12 + 13 - admin and privacy, both on request ====
+           157 words between them. Each is now one sentence plus a disclosure. -->
       <section class="band band-app">
-        <div class="wrap g12 rise">
+        <div class="wrap rise">
 
-          <div class="c6">
-            <div class="zone-label"><span class="caps">Sections that need admin</span></div>
-            <div class="panel pad">
-              <p class="t-sm ink-2">Six sections need Windows to elevate, and this window cannot answer a
-                UAC prompt on your behalf.</p>
-              <p class="t-xs ink-3" style="margin-top:var(--sp-2)">Starting one opens a
-                <strong>second, elevated window</strong> with its own log. This window then follows that
-                run’s report file rather than pretending to own it.</p>
-              <div style="display:flex;gap:var(--sp-2);flex-wrap:wrap;margin-top:var(--sp-3)">
-                <span class="badge badge-outline">12 Windows Update</span>
-                <span class="badge badge-outline">13 Disk Cleanup</span>
-                <span class="badge badge-outline">14 DISM</span>
-                <span class="badge badge-outline">15 Hibernation</span>
-                <span class="badge badge-outline">16 Event logs</span>
-                <span class="badge badge-outline">20 WSL compaction</span>
+          <details class="disclose">
+            <summary>
+              <span class="disclose-line">Six sections need Windows to ask your permission first.</span>
+              <span class="disclose-more">Details</span>
+            </summary>
+            <div class="disclose-body">
+              <p>Starting one opens a second window with its own log, because this window cannot answer a
+                Windows permission prompt for you. It then follows that run and shows you the result.</p>
+              <div style="display:flex;gap:var(--sp-2);flex-wrap:wrap">
+                <span class="badge badge-outline">Windows Update</span>
+                <span class="badge badge-outline">Disk Cleanup</span>
+                <span class="badge badge-outline">Component store</span>
+                <span class="badge badge-outline">Hibernation file</span>
+                <span class="badge badge-outline">Event logs</span>
+                <span class="badge badge-outline">WSL disk images</span>
               </div>
-              <p class="t-2xs ink-3" style="margin-top:var(--sp-3);padding-top:var(--sp-3);border-top:1px solid var(--c-line)">
-                The installer is not code-signed yet, so Windows SmartScreen will warn on first launch.
-                Saying that here is cheaper than the trust it costs to discover it.
-              </p>
+              <p>The installer is not signed yet, so Windows will warn you the first time you open it.
+                Saying so here costs less than letting you find out.</p>
             </div>
-          </div>
+          </details>
 
-          <div class="c6">
-            <div class="zone-label"><span class="caps">What leaves this machine</span></div>
-            <div class="well pad">
-              <p class="t-sm" style="display:flex;align-items:center;gap:var(--sp-2)">
-                <span class="state-ok"></span>
-                <span>The cleanup engine makes <strong>zero</strong> network calls. That is asserted by its
-                  own test suite, not by this sentence.</span>
-              </p>
-              <p class="t-xs ink-3" style="margin-top:var(--sp-3)">This desktop app can send analytics and
-                crash reports, and it sends nothing until you say yes. All four are off right now:</p>
-              <div style="display:flex;flex-direction:column;gap:var(--sp-2);margin-top:var(--sp-3)" data-ws-consent></div>
-              <p class="t-2xs ink-3" style="margin-top:var(--sp-3)">Signing in is optional and only syncs your
-                settings and run history. Runs are never gated – there is no paid tier.</p>
+          <details class="disclose">
+            <summary>
+              <span class="disclose-line">Nothing leaves this machine unless you turn it on.</span>
+              <span class="disclose-more">Details</span>
+            </summary>
+            <div class="disclose-body">
+              <p>The cleanup engine makes no network calls at all &mdash; its own tests check that. This app
+                can send usage and crash reports, and all four are off until you say yes:</p>
+              <div style="display:flex;flex-direction:column;gap:var(--sp-3)" data-ws-consent></div>
+              <p>Signing in is optional and only syncs your settings and history. Runs are never limited and
+                there is nothing to pay for.</p>
             </div>
-          </div>
+          </details>
 
         </div>
       </section>

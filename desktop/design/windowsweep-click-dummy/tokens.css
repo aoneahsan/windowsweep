@@ -92,13 +92,21 @@
   --sp-12: calc(var(--u) * 12);--sp-16: calc(var(--u) * 16);
   --sp-20: calc(var(--u) * 20);
 
-  --fs-2xs:  calc(0.6875rem * var(--type-scale));
-  --fs-xs:   calc(0.75rem   * var(--type-scale));
-  --fs-sm:   calc(0.8125rem * var(--type-scale));
-  --fs-base: calc(0.9375rem * var(--type-scale));
-  --fs-md:   calc(1.0625rem * var(--type-scale));
-  --fs-lg:   calc(1.375rem  * var(--type-scale));
-  --fs-xl:   calc(1.875rem  * var(--type-scale));
+  /* 🔴 Round 4. Measured before changing anything: 37 of 39 sized elements on the
+     page were set at 11-13px, because `caps` and `t-2xs` both resolved to 11px and
+     between them accounted for 37 uses. `home-page.md` sets the floor at 16px for
+     body text and the base was 15px with almost nothing using it.
+
+     Retuning these tokens is only half the fix - the other half is in shared.css
+     and the markup, where elements had to stop REACHING for the smallest step. A
+     scale nobody uses the top of is not a scale. */
+  --fs-2xs:  calc(0.75rem   * var(--type-scale));   /* 12px - badges and chips ONLY */
+  --fs-xs:   calc(0.8125rem * var(--type-scale));   /* 13px - secondary labels      */
+  --fs-sm:   calc(0.9375rem * var(--type-scale));   /* 15px - supporting prose      */
+  --fs-base: calc(1rem      * var(--type-scale));   /* 16px - the floor             */
+  --fs-md:   calc(1.125rem  * var(--type-scale));   /* 18px                         */
+  --fs-lg:   calc(1.5rem    * var(--type-scale));   /* 24px                         */
+  --fs-xl:   calc(2rem      * var(--type-scale));   /* 32px                         */
   --fs-2xl:  calc(2.75rem   * var(--type-scale));
   --fs-hero: calc(5rem      * var(--type-scale));
 
@@ -214,6 +222,13 @@
   --c-bleed-ink-2: oklch(0.775 0.012 128);
   --c-bleed-ink-3: oklch(0.668 0.012 128);
   --c-bleed-accent-ink: oklch(0.845 0.175 128);
+  /* never rebound by a band - a component that paints its OWN background
+     restores these, or it inherits the band's inverted ink onto its own
+     surface. Exactly the 1.09:1 defect the disclosure shipped with. */
+  --c-base-ink: oklch(0.962 0.008 128);
+  --c-base-ink-2: oklch(0.775 0.012 128);
+  --c-base-ink-3: oklch(0.668 0.012 128);
+  --c-base-accent-ink: oklch(0.845 0.175 128);
 }
 
 /* --- lime ----------------------------------------------------------------- */
@@ -240,6 +255,13 @@
   --c-accent-soft: oklch(0.930 0.055 128);
   --c-on-accent: oklch(0.995 0.005 128);
   --c-glow: oklch(0.512 0.145 128 / 0.12);
+  /* never rebound by a band - a component that paints its OWN background
+     restores these, or it inherits the band's inverted ink onto its own
+     surface. Exactly the 1.09:1 defect the disclosure shipped with. */
+  --c-base-ink: oklch(0.232 0.017 128);
+  --c-base-ink-2: oklch(0.462 0.015 128);
+  --c-base-ink-3: oklch(0.508 0.014 128);
+  --c-base-accent-ink: oklch(0.462 0.145 128);
 }
 [data-palette='lime'][data-appearance='dark'] {
   --hue-a: 128; --hue-n: 128;
@@ -264,6 +286,13 @@
   --c-accent-soft: oklch(0.300 0.055 128);
   --c-on-accent: oklch(0.185 0.030 128);
   --c-glow: oklch(0.820 0.185 128 / 0.16);
+  /* never rebound by a band - a component that paints its OWN background
+     restores these, or it inherits the band's inverted ink onto its own
+     surface. Exactly the 1.09:1 defect the disclosure shipped with. */
+  --c-base-ink: oklch(0.962 0.008 128);
+  --c-base-ink-2: oklch(0.775 0.012 128);
+  --c-base-ink-3: oklch(0.668 0.012 128);
+  --c-base-accent-ink: oklch(0.845 0.175 128);
 }
 
 /* --- sky ------------------------------------------------------------------ */
@@ -290,6 +319,13 @@
   --c-accent-soft: oklch(0.928 0.045 231);
   --c-on-accent: oklch(0.995 0.003 231);
   --c-glow: oklch(0.508 0.140 231 / 0.12);
+  /* never rebound by a band - a component that paints its OWN background
+     restores these, or it inherits the band's inverted ink onto its own
+     surface. Exactly the 1.09:1 defect the disclosure shipped with. */
+  --c-base-ink: oklch(0.228 0.024 225);
+  --c-base-ink-2: oklch(0.458 0.020 225);
+  --c-base-ink-3: oklch(0.505 0.019 225);
+  --c-base-accent-ink: oklch(0.462 0.140 231);
 }
 [data-palette='sky'][data-appearance='dark'] {
   --hue-a: 231; --hue-n: 225;
@@ -314,6 +350,13 @@
   --c-accent-soft: oklch(0.298 0.058 231);
   --c-on-accent: oklch(0.175 0.035 231);
   --c-glow: oklch(0.790 0.135 231 / 0.16);
+  /* never rebound by a band - a component that paints its OWN background
+     restores these, or it inherits the band's inverted ink onto its own
+     surface. Exactly the 1.09:1 defect the disclosure shipped with. */
+  --c-base-ink: oklch(0.960 0.010 225);
+  --c-base-ink-2: oklch(0.772 0.018 225);
+  --c-base-ink-3: oklch(0.665 0.018 225);
+  --c-base-accent-ink: oklch(0.820 0.130 231);
 }
 
 /* --- plum ----------------------------------------------------------------- */
@@ -340,6 +383,13 @@
   --c-accent-soft: oklch(0.932 0.050 320);
   --c-on-accent: oklch(0.996 0.004 320);
   --c-glow: oklch(0.518 0.172 320 / 0.12);
+  /* never rebound by a band - a component that paints its OWN background
+     restores these, or it inherits the band's inverted ink onto its own
+     surface. Exactly the 1.09:1 defect the disclosure shipped with. */
+  --c-base-ink: oklch(0.232 0.024 315);
+  --c-base-ink-2: oklch(0.462 0.020 315);
+  --c-base-ink-3: oklch(0.505 0.019 315);
+  --c-base-accent-ink: oklch(0.470 0.172 320);
 }
 [data-palette='plum'][data-appearance='dark'] {
   --hue-a: 320; --hue-n: 315;
@@ -364,6 +414,13 @@
   --c-accent-soft: oklch(0.302 0.062 320);
   --c-on-accent: oklch(0.180 0.035 320);
   --c-glow: oklch(0.782 0.150 320 / 0.16);
+  /* never rebound by a band - a component that paints its OWN background
+     restores these, or it inherits the band's inverted ink onto its own
+     surface. Exactly the 1.09:1 defect the disclosure shipped with. */
+  --c-base-ink: oklch(0.962 0.010 315);
+  --c-base-ink-2: oklch(0.776 0.018 315);
+  --c-base-ink-3: oklch(0.668 0.018 315);
+  --c-base-accent-ink: oklch(0.812 0.145 320);
 }
 
 /* --- semantic: CONSTANT hues, lightness re-solved per appearance ----------- */

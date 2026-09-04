@@ -252,7 +252,7 @@
     big.setAttribute('data-ws-text', 'cleanBtn');
     big.textContent = '-';
     foot.appendChild(big);
-    var sub = el('span', 't-2xs ink-3');
+    var sub = el('span', 't-xs ink-3');
     sub.appendChild(el('span', null, 'across '));
     var n = el('span', 'num');
     n.setAttribute('data-ws-text', 'sectionCount');
@@ -317,7 +317,7 @@
       bd.appendChild(wrap);
     });
 
-    var note = el('p', 't-2xs ink-3');
+    var note = el('p', 't-xs ink-3');
     note.textContent = 'Saved to this machine. Add ?palette=plum&theme=light to any link to show a look ' +
                        'without saving it.';
     bd.appendChild(note);
@@ -467,7 +467,7 @@
     // the first version of this registry - found by the gate, not by reading the CSS
     { name: 'bleed',  sel: '.band-bleed, .titlebar, .statusbar, .toast, .tm-tip, .selbar' },
     { name: 'panel',  sel: '.panel, .sheet' },
-    { name: 'well',   sel: '.band-well, .well, .rail, .tm-frame, .logview, .field, .card-sel, .tbl tbody tr[data-selected="true"]' },
+    { name: 'well',   sel: '.band-well, .well, .rail, .tm-frame, .logview, .field, .card-sel, .disclose, .tbl tbody tr[data-selected="true"]' },
     { name: 'app',    sel: '.band-app, body' }
   ];
 

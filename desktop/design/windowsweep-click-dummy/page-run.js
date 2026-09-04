@@ -42,11 +42,11 @@
       top.style.cssText = 'display:flex;align-items:baseline;gap:var(--sp-2)';
       top.appendChild(el('span', 'num t-2xs ink-3', String(item.section)));
       top.appendChild(el('span', 't-sm', s ? s.key : ''));
-      var st = el('span', 't-2xs ink-3', 'queued');
+      var st = el('span', 't-xs ink-3', 'queued');
       st.dataset.role = 'status';
       st.style.marginInlineStart = 'auto';
       top.appendChild(st);
-      var by = el('span', 'num t-2xs', fmt.bytes(item.bytes));
+      var by = el('span', 'num t-xs', fmt.bytes(item.bytes));
       by.dataset.role = 'bytes';
       top.appendChild(by);
       row.appendChild(top);
@@ -108,7 +108,7 @@
       var a = el('i', 'cap-seg cap-used'); a.style.width = usedPct + '%';
       cap.appendChild(a);
       row.appendChild(cap);
-      var right = el('div', 't-2xs');
+      var right = el('div', 't-xs');
       right.style.textAlign = 'end';
       right.style.whiteSpace = 'nowrap';
       var f1 = el('div', 'num state-ok'); f1.textContent = fmt.bytes(newFree) + ' free';

@@ -27,12 +27,12 @@
           <div style="display:flex;flex-wrap:wrap;gap:var(--sp-4);align-items:flex-end">
             <div>
               <h1 class="t-xl wide">Sections</h1>
-              <p class="t-xs ink-3">The catalogue is a frozen public contract – a number is never reused,
+              <p class="t-sm ink-3">The catalogue is a frozen public contract – a number is never reused,
                 and a retired section becomes a no-op that says so.</p>
             </div>
             <div style="margin-inline-start:auto;text-align:end">
               <p class="num t-xl wide accent-ink" data-ws-text="catalogueTotal">0 B</p>
-              <p class="t-2xs ink-3">reclaimable across every section</p>
+              <p class="t-sm ink-3">reclaimable across every section</p>
             </div>
           </div>
         </div>
@@ -74,14 +74,17 @@
               <tbody data-ws-sections></tbody>
             </table>
           </div>
-          <p class="t-2xs ink-3" style="margin-top:var(--sp-3)">
-            <strong>Batch policy</strong> decides what <code class="mono">--all --yes</code> is allowed to do.
-            <code class="mono">safe</code> runs unattended &middot;
-            <code class="mono">optin</code> needs the section named &middot;
-            <code class="mono">deep</code> needs <code class="mono">--i-understand-deep</code> as well &middot;
-            <code class="mono">interactive</code> needs a person, or a selection passed with
-            <code class="mono">--select-file</code>.
-          </p>
+          <details class="disclose" style="margin-top:var(--sp-4)">
+            <summary>
+              <span class="disclose-line">What the four run policies mean</span>
+              <span class="disclose-more">Details</span>
+            </summary>
+            <div class="disclose-body">
+              <p><strong>Safe</strong> runs on its own. <strong>Opt-in</strong> only runs if you name it.
+                <strong>Deep</strong> needs an extra confirmation on top. <strong>Interactive</strong> needs
+                you to pick the items, one by one.</p>
+            </div>
+          </details>
         </div>
       </section>
 

@@ -78,7 +78,7 @@
         });
         tdSel.appendChild(sw);
       } else {
-        var dash = el('span', 't-2xs ink-3', '—');
+        var dash = el('span', 't-xs ink-3', '—');
         dash.title = 'Report only - there is nothing to select';
         tdSel.appendChild(dash);
       }
@@ -96,7 +96,7 @@
       top.appendChild(key);
       if (s.dev) top.appendChild(badgeFor('dev', 'badge-outline'));
       tdName.appendChild(top);
-      var ttl = el('div', 't-2xs ink-3', s.title);
+      var ttl = el('div', 't-xs ink-3', s.title);
       ttl.style.maxWidth = '46rem';
       ttl.style.overflow = 'hidden';
       ttl.style.textOverflow = 'ellipsis';
@@ -107,7 +107,7 @@
       // tier
       var tdTier = el('td');
       var tier = el('span', 'tier tier-' + s.tier);
-      tier.appendChild(el('span', 't-2xs', s.tier));
+      tier.appendChild(el('span', 't-xs', s.tier));
       tdTier.appendChild(tier);
       tr.appendChild(tdTier);
 
@@ -123,7 +123,7 @@
       var tdNeeds = el('td');
       if (s.admin) tdNeeds.appendChild(badgeFor('admin', 'badge-danger'));
       else if (s.batch === 'interactive') tdNeeds.appendChild(badgeFor('you', 'badge-warn'));
-      else tdNeeds.appendChild(el('span', 't-2xs ink-3', '—'));
+      else tdNeeds.appendChild(el('span', 't-xs ink-3', '—'));
       tr.appendChild(tdNeeds);
 
       // bytes
@@ -159,11 +159,11 @@
         grid.style.gridTemplateColumns = 'minmax(0,1fr) auto auto';
         grid.style.gap = 'var(--sp-1) var(--sp-4)';
         list.forEach(function (t) {
-          var p = el('span', 'mono t-2xs', t.path);
+          var p = el('span', 'mono t-xs', t.path);
           p.style.overflow = 'hidden'; p.style.textOverflow = 'ellipsis';
           grid.appendChild(p);
-          grid.appendChild(el('span', 'num t-2xs ink-3', fmt.bytes(t.bytes)));
-          grid.appendChild(el('span', 't-2xs ink-3', 'idle ' + t.idle + 'd'));
+          grid.appendChild(el('span', 'num t-xs ink-3', fmt.bytes(t.bytes)));
+          grid.appendChild(el('span', 't-xs ink-3', 'idle ' + t.idle + 'd'));
         });
         dtd.appendChild(grid);
       }

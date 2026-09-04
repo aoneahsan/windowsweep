@@ -45,7 +45,7 @@
         <div class="wrap rise">
           <div class="zone-label">
             <span class="caps">What is going</span>
-            <span class="t-2xs ink-3" style="flex:none">tiles leave as each section reports</span>
+            <span class="t-sm ink-3" style="flex:none">Tiles leave as each section finishes</span>
           </div>
           <div data-ws-map style="min-height:240px"></div>
         </div>
@@ -62,14 +62,19 @@
           <div class="c7 rise">
             <div class="zone-label">
               <span class="caps">Log</span>
-              <span class="t-2xs ink-3" style="flex:none">never animates – this is the surface you watch while something irreversible happens</span>
+              <span class="t-sm ink-3" style="flex:none">never animates – this is the surface you watch while something irreversible happens</span>
             </div>
             <div class="logview" data-ws-log aria-live="off" role="log"></div>
-            <p class="t-2xs ink-3" style="margin-top:var(--sp-2)">
-              Progress comes from the engine’s own machine-readable lines
-              (<code class="mono">##windowsweep section=NN event=end status=… freed_bytes=…</code> on stderr,
-              added in 1.1.0 for exactly this). The GUI reimplements no cleanup logic.
-            </p>
+            <details class="disclose" style="margin-top:var(--sp-3)">
+              <summary>
+                <span class="disclose-line">Where these numbers come from</span>
+                <span class="disclose-more">Details</span>
+              </summary>
+              <div class="disclose-body">
+                <p>The progress you see is reported by the cleanup engine itself as it works. This window
+                  displays it and does none of the deleting.</p>
+              </div>
+            </details>
           </div>
 
         </div>
@@ -85,7 +90,7 @@
             <div class="zone-label"><span class="caps">Report</span></div>
             <div class="panel pad">
               <p class="t-sm state-ok"><span data-ws-text="finishLine">Run finished.</span></p>
-              <p class="t-2xs ink-3 mono" style="margin-top:var(--sp-2);word-break:break-all"
+              <p class="t-xs ink-3 mono" style="margin-top:var(--sp-2);word-break:break-all"
                  data-ws-text="reportPath">%USERPROFILE%\.windowsweep\reports\run-…json</p>
               <div style="display:flex;gap:var(--sp-2);margin-top:var(--sp-3);flex-wrap:wrap">
                 <button class="btn btn-sm" data-ws-action="soon">Open report</button>

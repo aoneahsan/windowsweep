@@ -110,7 +110,7 @@
     p.style.wordBreak = 'break-all';
     p.textContent = d.data.path;
     var s = document.createElement('div');
-    s.className = 't-2xs ink-3';
+    s.className = 't-xs ink-3';
     s.style.marginTop = '2px';
     s.textContent = db.fmt.bytes(d.data.value) + '  ·  idle ' + d.data.idle + ' days  ·  section '
       + d.data.section + '  ·  ' + d.data.tier

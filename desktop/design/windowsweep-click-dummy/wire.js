@@ -35,6 +35,8 @@
     })(t0);
   }
 
+  function cap(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
+
   var heroShown = 0;
   function paintHero(bytes) {
     var n = $('[data-ws-hero-n]'), u = $('[data-ws-hero-u]');
@@ -75,7 +77,7 @@
     });
     S.TIERS.filter(function (t) { return present[t.key]; }).forEach(function (t) {
       var w = el('span', 'tier tier-' + t.key);
-      w.appendChild(el('span', 't-2xs ink-3', t.label + ' – ' + t.blurb));
+      w.appendChild(el('span', 't-xs ink-3', t.label + ' – ' + t.blurb));
       mount.appendChild(w);
     });
     // the second channel is explained, or it is an encoding nobody can read
@@ -85,7 +87,7 @@
     bar.style.cssText = 'width:56px;height:9px;border-radius:2px;background:linear-gradient(90deg,' +
       'color-mix(in oklab, var(--c-accent) 34%, var(--c-well)), var(--c-accent))';
     ramp.appendChild(bar);
-    ramp.appendChild(el('span', 't-2xs ink-3', 'faded = used recently, solid = long idle'));
+    ramp.appendChild(el('span', 't-xs ink-3', 'faded = used recently, solid = long idle'));
     mount.appendChild(ramp);
   }
 
@@ -188,7 +190,7 @@
       cap.appendChild(a); cap.appendChild(b);
       row.appendChild(cap);
 
-      var right = el('div', 't-2xs');
+      var right = el('div', 't-xs');
       right.style.textAlign = 'end';
       right.style.whiteSpace = 'nowrap';
       var free = el('div', 'num'); free.textContent = fmt.bytes(d.free) + ' free';
@@ -199,7 +201,7 @@
       mount.appendChild(row);
     });
 
-    var note = el('p', 't-2xs ink-3');
+    var note = el('p', 't-xs ink-3');
     note.style.marginTop = 'var(--sp-4)';
     note.style.display = 'flex';
     note.style.gap = 'var(--sp-3)';
@@ -224,13 +226,19 @@
     mount.textContent = '';
     var rows = db.derive.safeRunSections();
     var max = rows.length ? rows[0].bytes : 1;
+    /* Eight rungs made this column twice the height of the one beside it and left a
+       block of dead space under Developer Mode. Four is enough to show the shape;
+       the rest are one click away - the same answer as everywhere else on the page. */
+    var SHOWN = 4;
+    var rest = rows.slice(SHOWN);
+    rows = rows.slice(0, SHOWN);
     rows.forEach(function (r) {
       var s = db.section[r.section];
       var rung = el('div', 'rung');
       var left = el('div');
       var name = el('div', 't-sm');
       name.textContent = (s ? s.key : r.section);
-      var sub = el('div', 't-2xs ink-3');
+      var sub = el('div', 't-xs ink-3');
       sub.textContent = r.count + (r.count === 1 ? ' target' : ' targets');
       left.appendChild(name); left.appendChild(sub);
       rung.appendChild(left);
@@ -246,6 +254,22 @@
       rung.appendChild(bar);
       mount.appendChild(rung);
     });
+    if (rest.length) {
+      var more = el('details', 'ladder-more');
+      var sum = el('summary');
+      var restBytes = rest.reduce(function (a, r) { return a + r.bytes; }, 0);
+      sum.appendChild(el('span', null, 'and ' + rest.length + ' more'));
+      sum.appendChild(el('span', 'num accent-ink', fmt.bytes(restBytes)));
+      more.appendChild(sum);
+      rest.forEach(function (r) {
+        var s2 = db.section[r.section];
+        var line = el('div', 'rung-mini');
+        line.appendChild(el('span', 't-sm', s2 ? s2.key : String(r.section)));
+        line.appendChild(el('span', 'num t-sm ink-2', fmt.bytes(r.bytes)));
+        more.appendChild(line);
+      });
+      mount.appendChild(more);
+    }
     if (!rows.length) {
       mount.appendChild(el('p', 't-sm ink-3', 'Nothing in the safe batch right now.'));
     }
@@ -273,10 +297,10 @@
       n.textContent = fmt.bytes(r.bytes);
       card.appendChild(n);
 
-      card.appendChild(el('p', 't-2xs ink-3', r.count + ' item' + (r.count === 1 ? '' : 's') + ' waiting'));
+      card.appendChild(el('p', 't-xs ink-3', r.count + ' item' + (r.count === 1 ? '' : 's') + ' waiting'));
 
       var t = el('span', 'tier tier-' + (s ? s.tier : 'recycle'));
-      t.appendChild(el('span', 't-2xs ink-3', s ? s.tier : ''));
+      t.appendChild(el('span', 't-xs ink-3', s ? s.tier : ''));
       card.appendChild(t);
 
       var go = el('button', 'btn btn-sm');
@@ -351,7 +375,7 @@
       c.setAttribute('cx', x(i)); c.setAttribute('cy', y(r.freed)); c.setAttribute('r', i === runs.length - 1 ? 3.4 : 2);
       c.setAttribute('fill', 'var(--c-accent)');
       var ttl = document.createElementNS(ns, 'title');
-      ttl.textContent = fmt.bytes(r.freed) + ' - ' + fmt.relDate(r.at) + ' - ' + r.mode;
+      ttl.textContent = cap(fmt.relDate(r.at)) + ' · freed ' + fmt.bytes(r.freed) + ' · ' + r.mode;
       c.appendChild(ttl);
       svg.appendChild(c);
     });
@@ -359,7 +383,7 @@
 
     var last = runs[runs.length - 1];
     setText('lastFreed', fmt.bytes(last.freed));
-    setText('lastWhen', fmt.relDate(last.at) + ' – ' + last.mode + ' – ' + last.sections + ' sections');
+    setText('lastWhen', cap(fmt.relDate(last.at)) + ' · ' + last.sections + ' sections · ' + last.mode);
   }
 
   /* --------------------------------------------------------------- consent */
@@ -383,7 +407,7 @@
       row.appendChild(sw);
       var lab = el('div');
       lab.appendChild(el('span', 't-sm', p[0]));
-      lab.appendChild(el('span', 't-2xs ink-3', '  ' + p[1]));
+      lab.appendChild(el('span', 't-xs ink-3', '  ' + p[1]));
       row.appendChild(lab);
       mount.appendChild(row);
     });

@@ -237,12 +237,30 @@
         a.setAttribute('aria-disabled', 'true');
         a.addEventListener('click', function (ev) {
           ev.preventDefault();
-          toast('That screen is in the next batch of this dummy - the direction is what is under review now.');
+          toast('That screen is in the next batch of this dummy – the direction is what is under review now.');
         });
       }
       if (item.href === here) a.setAttribute('aria-current', 'page');
       mount.appendChild(a);
     });
+
+    // the rail had ~500px of dead space below the nav; a compact readout uses it and
+    // keeps the number in view on every screen, not only Home
+    var foot = el('div', 'rail-foot');
+    foot.appendChild(el('span', 'caps ink-3', 'Reclaimable'));
+    var big = el('span', 'num t-md wide accent-ink');
+    big.setAttribute('data-ws-text', 'cleanBtn');
+    big.textContent = '-';
+    foot.appendChild(big);
+    var sub = el('span', 't-2xs ink-3');
+    sub.appendChild(el('span', null, 'across '));
+    var n = el('span', 'num');
+    n.setAttribute('data-ws-text', 'sectionCount');
+    n.textContent = '0';
+    sub.appendChild(n);
+    sub.appendChild(el('span', null, ' sections'));
+    foot.appendChild(sub);
+    mount.appendChild(foot);
   }
 
   /* -------------------------------------------------------------------------

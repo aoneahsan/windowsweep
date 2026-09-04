@@ -24,7 +24,13 @@
 (function () {
   'use strict';
 
-  var VB_W = 1000, VB_H = 420;      // constant frame - never derived from the data
+  /* 🔴 The frame never changes with the DATA - that is the rule, and it holds. It
+     does change with the VIEWPORT, which is a different thing and is required: a
+     1000x340 landscape treemap squeezed into a 358px column is unreadable, and it
+     left ~160px of dead frame under the tiles. Portrait below 700px. */
+  function frameFor(px) {
+    return (px && px < 700) ? { w: 620, h: 760 } : { w: 1000, h: 340 };
+  }
   var PAD_TOP = 19;                 // room for the section label strip
 
   /* TWO CHANNELS, TWO VARIABLES, each canonical.
@@ -41,18 +47,21 @@
      🔴 The domain is the REACHABLE range, not [0, 365]. It is re-solved from the data
      on every render, so a machine whose oldest cache is 60 days still gets the full
      ramp instead of eight indistinguishable pale tiles.                             */
-  var MIX_MIN = 34, MIX_MAX = 100;
   function mixFor(idle, scale) {
     var t = scale ? scale(idle) : 1;
-    return Math.round(MIX_MIN + (MIX_MAX - MIX_MIN) * Math.max(0, Math.min(1, t)));
+    return Math.round(100 * Math.max(0, Math.min(1, t)));
   }
+  /* interpolate between the tier's OWN two ends, never toward the page surface -
+     mixing toward the background is what produced mud */
   function tierColour(tier, pct) {
-    if (pct >= 99) return 'var(--c-tier-' + tier + ')';
-    return 'color-mix(in oklab, var(--c-tier-' + tier + ') ' + pct + '%, var(--c-well))';
+    return 'color-mix(in oklab, var(--c-tier-' + tier + '-hi) ' + pct +
+           '%, var(--c-tier-' + tier + '-lo))';
   }
-  /* a pale tile is close to the frame's own background, so its label takes the page's
-     ink; a saturated one takes the on-accent ink. One threshold, both appearances. */
-  function labelInk(pct) { return pct >= 62 ? 'var(--c-on-accent)' : 'var(--c-ink)'; }
+  /* With the muted tier ramp the tiles never approach the ink's own lightness in
+     either appearance, so the page's ink is correct on every tile - one rule rather
+     than a threshold that had to guess. Verified by the contrast sweep, which now
+     reads SVG `fill` instead of `color`. */
+  function labelInk() { return 'var(--c-ink)'; }
 
   function fitText(txt, widthPx, fontPx) {
     var max = Math.floor((widthPx - 12) / (fontPx * 0.56));
@@ -71,7 +80,8 @@
     root.classList.add('tm-frame');
 
     var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('viewBox', '0 0 ' + VB_W + ' ' + VB_H);
+    var f0 = frameFor(root.clientWidth);
+    svg.setAttribute('viewBox', '0 0 ' + f0.w + ' ' + f0.h);
     svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
     svg.setAttribute('class', 'tm-svg');
     svg.setAttribute('role', 'img');
@@ -136,15 +146,18 @@
       .sum(function (d) { return d.value || 0; })
       .sort(function (a, b) { return b.value - a.value; });
 
+    var F = frameFor(this.root.clientWidth);
+    this.svg.setAttribute('viewBox', '0 0 ' + F.w + ' ' + F.h);
     d3.treemap()
-      .tile(d3.treemapSquarify.ratio(1.4))
-      .size([VB_W, VB_H])
+      .tile(d3.treemapSquarify.ratio(F.w > F.h ? 1.4 : 0.8))
+      .size([F.w, F.h])
       .paddingOuter(2)
       .paddingTop(PAD_TOP)
       .paddingInner(2)
       .round(true)(hier);
 
     var ns = 'http://www.w3.org/2000/svg';
+    this.addDefs();
 
     // the idle ramp, re-solved from THIS data every render
     var idles = leaves.map(function (l) { return l.idle || 0; });
@@ -167,6 +180,14 @@
       self.svg.appendChild(frame);
 
       if (w > 62 && h > PAD_TOP + 6) {
+        var chip = document.createElementNS(ns, 'rect');
+        chip.setAttribute('class', 'tm-group-chip');
+        chip.setAttribute('x', grp.x0 + 3); chip.setAttribute('y', grp.y0 + 2.5);
+        chip.setAttribute('width', Math.min(w - 6, 168)); chip.setAttribute('height', 14);
+        chip.setAttribute('rx', 3);
+        chip.setAttribute('fill', 'color-mix(in oklab, var(--c-ink) 7%, transparent)');
+        self.svg.appendChild(chip);
+
         var lb = document.createElementNS(ns, 'text');
         lb.setAttribute('x', grp.x0 + 6);
         lb.setAttribute('y', grp.y0 + 13);
@@ -205,6 +226,19 @@
       r.setAttribute('fill', tierColour(d.data.tier, pct));
       g.appendChild(r);
 
+      // a lit top edge - the same light source as the panels, so tiles read as
+      // material rather than as flat swatches
+      if (h > 14) {
+        var sh = document.createElementNS(ns, 'rect');
+        sh.setAttribute('class', 'sheen');
+        sh.setAttribute('x', d.x0); sh.setAttribute('y', d.y0);
+        sh.setAttribute('width', w); sh.setAttribute('height', Math.min(h * 0.55, 34));
+        sh.setAttribute('rx', 4);
+        sh.setAttribute('fill', 'url(#wsSheen)');
+        sh.setAttribute('pointer-events', 'none');
+        g.appendChild(sh);
+      }
+
       // the second channel for the one tier that cannot be undone
       if (d.data.tier === 'permanent') {
         var hatch = document.createElementNS(ns, 'rect');
@@ -221,7 +255,7 @@
         t1.setAttribute('x', d.x0 + 6); t1.setAttribute('y', d.y0 + 15);
         t1.setAttribute('class', 'tm-label');
         t1.setAttribute('font-size', '11');
-        t1.setAttribute('fill', labelInk(pct));
+        t1.setAttribute('fill', labelInk());
         t1.textContent = fitText(d.data.name, w, 11);
         g.appendChild(t1);
       }
@@ -230,7 +264,7 @@
         t2.setAttribute('x', d.x0 + 6); t2.setAttribute('y', d.y0 + 29);
         t2.setAttribute('class', 'tm-sub');
         t2.setAttribute('font-size', '10');
-        t2.setAttribute('fill', labelInk(pct));
+        t2.setAttribute('fill', labelInk());
         t2.setAttribute('opacity', '.74');
         var full = db.fmt.bytes(d.data.value) + '  ·  ' + d.data.idle + 'd';
         var short = db.fmt.bytes(d.data.value);
@@ -277,6 +311,19 @@
     line.setAttribute('fill', 'oklch(0 0 0 / .34)');
     pat.appendChild(line);
     defs.appendChild(pat);
+
+    var grad = document.createElementNS(ns, 'linearGradient');
+    grad.setAttribute('id', 'wsSheen');
+    grad.setAttribute('x1', '0'); grad.setAttribute('y1', '0');
+    grad.setAttribute('x2', '0'); grad.setAttribute('y2', '1');
+    [['0%', 'color-mix(in oklab, var(--c-ink) 13%, transparent)'],
+     ['100%', 'transparent']].forEach(function (st) {
+      var s2 = document.createElementNS(ns, 'stop');
+      s2.setAttribute('offset', st[0]);
+      s2.setAttribute('stop-color', st[1]);
+      grad.appendChild(s2);
+    });
+    defs.appendChild(grad);
     this.svg.insertBefore(defs, this.svg.firstChild);
   };
 
@@ -294,8 +341,10 @@
 
     var hier = d3.hierarchy(fake).sum(function (d) { return d.value || 0; })
       .sort(function (a, b) { return b.value - a.value; });
-    d3.treemap().tile(d3.treemapSquarify.ratio(1.4))
-      .size([VB_W, VB_H]).paddingOuter(2).paddingInner(2).round(true)(hier);
+    var FZ = frameFor(this.root.clientWidth);
+    this.svg.setAttribute('viewBox', '0 0 ' + FZ.w + ' ' + FZ.h);
+    d3.treemap().tile(d3.treemapSquarify.ratio(FZ.w > FZ.h ? 1.4 : 0.8))
+      .size([FZ.w, FZ.h]).paddingOuter(2).paddingInner(2).round(true)(hier);
 
     hier.leaves().forEach(function (d) {
       var r = document.createElementNS(ns, 'rect');

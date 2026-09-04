@@ -368,7 +368,7 @@
           "id": "P6.design-dummy",
           "title": "Design argument and static click dummy for every desktop screen, three treatments, light and dark",
           "status": "in_progress",
-          "note": "Direction 01 (\"instrument panel\") was REJECTED by the owner on 2026-09-04: \"very basic and not attractive at all... i do not like it at all\". Archived byte-identical at desktop/design/windowsweep-click-dummy/_rejected/01-instrument-panel-2026-09-04/ with a five-point post-mortem - the root cause was a wrong design read (dashboard dials on a premium-consumer surface) plus the two skills whose omission is a recorded cause of exactly this rejection. Direction 02 \"Reclaim\" now stands: 3 screens (Home 14 zones, Sections, Run) x 3 treatments x light/dark, a D3 treemap as the signature element, Archivo's width axis as the hierarchy device, 10-axis pre-paint theme control, fully offline. Verified: 5,160 text nodes measured for contrast across 18 combinations -> 0 failures (after fixing 3 real root causes it found), 4 gates green at 1440 and 390 with each proven red on its own planted defect, 6 interactive flows driven end to end. GATE 1 is the owner's: MANUAL-TASKS row 17. Nothing is created under desktop/ beyond design/ until gate 3 is recorded",
+          "note": "Direction 01 (\"instrument panel\") was REJECTED by the owner on 2026-09-04: \"very basic and not attractive at all... i do not like it at all\". Archived byte-identical at desktop/design/windowsweep-click-dummy/_rejected/01-instrument-panel-2026-09-04/ with a five-point post-mortem - the root cause was a wrong design read (dashboard dials on a premium-consumer surface) plus the two skills whose omission is a recorded cause of exactly this rejection. Direction 02 \"Reclaim\" now stands: 3 screens (Home 14 zones, Sections, Run) x 3 treatments x light/dark, a D3 treemap as the signature element, Archivo's width axis as the hierarchy device, 10-axis pre-paint theme control, fully offline. Verified: 5,160 text nodes measured for contrast across 18 combinations -> 0 failures (after fixing 3 real root causes it found), 4 gates green at 1440 and 390 with each proven red on its own planted defect, 6 interactive flows driven end to end. GATE 1 is the owner's: MANUAL-TASKS row 17. Nothing is created under desktop/ beyond design/ until gate 3 is recorded | ROUND 3 (2026-09-04, same day): owner said \"okay it's better but still not final, improve it make it better and more beautiful\" - neither a rejection nor a keep-and-branch, so direction 02 was refined IN PLACE and nothing was archived. Changed: the tier ramp given a two-ended range per tier so the accent stops being spent across half the viewport (it was aliased to --c-accent and 8/8 sections are `rebuilds`); an atmosphere layer - ambient accent fields, 1.6% grain, panel sheen, faded band seams, hero glow and the sweep metaphor; the CAPACITY RING, three d3 arcs per drive, which fills the hero's dead right half and gives the page its only circle; treemap frame 420->340 and PORTRAIT below 700px; typographic correctness on visible copy only. \ud83d\udd34 And one instrument gap closed: the contrast sweep had never measured the treemap's 56 SVG labels because SVG text paints with `fill`, not `color` - it reported 0 failures while never looking at the map.",
           "awaitingUser": false
         },
         {
@@ -481,6 +481,12 @@
       "date": "2026-09-04",
       "phase": "P6-A",
       "summary": "Desktop click dummy direction 01 rejected and archived; direction 02 \"Reclaim\" built and verified - 3 screens, 3 treatments, light and dark, offline, with the mandatory external design-craft set copied into the project first",
+      "commit": "pending"
+    },
+    {
+      "date": "2026-09-04",
+      "phase": "P6-A",
+      "summary": "Click dummy direction 02 round 3 - accent reclaimed from the treemap, atmosphere and depth layer, the capacity ring, responsive portrait map, typography pass, and the SVG-text gap in the contrast sweep closed",
       "commit": "pending"
     }
   ],

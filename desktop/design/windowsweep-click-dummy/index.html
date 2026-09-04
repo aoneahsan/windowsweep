@@ -29,6 +29,16 @@
       <!-- ============ ZONE 2 - the reclaim readout ==================== -->
       <section class="band band-app">
         <div class="wrap readout rise">
+          <!-- the product's one visual metaphor, at 14% - decoration belongs at the
+               hero, not on every card -->
+          <svg class="hero-sweep" viewBox="0 0 480 220" fill="none" aria-hidden="true">
+            <path d="M-20 176 C 110 176, 120 40, 246 40 S 372 148, 500 62" stroke="currentColor"
+                  stroke-width="30" stroke-linecap="round"/>
+            <path d="M-20 214 C 118 214, 128 96, 262 96 S 392 190, 500 118" stroke="currentColor"
+                  stroke-width="13" stroke-linecap="round" opacity=".5"/>
+            <path d="M-20 240 C 126 240, 136 148, 278 148 S 408 226, 500 168" stroke="currentColor"
+                  stroke-width="6" stroke-linecap="round" opacity=".3"/>
+          </svg>
           <div>
             <p class="caps ink-3">Reclaimable now</p>
             <p class="hero-num" data-ws-hero>
@@ -41,13 +51,17 @@
               &middot; <button class="link-q" data-ws-action="rescan">re-scan</button>
             </p>
           </div>
-          <div style="display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-inline-start:auto;align-items:center">
+          <div class="hero-actions">
             <button class="btn" data-ws-action="scan"><span class="btn-label">Scan again</span></button>
             <button class="btn" data-ws-action="preview"><span class="btn-label">Preview a safe run</span></button>
             <button class="btn btn-primary btn-lg" data-ws-action="clean">
               <span class="btn-label">Clean <span data-ws-text="cleanBtn">0 B</span></span>
             </button>
           </div>
+
+          <!-- the page's only circle, and the one thing that made the hero's right
+               half stop being dead space -->
+          <div class="hero-ring" data-ws-ring aria-hidden="false"></div>
         </div>
       </section>
 
@@ -59,7 +73,7 @@
             <span class="t-2xs ink-3" style="flex:none">every target, sized by what it holds &middot; click a tile to keep it</span>
           </div>
 
-          <div data-ws-map style="min-height:280px"></div>
+          <div data-ws-map></div>
 
           <div style="display:flex;flex-wrap:wrap;gap:var(--sp-4);align-items:center;margin-top:var(--sp-3)">
             <div class="tm-legend" data-ws-legend></div>
@@ -95,7 +109,7 @@
               <div style="display:flex;gap:var(--sp-3);align-items:flex-start">
                 <button class="switch" role="switch" aria-checked="true" data-ws-action="devMode" aria-label="Developer mode"></button>
                 <div>
-                  <p class="t-sm" data-ws-text="devState">On - keeping anything used recently</p>
+                  <p class="t-sm" data-ws-text="devState">On – keeping anything used recently</p>
                   <p class="t-xs ink-3" style="margin-top:var(--sp-1)">
                     Package, build and test-runner caches you have touched inside the idle window are
                     left alone, so your next install is not a cold one.
@@ -112,7 +126,7 @@
                 <div style="flex:1;min-width:11rem">
                   <label class="caps ink-3" for="idle">Idle window</label>
                   <input id="idle" class="field" type="range" min="7" max="365" step="1" value="100" data-ws-action="idleDays">
-                  <p class="t-2xs ink-3">Lower it and more comes back into the map - live.</p>
+                  <p class="t-2xs ink-3">Lower it and more comes back into the map – live.</p>
                 </div>
               </div>
             </div>
@@ -170,11 +184,11 @@
               <div class="choke-out">
                 <div class="choke-out-row">
                   <span class="badge badge-danger">refused</span>
-                  <span class="t-xs ink-2">the path is protected, or outside the declared root - it does not matter which flag you passed</span>
+                  <span class="t-xs ink-2">the path is protected, or outside the declared root – it does not matter which flag you passed</span>
                 </div>
                 <div class="choke-out-row">
                   <span class="badge badge-warn">recycle bin</span>
-                  <span class="t-xs ink-2">anything personal - recoverable until you empty it</span>
+                  <span class="t-xs ink-2">anything personal – recoverable until you empty it</span>
                 </div>
                 <div class="choke-out-row">
                   <span class="badge badge-accent">deleted</span>
@@ -236,7 +250,7 @@
                 UAC prompt on your behalf.</p>
               <p class="t-xs ink-3" style="margin-top:var(--sp-2)">Starting one opens a
                 <strong>second, elevated window</strong> with its own log. This window then follows that
-                run's report file rather than pretending to own it.</p>
+                run’s report file rather than pretending to own it.</p>
               <div style="display:flex;gap:var(--sp-2);flex-wrap:wrap;margin-top:var(--sp-3)">
                 <span class="badge badge-outline">12 Windows Update</span>
                 <span class="badge badge-outline">13 Disk Cleanup</span>
@@ -264,7 +278,7 @@
                 crash reports, and it sends nothing until you say yes. All four are off right now:</p>
               <div style="display:flex;flex-direction:column;gap:var(--sp-2);margin-top:var(--sp-3)" data-ws-consent></div>
               <p class="t-2xs ink-3" style="margin-top:var(--sp-3)">Signing in is optional and only syncs your
-                settings and run history. Runs are never gated - there is no paid tier.</p>
+                settings and run history. Runs are never gated – there is no paid tier.</p>
             </div>
           </div>
 

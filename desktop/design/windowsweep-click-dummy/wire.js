@@ -75,7 +75,7 @@
     });
     S.TIERS.filter(function (t) { return present[t.key]; }).forEach(function (t) {
       var w = el('span', 'tier tier-' + t.key);
-      w.appendChild(el('span', 't-2xs ink-3', t.label + ' - ' + t.blurb));
+      w.appendChild(el('span', 't-2xs ink-3', t.label + ' – ' + t.blurb));
       mount.appendChild(w);
     });
     // the second channel is explained, or it is an encoding nobody can read
@@ -87,6 +87,87 @@
     ramp.appendChild(bar);
     ramp.appendChild(el('span', 't-2xs ink-3', 'faded = used recently, solid = long idle'));
     mount.appendChild(ramp);
+  }
+
+
+  /* ------------------------------------------------------------ capacity ring
+     The hero's right half was dead space and the treemap was carrying the whole
+     page. This fills one and relieves the other: three concentric arcs, one per
+     drive, each showing used / reclaimable / free, with the reclaimable slice in
+     full accent. It is also the page's only circle - a counterpoint to a layout
+     that is otherwise entirely rectangles, which is most of why it reads as
+     designed rather than assembled.
+
+     Real d3.arc(); constant viewBox, so the element never resizes with the data. */
+  function renderRing() {
+    var mount = $('[data-ws-ring]');
+    if (!mount || !window.d3) return;
+    mount.textContent = '';
+    var ns = 'http://www.w3.org/2000/svg';
+    var SZ = 260, cx = SZ / 2, cy = SZ / 2;
+    var svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 ' + SZ + ' ' + SZ);
+    svg.setAttribute('class', 'ring-svg');
+    svg.setAttribute('role', 'img');
+
+    var drives = db.derive.drives();
+    var TAU = Math.PI * 2, GAP = 0.055;
+    var outer = 116, band = 19, pad = 7;
+
+    drives.forEach(function (d, i) {
+      var r1 = outer - i * (band + pad), r0 = r1 - band;
+      var usedFrac = (d.used - d.reclaimable) / d.total;
+      var reclFrac = d.reclaimable / d.total;
+
+      function arc(a0, a1, fill, cls) {
+        var path = document.createElementNS(ns, 'path');
+        path.setAttribute('d', window.d3.arc()
+          .innerRadius(r0).outerRadius(r1)
+          .startAngle(a0).endAngle(a1).cornerRadius(3)());
+        path.setAttribute('transform', 'translate(' + cx + ',' + cy + ')');
+        path.setAttribute('fill', fill);
+        if (cls) path.setAttribute('class', cls);
+        svg.appendChild(path);
+      }
+      arc(GAP, TAU - GAP, 'color-mix(in oklab, var(--c-ink) 9%, transparent)');
+      arc(GAP, GAP + (TAU - GAP * 2) * usedFrac, 'color-mix(in oklab, var(--c-ink) 26%, transparent)');
+      arc(GAP + (TAU - GAP * 2) * usedFrac,
+          GAP + (TAU - GAP * 2) * (usedFrac + reclFrac), 'var(--c-accent)', 'ring-recl');
+
+      // a <title> rather than a drawn letter: the Drives zone right below is the
+      // labelled view, and three letters stacked in the 12 o'clock gap read as a
+      // stray list rather than as part of the ring
+      var tt = document.createElementNS(ns, 'title');
+      tt.textContent = d.letter + '  ' + fmt.bytes(d.free) + ' free of ' + fmt.bytes(d.total) +
+                       '  ·  ' + fmt.bytes(d.reclaimable) + ' reclaimable';
+      svg.appendChild(tt);
+    });
+
+    var pct = document.createElementNS(ns, 'text');
+    pct.setAttribute('x', cx); pct.setAttribute('y', cy + 2);
+    pct.setAttribute('text-anchor', 'middle');
+    pct.setAttribute('font-size', '31');
+    pct.setAttribute('font-family', 'var(--ff-display)');
+    pct.setAttribute('font-weight', '700');
+    pct.setAttribute('fill', 'var(--c-accent-ink)');
+    var tot = db.derive.drives().reduce(function (a, d) { return a + d.total; }, 0);
+    var rec = db.derive.reclaimable();
+    pct.textContent = ((rec / tot) * 100).toFixed(1) + '%';
+    svg.appendChild(pct);
+
+    var cap = document.createElementNS(ns, 'text');
+    cap.setAttribute('x', cx); cap.setAttribute('y', cy + 19);
+    cap.setAttribute('text-anchor', 'middle');
+    cap.setAttribute('font-size', '9.5');
+    cap.setAttribute('letter-spacing', '1.1');
+    cap.setAttribute('fill', 'var(--c-ink-3)');
+    cap.textContent = 'OF ALL DISKS';
+    svg.appendChild(cap);
+
+    svg.setAttribute('aria-label', 'Capacity: ' + fmt.bytes(rec) + ' reclaimable, ' +
+      ((rec / tot) * 100).toFixed(1) + ' per cent of ' + fmt.bytes(tot) + ' across ' +
+      drives.length + ' drives. The same figures are in the Drives panel below.');
+    mount.appendChild(svg);
   }
 
   /* ------------------------------------------------------------ drive rails */
@@ -278,7 +359,7 @@
 
     var last = runs[runs.length - 1];
     setText('lastFreed', fmt.bytes(last.freed));
-    setText('lastWhen', fmt.relDate(last.at) + ' - ' + last.mode + ' - ' + last.sections + ' sections');
+    setText('lastWhen', fmt.relDate(last.at) + ' – ' + last.mode + ' – ' + last.sections + ' sections');
   }
 
   /* --------------------------------------------------------------- consent */
@@ -325,14 +406,14 @@
     setText('devHeld', fmt.bytes(held.reduce(function (a, t) { return a + t.bytes; }, 0)));
     setText('devHeldN', String(held.length));
     setText('devState', db.facts.developer
-      ? 'On - keeping anything used in the last ' + db.facts.idleDays + ' days'
-      : 'Off - every cache is fair game');
+      ? 'On – keeping anything used in the last ' + db.facts.idleDays + ' days'
+      : 'Off – every cache is fair game');
     var devSw = $('[data-ws-action="devMode"]');
     if (devSw) devSw.setAttribute('aria-checked', db.facts.developer ? 'true' : 'false');
 
     var schedSw = $('[data-ws-action="schedule"]');
     if (schedSw) schedSw.setAttribute('aria-checked', db.facts.schedule ? 'true' : 'false');
-    setText('scheduleState', db.facts.schedule ? 'On - Sundays at 03:00' : 'Off');
+    setText('scheduleState', db.facts.schedule ? 'On – Sundays at 03:00' : 'Off');
 
     var ex = db.facts.excluded.length;
     setText('excludedNote', ex === 0 ? 'nothing excluded'
@@ -341,6 +422,7 @@
     renderDrives();
     renderLadder();
     renderLegend();
+    renderRing();
   }
 
   /* --------------------------------------------------------------- actions */

@@ -194,6 +194,7 @@
 
 /* --- defaults first (pitfall 3), = the lime/dark values ------------------- */
 :root {
+  --hue-a: 128; --hue-n: 128;
   --c-app: oklch(0.168 0.010 128);
   --c-panel: oklch(0.222 0.012 128);
   --c-well: oklch(0.133 0.009 128);
@@ -217,6 +218,7 @@
 
 /* --- lime ----------------------------------------------------------------- */
 [data-palette='lime'][data-appearance='light'] {
+  --hue-a: 128; --hue-n: 128;
   /* the bleed band INVERTS its surface, so it needs its own ink set - dark text on a
      dark band measured 1.05:1 before this existed, on every page, in light mode */
   --c-bleed-ink: oklch(0.968 0.009 128);
@@ -240,6 +242,7 @@
   --c-glow: oklch(0.512 0.145 128 / 0.12);
 }
 [data-palette='lime'][data-appearance='dark'] {
+  --hue-a: 128; --hue-n: 128;
   /* the bleed band INVERTS its surface, so it needs its own ink set - dark text on a
      dark band measured 1.05:1 before this existed, on every page, in light mode */
   --c-bleed-ink: oklch(0.962 0.008 128);
@@ -265,6 +268,7 @@
 
 /* --- sky ------------------------------------------------------------------ */
 [data-palette='sky'][data-appearance='light'] {
+  --hue-a: 231; --hue-n: 225;
   /* the bleed band INVERTS its surface, so it needs its own ink set - dark text on a
      dark band measured 1.05:1 before this existed, on every page, in light mode */
   --c-bleed-ink: oklch(0.966 0.011 225);
@@ -288,6 +292,7 @@
   --c-glow: oklch(0.508 0.140 231 / 0.12);
 }
 [data-palette='sky'][data-appearance='dark'] {
+  --hue-a: 231; --hue-n: 225;
   /* the bleed band INVERTS its surface, so it needs its own ink set - dark text on a
      dark band measured 1.05:1 before this existed, on every page, in light mode */
   --c-bleed-ink: oklch(0.960 0.010 225);
@@ -313,6 +318,7 @@
 
 /* --- plum ----------------------------------------------------------------- */
 [data-palette='plum'][data-appearance='light'] {
+  --hue-a: 320; --hue-n: 315;
   /* the bleed band INVERTS its surface, so it needs its own ink set - dark text on a
      dark band measured 1.05:1 before this existed, on every page, in light mode */
   --c-bleed-ink: oklch(0.967 0.011 315);
@@ -336,6 +342,7 @@
   --c-glow: oklch(0.518 0.172 320 / 0.12);
 }
 [data-palette='plum'][data-appearance='dark'] {
+  --hue-a: 320; --hue-n: 315;
   /* the bleed band INVERTS its surface, so it needs its own ink set - dark text on a
      dark band measured 1.05:1 before this existed, on every page, in light mode */
   --c-bleed-ink: oklch(0.962 0.010 315);
@@ -389,23 +396,61 @@
 }
 
 /* ---------------------------------------------------------------------------
-   5 - THE TIER RAMP. One canonical scale per metric (d3-charts): tier colour
-   means the same thing on a treemap tile, a badge and a table row, because all
-   three read these tokens.
+   5 - THE TIER RAMP - a two-ended scale per tier, not one flat colour.
 
-   It is ORDINAL, not categorical - the tiers form a real risk ladder from
-   "nothing is deleted" to "gone for good" - so it is built from the semantic
-   colours plus the accent rather than from six arbitrary hues. Colour is never
-   the only channel: every tier also carries its NAME in a badge, and `permanent`
-   additionally carries a hatch pattern on its tiles.
+   🔴 Two failures got us here, in opposite directions.
+   Round 2 aliased `rebuilds` straight to `--c-accent`: since eight of eight
+   sections are `rebuilds`, the largest element on the page was painted in
+   full-strength brand colour, which swamped the hero number and the primary
+   action - the accent is spent on three things, not on half the viewport.
+   The first correction muted every tier to one drab tone, and the map went from
+   too loud to MUD.
+
+   The answer is a real RANGE. Each tier declares a quiet `-lo` and a saturated
+   `-hi`, and the idle ramp interpolates between them: a cache touched yesterday
+   sits back into the surface, one untouched for eight months is bright and
+   worth looking at. That gives the block internal depth, makes the map
+   informative at a glance, and still leaves the accent's peak (L .82 / C .185)
+   above every tile, so the hero and the CTA keep it to themselves.
    --------------------------------------------------------------------------- */
+:root, [data-appearance='dark'] {
+  --c-tier-config-lo:    oklch(0.255 0.010 var(--hue-n, 128));
+  --c-tier-config-hi:    oklch(0.430 0.018 var(--hue-n, 128));
+  --c-tier-report-lo:    oklch(0.270 0.014 var(--hue-n, 128));
+  --c-tier-report-hi:    oklch(0.480 0.026 var(--hue-n, 128));
+  --c-tier-rebuilds-lo:  oklch(0.295 0.042 var(--hue-a, 128));
+  --c-tier-rebuilds-hi:  oklch(0.735 0.152 var(--hue-a, 128));
+  --c-tier-slow-lo:      oklch(0.280 0.038 var(--hue-a, 128));
+  --c-tier-slow-hi:      oklch(0.620 0.115 var(--hue-a, 128));
+  --c-tier-recycle-lo:   oklch(0.300 0.045 85);
+  --c-tier-recycle-hi:   oklch(0.740 0.135 85);
+  --c-tier-permanent-lo: oklch(0.300 0.055 27);
+  --c-tier-permanent-hi: oklch(0.640 0.170 27);
+}
+[data-appearance='light'] {
+  --c-tier-config-lo:    oklch(0.930 0.008 var(--hue-n, 128));
+  --c-tier-config-hi:    oklch(0.800 0.016 var(--hue-n, 128));
+  --c-tier-report-lo:    oklch(0.935 0.012 var(--hue-n, 128));
+  --c-tier-report-hi:    oklch(0.820 0.022 var(--hue-n, 128));
+  --c-tier-rebuilds-lo:  oklch(0.940 0.030 var(--hue-a, 128));
+  --c-tier-rebuilds-hi:  oklch(0.720 0.135 var(--hue-a, 128));
+  --c-tier-slow-lo:      oklch(0.935 0.028 var(--hue-a, 128));
+  --c-tier-slow-hi:      oklch(0.780 0.105 var(--hue-a, 128));
+  --c-tier-recycle-lo:   oklch(0.955 0.030 85);
+  --c-tier-recycle-hi:   oklch(0.830 0.120 85);
+  --c-tier-permanent-lo: oklch(0.945 0.030 27);
+  --c-tier-permanent-hi: oklch(0.760 0.140 27);
+}
+
+/* the single-value aliases the badges and the legend read - the tier's identity
+   colour, which is its saturated end */
 :root {
-  --c-tier-config:    var(--c-ink-3);        /* settings only, deletes nothing  */
-  --c-tier-report:    var(--c-line-strong);  /* reports only, deletes nothing   */
-  --c-tier-rebuilds:  var(--c-accent);       /* regenerates on next use         */
-  --c-tier-slow:      var(--c-accent-soft);  /* regenerates, but slowly         */
-  --c-tier-recycle:   var(--c-warn);         /* recoverable from the bin        */
-  --c-tier-permanent: var(--c-danger);       /* gone                            */
+  --c-tier-config:    var(--c-tier-config-hi);
+  --c-tier-report:    var(--c-tier-report-hi);
+  --c-tier-rebuilds:  var(--c-tier-rebuilds-hi);
+  --c-tier-slow:      var(--c-tier-slow-hi);
+  --c-tier-recycle:   var(--c-tier-recycle-hi);
+  --c-tier-permanent: var(--c-tier-permanent-hi);
 }
 
 /* ---------------------------------------------------------------------------

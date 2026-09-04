@@ -654,3 +654,148 @@ button, [role='button'] {
   --c-accent-ink: var(--c-bleed-accent-ink);
   color: var(--c-ink);
 }
+
+/* ============================================================================
+   ATMOSPHERE, DEPTH AND CRAFT - round 3
+
+   Round 2 was correct, legible and completely flat: every surface a solid fill
+   with a 1px border. "Correct and austere" is not the same as beautiful, and none
+   of what follows has a gate - the only instrument is opening the page.
+
+   Restraint governs ORNAMENT and this is a product surface, so there is no
+   parallax, no animated mesh, no magnetic hover. What is added is DEPTH: light
+   behaving as if the surfaces were real.
+   ============================================================================ */
+
+/* --- 1. ambient light. Two very low-opacity accent fields behind the app ground,
+       so the page has a light source instead of being uniformly lit. 0.055-0.09,
+       well under the 10-25% decorative ceiling, and static - it is atmosphere,
+       not animation. -------------------------------------------------------- */
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(60rem 32rem at 18% -6%,  color-mix(in oklab, var(--c-accent) 9%, transparent), transparent 70%),
+    radial-gradient(44rem 28rem at 92% 4%,   color-mix(in oklab, var(--c-accent) 5%, transparent), transparent 72%);
+}
+
+/* --- 2. grain. A single inline SVG turbulence at 1.6% - invisible as texture,
+       decisive as the difference between "flat fill" and "material". ---------- */
+body::after {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: .016;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.app { position: relative; z-index: 1; }
+
+/* --- 3. surfaces gain a top-edge sheen and a hairline, the way a real panel
+       catches light along its upper border ------------------------------------ */
+.panel, .well {
+  position: relative;
+  background-image: linear-gradient(180deg,
+    color-mix(in oklab, var(--c-ink) 3.5%, transparent) 0%,
+    transparent 42%);
+}
+.panel::before, .well::before {
+  content: ''; position: absolute; inset-inline: 8%; top: 0; height: 1px;
+  border-radius: var(--r-pill); pointer-events: none;
+  background: linear-gradient(90deg, transparent,
+    color-mix(in oklab, var(--c-ink) 20%, transparent), transparent);
+}
+.panel { transition: border-color var(--d-quick) var(--ease-mech), box-shadow var(--d-quick) var(--ease-mech); }
+
+/* --- 4. band seams fade at the edges instead of ruling straight across ------- */
+.band + .band { border-top: 0; }
+.band + .band::before {
+  content: ''; display: block; height: 1px; margin-inline: -1 * var(--sp-6);
+  margin-block-start: calc(var(--sp-6) * -1); margin-block-end: var(--sp-6);
+  background: linear-gradient(90deg, transparent, var(--c-line) 12%, var(--c-line) 88%, transparent);
+}
+.band-bleed { box-shadow: inset 0 1px 0 color-mix(in oklab, var(--c-ink) 8%, transparent); }
+
+/* --- 5. the hero gets its own light and the product's one metaphor ----------- */
+.readout { position: relative; }
+.hero-num {
+  text-shadow: 0 0 40px color-mix(in oklab, var(--c-accent) 26%, transparent);
+}
+/* pulled left and dimmed: at its first position it ran straight through the
+   capacity ring and the two decorations fought each other */
+.hero-sweep {
+  position: absolute; inset-inline-end: 12rem; inset-block-start: -3.5rem;
+  width: 26rem; height: 13rem; pointer-events: none;
+  opacity: .10; color: var(--c-accent);
+}
+@media (max-width: 1180px) { .hero-sweep { inset-inline-end: -2rem; opacity: .13; } }
+@media (max-width: 899px) { .hero-sweep { display: none; } }
+
+/* --- 6. treemap tiles: real craft. Radius, a vertical gradient so each tile has
+       a lit top edge, and a lift on hover that raises it toward the accent - which
+       is where full-strength accent is allowed to appear. --------------------- */
+.tm-frame {
+  box-shadow: var(--wm-panel-shadow);
+  background-image: linear-gradient(180deg, color-mix(in oklab, var(--c-ink) 3%, transparent), transparent 30%);
+}
+.tm-tile rect.fill {
+  transition: filter var(--d-quick) var(--ease-mech), stroke var(--d-instant) var(--ease-mech);
+  stroke: color-mix(in oklab, var(--c-ink) 9%, transparent);
+  stroke-width: .75;
+}
+.tm-tile:hover rect.fill { filter: brightness(1.14) saturate(1.5); stroke: var(--c-accent); stroke-width: 1.25; }
+.tm-tile:focus-visible rect.fill { stroke: var(--c-accent); stroke-width: 2; }
+.tm-tile rect.sheen { pointer-events: none; }
+.tm-group-chip { pointer-events: none; }
+
+/* --- 7. cards answer the pointer ------------------------------------------- */
+.g12 > .panel:hover, .well.pad-s:hover {
+  border-color: color-mix(in oklab, var(--c-accent) 34%, var(--c-line));
+}
+.fchip, .chip, .card-sel, .btn { will-change: auto; }
+
+/* --- 8. the rail's active item sits in a soft accent wash rather than a flat fill */
+.rail-item[aria-current='page'] {
+  background: linear-gradient(90deg,
+    color-mix(in oklab, var(--c-accent) 20%, transparent),
+    color-mix(in oklab, var(--c-accent) 7%, transparent));
+}
+.rail-foot {
+  margin-top: auto; padding: var(--sp-3);
+  border-top: 1px solid var(--c-line);
+  display: flex; flex-direction: column; gap: var(--sp-1);
+}
+
+/* --- 9. the primary action reads as the one thing on the page that matters --- */
+.btn-primary {
+  background-image: linear-gradient(180deg, color-mix(in oklab, #fff 16%, transparent), transparent 60%);
+  box-shadow: 0 1px 0 color-mix(in oklab, #fff 22%, transparent) inset,
+              0 6px 18px -8px var(--c-accent);
+}
+.btn-primary:hover {
+  box-shadow: 0 1px 0 color-mix(in oklab, #fff 26%, transparent) inset,
+              0 10px 26px -8px var(--c-accent), 0 0 0 4px var(--c-glow);
+}
+
+/* --- the hero, recomposed round 3 ------------------------------------------
+   Round 2's hero was a number on the left, ~600px of nothing, then three buttons.
+   Now it is a three-part cluster: the readout, its actions beneath it, and the
+   capacity ring holding the right. */
+.readout { align-items: center; gap: var(--sp-6) var(--sp-8); }
+.readout > div:first-of-type { flex: 1 1 22rem; min-width: 0; }
+.hero-actions {
+  display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center;
+  flex: 0 1 auto;
+}
+.hero-ring { flex: 0 0 auto; width: clamp(9rem, 15vw, 13rem); margin-inline-start: auto; }
+.ring-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.ring-recl { filter: drop-shadow(0 0 9px color-mix(in oklab, var(--c-accent) 55%, transparent)); }
+@media (max-width: 1180px) { .hero-ring { display: none; } }
+
+.band-app:first-of-type { padding-block-start: var(--sp-8); }
+.hero-ring { align-self: center; }
+
+/* a zone label wrapped to three lines at 390 because the caps run had nowhere to go */
+@media (max-width: 640px) {
+  .zone-label { flex-wrap: wrap; }
+  .zone-label > .caps { flex: 0 0 100%; }
+  .zone-label::after { display: none; }
+  .hero-actions { width: 100%; }
+  .hero-actions .btn-lg { flex: 1 1 100%; }
+}

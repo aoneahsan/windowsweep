@@ -1,6 +1,6 @@
 # windowsweep desktop - the design argument
 
-Last Updated: 2026-09-04 · Direction **02, "Reclaim"** · Phase P6-A, gate 1 pending
+Last Updated: 2026-09-04 (round 3) · Direction **02, "Reclaim"** · Phase P6-A, gate 1 pending
 
 The reasoning behind the click dummy in `windowsweep-click-dummy/`. Written so the owner can disagree with
 the *argument* rather than only with the pixels. Nothing here was put to him as a choice; the decisions are
@@ -73,6 +73,56 @@ painted one flat green and told the reader nothing the total did not already say
 the product actually reasons about, so it earns the second channel rather than a decorative stripe. **The
 idle domain is the reachable range, re-solved per render**, so a machine whose oldest cache is 60 days still
 gets the full ramp. Both channels are named in the on-screen legend.
+
+
+## 2a. Round 3 - what "better, but not final" changed
+
+His verdict on round 2 was *"okay it's better but still not final, improve it make it better and more
+beautiful"*. That is neither a rejection nor a keep-and-branch, so direction 02 stands and was refined in
+place - nothing was archived. Four causes, all specific:
+
+### 🔴 The accent was over-spent, and it cost the hero
+
+`rebuilds` was aliased straight to `--c-accent`, and eight of eight sections are `rebuilds` - so the largest
+element on the page was painted in full-strength brand colour. The accent is spent on **three** things: the
+primary action, a measured value, and the selected nav item. Spending it across half the viewport is what
+made the page read as a green block and stole the number's power.
+
+The first correction muted every tier to one drab tone and the map went from too loud to **mud**. The answer
+was a **range**: each tier declares a quiet `-lo` and a saturated `-hi`, and the idle ramp interpolates
+between them. A cache touched yesterday sits back into the surface; one untouched for eight months is bright
+and worth looking at. Every tile now stays below the accent's peak (L .82 / C .185), so the hero and the CTA
+keep it to themselves.
+
+### The page had no light in it
+
+Round 2 was correct, legible and entirely flat - every surface a solid fill with a 1px border. Added, all
+under the decorative ceiling and none of it animated: two ambient accent fields behind the app ground
+(9% and 5%), a 1.6% grain so surfaces read as material rather than fill, a top-edge sheen and hairline on
+every panel, band seams that fade at the edges instead of ruling straight across, a glow under the hero
+number, and the product's sweep metaphor at 10% behind it.
+
+### 🔴 The hero's right half was dead space, and the map was carrying the page
+
+Both fixed by one element: **the capacity ring** - three concentric arcs, one per drive, used / reclaimable /
+free, with the reclaimable slice in full accent and a soft glow. It is the page's only circle, which is most
+of why the layout stopped reading as a stack of rectangles. The treemap's frame then dropped from 420 to 340
+so the drives and the ladder are visible above the fold; the map is the hero's *evidence*, not the whole page.
+
+### Typography was correct in the display face and wrong in the details
+
+A spaced hyphen is not a dash and a straight apostrophe is not an apostrophe - and that group is most of why
+competent text still reads as machine-written. Applied to text nodes only, never inside `<code>`, so every
+CLI literal is untouched. 🔴 The project's ASCII-only IRON rule covers the PowerShell engine and `bin/*.js` -
+its file set was **read, not assumed** - so the desktop tree can carry proper punctuation.
+
+### And one instrument gap, which is the finding that matters most
+
+**The contrast sweep had never measured the treemap's labels.** SVG text paints with `fill`, not `color`, so
+reading `color` returned an inherited value and silently skipped 56 text nodes - the single largest block of
+text on the page. It reported 0 failures while never looking at the map. Corrected, then *proved* corrected
+by showing `fill` genuinely differs from `color` on 9 of those nodes. A sweep is only as good as the property
+it reads.
 
 ## 3. Typography - hierarchy carried by the WIDTH axis
 

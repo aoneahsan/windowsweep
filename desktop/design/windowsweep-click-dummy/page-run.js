@@ -134,7 +134,7 @@
 
     window.wsWire.setText('runTotal', String(queue.length));
     window.wsWire.setText('runState', 'Running');
-    log('windowsweep ' + window.wsSeed.ENGINE_VERSION + ' - safe batch, ' + queue.length + ' sections', 'l-dim');
+    log('windowsweep ' + window.wsSeed.ENGINE_VERSION + ' – safe batch, ' + queue.length + ' sections', 'l-dim');
     log('mode=all dry_run=false developer=' + db.facts.developer + ' idle_days=' + db.facts.idleDays, 'l-dim');
 
     var i = 0, phase = 0;
@@ -199,7 +199,7 @@
       window.wsWire.setText('runTotal', String(queue.length));
       window.wsWire.setText('runCmd',
         'windowsweep --all --yes --json' + (db.facts.developer ? ' --developer' : ' --not-developer'));
-      log('idle - press "Start the safe run"', 'l-dim');
+      log('idle – press “Start the safe run”', 'l-dim');
 
       document.addEventListener('click', function (e) {
         var t = e.target.closest('[data-ws-action]');
@@ -207,7 +207,7 @@
         if (t.dataset.wsAction === 'runStart') start();
         if (t.dataset.wsAction === 'runCancel') {
           cancelled = true;
-          log('> cancel requested - finishing the section in flight', 'l-warn');
+          log('> cancel requested – finishing the section in flight', 'l-warn');
         }
       });
     }

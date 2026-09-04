@@ -3,7 +3,7 @@
   "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md at the repository root; this file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-09-03",
+  "lastUpdated": "2026-09-04",
   "planFile": "C:/Users/PC/.claude/plans/please-plan-and-get-agile-fairy.md",
   "overview": "docs/features/windowsweep-completion/00-overview.md",
   "specification": "remaining-work.md",
@@ -19,7 +19,9 @@
     "toolchainDownloads": "no toolchain or dependency-tree downloads on this machine until the owner's go-ahead; CI compiles meanwhile (owner, 2026-09-03) - PENDING-TASKS.md TASK-001, MANUAL-TASKS row 14",
     "desktopLocation": "desktop/ in this repository (macleanup pattern); releases desktop-vX.Y.Z with latest.json; identifier com.aoneahsan.windowsweep (permanent); app version equals the bundled CLI version",
     "palette": "primary hue 128 (lime): light #4d7c0f, dark #a3e635 with dark on-accent text; 24 degrees from taxease 104 and wakalat 152, the widest gap left; success moves to 158; free treatments sky 231 and plum 320; the logo mark keeps its sky-blue gradient",
-    "adminSurface": "user emails and run history are administered in the Firebase console for phase P6; a web admin panel is a later separate phase (recorded deviation from the platform-admin rule)"
+    "adminSurface": "user emails and run history are administered in the Firebase console for phase P6; a web admin panel is a later separate phase (recorded deviation from the platform-admin rule)",
+    "unverifiedTargets": "verified only: a path becomes a target once it has been seen on a real machine; everything unverifiable is a documented candidate table in docs/sections.md plus one MANUAL-TASKS probe row (owner, 2026-09-04)",
+    "sessionOrder": "after 1.1.0 ships, continue straight into P6-A on Opus - no review round in between (owner, 2026-09-04)"
   },
   "knownRisks": [
     "RW-002: sections 17-19 pre-select every item under --yes in the interactive modes, and section 17 then deletes without a human choice; fix before any real run of section 17 with --yes.",
@@ -253,70 +255,70 @@
     {
       "id": "P5",
       "title": "1.1 family-parity features (release 1.1.0)",
-      "status": "pending",
+      "status": "in_progress",
       "completedAt": null,
       "subTasks": [
         {
           "id": "P5.RW-060",
           "title": "Section 22: global packages audit, read-only (npm, pnpm, yarn, bun, deno; uninstall commands printed)",
-          "status": "pending",
-          "note": "",
+          "status": "complete",
+          "note": "modules/globals_audit.ps1: section 22, read-only, declares no deletable target (its roots are protected subtrees). Verified against nvm4w node_modules (15 packages), the Yarn global root and .deno/bin",
           "awaitingUser": false
         },
         {
           "id": "P5.RW-061",
           "title": "Section 23: orphaned application data under AppData, interactive, Recycle Bin, fail-closed exclusions",
-          "status": "pending",
-          "note": "",
+          "status": "complete",
+          "note": "modules/orphaned_appdata.ps1: section 23, interactive, Recycle Bin, fail-closed on an unreadable registry, exclusions derived from the declared target list. Verified against 177 uninstall entries and 127 AppData folders",
           "awaitingUser": false
         },
         {
           "id": "P5.RW-062",
           "title": "Section 24: installed programs idle N+ days, report-only with winget/UninstallString hints",
-          "status": "pending",
-          "note": "",
+          "status": "complete",
+          "note": "modules/installed_programs.ps1: section 24, report only, winget ids resolved in one call. Idle is measured from LAST-WRITE only: last-access is live on this machine, which made every program read as touched today",
           "awaitingUser": false
         },
         {
           "id": "P5.RW-063",
           "title": "Section 25: startup items audit, report-only",
-          "status": "pending",
-          "note": "",
+          "status": "complete",
+          "note": "modules/startup_audit.ps1: section 25, report only. The enabled/disabled state comes from Explorer's disable FILETIME, not the widely quoted byte-0 table, which was measured wrong here",
           "awaitingUser": false
         },
         {
           "id": "P5.RW-064",
           "title": "Sections 8/9 target rows: Telegram, WhatsApp (Store), Office file cache (prune, Office guards), Steam shadercache, WebView2 caches, wsreset - paths verified first",
-          "status": "pending",
-          "note": "",
+          "status": "in_progress",
+          "note": "SHIPPED: wsreset offered as a next step in section 9 (no silent mode, always opens the Store, so it is never executed for you). AWAITING VERIFICATION: Telegram, WhatsApp (Store), Office file cache, Steam shadercache, the generic WebView2 glob - none of that software is installed here. Recorded in docs/sections.md and MANUAL-TASKS row 20",
           "awaitingUser": false
         },
         {
           "id": "P5.RW-065",
           "title": "Section 1 target rows: Hugging Face hub, torch, conda clean; document Chocolatey/winget/Metro as already covered",
-          "status": "pending",
-          "note": "",
+          "status": "in_progress",
+          "note": "SHIPPED: Hugging Face hub cache (prune, developer-gated), verified present. Deviation: the spec asked for keep-newest per model, but HF snapshots link into blobs so removing one orphans blobs; prune is correct. AWAITING VERIFICATION: the torch cache and conda clean - neither is installed here",
           "awaitingUser": false
         },
         {
           "id": "P5.RW-066",
           "title": "Section 26: driver and upgrade installer leftovers (admin, opt-in): C:\\NVIDIA, NVIDIA Downloader, C:\\AMD, C:\\Intel, C:\\ESD",
-          "status": "pending",
-          "note": "",
-          "awaitingUser": false
+          "status": "blocked",
+          "note": "DEFERRED, not shipped. C:\\NVIDIA, the NVIDIA Downloader, C:\\AMD and C:\\ESD are all absent on the build machine, and C:\\Intel was inspected and REJECTED: it holds Thunderbolt, Logs and GfxCPLBatchFiles, which are driver support content rather than extraction leftovers. Section 26 was not created, so the number stays free. MANUAL-TASKS row 20",
+          "awaitingUser": true
         },
         {
           "id": "P5.RW-067",
           "title": "Section 17 artefact list additions (.nx .mypy_cache .ruff_cache .tox .eggs .output .serverless; .cache with a marker)",
-          "status": "pending",
-          "note": "",
+          "status": "complete",
+          "note": ".nx .mypy_cache .ruff_cache .tox .eggs .output .serverless added; .cache only beside a Gatsby or Parcel marker (WS_ARTEFACT_DIRS_MARKED); .venv, venv and .terraform still excluded",
           "awaitingUser": false
         },
         {
           "id": "P5.RW-068",
           "title": "--notify toast (WinRT on 5.1, NotifyIcon balloon on pwsh), wired into --install-task",
-          "status": "pending",
-          "note": "",
+          "status": "complete",
+          "note": "modules/notify.ps1: WinRT toast on 5.1, NotifyIcon balloon on pwsh, both in try/catch, never touches the exit code or stdout; --install-task adds it. Toast seen on 5.1; the pwsh balloon is MANUAL-TASKS row 21",
           "awaitingUser": false
         },
         {
@@ -329,15 +331,15 @@
         {
           "id": "P5.RW-071",
           "title": "--select L and --select-file P: scripted selection for sections 17/18/19/23; lifts the batch refusal when present",
-          "status": "pending",
-          "note": "GUI prerequisite",
+          "status": "complete",
+          "note": "--select L (repeatable, one list per prompt) and --select-file P (paths, case-insensitive). Either lifts the interactive batch refusal and answers that section's final confirmation; --yes alone still selects nothing, re-proved by check 16c",
           "awaitingUser": false
         },
         {
           "id": "P5.RW-072",
           "title": "--json additions: candidates[], targets[] in scan, ##windowsweep progress lines; --list --json catalogue",
-          "status": "pending",
-          "note": "GUI prerequisite",
+          "status": "complete",
+          "note": "candidates[] and targets[] always present in --json, ##windowsweep progress lines on stderr in --json mode only, and --list --json for the catalogue",
           "awaitingUser": false
         },
         {
@@ -455,6 +457,12 @@
       "date": "2026-09-03",
       "phase": "session-close",
       "summary": "WH003 written; CLAUDE.md and AGENTS.md refreshed with the new state and stack rows for the docs site and the desktop app; PENDING-TASKS.md pointer added; memory and the plan execution log updated",
+      "commit": "pending"
+    },
+    {
+      "date": "2026-09-04",
+      "phase": "P5",
+      "summary": "Sections 22-25 added (globals audit, orphaned AppData, idle programs, startup items); --select/--select-file, --notify, candidates[]/targets[]/progress lines and --list --json; the Hugging Face and wsreset rows and seven artefact-dir additions. Target collection is driven by the catalogue instead of a literal 0..21. Self-test 124 -> 151, every new check proved red on its own plant. Three real defects the new checks found: a HashSet returned unrolled made the section-23 exclusions case-sensitive, section 24 measured last-access so it could never report anything, and a $p/$P case collision nulled the roots table",
       "commit": "pending"
     }
   ],

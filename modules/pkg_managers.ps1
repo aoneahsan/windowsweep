@@ -37,6 +37,10 @@ function Get-Targets01 {
     (New-Target 1 'electron-builder cache' "$($P.L)\electron-builder\Cache" -Mode prune -Dev $true)
     (New-Target 1 'node-gyp headers cache' "$($P.L)\node-gyp\Cache" -Mode prune -Dev $true)
     (New-Target 1 'Scoop installer cache' "$($P.U)\scoop\cache" -Mode prune -Dev $true)
+    # Hugging Face keeps revisions as snapshots\<rev> linking into blobs, so removing a whole snapshot orphans
+    # blobs: this prunes by the idle gate instead of keeping "the newest per model". AI agent state under
+    # ~\.cache (claude, codex, gemini, copilot) stays protected by lib/safety.ps1.
+    (New-Target 1 'Hugging Face model cache' "$($P.U)\.cache\huggingface\hub" -Mode prune -Dev $true -Note 'models are re-downloaded on next use; the idle gate keeps recent ones')
   )
 }
 

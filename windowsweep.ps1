@@ -20,7 +20,11 @@ $Script:WS = @{
   ScanRoots = @(); ExcludePaths = @(); Hiberfil = ''; ResetBase = $false; Permanent = $false
   OnlyList = ''; Profile = ''; Exclude = ''; ExportFmt = 'both'; ExportId = 'latest'; PruneDays = 90
   LogsDir = ''; ReportsDir = ''; NoReport = $false; CleanupLogs = $false
-  JsonMode = $false; Quiet = $false; NoColor = $false; Ascii = $false
+  JsonMode = $false; Quiet = $false; NoColor = $false; Ascii = $false; Notify = $false
+  # Scripted selection (--select / --select-file): a person's choice made in advance. SelectActive is LATCHED
+  # once at parse time because SelectQueue empties as prompts consume it.
+  SelectQueue = @(); SelectPaths = @(); SelectActive = $false; LastSelectionScripted = $false
+  Candidates = @(); ScanTargets = @()
   TotalFreed = [long]0; TotalEstimated = [long]0; SectionFreed = [long]0
   Refusals = @(); Hints = @(); ExitCode = 0; Finished = $false; AllowOwnData = $false
 }
@@ -79,6 +83,11 @@ OPTIONS
       --large-file-mb N    Minimum size for section 19 (default 100)
       --hiberfil off|reduced|keep   What section 15 does       --reset-base   DISM /ResetBase in 14
       --permanent       Sections 18/19 delete instead of using the Recycle Bin
+      --select L        Pre-answer the next interactive selection, e.g. --select 1,3-5. Repeatable: the
+                        lists are consumed in the order the prompts appear
+      --select-file P   UTF-8 file of one full path per line, matched against each prompt's candidates.
+                        Either flag lets sections 17/18/19/23 run unattended - a person did choose
+      --notify          Show a Windows notification when the run ends
       --logs-dir P / --reports-dir P / --no-report / --cleanup-logs
       --json            One-line JSON summary on stdout (everything else on stderr)
   -q, --quiet           Less chatter     --no-color     --ascii (plain glyphs)
@@ -167,6 +176,15 @@ function Read-Arguments {
       '--reports-dir' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; $ws.ReportsDir = $v }
       '--no-report' { $ws.NoReport = $true }
       '--cleanup-logs' { $ws.CleanupLogs = $true }
+      '--notify' { $ws.Notify = $true }
+      '--select' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; $ws.SelectQueue += $v }
+      '--select-file' {
+        $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }
+        $f = Get-FullPath $v
+        if (-not $f -or -not (Test-Path -LiteralPath $f)) { throw "--select-file not found: $v" }
+        $ws.SelectPaths = @([IO.File]::ReadAllLines($f) | ForEach-Object { $_.Trim() } | Where-Object { $_ -and -not $_.StartsWith('#') })
+        if ($ws.SelectPaths.Count -eq 0) { throw "--select-file has no paths in it: $v" }
+      }
       '--json' { $ws.JsonMode = $true; $ws.Quiet = $true }
       { $_ -in '-q', '--quiet' } { $ws.Quiet = $true }
       '--no-color' { $ws.NoColor = $true }
@@ -179,6 +197,8 @@ function Read-Arguments {
   if ($ws.Profile -and -not $Script:WS_PROFILES.ContainsKey($ws.Profile)) {
     throw "unknown profile '$($ws.Profile)' (known: $($Script:WS_PROFILES.Keys -join ', '))"
   }
+  # Latched here, once: the queue is drained by the prompts, so a recomputed flag would flip to false mid-run.
+  $ws.SelectActive = ($ws.SelectQueue.Count -gt 0 -or $ws.SelectPaths.Count -gt 0)
 }
 
 function Initialize-Paths {

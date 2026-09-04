@@ -19,7 +19,7 @@ The [README](https://github.com/aoneahsan/windowsweep#readme) is the elevator pi
 
 | Page | What it covers |
 |---|---|
-| [Sections 0-21](./sections.md) | Every section: what it touches, which flags tune it, how it behaves in dry-run and batch mode |
+| [Sections 0-25](./sections.md) | Every section: what it touches, which flags tune it, how it behaves in dry-run and batch mode |
 | [CLI reference](./cli-reference.md) | Every mode, option, exit code, environment variable and config key |
 | [Profiles](./profiles.md) | The named bundles: `dev`, `minimal`, `cache-only`, `system`, `deep`, `audit` |
 | [Admin sections and elevation](./admin-and-elevation.md) | What needs Administrator rights, how `--elevate` works, the hibernation decision |
@@ -51,4 +51,4 @@ The [README](https://github.com/aoneahsan/windowsweep#readme) is the elevator pi
 | **Author** | [Ahsan Mahmood](https://aoneahsan.com) - [aoneahsan@gmail.com](mailto:aoneahsan@gmail.com) |
 | **Support the work** | https://aoneahsan.com/payment?project-id=windowsweep&project-identifier=windowsweep |
 
-Last Updated: 2026-09-03 - tool version 1.0.1
+Last Updated: 2026-09-04 - tool version 1.1.0

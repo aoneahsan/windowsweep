@@ -37,7 +37,9 @@ function Invoke-Menu {
   }
   while ($true) {
     Show-Menu
-    $choice = Read-Choice -Prompt '  Select [0-21 / A / D / Y / S / Q]: ' -Default ''
+    $lo = ($Script:WS_SECTIONS | Measure-Object Id -Minimum).Minimum
+    $hi = ($Script:WS_SECTIONS | Measure-Object Id -Maximum).Maximum
+    $choice = Read-Choice -Prompt "  Select [$lo-$hi / A / D / Y / S / Q]: " -Default ''
     if ($choice -eq '') { continue }
     switch -Regex ($choice) {
       '^q' { Show-SessionSummary; return }

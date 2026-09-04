@@ -16,10 +16,11 @@ function New-Target {
 }
 
 function Get-AllTargets {
-  <# .SYNOPSIS Collect every declared target from the loaded modules (Get-Targets00 .. Get-Targets21). #>
+  <# .SYNOPSIS Collect every declared target from the loaded modules: one Get-TargetsNN per catalogue row.
+     Driven by WS_SECTIONS, never a literal range, so a new section is reachable the moment it is declared. #>
   $all = @()
-  for ($i = 0; $i -le 21; $i++) {
-    $fn = 'Get-Targets{0:00}' -f $i
+  foreach ($s in $Script:WS_SECTIONS) {
+    $fn = 'Get-Targets{0:00}' -f $s.Id
     if (Get-Command $fn -ErrorAction SilentlyContinue) { $all += @(& $fn) }
   }
   return $all
@@ -57,7 +58,12 @@ function Show-ScanTable {
       $paths = @(Resolve-TargetPaths $t)
       if ($paths.Count -eq 0) { Write-UiLine ("  {0,-46} {1,10}  {2}" -f $t.Label, 'absent', $t.Path) 'DarkGray'; continue }
       $bytes = [long]0
-      foreach ($p in $paths) { $bytes += Get-DirectoryBytes $p }
+      foreach ($p in $paths) {
+        # Sized once per path: a second Get-DirectoryBytes pass for --json would walk every target twice.
+        $b = [long](Get-DirectoryBytes $p)
+        $bytes += $b
+        if ($Script:WS.JsonMode) { $Script:WS.ScanTargets += [ordered]@{ section = $t.Section; label = $t.Label; path = $p; bytes = $b } }
+      }
       $secTotal += $bytes
       $shown = $t.Path
       if ($paths.Count -gt 1) { $shown = "$($t.Path)  ($($paths.Count) matches)" }

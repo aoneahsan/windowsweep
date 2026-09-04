@@ -73,22 +73,24 @@ function Show-FileTable {
 }
 
 function Invoke-PersonalPicker {
-  param([object[]] $Rows, [string] $Prompt)
+  param([object[]] $Rows, [string] $Prompt, [int] $Section = 0)
   $ws = $Script:WS
   $Rows = @($Rows)
   if ($Rows.Count -eq 0) { Write-Info 'none found'; return }
   Show-FileTable $Rows
   $total = [long]0
-  foreach ($r in $Rows) { $total += $r.Bytes }
+  $i = 1
+  foreach ($r in $Rows) { $total += $r.Bytes; Add-JsonCandidate -Section $Section -Index $i -Path $r.Path -Bytes $r.Bytes -IdleDays $r.Idle; $i++ }
   Write-Info ("total: " + (Format-Bytes $total))
   $dest = 'the Recycle Bin'
   if ($ws.Permanent) { $dest = 'PERMANENT deletion (--permanent)' }
   Write-Note "selected files go to $dest"
-  $picks = @(Read-MultiSelect -Total $Rows.Count -NoAutoYes)
+  $picks = @(Read-MultiSelect -Total $Rows.Count -NoAutoYes -Candidates @($Rows | ForEach-Object { $_.Path }))
   if ($picks.Count -eq 0) { Write-Info 'nothing selected'; return }
   if (-not $ws.DryRun) {
-    # Personal files never auto-confirm: --yes does not apply here.
-    if (-not (Confirm-Ui -Prompt "$Prompt ($($picks.Count) file(s))?" -Default 'n' -NoAutoYes)) { Write-Info 'skipped'; return }
+    # Personal files never auto-confirm: --yes does not apply here. An explicit --select / --select-file
+    # choice does, because it is a person naming these exact files in advance.
+    if (-not (Confirm-Ui -Prompt "$Prompt ($($picks.Count) file(s))?" -Default 'n' -NoAutoYes -ScriptedOk)) { Write-Info 'skipped'; return }
   }
   foreach ($k in $picks) { $null = Send-ToRecycleBin -Path $Rows[$k - 1].Path -Within $Rows[$k - 1].Root }
 }
@@ -99,7 +101,7 @@ function Invoke-Section18 {
     'You pick what goes; it lands in the Recycle Bin. Desktop and cloud-synced folders are never scanned.'
   )
   if (@(Get-PersonalRoots).Count -eq 0) { Write-Info 'no Downloads folder found'; return }
-  Invoke-PersonalPicker -Rows @(Get-PartialDownloads) -Prompt 'Move the selected partial downloads to the Recycle Bin'
+  Invoke-PersonalPicker -Rows @(Get-PartialDownloads) -Prompt 'Move the selected partial downloads to the Recycle Bin' -Section 18
 }
 
 function Invoke-Section19 {
@@ -109,7 +111,7 @@ function Invoke-Section19 {
     'archives you already extracted. You pick what goes; it lands in the Recycle Bin.'
   )
   if (@(Get-PersonalRoots).Count -eq 0) { Write-Info 'no Downloads folder found'; return }
-  Invoke-PersonalPicker -Rows @(Get-LargeStaleFiles) -Prompt 'Move the selected files to the Recycle Bin'
+  Invoke-PersonalPicker -Rows @(Get-LargeStaleFiles) -Prompt 'Move the selected files to the Recycle Bin' -Section 19
 }
 
 function Show-PersonalScan {

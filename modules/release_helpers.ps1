@@ -18,6 +18,9 @@ function Show-Version {
 }
 
 function Show-SectionList {
+  # --list --json prints the catalogue and nothing else: the human table below uses Write-Host, which would
+  # break the one-line-on-stdout promise.
+  if ($Script:WS.JsonMode) { [Console]::Out.WriteLine(((Get-CatalogueJson) | ConvertTo-Json -Depth 6 -Compress)); return }
   Write-Host ''
   Write-Host ("  {0,3}  {1,-84} {2,-10} {3,-5} {4}" -f '#', 'SECTION', 'TIER', 'ADMIN', 'BATCH')
   foreach ($s in $Script:WS_SECTIONS) {
@@ -340,7 +343,8 @@ function Install-WeeklyTask {
   if (Test-NpxInstallerRefusal '--install-task') { return }
   if (Get-ScheduledTask -TaskName $Script:WS_TASK_NAME -ErrorAction SilentlyContinue) { Write-Info 'task already exists'; return }
   $lc = Get-LaunchCommand
-  $argLine = (@($lc.Args) + @('--all', '--yes', '--quiet', '--no-color')) -join ' '
+  # --notify is part of the task action: an unattended Sunday run that says nothing is a run nobody sees.
+  $argLine = (@($lc.Args) + @('--all', '--yes', '--quiet', '--no-color', '--notify')) -join ' '
   Write-Info "action: $($lc.Exe) $argLine"
   if ($Script:WS.DryRun) { Write-DryRun 'would register the task'; return }
   if (-not (Confirm-Ui -Prompt 'Register this task for your user account?' -Default 'y')) { Write-Info 'skipped'; return }

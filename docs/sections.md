@@ -1,4 +1,4 @@
-# Sections 0-21
+# Sections 0-25
 
 Every cleanup operation lives in one numbered section. Numbers are a public contract: a section may be
 retired as a no-op, never renumbered. `windowsweep --list` prints the table; `--list-targets` prints every
@@ -28,6 +28,10 @@ path each section can reach on your machine.
 | 19 | Large stale personal files | Recycle Bin | - | interactive |
 | 20 | Disk-image compaction | config | admin | deep |
 | 21 | Disk usage report | report | - | safe |
+| 22 | Global packages audit | report | - | safe, audit only |
+| 23 | Orphaned application data | Recycle Bin | - | interactive |
+| 24 | Installed programs not modified for N+ days | report | - | safe, audit only |
+| 25 | Startup items audit | report | - | safe, audit only |
 
 "Developer-gated" means the idle gate applies in developer mode and the cache is cleared completely otherwise
 ([Developer mode](./developer-mode.md)). Every section honours `--dry-run`. Tier `recycle` means the item goes
@@ -184,4 +188,89 @@ Read-only: drive table, hibernation file, disk images, and the 20 largest entrie
 `AppData\Local`, `AppData\Roaming` and the system drive root, with protected entries marked. Writes
 `disk-usage-<stamp>.txt`.
 
-Last Updated: 2026-09-03
+## 22 - Global packages audit
+
+Read-only. Lists what `npm`, `pnpm`, `yarn`, `bun` and `deno` installed globally, with each package's
+version, size and how long it has been since anything touched it, then prints the exact uninstall command
+for the ones nothing seems to need. **It never uninstalls anything**, in any mode - several of these roots
+(`nvm4w`, `AppData\Roaming\npm`, `pnpm\global`, `.bun`, `.deno\bin`) are protected paths the tool refuses to
+delete from, so the section declares no deletable target at all.
+
+A package is a *candidate* only when all three are true: nothing has touched it for `--days`+ days, no
+`package.json` under your project scan roots that changed inside that window names it (dependencies or a
+`scripts` line), and it is not one of `npm`, `corepack`, `pnpm`, `yarn` or `windowsweep`. A candidate that a
+project also installs locally is marked, because the local copy is the one that actually runs.
+
+Windows keeps no record of when a command last ran, so "idle" here means the package folder's own files have
+not changed. Writes `global-packages-<stamp>.txt`. Part of the `audit` profile.
+
+## 23 - Orphaned application data
+
+Interactive only. Top-level folders under `%APPDATA%` and `%LOCALAPPDATA%` that no installed program claims
+and that nothing has touched for `--days`+ days - what an uninstaller left behind. You select what goes and
+it lands in the **Recycle Bin** (`--permanent` deletes instead). `--yes` never selects here; `--dry-run`
+lists and removes nothing.
+
+A folder is claimed - and therefore never offered - when any of these names it: an entry in the three
+uninstall registry hives (display name, publisher, or the leaf of its install location), a folder under
+`Program Files`, `Program Files (x86)`, `%LOCALAPPDATA%\Programs` or `WindowsApps`, a Store package, or a
+running process. Matching is deliberately generous: a token that merely starts with the folder name, or the
+reverse, counts as a claim, because wrongly calling something orphaned is the expensive mistake.
+
+**It fails closed.** If the uninstall hives cannot be read at all, the section reports that and produces
+**zero** candidates - an empty list of installed programs must never read as "everything is orphaned".
+
+Never offered: `Microsoft`, `Windows`, `Packages` (Store apps own their own lifecycle), `Programs`, `Temp`,
+`Comms`, `ConnectedDevicesPlatform`, `D3DSCache`, `Google`, `Mozilla`, `CrashDumps`, `VirtualStore`,
+`PeerDistRepub`, `Publishers`, `History`, `IconCache`, `ElevatedDiagnostics`, the shell folders, and the
+platform folders `IsolatedStorage`, `ToastNotificationManagerCompat`, `AppV`, `Package Cache`, `DBG` and the
+`CLR_v4.0` pair. On top of that, **every vendor folder another section already cleans is excluded
+automatically**, derived from the declared target list at run time so it cannot drift.
+
+## 24 - Installed programs not modified for N+ days
+
+Read-only. Reads the three uninstall hives and lists non-system programs, largest first, whose files under
+their install location have not been modified for `--days`+ days, each with the command that removes it -
+`winget uninstall --id <id>` when one `winget list` call resolves it, otherwise the program's own
+`UninstallString`. Store apps are listed separately with `Remove-AppxPackage` hints. **It never runs an
+uninstaller.**
+
+The number is **"not modified", not "not used"**: Windows keeps no reliable last-launched record. It is
+measured from last-write times only, because last-access is live on many systems and would report every
+program as touched today. A program with no recorded install location cannot be measured and is not listed.
+Writes `installed-programs-<stamp>.txt`. Part of the `audit` profile.
+
+## 25 - Startup items audit
+
+Read-only. One table of everything that launches at sign-in or boot: `Run` and `RunOnce` under HKCU, HKLM and
+`WOW6432Node`, both Startup folders, scheduled tasks with a logon trigger, and `Win32_StartupCommand`, each
+marked enabled or disabled. **It changes nothing** - the tool shows them, you change them in Task Manager >
+Startup, where you can undo it.
+
+The enabled/disabled state comes from Explorer's `StartupApproved` record, and specifically from the disable
+timestamp it stores: a value carrying a real timestamp was switched off, one whose timestamp is zero is on. A
+value too short to read is reported as `unknown` rather than guessed. Writes `startup-items-<stamp>.txt`.
+Part of the `audit` profile.
+
+## Candidate targets awaiting verification
+
+A path becomes a target only once it has been seen on a real machine holding only regenerable data. These are
+researched but **not shipped**, because the software is not installed on the build machine and a guessed path
+is exactly what this rule exists to prevent. Each will be added once its folder can be confirmed.
+
+| Would join | Candidate | What has to be seen first |
+|---|---|---|
+| 8 | Telegram Desktop `tdata\user_data\cache` and `media_cache` | Telegram installed; the two folders present |
+| 8 | WhatsApp (Store) cache leaf under its package `LocalCache` | the exact leaf name, which the package layout decides |
+| 8 | Microsoft Office `16.0\OfficeFileCache` (prune only, Office guards) | Office installed - it holds unsynced changes, so it is pruned, never cleared |
+| 8 | Steam `steamapps\shadercache` per library in `libraryfolders.vdf` | Steam with games installed (the build machine has Steam but no games) |
+| 8 | WebView2 `%LOCALAPPDATA%\*\EBWebView` as a Chromium layout | a host app that uses it; the layout itself is already proven by the Teams target |
+| 1 | `~\.cache\torch` | PyTorch installed |
+| 1 | `conda clean --all --yes` | conda on `PATH` |
+| new | Driver and upgrade leftovers: `C:\NVIDIA`, `ProgramData\NVIDIA Corporation\Downloader`, `C:\AMD`, `C:\ESD` | any of them present on a machine with that vendor's driver |
+
+**`C:\Intel` was inspected and rejected.** It exists on the build machine but holds `Thunderbolt`, `Logs` and
+a hidden `GfxCPLBatchFiles` - driver support content, not installer extraction leftovers. It will not become
+a target.
+
+Last Updated: 2026-09-04

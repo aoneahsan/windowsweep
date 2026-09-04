@@ -159,9 +159,13 @@ function Read-Line {
 }
 
 function Confirm-Ui {
-  <# .SYNOPSIS y/N prompt. --yes auto-confirms (unless -NoAutoYes); non-interactive runs answer no. #>
-  param([string] $Prompt = 'Proceed?', [string] $Default = 'n', [switch] $NoAutoYes)
+  <# .SYNOPSIS y/N prompt. --yes auto-confirms (unless -NoAutoYes); non-interactive runs answer no.
+     -ScriptedOk: the prompt that follows an explicit --select / --select-file choice. The selection IS the
+     person's decision, so it answers this one question - and only when the preceding prompt really was
+     answered from a script (LastSelectionScripted), never merely because the flag was passed. #>
+  param([string] $Prompt = 'Proceed?', [string] $Default = 'n', [switch] $NoAutoYes, [switch] $ScriptedOk)
   $ws = $Script:WS
+  if ($ScriptedOk -and $ws.LastSelectionScripted) { Write-Warn "[scripted selection] $Prompt - yes (--select / --select-file)"; return $true }
   if ($ws.Yes -and -not $NoAutoYes) { Write-UiLine ("    [auto-yes] $Prompt") 'DarkGray'; return $true }
   if (-not $ws.Interactive) {
     Write-Note "non-interactive session: '$Prompt' answered no (pass --yes to confirm in batch)"
@@ -188,15 +192,51 @@ function Confirm-Typed {
 
 function Read-MultiSelect {
   <# .SYNOPSIS Parse "1,3,5-7" / all / none into a sorted unique list of 1-based indexes.
-     --yes answers "all" only for callers that do not pass -NoAutoYes. The personal and project pickers pass
-     it, so under --yes they still ask when a console is present and select nothing when it is not. #>
-  param([int] $Total, [switch] $NoAutoYes)
+     Order of answers: a --select-file path list matched against -Candidates, then the next queued --select
+     list, then --yes (only for callers that do not pass -NoAutoYes), then the console, then nothing.
+     --yes NEVER selects for the personal and project pickers: they pass -NoAutoYes, so under --yes they
+     still ask when a console is present and select nothing when it is not. #>
+  param([int] $Total, [switch] $NoAutoYes, [string[]] $Candidates = @())
+  $ws = $Script:WS
+  $ws.LastSelectionScripted = $false
   if ($Total -le 0) { return @() }
-  if ($Script:WS.Yes -and -not $NoAutoYes) { return @(1..$Total) }
-  if (-not $Script:WS.Interactive) { Write-Note 'non-interactive session: nothing selected (a person has to pick these)'; return @() }
+  if ($ws.SelectPaths.Count -gt 0 -and $Candidates.Count -gt 0) {
+    $picked = @(Resolve-SelectedPaths -Candidates $Candidates)
+    $ws.LastSelectionScripted = $true
+    Write-Info ("--select-file matched $($picked.Count) of $Total candidate(s)")
+    return $picked
+  }
+  if ($ws.SelectQueue.Count -gt 0) {
+    $spec = [string]$ws.SelectQueue[0]
+    $ws.SelectQueue = @($ws.SelectQueue | Select-Object -Skip 1)
+    $picked = @(ConvertTo-IndexList -Text $spec -Total $Total)
+    $ws.LastSelectionScripted = $true
+    Write-Info ("--select '$spec' -> $($picked.Count) of $Total item(s)")
+    return $picked
+  }
+  if ($ws.Yes -and -not $NoAutoYes) { return @(1..$Total) }
+  if (-not $ws.Interactive) { Write-Note 'non-interactive session: nothing selected (a person has to pick these)'; return @() }
   Write-UiLine "  Selection: 1,3,5-10 | all | none (Enter = none)" 'DarkGray' -NoLog
   $reply = Read-Line ("  Select items (1..$Total): ")
   return (ConvertTo-IndexList -Text $reply -Total $Total)
+}
+
+function Resolve-SelectedPaths {
+  <# .SYNOPSIS Match the --select-file lines against this prompt's candidate paths, case-insensitively.
+     Returns 1-based indexes into $Candidates. A line matching nothing here is reported once and skipped:
+     the same file is offered to every prompt, so an unmatched line is normal and never fatal. #>
+  param([string[]] $Candidates)
+  $set = New-Object System.Collections.Generic.SortedSet[int]
+  $matched = New-Object System.Collections.Generic.HashSet[string]([StringComparer]::OrdinalIgnoreCase)
+  for ($i = 0; $i -lt $Candidates.Count; $i++) {
+    foreach ($want in $Script:WS.SelectPaths) {
+      if ([string]$Candidates[$i] -eq $want) { $null = $set.Add($i + 1); $null = $matched.Add($want) }
+    }
+  }
+  foreach ($want in $Script:WS.SelectPaths) {
+    if (-not $matched.Contains($want)) { Write-Note "--select-file: no candidate here matches $want" }
+  }
+  return @($set)
 }
 
 function ConvertTo-IndexList {

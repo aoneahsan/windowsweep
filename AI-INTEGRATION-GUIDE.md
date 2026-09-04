@@ -3,7 +3,7 @@
 This is the contract an automated caller can rely on: what windowsweep promises, what it refuses, what it
 prints, and what it returns. It is written for an agent or a script rather than a person. For what the tool
 *is*, read the [README](https://github.com/aoneahsan/windowsweep#readme); for what each section touches, read
-[Sections 0-21](https://github.com/aoneahsan/windowsweep/blob/main/docs/sections.md).
+[Sections 0-25](https://github.com/aoneahsan/windowsweep/blob/main/docs/sections.md).
 
 **windowsweep deletes files.** Every command below that is not marked read-only can remove data. There is no
 undo for caches. Treat a real run as an irreversible operation and preview it first.
@@ -27,13 +27,14 @@ already elevated.
 
 | Never covered by `--yes` | Behaviour |
 |---|---|
-| Sections 17, 18, 19 | The selection prompt appears even with `--yes` and defaults to none. With no console attached nothing is selected. Section 17 asks a final question `--yes` does not answer |
+| Sections 17, 18, 19, 23 | The selection prompt appears even with `--yes` and defaults to none. With no console attached nothing is selected, and each asks a final question `--yes` does not answer. Only `--select` / `--select-file` supply a choice (see below) |
 | Sections 11, 15, 16, 20 | Deep. Refused in batch mode unless `--i-understand-deep` is also passed |
 | `--uninstall-data` | Always asks; `--yes` does not answer it |
 | `--purge-all` | From a console it asks for a typed `purge` once per run. In a batch run `--yes` is the confirmation |
 
-In batch mode (`--all`, `--only`, `--profile`) sections 17, 18 and 19 are refused outright and reported as
-`refused`; they need a person at the keyboard.
+In batch mode (`--all`, `--only`, `--profile`) sections 17, 18, 19 and 23 are refused outright and reported as
+`refused`, unless a `--select` or `--select-file` choice was supplied. They need a person choosing items -
+in advance is fine, absent is not.
 
 ## Exit codes
 
@@ -59,6 +60,9 @@ In batch mode (`--all`, `--only`, `--profile`) sections 17, 18 and 19 are refuse
 | `--developer`, `--not-developer` | Override the saved developer answer for this run |
 | `--scan-roots "P1;P2"`, `--exclude-path P` | Section 17 roots and exclusions |
 | `--logs-dir P`, `--reports-dir P` | Redirect this run's output |
+| `--select L`, `--select-file P` | Supply an interactive section's selection in advance, by index or by full path. The only way sections 17/18/19/23 run unattended |
+| `--notify` | A Windows notification when the run ends. Never changes the exit code, never writes to stdout |
+| `--list --json` | Print the section catalogue as one JSON line instead of the human table |
 | `--pwsh` | Launcher only: run the engine on PowerShell 7 |
 
 A non-interactive run with no saved developer answer defaults to developer mode **on**, the conservative
@@ -67,9 +71,10 @@ choice, and says so.
 ## The `--json` line
 
 ```json
-{"tool":"windowsweep","version":"1.0.1","mode":"all","dry_run":false,"elevated":false,"developer":true,
+{"tool":"windowsweep","version":"1.1.0","mode":"all","dry_run":false,"elevated":false,"developer":true,
  "freed_bytes":0,"estimated_bytes":0,
  "sections":[{"section":1,"status":"ran","freed_bytes":0}],
+ "candidates":[],"targets":[],
  "refusals":[],"log_file":"...","report_file":"..."}
 ```
 
@@ -82,6 +87,8 @@ choice, and says so.
 | `freed_bytes` | Real bytes removed. `0` in a dry-run |
 | `estimated_bytes` | What a dry-run says a real run would remove. `0` in a real run |
 | `sections[]` | One entry per section attempted: `section`, `status`, `freed_bytes` |
+| `candidates[]` | What an interactive section offered: `section`, `index`, `path`, `bytes`, `idle_days`, `project`. Always present, empty when none were collected |
+| `targets[]` | Scan mode only: `section`, `label`, `path`, `bytes`. Always present, empty otherwise |
 | `refusals[]` | Human-readable reasons a section was refused in batch mode |
 | `log_file`, `report_file` | Absolute paths, or `null` under `--no-report` |
 
@@ -122,8 +129,8 @@ answered by a script, so `--elevate` does not belong in an unattended context.
   personal folders, credentials, toolchains, browser and editor state. No flag bypasses this.
 - **Junctions and symlinks are removed as links, never followed.**
 - **`--dry-run` and `--scan` write nothing** but the log and the report.
-- **Section numbers 0-21 are a public contract.** A section may be retired as a no-op; a number is never
-  reused.
+- **Section numbers are a public contract.** 0-25 today; a section may be retired as a no-op, and a number is
+  never reused. Read `--list --json` rather than hard-coding the set.
 - **Zero runtime dependencies.** The package is PowerShell plus a Node launcher that uses only built-in
   modules.
 
@@ -133,13 +140,60 @@ answered by a script, so `--elevate` does not belong in an unattended context.
   local package and the command fails. Run it from anywhere else.
 - Do not schedule `npx windowsweep` as a task action. The npx cache is evicted and the task breaks; install
   globally and use `--install-task`, which refuses under npx for this reason.
-- Do not pipe `y` into the tool to force a personal section. Sections 17, 18 and 19 are interactive by design
-  and a piped answer selects nothing.
+- Do not pipe `y` into the tool to force a personal section. Sections 17, 18, 19 and 23 are interactive by
+  design and a piped answer selects nothing - pass `--select` or `--select-file` instead, which is the
+  supported way and names exactly what goes.
 - Do not treat a green `--dry-run` as proof that a real run frees the same amount: an app that is open at run
   time keeps its caches.
 
-## Coming in 1.1.0
+## Driving the interactive sections (1.1.0+)
 
-`--select`, `--select-file`, a `candidates[]` array, a `targets[]` array, per-section progress lines and
-`--list --json`, so a GUI or a script can drive the interactive sections. See the
-[changelog](https://github.com/aoneahsan/windowsweep/blob/main/CHANGELOG.md) when it ships.
+Sections 17, 18, 19 and 23 refuse to run unattended, because they delete things a person should choose. Two
+flags supply that choice in advance, and either one lifts the refusal:
+
+```powershell
+# 1. list what the section would offer - deletes nothing
+npx windowsweep --only 17 --dry-run --json --no-color
+#    -> read .candidates[] from the single stdout line:
+#       { "section": 17, "index": 1, "path": "...", "bytes": 0, "idle_days": 400, "project": "..." }
+
+# 2. act on exactly the ones you chose
+npx windowsweep --only 17 --select 1,3            # by index, one list per prompt, in prompt order
+npx windowsweep --only 17 --select-file picks.txt # by full path, one per line, UTF-8, # comments allowed
+```
+
+Rules a caller can rely on:
+
+- **`--yes` alone still selects nothing.** It never has. Only `--select` / `--select-file` do.
+- The scripted selection also answers that section's final confirmation, so the run does not stall.
+- `--select` is repeatable and consumed one list per prompt; `--select-file` is offered to every prompt, so
+  a line that matches nothing in a given section is reported once and skipped.
+- Neither flag reaches a path the deletion chokepoint would otherwise refuse.
+
+## Reading the catalogue and following progress
+
+```powershell
+npx windowsweep --list --json
+```
+
+One stdout line: `sections[]` (`id`, `key`, `title`, `tier`, `admin`, `batch`, `dev`), `safe_batch`,
+`safe_batch_admin`, `profiles`, `walkthrough`, `walkthrough_admin`. Read it instead of hard-coding section
+numbers - they are frozen, but the set grows.
+
+In `--json` mode every section brackets itself on **stderr**:
+
+```text
+##windowsweep section=7 event=start
+##windowsweep section=7 event=end status=ran freed_bytes=4096
+```
+
+`status` is one of `ran`, `dry-run`, `skipped`, `refused`, `failed`. Scan mode also fills `targets[]`
+(`section`, `label`, `path`, `bytes`) in the final JSON line. `candidates` and `targets` are always present,
+empty when nothing was collected.
+
+## The read-only audits
+
+`--profile audit` runs sections 0, 21, 22, 24 and 25 and deletes nothing in any mode: the health report, disk
+usage, globally installed packages, installed programs not modified for `--days`+ days, and startup items.
+Sections 22, 24 and 25 print removal commands but never execute one, and section 25 never changes a startup
+entry. Section 24 reports "not modified", not "not used" - Windows keeps no reliable last-launched record.

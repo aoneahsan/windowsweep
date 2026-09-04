@@ -42,6 +42,29 @@ function Get-RequestedSections {
   return @($ids | Sort-Object -Unique)
 }
 
+function Get-MachineProgressLine {
+  <# .SYNOPSIS The progress-line format a --json caller parses. Kept pure so the self-test can round-trip it. #>
+  param([int] $Section, [string] $Stage, [string] $Status = '', [long] $Freed = 0)
+  $line = "##$Script:WS_NAME section=$Section event=$Stage"
+  if ($Stage -eq 'end') { $line += " status=$Status freed_bytes=$Freed" }
+  return $line
+}
+
+function Write-MachineProgress {
+  <# .SYNOPSIS One machine-readable progress line on stderr, --json mode only, so a GUI need not parse the log.
+     Never on stdout: --json promises exactly one stdout line. #>
+  param([int] $Section, [string] $Stage, [string] $Status = '', [long] $Freed = 0)
+  if (-not $Script:WS.JsonMode) { return }
+  [Console]::Error.WriteLine((Get-MachineProgressLine -Section $Section -Stage $Stage -Status $Status -Freed $Freed))
+}
+
+function Add-JsonCandidate {
+  <# .SYNOPSIS Record one item an interactive section offered, so --json callers can present the same list. #>
+  param([int] $Section, [int] $Index, [string] $Path, [long] $Bytes, [int] $IdleDays, [string] $Project = '')
+  if (-not $Script:WS.JsonMode) { return }
+  $Script:WS.Candidates += [ordered]@{ section = $Section; index = $Index; path = $Path; bytes = $Bytes; idle_days = $IdleDays; project = $Project }
+}
+
 function Invoke-SectionById {
   <# .SYNOPSIS Run one section under the batch, admin and developer policies; records the report step. #>
   param([int] $Id)
@@ -50,18 +73,24 @@ function Invoke-SectionById {
   if (-not $sec) { Write-Warn "no section $Id"; return }
   $title = "[{0:00}] {1}" -f $sec.Id, $sec.Title
   Write-Box $title
+  Write-MachineProgress -Section $Id -Stage 'start'
   # Batch policy: deep and interactive-only sections never run unattended without an explicit opt-in.
   if ($ws.BatchMode -and -not $ws.DryRun) {
-    if ($sec.Batch -eq 'interactive') {
-      Write-Warn "section $Id is interactive-only: it needs a person at the keyboard. Run it from the walkthrough or the menu."
+    if ($sec.Batch -eq 'interactive' -and -not $ws.SelectActive) {
+      Write-Warn "section $Id is interactive-only: it needs a person at the keyboard, or a selection passed with --select / --select-file."
       $ws.Refusals += "section $Id (interactive-only)"
       Add-ReportStep -Section $Id -Title $sec.Title -Status 'refused' -Note 'interactive-only section in batch mode'
+      Write-MachineProgress -Section $Id -Stage 'end' -Status 'refused'
       return
+    }
+    if ($sec.Batch -eq 'interactive') {
+      Write-Note "section $Id runs unattended because a selection was supplied (--select / --select-file): a person chose these."
     }
     if ($sec.Batch -eq 'deep' -and -not $ws.Deep) {
       Write-Warn "section $Id is deep (irreversible or system-changing): refused in batch mode without --i-understand-deep."
       $ws.Refusals += "section $Id (deep, add --i-understand-deep)"
       Add-ReportStep -Section $Id -Title $sec.Title -Status 'refused' -Note 'deep section without --i-understand-deep'
+      Write-MachineProgress -Section $Id -Stage 'end' -Status 'refused'
       return
     }
   }
@@ -70,11 +99,13 @@ function Invoke-SectionById {
     Write-Note "run it elevated:  windowsweep --only $Id --yes --elevate"
     $ws.Hints += "Admin section $Id skipped: windowsweep --only $Id --yes --elevate"
     Add-ReportStep -Section $Id -Title $sec.Title -Status 'skipped' -Note 'needs Administrator'
+    Write-MachineProgress -Section $Id -Stage 'end' -Status 'skipped'
     return
   }
   if ($sec.Dev -and $ws.Developer -eq $false -and $Id -in @(4, 17, 20)) {
     Write-Info "developer mode is off - section $Id (developer-only data) skipped."
     Add-ReportStep -Section $Id -Title $sec.Title -Status 'skipped' -Note 'developer mode off'
+    Write-MachineProgress -Section $Id -Stage 'end' -Status 'skipped'
     return
   }
   $ws.SectionFreed = [long]0
@@ -101,6 +132,7 @@ function Invoke-SectionById {
     Write-Note 'no measurable change in this section'
   }
   Add-ReportStep -Section $Id -Title $sec.Title -Status $status -Freed $freed
+  Write-MachineProgress -Section $Id -Stage 'end' -Status $status -Freed $freed
 }
 
 function Invoke-BatchMode {
@@ -173,6 +205,7 @@ function Show-SessionSummary {
   }
   Write-UiLine '' 'Gray'
   Write-Note "$Script:WS_NAME v$(Get-ToolVersion) by $Script:WS_AUTHOR - $Script:WS_REPO"
+  Send-RunNotification
   if ($ws.JsonMode) { Write-JsonSummary }
 }
 
@@ -184,7 +217,19 @@ function Get-JsonSummary {
     elevated = [bool]$ws.IsAdmin; developer = $ws.Developer
     freed_bytes = [long]$ws.TotalFreed; estimated_bytes = [long]$ws.TotalEstimated
     sections = @($ws.Report.steps | ForEach-Object { [ordered]@{ section = $_.section; status = $_.status; freed_bytes = $_.freed_bytes } })
+    # candidates and targets are ALWAYS present, empty when nothing was collected: a caller can rely on the shape.
+    candidates = @($ws.Candidates); targets = @($ws.ScanTargets)
     refusals = @($ws.Refusals); log_file = $ws.LogFile; report_file = $ws.ReportFile
+  }
+}
+
+function Get-CatalogueJson {
+  <# .SYNOPSIS --list --json: the section catalogue, so a front end reads it instead of hard-coding it. #>
+  return [ordered]@{
+    tool = $Script:WS_NAME; version = (Get-ToolVersion)
+    sections = @($Script:WS_SECTIONS | ForEach-Object { [ordered]@{ id = $_.Id; key = $_.Key; title = $_.Title; tier = $_.Tier; admin = [bool]$_.Admin; batch = $_.Batch; dev = [bool]$_.Dev } })
+    safe_batch = @($Script:WS_SAFE_BATCH); safe_batch_admin = @($Script:WS_SAFE_BATCH_ADMIN)
+    profiles = ([ordered]@{} + $Script:WS_PROFILES); walkthrough = @($Script:WS_WALKTHROUGH); walkthrough_admin = @($Script:WS_WALKTHROUGH_ADMIN)
   }
 }
 

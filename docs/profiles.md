@@ -10,7 +10,7 @@ profile with `--dry-run` the first time.
 | `cache-only` | 1, 2, 3, 6, 7, 8, 9 | Every cache layer, nothing else - the "something is misbehaving" reset |
 | `system` | 12, 13, 14 | The admin batch: Windows Update cache, Disk Cleanup engine, component store |
 | `deep` | 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 14, 21 | The monthly clean, everything except the deep-gated and interactive sections |
-| `audit` | 0, 21 | Read-only diagnostics |
+| `audit` | 0, 21, 22, 24, 25 | Read-only diagnostics: health, disk usage, global packages, idle programs, startup items |
 
 ```powershell
 windowsweep --profile dev --dry-run

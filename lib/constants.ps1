@@ -4,7 +4,7 @@
 # Single source of truth for the version is package.json: the Node launcher exports it as
 # WINDOWSWEEP_VERSION. A direct checkout falls back to this literal; the version:check script
 # asserts the two never drift.
-$Script:WS_VERSION_FALLBACK = '1.0.1'
+$Script:WS_VERSION_FALLBACK = '1.1.0'
 
 $Script:WS_NAME = 'windowsweep'
 $Script:WS_TAGLINE = 'Safe-by-default Windows cleanup CLI - developer-aware, dry-run first, zero install via npx.'
@@ -55,6 +55,10 @@ $Script:WS_SECTIONS = @(
   @{ Id = 19; Key = 'large';      Title = 'Large stale personal files (Downloads) -> Recycle Bin';    Tier = 'recycle';   Admin = $false; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section19' }
   @{ Id = 20; Key = 'vhdx';       Title = 'Docker Desktop / WSL disk image compaction (stops Docker + WSL)'; Tier = 'config'; Admin = $true; Batch = 'deep';    Dev = $true;  Fn = 'Invoke-Section20' }
   @{ Id = 21; Key = 'diskusage';  Title = 'Disk usage report (largest entries, drives, disk images)'; Tier = 'report';    Admin = $false; Batch = 'safe';        Dev = $false; Fn = 'Invoke-Section21' }
+  @{ Id = 22; Key = 'globals';    Title = 'Globally installed packages audit (npm, pnpm, yarn, bun, deno) - report only'; Tier = 'report'; Admin = $false; Batch = 'safe'; Dev = $true; Fn = 'Invoke-Section22' }
+  @{ Id = 23; Key = 'orphaned';   Title = 'Orphaned application data under AppData -> Recycle Bin';   Tier = 'recycle';   Admin = $false; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section23' }
+  @{ Id = 24; Key = 'programs';   Title = 'Installed programs not modified for N+ days - report only'; Tier = 'report';   Admin = $false; Batch = 'safe';        Dev = $false; Fn = 'Invoke-Section24' }
+  @{ Id = 25; Key = 'startup';    Title = 'Startup items audit (Run keys, Startup folders, logon tasks) - report only'; Tier = 'report'; Admin = $false; Batch = 'safe'; Dev = $false; Fn = 'Invoke-Section25' }
 )
 
 # The safe batch run by --all. Admin sections 12 and 13 join it only when already elevated.
@@ -67,11 +71,11 @@ $Script:WS_PROFILES = @{
   'cache-only' = @(1, 2, 3, 6, 7, 8, 9)
   'system'     = @(12, 13, 14)
   'deep'       = @(0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 14, 21)
-  'audit'      = @(0, 21)
+  'audit'      = @(0, 21, 22, 24, 25)
 }
 
 # Walkthrough order (interactive default mode). Admin sections are inserted when elevated.
-$Script:WS_WALKTHROUGH = @(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 17, 18, 19)
+$Script:WS_WALKTHROUGH = @(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 17, 18, 19, 23)
 $Script:WS_WALKTHROUGH_ADMIN = @(12, 13, 14)
 
 function Get-Section {

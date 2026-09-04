@@ -61,14 +61,21 @@ a cache is pruned by the idle gate or cleared completely.
 
 | Policy | Sections | Unattended (`--all`, `--only`, `--profile`) |
 |---|---|---|
-| safe | 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 21 (+12, 13 when elevated) | run with `--yes` |
+| safe | 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 21 (+12, 13 when elevated); 22, 24, 25 are read-only and safe but are not in `--all` | run with `--yes` |
 | opt-in | 4, 14 | run only when named in `--only` or a profile, with `--yes` |
 | deep | 11, 15, 16, 20 | refused without `--i-understand-deep`; `--dry-run` previews are allowed |
-| interactive | 17, 18, 19 | never; they need a person selecting items |
+| interactive | 17, 18, 19, 23 | never, unless a selection was supplied; they need a person choosing items |
 
-`--yes` never applies to personal or project files: sections 17, 18 and 19 show their selection prompt even
-with `--yes`, default to none, and ask a final question `--yes` does not answer. Section 20's disk picker is
-the documented exception (deep-gated, `--yes` selects every disk).
+`--yes` never applies to personal or project files: sections 17, 18, 19 and 23 show their selection prompt
+even with `--yes`, default to none, and ask a final question `--yes` does not answer. Section 20's disk
+picker is the documented exception (deep-gated, `--yes` selects every disk).
+
+**A scripted selection is a person's choice, and it is the one thing that does lift the interactive
+refusal.** `--select 1,3` and `--select-file paths.txt` name exactly which items go, in advance, so a script
+or a GUI can drive these sections unattended - and because the naming is explicit, the selection also answers
+the section's final confirmation. It is a narrow, deliberate door: the refusal exists to stop *unchosen*
+deletion, not scripted deletion. `--yes` on its own still selects nothing and still answers nothing, and
+neither flag reaches anything the deletion chokepoint would otherwise refuse.
 
 ## Running programs
 

@@ -34,12 +34,12 @@ It is the Windows member of a family with [linux-cleanup](https://github.com/aon
 
 | | |
 |---|---|
-| **Version** | `1.0.1` |
+| **Version** | `1.1.0` |
 | **License** | MIT |
 | **Node** | `>=14` (launcher only) |
 | **Runtime** | Windows PowerShell 5.1 (built in) or PowerShell 7 |
 | **Platforms** | Windows 10 (1809+) and Windows 11 |
-| **Install size** | ~81 kB packed · ~273 kB unpacked · 38 files · no dependencies |
+| **Install size** | ~109 kB packed · ~366 kB unpacked · 44 files · no dependencies |
 | **Undo** | Recycle Bin for personal files; none for caches (they regenerate) |
 | **Status** | Stable · actively maintained |
 
@@ -102,8 +102,9 @@ security scanner or a registry cleaner. It reclaims disk space, nothing else.
 
 - **Developer mode** - one question on the first run. Yes keeps package, build and test-runner caches used in
   the last 100 days and the newest version of every versioned tool; no clears them completely.
-- **22 numbered sections** - from package-manager caches to Windows Update leftovers, each naming its paths
-  before it acts. Numbers are a public contract.
+- **26 numbered sections** - from package-manager caches to Windows Update leftovers, plus four read-only
+  audits (global packages, orphaned app data, idle programs, startup items), each naming its paths before it
+  acts. Numbers are a public contract.
 - **One deletion chokepoint** - refuses drive roots, Windows, Program Files, your profile root, personal
   folders, credentials, toolchains and browser or editor state; asserts every deletion sits inside its declared
   target; never follows a junction or symlink; handles paths beyond 260 characters; skips files another program
@@ -119,7 +120,7 @@ security scanner or a registry cleaner. It reclaims disk space, nothing else.
 - **Running-app guard** - an open browser, editor or app keeps its caches; the tool tells you which to close.
 - **Session reports** - schema-versioned JSON, exportable to Markdown or a self-contained HTML page, plus
   `--json` for scripts.
-- **Self-test** - 124 checks prove the guards on your machine with a real junction, a 400-character path and
+- **Self-test** - 151 checks prove the guards on your machine with a real junction, a 400-character path and
   a dry-run fixture before you trust it.
 - **Offline by design** - zero network calls, no telemetry, no update check. Crash bundles stay on disk.
 
@@ -222,10 +223,16 @@ comes back but costs minutes, *Recycle Bin* is recoverable until you empty it (`
 | 19 | Large stale personal files in Downloads | Recycle Bin | - | interactive |
 | 20 | Docker Desktop / WSL disk-image compaction | config | yes | deep |
 | 21 | Disk usage report | report | - | safe |
+| 22 | Global packages audit (npm, pnpm, yarn, bun, deno) - never uninstalls | report | - | safe · audit only |
+| 23 | Orphaned application data under AppData | Recycle Bin | - | interactive |
+| 24 | Installed programs not modified for N+ days - never uninstalls | report | - | safe · audit only |
+| 25 | Startup items audit - never changes them | report | - | safe · audit only |
 
 *Safe* sections run in `--all`; *opt-in* ones run when named in `--only` or a profile; *deep* ones also need
-`--i-understand-deep`; *interactive* ones never run unattended. Every section is documented in
-[Sections 0-21](https://github.com/aoneahsan/windowsweep/blob/main/docs/sections.md).
+`--i-understand-deep`; *interactive* ones never run unattended unless you pass a selection. The three
+*audit only* sections are read-only and safe, but stay out of `--all` so a cleanup run is a cleanup run -
+`--profile audit` is where they live. Every section is documented in
+[Sections 0-25](https://github.com/aoneahsan/windowsweep/blob/main/docs/sections.md).
 
 ### Clean interactively
 
@@ -303,6 +310,8 @@ windowsweep [mode] [options]
 | `--scan-roots "P1;P2"`, `--exclude-path P` | auto | Section 17 roots and exclusions |
 | `--hiberfil off\|reduced\|keep` | ask | What section 15 does |
 | `--permanent` | off | Sections 18/19 delete instead of using the Recycle Bin |
+| `--select L`, `--select-file P` | off | Answer an interactive section's selection in advance, by index or by path - the one way sections 17/18/19/23 run unattended |
+| `--notify` | off | A Windows notification when the run ends |
 | `--json`, `--quiet`, `--no-color`, `--ascii`, `--no-report`, `--cleanup-logs` | off | Output and record controls |
 
 Every flag, exit code and environment variable:
@@ -403,7 +412,7 @@ More: [FAQ](https://github.com/aoneahsan/windowsweep/blob/main/docs/faq.md).
 | [Quick start](https://github.com/aoneahsan/windowsweep/blob/main/docs/quick-start.md) | running your first cleanup |
 | [Safety model](https://github.com/aoneahsan/windowsweep/blob/main/docs/safety-model.md) | you want every guarantee spelled out before deleting anything |
 | [Developer mode](https://github.com/aoneahsan/windowsweep/blob/main/docs/developer-mode.md) | you want to know what the first question changes |
-| [Sections 0-21](https://github.com/aoneahsan/windowsweep/blob/main/docs/sections.md) | you want to know precisely what one section touches |
+| [Sections 0-25](https://github.com/aoneahsan/windowsweep/blob/main/docs/sections.md) | you want to know precisely what one section touches |
 | [CLI reference](https://github.com/aoneahsan/windowsweep/blob/main/docs/cli-reference.md) | you need an exact flag, exit code or variable |
 | [Admin sections and elevation](https://github.com/aoneahsan/windowsweep/blob/main/docs/admin-and-elevation.md) | before running the system profile or touching the hibernation file |
 | [Reports and logs](https://github.com/aoneahsan/windowsweep/blob/main/docs/reports-and-logs.md) | parsing the JSON or finding a log |
@@ -414,8 +423,9 @@ More: [FAQ](https://github.com/aoneahsan/windowsweep/blob/main/docs/faq.md).
 <a id="changelog"></a>
 ## 🔄 Changelog&nbsp;[#](#changelog)
 
-Latest release: **`1.0.1`** - `--yes` never selects personal or project items; installers refuse under npx;
-exit 130 from the engine; documentation fixes.
+Latest release: **`1.1.0`** - four new sections (global packages, orphaned app data, idle programs, startup
+items), `--select` / `--select-file` so a script or a GUI can drive the interactive sections, `--notify`, and
+`candidates[]`, `targets[]`, progress lines and `--list --json` for machine callers.
 Full history: [CHANGELOG.md](https://github.com/aoneahsan/windowsweep/blob/main/CHANGELOG.md).
 
 <a id="contributing"></a>

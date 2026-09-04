@@ -76,7 +76,7 @@ function Invoke-Section00 {
     } catch { $null = $_ }
   }
   Write-UiLine '' 'Gray'
-  try { $n = @(Get-CimInstance Win32_StartupCommand -ErrorAction Stop).Count; Write-Kv 'Startup items:' "$n (review in Task Manager > Startup; this tool does not change them)" } catch { $null = $_ }
+  try { $n = @(Get-CimInstance Win32_StartupCommand -ErrorAction Stop).Count; Write-Kv 'Startup items:' "$n (section 25 lists them all; change them in Task Manager > Startup - this tool never does)" } catch { $null = $_ }
   try {
     $ss = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy' -ErrorAction Stop).'01'
     $ssText = 'off'

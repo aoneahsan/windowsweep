@@ -31,6 +31,7 @@ function Get-Targets09 {
     (New-Target 9 'Certificate URL cache' "$($P.LL)\Microsoft\CryptnetUrlCache" -Mode clear)
     (New-Target 9 'Diagnostics results' "$($P.L)\Diagnostics" -Mode clear-old -Days 30)
     (New-Target 9 'DNS resolver cache' 'ipconfig /flushdns' -Kind cmd)
+    (New-Target 9 'Microsoft Store download cache' 'wsreset.exe' -Kind cmd -Note 'printed as a next step, never run for you: wsreset has no silent mode and always opens the Store')
   )
 }
 
@@ -46,6 +47,11 @@ function Invoke-Section09 {
   $null = Invoke-TargetList $targets
   $r = Invoke-External -FilePath 'ipconfig.exe' -ArgumentList @('/flushdns') -Destructive -Quiet -Label 'ipconfig /flushdns'
   if ($r.Ran -and $r.ExitCode -eq 0) { Write-Ok 'DNS resolver cache flushed' }
+  # wsreset is the only lever for the Store download cache, and it has no silent switch: every build opens
+  # the Store window when it finishes. A cleanup run must not pop a window, so it is offered, never executed.
+  if (Test-PathPresent (Join-Path $Script:P.SR 'System32\wsreset.exe')) {
+    $Script:WS.Hints += 'Microsoft Store cache: run  wsreset.exe  yourself when you want it cleared (it opens the Store when it finishes)'
+  }
 }
 
 # ---------------------------------------------------------------------------------------------

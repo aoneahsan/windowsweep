@@ -2,11 +2,14 @@
 # and fixtures for logic that is invisible when wrong (RW-030). Called by Invoke-SelfTest; verdict lines only.
 
 function Invoke-SelfTestExtra {
-  <# .SYNOPSIS Run groups [12]-[14]. Returns an object with Checks and Fails counts. #>
+  <# .SYNOPSIS Run groups [12]-[17]. Returns an object with Checks and Fails counts. #>
   $ws = $Script:WS
   $checks = 0; $fails = 0
   $saved = @{ DryRun = $ws.DryRun; Yes = $ws.Yes; Interactive = $ws.Interactive; Quiet = $ws.Quiet; NoReport = $ws.NoReport
-    ScanRoots = $ws.ScanRoots; AllowOwnData = $ws.AllowOwnData; Mute = $ws.Mute; Days = $ws.Days }
+    ScanRoots = $ws.ScanRoots; AllowOwnData = $ws.AllowOwnData; Mute = $ws.Mute; Days = $ws.Days
+    SelectQueue = $ws.SelectQueue; SelectPaths = $ws.SelectPaths; SelectActive = $ws.SelectActive
+    LastSelectionScripted = $ws.LastSelectionScripted; Candidates = $ws.Candidates; ScanTargets = $ws.ScanTargets
+    JsonMode = $ws.JsonMode; Notify = $ws.Notify }
   $fx = Join-Path $ws.Home ('selftest-extra-' + [guid]::NewGuid().ToString('N'))
   $mute = { $Script:WS.Mute = $true }
   $unmute = { $Script:WS.Mute = $false }
@@ -174,6 +177,176 @@ function Invoke-SelfTestExtra {
     if ($md -and (Test-Path -LiteralPath $md)) { $mdText = Get-Content -LiteralPath $md -Raw }
     if ($html -and (Test-Path -LiteralPath $html)) { $htmlText = Get-Content -LiteralPath $html -Raw }
     if ($mdText.Contains('4.0 KB') -and $mdText.Contains('windowsweep') -and $htmlText.Contains('4.0 KB') -and $htmlText.Contains('Package &lt;caches&gt;') -and -not $htmlText.Contains('Package <caches>')) { Write-Ok 'report export: Markdown and HTML written, totals present, HTML escapes the title' } else { Write-Err 'report export smoke failed'; $fails++ }
+
+    Write-Section '[15] Catalogue: every section is reachable, and the new ones declare what they promise'
+    # 15a - Get-AllTargets is driven by the catalogue, not by a literal 0..21 range
+    $checks++
+    # The ids each Get-TargetsNN really RETURNS - sections 0 and 21 own a function that yields no rows.
+    $declared = @()
+    foreach ($s in $Script:WS_SECTIONS) {
+      $fn = 'Get-Targets{0:00}' -f $s.Id
+      if (-not (Get-Command $fn -ErrorAction SilentlyContinue)) { continue }
+      if (@(& $fn).Count -gt 0) { $declared += $s.Id }
+    }
+    $reached = @(Get-AllTargets | ForEach-Object { $_.Section } | Sort-Object -Unique)
+    $missed = @($declared | Where-Object { $reached -notcontains $_ })
+    if ($declared.Count -gt 0 -and $missed.Count -eq 0) { Write-Ok "Get-AllTargets reaches all $($declared.Count) section(s) whose Get-TargetsNN returns rows" } else { Write-Err "Get-AllTargets misses section(s): $($missed -join ',')"; $fails++ }
+    # 15b - every catalogue row is well formed
+    $checks++
+    $bad = @()
+    $ids = New-Object System.Collections.Generic.HashSet[int]
+    foreach ($s in $Script:WS_SECTIONS) {
+      if (-not $ids.Add([int]$s.Id)) { $bad += "duplicate id $($s.Id)" }
+      if (-not (Get-Command $s.Fn -ErrorAction SilentlyContinue)) { $bad += "section $($s.Id): no function $($s.Fn)" }
+      if ($s.Tier -notin 'report', 'rebuilds', 'slow', 'recycle', 'permanent', 'config') { $bad += "section $($s.Id): unknown tier $($s.Tier)" }
+      if ($s.Batch -notin 'safe', 'optin', 'deep', 'interactive') { $bad += "section $($s.Id): unknown batch $($s.Batch)" }
+    }
+    if ($bad.Count -eq 0) { Write-Ok "$($Script:WS_SECTIONS.Count) catalogue rows: unique ids, existing functions, known tier and batch" } else { Write-Err ("catalogue is wrong: " + ($bad -join '; ')); $fails++ }
+    # 15c - section 23 derives its exclusions from the declared targets, so the list cannot drift
+    $checks++
+    $ex = Get-OrphanExclusions
+    $wantSegments = @()
+    foreach ($t in (Get-AllTargets)) {
+      foreach ($pre in @("$($Script:P.A)\", "$($Script:P.L)\")) {
+        if ([string]$t.Path -match [regex]::Escape($pre)) { $seg = (([string]$t.Path).Substring(([string]$t.Path).IndexOf($pre) + $pre.Length) -split '\\')[0]; if ($seg) { $wantSegments += $seg } }
+      }
+    }
+    $wantSegments = @($wantSegments | Sort-Object -Unique)
+    $lost = @($wantSegments | Where-Object { -not $ex.Contains($_) })
+    if ($wantSegments.Count -gt 0 -and $lost.Count -eq 0) { Write-Ok "section 23 excludes all $($wantSegments.Count) AppData folder(s) other sections already clean" } else { Write-Err "section 23 would offer a folder we clean elsewhere: $($lost -join ', ')"; $fails++ }
+    # 15d - the fail-closed gate, in two halves: an empty index WOULD call everything orphaned, and does not
+    $checks++
+    $emptyTokens = New-Object System.Collections.Generic.HashSet[string]([StringComparer]::Ordinal)
+    $emptyIndex = [pscustomobject]@{ Tokens = $emptyTokens; RegistryCount = 0; Rows = @() }
+    $wouldOrphan = Test-OrphanFolderName -Name 'Slack' -Index $emptyIndex
+    & $mute
+    $gated = @(Find-OrphanedAppData -Days 100 -Index $emptyIndex)
+    & $unmute
+    if ($wouldOrphan -and $gated.Count -eq 0) { Write-Ok 'section 23 fails closed: an unreadable registry means zero candidates, not everything' } else { Write-Err "section 23 fail-closed gate broken (predicate=$wouldOrphan candidates=$($gated.Count))"; $fails++ }
+    # 15e - section 22 declares nothing deletable: its roots are protected subtrees
+    $checks++
+    $notCmd = @(Get-Targets22 | Where-Object { $_.Kind -ne 'cmd' })
+    if ($notCmd.Count -eq 0) { Write-Ok 'section 22 declares no deletable target (audit only)' } else { Write-Err "section 22 declares a deletable target: $(($notCmd | ForEach-Object { $_.Path }) -join ', ')"; $fails++ }
+    # 15f - PowerShell variable names are case-insensitive: $p silently destroys the $P roots table
+    $checks++
+    $clash = @()
+    foreach ($f in (Get-ChildItem -LiteralPath (Join-Path $Script:WS_ROOT 'modules') -Filter '*.ps1' -File)) {
+      $tk = $null; $er = $null
+      $ast = [System.Management.Automation.Language.Parser]::ParseFile($f.FullName, [ref]$tk, [ref]$er)
+      foreach ($fn in $ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)) {
+        $sets = @($fn.FindAll({ param($n) ($n -is [System.Management.Automation.Language.AssignmentStatementAst]) -and ($n.Left -is [System.Management.Automation.Language.VariableExpressionAst]) -and ($n.Left.VariablePath.UserPath -eq 'P') }, $true))
+        $loops = @($fn.FindAll({ param($n) ($n -is [System.Management.Automation.Language.ForEachStatementAst]) -and ($n.Variable.VariablePath.UserPath -eq 'P') }, $true))
+        if (@($sets | Where-Object { $_.Right.Extent.Text -match '\$Script:P\b' }).Count -eq 0) { continue }
+        if ($sets.Count -gt 1 -or $loops.Count -gt 0) { $clash += "$($f.Name):$($fn.Name)" }
+      }
+    }
+    if ($clash.Count -eq 0) { Write-Ok 'no function reuses $p after taking $P from $Script:P (they are the same variable)' } else { Write-Err "case-insensitive `$P clash in: $($clash -join ', ')"; $fails++ }
+
+    Write-Section '[16] Scripted selection and the machine-readable contract'
+    $ws.SelectPaths = @(); $ws.SelectQueue = @(); $ws.Yes = $false; $ws.Interactive = $false
+    # 16a - --select answers one prompt, in order
+    $checks++
+    $ws.SelectQueue = @('1,3')
+    & $mute
+    $sel = @(Read-MultiSelect -Total 5 -NoAutoYes)
+    & $unmute
+    if (($sel -join ',') -eq '1,3' -and $ws.SelectQueue.Count -eq 0 -and $ws.LastSelectionScripted) { Write-Ok "--select '1,3' of 5 -> 1,3, consumed once, marked as a scripted choice" } else { Write-Err "--select wrong: [$($sel -join ',')] queueLeft=$($ws.SelectQueue.Count) scripted=$($ws.LastSelectionScripted)"; $fails++ }
+    # 16b - --select-file matches paths, and warns about a line that matches nothing here
+    $checks++
+    $cands = @("$fx\one.txt", "$fx\two.txt")
+    $ws.SelectPaths = @("$fx\TWO.TXT", "$fx\not-offered.txt")
+    & $mute
+    $sel2 = @(Read-MultiSelect -Total 2 -NoAutoYes -Candidates $cands)
+    & $unmute
+    $ws.SelectPaths = @()
+    if (($sel2 -join ',') -eq '2' -and $ws.LastSelectionScripted) { Write-Ok '--select-file matches case-insensitively and ignores a line no prompt offers' } else { Write-Err "--select-file wrong: [$($sel2 -join ',')]"; $fails++ }
+    # 16c - RW-002 still holds under the new code: --yes alone selects nothing and is not a scripted choice
+    $checks++
+    $ws.Yes = $true; $ws.SelectQueue = @(); $ws.SelectPaths = @()
+    & $mute
+    $sel3 = @(Read-MultiSelect -Total 4 -NoAutoYes -Candidates @('a', 'b', 'c', 'd'))
+    & $unmute
+    $stillOff = (-not $ws.LastSelectionScripted)
+    $ws.Yes = $false
+    if ($sel3.Count -eq 0 -and $stillOff) { Write-Ok '--yes alone still selects nothing and never counts as a scripted choice' } else { Write-Err "DANGEROUS: --yes selected [$($sel3 -join ',')] scripted=$(-not $stillOff)"; $fails++ }
+    # 16d - the --json document keeps a stable shape even when nothing was collected
+    $checks++
+    $ws.JsonMode = $true; $ws.Candidates = @(); $ws.ScanTargets = @()
+    $doc = (Get-JsonSummary) | ConvertTo-Json -Depth 6 -Compress
+    $back = $null
+    try { $back = $doc | ConvertFrom-Json } catch { $back = $null }
+    $ws.JsonMode = $false
+    $hasBoth = ($back -and $null -ne $back.PSObject.Properties['candidates'] -and $null -ne $back.PSObject.Properties['targets'])
+    if ($hasBoth -and -not $doc.Contains("`n")) { Write-Ok '--json carries candidates and targets as keys even when empty, on one line' } else { Write-Err 'the --json shape is missing candidates/targets or spans lines'; $fails++ }
+    # 16e - --list --json covers the whole catalogue
+    $checks++
+    $cat = (Get-CatalogueJson) | ConvertTo-Json -Depth 6 -Compress | ConvertFrom-Json
+    $catIds = @($cat.sections | ForEach-Object { [int]$_.id } | Sort-Object)
+    $realIds = @($Script:WS_SECTIONS | ForEach-Object { [int]$_.Id } | Sort-Object)
+    if (($catIds -join ',') -eq ($realIds -join ',') -and $cat.safe_batch.Count -gt 0 -and $cat.walkthrough.Count -gt 0) { Write-Ok "--list --json covers all $($catIds.Count) sections plus the batch and profile lists" } else { Write-Err '--list --json does not match the catalogue'; $fails++ }
+    # 16f - the progress line a GUI parses round-trips
+    $checks++
+    $pl = Get-MachineProgressLine -Section 7 -Stage 'end' -Status 'ran' -Freed 4096
+    $ok16f = ($pl -match "^##$Script:WS_NAME section=(\d+) event=(\w+) status=([\w-]+) freed_bytes=(\d+)$") -and ([int]$Matches[1] -eq 7) -and ($Matches[2] -eq 'end') -and ($Matches[3] -eq 'ran') -and ([long]$Matches[4] -eq 4096)
+    $plStart = Get-MachineProgressLine -Section 7 -Stage 'start'
+    if ($ok16f -and $plStart -eq "##$Script:WS_NAME section=7 event=start") { Write-Ok 'the ##windowsweep progress line parses back into section, event, status and freed_bytes' } else { Write-Err "progress line format wrong: $pl"; $fails++ }
+
+    Write-Section '[17] New helpers: global packages, startup state, artefact list'
+    # 17a - only roots that exist are reported
+    $checks++
+    $roots = @(Get-GlobalPackageRoots)
+    $ghost = @($roots | Where-Object { -not (Test-DirPresent $_.Root) })
+    if ($ghost.Count -eq 0) { Write-Ok "Get-GlobalPackageRoots returned $($roots.Count) root(s), all of them present" } else { Write-Err "Get-GlobalPackageRoots returned a missing root: $(($ghost | ForEach-Object { $_.Root }) -join ', ')"; $fails++ }
+    # 17b - three orientations: A the finder works, B the reference test works, C the idle gate works
+    $checks++
+    $names = New-Object System.Collections.Generic.HashSet[string]([StringComparer]::OrdinalIgnoreCase)
+    $null = $names.Add('kept-because-referenced')
+    $idx = [pscustomobject]@{ Names = $names; Bins = (New-Object System.Collections.Generic.HashSet[string]([StringComparer]::OrdinalIgnoreCase)); ScriptText = '' }
+    $pkgA = [pscustomobject]@{ Manager = 'npm'; Name = 'gone-stale'; Version = '1.0.0'; Path = ''; Bytes = [long]1; Idle = 400; Bins = @() }
+    $pkgB = [pscustomobject]@{ Manager = 'npm'; Name = 'kept-because-referenced'; Version = '1.0.0'; Path = ''; Bytes = [long]1; Idle = 400; Bins = @() }
+    $pkgC = [pscustomobject]@{ Manager = 'npm'; Name = 'kept-because-fresh'; Version = '1.0.0'; Path = ''; Bytes = [long]1; Idle = 1; Bins = @() }
+    $vA = (Get-GlobalPackageVerdict -Package $pkgA -Index $idx -Days 100).Verdict
+    $vB = (Get-GlobalPackageVerdict -Package $pkgB -Index $idx -Days 100).Verdict
+    $vC = (Get-GlobalPackageVerdict -Package $pkgC -Index $idx -Days 100).Verdict
+    if ($vA -eq 'candidate' -and $vB -eq 'keep' -and $vC -eq 'keep') { Write-Ok 'global verdict: idle+unreferenced is a candidate; referenced and fresh are both kept' } else { Write-Err "global verdict wrong: A=$vA B=$vB C=$vC"; $fails++ }
+    # 17c - startup state comes from Explorer's disable timestamp, not from a guessed first byte
+    $checks++
+    $disabledVal = [byte[]](1, 0, 0, 0, 39, 190, 225, 241, 9, 168, 220, 1)
+    $enabledVal = [byte[]](1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    $markerVal = [byte[]](3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    $shortVal = [byte[]](1, 0, 0, 0)
+    $s1 = Get-StartupApprovedState -Value $disabledVal
+    $s2 = Get-StartupApprovedState -Value $enabledVal
+    $s3 = Get-StartupApprovedState -Value $markerVal
+    $s4 = Get-StartupApprovedState -Value $shortVal
+    if ($s1 -eq 'disabled' -and $s2 -eq 'enabled' -and $s3 -eq 'disabled' -and $s4 -eq 'unknown') { Write-Ok 'startup state: a disable timestamp means disabled, a zero tail means enabled, 03 still counts, a short value is unknown' } else { Write-Err "startup state wrong: stamped=$s1 zeroTail=$s2 marker03=$s3 short=$s4"; $fails++ }
+    # 17d - the artefact list gained the seven additions and still refuses the three that hold real work
+    $checks++
+    $added = @('.nx', '.mypy_cache', '.ruff_cache', '.tox', '.eggs', '.output', '.serverless')
+    $forbidden = @('.venv', 'venv', '.terraform')
+    $missingAdd = @($added | Where-Object { $Script:WS_ARTEFACT_DIRS -notcontains $_ })
+    $present = @($forbidden | Where-Object { $Script:WS_ARTEFACT_DIRS -contains $_ })
+    if ($missingAdd.Count -eq 0 -and $present.Count -eq 0) { Write-Ok 'artefact list has the seven additions and none of .venv, venv, .terraform' } else { Write-Err "artefact list wrong (missing: $($missingAdd -join ',') / forbidden present: $($present -join ','))"; $fails++ }
+    # 17e - .cache is an artefact only beside a Gatsby or Parcel marker; the normal rule must still work
+    $checks++
+    $mk = Join-Path $fx 'marked'
+    foreach ($n in 'gatsby', 'plain', 'normal') { New-Item -ItemType Directory -Force -Path (Join-Path $mk "$n\.cache") | Out-Null; Set-Content -LiteralPath (Join-Path $mk "$n\.cache\f.txt") -Value 'x' }
+    New-Item -ItemType Directory -Force -Path (Join-Path $mk 'normal\node_modules') | Out-Null
+    Set-Content -LiteralPath (Join-Path $mk 'normal\node_modules\f.txt') -Value 'x'
+    Set-Content -LiteralPath (Join-Path $mk 'gatsby\gatsby-config.js') -Value 'module.exports = {}'
+    foreach ($n in 'gatsby', 'plain', 'normal') { Set-Content -LiteralPath (Join-Path $mk "$n\package.json") -Value '{}' }
+    # EVERY file ages, not just the markers: an unmarked .cache counts as source, so a fresh file inside
+    # plain\.cache or normal\.cache would make its project look active and the check would prove nothing.
+    foreach ($f in (Get-ChildItem -LiteralPath $mk -Recurse -File -Force)) {
+      foreach ($ts in 'LastWriteTime', 'LastAccessTime', 'CreationTime') { Set-ItemProperty -LiteralPath $f.FullName -Name $ts -Value $ancient }
+    }
+    & $mute
+    $hits = @(Find-StaleArtefacts -Roots @($mk) -Days 100 | ForEach-Object { $_.Path })
+    & $unmute
+    $gotGatsbyCache = @($hits | Where-Object { $_ -like "*\gatsby\.cache" }).Count -eq 1
+    $noPlainCache = @($hits | Where-Object { $_ -like "*\plain\.cache" }).Count -eq 0
+    $gotNodeModules = @($hits | Where-Object { $_ -like "*\normal\node_modules" }).Count -eq 1
+    if ($gotGatsbyCache -and $noPlainCache -and $gotNodeModules) { Write-Ok '.cache is an artefact only beside a Gatsby/Parcel marker, and node_modules is unaffected' } else { Write-Err "marked-artefact rule wrong: gatsby=$gotGatsbyCache plainExcluded=$noPlainCache nodeModules=$gotNodeModules"; $fails++ }
 
   } catch {
     & $unmute

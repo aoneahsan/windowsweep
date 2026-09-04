@@ -46,9 +46,9 @@ are missing.
 ## Published contents
 
 `npm pack` emits the launcher, `lib/`, `modules/`, both entry files, `README.md`, `LICENSE`, `CHANGELOG.md`,
-`SECURITY.md`, `VERSION`, `AI-INTEGRATION-GUIDE.md` and `package.json`. The 1.0.1 release tarball was 38
-files, 81.4 kB packed and 273.1 kB unpacked; `main` since then adds the AI guide, so the next release packs
-39 files (1.0.0 packed 37 files at 78.1 kB / 263.2 kB). `docs/` is not shipped; the README links every page by absolute URL. The three
+`SECURITY.md`, `VERSION`, `AI-INTEGRATION-GUIDE.md` and `package.json`. The 1.1.0 release tarball is 44
+files, 108.9 kB packed and 365.6 kB unpacked (1.0.1: 38 files, 81.4 kB / 273.1 kB; 1.0.0: 37 files, 78.1 kB /
+263.2 kB). `docs/` is not shipped; the README links every page by absolute URL. The three
 root planning files (`remaining-work.md`, `remaining-work-summary.md`, `what-this-project-consists-of.md`),
 `PENDING-TASKS.md` and the portfolio-info copy are outside the allowlist and never ship; CI asserts each by
 name.
@@ -61,5 +61,5 @@ logs, reports, bundles.
 ```powershell
 npm pack --dry-run                                   # the allowlist only
 npm run version:check                                # package.json == VERSION == lib/constants.ps1
-node bin/windowsweep.js --self-test --no-color       # 124 checks
+node bin/windowsweep.js --self-test --no-color       # 151 checks
 ```

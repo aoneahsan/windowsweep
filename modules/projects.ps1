@@ -1,6 +1,10 @@
 # projects.ps1 - section 17: stale build artefacts in projects nobody has touched for N+ days. Interactive only.
 
-$Script:WS_ARTEFACT_DIRS = @('node_modules', 'dist', 'build', 'out', '.next', '.nuxt', '.turbo', '.vite', '.svelte-kit', '.astro', '.parcel-cache', 'target', 'vendor', 'coverage', '.nyc_output', '__pycache__', '.pytest_cache', '.dart_tool', '.angular')
+$Script:WS_ARTEFACT_DIRS = @('node_modules', 'dist', 'build', 'out', '.next', '.nuxt', '.turbo', '.vite', '.svelte-kit', '.astro', '.parcel-cache', 'target', 'vendor', 'coverage', '.nyc_output', '__pycache__', '.pytest_cache', '.dart_tool', '.angular', '.nx', '.mypy_cache', '.ruff_cache', '.tox', '.eggs', '.output', '.serverless')
+# Never here: .venv / venv (nobody expects an environment to vanish) and .terraform (provider binaries + lock state).
+# A name in this table is an artefact ONLY when the same folder carries one of the listed markers: a bare
+# .cache belongs to whoever made it, but beside a Gatsby or Parcel config it is a build cache.
+$Script:WS_ARTEFACT_DIRS_MARKED = @{ '.cache' = @('gatsby-config.js', 'gatsby-config.ts', 'gatsby-config.mjs', '.parcelrc', 'parcel.config.js') }
 $Script:WS_PROJECT_MARKERS = @('package.json', 'pubspec.yaml', 'composer.json', 'Cargo.toml', 'go.mod', 'build.gradle', 'build.gradle.kts', 'pom.xml', 'pyproject.toml', 'requirements.txt', 'angular.json', 'next.config.js', 'next.config.mjs', 'nuxt.config.ts', 'vite.config.ts', 'vite.config.js')
 $Script:WS_NEVER_ENTER = @('.git', 'AppData', 'node_modules', '$RECYCLE.BIN', 'System Volume Information', '.gradle', '.m2', '.nuget', '.cargo', '.vscode', '.idea')
 
@@ -37,6 +41,15 @@ function Get-Targets17 {
   return $t
 }
 
+function Test-MarkedArtefactDir {
+  <# .SYNOPSIS True when Name is a marker-gated artefact folder AND Dir carries one of its markers. #>
+  param([string] $Dir, [string] $Name)
+  if (-not $Script:WS_ARTEFACT_DIRS_MARKED.ContainsKey($Name)) { return $false }
+  $names = @(Get-ChildEntries $Dir | ForEach-Object { $_.Name })
+  foreach ($m in $Script:WS_ARTEFACT_DIRS_MARKED[$Name]) { if ($names -contains $m) { return $true } }
+  return $false
+}
+
 function Test-ProjectMarker {
   param([string] $Dir, [string] $ArtefactName)
   $entries = Get-ChildEntries $Dir
@@ -59,7 +72,7 @@ function Get-ProjectActivityDays {
       $seen++
       if (Test-ReparsePoint $e) { continue }
       if ($e -is [IO.DirectoryInfo]) {
-        if ($Script:WS_ARTEFACT_DIRS -contains $e.Name -or $Script:WS_NEVER_ENTER -contains $e.Name) { continue }
+        if ($Script:WS_ARTEFACT_DIRS -contains $e.Name -or $Script:WS_NEVER_ENTER -contains $e.Name -or (Test-MarkedArtefactDir -Dir $dir -Name $e.Name)) { continue }
         $stack.Push((Remove-LongPrefix $e.FullName)); continue
       }
       $t = Get-NewestTimestampUtc $e
@@ -88,7 +101,7 @@ function Find-StaleArtefacts {
         $skip = $false
         foreach ($x in $ws.ExcludePaths) { if ($x -and (Test-PathWithin -Path $full -Within $x)) { $skip = $true; break } }
         if ($skip) { continue }
-        if ($Script:WS_ARTEFACT_DIRS -contains $e.Name -or ($e.Name -in 'bin', 'obj')) {
+        if ($Script:WS_ARTEFACT_DIRS -contains $e.Name -or ($e.Name -in 'bin', 'obj') -or (Test-MarkedArtefactDir -Dir $dir -Name $e.Name)) {
           if (-not (Test-ProjectMarker -Dir $dir -ArtefactName $e.Name)) { continue }
           if (-not $projectAge.ContainsKey($dir)) { $projectAge[$dir] = Get-ProjectActivityDays $dir }
           $age = $projectAge[$dir]
@@ -116,27 +129,31 @@ function Invoke-Section17 {
   $found = @(Find-StaleArtefacts -Roots $roots -Days $ws.Days)
   if ($found.Count -eq 0) { Write-Info "no build artefacts in projects idle $($ws.Days)+ days"; return }
   $reportLines = @("stale build artefacts - projects idle $($ws.Days)+ days - $(Get-Date -Format 'yyyy-MM-dd HH:mm')", '')
+  # One offered list drives the table, the JSON candidates and the selection indexes: they cannot disagree.
+  $offered = @($found | Select-Object -First 200)
+  if ($found.Count -gt $offered.Count) { Write-Warn 'list truncated to 200 entries' }
   Write-UiLine ("  {0,3}  {1,10} {2,6}  {3}" -f '#', 'SIZE', 'IDLE', 'ARTEFACT') 'White'
   $i = 1; $total = [long]0
-  foreach ($f in $found) {
+  foreach ($f in $offered) {
     Write-UiLine ("  {0,3}  {1,10} {2,5}d  {3}" -f $i, (Format-Bytes $f.Bytes), $f.Age, $f.Path) 'Gray'
     $reportLines += ("{0,10} {1,5}d  {2}" -f (Format-Bytes $f.Bytes), $f.Age, $f.Path)
+    Add-JsonCandidate -Section 17 -Index $i -Path $f.Path -Bytes $f.Bytes -IdleDays $f.Age -Project $f.Project
     $total += $f.Bytes; $i++
-    if ($i -gt 200) { Write-Warn 'list truncated to 200 entries'; break }
   }
   Write-Info ("total: " + (Format-Bytes $total))
   if (-not $ws.NoReport) {
     $out = Join-Path $ws.ReportsDir ('stale-builds-' + $ws.Stamp + '.txt')
     try { [IO.File]::WriteAllLines($out, $reportLines); Write-Note "list saved: $out" } catch { $null = $_ }
   }
-  $picks = @(Read-MultiSelect -Total ([math]::Min($found.Count, 200)) -NoAutoYes)
+  $picks = @(Read-MultiSelect -Total $offered.Count -NoAutoYes -Candidates @($offered | ForEach-Object { $_.Path }))
   if ($picks.Count -eq 0) { Write-Info 'nothing selected'; return }
   if (-not $ws.DryRun) {
     # Project artefacts never auto-confirm: --yes does not apply, and the walkthrough's step answer is not a selection.
-    if (-not (Confirm-Ui -Prompt "Remove $($picks.Count) artefact folder(s)? (rebuild with the project's install/build command)" -Default 'n' -NoAutoYes)) { Write-Info 'skipped'; return }
+    # An explicit --select / --select-file choice does answer it - that is a person choosing, in advance.
+    if (-not (Confirm-Ui -Prompt "Remove $($picks.Count) artefact folder(s)? (rebuild with the project's install/build command)" -Default 'n' -NoAutoYes -ScriptedOk)) { Write-Info 'skipped'; return }
   }
   foreach ($k in $picks) {
-    $f = $found[$k - 1]
+    $f = $offered[$k - 1]
     $r = Remove-PathSafe -Path $f.Path -Within $f.Root -Label (Split-Path -Leaf $f.Path)
     if ($r.Removed -and -not $ws.DryRun) { Write-Ok ("removed " + (Format-Bytes $r.Bytes) + "  $($f.Path)") }
   }

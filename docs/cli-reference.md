@@ -57,6 +57,9 @@ delete files (subject to every guard in the [safety model](./safety-model.md)).
 | `--logs-dir P`, `--reports-dir P` | `~\.windowsweep\...` | Where logs and reports are written |
 | `--no-report` | off | Skip the JSON report (the log is still written) |
 | `--cleanup-logs` | off | Delete this run's log at exit; reports are kept |
+| `--select L` | off | Pre-answer the next interactive selection, e.g. `--select 1,3-5`. Repeatable; the lists are consumed in the order the prompts appear |
+| `--select-file P` | off | UTF-8 file of one full path per line (`#` comments and blank lines skipped), matched case-insensitively against each prompt's candidates |
+| `--notify` | off | Show a Windows notification when the run ends. Never changes the exit code and never writes to stdout |
 | `--json` | off | One-line JSON summary on stdout; everything else goes to stderr |
 | `-q`, `--quiet` | off | Fewer informational lines |
 | `--no-color` | auto | Disable colour (also `NO_COLOR` or `WINDOWSWEEP_NO_COLOR=1`; off when output is redirected) |
@@ -64,6 +67,62 @@ delete files (subject to every guard in the [safety model](./safety-model.md)).
 | `--pwsh` | off | Launcher only: run the engine on PowerShell 7 |
 
 Options may also be written `--days=30`.
+
+## Scripting the interactive sections
+
+Sections 17, 18, 19 and 23 normally need a person choosing items, and they refuse to run unattended. Two
+flags let a script or a GUI supply that choice in advance:
+
+```powershell
+# by index, one list per prompt, in the order the prompts appear
+windowsweep --only 17 --select 1,3-5
+
+# by path: list what you want removed, one full path per line
+windowsweep --only 17,18 --select-file .\picks.txt
+```
+
+- Either flag lifts the interactive refusal, because a person did choose - and the selection also answers
+  that section's final confirmation, so the run does not stall waiting for a keypress.
+- **`--yes` still selects nothing.** It never has, and neither flag changes that.
+- `--select` is consumed one list per prompt. A run with more prompts than lists falls back to the console
+  for the rest, and selects nothing when there is no console.
+- `--select-file` is offered to every prompt, so a line that matches nothing in a given section is normal;
+  it is reported once and skipped.
+- Nothing here reaches a path the deletion chokepoint would otherwise refuse.
+
+The usual pairing is to list the candidates first and then act on the ones you want:
+
+```powershell
+windowsweep --only 17 --dry-run --json        # read .candidates[] from the one stdout line
+windowsweep --only 17 --select-file .\picks.txt
+```
+
+## Machine-readable output
+
+`--json` writes exactly one line to stdout; every human line goes to stderr. The document carries:
+
+| Key | Meaning |
+|---|---|
+| `tool`, `version`, `mode`, `dry_run`, `elevated`, `developer` | what ran |
+| `freed_bytes`, `estimated_bytes` | reclaimed, and the dry-run estimate |
+| `sections[]` | `section`, `status` (`ran`, `dry-run`, `skipped`, `refused`, `failed`), `freed_bytes` |
+| `candidates[]` | what an interactive section offered: `section`, `index`, `path`, `bytes`, `idle_days`, `project` |
+| `targets[]` | in scan mode: `section`, `label`, `path`, `bytes` |
+| `refusals[]`, `log_file`, `report_file` | what was refused, and where the run was recorded |
+
+`candidates` and `targets` are always present, as empty arrays when nothing was collected, so a caller can
+rely on the shape.
+
+In `--json` mode each section also brackets itself on **stderr** so a caller can show progress:
+
+```text
+##windowsweep section=7 event=start
+##windowsweep section=7 event=end status=ran freed_bytes=4096
+```
+
+`--list --json` prints the section catalogue instead of the human table - `sections[]` (`id`, `key`, `title`,
+`tier`, `admin`, `batch`, `dev`), `safe_batch`, `safe_batch_admin`, `profiles`, `walkthrough` and
+`walkthrough_admin` - so a front end reads the catalogue rather than hard-coding it.
 
 ## Exit codes
 

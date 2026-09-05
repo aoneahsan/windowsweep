@@ -480,7 +480,7 @@
     {
       "id": "P7",
       "title": "Storytelling retrofit (owner 2026-09-05: \"Retrofit everything\")",
-      "status": "pending",
+      "status": "in_progress",
       "completedAt": null,
       "subTasks": [
         {
@@ -493,8 +493,8 @@
         {
           "id": "P7.RW-091",
           "title": "The content map: one row per surface with awareness level, structure, tone band, length, CTA and schema, plus the SEO/AEO question map - then GATE 2",
-          "status": "in_progress",
-          "note": "Content map drafted: 14 surfaces with awareness, structure, tone band, length, CTA, schema and status; an out-of-scope list with reasons; an 8-question map with answer-first sentences. 🔴 The question map states plainly that it has NO Search Console evidence - the docs domain has never resolved, so no query report exists - and is a first pass to be revised once RW-040 lands. AWAITING GATE 2.",
+          "status": "complete",
+          "note": "Content map drafted: 14 surfaces with awareness, structure, tone band, length, CTA, schema and status; an out-of-scope list with reasons; an 8-question map with answer-first sentences. 🔴 The question map states plainly that it has NO Search Console evidence - the docs domain has never resolved, so no query report exists - and is a first pass to be revised once RW-040 lands. AWAITING GATE 2. | GATE 2 APPROVED 2026-09-05, owner verbatim: \"Approved, start writing\". The question map was accepted as a first pass with its no-Search-Console-evidence note intact, to be revised once RW-040 lands.",
           "awaitingUser": false
         },
         {
@@ -616,8 +616,14 @@
       "phase": "P7",
       "summary": "GATE 1 approved as drafted; the Bible, run state, decision log and global registry all record it. The owner also settled the sequencing - story first, then the app - so the desktop screens are written before any app code is built against their words. Content map drafted to GATE 2. RW-045 closed: the docs-site install ran and proved the inherited lockfile valid.",
       "commit": "pending"
+    },
+    {
+      "date": "2026-09-05",
+      "phase": "P7",
+      "summary": "GATE 2 approved as drafted. The content map is settled at fourteen surfaces with the desktop screens first; the question map is accepted as a first pass with its honesty note. Writing may now begin - the next surface is desktop-safety (Consent and Elevation), where humor is off entirely.",
+      "commit": "pending"
     }
   ],
-  "resumeInstructions": "GATE 2 is open on the content map (docs/story/content-map.md) and must be asked in the main session. Once approved: write the desktop surfaces first (rows 11, 12, 13) through /story-write, because RW-093 puts their approved words into the click dummy before any app code exists; then the front door (rows 1, 2, 9); then the rest. Only after the desktop copy is in the dummy does RW-077 start the web layer. Owner rows 15, 16, 22, the P1 runs, row 20 and the DNS rows 11-12 run in parallel and never block agent work. The fingerprint is calibrated:false - if he pastes 1-3 samples, rewrite it and re-run GATE 1 for that file alone.",
+  "resumeInstructions": "GATES 1 and 2 are both approved (2026-09-05) and recorded. Writing may begin with no further permission. Start at P7.RW-092, surface desktop-safety (Consent and Elevation - humor off entirely), then desktop-moment, then desktop-cockpit; each goes through the panel with at most two review rounds and stops at GATE 4 before anything is published. RW-093 then writes the approved words into the click dummy, and only after that does RW-077 begin the web layer. The front door (readme, tagline, site-front) follows the desktop surfaces. Owner rows 15, 16, 22, the P1 runs, row 20 and the DNS rows 11-12 run in parallel and never block agent work. The fingerprint is calibrated:false - if he pastes 1-3 samples, rewrite it and re-run GATE 1 for that file alone.",
   "auditPlanFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-streamed-nest.md"
 }

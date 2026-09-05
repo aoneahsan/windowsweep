@@ -1,6 +1,6 @@
 # Content map - windowsweep
 
-Status: **DRAFT, awaiting GATE 2** · Bible: approved 2026-09-05 · Last updated: 2026-09-05
+Status: **APPROVED at GATE 2, 2026-09-05** · Bible: approved 2026-09-05 · Last updated: 2026-09-05
 
 One row per surface that will be written. **A surface with no row is not written** - that rule is what stops
 a writer improvising a store listing in the documentation's register. Every field here traces back to a Bible
@@ -79,10 +79,11 @@ project cannot verify.
 
 ---
 
-## GATE 2 - what is being asked
+## GATE 2 - approved 2026-09-05
 
-1. **Are the fourteen surfaces the right set**, and is anything in section 2 wrongly excluded?
-2. **Is the writing order right** - the desktop screens first, so their words land in the click dummy before
-   the app is built against them?
-3. **The question map has no Search Console evidence behind it** and says so. Accept it as a first pass to be
-   revised once the docs domain resolves, or hold the indexed surfaces until there is query data?
+Approved as drafted: the fourteen surfaces, the out-of-scope list, and the writing order that starts with the
+eleven desktop screens so their words reach the click dummy before any app code is built against them.
+
+The question map was accepted **as a first pass**, with its honesty note intact: it has no Search Console
+evidence because the docs domain has never resolved, and it is revised against real queries once RW-040
+lands. Nothing in it claims a search volume.

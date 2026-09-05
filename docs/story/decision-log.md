@@ -44,3 +44,14 @@ Asked whether the desktop app should wait for the story pass, he chose **"Story 
 click dummy owns the app's words, so the copy passes the pipeline and is written into the dummy (RW-093)
 before any app code is built against it. This costs time to first running app and buys never having to
 revise a string in two places.
+
+## 2026-09-05 - GATE 2 APPROVED
+
+Approved as drafted: **"Approved, start writing"**. The fourteen surfaces stand, the out-of-scope list stands,
+and the writing order begins with the eleven desktop screens.
+
+The question map was accepted as a **first pass**, explicitly on the understanding that it rests on no Search
+Console evidence - the docs domain has never resolved, so no query report for this project exists. It is
+revised against real queries once the DNS row (RW-040) lands. No search volume is claimed anywhere in it.
+
+Next surface: `desktop-safety` (Consent and Elevation). Humor is off entirely on both.

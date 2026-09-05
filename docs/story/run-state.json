@@ -2,16 +2,15 @@
   "project": "windowsweep",
   "slug": "windowsweep",
   "bibleApproved": true,
-  "contentMapApproved": false,
-  "phase": "content-map",
-  "surface": null,
+  "contentMapApproved": true,
+  "phase": "write",
+  "surface": "desktop-safety",
   "round": 0,
-  "gate": 2,
+  "gate": null,
   "openDecisions": [
-    "GATE 2: approve the content map - 14 surfaces, the writing order, and a question map with no Search Console evidence behind it yet",
     "Open, not blocking: the voice fingerprint is calibrated:false - 1-3 writing samples would replace the inferred one"
   ],
   "escalatedAt": null,
   "lastUpdated": "2026-09-05",
-  "notes": "GATE 1 approved as drafted 2026-09-05. Sequencing decided the same day: story first, then the desktop app - the copy passes the pipeline and is written into the click dummy before any app code is built against it."
+  "notes": "GATES 1 and 2 both approved 2026-09-05. Writing order: the desktop screens first (rows 11, 12, 13), because RW-093 puts their approved words into the click dummy before RW-077 builds the app against them. Next surface: desktop-safety (Consent and Elevation) - humor off entirely."
 }

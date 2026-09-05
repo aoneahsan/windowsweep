@@ -1,9 +1,16 @@
 # Story Bible - windowsweep
 
-Status: **DRAFT, awaiting GATE 1** · Slug: `windowsweep` · Language: en-GB · Last updated: 2026-09-05
+Status: **APPROVED at GATE 1, 2026-09-05** · Slug: `windowsweep` · Language: en-GB · Last updated: 2026-09-05
 
-Built from repository evidence on 2026-09-05. Sections marked *(inferred - confirm at GATE 1)* were derived
-from what the project already says about itself, not from the owner's answers; his answers outrank them.
+Built from repository evidence on 2026-09-05 and **approved as drafted** by the owner the same day: asked to
+approve the Bible, the palette and the registry entry, he chose *"Approved as drafted"*. The premise in
+section 1 and the 60/25/15 palette are therefore settled and are not re-litigated without a decision-log
+entry.
+
+🔴 **One thing remains open and is not a blocker:** the voice fingerprint is still `calibrated: false`,
+because it was derived from copy already in the repository rather than from samples the owner chose. Writing
+proceeds against it; if he later pastes one to three samples, the fingerprint is rewritten and GATE 1 re-runs
+for that file alone.
 
 ---
 

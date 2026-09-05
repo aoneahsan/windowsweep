@@ -21,3 +21,26 @@ clearhire) sit close to "calm competence, states the limit". The differentiator 
 that its dominant register is the moment *before an irreversible act*, and its second band is **refusal** -
 what the tool will not do even when instructed - rather than agency, evidence or custody. That distinction is
 what the uniqueness check rests on, and if the owner rejects it the palette has to move, not the wording.
+
+## 2026-09-05 - GATE 1 APPROVED
+
+Asked to approve the Story Bible, the palette and the registry entry, the owner chose **"Approved as
+drafted"**. So:
+
+- The premise stands: this product is about restraint rather than cleaning. It deletes, so it names what it
+  will touch before touching anything and refuses the rest no matter what is typed.
+- The palette stands at **60 precision-before-an-irreversible-act / 25 refusal-as-reassurance / 15 workshop
+  dryness**, including the deliberate choice not to use "calm competence" as the dominant band, which three
+  existing voices already hold.
+- The registry entry moves from `draft` to `approved`.
+
+**Still open, and not a blocker:** the fingerprint is `calibrated: false`. It was derived from copy already
+in the repository, not from samples he picked. Writing proceeds; if he pastes one to three samples later, the
+fingerprint is rewritten and GATE 1 re-runs for that file alone.
+
+## 2026-09-05 - sequencing: story before the app
+
+Asked whether the desktop app should wait for the story pass, he chose **"Story first, then the app"**. The
+click dummy owns the app's words, so the copy passes the pipeline and is written into the dummy (RW-093)
+before any app code is built against it. This costs time to first running app and buys never having to
+revise a string in two places.

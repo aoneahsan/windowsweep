@@ -144,7 +144,7 @@ Added 2026-09-05 with the first application code under `desktop/`. Installed wit
 **`@eslint/js` is deliberately absent.** It is banned fleet-wide for broken versioning, so the handful of core
 rules this project wants are written out in `eslint.config.js` rather than spread in from its recommended set.
 
-### The backend moved to Supabase on 2026-09-06
+### The backend moved to Supabase on 2026-09-05
 
 `@supabase/supabase-js` `^2.115.0` replaced the hand-rolled Firebase REST calls (there was never a Firebase SDK
 dependency - `auth.ts` and `sync.ts` used plain `fetch`). Added with it: **`drizzle-orm` `^0.45.2`** and

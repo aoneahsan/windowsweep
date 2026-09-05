@@ -3,7 +3,7 @@
   "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md at the repository root; this file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-09-06",
+  "lastUpdated": "2026-09-05",
   "planFile": "C:/Users/PC/.claude/plans/please-plan-and-get-agile-fairy.md",
   "overview": "docs/features/windowsweep-completion/00-overview.md",
   "specification": "remaining-work.md",
@@ -27,7 +27,7 @@
     "wipCommit": "The eight A4 click-dummy screens, their page-*.js, pages.html and the NAV wiring were committed as their own design commit 2721b75 before the audit commit (owner, 2026-09-05: \"Commit as its own design commit\"). A static check resolved 456 local links and every NAV href first.",
     "folderLayout": "D:\\work\\windows-cleanup-root\\{windows-cleanup, windowsweep-docs} is durable and the inner folder names do not change (owner, 2026-09-05: \"Keep this layout as is\"). MANUAL-TASKS row 4 is closed as superseded.",
     "storytelling": "Retrofit EVERYTHING (owner, 2026-09-05: \"Retrofit everything\"). Phase P7: /story-init and the Story Bible (GATE 1), the content map (GATE 2), then the README, the docs pages, llms.txt, the CLI console strings and the desktop copy through the pipeline. The desktop words are amended in the click dummy before the app is written (frontend-ui-standards.md section 10a). No product-voice prose before GATE 1; correcting a false statement is not new prose.",
-    "backend": "Supabase, not Firebase (owner directive 2026-09-06: \"moving forward use supabase as backend for all new projects unless i ask otherwise\"). Asked whether it reached this project, he chose to switch it now rather than at release - nothing had been created on Firebase, so it cost code and no data."
+    "backend": "Supabase, not Firebase (owner directive 2026-09-05: \"moving forward use supabase as backend for all new projects unless i ask otherwise\"). Asked whether it reached this project, he chose to switch it now rather than at release - nothing had been created on Firebase, so it cost code and no data."
   },
   "knownRisks": [
     "The Visual Studio Build Tools UAC click (MANUAL-TASKS row 22) has not happened, so nothing Rust-side links on this machine and the Tauri half of P6 is CI-verified only. Report that plainly; never round it up to \"verified\".",
@@ -35,7 +35,7 @@
     "The storytelling retrofit gates the desktop copy: RW-077 must not write UI strings before RW-090, RW-091 and RW-093 have run, or the app ships words the Bible never approved.",
     "P5 target paths wait on the owner probe (row 20). A path becomes a target only once it has been seen on a real machine holding regenerable data - C:\\Intel was in the specification, exists, and was rejected on inspection.",
     "The click dummy A4 screens are committed but unverified: Block Q's inventory, Block R's wiring and Block S's sweep (RW-073 to RW-075) are open, so the dummy is not yet the finished specification the app is built against.",
-    "Supabase free-tier capacity: all 7 registered accounts are full at 2 projects each (14/14 measured 2026-09-06), so windowsweep needs a NEW account before it can have a project. Both are owner-only."
+    "Supabase free-tier capacity: all 7 registered accounts are full at 2 projects each (14/14 measured 2026-09-05), so windowsweep needs a NEW account before it can have a project. Both are owner-only."
   ],
   "phases": [
     {
@@ -432,7 +432,7 @@
           "id": "P6.firebase-vault",
           "title": "Firebase project, Google provider, Firestore rules and indexes, FilesHub vault seeded",
           "status": "blocked",
-          "note": "🔴 RW-079 is now SUPABASE, not Firebase (owner directive 2026-09-06; he chose to switch this project the same day, before anything had been created, so it cost code and no data). Written and committed: the Drizzle schema at desktop/src/db/schema/sync.ts, two migrations (tables + RLS with seven policies, and the paired privilege block that Drizzle cannot emit), auth.ts on Supabase Auth PKCE reusing the Rust loopback listener unchanged, sync.ts on PostgREST paginated at 20 with a keyset cursor. The equivalence gate reports no schema changes, so schema and migrations agree. 🔴 BLOCKED on owner row 23, and on a constraint the code could not reveal: all 7 registered Supabase accounts hold 2 projects each - the free-tier limit, 14 of 14 used - so there is nowhere to put one and creating an account is owner-only too. Row 15 also changed shape: Supabase owns the redirect, so Google sign-in needs a WEB client at https://<ref>.supabase.co/auth/v1/callback, not a Desktop client.",
+          "note": "🔴 RW-079 is now SUPABASE, not Firebase (owner directive 2026-09-05; he chose to switch this project the same day, before anything had been created, so it cost code and no data). Written and committed: the Drizzle schema at desktop/src/db/schema/sync.ts, two migrations (tables + RLS with seven policies, and the paired privilege block that Drizzle cannot emit), auth.ts on Supabase Auth PKCE reusing the Rust loopback listener unchanged, sync.ts on PostgREST paginated at 20 with a keyset cursor. The equivalence gate reports no schema changes, so schema and migrations agree. 🔴 BLOCKED on owner row 23, and on a constraint the code could not reveal: all 7 registered Supabase accounts hold 2 projects each - the free-tier limit, 14 of 14 used - so there is nowhere to put one and creating an account is owner-only too. Row 15 also changed shape: Supabase owns the redirect, so Google sign-in needs a WEB client at https://<ref>.supabase.co/auth/v1/callback, not a Desktop client.",
           "awaitingUser": true
         },
         {
@@ -632,7 +632,7 @@
       "commit": "pending"
     },
     {
-      "date": "2026-09-06",
+      "date": "2026-09-05",
       "phase": "P6",
       "summary": "Backend switched from Firebase to Supabase on the owner standing directive. Drizzle schema + two migrations (tables/RLS, and the paired privilege block), auth.ts on Supabase Auth PKCE reusing the Rust loopback listener unchanged, sync.ts on PostgREST at limit 20 keyset, CSP narrowed to *.supabase.co, desktop/firebase deleted, rows 15 and 23 rewritten. Gates green: typecheck 0, lint 0, build 0 warnings and no source maps, drizzle-kit check clean, the equivalence gate reports no schema changes, the dev-surface gate still absent from dist with its control found, anon granted nothing. 🔴 Blocked on row 23 by Supabase free-tier capacity - 14 of 14 slots used across 7 accounts.",
       "commit": "pending"

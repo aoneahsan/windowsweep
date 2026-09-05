@@ -107,7 +107,7 @@ nothing to buy, which `~/.claude/rules/00-house-rules.md` forbids writing anywhe
 claim outlives the decision it describes. Until that is answered, those two sentences are the only thing in
 the product carrying a known rule violation.
 
-### Session 9 (2026-09-06) - the backend is Supabase, not Firebase
+### Session 9 (2026-09-05) - the backend is Supabase, not Firebase
 
 **Owner directive, verbatim:** *"we will use supabase for backend, not firebase, add this as rule, moving
 forward use supabase as backend for all new projects unless i ask otherwise"*. Recorded fleet-wide in
@@ -121,7 +121,7 @@ schema plus two migrations. **The Rust loopback listener was reused unchanged** 
 exactly the same redirect, so only the exchange differed.
 
 🔴 **AND THE SWITCH IS BLOCKED ON A CONSTRAINT NOBODY COULD HAVE PREDICTED FROM THE CODE.** Measured against
-the FilesHub registry on 2026-09-06: **all 7 registered Supabase accounts hold 2 projects each** - the
+the FilesHub registry on 2026-09-05: **all 7 registered Supabase accounts hold 2 projects each** - the
 free-tier limit, **14 of 14 slots used**, every one a real named project (growthify, netcage, shortlists x2,
 trizlink, labflow, aoneahsan-portfolio, habitforge, clearhire, custos, linkedin-automation, lifewell,
 trialith, callvault). So there is nowhere to put a windowsweep project, and creating **an account to hold one

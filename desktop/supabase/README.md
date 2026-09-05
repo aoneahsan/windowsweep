@@ -4,7 +4,7 @@ Sign-in and sync are the only things in this product that touch a network. The
 command-line engine makes no network calls at all, and the desktop window makes
 none until a person signs in or accepts a telemetry destination.
 
-**Supabase replaced Firebase on 2026-09-06**, on the owner's standing directive
+**Supabase replaced Firebase on 2026-09-05**, on the owner's standing directive
 that Supabase is the default backend for every new project
 (`~/.claude/rules/services-integrations.md`). Nothing had been created on Firebase
 yet, so the switch cost code and no data.
@@ -74,7 +74,7 @@ lossless difference. Nothing proceeds past a diff nobody has explained.
 ## Still owner-only, and one of them is blocked on capacity
 
 Creating a Supabase project is owner-only by rule. 🔴 **And right now there is
-nowhere to put one:** measured 2026-09-06, all **7** registered accounts hold **2
+nowhere to put one:** measured 2026-09-05, all **7** registered accounts hold **2
 projects each** — the free-tier limit, 14 of 14 slots used, every one a real named
 project. So `docs/MANUAL-TASKS.md` row 23 is two steps: a new account, then a
 project under it.

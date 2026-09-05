@@ -389,7 +389,7 @@ Amplitude, Clarity, Sentry) behind a first-run consent dialog with every provide
 CLI keeps zero network calls; `desktop/` in this repository, excluded from the npm allowlist and asserted absent
 by CI; identifier `com.aoneahsan.windowsweep` (permanent); app version = the bundled CLI version; releases
 tagged `desktop-vX.Y.Z` with NSIS + MSI + `.sig` + `latest.json`; the backend is **Supabase** (owner directive
-2026-09-06) and its administration surface is the Supabase dashboard for this phase - there is no in-app admin
+2026-09-05) and its administration surface is the Supabase dashboard for this phase - there is no in-app admin
 panel and none is owed, for the reason recorded in `docs/PROJECT-CONTEXT.md`: no server, no plan, no limit and
 no second user.
 
@@ -491,9 +491,9 @@ the story pipeline (RW-093), and the amended words must be **in the dummy**. See
 
 ### RW-079 - Block V: Supabase - the schema, the policies, the project (agent 1.5 h + owner rows 15, 23)
 
-- **What.** The backend. 🔴 **Supabase, not Firebase** - owner directive 2026-09-06, applied to this project
+- **What.** The backend. 🔴 **Supabase, not Firebase** - owner directive 2026-09-05, applied to this project
   the same day because nothing had been created yet, so it cost code and no data.
-- **Done and committed (2026-09-06).** `desktop/src/db/schema/sync.ts` (two tables, seven policies, RLS on
+- **Done and committed (2026-09-05).** `desktop/src/db/schema/sync.ts` (two tables, seven policies, RLS on
   both) · `supabase/migrations/` - the generated DDL **and** the hand-written **paired privilege block**,
   because Drizzle emits no `revoke` and Supabase's default ACL names `anon`, `authenticated` and
   `service_role` by name · `src/lib/auth.ts` on Supabase Auth PKCE, reusing the Rust loopback listener
@@ -512,7 +512,7 @@ the story pipeline (RW-093), and the amended words must be **in the dummy**. See
      non-admin test account, and remember a forbidden UPDATE/DELETE is 200 with 0 rows.
   5. `user_settings` is never written with `.upsert()`. The column-scoped UPDATE grant excludes `user_id`, so
      an upsert carrying it is refused at plan time with a message naming the table rather than the column.
-- **Blocked, and not on the code.** 🔴 Measured 2026-09-06: **all 7 registered Supabase accounts hold 2
+- **Blocked, and not on the code.** 🔴 Measured 2026-09-05: **all 7 registered Supabase accounts hold 2
   projects each** - the free-tier limit, 14 of 14 slots used. windowsweep needs a **new account** before it
   can have a project, and both are owner-only (row 23). Row 15 follows it and is a **Web** OAuth client
   pointed at `https://<ref>.supabase.co/auth/v1/callback`, not the Desktop client the Firebase flow wanted.

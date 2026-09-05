@@ -26,7 +26,7 @@ export const keys: AnalyticsKeys = {
 };
 
 /**
- * Supabase, since 2026-09-06: it is the default backend for every new project
+ * Supabase, since 2026-09-05: it is the default backend for every new project
  * (`~/.claude/rules/services-integrations.md`). The publishable key is a PUBLIC
  * client key whose whole security model is RLS - it is meant to ship in a bundle.
  * 🔴 The SECRET key never touches this process, and there is no code path here

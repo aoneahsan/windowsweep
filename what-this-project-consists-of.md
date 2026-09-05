@@ -171,8 +171,9 @@ Environment: `WINDOWSWEEP_HOME`, `WINDOWSWEEP_LOG_DIR`, `WINDOWSWEEP_REPORTS_DIR
   JetBrains Toolbox; Firefox places, key4, logins, cookies, storage, prefs, extensions); the protected file
   names (NTUSER.DAT and logs, ntuser.ini, UsrClass.dat and logs, hiberfil, pagefile, swapfile, bootmgr,
   BOOTNXT, DumpStack.log.tmp); and the tool's own data directory (except `--prune-history` and
-  `--uninstall-data`). Counted 2026-09-03: 66 subtrees, 50 patterns, 13 file names; the lists only grow
-  (1.1.0 added the Hugging Face hub exception under `.cache`). Then the path must lie strictly inside the
+  `--uninstall-data`). **Measured on 2026-09-05** by dot-sourcing the module, building the table and counting it: **20 exact
+  roots, 66 protected subtrees, 2 exceptions, 50 wildcard patterns and 13 protected file names.** The lists
+  only grow (1.1.0 added the Hugging Face hub exception under `.cache`). Then the path must lie strictly inside the
   declared root. No flag bypasses any of it.
 - **Layout kinds** (`chromium`, `firefox`, `electron`, `editor`) resolve only to allowlisted cache folder names
   (`Cache`, `Code Cache`, `GPUCache`, Dawn caches, shader caches, `Service Worker\ScriptCache`, Crashpad

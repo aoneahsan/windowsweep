@@ -6,7 +6,7 @@
 
   var STEPS = [
     ['Starting the engine\u2026', 18],
-    ['Reading the catalogue \u2013 26 sections', 46],
+    ['Reading the catalogue - 26 sections', 46],
     ['Checking for a newer build\u2026', 78],
     ['Ready', 100]
   ];
@@ -67,7 +67,7 @@
         }
         if (a === 'bootRetry') {
           if (fail) fail.hidden = true;
-          ws.toast('Checked again \u2013 still offline. Carrying on without it.');
+          ws.toast('Checked again - still offline. Carrying on without it.');
         }
       });
 

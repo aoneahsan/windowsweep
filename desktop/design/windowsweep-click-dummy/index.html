@@ -54,9 +54,9 @@
           </div>
           <div class="hero-actions">
             <button class="btn" data-ws-action="scan"><span class="btn-label">Scan again</span></button>
-            <button class="btn" data-ws-action="preview"><span class="btn-label">Preview a safe run</span></button>
-            <button class="btn btn-primary btn-lg" data-ws-action="clean">
-              <span class="btn-label">Clean <span data-ws-text="cleanBtn">0 B</span></span>
+            <button class="btn" data-ws-action="dryRun"><span class="btn-label">Dry-run first</span></button>
+            <button class="btn btn-primary btn-lg" data-ws-action="reclaim">
+              <span class="btn-label">Reclaim <span data-ws-text="reclaimBtn">0 B</span></span>
             </button>
           </div>
 
@@ -80,7 +80,7 @@
             <div class="tm-legend" data-ws-legend></div>
             <div style="margin-inline-start:auto;display:flex;gap:var(--sp-2);align-items:center">
               <span class="t-xs ink-3" data-ws-text="excludedNote">nothing excluded</span>
-              <button class="btn btn-sm btn-ghost" data-ws-action="clearExclusions">Reset choices</button>
+              <button class="btn btn-sm btn-ghost" data-ws-action="clearExclusions">Include everything</button>
             </div>
           </div>
 
@@ -126,7 +126,7 @@
                 <div style="flex:1;min-width:11rem">
                   <label class="caps ink-3" for="idle">Idle window</label>
                   <input id="idle" class="field" type="range" min="7" max="365" step="1" value="100" data-ws-action="idleDays">
-                  <p class="t-sm ink-3">Lower it to sweep more.</p>
+                  <p class="t-sm ink-3">Lower it to include more caches.</p>
                 </div>
               </div>
             </div>
@@ -174,7 +174,7 @@
 
           <details class="disclose" style="margin-top:var(--sp-4)">
             <summary>
-              <span class="disclose-line">How that is guaranteed</span>
+              <span class="disclose-line">How that is enforced</span>
               <span class="disclose-more">Details</span>
             </summary>
             <div class="disclose-body">
@@ -227,8 +227,8 @@
               <button class="switch" role="switch" aria-checked="false" data-ws-action="schedule" aria-label="Weekly scheduled run"></button>
               <div>
                 <p class="t-sm" data-ws-text="scheduleState">Off</p>
-                <p class="t-sm ink-3">Runs the safe sweep once a week and tells you what it freed. Never the
-                  ones that need you.</p>
+                <p class="t-sm ink-3">Runs the safe batch once a week and tells you what it freed. Never the
+                  sections that need you.</p>
               </div>
             </div>
           </div>
@@ -270,8 +270,7 @@
               <p>The cleanup engine makes no network calls at all &mdash; its own tests check that. This app
                 can send usage and crash reports, and all four are off until you say yes:</p>
               <div style="display:flex;flex-direction:column;gap:var(--sp-3)" data-ws-consent></div>
-              <p>Signing in is optional and only syncs your settings and history. Runs are never limited and
-                there is nothing to pay for.</p>
+              <p>Signing in is optional. It syncs your settings and a summary of each run, and nothing else.</p>
             </div>
           </details>
 

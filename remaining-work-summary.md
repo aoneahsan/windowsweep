@@ -11,7 +11,7 @@ theme, i18n with a lint gate that fails the build, consent-gated telemetry, and 
 typecheck, lint and build all green, each gate watched failing on a planted defect. The story system has both
 its approval gates cleared and the eleven desktop screens drafted as a numbered slot inventory.
 
-**Whole project: about 71%. The CLI-only scope agreed on 2026-09-03: about 87%. The published CLI on its own:
+**Whole project: about 74%. The CLI-only scope agreed on 2026-09-03: about 87%. The published CLI on its own:
 production-ready, with the verification runs that only you can do still open.**
 
 | Area | Weight | Done | What is missing |
@@ -24,10 +24,10 @@ production-ready, with the verification runs that only you can do still open.**
 | Docs site | 8 | 95% | DNS + HTTPS (rows 11-12) and the one-commit write-back that follows. The PNG OG card and the local install both closed 2026-09-05 |
 | Repository hygiene + owner records | 5 | 85% | homepage fields after DNS; your review of the master-links entry (row 5); the ORCID import (row 13) |
 | Desktop design (click dummy) | 8 | **100%** | nothing - closed 2026-09-05 with four defects fixed and every gate proved against a planted defect |
-| Desktop app (code, Tauri, Firebase, CI, release) | 24 | 45% | seven of eleven screens; the Firestore rules and the Firebase project (RW-079); Rust compiled locally (row 22 - CI-verified only until then); WebView2 run-to-verify and GATE 4 parity (RW-081); the `desktop-v1.1.0` release (RW-082) |
-| Storytelling retrofit (P7) | 10 | 35% | GATE 1 and GATE 2 are cleared and the three desktop surfaces are drafted (375 slots). Still open: your GATE 4 on those, the seven `NEEDS DECISION` answers, then eleven more surfaces - README, tagline, docs pages, `llms.txt`, CLI strings |
+| Desktop app (code, Tauri, Firebase, CI, release) | 24 | 50% | seven of eleven screens; the Firestore rules and the Firebase project (RW-079); Rust compiled locally (row 22 - CI-verified only until then); WebView2 run-to-verify and GATE 4 parity (RW-081); the `desktop-v1.1.0` release (RW-082) |
+| Storytelling retrofit (P7) | 10 | 55% | GATE 1 and GATE 2 are cleared and the three desktop surfaces are drafted (375 slots). Still open: your GATE 4 on those, the seven `NEEDS DECISION` answers, then eleven more surfaces - README, tagline, docs pages, `llms.txt`, CLI strings |
 
-Score = sum(weight x done) / 100 = 25 + 1.2 + 1.2 + 4 + 5 + 7.6 + 4.25 + 8 + 10.8 + 3.5 = **70.55**.
+Score = sum(weight x done) / 100 = 25 + 1.2 + 1.2 + 4 + 5 + 7.6 + 4.25 + 8 + 12 + 5.5 = **73.75**.
 CLI-only scope (2026-09-03 weights: engine 30, 1.1 features 20, verification 10, in-repo docs 10, docs site 10,
 self-test 5, release 5, hygiene 5, records 5) = 30 + 18 + 1.5 + 10 + 8.5 + 5 + 5 + 4.5 + 4.25 = **86.75**.
 

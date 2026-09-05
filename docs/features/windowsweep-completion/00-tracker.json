@@ -443,8 +443,8 @@
         {
           "id": "P6.story-copy",
           "title": "The desktop copy passes the story pipeline and is amended in the click dummy before the app is written",
-          "status": "in_progress",
-          "note": "RW-092 drafted the three desktop surfaces (375 slots, 38 proposed changes, 7 NEEDS DECISION). RW-093 waits on GATE 4",
+          "status": "complete",
+          "note": "RW-076/RW-093 closed 2026-09-05: the dummy was amended first and the app followed it, in that order.",
           "awaitingUser": false
         },
         {
@@ -501,14 +501,14 @@
           "id": "P7.RW-092",
           "title": "/story-write per surface: writer, the full panel, at most two rounds, the finalizer, GATE 4 each; the docs site re-mirrored after every approved page",
           "status": "in_progress",
-          "note": "desktop-moment (168 slots), desktop-safety (64) and desktop-cockpit (143) drafted as numbered slot inventories. Awaiting GATE 4 and seven NEEDS DECISION answers. Eleven surfaces not started",
+          "note": "The three desktop surfaces are through GATE 4 (approved 2026-09-05). Eleven surfaces remain: readme, tagline, docs-start, docs-safety, docs-reference, docs-help, docs-about, ai-guide, site-front, cli-strings, desktop-readme. The content map orders them: 1, 2, 9 next (the front door), then 3, 4, 6.",
           "awaitingUser": false
         },
         {
           "id": "P7.RW-093",
           "title": "The desktop copy written into the click dummy first, the design README recording why the dummy changed, then the app matches at GATE 4",
-          "status": "pending",
-          "note": "The dummy specifies the finished product, never today's build progress: a capability whose wave has not shipped is declared and exempted as pending-wave",
+          "status": "complete",
+          "note": "All 38 approved changes written into the click dummy, plus the owner two answers of 2026-09-05: the pricing claim on Home and Account replaced by a sentence about what sign-in does, and the installer ships unsigned with the SmartScreen note kept and the two verifiable artefacts named exactly. Two internal identifiers renamed alongside their labels (clean/preview -> reclaim/dryRun, cleanBtn -> reclaimBtn) and verified in both directions by a static check. The app then followed the dummy: three catalogue keys, all gates re-run green.",
           "awaitingUser": false
         }
       ]
@@ -626,10 +626,10 @@
     {
       "date": "2026-09-05",
       "phase": "P6+P7",
-      "summary": "Story GATES 1 and 2 approved and recorded; the eleven desktop screens drafted through the story writer (375 slots, 38 changes, 7 NEEDS DECISION, 5 dummy defects reported). Desktop app foundation built: web layer, Tauri shell, CI workflows. Gates green - typecheck 0, lint 0 with the i18n gate proved on two plants, vite build 0 warnings and no source maps, the prepaint drift gate proved on a plant, the npm tarball sweep proved against a planted desktop leak, CLI self-test 151/151 and version parity 1.1.0 unchanged. Whole project 55.45% -> 70.55%. Then RW-079 agent half: the Firestore rules, indexes and config written and committed; project creation filed as owner row 23",
+      "summary": "Story GATES 1 and 2 approved and recorded; the eleven desktop screens drafted through the story writer (375 slots, 38 changes, 7 NEEDS DECISION, 5 dummy defects reported). Desktop app foundation built: web layer, Tauri shell, CI workflows. Gates green - typecheck 0, lint 0 with the i18n gate proved on two plants, vite build 0 warnings and no source maps, the prepaint drift gate proved on a plant, the npm tarball sweep proved against a planted desktop leak, CLI self-test 151/151 and version parity 1.1.0 unchanged. Whole project 55.45% -> 70.55%. Then RW-079 agent half: the Firestore rules, indexes and config written and committed; project creation filed as owner row 23. Then GATE 4 was granted and RW-093 landed: 38 approved slots into the dummy, the pricing and code-signing answers applied, two action identifiers renamed with their labels, the app re-gated green",
       "commit": "pending"
     }
   ],
-  "resumeInstructions": "Blocked on the owner for two things and only two: GATE 4 on the three drafted desktop surfaces (docs/story/drafts/desktop-*.md) and the seven NEEDS DECISION answers listed there - the pricing sentences on Home and Account are the sharp one, because the fleet rule forbids writing that a product has no paid tier. Everything else proceeds: RW-079 (Firebase project, Firestore rules, vault) needs no copy at all and is the next agent item. After GATE 4: RW-093 writes the approved words into the click dummy, then the seven remaining screens (Picker, History, Report, Settings, Account, Elevation, Splash), then RW-081 (WebView2 run-to-verify + GATE 4 parity pairs at 1440 and 760) and RW-082 (desktop-v1.1.0). Rust is CI-verified only until owner row 22. Never re-plan; the specs are remaining-work.md.",
+  "resumeInstructions": "P7 continues with the eleven unwritten surfaces, in the content map order: readme, tagline and site-front (the front door) first, then docs-start, docs-safety and docs-help. Each goes through the panel with at most two review rounds and stops at GATE 4. In parallel, agent-doable and needing no copy: RW-079 waits only on owner row 23 (creating the Firebase project); the seven remaining desktop screens (Picker, History, Report, Settings, Account, Elevation, Splash) can now be built, because their words are through GATE 4 and are in the dummy. Then RW-081 (WebView2 run-to-verify plus GATE 4 parity pairs at 1440 and 760 - 390 is below the product minimum of 760 and is not chased) and RW-082 (desktop-v1.1.0). Rust is CI-verified only until owner row 22. Never re-plan; the specs are remaining-work.md.",
   "auditPlanFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-streamed-nest.md"
 }

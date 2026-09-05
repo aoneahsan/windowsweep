@@ -166,7 +166,7 @@
      were reachable by clicking.
      ------------------------------------------------------------------------- */
   var NAV = [
-    { group: 'Clean' },
+    { group: 'Reclaim' },
     { href: 'index.html',     label: 'Home',      icon: 'home' },
     { href: 'sections.html',  label: 'Sections',  icon: 'list',  badge: '26' },
     { href: 'picker.html',    label: 'Choose',    icon: 'user',  badge: '4' },
@@ -254,7 +254,7 @@
     var foot = el('div', 'rail-foot');
     foot.appendChild(el('span', 'caps ink-3', 'Reclaimable'));
     var big = el('span', 'num t-md wide accent-ink');
-    big.setAttribute('data-ws-text', 'cleanBtn');
+    big.setAttribute('data-ws-text', 'reclaimBtn');
     big.textContent = '-';
     foot.appendChild(big);
     var sub = el('span', 't-xs ink-3');
@@ -694,7 +694,7 @@
 
     bar.appendChild(el('span', 'tb-sep only-wide'));
     var user = el('span', 'badge badge-neutral only-wide', 'standard user');
-    user.title = 'Admin sections need a UAC prompt this window cannot answer';
+    user.title = 'Admin sections need a Windows permission prompt this window cannot answer.';
     bar.appendChild(user);
     bar.appendChild(el('span', 'badge badge-warn only-wide', 'design dummy · demo data'));
 

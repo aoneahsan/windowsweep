@@ -8,12 +8,12 @@
   var ROWS = [
     [1,  'pkg',       'ran',     4.21e9, ''],
     [2,  'build',     'ran',     1.13e9, ''],
-    [3,  'runtimes',  'skipped', 0,      'nothing older than the idle window'],
+    [3,  'runners',   'skipped', 0,      'nothing older than the idle window'],
     [6,  'editors',   'ran',     3.02e8, 'VSIX cache cleared; caches skipped, Code is running'],
-    [7,  'chromium',  'skipped', 0,      'Chrome is running \u2013 7.40 GB left in place'],
+    [7,  'browsers',  'skipped', 0,      'Chrome is running - 7.40 GB left in place'],
     [8,  'apps',      'ran',     3.73e8, ''],
-    [9,  'winuser',   'ran',     8.10e7, 'Store cache reset offered, not executed'],
-    [21, 'recycle',   'skipped', 0,      'the bin was already empty']
+    [9,  'wincaches', 'ran',     8.10e7, 'Store cache reset offered, not executed'],
+    [21, 'diskusage', 'ran',     0,      'report only - nothing is deleted by this section']
   ];
 
   function bars() {

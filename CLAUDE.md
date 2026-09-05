@@ -1,6 +1,6 @@
 # windowsweep - Project Rules
 
-Last Updated: 2026-09-05 (session 8: the click dummy closed, both story gates cleared, the desktop app foundation built and gated) · Context pass: 2026-09-05 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
+Last Updated: 2026-09-05 (session 8: the click dummy closed, all four story gates cleared for the desktop screens, the desktop app foundation built and gated) · Context pass: 2026-09-05 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
 
 Safe, developer-aware Windows cleanup CLI: a Windows PowerShell 5.1 engine behind a dependency-free Node
 launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macleanup` (Bash). Public repo
@@ -50,10 +50,14 @@ watched failing on a planted `desktop/` entry · CLI self-test 151/151 · `versi
 
 **The storytelling retrofit has both approval gates.** GATE 1 (the Bible) and GATE 2 (the content map) were
 approved 2026-09-05; the voice is the eleventh entry in the global registry. The three desktop surfaces are
-drafted as numbered slot inventories at `docs/story/drafts/desktop-{moment,safety,cockpit}.md` - **375 slots,
-331 kept as already on voice, 38 proposed changes, 7 `NEEDS DECISION`**. 🔴 **Two of those decisions block
-copy that is already in the tree**: Home and Account state there is no paid tier and nothing to buy, which the
-fleet rule in `~/.claude/rules/00-house-rules.md` forbids writing anywhere.
+drafted as numbered slot inventories at `docs/story/drafts/desktop-{moment,safety,cockpit}.md` - 375 slots,
+331 kept as already on voice, 38 changed - and **GATE 4 was granted on 2026-09-05**. RW-093 wrote all 38 into
+the click dummy, and the app then followed the dummy. Two owner answers came with it: **the pricing claim is
+gone** (Home and Account now say only what sign-in does, so nothing claims there is no paid tier), and **the
+installer ships unsigned** with the SmartScreen note kept and its two verifiable artefacts named exactly - a
+SHA-256 checksum and the updater's minisign signature, neither of which is a code-signing certificate.
+🔴 **Eleven surfaces are still unwritten**: readme, tagline, docs-start, docs-safety, docs-reference,
+docs-help, docs-about, ai-guide, site-front, cli-strings, desktop-readme.
 
 🔴 **P5 is closed but two of its rows are not:** RW-064 and RW-065 shipped only their verified halves and RW-066
 was **deferred, not shipped**. **Section 26 is still free.** `C:\Intel` was inspected and **rejected**.

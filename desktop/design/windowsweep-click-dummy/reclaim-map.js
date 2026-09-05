@@ -374,11 +374,11 @@
     note.className = 'tm-empty-note';
     var h = document.createElement('p');
     h.className = 't-lg wide';
-    h.textContent = 'Nothing to sweep.';
+    h.textContent = 'Nothing to reclaim.';
     var s = document.createElement('p');
     s.className = 't-sm ink-2';
     s.style.maxWidth = '30rem';
-    s.textContent = 'Every location behind these tiles is protected or in use. Your disk is cleaner than most.';
+    s.textContent = 'Every location behind these tiles is protected or in use. There is nothing here the scan is willing to touch.';
     note.appendChild(h); note.appendChild(s);
     this.root.appendChild(note);
   };

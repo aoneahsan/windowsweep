@@ -43,7 +43,7 @@
         ? (db.facts.signedIn
             ? 'None of your other machines has run windowsweep yet.'
             : 'Sign in and your other machines’ run summaries appear here. Nothing syncs while you are signed out.')
-        : 'windowsweep has not cleaned anything yet. A preview costs nothing and deletes nothing.'));
+        : 'windowsweep has not run on this machine yet. A dry-run costs nothing and deletes nothing.'));
       td0.appendChild(e); tr0.appendChild(td0); tb.appendChild(tr0);
     }
 
@@ -56,7 +56,7 @@
 
       var md = el('td');
       md.appendChild(el('span', 'badge ' + (r.dry ? 'badge-outline' : 'badge-neutral'),
-        r.dry ? 'preview' : 'real run'));
+        r.dry ? 'dry-run' : 'real run'));
       tr.appendChild(md);
 
       var sec = el('td');

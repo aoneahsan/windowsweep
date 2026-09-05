@@ -306,7 +306,7 @@
       var go = el('button', 'btn btn-sm');
       go.textContent = 'Choose items';
       go.addEventListener('click', function () {
-        ws.toast('The picker for section ' + r.section + ' is in the next batch of this dummy.');
+        location.href = 'picker.html?section=' + r.section;
       });
       card.appendChild(go);
 
@@ -391,8 +391,8 @@
     var mount = $('[data-ws-consent]');
     if (!mount) return;
     mount.textContent = '';
-    [['GA4', 'page and feature usage'], ['Amplitude', 'funnels'],
-     ['Clarity', 'session replay'], ['Sentry', 'crash reports']].forEach(function (p) {
+    [['Product analytics', 'Google Analytics 4'], ['Behaviour analytics', 'Amplitude'],
+     ['Session replay', 'Microsoft Clarity'], ['Crash reports', 'Sentry']].forEach(function (p) {
       var row = el('div');
       row.style.display = 'flex'; row.style.alignItems = 'center'; row.style.gap = 'var(--sp-3)';
       var sw = el('button', 'switch');
@@ -402,7 +402,8 @@
       sw.addEventListener('click', function () {
         var on = sw.getAttribute('aria-checked') !== 'true';
         sw.setAttribute('aria-checked', on ? 'true' : 'false');
-        ws.toast(p[0] + (on ? ' enabled' : ' disabled') + ' - nothing is sent in this dummy.');
+        ws.toast(on ? p[0] + ' is on. Nothing is sent in this dummy.'
+                    : p[0] + ' is off, from now.');
       });
       row.appendChild(sw);
       var lab = el('div');
@@ -417,7 +418,7 @@
   function refresh() {
     var total = db.derive.reclaimable();
     paintHero(total);
-    setText('cleanBtn', fmt.bytes(total));
+    setText('reclaimBtn', fmt.bytes(total));
     setText('safeTotal', fmt.bytes(db.derive.safeRunBytes()));
     setText('targetCount', String(db.derive.activeTargets().length));
     setText('sectionCount', String(db.derive.bySection().length));
@@ -431,7 +432,7 @@
     setText('devHeldN', String(held.length));
     setText('devState', db.facts.developer
       ? 'On – keeping anything used in the last ' + db.facts.idleDays + ' days'
-      : 'Off – every cache is fair game');
+      : 'Off – every cache is offered in full');
     var devSw = $('[data-ws-action="devMode"]');
     if (devSw) devSw.setAttribute('aria-checked', db.facts.developer ? 'true' : 'false');
 
@@ -469,17 +470,17 @@
         setText('freshness', '0');
         ws.toast('Read-only scan finished. Nothing was deleted.');
       });
-      else ws.toast('Re-scanning...');
+      else ws.toast('Re-scanning…');
     }
 
-    if (a === 'preview') {
+    if (a === 'dryRun') {
       busy(t, 'Previewing', 800, function () {
-        ws.toast('Dry run: ' + fmt.bytes(db.derive.safeRunBytes()) + ' across ' +
+        ws.toast('Dry-run: ' + fmt.bytes(db.derive.safeRunBytes()) + ' across ' +
                  db.derive.safeRunSections().length + ' sections. Nothing was deleted.');
       });
     }
 
-    if (a === 'clean') {
+    if (a === 'reclaim') {
       var freed = db.derive.reclaimable();
       var paths = db.derive.activeTargets().map(function (x) { return x.path; });
       t.dataset.state = 'pending';
@@ -487,7 +488,7 @@
         map.drain(paths, function () {
           t.dataset.state = 'done';
           paintHero(0);
-          setText('cleanBtn', '0 B');
+          setText('reclaimBtn', '0 B');
           setTimeout(function () { delete t.dataset.state; }, 900);
           ws.toast('Freed ' + fmt.bytes(freed) + '. A real run would have written a report.', {
             undo: function () { map.draining = {}; renderMap(); refresh(); }
@@ -517,7 +518,7 @@
 
     if (a === 'soon') {
       e.preventDefault();
-      ws.toast('That screen is in the next batch of this dummy.');
+      ws.toast('That screen is not in this prototype.');
     }
   });
 

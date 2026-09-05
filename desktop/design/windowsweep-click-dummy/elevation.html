@@ -42,8 +42,8 @@
           <div class="tl" style="margin-top:var(--sp-4);max-width:44rem">
             <div class="tl-i"><span class="tl-dot"></span><div>
               <div class="t-sm"><strong>Windows asks you.</strong></div>
-              <div class="t-sm ink-3">The standard User Account Control prompt, from Windows &#8211; not
-                from us. If you say no, nothing happens and nothing is written.</div></div></div>
+              <div class="t-sm ink-3">The standard User Account Control prompt, from Windows, not
+                from windowsweep. If you say no, nothing happens and nothing is written.</div></div></div>
             <div class="tl-i"><span class="tl-dot"></span><div>
               <div class="t-sm"><strong>A second window opens.</strong></div>
               <div class="t-sm ink-3">It runs only the sections you chose, with
@@ -60,10 +60,10 @@
           </div>
           <div style="margin-top:var(--sp-5);display:flex;gap:var(--sp-2);flex-wrap:wrap">
             <button class="btn btn-primary" data-ws-action="elevateRun">Ask for permission and run</button>
-            <button class="btn" data-ws-action="elevateDry">Preview without elevating</button>
+            <button class="btn" data-ws-action="elevateDry">Measure without elevating</button>
           </div>
-          <p class="t-sm ink-3" style="margin-top:var(--sp-2)">A preview can measure these sections
-            without administrator rights. It just cannot clean them.</p>
+          <p class="t-sm ink-3" style="margin-top:var(--sp-2)">A scan can measure these sections
+            without administrator rights. It cannot clear them.</p>
         </div>
       </section>
 
@@ -79,8 +79,10 @@
                 shows <em>&#8220;Windows protected your PC&#8221;</em> on first run. That is a statement
                 about the certificate, not about the file.</p>
               <p>Choose <strong>More info</strong> and then <strong>Run anyway</strong>. You can verify what
-                you downloaded first: every release publishes its installers next to a signature, and the
-                source is public.</p>
+                you downloaded first: every release publishes a SHA-256 checksum for each installer, and a
+                minisign signature the app&#8217;s own updater checks. Neither is a code-signing certificate
+                &#8211; they prove the file is the one that was built, not who built it. The source is
+                public.</p>
               <p>This note is here rather than hidden because meeting that dialog unexplained is worse than
                 reading about it in advance.</p>
             </div>

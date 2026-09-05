@@ -148,14 +148,14 @@
   /* last eight runs - relative to today, so the prototype never looks stale */
   function daysAgo(n) { var d = new Date(); d.setDate(d.getDate() - n); return d; }
   var RUNS = [
-    { at: daysAgo(31), freed: 18.2*GB, sections: 11, mode:'full sweep' },
-    { at: daysAgo(24), freed:  6.1*GB, sections: 11, mode:'full sweep' },
-    { at: daysAgo(18), freed:  9.7*GB, sections:  7, mode:'developer caches' },
-    { at: daysAgo(14), freed:  2.4*GB, sections:  4, mode:'browsers and temp' },
-    { at: daysAgo(10), freed: 13.9*GB, sections: 11, mode:'full sweep' },
-    { at: daysAgo(6),  freed:  4.8*GB, sections:  6, mode:'caches only' },
-    { at: daysAgo(3),  freed:  7.2*GB, sections: 11, mode:'full sweep' },
-    { at: daysAgo(1),  freed:  3.3*GB, sections:  5, mode:'packages and editors' }
+    { at: daysAgo(31), freed: 18.2*GB, sections: 11, mode:'safe batch' },
+    { at: daysAgo(24), freed:  6.1*GB, sections: 11, mode:'safe batch' },
+    { at: daysAgo(18), freed:  9.7*GB, sections:  7, mode:'profile: dev' },
+    { at: daysAgo(14), freed:  2.4*GB, sections:  4, mode:'profile: minimal' },
+    { at: daysAgo(10), freed: 13.9*GB, sections: 11, mode:'safe batch' },
+    { at: daysAgo(6),  freed:  4.8*GB, sections:  6, mode:'sections 1, 2, 3, 6, 7, 8' },
+    { at: daysAgo(3),  freed:  7.2*GB, sections: 11, mode:'safe batch' },
+    { at: daysAgo(1),  freed:  3.3*GB, sections:  5, mode:'sections 1, 2, 3, 5, 6' }
   ];
 
   var GLOBALS = [

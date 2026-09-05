@@ -83,7 +83,7 @@
       etd.colSpan = COLS.length;
       var e = el('div', 'empty');
       e.appendChild(el('h3', null, 'No section matches that'));
-      e.appendChild(el('p', null, 'All 26 are still there – the filter is just narrow. Clear it and they come back.'));
+      e.appendChild(el('p', null, 'All 26 are still there – the filter is narrow. Clear it and they come back.'));
       e.appendChild(G.btn('Clear the filter'));
       etd.appendChild(e);
       etr.appendChild(etd); tb.appendChild(etr);

@@ -225,7 +225,7 @@
 
     g.appendChild(row('Never sent, by any of them',
       'A file path, a folder name, a drive label, your machine name, your Windows user name, or the ' +
-      'contents of anything.', el('span', 'badge badge-ok', 'guaranteed'), ''));
+      'contents of anything.', el('span', 'badge badge-ok', 'refused'), ''));
     host.appendChild(g);
     window.wsWidgets.boot(host);
   }

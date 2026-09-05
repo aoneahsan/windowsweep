@@ -91,3 +91,47 @@ ships from day one. The equal-weight one is fixed in the app already; the rest a
 **Seven `NEEDS DECISION` items went to the owner verbatim.** Two are sharp: the pricing sentences on Home and
 Account state that there is no paid tier and nothing to buy, and a standing fleet rule forbids writing that
 anywhere, on the grounds that the claim outlives the decision it describes.
+
+## 2026-09-05 - GATE 4 granted, and two answers that were blocking copy
+
+**GATE 4: approved.** All 38 proposed changes are written into the click dummy (RW-093), and the app then
+followed the dummy for the three screens it has built.
+
+### The pricing claim - "say only what sign-in does"
+
+Home and Account stated that there is no paid tier, no plan and nothing to buy. Asked to choose, the owner
+picked the option that **drops the claim without adding a plan**:
+
+- Account: *"Reclaiming space is never gated. Signing in moves your settings and a summary of each run
+  between your own machines, and that is all it does."*
+- Home: *"Signing in is optional. It syncs your settings and a summary of each run, and nothing else."*
+
+Both sentences are true today and neither can be falsified by a later release, which is exactly what the
+fleet rule is protecting against - it forbids the *claim*, not the state of affairs. No plan set is scoped
+for this product, and none is implied by this wording.
+
+### Code signing - unsigned, and the note stays
+
+The installer ships without a paid code-signing certificate, so both SmartScreen explanations ship as
+written. The follow-on question - what a release publishes that a reader can actually check - is answered
+by naming the two artefacts exactly rather than saying "a signature":
+
+> every release publishes a SHA-256 checksum for each installer, and a minisign signature the app's own
+> updater checks. Neither is a code-signing certificate - they prove the file is the one that was built, not
+> who built it.
+
+That distinction matters because the previous wording read as though it contradicted the sentence above it:
+"not signed" followed by "publishes a signature" invites the reader to conclude one of the two is wrong.
+
+### One thing done beyond the 38, and recorded rather than smuggled
+
+Two internal identifiers were renamed with their labels: `data-ws-action="clean"` became `"reclaim"` and
+`"preview"` became `"dryRun"`, and the `cleanBtn` text key became `reclaimBtn`. The writer's report asked for
+this on S-031 and the reasoning generalises - **an identifier that still says the retired word is how the
+retired word comes back**, in the next component someone writes by copying its neighbour. A static check
+verified both directions afterwards: every `data-ws-text` and `data-ws-action` a page declares has a writer
+or handler, and no writer targets a key no page declares.
+
+The same banned phrase was also fixed in one gallery specimen (`g-tables.js`, "the filter is just narrow"),
+which the drafts did not cover because their scope was the eleven screens. Same string, same reason, noted
+here rather than left to look like part of the approved set.

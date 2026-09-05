@@ -16,11 +16,15 @@
     "check:prepaint": "node scripts/gen-prepaint.mjs --check",
     "predev": "node scripts/gen-prepaint.mjs",
     "prebuild": "node scripts/gen-prepaint.mjs && node scripts/check-tauri-config.mjs",
-    "check:tauri-config": "node scripts/check-tauri-config.mjs"
+    "check:tauri-config": "node scripts/check-tauri-config.mjs",
+    "db:generate": "drizzle-kit generate",
+    "db:custom": "drizzle-kit generate --custom",
+    "db:check": "drizzle-kit check"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.45.8",
     "@sentry/browser": "^10.73.0",
+    "@supabase/supabase-js": "^2.115.0",
     "@tanstack/react-router": "^1.170.32",
     "@tauri-apps/api": "^2.11.1",
     "@tauri-apps/plugin-dialog": "^2.4.0",
@@ -34,6 +38,7 @@
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
     "d3-time-format": "^4.1.0",
+    "drizzle-orm": "^0.45.2",
     "i18next": "^26.4.2",
     "motion": "^13.2.0",
     "react": "^19.2.0",
@@ -56,6 +61,7 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^6.1.1",
+    "drizzle-kit": "~0.31.10",
     "eslint": "~9.39.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.12.0",

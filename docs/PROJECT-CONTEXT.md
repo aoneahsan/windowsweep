@@ -107,6 +107,34 @@ nothing to buy, which `~/.claude/rules/00-house-rules.md` forbids writing anywhe
 claim outlives the decision it describes. Until that is answered, those two sentences are the only thing in
 the product carrying a known rule violation.
 
+### Session 9 (2026-09-06) - the backend is Supabase, not Firebase
+
+**Owner directive, verbatim:** *"we will use supabase for backend, not firebase, add this as rule, moving
+forward use supabase as backend for all new projects unless i ask otherwise"*. Recorded fleet-wide in
+`~/.claude/rules/services-integrations.md`; asked whether it reached this project, he chose **"Switch it to
+Supabase now"**.
+
+It cost code and no data: the Firebase project had never been created, so nothing was deployed and nothing had
+to migrate. What changed: `src/lib/auth.ts` (Identity Toolkit REST -> Supabase Auth PKCE), `src/lib/sync.ts`
+(Firestore REST -> PostgREST), `desktop/firebase/` deleted, and the Firestore rules replaced by a Drizzle
+schema plus two migrations. **The Rust loopback listener was reused unchanged** - Supabase's PKCE flow needs
+exactly the same redirect, so only the exchange differed.
+
+🔴 **AND THE SWITCH IS BLOCKED ON A CONSTRAINT NOBODY COULD HAVE PREDICTED FROM THE CODE.** Measured against
+the FilesHub registry on 2026-09-06: **all 7 registered Supabase accounts hold 2 projects each** - the
+free-tier limit, **14 of 14 slots used**, every one a real named project (growthify, netcage, shortlists x2,
+trizlink, labflow, aoneahsan-portfolio, habitforge, clearhire, custos, linkedin-automation, lifewell,
+trialith, callvault). So there is nowhere to put a windowsweep project, and creating **an account to hold one
+is owner-only too**. `docs/MANUAL-TASKS.md` row 23 is now two steps rather than one.
+
+**Row 15 changed shape with the backend.** Supabase owns the OAuth redirect, so Google sign-in needs a **Web**
+client whose redirect URI is `https://<ref>.supabase.co/auth/v1/callback`, not the **Desktop** client the
+Firebase flow wanted. The old row would have sent him to create the wrong credential type.
+
+Everything that does not depend on the missing project was built and gated: `drizzle-kit generate` needs no
+database connection, which is exactly why the schema could be authored before G1 passes. The equivalence gate
+reports **"No schema changes, nothing to migrate"**, so the schema and the migrations agree.
+
 ### How the frontend UI mandates map to this product - the declared exemptions
 
 `~/.claude/rules/frontend-ui-standards.md` applies to the desktop app (the CLI has no UI at all). Recorded

@@ -3,7 +3,7 @@
   "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md at the repository root; this file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-09-05",
+  "lastUpdated": "2026-09-06",
   "planFile": "C:/Users/PC/.claude/plans/please-plan-and-get-agile-fairy.md",
   "overview": "docs/features/windowsweep-completion/00-overview.md",
   "specification": "remaining-work.md",
@@ -26,14 +26,16 @@
     "scopeOf100": "INCLUDES the desktop app and the storytelling retrofit (owner, 2026-09-05, asked directly: \"Yes, include it\"). The 2026-09-03 CLI-only scope still exists and is reported beside it, because the earlier records were written against that number.",
     "wipCommit": "The eight A4 click-dummy screens, their page-*.js, pages.html and the NAV wiring were committed as their own design commit 2721b75 before the audit commit (owner, 2026-09-05: \"Commit as its own design commit\"). A static check resolved 456 local links and every NAV href first.",
     "folderLayout": "D:\\work\\windows-cleanup-root\\{windows-cleanup, windowsweep-docs} is durable and the inner folder names do not change (owner, 2026-09-05: \"Keep this layout as is\"). MANUAL-TASKS row 4 is closed as superseded.",
-    "storytelling": "Retrofit EVERYTHING (owner, 2026-09-05: \"Retrofit everything\"). Phase P7: /story-init and the Story Bible (GATE 1), the content map (GATE 2), then the README, the docs pages, llms.txt, the CLI console strings and the desktop copy through the pipeline. The desktop words are amended in the click dummy before the app is written (frontend-ui-standards.md section 10a). No product-voice prose before GATE 1; correcting a false statement is not new prose."
+    "storytelling": "Retrofit EVERYTHING (owner, 2026-09-05: \"Retrofit everything\"). Phase P7: /story-init and the Story Bible (GATE 1), the content map (GATE 2), then the README, the docs pages, llms.txt, the CLI console strings and the desktop copy through the pipeline. The desktop words are amended in the click dummy before the app is written (frontend-ui-standards.md section 10a). No product-voice prose before GATE 1; correcting a false statement is not new prose.",
+    "backend": "Supabase, not Firebase (owner directive 2026-09-06: \"moving forward use supabase as backend for all new projects unless i ask otherwise\"). Asked whether it reached this project, he chose to switch it now rather than at release - nothing had been created on Firebase, so it cost code and no data."
   },
   "knownRisks": [
     "The Visual Studio Build Tools UAC click (MANUAL-TASKS row 22) has not happened, so nothing Rust-side links on this machine and the Tauri half of P6 is CI-verified only. Report that plainly; never round it up to \"verified\".",
     "The docs domain still probes 000. Every link, homepage field and WS_DOCS switch waits on the owner DNS rows 11-12 and a 200 probe - never switch one early.",
     "The storytelling retrofit gates the desktop copy: RW-077 must not write UI strings before RW-090, RW-091 and RW-093 have run, or the app ships words the Bible never approved.",
     "P5 target paths wait on the owner probe (row 20). A path becomes a target only once it has been seen on a real machine holding regenerable data - C:\\Intel was in the specification, exists, and was rejected on inspection.",
-    "The click dummy A4 screens are committed but unverified: Block Q's inventory, Block R's wiring and Block S's sweep (RW-073 to RW-075) are open, so the dummy is not yet the finished specification the app is built against."
+    "The click dummy A4 screens are committed but unverified: Block Q's inventory, Block R's wiring and Block S's sweep (RW-073 to RW-075) are open, so the dummy is not yet the finished specification the app is built against.",
+    "Supabase free-tier capacity: all 7 registered accounts are full at 2 projects each (14/14 measured 2026-09-06), so windowsweep needs a NEW account before it can have a project. Both are owner-only."
   ],
   "phases": [
     {
@@ -429,9 +431,9 @@
         {
           "id": "P6.firebase-vault",
           "title": "Firebase project, Google provider, Firestore rules and indexes, FilesHub vault seeded",
-          "status": "in_progress",
-          "note": "RW-079 agent half done 2026-09-05: desktop/firebase/{firestore.rules,firestore.indexes.json,firebase.json,README.md}. Deny by default, a field allowlist on BOTH documents (users/{uid} and users/{uid}/runs/{runId}), no update on a run, and the one composite index History needs. The field allowlist is what makes the consent screen enforceable rather than a promise - sync.ts narrows and the server refuses anything wider. 🔴 Creating the Firebase project is owner row 23: it is a new cloud project on his account, outward-facing and awkward to undo. The rules deploy in one command once he says go, and never as a bare --only firestore",
-          "awaitingUser": false
+          "status": "blocked",
+          "note": "🔴 RW-079 is now SUPABASE, not Firebase (owner directive 2026-09-06; he chose to switch this project the same day, before anything had been created, so it cost code and no data). Written and committed: the Drizzle schema at desktop/src/db/schema/sync.ts, two migrations (tables + RLS with seven policies, and the paired privilege block that Drizzle cannot emit), auth.ts on Supabase Auth PKCE reusing the Rust loopback listener unchanged, sync.ts on PostgREST paginated at 20 with a keyset cursor. The equivalence gate reports no schema changes, so schema and migrations agree. 🔴 BLOCKED on owner row 23, and on a constraint the code could not reveal: all 7 registered Supabase accounts hold 2 projects each - the free-tier limit, 14 of 14 used - so there is nowhere to put one and creating an account is owner-only too. Row 15 also changed shape: Supabase owns the redirect, so Google sign-in needs a WEB client at https://<ref>.supabase.co/auth/v1/callback, not a Desktop client.",
+          "awaitingUser": true
         },
         {
           "id": "P6.code-ci",
@@ -628,8 +630,14 @@
       "phase": "P6+P7",
       "summary": "Story GATES 1 and 2 approved and recorded; the eleven desktop screens drafted through the story writer (375 slots, 38 changes, 7 NEEDS DECISION, 5 dummy defects reported). Desktop app foundation built: web layer, Tauri shell, CI workflows. Gates green - typecheck 0, lint 0 with the i18n gate proved on two plants, vite build 0 warnings and no source maps, the prepaint drift gate proved on a plant, the npm tarball sweep proved against a planted desktop leak, CLI self-test 151/151 and version parity 1.1.0 unchanged. Whole project 55.45% -> 70.55%. Then RW-079 agent half: the Firestore rules, indexes and config written and committed; project creation filed as owner row 23. Then GATE 4 was granted and RW-093 landed: 38 approved slots into the dummy, the pricing and code-signing answers applied, two action identifiers renamed with their labels, the app re-gated green. Then the remaining seven screens, so RW-077 is complete at eleven of eleven; two CI-found defects fixed (the protocol-asset feature, and the resource glob trailing ** which matches directories not files). Then the four front-door surfaces drafted, and eight factual defects found and either corrected (the README calling section 23 a read-only audit; an unsourced number; 400 vs 445; the deep-flag arithmetic; the dummy claiming Nothing else about a nine-field payload; og:locale) or fixed at the source (the release now produces the SHA-256 checksum its copy promises, and refuses while the updater pubkey is a placeholder). Then the six documentation surfaces, and seventeen more factual corrections including the safety page overclaiming against its own engine header and the AI guide misstating which admin sections --yes covers",
       "commit": "pending"
+    },
+    {
+      "date": "2026-09-06",
+      "phase": "P6",
+      "summary": "Backend switched from Firebase to Supabase on the owner standing directive. Drizzle schema + two migrations (tables/RLS, and the paired privilege block), auth.ts on Supabase Auth PKCE reusing the Rust loopback listener unchanged, sync.ts on PostgREST at limit 20 keyset, CSP narrowed to *.supabase.co, desktop/firebase deleted, rows 15 and 23 rewritten. Gates green: typecheck 0, lint 0, build 0 warnings and no source maps, drizzle-kit check clean, the equivalence gate reports no schema changes, the dev-surface gate still absent from dist with its control found, anon granted nothing. 🔴 Blocked on row 23 by Supabase free-tier capacity - 14 of 14 slots used across 7 accounts.",
+      "commit": "pending"
     }
   ],
-  "resumeInstructions": "P7 continues with the eleven unwritten surfaces, in the content map order: readme, tagline and site-front (the front door) first, then docs-start, docs-safety and docs-help. Each goes through the panel with at most two review rounds and stops at GATE 4. In parallel, agent-doable and needing no copy: RW-079 waits only on owner row 23 (creating the Firebase project); the seven remaining desktop screens (Picker, History, Report, Settings, Account, Elevation, Splash) can now be built, because their words are through GATE 4 and are in the dummy. Then RW-081 (WebView2 run-to-verify plus GATE 4 parity pairs at 1440 and 760 - 390 is below the product minimum of 760 and is not chased) and RW-082 (desktop-v1.1.0). Rust is CI-verified only until owner row 22. Never re-plan; the specs are remaining-work.md.",
+  "resumeInstructions": "🔴 Two owner rows now gate the desktop app: row 22 (Build Tools - Rust locally, the WebView2 run-to-verify, GATE 4 screenshot pairs, the release) and row 23 (a NEW Supabase account, then a project - all 7 existing accounts are at the free-tier limit). Row 15 follows 23 and is a WEB OAuth client, not a Desktop one. Everything not depending on those is done: the app has all eleven screens, desktop-ci is green end to end, and the Supabase schema and migrations are written and self-consistent. P7 has ten of fourteen surfaces drafted and awaiting GATE 4; only cli-strings is unwritten, deliberately last because it changes engine source and so belongs with a 1.2.0 version cascade. Never re-plan; the specs are remaining-work.md.",
   "auditPlanFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-streamed-nest.md"
 }

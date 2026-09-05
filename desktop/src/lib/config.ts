@@ -8,9 +8,10 @@
  * worse outcome than no analytics.
  *
  * 🔴 No SERVER secret is ever read here. Everything below is a public client
- * identifier: a GA4 measurement id, a Clarity project id, a Sentry DSN, a Firebase
- * web API key and a public OAuth desktop client id. A desktop client is a public
- * client by definition, which is why the sign-in flow uses PKCE.
+ * identifier: a GA4 measurement id, a Clarity project id, a Sentry DSN, a Supabase URL
+ * and its publishable key. A desktop client is a public client by definition,
+ * which is why the sign-in flow uses PKCE and why the publishable key's whole
+ * security model is RLS rather than secrecy.
  */
 
 import type { AnalyticsKeys } from './analytics';
@@ -24,14 +25,16 @@ export const keys: AnalyticsKeys = {
   sentryDsn: env.VITE_SENTRY_DSN,
 };
 
-export const authConfig = {
-  googleClientId: env.VITE_GOOGLE_DESKTOP_CLIENT_ID,
-  firebaseApiKey: env.VITE_FIREBASE_API_KEY,
-};
-
-export const syncConfig = {
-  projectId: env.VITE_FIREBASE_PROJECT_ID,
-  apiKey: env.VITE_FIREBASE_API_KEY,
+/**
+ * Supabase, since 2026-09-06: it is the default backend for every new project
+ * (`~/.claude/rules/services-integrations.md`). The publishable key is a PUBLIC
+ * client key whose whole security model is RLS - it is meant to ship in a bundle.
+ * 🔴 The SECRET key never touches this process, and there is no code path here
+ * that could read one.
+ */
+export const supabaseConfig = {
+  url: env.VITE_SUPABASE_URL,
+  publishableKey: env.VITE_SUPABASE_PUBLISHABLE_KEY,
 };
 
 /** Used until the Rust side reports the real one. */
@@ -48,9 +51,13 @@ export const REPO_URL = 'https://github.com/aoneahsan/windowsweep';
 
 /** Which of these are configured, for the settings screen to state honestly. */
 export function configuredFeatures(): { signIn: boolean; sync: boolean; telemetry: boolean } {
+  const supabaseReady = Boolean(supabaseConfig.url && supabaseConfig.publishableKey);
   return {
-    signIn: Boolean(authConfig.googleClientId && authConfig.firebaseApiKey),
-    sync: Boolean(syncConfig.projectId && syncConfig.apiKey),
+    // One backend, so sign-in and sync are configured together or not at all -
+    // which is simpler to state honestly on the Settings screen than two flags
+    // that can disagree.
+    signIn: supabaseReady,
+    sync: supabaseReady,
     telemetry: Boolean(keys.ga4MeasurementId ?? keys.amplitudeApiKey ?? keys.clarityProjectId ?? keys.sentryDsn),
   };
 }

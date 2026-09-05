@@ -144,6 +144,18 @@ Added 2026-09-05 with the first application code under `desktop/`. Installed wit
 **`@eslint/js` is deliberately absent.** It is banned fleet-wide for broken versioning, so the handful of core
 rules this project wants are written out in `eslint.config.js` rather than spread in from its recommended set.
 
+### The backend moved to Supabase on 2026-09-06
+
+`@supabase/supabase-js` `^2.115.0` replaced the hand-rolled Firebase REST calls (there was never a Firebase SDK
+dependency - `auth.ts` and `sync.ts` used plain `fetch`). Added with it: **`drizzle-orm` `^0.45.2`** and
+**`drizzle-kit` `~0.31.10`**, which are the fleet's schema-and-migration standard rather than this project's
+choice.
+
+🔴 **Both Drizzle pins are load-bearing.** The `@rc` / 1.0-beta line emits a *directory* per migration, which
+the Supabase CLI cannot read - so `supabase db push` reports success having applied **nothing**. Stay on
+`drizzle-kit ~0.31` and `drizzle-orm ^0.45`; today those are also the registry's latest, so an `ncu -u` is
+currently a no-op here rather than a trap.
+
 ### Rust (`desktop/src-tauri/Cargo.toml`)
 
 `tauri` 2 with the `protocol-asset` feature, plus the `dialog`, `opener`, `os`, `process` and `updater`

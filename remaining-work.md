@@ -41,7 +41,7 @@ an approved Story Bible with every in-scope surface through GATE 4.**
 | Docs site | 8 | 95% | DNS + HTTPS (rows 11-12) and the write-back that follows. The PNG OG card and the local install closed 2026-09-05 |
 | Repository hygiene + owner records | 5 | 85% | homepage fields after DNS; the owner's review of the master-links entry (row 5); the ORCID import (row 13) |
 | Desktop design (click dummy) | 8 | **100%** | nothing - RW-073 to RW-075 closed 2026-09-05, four defects fixed, every gate proved red on its own plant |
-| Desktop app (code, Tauri, Firebase, CI, release) | 24 | 68% | all eleven screens built; RW-079 waits on owner row 23; Rust compiled locally (row 22); RW-081 run-to-verify and GATE 4 parity; RW-082 the release |
+| Desktop app (code, Tauri, Supabase, CI, release) | 24 | 68% | all eleven screens built; RW-079 waits on owner row 23; Rust compiled locally (row 22); RW-081 run-to-verify and GATE 4 parity; RW-082 the release |
 | Storytelling retrofit (P7) | 10 | 55% | GATE 4 on the three drafted desktop surfaces, seven `NEEDS DECISION` answers, RW-093, then eleven more surfaces |
 
 Score = sum(weight x done) / 100 = 25 + 1.2 + 1.2 + 4 + 5 + 7.6 + 4.25 + 8 + 16.32 + 5.5 = **78.07% of the whole
@@ -388,8 +388,10 @@ settings restored on sign-in); **runs are never gated, no paid tier, no plan set
 Amplitude, Clarity, Sentry) behind a first-run consent dialog with every provider off until accepted, while the
 CLI keeps zero network calls; `desktop/` in this repository, excluded from the npm allowlist and asserted absent
 by CI; identifier `com.aoneahsan.windowsweep` (permanent); app version = the bundled CLI version; releases
-tagged `desktop-vX.Y.Z` with NSIS + MSI + `.sig` + `latest.json`; the admin surface is the Firebase console for
-this phase.
+tagged `desktop-vX.Y.Z` with NSIS + MSI + `.sig` + `latest.json`; the backend is **Supabase** (owner directive
+2026-09-06) and its administration surface is the Supabase dashboard for this phase - there is no in-app admin
+panel and none is owed, for the reason recorded in `docs/PROJECT-CONTEXT.md`: no server, no plan, no limit and
+no second user.
 
 ### RW-073 - Finish Block Q: the A4 screens, the inventory and the promotions (agent 1 h)
 
@@ -487,20 +489,36 @@ the story pipeline (RW-093), and the amended words must be **in the dummy**. See
   `%LOCALAPPDATA%\windowsweep-desktop\runs\<id>`, and the app **tails the log**.
 - **Do not.** The app never elevates itself, and no agent session triggers that path.
 
-### RW-079 - Block V: Firebase and the vault (agent 1.5 h)
+### RW-079 - Block V: Supabase - the schema, the policies, the project (agent 1.5 h + owner rows 15, 23)
 
-- **Acceptance points.** `npx -y firebase-tools@latest`; project `windowsweep` (fallback `windowsweep-app`),
-  Google provider, Firestore + indexes. 🔴 **Never `deploy --only firestore`** bare - name
-  `firestore:rules,firestore:indexes`. `desktop/firebase/firestore.rules`: `users/{uid}` readable and writable
-  only by that uid with
-  `keys().hasOnly(['email','displayName','settings','settingsUpdatedAt','createdAt','lastSeenAt'])`;
-  `users/{uid}/runs/{runId}` create/read/delete by the owner, **no update**; everything else denied. 🔴 A list
-  query must prove its rule from its own filters - the runs query carries them. FilesHub project **60**
-  (`windowsweep`) seeded with the web config; the token is read at runtime with `grep -oE 'fh_pat_[A-Za-z0-9]+'`,
-  never echoed, never committed.
-- **Owner rows.** The Google OAuth **desktop** client id (row 15) and the four telemetry keys (row 16) are his
-  Cloud-Console clicks. The app reads them from config; **an absent key skips that provider and never blocks
-  boot**, so sign-in and telemetry compile and ship dormant rather than blocking the release.
+- **What.** The backend. 🔴 **Supabase, not Firebase** - owner directive 2026-09-06, applied to this project
+  the same day because nothing had been created yet, so it cost code and no data.
+- **Done and committed (2026-09-06).** `desktop/src/db/schema/sync.ts` (two tables, seven policies, RLS on
+  both) · `supabase/migrations/` - the generated DDL **and** the hand-written **paired privilege block**,
+  because Drizzle emits no `revoke` and Supabase's default ACL names `anon`, `authenticated` and
+  `service_role` by name · `src/lib/auth.ts` on Supabase Auth PKCE, reusing the Rust loopback listener
+  unchanged · `src/lib/sync.ts` on PostgREST, limit 20, keyset by `started_at`, every query filtered on the
+  column its policy reads · the CSP narrowed to `*.supabase.co` · `desktop/supabase/README.md`.
+- **Acceptance points.**
+  1. 🔴 `supabase db push` is the ONE applier. Never `drizzle-kit push`, never `drizzle-kit migrate`, never
+     the `@rc`/1.0-beta line - it emits a directory per migration, so `db push` reports success having applied
+     nothing.
+  2. The **equivalence gate** passes: after the push, `yarn db:generate` prints *"No schema changes, nothing
+     to migrate"*. It does today, against the migrations as written.
+  3. 🔴 Grants verified from `information_schema.role_table_grants`, **never from the migration text** - the
+     files describe intent, and intent is what diverges. No app table shows `arwd` for `anon`; `anon` holds
+     nothing at all.
+  4. 🔴 Policies verified from `pg_policies`, and a `(200, 0)` probe proves nothing - seed first, probe as a
+     non-admin test account, and remember a forbidden UPDATE/DELETE is 200 with 0 rows.
+  5. `user_settings` is never written with `.upsert()`. The column-scoped UPDATE grant excludes `user_id`, so
+     an upsert carrying it is refused at plan time with a message naming the table rather than the column.
+- **Blocked, and not on the code.** 🔴 Measured 2026-09-06: **all 7 registered Supabase accounts hold 2
+  projects each** - the free-tier limit, 14 of 14 slots used. windowsweep needs a **new account** before it
+  can have a project, and both are owner-only (row 23). Row 15 follows it and is a **Web** OAuth client
+  pointed at `https://<ref>.supabase.co/auth/v1/callback`, not the Desktop client the Firebase flow wanted.
+- **Do not.** Create a Supabase project or an account by any means. Run `supabase db reset`, `start`, `stop`
+  or `status`. Point anything at `127.0.0.1:54321`. Treat a blocked credential gate as a reason to switch
+  backends - that is exactly how "unless I ask otherwise" becomes "whenever a credential was slow to arrive".
 
 ### RW-080 - Block W: CI (agent 1 h)
 

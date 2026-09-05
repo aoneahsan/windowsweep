@@ -24,7 +24,7 @@ production-ready, with the verification runs that only you can do still open.**
 | Docs site | 8 | 95% | DNS + HTTPS (rows 11-12) and the one-commit write-back that follows. The PNG OG card and the local install both closed 2026-09-05 |
 | Repository hygiene + owner records | 5 | 85% | homepage fields after DNS; your review of the master-links entry (row 5); the ORCID import (row 13) |
 | Desktop design (click dummy) | 8 | **100%** | nothing - closed 2026-09-05 with four defects fixed and every gate proved against a planted defect |
-| Desktop app (code, Tauri, Firebase, CI, release) | 24 | 68% | **all eleven screens are built, `desktop-ci` is green end to end, and a 264-combination browser pass found zero contrast, type or overflow defects.** Open: the Firebase project (owner row 23); Rust compiled locally (owner row 22 - CI-verified until then); **GATE 4 proper** - screenshot pairs judged by eye in the app own WebView2, which needs row 22; the `desktop-v1.1.0` release (RW-082) |
+| Desktop app (code, Tauri, Supabase, CI, release) | 24 | 68% | **all eleven screens are built, `desktop-ci` is green end to end, and a 264-combination browser pass found zero contrast, type or overflow defects.** Open: the Firebase project (owner row 23); Rust compiled locally (owner row 22 - CI-verified until then); **GATE 4 proper** - screenshot pairs judged by eye in the app own WebView2, which needs row 22; the `desktop-v1.1.0` release (RW-082) |
 | Storytelling retrofit (P7) | 10 | 55% | GATE 1 and GATE 2 are cleared and the three desktop surfaces are drafted (375 slots). Still open: your GATE 4 on those, the seven `NEEDS DECISION` answers, then eleven more surfaces - README, tagline, docs pages, `llms.txt`, CLI strings |
 
 Score = sum(weight x done) / 100 = 25 + 1.2 + 1.2 + 4 + 5 + 7.6 + 4.25 + 8 + 16.32 + 5.5 = **78.07**.
@@ -47,8 +47,11 @@ self-test 5, release 5, hygiene 5, records 5) = 30 + 18 + 1.5 + 10 + 8.5 + 5 + 5
    click dummy, and the app then follows the dummy.
 5. **RW-077 residue (agent).** Seven screens remain: Picker, History, Report, Settings, Account, Elevation and
    Splash. Their words come from the approved drafts, so they follow step 4.
-6. **RW-079 (agent).** The Firebase project, the Firestore rules and indexes, the vault entries. Sign-in and
-   sync are written and compile; they stay dormant until rows 15 and 16.
+6. 🔴 **RW-079 is Supabase now, and it is blocked on capacity rather than on code.** The Drizzle schema,
+   both migrations and the two client modules are written and self-consistent. But **all 7 of your
+   Supabase accounts are at the 2-project free-tier limit** - 14 of 14 slots, every one a real project -
+   so windowsweep needs a **new account** before it can have a project, and both are yours to create
+   (row 23). Row 15 follows it and is a **Web** OAuth client, not the Desktop one Firebase wanted.
 7. **Rows 15, 16, 22 (you).** The Google OAuth desktop client id, the four telemetry keys, the Build Tools UAC
    click. Rust is CI-verified only until row 22.
 8. **RW-081, RW-082 (agent).** The WebView2 run-to-verify pass, GATE 4 parity as screenshot pairs, then the

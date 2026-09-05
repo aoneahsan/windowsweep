@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
 import { signIn, signOut } from '../lib/auth';
-import { authConfig, configuredFeatures } from '../lib/config';
+import { configuredFeatures } from '../lib/config';
 
 export function Account() {
   const { t } = useTranslation();
@@ -29,7 +29,7 @@ export function Account() {
   function onSignIn() {
     setBusy(true);
     setError(null);
-    void signIn(authConfig)
+    void signIn()
       .then(setUser)
       .catch((e: unknown) => { setError(e instanceof Error ? e.message : String(e)); })
       .finally(() => { setBusy(false); });
@@ -61,7 +61,7 @@ export function Account() {
                       <button
                         className="btn btn-sm"
                         type="button"
-                        onClick={() => { signOut(); setUser(null); }}
+                        onClick={() => { void signOut().finally(() => { setUser(null); }); }}
                       >
                         {t('account.signOut')}
                       </button>

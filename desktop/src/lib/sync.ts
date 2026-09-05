@@ -1,31 +1,30 @@
 /**
- * Settings and run history across machines, over the Firestore REST API.
+ * Settings and run history across machines, through Supabase.
  *
  * 🔴 WHAT IS NEVER SENT: a file path, a folder name, a drive label, a machine
- * name, a user name, or the contents of anything. A synced run is a date, a mode,
- * a duration, a section list and two byte counts. The consent screen states that;
- * `stripRun` is where it is kept, and the shape below is deliberately narrow
- * enough that adding a path would mean changing this type.
+ * name, a Windows user name, or the contents of anything. `stripRun` below is the
+ * narrowing, and the schema has no column that could hold one - so the promise is
+ * kept twice, once in the client and once by a server that would refuse a wider
+ * row from a client that tried.
  *
- * 🔴 Every list read is paginated - limit 20 with a page token, never a whole
- * collection. A run history that fetched everything would grow without bound and
- * cost the reader their quota to render a screen showing twenty rows.
+ * 🔴 Every list read is paginated - **limit 20**, keyset by `started_at`, never a
+ * whole table. And every query filters on `user_id`, the same column its RLS
+ * policy compares: RLS *filters* rather than refuses, so a missing owner filter
+ * is a 200 with someone else's rows absent rather than an error, which is
+ * invisible to any test asserting 2xx. The filter is what makes the read provable
+ * from its own constraints instead of trusting the server to narrow it.
  *
- * 🔴 Every list query carries the filter its security rule reads. The rule allows
- * a document whose parent is the caller's own uid; the query is scoped to that
- * same path, so it proves its rule from its own filters rather than relying on
- * the server to filter for it.
+ * 🔴 NO `.upsert()` ON `user_settings`, and that is a hard constraint rather than
+ * a preference. PostgREST builds `ON CONFLICT DO UPDATE SET` from every payload
+ * key and Postgres checks the privilege at PLAN time; `user_id` is deliberately
+ * outside the column-scoped UPDATE grant, so an upsert carrying it is refused
+ * outright with `permission denied for table user_settings` - naming the TABLE,
+ * not the column, which reads exactly like a broken policy. This inserts and
+ * handles `23505`.
  */
 
 import type { RunSummary } from './cli';
-import { validToken, type AuthUser } from './auth';
-
-const FIRESTORE = 'https://firestore.googleapis.com/v1';
-
-export interface SyncConfig {
-  projectId: string | undefined;
-  apiKey: string | undefined;
-}
+import { supabase } from './auth';
 
 /** The only run fields that ever leave the machine. */
 export interface SyncedRun {
@@ -46,8 +45,13 @@ export interface SyncedSettings {
   updatedAt: string;
 }
 
-/** 🔴 The narrowing. Everything not named here is dropped, including candidates and targets. */
-export function stripRun(summary: RunSummary, runId: string, startedAt: string, durationMs: number): SyncedRun {
+/** 🔴 The narrowing. Everything not named here is dropped - candidates and targets included. */
+export function stripRun(
+  summary: RunSummary,
+  runId: string,
+  startedAt: string,
+  durationMs: number,
+): SyncedRun {
   return {
     runId,
     startedAt,
@@ -61,88 +65,78 @@ export function stripRun(summary: RunSummary, runId: string, startedAt: string, 
   };
 }
 
-type FirestoreValue =
-  | { stringValue: string }
-  | { booleanValue: boolean }
-  | { integerValue: string }
-  | { arrayValue: { values: FirestoreValue[] } }
-  | { mapValue: { fields: Record<string, FirestoreValue> } };
-
-function toValue(v: unknown): FirestoreValue {
-  if (typeof v === 'string') return { stringValue: v };
-  if (typeof v === 'boolean') return { booleanValue: v };
-  if (typeof v === 'number') return { integerValue: String(Math.trunc(v)) };
-  if (Array.isArray(v)) return { arrayValue: { values: v.map(toValue) } };
-  if (typeof v === 'object' && v !== null) {
-    return { mapValue: { fields: Object.fromEntries(Object.entries(v).map(([k, x]) => [k, toValue(x)])) } };
-  }
-  return { stringValue: String(v) };
+interface SettingsRow {
+  prefs: Record<string, string> | null;
+  developer: boolean;
+  settings_updated_at: string;
 }
 
-function fromValue(v: FirestoreValue): unknown {
-  if ('stringValue' in v) return v.stringValue;
-  if ('booleanValue' in v) return v.booleanValue;
-  if ('integerValue' in v) return Number(v.integerValue);
-  if ('arrayValue' in v) return (v.arrayValue.values ?? []).map(fromValue);
-  return Object.fromEntries(Object.entries(v.mapValue.fields ?? {}).map(([k, x]) => [k, fromValue(x)]));
-}
-
-function toFields(obj: Record<string, unknown>): Record<string, FirestoreValue> {
-  return Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, toValue(v)]));
-}
-
-async function request(
-  config: SyncConfig,
-  user: AuthUser,
-  path: string,
-  init: RequestInit = {},
-): Promise<unknown> {
-  if (!config.projectId || !config.apiKey) throw new Error('sync is not configured in this build');
-  const fresh = await validToken(user, config.apiKey);
-  const url = `${FIRESTORE}/projects/${config.projectId}/databases/(default)/documents/${path}`;
-  const res = await fetch(url, {
-    ...init,
-    headers: {
-      'content-type': 'application/json',
-      authorization: `Bearer ${fresh.idToken}`,
-      ...(init.headers ?? {}),
-    },
-  });
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error(`sync failed (${res.status})`);
-  return res.json();
-}
-
-export async function fetchSettings(config: SyncConfig, user: AuthUser): Promise<SyncedSettings | null> {
-  const doc = (await request(config, user, `users/${user.uid}`)) as
-    | { fields?: Record<string, FirestoreValue> }
-    | null;
-  if (!doc?.fields?.['settings']) return null;
-  const settings = fromValue(doc.fields['settings']) as Record<string, unknown>;
+export async function fetchSettings(userId: string): Promise<SyncedSettings | null> {
+  const sb = supabase();
+  if (!sb) return null;
+  const { data, error } = await sb
+    .from('user_settings')
+    .select('prefs, developer, settings_updated_at')
+    // the same column the policy reads
+    .eq('user_id', userId)
+    .maybeSingle<SettingsRow>();
+  if (error) throw new Error(`settings could not be read: ${error.message}`);
+  if (!data) return null;
   return {
-    prefs: (settings['prefs'] as Record<string, string>) ?? {},
-    developer: settings['developer'] === true,
-    updatedAt: String(fromValue(doc.fields['settingsUpdatedAt'] ?? { stringValue: '' })),
+    prefs: data.prefs ?? {},
+    developer: data.developer,
+    updatedAt: data.settings_updated_at,
   };
 }
 
-export async function pushSettings(config: SyncConfig, user: AuthUser, settings: SyncedSettings): Promise<void> {
-  await request(
-    config,
-    user,
-    `users/${user.uid}?updateMask.fieldPaths=settings&updateMask.fieldPaths=settingsUpdatedAt&updateMask.fieldPaths=email&updateMask.fieldPaths=lastSeenAt`,
-    {
-      method: 'PATCH',
-      body: JSON.stringify({
-        fields: toFields({
-          settings: { prefs: settings.prefs, developer: settings.developer },
-          settingsUpdatedAt: settings.updatedAt,
-          email: user.email,
-          lastSeenAt: new Date().toISOString(),
-        }),
-      }),
-    },
-  );
+/**
+ * Write the settings row: insert once, update thereafter.
+ *
+ * The `23505` branch is not defensive coding around an unlikely case - it is the
+ * ordinary path on every machine after the first, and it exists because the
+ * upsert that would have replaced it is refused at plan time by the column-scoped
+ * UPDATE grant. See the header.
+ */
+export async function pushSettings(
+  userId: string,
+  email: string,
+  displayName: string | null,
+  settings: SyncedSettings,
+): Promise<void> {
+  const sb = supabase();
+  if (!sb) return;
+
+  const now = new Date().toISOString();
+  const insert = await sb.from('user_settings').insert({
+    user_id: userId,
+    email,
+    display_name: displayName,
+    prefs: settings.prefs,
+    developer: settings.developer,
+    settings_updated_at: settings.updatedAt,
+    last_seen_at: now,
+  });
+
+  if (!insert.error) return;
+  // 23505 = unique_violation: the row already exists, which is the normal case.
+  if (insert.error.code !== '23505') {
+    throw new Error(`settings could not be saved: ${insert.error.message}`);
+  }
+
+  // 🔴 `user_id` is NOT in this payload - it is outside the UPDATE grant, and
+  // sending it would make Postgres refuse the whole statement at plan time.
+  const update = await sb
+    .from('user_settings')
+    .update({
+      email,
+      display_name: displayName,
+      prefs: settings.prefs,
+      developer: settings.developer,
+      settings_updated_at: settings.updatedAt,
+      last_seen_at: now,
+    })
+    .eq('user_id', userId);
+  if (update.error) throw new Error(`settings could not be saved: ${update.error.message}`);
 }
 
 /**
@@ -151,8 +145,8 @@ export async function pushSettings(config: SyncConfig, user: AuthUser, settings:
  * 🔴 The undo is not decoration. Two machines editing settings is the ordinary
  * case for this product - one desktop, one laptop - and silently discarding the
  * older side means a person changes a setting, walks to the other machine and
- * finds it reverted with no explanation. The caller shows the returned
- * `replaced` value in an undo toast.
+ * finds it reverted with no explanation. The caller shows `replaced` in an undo
+ * toast.
  */
 export function reconcileSettings(
   local: SyncedSettings,
@@ -167,32 +161,88 @@ export function reconcileSettings(
 
 export const RUNS_PAGE_SIZE = 20;
 
+interface RunRow {
+  run_id: string;
+  started_at: string;
+  mode: string;
+  dry_run: boolean;
+  elevated: boolean;
+  sections: number[];
+  freed_bytes: number;
+  estimated_bytes: number;
+  duration_ms: number;
+}
+
+/**
+ * One page of a person's own runs, newest first.
+ *
+ * Keyset, not offset: `before` is the previous page's oldest `startedAt`. An
+ * offset walk re-reads every skipped row, and the cost grows with the history
+ * rather than with the page.
+ */
 export async function fetchRuns(
-  config: SyncConfig,
-  user: AuthUser,
-  pageToken?: string,
-): Promise<{ runs: SyncedRun[]; nextPageToken: string | null }> {
-  const params = new URLSearchParams({
-    pageSize: String(RUNS_PAGE_SIZE),
-    orderBy: 'startedAt desc',
-  });
-  if (pageToken) params.set('pageToken', pageToken);
-  const body = (await request(config, user, `users/${user.uid}/runs?${params.toString()}`)) as
-    | { documents?: { fields: Record<string, FirestoreValue> }[]; nextPageToken?: string }
-    | null;
+  userId: string,
+  before?: string,
+): Promise<{ runs: SyncedRun[]; nextCursor: string | null }> {
+  const sb = supabase();
+  if (!sb) return { runs: [], nextCursor: null };
+
+  let runsQuery = sb
+    .from('runs')
+    .select('run_id, started_at, mode, dry_run, elevated, sections, freed_bytes, estimated_bytes, duration_ms')
+    .eq('user_id', userId)
+    .order('started_at', { ascending: false })
+    .limit(RUNS_PAGE_SIZE);
+  if (before) runsQuery = runsQuery.lt('started_at', before);
+
+  const { data, error } = await runsQuery;
+  if (error) throw new Error(`run history could not be read: ${error.message}`);
+
+  const rows = (data ?? []) as RunRow[];
+  const runs: SyncedRun[] = rows.map((r) => ({
+    runId: r.run_id,
+    startedAt: r.started_at,
+    mode: r.mode,
+    dryRun: r.dry_run,
+    elevated: r.elevated,
+    sections: r.sections,
+    freedBytes: r.freed_bytes,
+    estimatedBytes: r.estimated_bytes,
+    durationMs: r.duration_ms,
+  }));
+
+  // A full page means there may be more; a short page is the end.
+  const last = runs.at(-1);
   return {
-    runs: (body?.documents ?? []).map((d) => fromValue({ mapValue: { fields: d.fields } }) as SyncedRun),
-    nextPageToken: body?.nextPageToken ?? null,
+    runs,
+    nextCursor: runs.length === RUNS_PAGE_SIZE && last ? last.startedAt : null,
   };
 }
 
-export async function pushRun(config: SyncConfig, user: AuthUser, run: SyncedRun): Promise<void> {
-  await request(config, user, `users/${user.uid}/runs?documentId=${encodeURIComponent(run.runId)}`, {
-    method: 'POST',
-    body: JSON.stringify({ fields: toFields(run as unknown as Record<string, unknown>) }),
+export async function pushRun(userId: string, run: SyncedRun): Promise<void> {
+  const sb = supabase();
+  if (!sb) return;
+  const { error } = await sb.from('runs').insert({
+    run_id: run.runId,
+    user_id: userId,
+    started_at: run.startedAt,
+    mode: run.mode,
+    dry_run: run.dryRun,
+    elevated: run.elevated,
+    sections: run.sections,
+    freed_bytes: run.freedBytes,
+    estimated_bytes: run.estimatedBytes,
+    duration_ms: run.durationMs,
   });
+  // A re-sync of a run already stored is not an error worth surfacing.
+  if (error && error.code !== '23505') {
+    throw new Error(`the run could not be saved: ${error.message}`);
+  }
 }
 
-export async function deleteRun(config: SyncConfig, user: AuthUser, runId: string): Promise<void> {
-  await request(config, user, `users/${user.uid}/runs/${encodeURIComponent(runId)}`, { method: 'DELETE' });
+export async function deleteRun(userId: string, runId: string): Promise<void> {
+  const sb = supabase();
+  if (!sb) return;
+  const { error } = await sb.from('runs').delete().eq('user_id', userId).eq('run_id', runId);
+  if (error) throw new Error(`the run could not be removed: ${error.message}`);
 }

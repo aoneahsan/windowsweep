@@ -1,7 +1,0 @@
-{
-  "//": "Firestore only. There is no Hosting target and no Functions: the desktop app is an installer, the docs site is on GitHub Pages, and Firebase Storage is banned fleet-wide in favour of the house file service.",
-  "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
-  }
-}

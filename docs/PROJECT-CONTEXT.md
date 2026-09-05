@@ -105,6 +105,48 @@ nothing to buy, which `~/.claude/rules/00-house-rules.md` forbids writing anywhe
 claim outlives the decision it describes. Until that is answered, those two sentences are the only thing in
 the product carrying a known rule violation.
 
+### How the frontend UI mandates map to this product - the declared exemptions
+
+`~/.claude/rules/frontend-ui-standards.md` applies to the desktop app (the CLI has no UI at all). Recorded
+here because the rule says anything a product declines to ship is **declared with a reason, never quietly
+dropped** - and three of its mandates genuinely do not apply to a local disk utility.
+
+**Met, and verified by measurement on 2026-09-05:**
+
+| § | Mandate | Evidence |
+|---|---|---|
+| 1 | Decoration and entrance motion | the sweep motif at the hero only; motion consults BOTH the axis and the OS query (`lib/theme.ts` -> `motionAllowed`) |
+| 3 | URL state, not bare `useState` | hash history; the filter and tab live in the URL on Sections, History and Settings |
+| 5 | `.env.example` in sync, no server secret in a `VITE_` var | every value is a public client identifier; `configuredFeatures()` reports what is absent |
+| 6 | SVG-first assets | `src-tauri/icons/icon.svg` is the master; every PNG and the `.ico` are exported from it |
+| 9a | Three colour treatments, light and dark | lime / sky / plum, hue 128 registered; 264 combinations measured with zero contrast failures |
+| 9b | No `<textarea>` in a shipped product | zero in any component. The one match in `src/styles/shell.css` is the rule's own comment |
+| 11 | ONE theme control, applied pre-paint from one table | `src/lib/axes.json` is the single table; `public/prepaint.js` is GENERATED from it and `yarn check:prepaint` fails the build on drift |
+| 14 | Every string through `t()` from day one | enforced by `no-restricted-syntax` AST selectors at `error`, watched failing on two different plants |
+| 15 | External links leave the origin, and the do-follow policy | `lib/links.ts` is the one policy module; a raw `href="http…"` appears nowhere in a component |
+
+**Declared out, with reasons:**
+
+🔴 **§13, the admin panel and the five plan-administration capabilities: NOT APPLICABLE, and this is the
+reason.** The rule exists so a product's limits are admin fields rather than code changes. This product has
+**no server, no plan, no limit and no second user**: the engine runs locally with no network calls at all, and
+the desktop window's only account feature is syncing one person's own settings between their own machines.
+There is nothing an administrator could administer and no limit to raise. Consistent with the owner's
+2026-09-05 decision that **no surface makes a pricing claim** - which is why the app says what signing in
+*does* rather than what it costs.
+
+⚠️ **§2, the upload-field info popover:** there is no upload field anywhere in the app. Nothing to declare
+beyond its absence.
+
+⚠️ **§16, a decorative overlay painted outside its surface:** the custom cursor is an axis and is drawn
+inside the app shell rather than `position: fixed` on `<body>`, so the band-colour resolution the rule
+requires does not arise. If a floating badge or scroll indicator is added later, that mandate applies to it.
+
+**Open, and honestly so:** §10's GATE 4 parity - screenshot pairs of the dummy beside the app, judged by eye
+in the app's own WebView2 - is not done, and needs owner row 22. §12's interaction floor has no automated
+gate by design; the browser pass proves the screens render and are reachable, not that every control
+acknowledges within 100 ms. That is a look-at-it check and it is owed.
+
 ### Two durable constraints found on 2026-09-05, worth not rediscovering
 
 🔴 **`Write-Box` draws a 78-glyph rule, so the tagline has a de-facto 75-character

@@ -211,3 +211,33 @@ reader to fetch something that is not there.
 ### Also corrected
 
 `og:locale` was `en_US` on an en-GB product.
+
+## 2026-09-05 - the decision sweep, applied because a global rule landed the same day
+
+Another session added a clause to `~/.claude/rules/storytelling-content.md` while this one was running:
+
+> 🔴 **AN APPROVED ARTEFACT HOLDS ITS CLAIM UNTIL SOMETHING FALSIFIES IT — AND NOTHING RE-READS IT.**
+> When a decision lands, grep the approved surfaces for the claim it just changed, rather than waiting for a
+> writer to stumble over it.
+
+Two decisions landed today, so both sweeps were run rather than assumed.
+
+**The pricing sweep** — `no paid tier`, `nothing to pay`, `nothing to buy`, `no plan`, `free forever`,
+`free tier`, `priceCurrency`, `isAccessibleForFree` — across the README, `docs/`, the app source, the click
+dummy, `lib/`, `package.json` and both of the docs site's content directories. **Zero hits**, and the sweep
+was proved non-blind against a planted control line first, because a pattern that finds nothing and a pattern
+that cannot find anything look identical in a terminal.
+
+**The signing sweep** found seven surfaces making a claim, and one of them was still wrong. `index.html` said
+the installer *"is not signed **yet**"*. "Yet" is a small forward-looking promise, and the decision taken
+today is that no certificate is budgeted — so the sentence quietly contradicted the decision that had just
+been recorded above it. It now states the fact and points at the Administrator-rights screen instead of
+duplicating its explanation.
+
+The three that remain are each accounted for: `elevation.html` and its `en.json` mirror name a SHA-256
+checksum and a minisign signature, and the release workflow now produces both and refuses to run while the
+updater key is a placeholder; `index.html` states a fact and promises no artefact, so there is nothing to back.
+
+🔴 **The lesson generalises past storytelling.** The two defects this sweep and the front-door pass caught
+were both in copy approved *hours* earlier — a checksum with no step, and "Nothing else" about a nine-field
+payload. **GATE 4 approves a snapshot; nothing re-reads it.** The grep is the cheap part.

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>windowsweep - History</title>
+<meta name="description" content="windowsweep desktop, click dummy - local runs and cloud summaries.">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="components.css">
+<script src="app.js"></script>
+</head>
+<body>
+
+<div class="app">
+  <header class="titlebar" data-ws-titlebar></header>
+
+  <div class="shell">
+    <nav class="rail" data-ws-rail aria-label="Main"></nav>
+
+    <main class="content">
+
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <div style="display:flex;flex-wrap:wrap;gap:var(--sp-4);align-items:flex-end">
+            <div>
+              <h1 class="t-xl wide">History</h1>
+              <p class="t-sm ink-3">Every run this machine has made, and a summary of runs from your other
+                machines if you are signed in.</p>
+            </div>
+            <div style="margin-inline-start:auto;text-align:end">
+              <p class="num t-xl wide accent-ink" data-ws-text="histTotal">0 B</p>
+              <p class="t-sm ink-3">freed in the last <span class="num" data-ws-text="histCount">0</span> runs</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <div class="panel pad">
+            <div class="fw-row" style="margin-bottom:var(--sp-3)">
+              <span class="caps ink-3">Freed per run</span>
+              <span class="t-xs ink-3" style="margin-inline-start:auto">the frame does not move with the data</span>
+            </div>
+            <div data-ws-hist-spark></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band band-well band-tight" style="position:sticky;top:0;z-index:4">
+        <div class="wrap">
+          <div class="filters">
+            <span class="caps ink-3" style="margin-inline-end:var(--sp-2)">Show</span>
+            <button class="fchip" data-ws-hist="all" aria-pressed="true">All</button>
+            <button class="fchip" data-ws-hist="local" aria-pressed="false">This machine</button>
+            <button class="fchip" data-ws-hist="cloud" aria-pressed="false">Other machines</button>
+            <button class="fchip" data-ws-hist="dry" aria-pressed="false">Previews</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <div class="panel xscroll" style="overflow:visible">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th style="width:11rem">When</th>
+                  <th style="width:6rem">Mode</th>
+                  <th>Sections</th>
+                  <th style="width:7rem">Where</th>
+                  <th style="width:7rem" class="num-cell">Freed</th>
+                  <th style="width:2.5rem"><span class="visually-hidden">Open</span></th>
+                </tr>
+              </thead>
+              <tbody data-ws-hist-rows></tbody>
+            </table>
+          </div>
+          <div class="pager" style="margin-top:var(--sp-4)">
+            <button class="btn btn-sm" data-ws-action="histMore">Load 20 more</button>
+            <span class="t-xs ink-3">showing <span class="num" data-ws-text="histShown">0</span> of
+              <span class="num" data-ws-text="histAll">0</span></span>
+          </div>
+          <p class="t-sm ink-3" style="margin-top:var(--sp-2)">Twenty at a time with a cursor, never the
+            whole table &#8211; the same budget the engine itself keeps.</p>
+        </div>
+      </section>
+
+      <div style="height:var(--sp-16)"></div>
+    </main>
+  </div>
+
+  <footer class="statusbar">
+    <span class="dot" aria-hidden="true"></span>
+    <span>engine <span class="mono" data-ws-text="engineVersion">1.1.0</span></span>
+    <span class="only-wide">local runs are complete - cloud rows are summaries</span>
+    <span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span>
+  </footer>
+</div>
+
+<script src="vendor/d3-color.js"></script>
+<script src="vendor/d3-interpolate.js"></script>
+<script src="vendor/d3-array.js"></script>
+<script src="vendor/d3-path.js"></script>
+<script src="vendor/d3-format.js"></script>
+<script src="vendor/d3-time.js"></script>
+<script src="vendor/d3-time-format.js"></script>
+<script src="vendor/d3-scale.js"></script>
+<script src="vendor/d3-shape.js"></script>
+<script src="vendor/d3-hierarchy.js"></script>
+<script src="seed.js"></script>
+<script src="db.js"></script>
+<script src="reclaim-map.js"></script>
+<script src="widgets.js"></script>
+<script src="page-history.js"></script>
+<script src="wire.js"></script>
+<script src="demo.js"></script>
+</body>
+</html>

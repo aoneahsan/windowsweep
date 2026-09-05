@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>windowsweep - Run report</title>
+<meta name="description" content="windowsweep desktop, click dummy - one run rendered from its JSON report.">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="components.css">
+<script src="app.js"></script>
+</head>
+<body>
+
+<div class="app">
+  <header class="titlebar" data-ws-titlebar></header>
+
+  <div class="shell">
+    <nav class="rail" data-ws-rail aria-label="Main"></nav>
+
+    <main class="content">
+
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <ol class="crumbs" style="margin-bottom:var(--sp-3)">
+            <li><a class="lnk" href="history.html">History</a></li>
+            <li><span aria-current="page">2026-09-04 09:14</span></li>
+          </ol>
+          <div style="display:flex;flex-wrap:wrap;gap:var(--sp-4);align-items:flex-end">
+            <div>
+              <h1 class="t-xl wide">Freed 3.31 GB</h1>
+              <p class="t-sm ink-3">Safe batch &#183; 8 sections attempted &#183; 5 ran &#183; 3 skipped
+                &#183; nothing refused &#183; 17 seconds</p>
+            </div>
+            <div style="margin-inline-start:auto;display:flex;gap:var(--sp-2);flex-wrap:wrap">
+              <button class="btn" data-ws-action="reportOpen">Show the JSON</button>
+              <button class="btn" data-ws-action="reportExport">Export&#8230;</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <div class="g12">
+            <div class="c9">
+              <div class="panel pad">
+                <span class="caps ink-3">What each section freed</span>
+                <div data-ws-report-bars style="margin-top:var(--sp-3)"></div>
+              </div>
+            </div>
+            <div class="c3">
+              <div class="well pad" style="height:100%">
+                <span class="caps ink-3">Disk, before and after</span>
+                <div data-ws-report-drives style="margin-top:var(--sp-3)"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <div class="panel xscroll" style="overflow:visible">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th style="width:3rem">#</th>
+                  <th>Section</th>
+                  <th style="width:7rem">Status</th>
+                  <th style="width:7rem" class="num-cell">Freed</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody data-ws-report-rows></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="band band-well band-tight">
+        <div class="wrap">
+          <details class="disclose">
+            <summary>
+              <span class="disclose-line">Where this file lives, and what else reads it</span>
+              <span class="disclose-more">Details</span>
+            </summary>
+            <div class="disclose-body">
+              <p>Written to <code class="mono">%USERPROFILE%\.windowsweep\reports\run-&lt;stamp&gt;.json</code>
+                by the engine itself, in schema 1. This window renders that file &#8211; it does not
+                compute anything of its own, which is why a report opened here and a report opened in a
+                text editor can never disagree.</p>
+              <p>The same file is what <code class="mono">--export md</code> and
+                <code class="mono">--export html</code> convert, and what an agent reads when it drives
+                windowsweep from a script.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <div style="height:var(--sp-16)"></div>
+    </main>
+  </div>
+
+  <footer class="statusbar">
+    <span class="dot" aria-hidden="true"></span>
+    <span>engine <span class="mono" data-ws-text="engineVersion">1.1.0</span></span>
+    <span class="only-wide">schema 1 - the same file the CLI writes</span>
+    <span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span>
+  </footer>
+</div>
+
+<script src="vendor/d3-color.js"></script>
+<script src="vendor/d3-interpolate.js"></script>
+<script src="vendor/d3-array.js"></script>
+<script src="vendor/d3-path.js"></script>
+<script src="vendor/d3-format.js"></script>
+<script src="vendor/d3-time.js"></script>
+<script src="vendor/d3-time-format.js"></script>
+<script src="vendor/d3-scale.js"></script>
+<script src="vendor/d3-shape.js"></script>
+<script src="vendor/d3-hierarchy.js"></script>
+<script src="seed.js"></script>
+<script src="db.js"></script>
+<script src="reclaim-map.js"></script>
+<script src="widgets.js"></script>
+<script src="page-report.js"></script>
+<script src="wire.js"></script>
+<script src="demo.js"></script>
+</body>
+</html>

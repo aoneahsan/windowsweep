@@ -888,10 +888,26 @@ body::after {
    This is the second time - `.badge-accent` hit it in round 3 and was fixed with a
    single never-rebound token. Fixing it per component does not scale, so the reset
    is general and every future surface inherits the correct behaviour. */
+   THIRD occurrence: the segmented control in the picker's selection bar landed at
+   1.09:1 the moment it was added, because a component added later does not know
+   about a list written earlier. So the list is explicit and alphabetised, every
+   surface-painting component belongs in it, and the CONTRAST SWEEP is what
+   catches an omission - it has now found all three, each time before release. */
+.band-bleed .card,
+.band-bleed .card-sel,
 .band-bleed .disclose,
+.band-bleed .drop,
+.band-bleed .field,
+.band-bleed .lbox,
+.band-bleed .lst,
+.band-bleed .menu,
+.band-bleed .note,
 .band-bleed .panel,
-.band-bleed .well,
-.band-bleed .card-sel {
+.band-bleed .pop,
+.band-bleed .rt,
+.band-bleed .seg,
+.band-bleed .tags,
+.band-bleed .well {
   --c-ink: var(--c-base-ink);
   --c-ink-2: var(--c-base-ink-2);
   --c-ink-3: var(--c-base-ink-3);

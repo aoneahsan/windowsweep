@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>windowsweep - Before we start</title>
+<meta name="description" content="windowsweep desktop, click dummy - the first-run consent dialog.">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="components.css">
+<script src="app.js"></script>
+</head>
+<body>
+
+<div class="app">
+  <header class="titlebar" data-ws-titlebar></header>
+
+  <div class="shell">
+
+    <main class="content">
+
+      <section class="band band-app">
+        <div class="wrap wrap-narrow">
+          <p class="caps ink-3">First run</p>
+          <h1 class="t-xl wide">Nothing leaves this machine unless you turn it on.</h1>
+          <p class="lede">The cleanup engine makes <strong>zero network calls</strong> &#8211; its own test
+            suite asserts that, and it is true whether you accept anything below or not. What follows is
+            only about the desktop window you are looking at.</p>
+        </div>
+      </section>
+
+      <section class="band band-app band-tight">
+        <div class="wrap wrap-narrow">
+          <div class="panel pad">
+            <div class="fw-row" style="margin-bottom:var(--sp-4)">
+              <h2 class="t-md wide">Four destinations, four switches</h2>
+              <button class="btn btn-sm" style="margin-inline-start:auto" data-ws-action="consentAll">
+                Turn all on</button>
+              <button class="btn btn-sm" data-ws-action="consentNone">Turn all off</button>
+            </div>
+            <div class="lst" data-ws-consent></div>
+          </div>
+
+          <details class="disclose" style="margin-top:var(--sp-4)">
+            <summary>
+              <span class="disclose-line">What each one would receive, in plain terms</span>
+              <span class="disclose-more">Details</span>
+            </summary>
+            <div class="disclose-body">
+              <p><strong>Never sent, by any of them:</strong> a file path, a folder name, a drive label,
+                your user name, your machine name, or the contents of anything. A run summary is a count
+                and a number of bytes.</p>
+              <p><strong>Analytics</strong> would receive which screens you opened and which buttons you
+                pressed. <strong>Session replay</strong> would receive a recording of this window with all
+                text masked. <strong>Crash reports</strong> would receive a stack trace with paths
+                stripped. Each is individually revocable later, in Settings, and revoking one stops it
+                immediately.</p>
+              <p>Declining is a first-class answer. The app is not degraded, nothing nags you again, and
+                every feature including sign-in and sync still works.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="band band-bleed band-tight">
+        <div class="wrap wrap-narrow" style="display:flex;gap:var(--sp-3);flex-wrap:wrap;align-items:center">
+          <p class="t-sm" data-ws-text="consentSummary">Nothing is switched on.</p>
+          <div style="margin-inline-start:auto;display:flex;gap:var(--sp-2)">
+            <button class="btn" data-ws-action="consentDecline">Continue with everything off</button>
+            <button class="btn btn-primary" data-ws-action="consentAccept">Save and continue</button>
+          </div>
+        </div>
+      </section>
+
+      <div style="height:var(--sp-16)"></div>
+    </main>
+  </div>
+
+  <footer class="statusbar">
+    <span class="dot" aria-hidden="true"></span>
+    <span>engine <span class="mono" data-ws-text="engineVersion">1.1.0</span></span>
+    <span class="only-wide">first run - nothing is on yet</span>
+    <span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span>
+  </footer>
+</div>
+
+<script src="vendor/d3-color.js"></script>
+<script src="vendor/d3-interpolate.js"></script>
+<script src="vendor/d3-array.js"></script>
+<script src="vendor/d3-path.js"></script>
+<script src="vendor/d3-format.js"></script>
+<script src="vendor/d3-time.js"></script>
+<script src="vendor/d3-time-format.js"></script>
+<script src="vendor/d3-scale.js"></script>
+<script src="vendor/d3-shape.js"></script>
+<script src="vendor/d3-hierarchy.js"></script>
+<script src="seed.js"></script>
+<script src="db.js"></script>
+<script src="reclaim-map.js"></script>
+<script src="widgets.js"></script>
+<script src="page-consent.js"></script>
+<script src="wire.js"></script>
+<script src="demo.js"></script>
+</body>
+</html>

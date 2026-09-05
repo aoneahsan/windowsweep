@@ -13,7 +13,13 @@
     if (mode === 'icons') r.setAttribute('data-collapsed', 'true');
     var group = el('div', 'rail-group');
     NAV.forEach(function (item) {
-      if (item.sep) { group.appendChild(el('div', 'rail-sep')); return; }
+      /* The registry marks a heading with `group`, not `sep`. Reading the wrong key
+         turned every heading into <a href=undefined> - which the link crawl caught
+         and reading the hrefs by eye would not have. */
+      if (item.group) {
+        if (mode !== 'icons') group.appendChild(el('div', 'rail-group caps', item.group));
+        return;
+      }
       var a = el('a', 'rail-item');
       a.href = item.href;
       if (item.href === 'index.html') a.setAttribute('aria-current', 'page');

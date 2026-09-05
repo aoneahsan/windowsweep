@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>windowsweep - Account</title>
+<meta name="description" content="windowsweep desktop, click dummy - optional Google sign-in for sync only.">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="components.css">
+<script src="app.js"></script>
+</head>
+<body>
+
+<div class="app">
+  <header class="titlebar" data-ws-titlebar></header>
+
+  <div class="shell">
+    <nav class="rail" data-ws-rail aria-label="Main"></nav>
+
+    <main class="content">
+
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <p class="caps ink-3">Optional</p>
+          <h1 class="t-xl wide">Sign in only if you want your settings on another machine.</h1>
+          <p class="lede">Cleaning is <strong>never gated</strong>. There is no paid tier, no plan and
+            nothing to buy &#8211; signing in moves your settings and a summary of each run between your
+            own machines, and that is all it does.</p>
+        </div>
+      </section>
+
+      <section class="band band-app">
+        <div class="wrap">
+          <div class="g12">
+            <div class="c6">
+              <div class="panel pad" data-ws-account-card></div>
+            </div>
+            <div class="c6">
+              <div class="well pad">
+                <h2 class="t-md wide">What is stored, exactly</h2>
+                <div class="xscroll" style="margin-top:var(--sp-3)">
+                  <table class="tbl">
+                    <thead><tr><th>Field</th><th>Why</th></tr></thead>
+                    <tbody>
+                      <tr><td class="t-sm">Email address</td><td class="t-sm ink-3">It is the account.</td></tr>
+                      <tr><td class="t-sm">Display name</td><td class="t-sm ink-3">Shown in this window.</td></tr>
+                      <tr><td class="t-sm">Your settings</td><td class="t-sm ink-3">So a second machine starts where you left off.</td></tr>
+                      <tr><td class="t-sm">Run summaries</td><td class="t-sm ink-3">Date, bytes freed, section count. Nothing else.</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p class="t-sm ink-3" style="margin-top:var(--sp-3)">
+                  <strong>Never stored:</strong> a file path, a folder name, a drive label, your machine
+                  name or your Windows user name. A cloud run row is labelled
+                  <span class="badge badge-outline">summary only</span> in History for exactly that reason
+                  &#8211; the detail stays on the machine that made it.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band band-well band-tight">
+        <div class="wrap">
+          <h2 class="t-md wide">Sync</h2>
+          <div class="lst panel" style="margin-top:var(--sp-3)" data-ws-sync></div>
+          <details class="disclose" style="margin-top:var(--sp-4)">
+            <summary>
+              <span class="disclose-line">What happens when two machines disagree</span>
+              <span class="disclose-more">Details</span>
+            </summary>
+            <div class="disclose-body">
+              <p>The newer change wins, and you are told which one it was with an <strong>Undo</strong> that
+                puts the other back. Settings are small and rarely edited on two machines at once, so a
+                silent merge would be more surprising than a visible choice.</p>
+              <p>Run history never conflicts: a run belongs to the machine that made it and is only ever
+                added or removed, never edited.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <div style="height:var(--sp-16)"></div>
+    </main>
+  </div>
+
+  <footer class="statusbar">
+    <span class="dot" aria-hidden="true"></span>
+    <span>engine <span class="mono" data-ws-text="engineVersion">1.1.0</span></span>
+    <span class="only-wide">sync is optional - runs are never gated</span>
+    <span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span>
+  </footer>
+</div>
+
+<script src="vendor/d3-color.js"></script>
+<script src="vendor/d3-interpolate.js"></script>
+<script src="vendor/d3-array.js"></script>
+<script src="vendor/d3-path.js"></script>
+<script src="vendor/d3-format.js"></script>
+<script src="vendor/d3-time.js"></script>
+<script src="vendor/d3-time-format.js"></script>
+<script src="vendor/d3-scale.js"></script>
+<script src="vendor/d3-shape.js"></script>
+<script src="vendor/d3-hierarchy.js"></script>
+<script src="seed.js"></script>
+<script src="db.js"></script>
+<script src="reclaim-map.js"></script>
+<script src="widgets.js"></script>
+<script src="page-account.js"></script>
+<script src="wire.js"></script>
+<script src="demo.js"></script>
+</body>
+</html>

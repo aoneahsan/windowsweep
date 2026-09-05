@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>windowsweep - Settings</title>
+<meta name="description" content="windowsweep desktop, click dummy - developer mode, windows, scanning, notifications, privacy.">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="components.css">
+<script src="app.js"></script>
+</head>
+<body>
+
+<div class="app">
+  <header class="titlebar" data-ws-titlebar></header>
+
+  <div class="shell">
+    <nav class="rail" data-ws-rail aria-label="Main"></nav>
+
+    <main class="content">
+
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <h1 class="t-xl wide">Settings</h1>
+          <p class="t-sm ink-3">Every one of these maps to a flag the engine already has, so anything you
+            set here you can also pass on a command line.</p>
+        </div>
+      </section>
+
+      <section class="band band-app">
+        <div class="wrap">
+          <div class="tabs">
+            <div class="tablist" role="tablist" aria-label="Settings sections">
+              <button class="tab" role="tab" id="t-gen-t" aria-controls="t-gen" aria-selected="true">General</button>
+              <button class="tab" role="tab" id="t-scan-t" aria-controls="t-scan" aria-selected="false">Scanning</button>
+              <button class="tab" role="tab" id="t-notify-t" aria-controls="t-notify" aria-selected="false">Notifications</button>
+              <button class="tab" role="tab" id="t-priv-t" aria-controls="t-priv" aria-selected="false">Privacy</button>
+              <button class="tab" role="tab" id="t-about-t" aria-controls="t-about" aria-selected="false">About</button>
+            </div>
+
+            <div class="tabpanel" role="tabpanel" id="t-gen" aria-labelledby="t-gen-t" tabindex="0"
+                 data-ws-set-general></div>
+            <div class="tabpanel" role="tabpanel" id="t-scan" aria-labelledby="t-scan-t" tabindex="0"
+                 data-ws-set-scan hidden></div>
+            <div class="tabpanel" role="tabpanel" id="t-notify" aria-labelledby="t-notify-t" tabindex="0"
+                 data-ws-set-notify hidden></div>
+            <div class="tabpanel" role="tabpanel" id="t-priv" aria-labelledby="t-priv-t" tabindex="0"
+                 data-ws-set-priv hidden></div>
+            <div class="tabpanel" role="tabpanel" id="t-about" aria-labelledby="t-about-t" tabindex="0"
+                 data-ws-set-about hidden></div>
+          </div>
+        </div>
+      </section>
+
+      <div style="height:var(--sp-16)"></div>
+    </main>
+  </div>
+
+  <footer class="statusbar">
+    <span class="dot" aria-hidden="true"></span>
+    <span>engine <span class="mono" data-ws-text="engineVersion">1.1.0</span></span>
+    <span class="only-wide">settings sync when you are signed in</span>
+    <span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span>
+  </footer>
+</div>
+
+<script src="vendor/d3-color.js"></script>
+<script src="vendor/d3-interpolate.js"></script>
+<script src="vendor/d3-array.js"></script>
+<script src="vendor/d3-path.js"></script>
+<script src="vendor/d3-format.js"></script>
+<script src="vendor/d3-time.js"></script>
+<script src="vendor/d3-time-format.js"></script>
+<script src="vendor/d3-scale.js"></script>
+<script src="vendor/d3-shape.js"></script>
+<script src="vendor/d3-hierarchy.js"></script>
+<script src="seed.js"></script>
+<script src="db.js"></script>
+<script src="reclaim-map.js"></script>
+<script src="widgets.js"></script>
+<script src="page-settings.js"></script>
+<script src="wire.js"></script>
+<script src="demo.js"></script>
+</body>
+</html>

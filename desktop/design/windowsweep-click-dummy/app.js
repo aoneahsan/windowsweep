@@ -167,15 +167,20 @@
      ------------------------------------------------------------------------- */
   var NAV = [
     { group: 'Clean' },
-    { href: 'index.html',    label: 'Home',      icon: 'home' },
-    { href: 'sections.html', label: 'Sections',  icon: 'list',  badge: '26' },
-    { href: 'run.html',      label: 'Run',       icon: 'play' },
+    { href: 'index.html',     label: 'Home',      icon: 'home' },
+    { href: 'sections.html',  label: 'Sections',  icon: 'list',  badge: '26' },
+    { href: 'picker.html',    label: 'Choose',    icon: 'user',  badge: '4' },
+    { href: 'run.html',       label: 'Run',       icon: 'play' },
     { group: 'Records' },
-    { href: '#history',  label: 'History',  icon: 'clock',  soon: true },
-    { href: '#reports',  label: 'Reports',  icon: 'doc',    soon: true },
+    { href: 'history.html',   label: 'History',   icon: 'clock' },
+    { href: 'report.html',    label: 'Reports',   icon: 'doc' },
     { group: 'You' },
-    { href: '#account',  label: 'Account',  icon: 'user',   soon: true },
-    { href: '#settings', label: 'Settings', icon: 'gear',   soon: true }
+    { href: 'account.html',   label: 'Account',   icon: 'user' },
+    { href: 'settings.html',  label: 'Settings',  icon: 'gear' },
+    { href: 'elevation.html', label: 'Admin',     icon: 'backend' },
+    { group: 'Prototype' },
+    { href: 'pages.html',     label: 'Contents',  icon: 'list' },
+    { href: 'gallery.html',   label: 'Components', icon: 'doc' }
   ];
 
   var ICONS = {

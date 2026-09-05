@@ -631,3 +631,23 @@ hr.rule { border: 0; border-top: 1px solid var(--c-line); margin: var(--sp-4) 0;
 .chart-sw { width: .7em; height: .7em; border-radius: 2px; flex: none; }
 .chart-ax { font-size: var(--fs-2xs); fill: var(--c-ink-3); }
 .chart-grid line { stroke: var(--c-line); stroke-width: 1; }
+
+/* tab panels - the shell the settings screen composes into */
+.tabpanel { padding-block: var(--sp-4); }
+.tabpanel:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 4px; }
+.set-grp { display: flex; flex-direction: column; gap: var(--sp-5); max-width: 46rem; }
+.set-row {
+  display: flex; gap: var(--sp-4); align-items: flex-start;
+  padding-bottom: var(--sp-4); border-bottom: 1px solid var(--c-line);
+}
+.set-row:last-child { border-bottom: 0; padding-bottom: 0; }
+.set-row > .set-txt { flex: 1; min-width: 0; }
+.set-row > .set-ctl { flex: none; display: flex; align-items: center; gap: var(--sp-3); }
+.set-txt h3 { font-size: var(--fs-base); font-weight: 600; }
+.set-txt p { font-size: var(--fs-sm); color: var(--c-ink-3); margin-top: 2px; }
+.set-conseq {
+  margin-top: var(--sp-2); font-size: var(--fs-sm);
+  color: var(--c-accent-ink); font-weight: 500;
+}
+/* the house-promotion panel - the ecosystem roster, self-excluded */
+.promo { display: grid; gap: var(--sp-3); grid-template-columns: repeat(auto-fit, minmax(min(14rem,100%),1fr)); }

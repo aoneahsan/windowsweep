@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>windowsweep - Administrator rights</title>
+<meta name="description" content="windowsweep desktop, click dummy - the elevated-run flow and the SmartScreen note.">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="components.css">
+<script src="app.js"></script>
+</head>
+<body>
+
+<div class="app">
+  <header class="titlebar" data-ws-titlebar></header>
+
+  <div class="shell">
+    <nav class="rail" data-ws-rail aria-label="Main"></nav>
+
+    <main class="content">
+
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <p class="caps ink-3">Sections 12&#8211;16 and 20</p>
+          <h1 class="t-xl wide">Six sections need Windows to ask your permission.</h1>
+          <p class="lede">windowsweep <strong>never elevates itself</strong>. When you ask for one of
+            these, it opens a second, elevated window that does that work and writes its own report.
+            This window keeps running, unelevated, and shows you the log as it arrives.</p>
+        </div>
+      </section>
+
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <div class="cards" data-ws-elevated></div>
+        </div>
+      </section>
+
+      <section class="band band-well band-tight">
+        <div class="wrap">
+          <h2 class="t-md wide">What happens when you press it</h2>
+          <div class="tl" style="margin-top:var(--sp-4);max-width:44rem">
+            <div class="tl-i"><span class="tl-dot"></span><div>
+              <div class="t-sm"><strong>Windows asks you.</strong></div>
+              <div class="t-sm ink-3">The standard User Account Control prompt, from Windows &#8211; not
+                from us. If you say no, nothing happens and nothing is written.</div></div></div>
+            <div class="tl-i"><span class="tl-dot"></span><div>
+              <div class="t-sm"><strong>A second window opens.</strong></div>
+              <div class="t-sm ink-3">It runs only the sections you chose, with
+                <code class="mono">--reports-dir</code> and <code class="mono">--logs-dir</code> pointed at
+                this run&#8217;s folder.</div></div></div>
+            <div class="tl-i"><span class="tl-dot"></span><div>
+              <div class="t-sm"><strong>This window tails the log.</strong></div>
+              <div class="t-sm ink-3">You watch it from here. The elevated window closes itself when it is
+                done, and its exit code comes back to this one.</div></div></div>
+            <div class="tl-i" data-tone="muted"><span class="tl-dot"></span><div>
+              <div class="t-sm"><strong>Both reports land side by side.</strong></div>
+              <div class="t-sm ink-3">Under
+                <code class="mono">%LOCALAPPDATA%\windowsweep-desktop\runs\</code>, one JSON each.</div></div></div>
+          </div>
+          <div style="margin-top:var(--sp-5);display:flex;gap:var(--sp-2);flex-wrap:wrap">
+            <button class="btn btn-primary" data-ws-action="elevateRun">Ask for permission and run</button>
+            <button class="btn" data-ws-action="elevateDry">Preview without elevating</button>
+          </div>
+          <p class="t-sm ink-3" style="margin-top:var(--sp-2)">A preview can measure these sections
+            without administrator rights. It just cannot clean them.</p>
+        </div>
+      </section>
+
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <details class="disclose">
+            <summary>
+              <span class="disclose-line">Windows may warn you the first time you install this</span>
+              <span class="disclose-more">Details</span>
+            </summary>
+            <div class="disclose-body">
+              <p>The installer is not signed with a paid code-signing certificate, so Microsoft SmartScreen
+                shows <em>&#8220;Windows protected your PC&#8221;</em> on first run. That is a statement
+                about the certificate, not about the file.</p>
+              <p>Choose <strong>More info</strong> and then <strong>Run anyway</strong>. You can verify what
+                you downloaded first: every release publishes its installers next to a signature, and the
+                source is public.</p>
+              <p>This note is here rather than hidden because meeting that dialog unexplained is worse than
+                reading about it in advance.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <div style="height:var(--sp-16)"></div>
+    </main>
+  </div>
+
+  <footer class="statusbar">
+    <span class="dot" aria-hidden="true"></span>
+    <span>engine <span class="mono" data-ws-text="engineVersion">1.1.0</span></span>
+    <span class="only-wide">six sections need an elevated window</span>
+    <span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span>
+  </footer>
+</div>
+
+<script src="vendor/d3-color.js"></script>
+<script src="vendor/d3-interpolate.js"></script>
+<script src="vendor/d3-array.js"></script>
+<script src="vendor/d3-path.js"></script>
+<script src="vendor/d3-format.js"></script>
+<script src="vendor/d3-time.js"></script>
+<script src="vendor/d3-time-format.js"></script>
+<script src="vendor/d3-scale.js"></script>
+<script src="vendor/d3-shape.js"></script>
+<script src="vendor/d3-hierarchy.js"></script>
+<script src="seed.js"></script>
+<script src="db.js"></script>
+<script src="reclaim-map.js"></script>
+<script src="widgets.js"></script>
+<script src="page-elevation.js"></script>
+<script src="wire.js"></script>
+<script src="demo.js"></script>
+</body>
+</html>

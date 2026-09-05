@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>windowsweep - Choose what goes</title>
+<meta name="description" content="windowsweep desktop, click dummy - the candidate picker for sections 17, 18, 19 and 23.">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="components.css">
+<script src="app.js"></script>
+</head>
+<body>
+
+<div class="app">
+  <header class="titlebar" data-ws-titlebar></header>
+
+  <div class="shell">
+    <nav class="rail" data-ws-rail aria-label="Main"></nav>
+
+    <main class="content">
+
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <div style="display:flex;flex-wrap:wrap;gap:var(--sp-4);align-items:flex-end">
+            <div>
+              <p class="caps ink-3">Section <span data-ws-text="pickSection">17</span> &#183; needs a person</p>
+              <h1 class="t-xl wide" data-ws-text="pickTitle">Stale build artefacts</h1>
+              <p class="t-sm ink-3" data-ws-text="pickLede">Nothing here is chosen for you.</p>
+            </div>
+            <div style="margin-inline-start:auto;text-align:end">
+              <p class="num t-xl wide accent-ink" data-ws-text="pickChosen">0 B</p>
+              <p class="t-sm ink-3"><span class="num" data-ws-text="pickCount">0</span> of
+                <span class="num" data-ws-text="pickTotal">0</span> chosen</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band band-well band-tight" style="position:sticky;top:0;z-index:4">
+        <div class="wrap">
+          <div class="filters">
+            <span class="caps ink-3" style="margin-inline-end:var(--sp-2)">Section</span>
+            <button class="fchip" data-ws-pick="17" aria-pressed="true">17 &#183; artefacts</button>
+            <button class="fchip" data-ws-pick="18" aria-pressed="false">18 &#183; large files</button>
+            <button class="fchip" data-ws-pick="19" aria-pressed="false">19 &#183; downloads</button>
+            <button class="fchip" data-ws-pick="23" aria-pressed="false">23 &#183; orphaned data</button>
+            <input class="field" type="search" placeholder="Filter by path or project"
+                   data-ws-pick-search style="max-width:16rem;margin-inline-start:auto">
+          </div>
+        </div>
+      </section>
+
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <div class="panel xscroll" style="overflow:visible">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th style="width:2.4rem"><span class="visually-hidden">Choose</span></th>
+                  <th>Path</th>
+                  <th style="width:9rem">Project</th>
+                  <th style="width:5rem">Idle</th>
+                  <th style="width:6.5rem" class="num-cell">Size</th>
+                </tr>
+              </thead>
+              <tbody data-ws-pick-rows></tbody>
+            </table>
+          </div>
+
+          <div class="note note-info" style="margin-top:var(--sp-4)">
+            <span aria-hidden="true">i</span>
+            <span><strong>Nothing here is pre-selected, on purpose.</strong> These four sections refuse to
+              act on <code class="mono">--yes</code> alone &#8211; the prompt still appears, the default is
+              none, and the final question is never auto-answered. A scripted selection
+              (<code class="mono">--select</code> or <code class="mono">--select-file</code>) counts as a
+              person choosing, and only then does the run go ahead unattended.</span>
+          </div>
+
+          <details class="disclose" style="margin-top:var(--sp-4)">
+            <summary>
+              <span class="disclose-line">Drive this from a file instead</span>
+              <span class="disclose-more">Details</span>
+            </summary>
+            <div class="disclose-body">
+              <p>A plain UTF-8 file with one full path per line is matched, case-insensitively, against the
+                candidates this section offers. A line that matches nothing is warned about individually
+                rather than failing the run.</p>
+              <p class="mono t-xs">windowsweep --only 17 --select-file D:\selections\artefacts.txt</p>
+              <div class="drop" data-w-drop style="margin-top:var(--sp-3)">
+                <p class="t-sm">Drop a selection file here, or choose one</p>
+                <p class="drop-hint">.txt or .list &#183; up to 256 KB &#183; one full path per line</p>
+                <button class="btn" data-ws-action="pickFile">Choose a file</button>
+              </div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <div style="height:var(--sp-16)"></div>
+    </main>
+  </div>
+
+  <div class="selbar" data-ws-pickbar hidden>
+    <span class="num t-md wide" data-ws-text="pickCount2">0</span>
+    <span class="t-sm ink-2">chosen</span>
+    <span class="tb-sep"></span>
+    <span class="num t-md wide accent-ink" data-ws-text="pickChosen2">0 B</span>
+    <span class="t-xs ink-3 only-wide" data-ws-text="pickWhere"></span>
+    <div style="margin-inline-start:auto;display:flex;gap:var(--sp-2);align-items:center">
+      <div class="seg" role="radiogroup" aria-label="How to delete">
+        <label class="seg-opt"><input type="radio" name="pick-mode" value="recycle" checked><span>Recycle Bin</span></label>
+        <label class="seg-opt"><input type="radio" name="pick-mode" value="permanent"><span>Permanent</span></label>
+      </div>
+      <button class="btn btn-sm" data-ws-action="pickClear">Clear</button>
+      <button class="btn btn-sm btn-primary" data-ws-action="pickGo">Remove these</button>
+    </div>
+  </div>
+
+  <footer class="statusbar">
+    <span class="dot" aria-hidden="true"></span>
+    <span>engine <span class="mono" data-ws-text="engineVersion">1.1.0</span></span>
+    <span class="only-wide">a person chooses these - --yes never does</span>
+    <span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span>
+  </footer>
+</div>
+
+<script src="vendor/d3-color.js"></script>
+<script src="vendor/d3-interpolate.js"></script>
+<script src="vendor/d3-array.js"></script>
+<script src="vendor/d3-path.js"></script>
+<script src="vendor/d3-format.js"></script>
+<script src="vendor/d3-time.js"></script>
+<script src="vendor/d3-time-format.js"></script>
+<script src="vendor/d3-scale.js"></script>
+<script src="vendor/d3-shape.js"></script>
+<script src="vendor/d3-hierarchy.js"></script>
+<script src="seed.js"></script>
+<script src="db.js"></script>
+<script src="reclaim-map.js"></script>
+<script src="widgets.js"></script>
+<script src="page-picker.js"></script>
+<script src="wire.js"></script>
+<script src="demo.js"></script>
+</body>
+</html>

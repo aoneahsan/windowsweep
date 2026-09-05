@@ -39,7 +39,7 @@ The [README](https://github.com/aoneahsan/windowsweep#readme) is the elevator pi
 |---|---|
 | [Author](./author.md) | Who built this, the sibling tools, how to support the work |
 | [Packages](./PACKAGES.md) | The dependency and manifest record (there are no dependencies) |
-| [What the project consists of](../what-this-project-consists-of.md) | Every part of the project with its evidence, as audited on 2026-09-03 |
+| [What the project consists of](../what-this-project-consists-of.md) | Every part of the project with its evidence, as audited on 2026-09-05 |
 | [Remaining work](../remaining-work.md) | The specification of every open item: evidence, success criteria, acceptance points |
 | [Remaining work, one page](../remaining-work-summary.md) | Percentages, the next ten actions, the owner-only rows |
 
@@ -51,4 +51,4 @@ The [README](https://github.com/aoneahsan/windowsweep#readme) is the elevator pi
 | **Author** | [Ahsan Mahmood](https://aoneahsan.com) - [aoneahsan@gmail.com](mailto:aoneahsan@gmail.com) |
 | **Support the work** | https://aoneahsan.com/payment?project-id=windowsweep&project-identifier=windowsweep |
 
-Last Updated: 2026-09-04 - tool version 1.1.0
+Last Updated: 2026-09-05 - tool version 1.1.0

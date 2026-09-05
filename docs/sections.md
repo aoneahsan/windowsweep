@@ -140,7 +140,9 @@ the dry-run lists the handlers only.
 
 ## 14 - Component store (admin)
 
-`Dism /Online /Cleanup-Image /AnalyzeComponentStore` (read-only) then `/StartComponentCleanup`. Slow, safe.
+`Dism /Online /Cleanup-Image /AnalyzeComponentStore` (read-only) then `/StartComponentCleanup`. Slow, and
+not in the safe batch: its batch is `optin`, so it runs only when you name it with `--only 14` or through
+`--profile system`.
 `--reset-base` adds `/ResetBase`, which also removes the ability to uninstall installed updates. Opt-in.
 
 ## 15 - Hibernation file (admin)

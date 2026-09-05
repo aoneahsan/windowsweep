@@ -134,7 +134,7 @@ security scanner or a registry cleaner. It reclaims disk space, nothing else.
 |---|---|---|
 | Windows 11 | ✅ | Same engine and PowerShell hosts; a real run on Windows 11 is on the verification list ([roadmap](https://github.com/aoneahsan/windowsweep/blob/main/remaining-work-summary.md)) |
 | Windows 10 (1809 and later) | ✅ | The primary development target; every real run so far |
-| Windows Server 2019+ | ⚠️ | Uses nothing newer than 1809; CI runs the self-test and a dry-run on Windows Server (`windows-latest`) on every push, but no real cleanup has been run on Server |
+| Windows Server 2019+ | ⚠️ | Uses nothing newer than 1809; CI runs the self-test and a dry-run on Windows Server (`windows-latest`) on every push to `main` and every pull request, but no real cleanup has been run on Server |
 | Linux | ❌ | `os: ["win32"]` makes npm refuse to install; use [linux-cleanup](https://github.com/aoneahsan/linux-cleanup) |
 | macOS | ❌ | Use [macleanup](https://github.com/aoneahsan/macleanup) |
 

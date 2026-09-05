@@ -28,7 +28,7 @@ delete files (subject to every guard in the [safety model](./safety-model.md)).
 | Feedback | `--feedback` | How to report a bug; nothing is sent |
 | Report issue | `--report-issue` | Opens a pre-filled GitHub issue in your browser after confirming |
 | Debug bundle | `--debug-bundle` | Zips the latest log, report and a manifest under `~\.windowsweep\feedback` |
-| Scheduled task | `--install-task`, `--uninstall-task` | Weekly `--all --yes` on Sundays at 03:00, as your user (refused under `npx`; install globally first) |
+| Scheduled task | `--install-task`, `--uninstall-task` | Weekly `--all --yes --quiet --no-color --notify` on Sundays at 03:00, as your user, start-when-available, with a three-hour limit (refused under `npx`; install globally first) |
 | Profile alias | `--install-alias`, `--uninstall-alias` | A `cleanup` function in your PowerShell profile (refused under `npx`; install globally first) |
 | Uninstall data | `--uninstall-data` | Removes `~\.windowsweep` after a confirmation that `--yes` never answers |
 | Version | `-V`, `--version` | Version and author |
@@ -53,7 +53,7 @@ delete files (subject to every guard in the [safety model](./safety-model.md)).
 | `--large-file-mb N` | 100 | Minimum size for section 19 |
 | `--hiberfil off|reduced|keep` | ask | What section 15 does |
 | `--reset-base` | off | Add `/ResetBase` to section 14 |
-| `--permanent` | off | Sections 18 and 19 delete instead of using the Recycle Bin |
+| `--permanent` | off | Sections 18, 19 and 23 delete instead of using the Recycle Bin |
 | `--logs-dir P`, `--reports-dir P` | `~\.windowsweep\...` | Where logs and reports are written |
 | `--no-report` | off | Skip the JSON report (the log is still written) |
 | `--cleanup-logs` | off | Delete this run's log at exit; reports are kept |

@@ -9,12 +9,28 @@ Every deletion passes through one function, `Remove-PathSafe` (or `Send-ToRecycl
 with a declared target root. It refuses, in order:
 
 1. paths with `..` segments, UNC paths, drive roots;
-2. Windows, `System32`, Program Files, ProgramData, `C:\Users`, your profile root and the AppData roots;
-3. every protected subtree, pattern and file name listed below;
+2. every drive root, plus Windows, `System32`, `SysWOW64`, Program Files, Program Files (x86), ProgramData,
+   `C:\Users`, `C:\Users\Default`, `C:\Users\Public`, your profile root and the three AppData roots - fifteen
+   declared entries, fourteen of them distinct;
+3. every protected subtree, pattern and file name listed below - **66 subtrees, 50 patterns and 13 file
+   names**, with **two declared exceptions**: `%LOCALAPPDATA%\Android\Sdk\.temp` and `.downloadIntermediates`,
+   which are regenerable caches that happen to sit inside a protected subtree. They are tested before the
+   subtree list, so they are a carve-out rather than an oversight;
 4. any path that does not lie strictly inside the target root the calling section declared;
 5. the tool's own data folder.
 
-No flag bypasses steps 1-5. `--purge-all` changes how much of a cache goes, never where the tool may reach.
+**No flag bypasses steps 1 to 4.** `--purge-all` changes how much of a cache goes, never where the tool may
+reach.
+
+🔴 **Step 5 is the one exception, and it is deliberate.** `--prune-history` and `--uninstall-data` exist to
+delete the tool's own logs and reports, so each lifts that guard for its own run. Nothing else does, and
+nothing lifts guards 1 to 4 ever. The engine says the same in its own header - *"No flag bypasses steps
+1-3"* - counting its five steps differently from this page's five.
+
+**There is also a second refusal the chokepoint does not perform.** A target declared with a layout kind -
+`chromium`, `firefox`, `electron` or `editor` - is filtered again in `lib/actions.ps1`, which clears only
+cache folder names on an allowlist. A browser profile is therefore refused twice: once because its path is
+protected, and once because its folder name is not one this tool knows how to clear.
 
 ## Never touched
 
@@ -28,8 +44,9 @@ No flag bypasses steps 1-5. `--purge-all` changes how much of a cache goes, neve
 | Store apps | `Packages\*\LocalState`, `Settings`, `RoamingState` |
 | Windows | Prefetch (clearing it slows boot), `Windows\Installer`, WinSxS (only DISM touches it), `System Volume Information`, `NTUSER.DAT`, `UsrClass.dat`, hiberfil/pagefile/swapfile (only `powercfg` touches hiberfil), Recycle Bin contents (only `Clear-RecycleBin`) |
 
-`windowsweep --list-targets` prints every path the tool can reach and the protected list as the running
-script sees it.
+`windowsweep --list-targets` prints every path the tool can reach, grouped by section, then four summary
+lines for the protected list as the running script sees it. The 66 subtrees are printed one by one; the exact
+roots, the patterns and the file names are counted rather than listed.
 
 ## What it deletes, by tier
 
@@ -37,7 +54,8 @@ script sees it.
 |---|---|---|
 | **Rebuilds** - caches and temp files the tool or Windows recreates on next use | 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 14, 17 | The data reappears on demand; a rebuild costs time, not information |
 | **Slow to rebuild** - Android emulator images | 4 | Recreate in Android Studio; the per-AVD idle gate exists for this reason |
-| **Recycle Bin** - personal files you selected | 18, 19 | Yes, until you empty the bin (`--permanent` bypasses it) |
+| **Recycle Bin** - personal files you selected | 18, 19, 23 | Yes, until you empty the bin (`--permanent` bypasses it) |
+| **Report only** - reads and prints, deletes nothing | 0, 21, 22, 24, 25 | Nothing is removed, so there is nothing to recover |
 | **Permanent** | 11 (empty the Recycle Bin), 16 (event logs) | No |
 | **Configuration** | 15 (hibernation), 20 (disk-image compaction) | Reversible with `powercfg /hibernate on`; compaction loses nothing |
 

@@ -241,3 +241,77 @@ updater key is a placeholder; `index.html` states a fact and promises no artefac
 🔴 **The lesson generalises past storytelling.** The two defects this sweep and the front-door pass caught
 were both in copy approved *hours* earlier — a checksum with no step, and "Nothing else" about a nine-field
 payload. **GATE 4 approves a snapshot; nothing re-reads it.** The grep is the cheap part.
+
+## 2026-09-05 - the documentation pass, and seventeen factual corrections
+
+Six surfaces drafted (`docs-start`, `docs-safety`, `docs-reference`, `docs-help`, `docs-about`, `ai-guide`);
+215 slots, 150 changed or new. They await GATE 4. **The factual findings did not wait**, and there were
+seventeen of them.
+
+### The safety page overclaimed against its own source
+
+🔴 `safety-model.md` said **"No flag bypasses steps 1-5"**. Step 5 is the tool's own data folder, and
+`--prune-history` and `--uninstall-data` both lift that guard - deliberately, because deleting the tool's own
+logs is what those commands are for. The engine's own header has always said **"No flag bypasses steps 1-3"**.
+The page now states the true shape: guards 1 to 4 are absolute, guard 5 has exactly two lifters, and both are
+named.
+
+**The page also understated the guard it describes.** Step 2 omitted `SysWOW64`, `Program Files (x86)`,
+`C:\Users\Default` and `C:\Users\Public`, all of which are in the exact set. The counts are now stated and
+were counted from `lib/safety.ps1` rather than recalled: **66 subtrees, 50 patterns, 13 file names, 2 declared
+exceptions, 15 declared exact roots (14 distinct)** plus every drive root. The two exceptions -
+`%LOCALAPPDATA%\Android\Sdk\.temp` and `.downloadIntermediates` - were not mentioned anywhere, and a carve-out
+inside a protected subtree is exactly the thing a sceptical reader wants named.
+
+**And a second refusal was undocumented.** A target with a layout kind is filtered again in `lib/actions.ps1`
+against an allowlist of cache folder names. A browser profile is refused twice; the page sold one.
+
+### The same defect class as this morning's, in five more places
+
+Section 23 sends files to the Recycle Bin, and the tier table, the FAQ's undo answer, and `--permanent`'s row
+all omitted it. 🔴 **Sweeping for the class rather than the instance found two more that neither the writer
+nor this session had listed**: `--permanent` affects 23 (`orphaned_appdata.ps1:180`), and
+`PROJECT-CONTEXT.md` grouped section 17 with the Recycle Bin sections when 17 removes build artefacts through
+the chokepoint outright.
+
+### The one that would have broken automation silently
+
+🔴 `AI-INTEGRATION-GUIDE.md` said `--yes` covers **"12-14 when the console is elevated"**.
+`WS_SAFE_BATCH_ADMIN = @(12, 13)`. Section 14 is `optin` and is never in `--all`. A caller scheduling a DISM
+component cleanup would record it as done, every week, and it would never have run.
+
+### The rest
+
+`quick-start` called `--scan` **"Read-only"** when it writes a log and a report unless `--no-report`; it said
+sections **12-16** need elevation and omitted 20, then gave a command covering only 12, 13 and 14.
+`developer-mode` said versioned caches keep their newest version **"unconditionally"** - `--purge-all` removes
+that protection, and the safety page had always said so, so the two pages disagreed in the one case that
+mattered. The FAQ and the README both said CI runs **"on every push"**; it runs on pushes to `main` and on
+pull requests. The Scheduled Task's action is five flags, not two - `--notify` is part of it. Section 14 was
+described as "Slow, safe" when `safe` is neither its tier nor its batch. And `docs/README.md` carried two
+dates the site's mirror had already corrected - **the source was the stale one**, which is the opposite of
+the drift a mirror is supposed to have.
+
+All seventeen are corrected in the CLI repo and re-mirrored to the site, front matter preserved, and the
+site build passes with `onBrokenLinks: 'throw'`.
+
+### One NEEDS DECISION, and three things reported rather than edited
+
+**NEEDS DECISION, verbatim:** *"is 'independent software engineer' the description you want on this page? It
+is the existing wording and it is kept unchanged, because how you describe yourself is yours to decide rather
+than a fact this draft can check."* Options: keep it, give the wording from aoneahsan.com, or drop the title
+and let the links speak. Keeping it is recommended, and one wording across every surface changes five files.
+
+**Reported, not edited:** `modules/system_admin.ps1:155` says `reduced` keeps Fast Startup at "roughly 40% of
+RAM" while line 162 says the whole file is ~40% - an engine string, and changing one would need a version
+cascade. Section 22 carries `Dev = $true` with no behavioural branch anywhere, so `--list --json` reports a
+flag that changes nothing. And `WINDOWSWEEP_portfolio-info_2026-09-05.md` says *"Monetization is intentionally
+absent - MIT, free"* - out of the content map's scope, and the exact claim the pricing decision forbids, in a
+file that feeds public surfaces.
+
+### Row 6's declared schema does not exist
+
+There is no `FAQPage` JSON-LD anywhere on the docs site, and the four blocks that do exist are in `headTags`,
+so they are emitted on **every** page - adding `FAQPage` there would claim the CLI reference is an FAQ. It
+needs a page-scoped head tag, which is a docs-site code change rather than a copy change. The draft carries
+the ready payload for five questions, marked BLOCKED.

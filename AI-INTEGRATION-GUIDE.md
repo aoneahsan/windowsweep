@@ -22,7 +22,7 @@ summary**, and every human-readable line goes to stderr. `--json` also implies `
 
 ## What `--yes` covers, and what it never covers
 
-`--yes` auto-confirms **regenerable caches only**: sections 0-3, 5-10, 21, and 12-14 when the console is
+`--yes` auto-confirms **regenerable caches only**: sections 0-3, 5-10, 21, and 12-13 when the console is
 already elevated.
 
 | Never covered by `--yes` | Behaviour |

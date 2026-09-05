@@ -4,16 +4,18 @@
   "bibleApproved": true,
   "contentMapApproved": true,
   "phase": "recorded",
-  "surface": "readme, tagline, site-front, desktop-readme (drafted, awaiting GATE 4); 7 surfaces unwritten",
+  "surface": "10 of 14 surfaces drafted; awaiting GATE 4 on readme, tagline, site-front, desktop-readme, docs-start, docs-safety, docs-reference, docs-help, docs-about, ai-guide. Unwritten: cli-strings",
   "round": 1,
   "gate": 4,
   "openDecisions": [
-    "GATE 4 on readme (96 slots, 18 changed), tagline (1 recommendation + 2 alternates), site-front (46 slots, 30 changed) and desktop-readme (21, all new)",
-    "The tagline lives in FIVE places, not three, and the docs site already carries a different sentence - adopting any candidate also ends that divergence",
-    "Content-map change requested: row 14 desktop-readme caps at ~600 words and its honest floor is near 800 (114 of them are verbatim GATE-4-approved SmartScreen copy)",
+    "GATE 4 on ten drafted surfaces (readme, tagline, site-front, desktop-readme, docs-start, docs-safety, docs-reference, docs-help, docs-about, ai-guide)",
+    "NEEDS DECISION docs-about: is \"independent software engineer\" the description you want? Keeping it is recommended; one wording across every surface changes five files",
+    "The tagline lives in FIVE places, not three, and the docs site already carries a different sentence",
+    "Content-map change requested: row 14 desktop-readme caps at ~600 words, honest floor near 800",
+    "Row 6 declares FAQPage schema and there is none on the site; it needs a page-scoped head tag, a docs-site code change",
     "Open, not blocking: the voice fingerprint is calibrated:false"
   ],
   "escalatedAt": null,
   "lastUpdated": "2026-09-05",
-  "notes": "Four front-door surfaces drafted 2026-09-05. Eight factual defects found in the CURRENT text; four were corrected immediately as factual corrections of false statements (the README calling section 23 a read-only audit when it sends files to the Recycle Bin, an unsourced twelve-gigabyte figure, 400 vs the real 445-char fixture, and which sections --i-understand-deep gates). Two were promises with nothing behind them and were fixed in the release workflow rather than by softening the copy: the SHA-256 checksum is now produced and attached, and the release refuses while the updater pubkey is a placeholder. The dummy said Nothing else about a nine-field payload; corrected in the dummy first, then the app. The docs-site JSON-LD price:0 offer was removed as the literal application of the no-pricing-claim decision."
+  "notes": "Ten of fourteen surfaces drafted. 🔴 SEVENTEEN factual defects found in the current text and corrected immediately, the sharpest being: safety-model.md claiming No flag bypasses steps 1-5 when --prune-history and --uninstall-data both lift step 5 and the engine header says 1-3; the AI guide claiming --yes covers sections 12-14 when WS_SAFE_BATCH_ADMIN is (12,13) so a scheduled DISM cleanup would be recorded done and never run; and section 23 omitted from five Recycle Bin lists, two of which were found by sweeping for the CLASS rather than the instance. All corrected in the CLI repo and re-mirrored to the site with front matter preserved; the site build passes with onBrokenLinks throw."
 }

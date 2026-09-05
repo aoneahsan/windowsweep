@@ -19,8 +19,9 @@ on any failure.
 npx windowsweep --scan
 ```
 
-Read-only. Prints a health report (drives, hibernation file, disk images, running apps that block cache
-steps), every target with its size on disk, and the personal-file scanners' findings.
+Deletes nothing. Prints a health report (drives, hibernation file, disk images, running apps that block cache
+steps), every target with its size on disk, and the personal-file scanners' findings. It does write its own
+log and a report under `~\.windowsweep`; pass `--no-report` if you would rather it wrote nothing at all.
 
 ## 3. Rehearse the cleanup
 
@@ -51,7 +52,7 @@ npx windowsweep --all --yes
 
 ## 5. The admin step
 
-Sections 12-16 need an elevated console. When you are at the keyboard:
+Sections 12, 13, 14, 15, 16 and 20 need an elevated console. When you are at the keyboard:
 
 ```powershell
 npx windowsweep --profile system --yes --elevate

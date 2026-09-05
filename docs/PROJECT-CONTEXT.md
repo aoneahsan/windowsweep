@@ -42,7 +42,9 @@ Verified Against: commit 5f2bc84 on `main`, 2026-09-05 (session 8: the click dum
   non-developer = clear those caches. Non-interactive with no saved answer defaults to developer on.
 - Idle age = newest of write/access/creation time, because Windows disables last-access updates on most
   volumes; the rule may only make files look fresher (conservative). Accepted trade-off 2026-09-03.
-- Personal sections (17, 18, 19) are interactive-only and use the Recycle Bin; Downloads is the only personal
+- Interactive sections (17, 18, 19, 23) are never auto-confirmed by `--yes`. Of those, 18, 19 and 23 use the
+  Recycle Bin; 17 removes build artefacts through the chokepoint outright, because a rebuilt `node_modules` is
+  not something a Recycle Bin is for. Downloads is the only personal
   root scanned; Desktop stays a protected root. `--yes` never selects items in them (RW-002 restores this).
 - Prefetch, `Windows\Installer`, WinSxS (except via DISM), NTUSER/UsrClass, hiberfil (except via powercfg) are
   never touched by design.

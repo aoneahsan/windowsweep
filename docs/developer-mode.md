@@ -11,7 +11,10 @@ developer's day fast.
 
 - Package-manager, build-tool and test-runner caches are **pruned by the idle gate**: a file goes only when its
   newest timestamp is `--days` old (default 100). A package you installed last month stays cached.
-- Versioned tool caches (Cypress, Playwright, Gradle distributions) keep their **newest version** unconditionally.
+- Versioned tool caches (Cypress, Playwright, Gradle distributions) keep their **newest version** under the
+  idle gate. 🔴 `--purge-all` removes that protection along with the gate - it rewrites those targets to clear
+  completely, newest version included. The safety-model page always said "by the idle gate"; this page said
+  "unconditionally", and the two disagreed in exactly the case where it mattered.
 - Docker removes dangling layers, build cache idle for the window, and images no container uses that are older
   than the window. Volumes are never touched.
 - Section 17 scans your project roots for build artefacts in projects nobody touched for the window.

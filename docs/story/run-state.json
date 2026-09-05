@@ -1,0 +1,17 @@
+{
+  "project": "windowsweep",
+  "slug": "windowsweep",
+  "bibleApproved": false,
+  "contentMapApproved": false,
+  "phase": "discover",
+  "surface": null,
+  "round": 0,
+  "gate": 1,
+  "openDecisions": [
+    "GATE 1: approve the Story Bible, the palette ratio and the registry entry",
+    "NEEDS DECISION: paste 1-3 writing samples to calibrate the voice fingerprint (currently calibrated: false)"
+  ],
+  "escalatedAt": null,
+  "lastUpdated": "2026-09-05",
+  "notes": "Built from repository evidence at RW-090. No interview was run; every owner-answerable section is marked inferred. Nothing may be written against this Bible until GATE 1 is approved in writing."
+}

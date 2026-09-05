@@ -58,12 +58,31 @@ jobs:
             exit 1
           fi
 
+      # 🔴 The same sentence promises "a minisign signature the app's own updater
+      # checks". tauri.conf.json still carries REPLACE_WITH_UPDATER_PUBLIC_KEY, so
+      # that half has nothing behind it. Refuse here rather than publish a release
+      # whose shipped copy describes an artefact it does not contain.
+      - name: The updater public key is real
+        shell: bash
+        run: |
+          key="$(node -p "require('./desktop/src-tauri/tauri.conf.json').plugins.updater.pubkey")"
+          if [ "$key" = "REPLACE_WITH_UPDATER_PUBLIC_KEY" ] || [ -z "$key" ]; then
+            echo "the updater public key is still a placeholder."
+            echo "The Elevation screen and the desktop README both promise a minisign"
+            echo "signature the updater checks. Generate the keypair, put the public half"
+            echo "in tauri.conf.json and the private half in TAURI_SIGNING_PRIVATE_KEY,"
+            echo "or remove that clause from the copy first."
+            exit 1
+          fi
+          echo "updater public key present"
+
       - uses: dtolnay/rust-toolchain@stable
       - uses: swatinem/rust-cache@v2
         with:
           workspaces: desktop/src-tauri
 
       - uses: tauri-apps/tauri-action@v0
+        id: tauri
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
@@ -75,3 +94,29 @@ jobs:
           releaseDraft: true
           prerelease: false
           includeUpdaterJson: true
+
+      # 🔴 THE APPROVED COPY PROMISES THIS FILE. The Elevation screen and the
+      # desktop README both say "every release publishes a SHA-256 checksum for
+      # each installer" - approved by the owner on 2026-09-05 - and until this
+      # step existed the workflow produced no checksum at all. A promise in
+      # shipped copy with no step behind it is the defect; the fix is the step,
+      # not a softer sentence.
+      - name: Publish a SHA-256 checksum for every installer
+        shell: pwsh
+        run: |
+          $dir = 'desktop/src-tauri/target/release/bundle'
+          $files = Get-ChildItem -Path $dir -Recurse -Include *.exe, *.msi -File
+          if ($files.Count -eq 0) { throw 'no installer was produced - nothing to checksum' }
+          $out = 'SHA256SUMS.txt'
+          Remove-Item $out -ErrorAction SilentlyContinue
+          foreach ($f in $files) {
+            $h = (Get-FileHash -Algorithm SHA256 -Path $f.FullName).Hash.ToLower()
+            "$h  $($f.Name)" | Add-Content -Encoding utf8 $out
+            Write-Host "$h  $($f.Name)"
+          }
+          Write-Host "checksums for $($files.Count) installer(s) -> $out"
+
+      - name: Attach the checksum file to the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ inputs.tag }}" SHA256SUMS.txt --clobber

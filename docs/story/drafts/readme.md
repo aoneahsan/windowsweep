@@ -106,7 +106,7 @@ with what it is called. The platform refusal closes on the mechanism that enforc
 
 **Change:** added, and this is the change the Bible's per-surface rule asks for. The old paragraph opened on
 what the tool removes and reached restraint in its fourth sentence, which is the wrong order for a reader who
-has already been burned by a cleaner. Twelve words, then four. The refusal is checkable: 66 protected
+has already been burned by a cleaner. Eleven words, then four. The refusal is checkable: 66 protected
 subtrees, 50 wildcard patterns and 13 protected file names are built in `Initialize-Safety`
 (`lib/safety.ps1`), and steps 1 to 3 of `Remove-PathSafe` carry the comment "No flag bypasses steps 1-3".
 
@@ -790,7 +790,7 @@ These are the limits, not the small print. Each one is a thing this tool cannot 
 **Change:** added, and this is the Bible's per-surface rule discharged. The Limitations section is part of
 the pitch rather than an appendix, and for a solution-sceptical reader the seven bullets under it are the
 most persuasive block on the page — but only if they are framed as a claim rather than as a disclaimer a
-reader is meant to skim. Eight words, then twenty-one.
+reader is meant to skim. Eight words, then seventeen.
 
 ### S-077 · README.md:370-371 · Limitations · no undo
 ```
@@ -906,8 +906,8 @@ An open browser keeps its cache files locked and half-written. Close it and run 
 ```
 **Was:** identical.
 
-**Change:** none. Voice-fingerprint sentence 7, and it ends on the exact command, which is where this voice
-ends an answer.
+**Change:** none. Voice-fingerprint sentence 7. It ends on the exact command, which is where this voice ends
+an answer.
 
 ### S-089 · README.md:400-402 · FAQ · why PowerShell
 ```
@@ -1023,20 +1023,22 @@ command. The dry aside at S-069 ("never returns on its own") is a third candidat
 which puts W at roughly 3 of the file's 96 slots. That is under the 15 per cent budget rather than at it,
 which is the right side to err on for a file about deleting things.
 
-**Rhythm.** Shortest shipping sentence: "No flag changes that." at four words, S-006. Also four: "There is no
-configuration you must do." is six, and "No." at S-086 is one word standing as a complete answer. Longest:
-S-080's middle sentence at thirty-eight words, which explains the direction of the idle gate's error and
-earns the length. The added lines follow the fingerprint's shape deliberately. S-006 is twelve words then
-four. S-076 is eight then twenty-one.
+**Rhythm.** Shortest shipping sentence: "No." at S-086, one word standing as a complete answer. Then "No
+flag changes that." at four, S-006. Longest: the Problem beat's first sentence at S-014, fifty-two words of
+named tools, and the chokepoint bullet at S-024, forty-six of named refusals; both are lists and both earn
+it. The added lines follow the fingerprint's shape deliberately. S-006 is eleven words then four. S-076 is
+eight then seventeen, and S-080's middle sentence runs thirty-one.
 
-**Length.** No section grows beyond a line. Measured against the current file: the opening paragraph goes
-from **106 words to 98** (S-006 to S-010 replace four sentences with five shorter ones); Features goes from
-**331 to 349** (+18, all of it the two mechanism clauses at S-024 and S-031 and the correction at S-023,
-which is itself two words shorter than what it replaces); Why windowsweep goes from **214 to 209**;
-Limitations goes from **190 to 213** (+23, the framing line at S-076). Every other covered section is
-unchanged or one word shorter. Total change across the file: **+29 words**, against a row-1 cap of "the
-existing structure, fixed anchors", which is met. 28 `##` headings in, 28 out. Every `<a id>` is untouched,
-and the two `###` renames were proved unlinked by grep before they were made.
+**Length.** Row 1's cap is not a word count. It reads "the existing structure, fixed anchors", and that part
+is met outright. 28 `##` headings in, 28 out. Every `<a id>` is untouched, and the two `###` renames were proved unlinked by
+grep before they were made. Word counts were then measured section by section against the current file with
+markup stripped, because "no section grows" is the useful reading of that cap: the opening paragraph goes
+from **102 words to 121**, of which S-006's added refusal is 16; Why windowsweep's prose goes from **168 to
+169**; Features from **274 to 303**, being the two mechanism clauses at S-024 and S-031 plus the correction
+at S-023; Limitations from **152 to 178**, which is the framing line at S-076; Quick Start is unchanged at
+37. Every other covered section is unchanged or a word shorter. Total across the file: about **+75** words on
+2,996 of visible copy, so 2.5 per cent, and every added word is either a named mechanism or a corrected
+fact.
 
 **Unsure.** No `NEEDS DECISION` in this draft: every fact in it was read out of the tree or printed by the
 tool this session. Three judgement calls are worth naming rather than hiding. **S-013** replaces "actively

@@ -135,3 +135,79 @@ or handler, and no writer targets a key no page declares.
 The same banned phrase was also fixed in one gallery specimen (`g-tables.js`, "the filter is just narrow"),
 which the drafts did not cover because their scope was the eleven screens. Same string, same reason, noted
 here rather than left to look like part of the approved set.
+
+## 2026-09-05 - the front-door surfaces drafted, and eight factual defects found
+
+`readme` (96 slots), `tagline` (one recommendation plus two alternates), `site-front` (46 slots) and
+`desktop-readme` (21, all new) are drafted and awaiting GATE 4. What the pass turned up matters more than the
+prose.
+
+### Corrected immediately, without waiting for GATE 4
+
+A factual correction of a false statement is allowed without the story gate (`CLAUDE.md`), and one of these
+was the sort of sentence this whole system exists to catch.
+
+🔴 **The README called section 23 a read-only audit.** *"26 numbered sections … plus four read-only audits
+(global packages, orphaned app data, idle programs, startup items)."* Section 23 is `Tier='recycle'`,
+`Batch='interactive'`: it asks a person to pick, row by row, and what they pick goes to the Recycle Bin.
+**Three** sections report and delete nothing (22, 24, 25). This is the one sentence in the file that could
+have made a reader trust a deletion they were not expecting. The README already contradicted itself further
+down, and `llms.txt` had it right — so the machine-readable surface and the human one disagreed, with the
+machine correct.
+
+**A number nobody could source.** *"the next `yarn install` re-downloads twelve gigabytes"* appears nowhere
+in the tree, and the Bible's rule is absolute: never promise a number. It now reads "downloads the lot
+again", which is true on any machine.
+
+**445, not 400.** The self-test prints `long path (445 chars) removed`. The README claimed 400.
+
+**Which sections the deep flag covers.** Two sections are permanent; `--i-understand-deep` gates four. The
+old wording let a reader infer the two sets were the same.
+
+### The two that were promises with nothing behind them
+
+🔴 **The SmartScreen copy approved earlier today names a SHA-256 checksum the release workflow did not
+produce.** `desktop-release.yml` built the installers and, given the signing secret, emitted `.sig` files and
+`latest.json` — there was no checksum step anywhere in it. **The fix is the step, not a softer sentence**: the
+workflow now hashes every installer and attaches `SHA256SUMS.txt` to the release.
+
+🔴 **And the other half of the same sentence had nothing behind it either.** `tauri.conf.json` still carries
+`REPLACE_WITH_UPDATER_PUBLIC_KEY`, so the minisign signature the copy promises does not exist yet. The release
+workflow now refuses to run while that placeholder is in place, rather than publishing a release whose own
+copy describes an artefact it does not contain.
+
+### The dummy said "Nothing else" about something with nine fields
+
+🔴 `account.html` read *"Run summaries | Date, bytes freed, section count. **Nothing else.**"* `stripRun` in
+`desktop/src/lib/sync.ts` sends nine fields, three of which the app's own History screen displays as its Mode
+and Took columns — so the table was contradicted by the screen beside it. **"Nothing else" is what made it a
+defect rather than a summary.** `pushSettings` also writes a `lastSeenAt` timestamp disclosed nowhere.
+
+Both are now named in the dummy, and the app's catalogue follows it — in that order (§10a).
+
+### Two owner decisions still open
+
+**The docs site's `SoftwareApplication` schema carried `offers: { price: '0', priceCurrency: 'USD' }`** — a
+machine-readable pricing claim on the one surface answer engines parse structurally, and the fleet rule names
+JSON-LD explicitly. The 2026-09-05 decision was "no pricing claim, anywhere"; this is the artefact that
+decision did not name. Applied the literal reading and **removed the block**, recorded here so it is not
+re-litigated. `isAccessibleForFree` is the same claim in another field and is equally out.
+
+**The desktop README section is held back**, not shipped. It needs a download sentence and there is nothing
+to download: no desktop release exists, `desktop-release.yml` is manual-dispatch only, and the updater key is
+a placeholder. It is inserted in the same change that publishes the first release, rather than telling a
+reader to fetch something that is not there.
+
+### Two things for the owner, in his own reading
+
+1. **The tagline lives in FIVE places, not three, and they already disagree** — the docs site carries a
+   different sentence. Adopting any candidate is also a decision to end that divergence.
+2. **Row 14's length cap is wrong, and the draft says so rather than cutting to fit.** `desktop-readme`
+   measures 887 words against a ~600 cap, after two rounds of cuts. The floor: 114 words are reproduced
+   verbatim from GATE-4-approved SmartScreen copy, 137 are the what-it-sends disclosure that is the surface's
+   whole reason for existing, and 111 are one of the three things the row itself mandates. The honest floor is
+   near 800. That is a content-map change, so it is a request rather than an edit.
+
+### Also corrected
+
+`og:locale` was `en_US` on an en-GB product.

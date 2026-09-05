@@ -190,7 +190,7 @@
   "report.onDisk": "The same report, on disk at",
   "account.title": "Sign in only if you want your settings on another machine.",
   "account.lede": "Reclaiming space is never gated. Signing in moves your settings and a summary of each run between your own machines, and that is all it does.",
-  "account.whatSyncs": "What syncs: your appearance settings, developer mode, and for each run its date, mode, duration, section list and two byte counts.",
+  "account.whatSyncs": "What syncs, per run: the date, the mode, whether it was a dry-run, whether it was elevated, which section numbers ran, the bytes reclaimed, the bytes a dry-run estimated, how long it took, and an id. Plus your appearance settings, developer mode, and a last-seen timestamp.",
   "account.whatNeverSyncs": "What never syncs: a file path, a folder name, a drive label, your machine name or your Windows user name.",
   "account.signIn": "Sign in with Google",
   "account.signOut": "Sign out",

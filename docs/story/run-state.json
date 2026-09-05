@@ -4,14 +4,16 @@
   "bibleApproved": true,
   "contentMapApproved": true,
   "phase": "recorded",
-  "surface": "desktop-moment, desktop-safety, desktop-cockpit (GATE 4 granted); next: readme, tagline, site-front",
-  "round": 2,
-  "gate": null,
+  "surface": "readme, tagline, site-front, desktop-readme (drafted, awaiting GATE 4); 7 surfaces unwritten",
+  "round": 1,
+  "gate": 4,
   "openDecisions": [
-    "Open, not blocking: the voice fingerprint is calibrated:false - 1-3 writing samples would replace the inferred one",
-    "Eleven surfaces not yet written: readme, tagline, docs-start, docs-safety, docs-reference, docs-help, docs-about, ai-guide, site-front, cli-strings, desktop-readme"
+    "GATE 4 on readme (96 slots, 18 changed), tagline (1 recommendation + 2 alternates), site-front (46 slots, 30 changed) and desktop-readme (21, all new)",
+    "The tagline lives in FIVE places, not three, and the docs site already carries a different sentence - adopting any candidate also ends that divergence",
+    "Content-map change requested: row 14 desktop-readme caps at ~600 words and its honest floor is near 800 (114 of them are verbatim GATE-4-approved SmartScreen copy)",
+    "Open, not blocking: the voice fingerprint is calibrated:false"
   ],
   "escalatedAt": null,
   "lastUpdated": "2026-09-05",
-  "notes": "GATE 4 granted 2026-09-05 for the three desktop surfaces. All 38 approved changes are written into the click dummy (RW-093), plus the two decision answers: the pricing claim on Home and Account is replaced by a sentence about what sign-in does, and the installer ships unsigned with the SmartScreen note kept and the two verifiable artefacts named exactly (a SHA-256 checksum and the updater minisign signature, neither of which is a code-signing certificate). Two internal identifiers were renamed alongside their labels - data-ws-action clean/preview became reclaim/dryRun and cleanBtn became reclaimBtn - because an identifier that still says the retired word is how the retired word comes back. The app then followed the dummy: three catalogue keys updated, all gates re-run green."
+  "notes": "Four front-door surfaces drafted 2026-09-05. Eight factual defects found in the CURRENT text; four were corrected immediately as factual corrections of false statements (the README calling section 23 a read-only audit when it sends files to the Recycle Bin, an unsourced twelve-gigabyte figure, 400 vs the real 445-char fixture, and which sections --i-understand-deep gates). Two were promises with nothing behind them and were fixed in the release workflow rather than by softening the copy: the SHA-256 checksum is now produced and attached, and the release refuses while the updater pubkey is a placeholder. The dummy said Nothing else about a nine-field payload; corrected in the dummy first, then the app. The docs-site JSON-LD price:0 offer was removed as the literal application of the no-pricing-claim decision."
 }

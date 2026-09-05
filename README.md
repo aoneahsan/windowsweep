@@ -19,8 +19,9 @@
 
 > [!IMPORTANT]
 > **This tool deletes files.** Most of what it removes are caches that rebuild themselves; personal files it
-> lists go to the Recycle Bin; two sections (emptying the Recycle Bin, clearing event logs) are permanent and
-> gated behind a separate flag. Start with `npx windowsweep --scan`, which deletes nothing, then
+> lists go to the Recycle Bin; and two sections - emptying the Recycle Bin, clearing event logs - are
+> permanent, with no undo of any kind. Those two sit behind `--i-understand-deep`, along with the hibernation
+> file and disk-image compaction. Start with `npx windowsweep --scan`, which deletes nothing, then
 > `npx windowsweep --dry-run --all --yes`, which shows exactly what a real run would remove.
 > **Windows only** - npm refuses to install it elsewhere.
 
@@ -78,8 +79,8 @@ Yarn and npm caches, Gradle, Cypress and Playwright browsers, Android emulator i
 `node_modules` for a project you finished in spring, editor caches, two hundred profiles' worth of Chrome cache.
 Clearing them by hand means keeping a private list of paths and remembering which ones bite back.
 
-A cleaner that wipes every cache it finds trades one problem for another: the next `yarn install` re-downloads
-twelve gigabytes and your afternoon is gone. `windowsweep` takes the narrower path.
+A cleaner that clears every cache it finds trades one problem for another: the next `yarn install` downloads
+the lot again, and your afternoon is gone. `windowsweep` takes the narrower path.
 
 | | `windowsweep` | Windows Disk Cleanup / Storage Sense | A wipe-everything cleaner |
 |---|---|---|---|
@@ -102,9 +103,11 @@ security scanner or a registry cleaner. It reclaims disk space, nothing else.
 
 - **Developer mode** - one question on the first run. Yes keeps package, build and test-runner caches used in
   the last 100 days and the newest version of every versioned tool; no clears them completely.
-- **26 numbered sections** - from package-manager caches to Windows Update leftovers, plus four read-only
-  audits (global packages, orphaned app data, idle programs, startup items), each naming its paths before it
-  acts. Numbers are a public contract.
+- **26 numbered sections** - from package-manager caches to Windows Update leftovers, plus three read-only
+  audits (global packages, idle programs, startup items) that report and delete nothing. Orphaned application
+  data is a fourth 1.1.0 section and is **not** an audit: it asks you to pick, row by row, and what you pick
+  goes to the Recycle Bin. Every section names its paths before it acts, and the numbers are a public
+  contract.
 - **One deletion chokepoint** - refuses drive roots, Windows, Program Files, your profile root, personal
   folders, credentials, toolchains and browser or editor state; asserts every deletion sits inside its declared
   target; never follows a junction or symlink; handles paths beyond 260 characters; skips files another program
@@ -120,7 +123,7 @@ security scanner or a registry cleaner. It reclaims disk space, nothing else.
 - **Running-app guard** - an open browser, editor or app keeps its caches; the tool tells you which to close.
 - **Session reports** - schema-versioned JSON, exportable to Markdown or a self-contained HTML page, plus
   `--json` for scripts.
-- **Self-test** - 151 checks prove the guards on your machine with a real junction, a 400-character path and
+- **Self-test** - 151 checks prove the guards on your machine with a real junction, a 445-character path and
   a dry-run fixture before you trust it.
 - **Offline by design** - zero network calls, no telemetry, no update check. Crash bundles stay on disk.
 

@@ -457,8 +457,8 @@
         {
           "id": "P6.records",
           "title": "README section, docs-site desktop page, PROJECT-CONTEXT, CLAUDE/AGENTS rows",
-          "status": "pending",
-          "note": "specification: remaining-work.md RW-083 - README section, docs-site desktop.md, PACKAGES, CLAUDE/AGENTS, the work-history record, the tracker and a recomputed summary",
+          "status": "in_progress",
+          "note": "RW-083: CLAUDE.md/AGENTS.md, docs/PACKAGES.md, PROJECT-CONTEXT, the tracker and WH006 are all current. 🔴 The README Desktop app section and the docs-site desktop.md are DRAFTED but deliberately HELD BACK - they need a download sentence and there is nothing to download yet (no release, manual-dispatch workflow, placeholder updater key). They are inserted in the same change that publishes desktop-v1.1.0.",
           "awaitingUser": false
         },
         {
@@ -501,7 +501,7 @@
           "id": "P7.RW-092",
           "title": "/story-write per surface: writer, the full panel, at most two rounds, the finalizer, GATE 4 each; the docs site re-mirrored after every approved page",
           "status": "in_progress",
-          "note": "The three desktop surfaces are through GATE 4 (approved 2026-09-05). Eleven surfaces remain: readme, tagline, docs-start, docs-safety, docs-reference, docs-help, docs-about, ai-guide, site-front, cli-strings, desktop-readme. The content map orders them: 1, 2, 9 next (the front door), then 3, 4, 6.",
+          "note": "Three desktop surfaces through GATE 4 (2026-09-05). Four front-door surfaces DRAFTED and awaiting GATE 4 the same day: readme (96 slots, 18 changed), tagline (1 recommendation + 2 alternates, 99 chars ASCII), site-front (46 slots, 30 changed - the llms.txt Facts block grows from 8 lines to 16 because six of the eight mapped questions were previously answerable only by following a link), desktop-readme (21 slots, all new). 🔴 The pass found EIGHT factual defects in the current text; four were corrected immediately as factual corrections and two were promises with nothing behind them, fixed in the release workflow. Seven surfaces remain: docs-start, docs-safety, docs-reference, docs-help, docs-about, ai-guide, cli-strings.",
           "awaitingUser": false
         },
         {
@@ -626,7 +626,7 @@
     {
       "date": "2026-09-05",
       "phase": "P6+P7",
-      "summary": "Story GATES 1 and 2 approved and recorded; the eleven desktop screens drafted through the story writer (375 slots, 38 changes, 7 NEEDS DECISION, 5 dummy defects reported). Desktop app foundation built: web layer, Tauri shell, CI workflows. Gates green - typecheck 0, lint 0 with the i18n gate proved on two plants, vite build 0 warnings and no source maps, the prepaint drift gate proved on a plant, the npm tarball sweep proved against a planted desktop leak, CLI self-test 151/151 and version parity 1.1.0 unchanged. Whole project 55.45% -> 70.55%. Then RW-079 agent half: the Firestore rules, indexes and config written and committed; project creation filed as owner row 23. Then GATE 4 was granted and RW-093 landed: 38 approved slots into the dummy, the pricing and code-signing answers applied, two action identifiers renamed with their labels, the app re-gated green. Then the remaining seven screens, so RW-077 is complete at eleven of eleven; two CI-found defects fixed (the protocol-asset feature, and the resource glob trailing ** which matches directories not files)",
+      "summary": "Story GATES 1 and 2 approved and recorded; the eleven desktop screens drafted through the story writer (375 slots, 38 changes, 7 NEEDS DECISION, 5 dummy defects reported). Desktop app foundation built: web layer, Tauri shell, CI workflows. Gates green - typecheck 0, lint 0 with the i18n gate proved on two plants, vite build 0 warnings and no source maps, the prepaint drift gate proved on a plant, the npm tarball sweep proved against a planted desktop leak, CLI self-test 151/151 and version parity 1.1.0 unchanged. Whole project 55.45% -> 70.55%. Then RW-079 agent half: the Firestore rules, indexes and config written and committed; project creation filed as owner row 23. Then GATE 4 was granted and RW-093 landed: 38 approved slots into the dummy, the pricing and code-signing answers applied, two action identifiers renamed with their labels, the app re-gated green. Then the remaining seven screens, so RW-077 is complete at eleven of eleven; two CI-found defects fixed (the protocol-asset feature, and the resource glob trailing ** which matches directories not files). Then the four front-door surfaces drafted, and eight factual defects found and either corrected (the README calling section 23 a read-only audit; an unsourced number; 400 vs 445; the deep-flag arithmetic; the dummy claiming Nothing else about a nine-field payload; og:locale) or fixed at the source (the release now produces the SHA-256 checksum its copy promises, and refuses while the updater pubkey is a placeholder)",
       "commit": "pending"
     }
   ],

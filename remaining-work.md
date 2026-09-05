@@ -41,10 +41,10 @@ an approved Story Bible with every in-scope surface through GATE 4.**
 | Docs site | 8 | 95% | DNS + HTTPS (rows 11-12) and the write-back that follows. The PNG OG card and the local install closed 2026-09-05 |
 | Repository hygiene + owner records | 5 | 85% | homepage fields after DNS; the owner's review of the master-links entry (row 5); the ORCID import (row 13) |
 | Desktop design (click dummy) | 8 | **100%** | nothing - RW-073 to RW-075 closed 2026-09-05, four defects fixed, every gate proved red on its own plant |
-| Desktop app (code, Tauri, Firebase, CI, release) | 24 | 62% | all eleven screens built; RW-079 waits on owner row 23; Rust compiled locally (row 22); RW-081 run-to-verify and GATE 4 parity; RW-082 the release |
+| Desktop app (code, Tauri, Firebase, CI, release) | 24 | 68% | all eleven screens built; RW-079 waits on owner row 23; Rust compiled locally (row 22); RW-081 run-to-verify and GATE 4 parity; RW-082 the release |
 | Storytelling retrofit (P7) | 10 | 55% | GATE 4 on the three drafted desktop surfaces, seven `NEEDS DECISION` answers, RW-093, then eleven more surfaces |
 
-Score = sum(weight x done) / 100 = 25 + 1.2 + 1.2 + 4 + 5 + 7.6 + 4.25 + 8 + 14.88 + 5.5 = **76.63% of the whole
+Score = sum(weight x done) / 100 = 25 + 1.2 + 1.2 + 4 + 5 + 7.6 + 4.25 + 8 + 16.32 + 5.5 = **78.07% of the whole
 project**. Against the narrower scope agreed on 2026-09-03 (engine 30, 1.1 features 20, verification 10,
 in-repo docs 10, docs site 10, self-test 5, release 5, hygiene 5, records 5) the CLI stands at
 30 + 18 + 1.5 + 10 + 9.5 + 5 + 5 + 4.5 + 4.25 = **87.75**. The published CLI on its own is production-ready;

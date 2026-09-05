@@ -437,7 +437,7 @@
           "id": "P6.code-ci",
           "title": "desktop/ app written and compiled by CI (desktop-ci.yml, desktop-release.yml)",
           "status": "in_progress",
-          "note": "RW-077 COMPLETE 2026-09-05: all eleven screens built (Splash, Consent, Home, Run, Sections, Picker, History, Report, Settings, Account, Elevation) - the Placeholder scaffolding is deleted because it has no callers left. RW-078 src-tauri written, 5 commands, least-privilege capabilities, an argument allowlist with a unit test, an icon set exported from a new SVG master. RW-080 both workflows; desktop-ci found two real defects on its first runs - the protocol-asset feature with no allowlist entry, and a resource glob whose trailing ** matches directories rather than files. Rust still CI-only (owner row 22).",
+          "note": "RW-077 COMPLETE 2026-09-05: all eleven screens built (Splash, Consent, Home, Run, Sections, Picker, History, Report, Settings, Account, Elevation) - the Placeholder scaffolding is deleted because it has no callers left. RW-078 src-tauri written, 5 commands, least-privilege capabilities, an argument allowlist with a unit test, an icon set exported from a new SVG master. RW-080 both workflows; desktop-ci found two real defects on its first runs - the protocol-asset feature with no allowlist entry, and a resource glob whose trailing ** matches directories rather than files. Rust still CI-only (owner row 22). | desktop-ci GREEN on 4c031d7: every step including cargo fmt, clippy -D warnings, cargo test and tauri build --no-bundle.",
           "awaitingUser": false
         },
         {
@@ -450,8 +450,8 @@
         {
           "id": "P6.ui",
           "title": "UI implemented against the approved dummy, with the parity check",
-          "status": "pending",
-          "note": "follows the dummy review | UNBLOCKED 2026-09-05: gate 3 is recorded (owner pre-authorised it), so desktop/ may now hold app code | specification: remaining-work.md RW-081, which also closes GATE 4 (parity screenshot pairs at 1440 and 390)",
+          "status": "in_progress",
+          "note": "RW-081 part one done 2026-09-05: a browser pass over all eleven React screens - 264 combinations (11 screens x 4 widths x 3 treatments x light+dark), 10,684 text nodes, ZERO contrast failures, zero overflow, zero text under 12px, zero focusable-in-hidden, zero runtime errors. Widths 760/1024/1440/1920 - 390 is below the product minimum of 760 and is deliberately not measured. Both gates watched failing on two different plants. It found one defect no static gate could: Shell.tsx resolved getCurrentWindow() during render, which throws outside a Tauri window, so every screen using the shell was broken while typecheck, lint and build stayed green. 🔴 STILL OWED: GATE 4 proper - screenshot pairs judged by eye in the app own WebView2, which needs owner row 22. Evidence: desktop/design/CLICK-DUMMY-INVENTORY.md section 9.",
           "awaitingUser": false
         },
         {

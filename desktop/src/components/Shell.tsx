@@ -11,7 +11,12 @@
 import { useState } from 'react';
 import { Link, useRouterState } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { getCurrentWindow } from '@tauri-apps/api/window';
+/* 🔴 `getCurrentWindow` is imported lazily, inside the handler. Calling it during
+   render reads `window.__TAURI_INTERNALS__`, which does not exist outside a Tauri
+   window - so every screen that renders this title bar threw, while Splash and
+   Consent (which do not) were fine. A browser pass found it; no static gate could,
+   because the call is perfectly typed and the module resolves. A title bar has no
+   reason to resolve the window object before someone presses one of its buttons. */
 
 import { Icon, type IconName } from './Icon';
 import { ThemePanel } from './ThemePanel';
@@ -47,9 +52,24 @@ function isGroup(entry: NavEntry): entry is NavGroup {
   return 'group' in entry;
 }
 
+type WindowAction = 'minimize' | 'toggleMaximize' | 'close';
+
+async function windowAction(action: WindowAction): Promise<void> {
+  try {
+    const { getCurrentWindow } = await import('@tauri-apps/api/window');
+    const win = getCurrentWindow();
+    if (action === 'minimize') await win.minimize();
+    else if (action === 'toggleMaximize') await win.toggleMaximize();
+    else await win.close();
+  } catch {
+    /* No Tauri window - a development build in an ordinary browser. The buttons
+       are inert there rather than throwing, which is the honest behaviour: there
+       is no window for them to act on. */
+  }
+}
+
 function Titlebar({ onOpenTheme }: { onOpenTheme: () => void }) {
   const { t } = useTranslation();
-  const win = getCurrentWindow();
   return (
     <header className="titlebar" data-tauri-drag-region>
       <span className="tb-name">{t('app.name')}</span>
@@ -57,13 +77,13 @@ function Titlebar({ onOpenTheme }: { onOpenTheme: () => void }) {
       <button className="tb-btn" type="button" onClick={onOpenTheme} aria-label={t('theme.title')}>
         <Icon name="sun" />
       </button>
-      <button className="tb-btn" type="button" onClick={() => void win.minimize()} aria-label={t('window.minimise')}>
+      <button className="tb-btn" type="button" onClick={() => { void windowAction('minimize'); }} aria-label={t('window.minimise')}>
         <Icon name="min" />
       </button>
-      <button className="tb-btn" type="button" onClick={() => void win.toggleMaximize()} aria-label={t('window.maximise')}>
+      <button className="tb-btn" type="button" onClick={() => { void windowAction('toggleMaximize'); }} aria-label={t('window.maximise')}>
         <Icon name="max" />
       </button>
-      <button className="tb-btn tb-close" type="button" onClick={() => void win.close()} aria-label={t('window.close')}>
+      <button className="tb-btn tb-close" type="button" onClick={() => { void windowAction('close'); }} aria-label={t('window.close')}>
         <Icon name="close" />
       </button>
     </header>

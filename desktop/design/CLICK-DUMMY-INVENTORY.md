@@ -274,3 +274,83 @@ text box; the second used `#8a8a8a`, which is genuinely readable at 4.5:1 agains
 **A plant must reproduce the condition against the surface it actually lands on**, or it proves nothing -
 and it fails in the direction that looks like a broken gate, which is the safer direction but still costs a
 session real time.
+
+---
+
+## 9. The app-side pass — 2026-09-05, and what it found
+
+GATE 4 compares the built app against this dummy page by page, so this ledger
+records both halves. Section 8 recorded the dummy's own verification; this records
+the first pass over the eleven **React** screens.
+
+### How it was possible before the Rust half compiled
+
+Visual Studio Build Tools is not installed on this machine (owner row 22), so
+`tauri build` cannot run here — and outside a Tauri window there is no `invoke`,
+so every screen showed its engine-error state and could not be compared with
+anything. A design gate blocked on a 5 GB owner-only download is the wrong
+dependency, so `desktop/src/lib/dev-engine.ts` answers the engine's contract in a
+development build: the real captured catalogue, plausible sizes, always as a
+dry-run, every log line saying it is not the real engine.
+
+🔴 **Its gate took two attempts, and the second one is the lesson.** The first
+version gated the call sites on `import.meta.env.DEV` and imported the module
+statically. Measured against `dist/`: the identifiers were gone and two of the
+module's string literals were still there — the branches were eliminated, the
+module stayed in the graph. The import is now dynamic behind the same constant,
+and re-measured with a control string that must be found. **Gating a body is not
+gating a module.**
+
+### What was measured
+
+The automation Chrome (`$CHROME_WS_BROWSER`), headed, on its own profile
+directory and its own debugging port. **11 screens × 4 widths × 3 treatments ×
+light and dark = 264 combinations**, and **10,684 text nodes**.
+
+Widths were **760, 1024, 1440 and 1920**. 🔴 **390 is not among them, deliberately**
+— `tauri.conf.json` sets `minWidth: 760`, so the product cannot be narrower than
+that and a failure at 390 is one nobody can act on.
+
+| Check | Result |
+|---|---|
+| Routes that threw | 0 |
+| Screens in the engine-error state | 0 — the stand-in answers |
+| Horizontal overflow on the body | 0 |
+| Text below 12px | 0 |
+| Contrast failures (WCAG AA, size- and weight-aware) | **0 of 10,684** |
+| Focusable controls inside a hidden container | 0 |
+
+### The defect it found, which no static gate could
+
+**`Shell.tsx` resolved `getCurrentWindow()` during render.** Outside a Tauri
+window that reads `window.__TAURI_INTERNALS__`, which does not exist — so every
+screen rendering the title bar threw, while Splash and Consent, which do not use
+the shell, were fine. Typecheck, lint and build were all green: the call is
+correctly typed and the module resolves. The window object is now resolved inside
+the button handler, which is also the right shape in production — a title bar has
+no reason to reach for the window before someone presses one of its buttons.
+
+🔴 **And the audit nearly missed it.** Vite's error overlay is a custom element in
+a shadow root, so the text walk never saw it; the first run reported eleven broken
+screens as clean, and only the overlay's own 9.6px "Hide Error" leaking into the
+tiny-text list gave it away. The audit now asks for `vite-error-overlay` directly,
+and the earlier numbers were re-taken — 1,504 text nodes became 10,684 once the
+pages actually rendered, which is how much of each screen the overlay was hiding.
+
+### The gates were watched failing
+
+Two different plants on the Sections screen: an inline `#3a3f36` on the lede, and
+a 9px paragraph. Both were caught and located — `1.94:1 (needs 4.5) at 15px` and
+`9px "The catalogue"`, each with its screen, mode, treatment and width. Restored,
+and the pass came back clean.
+
+### What this pass is NOT
+
+It is **not** GATE 4. GATE 4 is screenshot pairs of the dummy page beside the app
+page, judged by eye, in the app's own WebView2 — and that needs the Tauri build,
+which needs owner row 22. This pass establishes that every screen renders, at
+every width the product can be, in every treatment, with no contrast or type
+defect and no runtime error. The visual comparison is still owed.
+
+Reproduce: `yarn dev` in `desktop/`, then the CDP script recorded in that
+session's work-history entry.

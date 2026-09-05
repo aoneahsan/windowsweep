@@ -44,8 +44,24 @@ master carrying the sweep motif in the registered hue. 🔴 **All eleven screens
 Home, Run, Sections, Picker, History, Report, Settings, Account, Elevation - so RW-077 is complete and the
 placeholder scaffolding is deleted. 🔴 **Rust has not been compiled locally** - Visual Studio Build Tools is
 still absent (row 22), so `desktop-ci.yml` is the only Rust evidence, and it earned its place immediately by
-catching two real defects: the `protocol-asset` Cargo feature with no matching allowlist entry, and a
-`bundle.resources` glob whose trailing `**` matches path COMPONENTS - four directories, no files.
+catching **three** real defects across four cycles: the `protocol-asset` Cargo feature with no matching
+allowlist entry, a `bundle.resources` glob whose trailing `**` matches path COMPONENTS (four directories, no
+files), and a comment key the config schema refuses outright. 🔴 **`desktop-ci` is now GREEN end to end** on
+`4c031d7` - `cargo fmt`, `clippy -D warnings`, `cargo test` and `tauri build --no-bundle` all pass. Because
+that class of failure was only findable in CI, `scripts/check-tauri-config.mjs` now validates the config
+against the installed CLI's own schema in `prebuild` and in CI; its `--self-check` plants an unknown field to
+prove it is not vacuous.
+
+**A browser pass over all eleven screens** (2026-09-05): 264 combinations - 11 screens x 4 widths x 3
+treatments x light and dark - **10,684 text nodes, zero contrast failures**, zero overflow, zero text under
+12px, zero focusable-in-hidden, zero runtime errors; both gates watched failing on two different plants.
+🔴 Widths are **760/1024/1440/1920** and **390 is deliberately absent** - `minWidth` is 760, so the product
+cannot be narrower and a failure there is unactionable. It was made possible by `src/lib/dev-engine.ts`, a
+DEV-only stand-in behind a **dynamic** import; 🔴 the first version gated the call sites and its strings still
+shipped, so **gating a body is not gating a module** - verify with a grep of `dist/` plus a control. It found
+one defect no static gate could: `Shell.tsx` resolved `getCurrentWindow()` during render, which throws
+outside a Tauri window. 🔴 **GATE 4 itself is still owed** - screenshot pairs judged by eye in the app's own
+WebView2, which needs row 22.
 
 **Gates run 2026-09-05, all green:** `yarn typecheck` exit 0 · `yarn lint` exit 0, with the i18n gate watched
 failing on two different plants (a literal JSX string and a literal `aria-label`) · `yarn build` zero warnings,

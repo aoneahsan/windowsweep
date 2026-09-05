@@ -15,7 +15,8 @@
     "gen:prepaint": "node scripts/gen-prepaint.mjs",
     "check:prepaint": "node scripts/gen-prepaint.mjs --check",
     "predev": "node scripts/gen-prepaint.mjs",
-    "prebuild": "node scripts/gen-prepaint.mjs"
+    "prebuild": "node scripts/gen-prepaint.mjs && node scripts/check-tauri-config.mjs",
+    "check:tauri-config": "node scripts/check-tauri-config.mjs"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.45.8",

@@ -53,6 +53,14 @@ jobs:
       - name: The pre-paint script matches the axis registry
         run: yarn check:prepaint
 
+      # tauri.conf.json denies unknown fields, and the rejection happens inside
+      # tauri-build - which needs the MSVC linker, absent on the development
+      # machine. So this file's mistakes were only findable in CI, ten minutes at
+      # a time; three cycles went that way on 2026-09-05. This validates it
+      # against the schema the installed CLI ships, before anything compiles.
+      - name: The Tauri config validates against the installed CLI schema
+        run: yarn check:tauri-config
+
       - name: Typecheck
         run: yarn typecheck
 

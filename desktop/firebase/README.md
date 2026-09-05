@@ -45,3 +45,19 @@ rows in `docs/MANUAL-TASKS.md` alongside row 15 (the OAuth desktop client id),
 because all three are needed together and none of them is useful alone: the app
 compiles, installs and cleans without any of it, and sign-in stays dormant until
 `VITE_GOOGLE_DESKTOP_CLIENT_ID` and `VITE_FIREBASE_API_KEY` are present.
+
+## Two notes that cannot live in the files themselves
+
+**`firestore.indexes.json` carries no comment keys.** The Firebase CLI validates
+that file against a schema, so a `"//"` key inside an index object is a risk
+rather than documentation. What the one index is for: the History screen pages a
+person's own runs newest-first, twenty at a time. It is declared explicitly rather
+than relying on Firestore's automatic single-field index surviving a schema change.
+
+**`tauri.conf.json` carries none either, and that one is measured** — Tauri's
+config schema rejects UNKNOWN FIELDS outright, so a `_note` key fails the build
+with `unknown field ..., expected one of ...`. Measured in CI on 2026-09-05, on a
+comment added in good faith. The note it was carrying belongs here: the
+`bundle.resources` glob ends in `**/*`, not `**`, because in the Rust glob crate a
+trailing `**` matches full path *components* — it found four directories and no
+files, and tauri-build reported `didn't match any files`.

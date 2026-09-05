@@ -1,11 +1,13 @@
 {
   "indexes": [
     {
-      "//": "The History screen pages a person's own runs newest-first, 20 at a time. Firestore's single-field index on startedAt covers this within one collection, but the collection is a SUBCOLLECTION per user, so the composite is declared explicitly rather than relying on the automatic one surviving a schema change.",
       "collectionGroup": "runs",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "startedAt", "order": "DESCENDING" }
+        {
+          "fieldPath": "startedAt",
+          "order": "DESCENDING"
+        }
       ]
     }
   ],

@@ -38,7 +38,6 @@
       "icons/128x128@2x.png",
       "icons/icon.ico"
     ],
-    "_resourcesNote": "The trailing pattern is **/* and not **. In the Rust glob crate a trailing ** matches full path COMPONENTS - directories - so tauri-build found 4 directories, no files, and failed with `glob pattern ... didn't match any files`. Measured in CI 2026-09-05.",
     "resources": {
       "resources/windowsweep/**/*": "windowsweep/"
     },

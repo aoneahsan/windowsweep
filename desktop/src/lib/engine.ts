@@ -29,6 +29,26 @@ export interface RunHandlers {
   onProgress: (section: number, event: 'start' | 'end', status?: string, freedBytes?: number) => void;
 }
 
+/**
+ * Resolve the development stand-in, or null.
+ *
+ * 🔴 A DYNAMIC import behind a build-time constant, not a static one. The first
+ * version imported `./dev-engine` at the top of this file and gated only the call
+ * sites; Vite eliminated the branches, so `devRun` and `isDevFallback` were gone
+ * from `dist/` - and the module's string literals were still there, because it was
+ * still in the module graph. Two of five needles present, with a control proving
+ * the grep worked. `import.meta.env.DEV` is a literal `false` in a production
+ * build, so this whole function collapses and the module is never reached.
+ *
+ * The lesson generalises past this file: verify a dev-only surface by grepping the
+ * OUTPUT for a string unique to it, and include a control that must be found.
+ */
+async function devEngine(): Promise<typeof import('./dev-engine') | null> {
+  if (!import.meta.env.DEV) return null;
+  if ('__TAURI_INTERNALS__' in window) return null;
+  return import('./dev-engine');
+}
+
 export function newRunId(): string {
   // Sortable, and safe as a folder name - the Rust side refuses anything else.
   const now = new Date();
@@ -37,8 +57,19 @@ export function newRunId(): string {
   return `${stamp}-${suffix}`;
 }
 
-/** Read the section catalogue. Called once at boot; the app has no fallback copy. */
+/**
+ * Read the section catalogue. Called once at boot.
+ *
+ * In a DEVELOPMENT build running outside a Tauri window there is no `invoke`, so
+ * the stand-in answers instead - see `dev-engine.ts` for why that exists and why
+ * its gate is a build-time constant. In production the branch does not exist.
+ */
 export async function loadCatalogue(): Promise<Catalogue> {
+  const dev = await devEngine();
+  if (dev) {
+    const stub = await dev.devRun(['--list', '--json'], newRunId(), () => undefined);
+    return parseCatalogue(stub.stdout);
+  }
   const finished = await invoke<RunFinished>('run_clean', {
     request: { runId: newRunId(), args: ['--list', '--json'] },
   });
@@ -57,6 +88,18 @@ export async function run(
   runId: string,
   handlers: RunHandlers,
 ): Promise<{ summary: RunSummary | null; exitCode: number }> {
+  const dev = await devEngine();
+  if (dev) {
+    const finished = await dev.devRun(args, runId, (channel, line) => {
+      if (channel === 'clean:log') handlers.onLog(line);
+      else {
+        const parsed = parseProgressLine(line);
+        if (parsed) handlers.onProgress(parsed.section, parsed.event, parsed.status, parsed.freedBytes);
+      }
+    });
+    return { summary: parseRunSummary(finished.stdout), exitCode: finished.exit_code };
+  }
+
   const unlisten: UnlistenFn[] = [];
   unlisten.push(
     await listen<LogLine>('clean:log', (e) => {

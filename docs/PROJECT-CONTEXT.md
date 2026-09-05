@@ -1,7 +1,7 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-09-05
-Verified Against: commit 2721b75 on `main`, 2026-09-05 (full audit; the 1.1.0 engine at 3c4d54e is unchanged since)
+Last Updated: 2026-09-05 (session 8)
+Verified Against: commit 5f2bc84 on `main`, 2026-09-05 (session 8: the click dummy closed, both story gates cleared, the desktop app's foundation built; the 1.1.0 engine at 3c4d54e is unchanged since)
 
 ## Identity and outcome
 - Purpose: safe, developer-aware disk and cache cleanup CLI for Windows; the Windows member of the family with
@@ -64,6 +64,46 @@ Verified Against: commit 2721b75 on `main`, 2026-09-05 (full audit; the 1.1.0 en
   (free local GUI vs sign-in with plans) is decided when the phase opens.
 - **Releases (2026-09-03):** every release from 1.0.1 on gets an annotated tag `vX.Y.Z` and a GitHub Release;
   `v1.0.0` is tagged retroactively on `70c6738`, the commit the published tarball was built from.
+
+### Session 8 (2026-09-05, later the same day) - what was built and what it turned up
+
+No new owner decisions were taken; this records what the session established, because two of the findings
+change how a later session should read the tree.
+
+**The desktop app has a foundation, and the promotion is one-directional and DONE.** `tokens.css`,
+`shared.css` and `components.css` were copied from the click dummy into `desktop/src/styles/` on 2026-09-05.
+🔴 **From that moment the app's copies are authoritative.** The dummy keeps its own as the design record; the
+two are never synced, in either direction. The only edit made during promotion was the `@font-face` URL,
+which moved from the dummy's relative `vendor/fonts/` to the app's served `/fonts/`.
+
+**A correction found by reading the engine rather than assuming it.** The first version of the app's
+selection path built `--select` as `<section>:<index>` groups. The engine's `--select` is nothing of the
+sort: `lib/ui.ps1` -> `Read-MultiSelect` takes **1-based indexes against one prompt** and consumes the flag
+as a **queue**, one value per interactive section in whatever order they happen to run. A front end using it
+would have to predict both the ordering and the numbering the engine will produce. The app therefore writes
+a **`--select-file`** of full paths, which the engine matches case-insensitively against whatever each prompt
+actually offers and which reports a line that matches nothing. Recorded here because the wrong version looked
+entirely plausible.
+
+**The ten appearance axes now live in one file, `desktop/src/lib/axes.json`.** `theme.ts` reads it at runtime;
+`scripts/gen-prepaint.mjs` reads it at build time and writes `public/prepaint.js`, the synchronous head script
+that applies every axis before the body is parsed. 🔴 A generator rather than two hand-written copies, because
+the pre-paint pass cannot be a module script (deferred, so it would flash) and the alternative to generating
+is retyping the table where it can drift. `yarn check:prepaint` fails the build on drift and was watched
+failing on a planted default change.
+
+🔴 **Rust cannot be compiled on this machine, and the error does not say so.** `cargo fmt --check` runs and is
+clean. `cargo clippy` fails at link time with `link: extra operand ...rcgu.o / Try 'link --help'` - because a
+GNU coreutils `link.exe` precedes MSVC's on PATH, so Cargo invokes the wrong program entirely. It reads like a
+Rust or Cargo bug. It is owner row 22, and `.github/workflows/desktop-ci.yml` is the only Rust evidence until
+that UAC click.
+
+**The storytelling pass reached GATE 4 for three surfaces and stopped there.** 375 numbered slots across the
+eleven desktop screens; 331 kept as already on voice. 🔴 **Seven `NEEDS DECISION` items went to the owner,
+and two of them concern copy already in the tree**: Home and Account state that there is no paid tier and
+nothing to buy, which `~/.claude/rules/00-house-rules.md` forbids writing anywhere on the grounds that the
+claim outlives the decision it describes. Until that is answered, those two sentences are the only thing in
+the product carrying a known rule violation.
 
 ### Session 7 decisions (2026-09-05, the audit) - scope, the WIP commit, the layout, storytelling
 

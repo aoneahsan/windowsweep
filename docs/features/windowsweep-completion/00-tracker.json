@@ -429,8 +429,8 @@
         {
           "id": "P6.firebase-vault",
           "title": "Firebase project, Google provider, Firestore rules and indexes, FilesHub vault seeded",
-          "status": "pending",
-          "note": "UNBLOCKED 2026-09-05: TASK-001 lifted, so npx firebase-tools is allowed. The Google OAuth desktop client (MANUAL-TASKS row 15) and the four telemetry keys (row 16) remain his Cloud-Console clicks; the app reads them from config and an absent key skips that provider, so sign-in and analytics ship compiled and dormant rather than blocking the release | specification: remaining-work.md RW-079",
+          "status": "in_progress",
+          "note": "RW-079 agent half done 2026-09-05: desktop/firebase/{firestore.rules,firestore.indexes.json,firebase.json,README.md}. Deny by default, a field allowlist on BOTH documents (users/{uid} and users/{uid}/runs/{runId}), no update on a run, and the one composite index History needs. The field allowlist is what makes the consent screen enforceable rather than a promise - sync.ts narrows and the server refuses anything wider. 🔴 Creating the Firebase project is owner row 23: it is a new cloud project on his account, outward-facing and awkward to undo. The rules deploy in one command once he says go, and never as a bare --only firestore",
           "awaitingUser": false
         },
         {
@@ -626,7 +626,7 @@
     {
       "date": "2026-09-05",
       "phase": "P6+P7",
-      "summary": "Story GATES 1 and 2 approved and recorded; the eleven desktop screens drafted through the story writer (375 slots, 38 changes, 7 NEEDS DECISION, 5 dummy defects reported). Desktop app foundation built: web layer, Tauri shell, CI workflows. Gates green - typecheck 0, lint 0 with the i18n gate proved on two plants, vite build 0 warnings and no source maps, the prepaint drift gate proved on a plant, the npm tarball sweep proved against a planted desktop leak, CLI self-test 151/151 and version parity 1.1.0 unchanged. Whole project 55.45% -> 70.55%",
+      "summary": "Story GATES 1 and 2 approved and recorded; the eleven desktop screens drafted through the story writer (375 slots, 38 changes, 7 NEEDS DECISION, 5 dummy defects reported). Desktop app foundation built: web layer, Tauri shell, CI workflows. Gates green - typecheck 0, lint 0 with the i18n gate proved on two plants, vite build 0 warnings and no source maps, the prepaint drift gate proved on a plant, the npm tarball sweep proved against a planted desktop leak, CLI self-test 151/151 and version parity 1.1.0 unchanged. Whole project 55.45% -> 70.55%. Then RW-079 agent half: the Firestore rules, indexes and config written and committed; project creation filed as owner row 23",
       "commit": "pending"
     }
   ],

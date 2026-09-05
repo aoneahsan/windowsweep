@@ -1,0 +1,73 @@
+rules_version = '2';
+
+// windowsweep desktop - Firestore security rules.
+//
+// The whole data model is one document per person plus a bounded list of run
+// summaries. Sign-in exists only so settings and run history follow a person
+// between their own machines; nothing here is shared, nothing is public, and no
+// path, machine name or user name is ever stored (`src/lib/sync.ts` -> stripRun
+// is the narrowing, and the field allowlist below is what makes it enforceable
+// rather than a promise).
+//
+// 🔴 Deny by default. The final catch-all match refuses everything not named
+// above it, so a collection added to the client without a rule is refused rather
+// than inheriting one.
+//
+// 🔴 Every list query the app makes is scoped to the caller's own uid, so it
+// proves its rule from its own filters. A rule that reads `request.auth.uid`
+// against a path segment cannot be satisfied by a query that does not constrain
+// that segment - the read simply fails - and the fetch-budget rule requires the
+// query to carry the constraint rather than expecting the server to apply it.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // The person's own document. The field allowlist is the enforcement point for
+    // the consent screen's promise: a client that started sending a path would be
+    // refused by the server, not merely reviewed.
+    match /users/{uid} {
+      allow get: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(
+             ['email', 'displayName', 'settings', 'settingsUpdatedAt', 'createdAt', 'lastSeenAt'])
+        && request.resource.data.settings is map
+        && request.resource.data.settings.keys().hasOnly(['prefs', 'developer'])
+        && request.resource.data.settingsUpdatedAt is string;
+      allow delete: if isOwner(uid);
+      // No `list` on /users: there is no query in this product that reads more
+      // than one person's document, so allowing one would only widen the surface.
+    }
+
+    // One document per run. Created once and never updated - a run is a record of
+    // something that already happened, so an editable one would be a record that
+    // can be made to disagree with the log file it was written from.
+    match /users/{uid}/runs/{runId} {
+      allow get, list: if isOwner(uid);
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(
+             ['runId', 'startedAt', 'mode', 'dryRun', 'elevated', 'sections',
+              'freedBytes', 'estimatedBytes', 'durationMs'])
+        && request.resource.data.runId == runId
+        && request.resource.data.startedAt is string
+        && request.resource.data.mode is string
+        && request.resource.data.dryRun is bool
+        && request.resource.data.elevated is bool
+        && request.resource.data.sections is list
+        && request.resource.data.sections.size() <= 64
+        && request.resource.data.freedBytes is int
+        && request.resource.data.estimatedBytes is int
+        && request.resource.data.durationMs is int;
+      allow update: if false;
+      allow delete: if isOwner(uid);
+    }
+
+    // 🔴 Everything else, at every depth.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

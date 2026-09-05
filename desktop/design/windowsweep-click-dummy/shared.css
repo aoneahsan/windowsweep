@@ -159,6 +159,9 @@ button, [role='button'] {
   margin-bottom: var(--sp-3); color: var(--c-ink-3);
 }
 .zone-label::after { content: ''; flex: 1; height: 1px; background: var(--c-line); }
+/* A flex item will not shrink below its content width unless it is allowed to: without this a
+   one-line explanation beside a zone heading forced 549px of text through a 390px viewport. */
+.zone-label > * { min-width: 0; overflow-wrap: anywhere; }
 
 /* ---------------------------------------------------------------------------
    SURFACES - alpha composed, never overridden
@@ -473,7 +476,17 @@ button, [role='button'] {
   box-shadow: var(--wm-raise-shadow);
   translate: 0 0; transition: translate var(--d-mod) var(--ease-mech);
 }
-.selbar[hidden] { display: flex !important; translate: 0 110%; pointer-events: none; }
+/* 🔴 The bar slides out rather than vanishing, so it cannot use the global [hidden] reset - but
+   "display: flex" alone left it VISIBLE to everything except the mouse: measured 2026-09-05 with
+   nothing selected, all THREE of its buttons were focusable, aria-hidden was null, inert was absent
+   and its top edge sat at 726px in a 749px viewport. A keyboard user tabbed into a bar they could
+   not see. visibility:hidden takes it out of the tab order and the accessibility tree; the delayed
+   transition means it is only applied once the slide has finished, so the animation still reads. */
+.selbar[hidden] {
+  display: flex !important; translate: 0 110%; pointer-events: none;
+  visibility: hidden;
+  transition: translate var(--d-mod) var(--ease-mech), visibility 0s linear var(--d-mod);
+}
 
 /* ---------------------------------------------------------------------------
    PROGRESS - determinate, always. "How far along" is the question being asked.
@@ -887,7 +900,8 @@ body::after {
 
    This is the second time - `.badge-accent` hit it in round 3 and was fixed with a
    single never-rebound token. Fixing it per component does not scale, so the reset
-   is general and every future surface inherits the correct behaviour. */
+   is general and every future surface inherits the correct behaviour.
+
    THIRD occurrence: the segmented control in the picker's selection bar landed at
    1.09:1 the moment it was added, because a component added later does not know
    about a list written earlier. So the list is explicit and alphabetised, every

@@ -1,6 +1,6 @@
 # windowsweep - remaining work to 100% feature-complete and production-ready
 
-Last Updated: 2026-09-05 (audit of `main` at `2721b75`; npm `windowsweep@1.1.0`; the desktop app and the storytelling retrofit are in scope)
+Last Updated: 2026-09-05 (audit of `main` at `2721b75`, then the click dummy closed; npm `windowsweep@1.1.0`; the desktop app and the storytelling retrofit are in scope)
 
 This is the working specification for finishing windowsweep. It is written for an agent session (Claude Code
 or Codex) that has read `CLAUDE.md` / `AGENTS.md` and nothing else. Every open item carries its evidence, its
@@ -40,11 +40,11 @@ an approved Story Bible with every in-scope surface through GATE 4.**
 | In-repo documentation | 5 | 100% | nothing (the stale lines were fixed in this audit) |
 | Docs site | 8 | 85% | DNS + HTTPS (rows 11-12) and the write-back that follows; a PNG OG image; the local install and lockfile |
 | Repository hygiene + owner records | 5 | 85% | homepage fields after DNS; the owner's review of the master-links entry (row 5); the ORCID import (row 13) |
-| Desktop design (click dummy) | 8 | 70% | the inventory ledger, the wiring batch, the verification sweep across 19 files |
+| Desktop design (click dummy) | 8 | **100%** | nothing - RW-073 to RW-075 closed 2026-09-05, four defects fixed, every gate proved red on its own plant |
 | Desktop app (code, Tauri, Firebase, CI, release) | 24 | 0% | everything |
 | Storytelling retrofit (P7) | 10 | 0% | everything |
 
-Score = sum(weight x done) / 100 = 25 + 1.2 + 1.2 + 4 + 5 + 6.8 + 4.25 + 5.6 + 0 + 0 = **53.05% of the whole
+Score = sum(weight x done) / 100 = 25 + 1.2 + 1.2 + 4 + 5 + 6.8 + 4.25 + 8 + 0 + 0 = **55.45% of the whole
 project**. Against the narrower scope agreed on 2026-09-03 (engine 30, 1.1 features 20, verification 10,
 in-repo docs 10, docs site 10, self-test 5, release 5, hygiene 5, records 5) the CLI stands at
 30 + 18 + 1.5 + 10 + 8.5 + 5 + 5 + 4.5 + 4.25 = **86.75%**. The published CLI on its own is production-ready;
@@ -142,6 +142,9 @@ what is open there is verification only the owner can run.
 | RW-070 | The desktop app's scope decided and recorded (account model, telemetry, location, identity, releases) | 2026-09-03 |
 | Click dummy | Direction 01 built and rejected; direction 02 "Reclaim" built, refined over rounds 3 and 4, approved at GATE 1 with gates 2-3 pre-authorised; the eight-file component library; the eight A4 screens | `07c6f37`, `5481891`, `0c7b955`, `a2d6b88`, `63e815f`, `45953b7`, `2721b75` |
 | RW-042 | Docs-site labels corrected: footer `Sections 0-25`, `llms.txt` facts, the intro footer, the quick-start check count, the report example version | this audit |
+| RW-073 | Block Q closed: the inventory ledger, the house-promotion panel with both self-exclusion layers made load-bearing and proved, every page opened | 2026-09-05 |
+| RW-074 | Block R closed: six store flows, 11/11 rail links verified by clicking, demo axes never persisted, the namespace read from a physical key | 2026-09-05 |
+| RW-075 | Block S closed: overflow clean at six widths, no focusable-while-hidden control, no HTML text under 12px, 8,034 contrast measurements with 0 failures, every gate proved red on its own plant. Four defects fixed | 2026-09-05 |
 | RW-044 (part) | Docs-repo topics set | this audit |
 | RW-052 | Folder rename superseded by the `-root` layout decision | this audit |
 | RW-055 | Portfolio file refreshed to 1.1.0 and renamed in both locations; master links entry updated | this audit |

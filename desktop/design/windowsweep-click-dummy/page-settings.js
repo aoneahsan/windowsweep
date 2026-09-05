@@ -10,12 +10,23 @@
      resolver below filters it again - two layers, so a row added by hand still
      never renders. A project never advertises itself. */
   var SELF = 'windowsweep';
-  var ROSTER = [
+
+  /* The ecosystem roster as it is vendored from the shared product list. It carries EVERY product,
+     windowsweep included - that is what makes the two exclusion layers below load-bearing rather than
+     decorative. An earlier version hand-omitted windowsweep here, which left both filters matching
+     nothing: removing either one changed the rendered list not at all, so the "prove each layer with the
+     other removed" check passed in both directions while proving nothing. A filter that cannot match is
+     indistinguishable from a filter that works. */
+  var ROSTER_SOURCE = [
+    { id: 'windowsweep', name: 'windowsweep', blurb: 'This app. It must never appear in its own promotion list.' },
     { id: 'linux-cleanup', name: 'linux-cleanup', blurb: 'The same idea, one chokepoint and a real dry-run, for Linux.' },
     { id: 'macleanup', name: 'macleanup', blurb: 'And for macOS, with the same section catalogue.' },
     { id: 'native-update', name: 'native-update', blurb: 'Signed over-the-air updates for Capacitor apps.' },
     { id: 'strata-storage', name: 'strata-storage', blurb: 'One storage API over localStorage, IndexedDB, cookies and URL state.' }
-  ].filter(function (p) { return p.id !== SELF; });
+  ];
+
+  /* LAYER 1 - the vendoring drop: this project's own id leaves the roster as it is taken in. */
+  var ROSTER = ROSTER_SOURCE.filter(function (p) { return p.id !== SELF; });
 
   function row(title, desc, control, consequence) {
     var r = el('div', 'set-row');
@@ -234,7 +245,10 @@
     g.appendChild(row('Version', 'What is installed right now.', el('span', 'badge badge-neutral', 'up to date'), ''));
     g.appendChild(v);
 
-    /* House promotions: the roster, self-excluded twice over. */
+    /* House promotions: the roster, self-excluded twice over.
+       LAYER 2 - the display resolver drops the id again, so a roster re-vendored without layer 1 still
+       cannot promote this app to its own users. Each layer is proved by removing the other; the harness
+       is window.wsPromoAudit below. */
     var promo = el('div', 'promo');
     ROSTER.filter(function (p) { return p.id !== SELF; }).forEach(function (p) {
       var card = el('div', 'card');
@@ -255,6 +269,25 @@
 
     host.appendChild(g);
   }
+
+  /* Proof that the two self-exclusion layers are each load-bearing. Each case removes ONE layer and
+     asks whether this app could promote itself; the fourth removes both, and MUST come back present -
+     without that control the other three prove only that the roster happens not to contain the id. */
+  window.wsPromoAudit = function () {
+    var vend = function (on) { return on ? ROSTER_SOURCE.filter(function (p) { return p.id !== SELF; }) : ROSTER_SOURCE; };
+    var show = function (list, on) { return (on ? list.filter(function (p) { return p.id !== SELF; }) : list).map(function (p) { return p.id; }); };
+    var cases = [
+      ['both layers', true, true, false],
+      ['layer 1 only (display filter removed)', true, false, false],
+      ['layer 2 only (vendoring drop removed)', false, true, false],
+      ['NEITHER layer - the control', false, false, true]
+    ];
+    return cases.map(function (c) {
+      var ids = show(vend(c[1]), c[2]);
+      var self = ids.indexOf(SELF) !== -1;
+      return { name: c[0], selfPromoted: self, expected: c[3], pass: self === c[3], shown: ids.length };
+    });
+  };
 
   window.wsPage = {
     init: function () {

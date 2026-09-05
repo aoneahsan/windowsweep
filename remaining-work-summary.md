@@ -1,6 +1,6 @@
 # windowsweep - remaining work, one page
 
-Last Updated: 2026-09-05 (audit of `main` at `2721b75`; npm `windowsweep@1.1.0`; the desktop app and the storytelling retrofit now count toward 100%)
+Last Updated: 2026-09-05 (audit, then the click dummy closed; npm `windowsweep@1.1.0`; the desktop app and the storytelling retrofit now count toward 100%)
 
 The CLI is finished and published: 1.1.0 equals `main`, 26 sections (0-25), the scripted-selection flags and
 the `--json` contract a GUI needs, a 151-check self-test green on both PowerShell hosts, tags and Releases for
@@ -9,7 +9,7 @@ and deployed but its domain still waits on your DNS record. The desktop app has 
 complete click dummy, and no application code yet. Every product-voice surface still has to pass through the
 storytelling system, which you chose today to apply to everything.
 
-**Whole project: about 53%. The CLI-only scope agreed on 2026-09-03: about 87%. The published CLI on its own:
+**Whole project: about 55%. The CLI-only scope agreed on 2026-09-03: about 87%. The published CLI on its own:
 production-ready, with the verification runs that only you can do still open.**
 
 | Area | Weight | Done | What is missing |
@@ -21,18 +21,19 @@ production-ready, with the verification runs that only you can do still open.**
 | In-repo documentation | 5 | 100% | nothing (the stale lines were fixed in this audit) |
 | Docs site | 8 | 85% | DNS + HTTPS (rows 11-12) and the write-back that follows; a PNG OG image; the local `yarn install` and lockfile |
 | Repository hygiene + owner records | 5 | 85% | homepage fields after DNS; your review of the master-links entry (row 5); the ORCID import (row 13) |
-| Desktop design (click dummy) | 8 | 70% | the inventory ledger, the wiring batch (six flows through the store), the verification sweep across 19 files |
+| Desktop design (click dummy) | 8 | **100%** | nothing - closed 2026-09-05 with four defects fixed and every gate proved against a planted defect |
 | Desktop app (code, Tauri, Firebase, CI, release) | 24 | 0% | everything: `desktop/` web layer, `src-tauri/`, Firebase + vault, two CI workflows, local gates + WebView2 run-to-verify + GATE 4 parity, the `desktop-v1.1.0` release, the records |
 | Storytelling retrofit (P7) | 10 | 0% | `/story-init` (Bible, GATE 1), the content map (GATE 2), then every surface: README, docs pages, `llms.txt`, CLI strings, the eleven desktop screens |
 
-Score = sum(weight x done) / 100 = 25 + 1.2 + 1.2 + 4 + 5 + 6.8 + 4.25 + 5.6 + 0 + 0 = **53.05**.
+Score = sum(weight x done) / 100 = 25 + 1.2 + 1.2 + 4 + 5 + 6.8 + 4.25 + 8 + 0 + 0 = **55.45**.
 CLI-only scope (2026-09-03 weights: engine 30, 1.1 features 20, verification 10, in-repo docs 10, docs site 10,
 self-test 5, release 5, hygiene 5, records 5) = 30 + 18 + 1.5 + 10 + 8.5 + 5 + 5 + 4.5 + 4.25 = **86.75**.
 
 ## The next actions, in order
 
-1. **RW-073 to RW-075 (agent).** Finish the click dummy: the inventory ledger, the wiring batch, the
-   verification sweep with screenshots - the hand-back you already pre-approved.
+1. ~~RW-073 to RW-075~~ **done 2026-09-05.** The click dummy is finished and verified: four defects fixed,
+   including one that had made text invisible in light mode on the home screen. Evidence:
+   `desktop/design/CLICK-DUMMY-INVENTORY.md` section 8.
 2. **RW-090 / RW-091 (agent + you).** `/story-init` for windowsweep, then the content map. You approve the
    Bible (GATE 1) and the map (GATE 2).
 3. **RW-092 / RW-093 (agent + you).** The desktop screens' copy through the story pipeline first (the dummy is

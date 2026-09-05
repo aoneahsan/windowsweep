@@ -47,11 +47,17 @@
 
   function buildTable(opts) {
     opts = opts || {};
-    var wrap = el('div', 'panel xscroll');
+    /* The panel keeps overflow:visible so a row-actions menu can escape it. The SCROLLER is a separate
+       inner element: overflow-x:auto and overflow-y:visible cannot coexist on one box, and an inline
+       overflow:visible here silently defeated the .xscroll class - measured 2026-09-05, every table on
+       this page computed overflow-x:visible while matching a rule that sets it to auto. */
+    var wrap = el('div', 'panel');
     wrap.style.overflow = 'visible';
+    var scroller = el('div', 'xscroll');
+    wrap.appendChild(scroller);
     var t = el('table', 'tbl');
     if (opts.dense) t.style.setProperty('--density', '.82');
-    if (opts.sticky) { wrap.style.maxHeight = '18rem'; wrap.style.overflowY = 'auto'; }
+    if (opts.sticky) { scroller.style.maxHeight = '18rem'; scroller.style.overflowY = 'auto'; }
     t.appendChild(header(COLS, opts));
     var tb = el('tbody');
 
@@ -67,7 +73,7 @@
         });
         tb.appendChild(tr);
       }
-      t.appendChild(tb); wrap.appendChild(t);
+      t.appendChild(tb); scroller.appendChild(t);
       return wrap;
     }
 
@@ -81,7 +87,7 @@
       e.appendChild(G.btn('Clear the filter'));
       etd.appendChild(e);
       etr.appendChild(etd); tb.appendChild(etr);
-      t.appendChild(tb); wrap.appendChild(t);
+      t.appendChild(tb); scroller.appendChild(t);
       return wrap;
     }
 
@@ -145,7 +151,7 @@
       tb.appendChild(tr);
     });
     t.appendChild(tb);
-    wrap.appendChild(t);
+    scroller.appendChild(t);
     return wrap;
   }
 

@@ -68,6 +68,11 @@
 }
 .spec-row[data-stack] { flex-direction: column; align-items: stretch; }
 .spec-cell { display: flex; flex-direction: column; gap: var(--sp-2); align-items: flex-start; min-width: 0; }
+/* A flex item keeps its content width unless it is allowed to shrink. Without this a specimen panel
+   holding a seven-column table stayed 1125px wide inside a 1024px viewport, and the .xscroll inside it
+   never got the chance to scroll - the panel itself was the thing overflowing. Measured 2026-09-05. */
+.spec-row > * { min-width: 0; }
+.xscroll { min-width: 0; }
 .spec-cell > .caps { color: var(--c-ink-3); }
 .spec-grid {
   display: grid; gap: var(--sp-4);

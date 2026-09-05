@@ -25,7 +25,13 @@ import { Home } from './screens/Home';
 import { RunScreen } from './screens/Run';
 import { Sections } from './screens/Sections';
 import { Consent } from './screens/Consent';
-import { Placeholder } from './screens/Placeholder';
+import { Splash } from './screens/Splash';
+import { Settings } from './screens/Settings';
+import { History } from './screens/History';
+import { Picker } from './screens/Picker';
+import { Report } from './screens/Report';
+import { Account } from './screens/Account';
+import { Elevation } from './screens/Elevation';
 import { useStore } from './state/store';
 import { loadCatalogue } from './lib/engine';
 
@@ -58,6 +64,7 @@ const rootRoute = createRootRoute({ component: RootLayout });
 /** The consent screen deliberately renders WITHOUT the rail: it is answered before
     the app is navigable, and offering navigation would let it be skipped silently. */
 const consentRoute = createRoute({ getParentRoute: () => rootRoute, path: '/consent', component: Consent });
+const splashRoute = createRoute({ getParentRoute: () => rootRoute, path: '/splash', component: Splash });
 
 function withShell(Component: () => React.ReactElement) {
   return function Wrapped() {
@@ -71,39 +78,16 @@ function withShell(Component: () => React.ReactElement) {
 
 const routes = [
   consentRoute,
+  splashRoute,
   createRoute({ getParentRoute: () => rootRoute, path: '/', component: withShell(Home) }),
   createRoute({ getParentRoute: () => rootRoute, path: '/run', component: withShell(RunScreen) }),
   createRoute({ getParentRoute: () => rootRoute, path: '/sections', component: withShell(Sections) }),
-  createRoute({
-    getParentRoute: () => rootRoute,
-    path: '/picker',
-    component: withShell(() => <Placeholder screen="picker" />),
-  }),
-  createRoute({
-    getParentRoute: () => rootRoute,
-    path: '/history',
-    component: withShell(() => <Placeholder screen="history" />),
-  }),
-  createRoute({
-    getParentRoute: () => rootRoute,
-    path: '/report',
-    component: withShell(() => <Placeholder screen="report" />),
-  }),
-  createRoute({
-    getParentRoute: () => rootRoute,
-    path: '/account',
-    component: withShell(() => <Placeholder screen="account" />),
-  }),
-  createRoute({
-    getParentRoute: () => rootRoute,
-    path: '/settings',
-    component: withShell(() => <Placeholder screen="settings" />),
-  }),
-  createRoute({
-    getParentRoute: () => rootRoute,
-    path: '/elevation',
-    component: withShell(() => <Placeholder screen="elevation" />),
-  }),
+  createRoute({ getParentRoute: () => rootRoute, path: '/picker', component: withShell(Picker) }),
+  createRoute({ getParentRoute: () => rootRoute, path: '/history', component: withShell(History) }),
+  createRoute({ getParentRoute: () => rootRoute, path: '/report', component: withShell(Report) }),
+  createRoute({ getParentRoute: () => rootRoute, path: '/account', component: withShell(Account) }),
+  createRoute({ getParentRoute: () => rootRoute, path: '/settings', component: withShell(Settings) }),
+  createRoute({ getParentRoute: () => rootRoute, path: '/elevation', component: withShell(Elevation) }),
 ];
 
 const router = createRouter({

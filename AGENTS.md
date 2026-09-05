@@ -39,9 +39,13 @@ parses the `--json` contract, `lib/catalogue.ts` reads `--list --json` so no sec
 anywhere), PKCE sign-in, Firestore REST sync that pages at 20 and syncs no path, one consent-gated `track()`
 fan-out, the **ten-axis theme registry in ONE file** (`src/lib/axes.json`) with `public/prepaint.js` GENERATED
 from it and a `--check` drift gate, i18n on every string behind a `no-restricted-syntax` gate at `error`, and
-five Rust commands behind an **argument allowlist with its own unit test**. Screens built: Home, Run, Sections,
-Consent. Seven are declared as `pending-wave` placeholders rather than hidden. 🔴 **Rust has not been compiled
-locally** - Visual Studio Build Tools is still absent (row 22), so `desktop-ci.yml` is the only Rust evidence.
+five Rust commands behind an **argument allowlist with its own unit test**, and an icon set exported from an SVG
+master carrying the sweep motif in the registered hue. 🔴 **All eleven screens are built** - Splash, Consent,
+Home, Run, Sections, Picker, History, Report, Settings, Account, Elevation - so RW-077 is complete and the
+placeholder scaffolding is deleted. 🔴 **Rust has not been compiled locally** - Visual Studio Build Tools is
+still absent (row 22), so `desktop-ci.yml` is the only Rust evidence, and it earned its place immediately by
+catching two real defects: the `protocol-asset` Cargo feature with no matching allowlist entry, and a
+`bundle.resources` glob whose trailing `**` matches path COMPONENTS - four directories, no files.
 
 **Gates run 2026-09-05, all green:** `yarn typecheck` exit 0 · `yarn lint` exit 0, with the i18n gate watched
 failing on two different plants (a literal JSX string and a literal `aria-label`) · `yarn build` zero warnings,

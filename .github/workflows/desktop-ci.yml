@@ -73,6 +73,18 @@ jobs:
       - name: Bundle the engine
         run: yarn sync:cli
 
+      # The bundle step's own success only proves the script ran. tauri-build
+      # resolves `bundle.resources` as a glob and fails LATE, three steps later,
+      # with a message about a glob rather than about a missing tree - so this
+      # asserts the tree has real FILES in it while the cause is still obvious.
+      - name: The bundled engine has files in it
+        shell: bash
+        run: |
+          n="$(find src-tauri/resources/windowsweep -type f | wc -l)"
+          echo "bundled files: $n"
+          test "$n" -ge 20 || { echo "the engine did not reach the bundle"; exit 1; }
+          test -f src-tauri/resources/windowsweep/windowsweep.ps1
+
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy

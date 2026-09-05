@@ -3,14 +3,16 @@
   "slug": "windowsweep",
   "bibleApproved": true,
   "contentMapApproved": true,
-  "phase": "write",
-  "surface": "desktop-safety",
-  "round": 0,
-  "gate": null,
+  "phase": "review",
+  "surface": "desktop-moment, desktop-safety, desktop-cockpit",
+  "round": 1,
+  "gate": 4,
   "openDecisions": [
+    "GATE 4: approve the three desktop surfaces (375 slots, 38 proposed changes) before RW-093 writes them into the click dummy",
+    "NEEDS DECISION x7, verbatim in the drafts: the pricing sentences at desktop-moment S-090 and S-147 (a fleet rule forbids writing that a product has no paid tier); the installer signing position at desktop-safety S-058 and desktop-moment S-085; what a release publishes beside an installer (S-059); the Amplitude retention claim (S-013); whether the Clarity masking and Sentry path-stripping commitments at S-016/S-017 are binding",
     "Open, not blocking: the voice fingerprint is calibrated:false - 1-3 writing samples would replace the inferred one"
   ],
   "escalatedAt": null,
   "lastUpdated": "2026-09-05",
-  "notes": "GATES 1 and 2 both approved 2026-09-05. Writing order: the desktop screens first (rows 11, 12, 13), because RW-093 puts their approved words into the click dummy before RW-077 builds the app against them. Next surface: desktop-safety (Consent and Elevation) - humor off entirely."
+  "notes": "Three desktop surfaces drafted 2026-09-05 by the story writer as numbered slot inventories (S-NNN, file, selector, the shipping string fenced alone). 141/168, 57/64 and 133/143 slots were KEPT as already on voice; the changes are mostly banned diction - clean and sweep as verbs, preview as a synonym for dry-run, just, and one first-person plural on a permission screen. The lint hook is blind to fenced copy, so the writer swept the shipping strings with a separate script; that sweep, the fact-checker and a human reader are the real gate on this surface shape."
 }

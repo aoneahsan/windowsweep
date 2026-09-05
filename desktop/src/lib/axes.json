@@ -1,0 +1,26 @@
+{
+  "_comment": "THE axis registry. One row per appearance axis. Read by src/lib/theme.ts at runtime and by scripts/gen-prepaint.mjs at build time, so the pre-paint script and the theme panel can never disagree about what exists or what its default is. Adding an axis is one row here and nothing else.",
+  "storageKey": "windowsweep:prefs",
+  "axes": [
+    { "key": "theme", "attr": "data-theme", "labelKey": "theme.axis.appearance", "def": "dark", "preview": "appearance",
+      "values": [{ "value": "light", "label": "Light" }, { "value": "dark", "label": "Dark" }, { "value": "system", "label": "System" }] },
+    { "key": "palette", "attr": "data-palette", "labelKey": "theme.axis.palette", "def": "lime", "preview": "swatch",
+      "values": [{ "value": "lime", "label": "Lime" }, { "value": "sky", "label": "Sky" }, { "value": "plum", "label": "Plum" }] },
+    { "key": "radius", "attr": "data-radius", "labelKey": "theme.axis.radius", "def": "medium", "preview": "radius",
+      "values": [{ "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" }, { "value": "full", "label": "Full" }] },
+    { "key": "density", "attr": "data-density", "labelKey": "theme.axis.density", "def": "comfortable", "preview": "density",
+      "values": [{ "value": "compact", "label": "Compact" }, { "value": "comfortable", "label": "Comfortable" }, { "value": "spacious", "label": "Spacious" }] },
+    { "key": "typeScale", "attr": "data-type-scale", "labelKey": "theme.axis.typeScale", "def": "medium", "preview": "typescale",
+      "values": [{ "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" }] },
+    { "key": "font", "attr": "data-font", "labelKey": "theme.axis.font", "def": "grotesque", "preview": "font",
+      "values": [{ "value": "grotesque", "label": "Archivo" }, { "value": "native", "label": "Segoe" }] },
+    { "key": "surfaceStyle", "attr": "data-surface-style", "labelKey": "theme.axis.surface", "def": "solid", "preview": "surface",
+      "values": [{ "value": "solid", "label": "Solid" }, { "value": "translucent", "label": "Translucent" }] },
+    { "key": "cursor", "attr": "data-cursor", "labelKey": "theme.axis.cursor", "def": "custom", "preview": "cursor",
+      "values": [{ "value": "custom", "label": "On" }, { "value": "off", "label": "Off" }] },
+    { "key": "motion", "attr": "data-motion", "labelKey": "theme.axis.motion", "def": "system", "preview": "motion",
+      "values": [{ "value": "system", "label": "System" }, { "value": "full", "label": "Full" }, { "value": "reduced", "label": "Reduced" }] },
+    { "key": "sound", "attr": "data-sound", "labelKey": "theme.axis.sound", "def": "off", "preview": "sound",
+      "values": [{ "value": "on", "label": "On" }, { "value": "off", "label": "Off" }] }
+  ]
+}

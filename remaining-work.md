@@ -1,6 +1,6 @@
 # windowsweep - remaining work to 100% feature-complete and production-ready
 
-Last Updated: 2026-09-05 (audit of `main` at `2721b75`, then the click dummy closed; npm `windowsweep@1.1.0`; the desktop app and the storytelling retrofit are in scope)
+Last Updated: 2026-09-05 (audit, the click dummy closed, both story gates cleared and the desktop app's foundation built; npm `windowsweep@1.1.0`; the desktop app and the storytelling retrofit are in scope)
 
 This is the working specification for finishing windowsweep. It is written for an agent session (Claude Code
 or Codex) that has read `CLAUDE.md` / `AGENTS.md` and nothing else. Every open item carries its evidence, its
@@ -37,17 +37,17 @@ an approved Story Bible with every in-scope surface through GATE 4.**
 | 1.1 residue (candidate target rows) | 3 | 40% | Telegram, WhatsApp, Office, Steam shadercache, WebView2, torch, conda, driver leftovers - all wait on the owner's probe (row 20) |
 | Verification (P1) | 8 | 15% | elevated sections 12-16/20 and `--elevate`; Windows 11; the Scheduled Task; sections 4/5/7/8/17-19/23 for real; `--notify` on pwsh |
 | Self-test coverage | 4 | 100% | nothing (151 checks, 17 groups) |
-| In-repo documentation | 5 | 100% | nothing (the stale lines were fixed in this audit) |
-| Docs site | 8 | 85% | DNS + HTTPS (rows 11-12) and the write-back that follows; a PNG OG image; the local install and lockfile |
+| In-repo documentation | 5 | 100% | nothing |
+| Docs site | 8 | 95% | DNS + HTTPS (rows 11-12) and the write-back that follows. The PNG OG card and the local install closed 2026-09-05 |
 | Repository hygiene + owner records | 5 | 85% | homepage fields after DNS; the owner's review of the master-links entry (row 5); the ORCID import (row 13) |
 | Desktop design (click dummy) | 8 | **100%** | nothing - RW-073 to RW-075 closed 2026-09-05, four defects fixed, every gate proved red on its own plant |
-| Desktop app (code, Tauri, Firebase, CI, release) | 24 | 0% | everything |
-| Storytelling retrofit (P7) | 10 | 0% | everything |
+| Desktop app (code, Tauri, Firebase, CI, release) | 24 | 45% | seven screens; RW-079 in full; Rust compiled locally (row 22); RW-081's run-to-verify and GATE 4 parity; RW-082's release |
+| Storytelling retrofit (P7) | 10 | 35% | GATE 4 on the three drafted desktop surfaces, seven `NEEDS DECISION` answers, RW-093, then eleven more surfaces |
 
-Score = sum(weight x done) / 100 = 25 + 1.2 + 1.2 + 4 + 5 + 6.8 + 4.25 + 8 + 0 + 0 = **55.45% of the whole
+Score = sum(weight x done) / 100 = 25 + 1.2 + 1.2 + 4 + 5 + 7.6 + 4.25 + 8 + 10.8 + 3.5 = **70.55% of the whole
 project**. Against the narrower scope agreed on 2026-09-03 (engine 30, 1.1 features 20, verification 10,
 in-repo docs 10, docs site 10, self-test 5, release 5, hygiene 5, records 5) the CLI stands at
-30 + 18 + 1.5 + 10 + 8.5 + 5 + 5 + 4.5 + 4.25 = **86.75%**. The published CLI on its own is production-ready;
+30 + 18 + 1.5 + 10 + 9.5 + 5 + 5 + 4.5 + 4.25 = **87.75**. The published CLI on its own is production-ready;
 what is open there is verification only the owner can run.
 
 ## 3. How to work this file

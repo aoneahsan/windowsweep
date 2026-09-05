@@ -436,15 +436,15 @@
         {
           "id": "P6.code-ci",
           "title": "desktop/ app written and compiled by CI (desktop-ci.yml, desktop-release.yml)",
-          "status": "pending",
-          "note": "no local dependency tree until TASK-001 | UNBLOCKED 2026-09-05: gate 3 is recorded (owner pre-authorised it), so desktop/ may now hold app code | specification: remaining-work.md RW-077 (web layer), RW-078 (Tauri shell), RW-080 (CI)",
+          "status": "in_progress",
+          "note": "RW-077 web layer built: package.json + yarn 4 install, tokens.css/shared.css/components.css promoted once, cli.ts + catalogue.ts (both parse the engine, nothing hard-coded), auth.ts (PKCE), sync.ts (Firestore REST, paginated 20), analytics.ts (consent-gated fan-out), links.ts, the ten-axis registry with a generated pre-paint script and a drift gate, i18n + a no-restricted-syntax gate proved on two plants. RW-078 src-tauri written: 5 commands, least-privilege capabilities, argument allowlist with a Rust unit test. RW-080 both workflows written. Screens: Home, Run, Sections, Consent built; seven declared as pending-wave placeholders",
           "awaitingUser": false
         },
         {
           "id": "P6.story-copy",
           "title": "The desktop copy passes the story pipeline and is amended in the click dummy before the app is written",
-          "status": "pending",
-          "note": "RW-076 and RW-093; depends on P7.RW-090 and P7.RW-091. Consent and elevation are safety surfaces: humor off, no shame or urgency language | unblocked as soon as P7.RW-090 and P7.RW-091 close",
+          "status": "in_progress",
+          "note": "RW-092 drafted the three desktop surfaces (375 slots, 38 proposed changes, 7 NEEDS DECISION). RW-093 waits on GATE 4",
           "awaitingUser": false
         },
         {
@@ -487,21 +487,21 @@
           "id": "P7.RW-090",
           "title": "/story-init: Discover from repo evidence, the eleven-section Story Bible, the voice fingerprint, the registry uniqueness check, the decision log and run state - then GATE 1",
           "status": "complete",
-          "note": "Discover done from repository evidence and docs/story/ created in full: story-bible.md (all eleven sections), voice-fingerprint.md (12 sentences, calibrated:false), content-map.md (surfaces listed, not yet planned), decision-log.md, run-state.json, drafts/. The voice is registered as a draft in the global registry with a uniqueness note - three existing voices (labflow, netcage, clearhire) sit close on the calm-competence axis, and the separator is that this is the only voice attached to a destructive product: dominant band is the moment before an irreversible act, second band is refusal rather than agency or evidence. AWAITING GATE 1: the premise, the 60/25/15 palette, and 1-3 writing samples to calibrate the fingerprint. No prose may be written against this Bible until he approves it. | GATE 1 APPROVED 2026-09-05, owner verbatim: \"Approved as drafted\" - the premise and the 60/25/15 palette are settled. The fingerprint stays calibrated:false, which is recorded as open but explicitly not a blocker. Registry entry moved to approved.",
+          "note": "Story Bible + voice fingerprint + decision log + run-state written; the voice registered globally as the 11th entry with a uniqueness note. GATE 1 approved as drafted 2026-09-05; the fingerprint stays calibrated:false, which is open and not blocking",
           "awaitingUser": false
         },
         {
           "id": "P7.RW-091",
           "title": "The content map: one row per surface with awareness level, structure, tone band, length, CTA and schema, plus the SEO/AEO question map - then GATE 2",
           "status": "complete",
-          "note": "Content map drafted: 14 surfaces with awareness, structure, tone band, length, CTA, schema and status; an out-of-scope list with reasons; an 8-question map with answer-first sentences. 🔴 The question map states plainly that it has NO Search Console evidence - the docs domain has never resolved, so no query report exists - and is a first pass to be revised once RW-040 lands. AWAITING GATE 2. | GATE 2 APPROVED 2026-09-05, owner verbatim: \"Approved, start writing\". The question map was accepted as a first pass with its no-Search-Console-evidence note intact, to be revised once RW-040 lands.",
+          "note": "content-map.md: 14 surfaces, the out-of-scope list with reasons, and an 8-question map carrying its own honesty note (no Search Console data exists because the domain has never resolved). GATE 2 approved 2026-09-05",
           "awaitingUser": false
         },
         {
           "id": "P7.RW-092",
           "title": "/story-write per surface: writer, the full panel, at most two rounds, the finalizer, GATE 4 each; the docs site re-mirrored after every approved page",
-          "status": "pending",
-          "note": "The lint hook is blind to copy inside a code fence, so on a slot-shaped surface (the CLI strings, later the .tsx copy) the fact-checker and the human reader are the only real gate - say so in the packet and never read a green hook there as evidence",
+          "status": "in_progress",
+          "note": "desktop-moment (168 slots), desktop-safety (64) and desktop-cockpit (143) drafted as numbered slot inventories. Awaiting GATE 4 and seven NEEDS DECISION answers. Eleven surfaces not started",
           "awaitingUser": false
         },
         {
@@ -622,8 +622,14 @@
       "phase": "P7",
       "summary": "GATE 2 approved as drafted. The content map is settled at fourteen surfaces with the desktop screens first; the question map is accepted as a first pass with its honesty note. Writing may now begin - the next surface is desktop-safety (Consent and Elevation), where humor is off entirely.",
       "commit": "pending"
+    },
+    {
+      "date": "2026-09-05",
+      "phase": "P6+P7",
+      "summary": "Story GATES 1 and 2 approved and recorded; the eleven desktop screens drafted through the story writer (375 slots, 38 changes, 7 NEEDS DECISION, 5 dummy defects reported). Desktop app foundation built: web layer, Tauri shell, CI workflows. Gates green - typecheck 0, lint 0 with the i18n gate proved on two plants, vite build 0 warnings and no source maps, the prepaint drift gate proved on a plant, the npm tarball sweep proved against a planted desktop leak, CLI self-test 151/151 and version parity 1.1.0 unchanged. Whole project 55.45% -> 70.55%",
+      "commit": "pending"
     }
   ],
-  "resumeInstructions": "GATES 1 and 2 are both approved (2026-09-05) and recorded. Writing may begin with no further permission. Start at P7.RW-092, surface desktop-safety (Consent and Elevation - humor off entirely), then desktop-moment, then desktop-cockpit; each goes through the panel with at most two review rounds and stops at GATE 4 before anything is published. RW-093 then writes the approved words into the click dummy, and only after that does RW-077 begin the web layer. The front door (readme, tagline, site-front) follows the desktop surfaces. Owner rows 15, 16, 22, the P1 runs, row 20 and the DNS rows 11-12 run in parallel and never block agent work. The fingerprint is calibrated:false - if he pastes 1-3 samples, rewrite it and re-run GATE 1 for that file alone.",
+  "resumeInstructions": "Blocked on the owner for two things and only two: GATE 4 on the three drafted desktop surfaces (docs/story/drafts/desktop-*.md) and the seven NEEDS DECISION answers listed there - the pricing sentences on Home and Account are the sharp one, because the fleet rule forbids writing that a product has no paid tier. Everything else proceeds: RW-079 (Firebase project, Firestore rules, vault) needs no copy at all and is the next agent item. After GATE 4: RW-093 writes the approved words into the click dummy, then the seven remaining screens (Picker, History, Report, Settings, Account, Elevation, Splash), then RW-081 (WebView2 run-to-verify + GATE 4 parity pairs at 1440 and 760) and RW-082 (desktop-v1.1.0). Rust is CI-verified only until owner row 22. Never re-plan; the specs are remaining-work.md.",
   "auditPlanFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-streamed-nest.md"
 }

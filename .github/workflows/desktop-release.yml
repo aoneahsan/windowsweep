@@ -1,0 +1,77 @@
+name: desktop-release
+
+# Builds the NSIS and MSI installers and publishes them to a GitHub Release.
+#
+# 🔴 Manual dispatch only until the updater signing secrets exist. A tag-triggered
+# release that runs without `TAURI_SIGNING_PRIVATE_KEY` produces installers with
+# no `.sig` and no `latest.json`, which means the updater silently has nothing to
+# verify - a release that looks complete and cannot be updated from. The tag
+# trigger is added in the same change that adds the secrets.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'The desktop tag to build, e.g. desktop-v1.1.0'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: installers
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.tag }}
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - run: corepack enable
+
+      - name: Install
+        working-directory: desktop
+        run: yarn install --immutable
+
+      - name: Bundle the engine
+        working-directory: desktop
+        run: yarn sync:cli
+
+      # 🔴 The app version and the bundled engine version must agree. They are the
+      # same product to a person reading an About box, and a mismatch means the
+      # window reports one number while the engine writing the reports reports
+      # another.
+      - name: The app version matches the bundled engine
+        shell: bash
+        run: |
+          app="$(node -p "require('./desktop/package.json').version")"
+          engine="$(cat VERSION | tr -d '[:space:]')"
+          tauri="$(node -p "require('./desktop/src-tauri/tauri.conf.json').version")"
+          echo "app=$app engine=$engine tauri=$tauri"
+          if [ "$app" != "$engine" ] || [ "$tauri" != "$engine" ]; then
+            echo "version mismatch - the desktop app, its Tauri config and the bundled engine must agree"
+            exit 1
+          fi
+
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: desktop/src-tauri
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          projectPath: desktop
+          tagName: ${{ inputs.tag }}
+          releaseName: 'windowsweep desktop ${{ inputs.tag }}'
+          releaseDraft: true
+          prerelease: false
+          includeUpdaterJson: true

@@ -1,0 +1,10 @@
+@import 'tailwindcss';
+@import './tokens.css';
+@import './theme-bridge.css';
+
+/* The dummy's shared chrome, promoted alongside the tokens. Component classes
+   live here rather than as Tailwind utilities because the click dummy is the
+   specification and its class names are what GATE 4 compares against. */
+@import './shell.css';
+
+@custom-variant light (&:where([data-appearance='light'], [data-appearance='light'] *));

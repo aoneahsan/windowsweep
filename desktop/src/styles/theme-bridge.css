@@ -1,0 +1,43 @@
+/* ============================================================================
+   Tailwind v4 bridge.
+
+   🔴 `inline` is required: every token below references another custom property,
+   and a non-inline @theme would emit the literal `var(--c-app)` text as the
+   token's value rather than resolving through it - which breaks the moment an
+   axis attribute rebinds the source variable. The axes work by rebinding
+   --c-*; the bridge must follow them, not snapshot them.
+
+   Only SEMANTIC tokens are bridged. Primitives are never named by a component,
+   so giving them utilities would invite exactly that.
+   ============================================================================ */
+@theme inline {
+  --color-app: var(--c-app);
+  --color-panel: var(--c-panel);
+  --color-well: var(--c-well);
+  --color-bleed: var(--c-bleed);
+  --color-line: var(--c-line);
+  --color-line-strong: var(--c-line-strong);
+
+  --color-ink: var(--c-ink);
+  --color-ink-2: var(--c-ink-2);
+  --color-ink-3: var(--c-ink-3);
+
+  --color-accent: var(--c-accent);
+  --color-accent-ink: var(--c-accent-ink);
+  --color-accent-soft: var(--c-accent-soft);
+  --color-on-accent: var(--c-on-accent);
+  --color-on-accent-soft: var(--c-on-accent-soft);
+  --color-glow: var(--c-glow);
+
+  --color-ok: var(--c-ok);
+  --color-warn: var(--c-warn);
+  --color-danger: var(--c-danger);
+
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-xl: var(--r-xl);
+
+  --font-sans: var(--f-sans);
+  --font-mono: var(--f-mono);
+}

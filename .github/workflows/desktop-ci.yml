@@ -1,0 +1,99 @@
+name: desktop-ci
+
+# The desktop app's own gates. Separate from `ci.yml` because that job is the
+# engine's contract and must stay fast and independent - a Rust toolchain failure
+# should never be able to make the CLI look broken.
+#
+# 🔴 windows-latest only. The app links against WebView2 and spawns
+# `powershell.exe`; a green build on any other runner would prove nothing about
+# the only platform it ships to.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'desktop/**'
+      - '.github/workflows/desktop-ci.yml'
+  pull_request:
+    paths:
+      - 'desktop/**'
+      - '.github/workflows/desktop-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desktop-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  desktop:
+    name: desktop
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - name: Enable corepack and yarn 4
+        run: corepack enable
+
+      - name: Install
+        run: yarn install --immutable
+
+      # The pre-paint script is GENERATED from src/lib/axes.json. If the two have
+      # drifted, the window would apply a different set of axes before first paint
+      # than the theme panel offers - so this fails the build rather than warning.
+      - name: The pre-paint script matches the axis registry
+        run: yarn check:prepaint
+
+      - name: Typecheck
+        run: yarn typecheck
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Build the web layer
+        run: yarn build
+
+      # No source map may reach a release build.
+      - name: No source maps in the output
+        shell: bash
+        run: |
+          hits="$(find dist -name '*.map' -o -name '*.js' -exec grep -l 'sourceMappingURL' {} + 2>/dev/null || true)"
+          if [ -n "$hits" ]; then echo "source maps found:"; echo "$hits"; exit 1; fi
+          echo "no source maps in dist/"
+
+      - name: Bundle the engine
+        run: yarn sync:cli
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: desktop/src-tauri
+
+      - name: Rust formatting
+        working-directory: desktop/src-tauri
+        run: cargo fmt --all -- --check
+
+      - name: Rust lints
+        working-directory: desktop/src-tauri
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Rust tests
+        working-directory: desktop/src-tauri
+        run: cargo test
+
+      # Compiles the whole app without producing installers - the installers are
+      # the release workflow's job and take several minutes longer.
+      - name: Build the desktop binary
+        run: yarn tauri build --no-bundle

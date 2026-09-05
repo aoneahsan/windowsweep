@@ -1,6 +1,6 @@
 # windowsweep - Project Rules
 
-Last Updated: 2026-09-05 (session 7: audit - the desktop app and the storytelling retrofit added to the 100% scope; the A4 screens committed as WIP; every record refreshed) · Context pass: 2026-09-05 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
+Last Updated: 2026-09-05 (session 8: the click dummy closed, both story gates cleared, the desktop app foundation built and gated) · Context pass: 2026-09-05 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
 
 Safe, developer-aware Windows cleanup CLI: a Windows PowerShell 5.1 engine behind a dependency-free Node
 launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macleanup` (Bash). Public repo
@@ -15,41 +15,52 @@ launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macl
 - Dependency and manifest record: `docs/PACKAGES.md`
 - Follow-ups the agent owes this project: `PENDING-TASKS.md` (root)
 
-## Current state (session 7, 2026-09-05 - audit)
+## Current state (session 8, 2026-09-05 - the desktop foundation and the story gates)
 
 **1.1.0 is published on npm and equals `main`'s engine** (built from `3c4d54e`; `git diff 3c4d54e..HEAD -- lib
 modules windowsweep.ps1 bin` is empty; tags `v1.0.0`, `v1.0.1`, `v1.1.0`, each with a GitHub Release). Sections
 0-25, `--select` / `--select-file`, `--notify`, `candidates[]` / `targets[]` and `##windowsweep` progress lines
-in `--json`, `--list --json`. The self-test runs **151 checks** (green on 2026-09-05, exit 0). The documentation
-site `aoneahsan/windowsweep-docs` is deployed and green; `windowsweep-docs.aoneahsan.com` still probes **000**
-(owner DNS rows 11-12), so `package.json` `homepage`, the README links and `WS_DOCS` point at GitHub until it
-probes 200.
+in `--json`, `--list --json`. The self-test runs **151 checks** (green 2026-09-05, exit 0). 🔴 **No engine file
+has been touched since 1.1.0 and none should be** without a version cascade.
 
-**Open: P6 (the desktop app), P7 (the storytelling retrofit), the owner rows.** Desktop direction 02 "Reclaim"
-was **approved on 2026-09-05** (*"approved, looks great, get all remaining work fully done now"*); gates 2 and 3
-were **pre-authorised** in the same message (*"Straight through to the app"*), so `desktop/` may hold app code;
-GATE 4 (parity) closes after the app exists. The click dummy holds all eleven screens plus the eight-file
-component library (A3 in `45953b7`, A4 handed over as WIP in `2721b75`); Block Q's inventory ledger, Block R's
-wiring and Block S's verification are still open (RW-073 to RW-075). No app code, no Firebase project, no
-desktop CI exists yet. rustup 1.98.1 is installed per-user; **Visual Studio Build Tools is not** (row 22), so
-Rust links only in CI. TASK-001 (the download gate) was lifted in full on 2026-09-05.
+**The docs site** is deployed and green, now with a real PNG Open Graph card and its own regenerated lockfile;
+`windowsweep-docs.aoneahsan.com` still probes **000** (owner DNS rows 11-12), so `package.json` `homepage`,
+the README links and `WS_DOCS` point at GitHub until it probes 200.
 
-**Owner decisions of 2026-09-05 (audit session), verbatim in `docs/PROJECT-CONTEXT.md`:** "100%" **includes the
-desktop app**; the WIP screens were committed as their own `design:` commit; the folder layout
-`D:\work\windows-cleanup-root\{windows-cleanup, windowsweep-docs}` is durable (row 4 closed as superseded);
-and **every product-voice surface is retrofitted through the storytelling system** (P7: Story Bible first, then
-the README, the docs pages, `llms.txt`, the CLI strings and the desktop copy -
-`~/.claude/rules/storytelling-content.md`). 🔴 No new product-voice prose before the approved Bible; factual
-corrections of false statements are allowed; in the docs repo `docs/story/**` is excluded from the build.
+**The click dummy is CLOSED** (RW-073 to RW-075, 2026-09-05). Eleven screens, eight gallery files, a parity
+ledger at `desktop/design/CLICK-DUMMY-INVENTORY.md`. Four real defects were fixed, including a premature `*/`
+that had disabled the whole bleed-band ink reset and left 87 text nodes at 1.09:1 in light mode. Gates: 8,034
+contrast measurements across three treatments in light and dark with zero failures, zero focusable-while-hidden
+controls, no HTML text under 12px - each watched failing on its own plant.
+
+**The desktop app now has a built foundation** (RW-077, RW-078, RW-080 largely done). `desktop/` holds a Vite 8
++ React 19 + TS ~6.0.3 web layer and `src-tauri/`. What exists and is proved: the engine bridge (`lib/cli.ts`
+parses the `--json` contract, `lib/catalogue.ts` reads `--list --json` so no section list is hard-coded
+anywhere), PKCE sign-in, Firestore REST sync that pages at 20 and syncs no path, one consent-gated `track()`
+fan-out, the **ten-axis theme registry in ONE file** (`src/lib/axes.json`) with `public/prepaint.js` GENERATED
+from it and a `--check` drift gate, i18n on every string behind a `no-restricted-syntax` gate at `error`, and
+five Rust commands behind an **argument allowlist with its own unit test**. Screens built: Home, Run, Sections,
+Consent. Seven are declared as `pending-wave` placeholders rather than hidden. 🔴 **Rust has not been compiled
+locally** - Visual Studio Build Tools is still absent (row 22), so `desktop-ci.yml` is the only Rust evidence.
+
+**Gates run 2026-09-05, all green:** `yarn typecheck` exit 0 · `yarn lint` exit 0, with the i18n gate watched
+failing on two different plants (a literal JSX string and a literal `aria-label`) · `yarn build` zero warnings,
+zero source maps · the prepaint drift gate watched failing on a planted axis change · the CI tarball sweep
+watched failing on a planted `desktop/` entry · CLI self-test 151/151 · `version parity OK: 1.1.0`.
+
+**The storytelling retrofit has both approval gates.** GATE 1 (the Bible) and GATE 2 (the content map) were
+approved 2026-09-05; the voice is the eleventh entry in the global registry. The three desktop surfaces are
+drafted as numbered slot inventories at `docs/story/drafts/desktop-{moment,safety,cockpit}.md` - **375 slots,
+331 kept as already on voice, 38 proposed changes, 7 `NEEDS DECISION`**. 🔴 **Two of those decisions block
+copy that is already in the tree**: Home and Account state there is no paid tier and nothing to buy, which the
+fleet rule in `~/.claude/rules/00-house-rules.md` forbids writing anywhere.
 
 🔴 **P5 is closed but two of its rows are not:** RW-064 and RW-065 shipped only their verified halves and RW-066
-was **deferred, not shipped**, because that software is not installed on this machine - a candidate table in
-`docs/sections.md` plus one owner probe (`MANUAL-TASKS` row 20). **Section 26 is still free.** `C:\Intel` was
-inspected and **rejected**: it holds `Thunderbolt` and driver support content, not extraction leftovers.
+was **deferred, not shipped**. **Section 26 is still free.** `C:\Intel` was inspected and **rejected**.
 
 Phase P1 is entirely owner-run (rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21). The specification of every open item is
-`remaining-work.md`; the one-page view with the two percentages (whole project about 53%, CLI-only scope about
-87%) is `remaining-work-summary.md`.
+`remaining-work.md`; the one-page view (whole project about **71%**, CLI-only about **88%**) is
+`remaining-work-summary.md`.
 
 ## Per-Project Stack Override (binding)
 
@@ -62,8 +73,8 @@ Phase P1 is entirely owner-run (rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21). The speci
 | Typecheck / lint / build | no build output, so the fleet source-map rule is satisfied by construction; PSScriptAnalyzer is the lint |
 | UI rules | none apply to the CLI - no frontend, i18n surface, theme, plans or admin panel. They apply to the desktop app (P6) |
 | Docs site | `aoneahsan/windowsweep-docs` at `D:\work\windows-cleanup-root\windowsweep-docs`: Docusaurus 3 + React 19 + TS ~6.0.3 + yarn 4, GitHub Pages only, ports 5972/5973. Its pages MIRROR `docs/` - fix a wording error here first, then re-mirror. `docs/MANUAL-TASKS.md` and `docs/story/**` are excluded from its build |
-| Desktop app (P6) | `desktop/` in this repo: Tauri 2 + React 19 + Vite + Tailwind v4 + React Aria, port 5974, identifier `com.aoneahsan.windowsweep`. It runs the bundled script with `--json` and reimplements no cleanup logic. Today only `desktop/design/` exists - the argument in its `README.md` and the **approved** click dummy in `windowsweep-click-dummy/` (eleven screens + eight gallery files, plain CSS + vendored D3, zero network; `tokens.css` promotes into the app in ONE direction). Gates 1-3 are recorded, so app code may now be created; GATE 4 (parity) closes after it exists. External design-craft skills are vendored per-project in `.claude/skills/` - see `EXTERNAL-SKILLS.md` |
-| Storytelling (P7) | `docs/story/` does not exist yet. Owner decision 2026-09-05: retrofit everything - `/story-init` first (GATE 1), then the content map (GATE 2), then every product-voice surface through `/story-write`. The dummy's words are amended before the app's (`~/.claude/rules/frontend-ui-standards.md` §10a) |
+| Desktop app (P6) | `desktop/` in this repo: Tauri 2 + React 19 + Vite 8 + Tailwind v4 + React Aria + TanStack Router (hash history), port 5974, identifier `com.aoneahsan.windowsweep`. It runs the bundled script with `--json --no-color` and reimplements no cleanup logic. `desktop/design/` holds the approved click dummy and its inventory; `desktop/src` and `desktop/src-tauri` hold the app. 🔴 `tokens.css`, `shared.css` and `components.css` were promoted **once, in one direction** on 2026-09-05 - the app's copies are authoritative and are never synced back. Its own gates are `yarn typecheck && yarn lint && yarn build` plus `yarn check:prepaint`, and `desktop-ci.yml` adds `cargo fmt --check`, `clippy -D warnings` and `cargo test`. GATE 4 (parity) is still open. External design-craft skills are vendored per-project in `.claude/skills/` - see `EXTERNAL-SKILLS.md` |
+| Storytelling (P7) | `docs/story/` holds the approved Bible, the voice fingerprint (`calibrated: false`, open and not blocking), the approved 14-surface content map, the decision log, `run-state.json` and `drafts/`. GATE 1 and GATE 2 are cleared; three desktop surfaces are drafted and awaiting GATE 4. The dummy's words are amended before the app's (`~/.claude/rules/frontend-ui-standards.md` §10a) |
 
 ## IRON rules for this repository
 

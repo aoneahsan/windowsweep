@@ -1,689 +1,675 @@
 # windowsweep - remaining work to 100% feature-complete and production-ready
 
-Last Updated: 2026-09-03 (audit of commit `84c732f` on `main`; npm `windowsweep@1.0.0`)
+Last Updated: 2026-09-05 (audit of `main` at `2721b75`; npm `windowsweep@1.1.0`; the desktop app and the storytelling retrofit are in scope)
 
-This is the working specification for finishing windowsweep. It is written for an agent session (Claude
-Code or Codex) that has read `CLAUDE.md` / `AGENTS.md` and nothing else. Every item carries its evidence,
-its success criteria, its acceptance points, what to do and what not to do. **Status lives in one place
-only: `docs/features/windowsweep-completion/00-tracker.json`.** This file never carries a status column;
-when an item closes, the tracker sub-task flips in the same commit as the work.
+This is the working specification for finishing windowsweep. It is written for an agent session (Claude Code
+or Codex) that has read `CLAUDE.md` / `AGENTS.md` and nothing else. Every open item carries its evidence, its
+success criteria, its acceptance points, what to do and what not to do. **Status lives in one place only:
+`docs/features/windowsweep-completion/00-tracker.json`.** This file never carries a status column; when an
+item closes, the tracker sub-task flips in the same commit as the work.
 
 Companion files: `what-this-project-consists-of.md` (what exists today, with evidence) and
 `remaining-work-summary.md` (the one-page view with percentages).
 
-## 1. Definition of done (owner decisions, 2026-09-03)
+## 1. Definition of done
 
 | Question | Decision |
 |---|---|
-| What counts as 100% feature-complete | The 1.0 catalogue (sections 0-21) **plus the family-parity features shipped as 1.1** (P5 below), plus the release sync, the found defects, verification, self-test coverage, the docs site, repository hygiene and the portfolio/ORCID records |
-| Docs site | **In scope.** `aoneahsan/windowsweep-docs` served at `windowsweep-docs.aoneahsan.com` (Docusaurus on GitHub Pages, like `linux-cleanup-docs` and `macleanup-docs`) |
-| Desktop GUI | **A later, separate phase** (P6). A Tauri wrapper around the same script, like `macleanup/desktop`. Not counted toward CLI completion; it gets its own plan and tracker when P0-P5 are closed |
-| Distribution channels | **npm and the git clone only.** No winget, Scoop, Chocolatey or PowerShell Gallery |
+| What counts as 100% feature-complete | The 1.0 catalogue (sections 0-21) **plus** the family-parity features shipped as 1.1 (sections 22-25, the scripted-selection flags, the `--json` contract), **plus** the docs site, repository hygiene and the owner records, **plus** the Windows desktop app, **plus** the storytelling retrofit of every product-voice surface |
+| Does the desktop app count? | **Yes** (owner, 2026-09-05: *"Yes, include it"*). It was excluded from the CLI percentage on 2026-09-03; that scope still exists and is reported separately, but the headline number now covers the whole project |
+| Docs site | **In scope.** `aoneahsan/windowsweep-docs` served at `windowsweep-docs.aoneahsan.com` (Docusaurus on GitHub Pages, like `linux-cleanup-docs` and `macleanup-docs`). Built and deployed; the domain waits on the owner's DNS record |
+| Storytelling | **Retrofit everything** (owner, 2026-09-05: *"Retrofit everything"*). A Story Bible first, then the README, the docs-site pages, `llms.txt`, the CLI console strings and the desktop copy through the story pipeline. Phase P7 |
+| Folder layout | `D:\work\windows-cleanup-root\{windows-cleanup, windowsweep-docs}` is durable (owner, 2026-09-05: *"Keep this layout as is"*). The 2026-09-03 rename row is closed as superseded |
+| Distribution channels | **npm and the git clone only** for the CLI. No winget, Scoop, Chocolatey or PowerShell Gallery. The desktop app ships as a GitHub Release with NSIS and MSI installers |
 
-"Production-ready" for this project means: the published npm version equals `main`; every documented
-promise is true in the code; the admin, personal and Windows 11 paths have been exercised for real at least
-once; the docs site is live and linked; the repository carries topics, a tag and a release per version; the
-owner's records (portfolio, ORCID, master links) name the project.
+"Production-ready" for this project means: the published npm version equals `main`; every documented promise
+is true in the code; the admin, personal and Windows 11 paths have been exercised for real at least once; the
+docs site is live and linked; the repository carries topics, a tag and a release per version; the owner's
+records (portfolio, ORCID, master links) name the project and agree with it; **the desktop app is released as
+`desktop-v1.1.0` and verified page by page against the approved click dummy (GATE 4); and `docs/story/` holds
+an approved Story Bible with every in-scope surface through GATE 4.**
 
-## 2. Status snapshot (2026-09-03)
+## 2. Status snapshot (2026-09-05)
 
-| Area | Done | What is missing |
-|---|---|---|
-| CLI engine 1.0 (22 sections, 5 modes, chokepoint, dry-run, reports, self-test) | 97% | the defects in P0 |
-| Release state | 85% | `main` is ahead of npm by one internal rename (RW-001); no git tag, no GitHub Release |
-| Verification | 65% | admin sections 12-16 and 20 never run for real; Windows 11 never exercised; Scheduled Task never observed; sections 4, 5, 7 (Chrome), 8 (Slack), 17-19 never run for real |
-| Self-test coverage | 75% | argument parser, section-list parser, size parser, superseded-version logic, layout guard, workspace-storage and artefact finders, report export, `--json` shape |
-| In-repo documentation | 95% | three doc-versus-code mismatches (RW-004, RW-005, RW-006) |
-| Docs site | 0% | everything (P3) |
-| Repository hygiene | 70% | topics, homepage, wiki off, tags, releases |
-| Owner records | 60% | portfolio-info file, master links JSON, ORCID entry (P4) |
-| 1.1 family-parity features | 0% | P5 |
-| Desktop app (P6, excluded from the percentage) | 0% | its own plan |
+| Area | Weight | Done | What is missing |
+|---|---|---|---|
+| CLI engine + releases (1.0.0, 1.0.1, 1.1.0) | 25 | 100% | nothing |
+| 1.1 residue (candidate target rows) | 3 | 40% | Telegram, WhatsApp, Office, Steam shadercache, WebView2, torch, conda, driver leftovers - all wait on the owner's probe (row 20) |
+| Verification (P1) | 8 | 15% | elevated sections 12-16/20 and `--elevate`; Windows 11; the Scheduled Task; sections 4/5/7/8/17-19/23 for real; `--notify` on pwsh |
+| Self-test coverage | 4 | 100% | nothing (151 checks, 17 groups) |
+| In-repo documentation | 5 | 100% | nothing (the stale lines were fixed in this audit) |
+| Docs site | 8 | 85% | DNS + HTTPS (rows 11-12) and the write-back that follows; a PNG OG image; the local install and lockfile |
+| Repository hygiene + owner records | 5 | 85% | homepage fields after DNS; the owner's review of the master-links entry (row 5); the ORCID import (row 13) |
+| Desktop design (click dummy) | 8 | 70% | the inventory ledger, the wiring batch, the verification sweep across 19 files |
+| Desktop app (code, Tauri, Firebase, CI, release) | 24 | 0% | everything |
+| Storytelling retrofit (P7) | 10 | 0% | everything |
 
-Weighted over the agreed scope (engine 30, 1.1 features 20, verification 10, in-repo docs 10, docs site 10,
-self-test 5, release 5, hygiene 5, records 5) the project stands at **about 60% of the agreed scope**; the
-shipped 1.0 CLI on its own is **about 90% production-ready**.
+Score = sum(weight x done) / 100 = 25 + 1.2 + 1.2 + 4 + 5 + 6.8 + 4.25 + 5.6 + 0 + 0 = **53.05% of the whole
+project**. Against the narrower scope agreed on 2026-09-03 (engine 30, 1.1 features 20, verification 10,
+in-repo docs 10, docs site 10, self-test 5, release 5, hygiene 5, records 5) the CLI stands at
+30 + 18 + 1.5 + 10 + 8.5 + 5 + 5 + 4.5 + 4.25 = **86.75%**. The published CLI on its own is production-ready;
+what is open there is verification only the owner can run.
 
 ## 3. How to work this file
 
-1. Read `CLAUDE.md` (or `AGENTS.md`), then `docs/features/windowsweep-completion/00-tracker.json`. Take
-   the first `pending` sub-task; it names the `RW-` item below. Never re-plan from zero.
-2. One item (or one phase, when the items are small) per session. Run the gates named in the item before
-   claiming it done. Flip the sub-task, bump `lastUpdated`, append a `runHistory` row, one commit, push.
-3. Every code change obeys the IRON rules in `CLAUDE.md`: PowerShell 5.1 syntax, ASCII-only source, every
-   deletion through the chokepoint with a declared `-Within` root, `--dry-run` honoured, files under 500
-   lines, section numbers 0-21 frozen, the version cascade moves together.
+1. Read `CLAUDE.md` (or `AGENTS.md`), then `docs/features/windowsweep-completion/00-tracker.json`. Take the
+   first `pending` or `in_progress` sub-task; it names the `RW-` item below. **Never re-plan from zero.**
+2. One item (or one small phase, when the items are small) per session. Run the gates named in the item before
+   claiming it done. Flip the sub-task, bump `lastUpdated`, append a `runHistory` row, one commit per repo,
+   push and quote the `Bypassed rule violations` line.
+3. Every code change obeys the IRON rules in `CLAUDE.md`: PowerShell 5.1 syntax, ASCII-only engine source,
+   every deletion through the chokepoint with a declared `-Within` root, `--dry-run` honoured, files under 500
+   lines, section numbers frozen, the version cascade moves together.
 4. Owner-only rows (`awaitingUser: true` in the tracker, and a row in `docs/MANUAL-TASKS.md`) are never
    executed by an agent. The agent prepares, the owner runs, the agent records the result.
 5. Paste-ready session prompt:
 
    > Read `remaining-work.md` and `docs/features/windowsweep-completion/00-tracker.json` in
-   > `aoneahsan/windowsweep`. Resume the first pending sub-task, do only that item (or that phase), run its
-   > gates, flip its status in the same commit, append a runHistory row, one commit, push to `o main`.
+   > `D:\work\windows-cleanup-root\windows-cleanup`. Resume the first pending sub-task, do only that item (or
+   > that small phase), run its gates, flip its status in the same commit, append a runHistory row, one commit,
+   > push to `o main` and quote the bypass line.
 
 ## 4. Things never to do (apply to every item)
 
-- Never reuse or renumber a section. 0-21 are a public contract; new sections start at 22; a retired
-  section stays as a no-op that says so.
-- Never add a runtime dependency to `package.json`, and never add network code (self-test check [9] fails
-  the build on `Invoke-WebRequest`, `HttpClient`, sockets, `curl`, `wget`).
+**The CLI**
+
+- Never reuse or renumber a section. 0-25 are a public contract; the next new section is 26; a retired section
+  stays as a no-op that says so.
+- Never add a runtime dependency to `package.json`, and never add network code (self-test check [9] fails the
+  build on `Invoke-WebRequest`, `HttpClient`, sockets, `curl`, `wget`).
 - Never delete outside `Remove-PathSafe` / `Send-ToRecycleBin` / `Clear-DirectoryContents` /
   `Remove-StaleFiles` / `Remove-StaleUnits`, and never call a destructive external command outside
   `Invoke-External -Destructive`. A bare `Remove-Item` on user data is a defect.
 - Never shrink a protected list. They only grow.
-- Never `npm unpublish`; a bad release is `npm deprecate`d. Never `git push --force`, never `--admin`,
-  never edit or disable the `main` ruleset. A direct owner push prints `Bypassed rule violations`; quote it.
-- Never ship `CLAUDE.md`, `AGENTS.md`, `docs/`, `temp/` or the three root planning files in the tarball
-  (`files` is an allowlist; CI sweeps the listing).
+- Never `npm unpublish`; a bad release is `npm deprecate`d. Never `git push --force`, never `--admin`, never
+  edit or disable the `main` ruleset. A direct owner push prints `Bypassed rule violations`; quote it.
+- Never ship `CLAUDE.md`, `AGENTS.md`, `docs/`, `temp/`, `desktop/`, the three root planning files or the
+  portfolio file in the tarball (`files` is an allowlist; CI sweeps the listing by name).
 - Never put a secret, a token, a phone number or a new machine-specific path into this public repository.
-- Never write GUI code into this repository before the desktop-app plan (P6) exists and the owner has
-  decided its account model.
 - Never change deletion behaviour without a `CHANGELOG.md` entry and matching edits to `docs/sections.md`,
   `docs/cli-reference.md` and the README section table.
 - Never run an admin section from an agent session (they need a UAC click), and never run a real (non
   dry-run) cleanup outside the scope the owner named for that session.
 
-## 5. Phase P0 - release sync and known defects (target: 1.0.1)
+**The desktop app**
 
-Gate for the whole phase: `node bin\windowsweep.js --self-test --no-color --no-report` exit 0 on Windows
-PowerShell 5.1; CI green on both hosts; `npm run version:check`; `npm pack --dry-run` lists the allowlist
-only; every planted defect below turned its new self-test check red before the fix was kept.
+- Never reimplement any cleanup logic in the app: it runs the bundled `windowsweep.ps1` with
+  `--json --no-color` and reads the catalogue from `--list --json`. No finder, no path list, no idle rule.
+- Never gate a run behind sign-in, never add a paid tier or a plan set (an explicit owner exemption).
+- Never enable a telemetry provider before the consent dialog is accepted, and never sync a filesystem path,
+  host name or user name in a run summary.
+- Never let the app elevate itself; elevation goes through the engine's own `--elevate`, and this session
+  never triggers that path.
+- 🔴 **The click dummy owns the words as well as the layout.** A divergence is written into the dummy first,
+  then the app matches (GATE 4 parity, screenshot pairs at 1440 and 390). Anything the app declines to ship is
+  declared with a reason, never quietly dropped.
 
-### RW-001 - Publish 1.0.1 so npm equals `main` (agent, ~1 h including the gate)
+**The storytelling retrofit**
 
-- **What.** `main` (`84c732f`) is ahead of the published `windowsweep@1.0.0` by the internal rename
-  `Write-Log` -> `Write-LogLine` in `lib/log.ps1`, `lib/safety.ps1`, `lib/ui.ps1`, `modules/crash_trap.ps1`,
-  `modules/runner.ps1` (18 call sites, no behaviour change; it made PSScriptAnalyzer pass under PowerShell 7).
-  Every other P0 fix lands in the same release.
-- **Why.** A user who reads the source on GitHub and runs the npm package must be running the same code.
-- **Evidence.** `git diff 70c6738..HEAD --stat`; `npm view windowsweep version` = `1.0.0`;
-  `CHANGELOG.md` `[Unreleased]` (written 2026-09-03).
-- **Success criteria.** `npm view windowsweep version` prints `1.0.1`; `git tag v1.0.1` points at the
-  release commit; `npx -y windowsweep@1.0.1 --version` from a directory outside the repo prints 1.0.1.
-- **Acceptance points.**
-  1. Version cascade moved together: `package.json`, `VERSION`, `WS_VERSION_FALLBACK` in
-     `lib/constants.ps1`, `CHANGELOG.md` (`[1.0.1] - <date>` replaces `[Unreleased]`), README at-a-glance
-     row and README changelog line, `docs/PACKAGES.md` size row (re-measure with `npm pack --dry-run`; the
-     audit-day tree packs 78.4 kB / 264.0 kB / 37 files).
-  2. The publish gate from `~/.claude/rules/publishing-compliance.md` ran in order: tree clean and pushed,
-     self-test and dry-run green, registry version below the new one, `npm pack` + tarball sweep (no
-     `CLAUDE.md`, `AGENTS.md`, `docs/`, `temp/`, `.npmrc`, the three root planning files), smoke-install
-     of the packed tarball into a temp prefix (`--version`, `--list`, `--self-test`), `npm whoami` =
-     `aoneahsan` with the token written from the FilesHub developer account (never echoed), `npm publish
-     --access public`, then `npm view` and a fresh-cache `npx` run from a neutral directory.
-  3. A GitHub Release `v1.0.1` with the changelog entry as its body (see RW-050 for the tagging convention).
-- **To complete.** Land RW-002 to RW-011 first (they are all 1.0.1 content), then run the cascade and gate.
-- **Do not.** Do not publish from inside a session that also has uncommitted work; do not skip the
-  smoke-install; do not run `npx windowsweep` inside the repo to verify (it resolves the local package and
-  fails - `docs/troubleshooting.md`).
+- Never write product-voice prose before the Story Bible is approved at GATE 1. Correcting a factually false
+  statement is not new prose and is always allowed.
+- Never guess a `NEEDS DECISION`: surface it to the owner verbatim, the turn it arrives, with options.
+- Never let `docs/story/**` reach the docs-site build (the `exclude` entry plus the workflow sweep).
+- Never run a third review round; after two, both positions go to the decision log and the owner decides.
 
-### RW-002 - Section 17 deletes every listed artefact under `--yes` with no selection (agent, HIGH, ~1 h)
+## 5. Closed items (reference only - the specifications were deleted when they closed)
 
-- **What.** The README and `docs/faq.md` promise that section 17 "removes only what you select". With
-  `--yes` on, `Read-MultiSelect` returns every index instead of asking (`lib/ui.ps1:193`), and the final
-  confirmation is auto-answered: in the walkthrough `SectionPreConfirmed` short-circuits `Confirm-Section`
-  (`modules/walkthrough.ps1:45-46`, `lib/actions.ps1:98`), in the menu the `Y` toggle (`modules/menu.ps1:52`)
-  makes `Confirm-Ui` auto-yes. Result: `windowsweep --yes` followed by `a` at step 17, or `--menu`, `Y`,
-  `17`, removes every stale artefact folder without a person choosing one. Sections 18 and 19 pre-select
-  everything the same way (`modules/personal.ps1:87`) but still stop at a typed confirmation
-  (`modules/personal.ps1:91`, `-NoAutoYes`), so they only pre-select.
-- **Why.** The whole design rests on personal and project data never going unattended; batch mode refuses
-  17-19 correctly (`modules/runner.ps1:55-60`), the interactive modes do not.
-- **Evidence.** `lib/ui.ps1:189-197`, `lib/actions.ps1:93-100`, `modules/projects.ps1:132-134`,
-  `README.md` FAQ "removes only what you select", `docs/sections.md:157`.
-- **Success criteria.** With `--yes` active in any interactive mode, sections 17, 18 and 19 present the
-  selection prompt and default to "none"; an empty selection removes nothing; section 17's final
-  confirmation is never auto-answered.
-- **Acceptance points.**
-  1. `Read-MultiSelect` gains `-NoAutoYes`; sections 17, 18, 19 (and section 20's disk picker) pass it.
-  2. Section 17's `Confirm-Section` call becomes `Confirm-Ui -NoAutoYes` (walkthrough pre-confirmation no
-     longer applies to the selection step).
-  3. New self-test check: with `$ws.Yes = $true` and `$ws.Interactive = $false`,
-     `Read-MultiSelect -Total 5 -NoAutoYes` returns an empty list, and without the switch returns 1..5
-     (documents the intended asymmetry for sections 4 and 20 that legitimately honour `--yes`).
-  4. Planted defect proved: remove the switch from section 17, watch the new check go red, restore.
-  5. `docs/sections.md` sections 17-19 and `docs/safety-model.md` "Batch policy" state that `--yes` never
-     selects items in 17-19; README FAQ unchanged (it becomes true).
-- **To complete.** Edit `lib/ui.ps1`, `modules/projects.ps1`, `modules/personal.ps1`, `modules/docker.ps1`
-  (section 20 keeps `--yes` = all, because it is deep-gated and documented), `modules/release_helpers.ps1`
-  (check), the two docs pages, `CHANGELOG.md` under Fixed.
-- **Do not.** Do not change batch-mode refusal (`runner.ps1`); do not make `--yes` stop working for
-  sections 4, 11, 15, 16, 20 where it is documented.
-
-### RW-003 - Section 19 title claims Desktop is scanned (agent, 10 min)
-
-- **What.** `lib/constants.ps1:55` titles section 19 "Large stale personal files (Downloads, Desktop)";
-  `Get-PersonalRoots` scans Downloads only (`modules/personal.ps1:5-10`) and Desktop is a protected root.
-  `--list`, the menu and the walkthrough step header show the wrong title.
-- **Success criteria.** Title reads "Large stale personal files (Downloads) -> Recycle Bin"; README row 19,
-  `docs/sections.md` row 19 and the section 19 prose all say Downloads only (they already do).
-- **Acceptance points.** `node bin\windowsweep.js --list` shows the new title; self-test [3] and [6] green.
-- **Do not.** Do not add Desktop as a scanned root; that is a recorded owner decision.
-
-### RW-004 - Sections 18 and 19 print the tier "permanent" (agent, 20 min)
-
-- **What.** `lib/constants.ps1:54-55` carry `Tier = 'permanent'` for the two Recycle Bin sections, so
-  `--list` prints "permanent" while README, `docs/sections.md:27-28` and `docs/safety-model.md` say
-  "Recycle Bin".
-- **Success criteria.** A tier value `recycle` exists in the catalogue comment (`lib/constants.ps1:32`),
-  sections 18 and 19 use it, `Show-SectionList` (`modules/release_helpers.ps1:20-33`) prints it, and the
-  tier legend in `docs/sections.md` names it.
-- **Acceptance points.** `--list` output matches the README tier column row for row; self-test green.
-- **Do not.** Do not touch the `Batch` column; 18 and 19 stay `interactive`.
-
-### RW-005 - `--purge-all` is documented as asking once more, but only Docker asks (agent, 45 min)
-
-- **What.** `docs/developer-mode.md:33` says `--purge-all` "asks once more first". In the code only section
-  5 asks (`modules/docker.ps1:42`); `Invoke-TargetList` silently switches prune/units targets to `clear`
-  (`lib/actions.ps1:126`).
-- **Recommended fix.** In interactive runs with `--purge-all` and developer mode on, ask one typed
-  confirmation (`Confirm-Typed`, `lib/ui.ps1:179`) once per run before the first section that would purge;
-  in batch runs `--yes` is the confirmation (already documented with the fire mark). Update the doc
-  sentence to match exactly.
-- **Success criteria.** The sentence in `docs/developer-mode.md` describes the real behaviour; a run with
-  `--purge-all` and no `--yes` from a console cannot purge without the typed word.
-- **Acceptance points.** Manual dry-run from a console shows the typed prompt once; `--purge-all --yes
-  --dry-run --all` in CI still runs unattended; self-test green.
-- **Do not.** Do not make `--purge-all --yes` interactive; scheduled and scripted use must keep working.
-
-### RW-006 - A running editor's VSIX cache is documented as cleared but is skipped (agent, 20 min)
-
-- **What.** `docs/sections.md:83-84` and the section intro (`modules/editors.ps1:134-135`) say a running
-  editor "is left alone except for its VSIX download cache and old logs". The editor-kind target that
-  contains `CachedExtensionVSIXs` carries `-Guard $e.Proc` (`modules/editors.ps1:16`), so it is skipped
-  while the editor runs; only the logs target is unguarded (`modules/editors.ps1:17`).
-- **Recommended fix.** Split `CachedExtensionVSIXs` out of `WS_EDITOR_CACHES` into its own unguarded
-  `clear` target per editor (it is a download cache the editor rewrites; safe while running). Keep the
-  layout-kind allowlist in `lib/actions.ps1` consistent (`CachedExtensionVSIXs` stays a known leaf).
-- **Success criteria.** With VS Code open, `--only 6 --dry-run` lists the VSIX cache as eligible and the
-  other caches as skipped; the docs sentence is true.
-- **Acceptance points.** Self-test [6] green (the new target is not inside a protected path); dry-run output
-  reviewed with an editor open and closed.
-
-### RW-007 - `--install-task` and `--install-alias` under npx point at the evictable npx cache (agent, 45 min)
-
-- **What.** `Get-LaunchCommand` (`modules/release_helpers.ps1:310-318`) uses the global `windowsweep`
-  shim only when launched by Node outside npx; under npx it registers `powershell.exe -File <path inside
-  the npx cache>`. npx evicts that cache, after which the weekly task and the `cleanup` alias fail silently.
-- **Recommended fix.** When `$ws.Npx` is true, refuse both installers with the exact instruction:
-  `npm install -g windowsweep` then re-run `windowsweep --install-task` (exit code 3, refused). Say so in
-  `docs/installation.md`, `docs/cli-reference.md` (both modes) and `docs/faq.md` ("Is a weekly Scheduled
-  Task safe?").
-- **Success criteria.** From `npx windowsweep --install-task` the tool prints the instruction and registers
-  nothing; from a global install it registers the `windowsweep` shim as before.
-- **Acceptance points.** `Get-ScheduledTask -TaskName 'windowsweep weekly safe cleanup'` absent after the
-  npx attempt; present after the global-install attempt (owner verifies once, see RW-025).
-- **Do not.** Do not register `npx -y windowsweep` as the task action; it would download from the registry
-  when the cache is empty, and this tool promises no network activity of its own.
-
-### RW-008 - Exit code 130 is documented but only the Node launcher produces it (agent, 30 min)
-
-- **What.** `docs/cli-reference.md:76` lists 130 for Ctrl-C. The launcher maps a signal to 128+n
-  (`bin/windowsweep.js:76-79`); the engine defines `WS_EXIT_INTERRUPT = 130` (`lib/constants.ps1:28`) and
-  never uses it, so `windowsweep.cmd` and a direct `-File` run return PowerShell's own code.
-- **Recommended fix.** Document the truth ("130 through the Node launcher; the `.cmd` launcher and a direct
-  run return PowerShell's code") or, better, catch `PipelineStoppedException` in the entry script's
-  `finally` and exit 130 when the run did not finish. Either way the doc and the code must agree.
-- **Acceptance points.** Ctrl-C during `--scan` through each launcher observed once; the table matches.
-
-### RW-010 - `--uninstall-data --yes` removes history and the developer answer unattended (agent, 10 min)
-
-- **What.** `modules/release_helpers.ps1:391` confirms with `Confirm-Ui`, which `--yes` auto-answers.
-- **Fix.** `-NoAutoYes` on that prompt; note it in `docs/cli-reference.md` ("always asks").
-- **Acceptance points.** `--uninstall-data --yes` from a non-interactive console removes nothing and says why.
-
-### RW-011 - Thirteen keywords against the 5-12 rule (agent, 5 min)
-
-- **What.** `package.json:36-48` and the README Keywords line carry 13 terms; the fleet README rule allows
-  5-12. Drop `temp-files` from both (least searched) in the 1.0.1 release.
+| Item | What shipped | Commit |
+|---|---|---|
+| RW-001 | 1.0.1 published so npm equalled `main`, with the full publish gate | `edaa5cf` |
+| RW-002 (HIGH) | `--yes` no longer selects anything in sections 17, 18, 19: `Read-MultiSelect -NoAutoYes`, section 17's confirmation never auto-answered, an AST check on every picker call site | `edaa5cf` |
+| RW-003, RW-004 | Section 19's title names Downloads only; sections 18/19 report the `recycle` tier | `edaa5cf` |
+| RW-005 | `--purge-all` from a console asks for the typed word once per run | `edaa5cf` |
+| RW-006 | The VSIX download cache is its own unguarded target, as documented | `edaa5cf` |
+| RW-007 | `--install-task` / `--install-alias` refuse under npx (exit 3) with the global-install steps | `edaa5cf` |
+| RW-008 | The engine exits 130 on an interrupted run, matching the launcher and the docs | `edaa5cf` |
+| RW-010, RW-011 | `--uninstall-data` always asks; keywords trimmed to twelve | `edaa5cf` |
+| RW-022 | Windows Server wording: CI dry-runs on `windows-latest`; real runs verified on Windows 10 | `3ae3c4d` |
+| RW-030 | Self-test 114 -> 124: parser, section lists, size text, cache leaves, `--json` shape, superseded versions, Chromium layout, workspace storage, stale artefacts, report export - each proved red on a plant | `1650e80` |
+| RW-041 | `AI-INTEGRATION-GUIDE.md` at the root, in the `files` allowlist, linked and mirrored | `5c12134` |
+| RW-050 | 8 topics, wiki off, annotated tags `v1.0.0` and `v1.0.1` with GitHub Releases | `a94bac7` + tags |
+| RW-051 (agent half) | Portfolio-info file with a byte-identical root copy, the master links entry, `windowsweep.bib` and the combined refresh, the ORCID block in both instruction files | `a94bac7` |
+| RW-053, RW-054 | CI tarball sweep names the planning files; README and docs index rows point at them | `edaa5cf`, `3ae3c4d` |
+| RW-060 | Section 22: the global-packages audit, read-only, declaring no deletable target | `3c4d54e` |
+| RW-061 | Section 23: orphaned application data under AppData, interactive, Recycle Bin, fail-closed | `3c4d54e` |
+| RW-062 | Section 24: installed programs not modified for N+ days, report only | `3c4d54e` |
+| RW-063 | Section 25: the startup-items audit, report only | `3c4d54e` |
+| RW-067 | Seven artefact-directory additions plus a marker-gated `.cache` | `3c4d54e` |
+| RW-068 | `--notify`: a WinRT toast on 5.1, a tray balloon on pwsh, wired into `--install-task` | `3c4d54e` |
+| RW-069 | The sibling features deliberately not adopted, recorded (§9 below keeps the table) | `3c4d54e` |
+| RW-071, RW-072 | `--select` / `--select-file`; `candidates[]`, `targets[]`, progress lines, `--list --json` | `3c4d54e` |
+| P5 release | 1.1.0 published, tagged `v1.1.0`, released; the docs site re-mirrored | `3c4d54e` |
+| RW-070 | The desktop app's scope decided and recorded (account model, telemetry, location, identity, releases) | 2026-09-03 |
+| Click dummy | Direction 01 built and rejected; direction 02 "Reclaim" built, refined over rounds 3 and 4, approved at GATE 1 with gates 2-3 pre-authorised; the eight-file component library; the eight A4 screens | `07c6f37`, `5481891`, `0c7b955`, `a2d6b88`, `63e815f`, `45953b7`, `2721b75` |
+| RW-042 | Docs-site labels corrected: footer `Sections 0-25`, `llms.txt` facts, the intro footer, the quick-start check count, the report example version | this audit |
+| RW-044 (part) | Docs-repo topics set | this audit |
+| RW-052 | Folder rename superseded by the `-root` layout decision | this audit |
+| RW-055 | Portfolio file refreshed to 1.1.0 and renamed in both locations; master links entry updated | this audit |
 
 ## 6. Phase P1 - verification of paths that have never run for real
 
-These rows are owner-run (a UAC click, a closed browser, a second machine). The agent's part is to prepare
-the exact command, collect the log and report afterwards, fix what the run exposes, and record the outcome
-in `docs/PROJECT-CONTEXT.md` under a "Verified runs" heading. The rows already exist in
-`docs/MANUAL-TASKS.md`; the tracker mirrors them as `awaitingUser` sub-tasks.
+Every row here is owner-run. The agent's part is to prepare the exact command, collect the log and report
+afterwards, fix what the run exposes, and record the outcome in `docs/PROJECT-CONTEXT.md` under "Verified
+runs". The rows exist in `docs/MANUAL-TASKS.md`; the tracker mirrors them as `awaitingUser` sub-tasks. Run
+them from 1.1.0 (`npm i -g windowsweep@latest` or the clone).
 
 ### RW-020 - First real elevated run of sections 12-16 and 20 (owner ~30 min + agent 30 min)
 
-- **What.** No admin section has ever executed for real: the build machine ran unelevated, CI runs
-  dry-runs only. `Invoke-Elevated` (`lib/safety.ps1:476-493`), the service stop/start wrapper
-  (`modules/system_admin.ps1:22-36`), `cleanmgr` with `StateFlags0077` (`modules/system_admin.ps1:86-114`),
-  DISM (`:126-148`), `powercfg` (`:158-186`), `wevtutil` (`:196-220`) and `diskpart` compaction
-  (`modules/docker.ps1:59-93`) are untested outside dry-run.
-- **Command (owner, at the keyboard).**
-  `windowsweep --only 12,13,14,15 --hiberfil off --yes --i-understand-deep --elevate` (MANUAL-TASKS row 1;
-  hibernation fully off is the owner's recorded decision). Section 16 (event logs) and 20 (compaction) are
-  separate decisions: run `--only 20 --yes --i-understand-deep --elevate` only with Docker Desktop and WSL
-  shut down; run 16 only if the owner wants the logs gone.
+- **What.** No admin section has ever executed for real: the build machine ran unelevated, CI runs dry-runs
+  only. `Invoke-Elevated` (`lib/safety.ps1`), the service stop/start wrapper, `cleanmgr` with `StateFlags0077`,
+  DISM, `powercfg`, `wevtutil` (`modules/system_admin.ps1`) and `diskpart` compaction (`modules/docker.ps1`)
+  are untested outside dry-run.
+- **Command (owner, at the keyboard).** `windowsweep --only 12,13,14,15 --hiberfil off --yes
+  --i-understand-deep --elevate` (MANUAL-TASKS row 1; hibernation fully off is the owner's recorded decision).
+  Section 16 (event logs) and 20 (compaction) are separate decisions: run `--only 20 --yes --i-understand-deep
+  --elevate` only with Docker Desktop and WSL shut down; run 16 only if the owner wants the logs gone.
 - **Success criteria.** The elevated window's JSON report shows `ran` for every section requested;
-  `wuauserv` and `bits` are `Running` again afterwards (`Get-Service wuauserv,bits`); the
-  `StateFlags0077` values are absent from `HKLM:\...\VolumeCaches\*`; `hiberfil.sys` is gone and
-  `powercfg /a` reports hibernation unavailable; DISM's analysis lines appeared in the log; no crash
-  bundle under `~\.windowsweep\feedback`.
-- **Acceptance points (agent, after the run).**
-  1. Read the elevated run's log and report; record freed bytes and the before/after free space in
-     `docs/PROJECT-CONTEXT.md`.
-  2. Any warning or non-zero exit in the log becomes a P0-style fix with its own sub-task.
-  3. Confirm the parent window printed the child's exit code (the `-Wait -PassThru` path).
+  `Get-Service wuauserv,bits` shows both `Running` afterwards; the `StateFlags0077` values are absent from
+  `HKLM:\...\VolumeCaches\*`; `hiberfil.sys` is gone and `powercfg /a` reports hibernation unavailable; DISM's
+  analysis lines appear in the log; no crash bundle under `~\.windowsweep\feedback`.
+- **Acceptance points (agent, after the run).** 1. Read the log and report; record freed bytes and the
+  before/after free space in `docs/PROJECT-CONTEXT.md`. 2. Any warning or non-zero exit becomes a P0-style fix
+  with its own sub-task. 3. Confirm the parent window printed the child's exit code (the `-Wait -PassThru` path).
 - **Do not.** Never run this from an agent session; never add `--reset-base` on the first run.
 
-### RW-021 - Windows 11 has never been exercised (owner, ~30 min)
+### RW-021 - Windows 11 has never been exercised (owner ~30 min)
 
-- **What.** README and `docs/installation.md` list Windows 11 as supported; every real and dry run so far
-  was Windows 10 Pro for Workstations (build 19045) or CI's Windows Server (`windows-latest`).
-- **Command (owner, on a Windows 11 machine or VM).** `npx windowsweep --self-test`, then
-  `npx windowsweep --dry-run --all --yes`, then a real safe batch `npx windowsweep --all --yes`.
-- **Success criteria.** Self-test 108/108 (or the current count), dry-run reviewed, real run frees space with
-  no `REFUSE` line that is not expected and no crash bundle; the OS build number recorded in
-  `docs/PROJECT-CONTEXT.md` "Verified runs".
-- **Acceptance points.** Paths that only exist on Windows 11 (new Teams under `Packages\MSTeams_*`,
-  `Widgets`, WebView2 caches) show up in the `--scan` table; anything absent by design is noted in
-  `docs/sections.md`.
+- **What.** README and `docs/installation.md` list Windows 11 as supported; every real and dry run so far was
+  Windows 10 Pro for Workstations (19045) or CI's Windows Server.
+- **Command (owner, on a Windows 11 machine or VM).** `npx windowsweep --self-test` (expect 151/151), then
+  `npx windowsweep --dry-run --all --yes`, then a real `npx windowsweep --all --yes`. MANUAL-TASKS row 8.
+- **Success criteria.** Self-test green, dry-run reviewed, the real run frees space with no unexpected `REFUSE`
+  line and no crash bundle; the OS build number recorded in `docs/PROJECT-CONTEXT.md`.
+- **Acceptance points.** Windows 11-only paths (new Teams under `Packages\MSTeams_*`, `Widgets`, WebView2
+  caches) appear in the `--scan` table; anything absent by design is noted in `docs/sections.md`.
 
-### RW-022 - Windows Server wording (done 2026-09-03 in the audit commit)
+### RW-023 - Sections 4, 17, 18, 19 and 23 for real (owner ~20 min)
 
-- **What.** README "Platform Support" and `docs/faq.md` said Server "is not in the test matrix"; CI runs
-  every self-test and dry-run on `windows-latest`, which is Windows Server. Both texts now say: Server is
-  dry-run tested in CI on every push; real runs are verified on Windows 10 only (Windows 11 after RW-021).
-- **Acceptance points.** Met: both texts updated in the same wording; nothing claims a real Server run.
+- **What.** Section 4 found no idle AVD on the build machine; 17-19 and 23 are interactive by design.
+  MANUAL-TASKS row 3 (`--only 17 --scan-roots "D:\work;E:\04-code"`, then `--only 18,19`) and row 19
+  (`--profile audit`, then `--only 23 --dry-run`). Section 4 runs when an AVD is idle 100+ days or with
+  `--days` lowered deliberately.
+- **Success criteria.** Each section lists candidates, the owner selects, the selected items go (17: removed;
+  18/19/23: Recycle Bin), the JSON report shows `ran`, nothing unselected is touched. The selection prompt
+  appears even with `--yes`. `--select-file` is the scripted alternative and lifts the batch refusal.
+- **Acceptance points.** Section 23 lists nothing belonging to a program that is still installed (the owner's
+  judgement is the acceptance); a folder named for a running process never appears.
 
-### RW-023 - Sections 4, 17, 18 and 19 for real (owner, ~20 min)
+### RW-024 - Sections 5, 7 and 8 with the blockers closed (owner ~15 min)
 
-- **What.** Section 4 found no idle AVD on the build machine (both used within 3 days), 17-19 are
-  interactive by design: MANUAL-TASKS row 3 (`--only 17 --scan-roots "D:\work;E:\04-code"`, then
-  `--only 18,19`). Section 4 runs when an AVD is idle 100+ days or with `--days` lowered deliberately.
-- **Success criteria.** Each section lists candidates, the owner selects, the selected items go (17:
-  removed; 18/19: Recycle Bin), the JSON report shows `ran`, nothing unselected is touched. After RW-002 the
-  selection prompt must appear even with `--yes` (do the run after RW-002 lands to prove it).
-
-### RW-024 - Sections 5, 7 and 8 with the blockers closed (owner, ~15 min)
-
-- **What.** Chrome (7.4 GB across 25 profiles), Slack and Granola were open and Docker's daemon was
-  stopped during the build-session run, so those targets were skipped by the running-app guard. MANUAL-TASKS
-  rows 2, 6, 7.
+- **What.** Chrome (7.4 GB across 25 profiles), Slack and Granola were open and Docker's daemon was stopped
+  during the build-session run, so those targets were skipped by the running-app guard. MANUAL-TASKS rows 2,
+  6, 7.
 - **Success criteria.** Each `--only N --yes` run shows the previously skipped targets as cleared; the
   before/after free-space delta is recorded.
 
 ### RW-025 - The weekly Scheduled Task observed running once (owner 5 min + agent 15 min)
 
-- **What.** `--install-task` registers `windowsweep weekly safe cleanup` (Sunday 03:00, `--all --yes
-  --quiet --no-color`); it has never been observed to run. After RW-007, install it from a global install.
+- **What.** `--install-task` registers `windowsweep weekly safe cleanup` (Sunday 03:00, `--all --yes --quiet
+  --no-color --notify`); it has never been observed to run. Install it from a **global** install - under npx it
+  refuses by design. MANUAL-TASKS row 9.
 - **Success criteria.** `Get-ScheduledTaskInfo -TaskName 'windowsweep weekly safe cleanup'` shows
-  `LastTaskResult 0` after `Start-ScheduledTask` (a manual trigger is fine), a new `report-*.json` exists
-  with `mode: all`, `developer_mode: true` (saved answer) and no `refused` step.
+  `LastTaskResult 0` after `Start-ScheduledTask`; a new `report-*.json` exists with `mode: all`,
+  `developer_mode: true` and no `refused` step.
 
-### RW-026 - PowerShell 7 path on a real machine (owner optional, 10 min)
+### RW-026 - PowerShell 7 path on a real machine (owner, optional, 10 min)
 
-- **What.** CI proves the engine on `pwsh`; the build machine has no PowerShell 7, so `--pwsh` through the
-  Node launcher and `Register-ScheduledTask` under pwsh 7 were never run locally.
-- **Success criteria.** `npx windowsweep --pwsh --self-test` green on a machine with PowerShell 7
-  installed; `--pwsh --install-task --dry-run` prints the action line.
+- **What.** CI proves the engine on `pwsh`; the build machine has no PowerShell 7, so `--pwsh` through the Node
+  launcher and `Register-ScheduledTask` under pwsh were never run locally. MANUAL-TASKS row 10.
+- **Success criteria.** `npx windowsweep --pwsh --self-test` green on a machine with PowerShell 7;
+  `--pwsh --install-task --dry-run` prints the action line.
 
-## 7. Phase P2 - self-test coverage of the pure logic (agent, half a session)
+### RW-027 - `--notify` seen on both hosts (owner 5 min)
 
-All of these fall inside the pre-approved test classes (pure logic whose wrongness is invisible, one smoke
-test per generator). They extend `Invoke-SelfTest` (`modules/release_helpers.ps1`) group [8] "Pure helpers"
-and group [7] fixtures; the file is at 414 lines, so a new `modules/self_test_extra.ps1` (or splitting the
-self-test into its own module) keeps every file under 500 lines.
+- **What.** The toast was seen once on Windows PowerShell 5.1; the `NotifyIcon` balloon on PowerShell 7 has
+  never been observed by a person, and a notification is only verifiable by seeing it. MANUAL-TASKS row 21.
+- **Command.** `windowsweep --scan --notify` on 5.1 and `windowsweep --pwsh --scan --notify` on pwsh.
+- **Success criteria.** A notification appears on each host; the exit code is 0 and stdout is unchanged
+  (`--json` output must not gain a line).
 
-### RW-030 - New checks (target: about 120 checks total)
+### RW-028 - Owner dry-run review of the four read-only audits (owner 10 min)
 
-| Check | Fixture | Passes when |
-|---|---|---|
-| Argument parser | call `Read-Arguments` on a saved `RawArgs` array: `--only=1,3`, `--export html 2`, `--days=30`, `--scan-roots "a;b"`, `--exclude-path x` twice | every `$Script:WS` field holds the expected value; `--days x` throws the usage error |
-| `Get-SectionIdList` | `'1,3,5-7,9-8,99,x'` | returns `1,3,5,6,7,8,9`, warns on 99 and x (`modules/runner.ps1:3-22`) |
-| `ConvertFrom-SizeText` | `'2.891GB'`, `'12.5 MB'`, `'20.48kB'`, `'0B'` | bytes match docker's decimal units (`lib/actions.ps1:178-186`) |
-| `Remove-SupersededVersions` | fixture root with `app-1.0.0`, `app-1.10.0`, `app-1.9.0` | only `app-1.10.0` survives (version, not string, order) |
-| Chromium layout guard | fixture `User Data` with `Default\Cache`, `Default\Local Storage`, `Profile 3\Code Cache` | `Get-ChromiumCacheDirs` returns the two cache folders only; `Invoke-TargetList` refuses a hand-injected non-allowlisted path with `REFUSE (not a known cache folder ...)` |
-| `Remove-StaleWorkspaceStorage` | two `workspaceStorage\<id>\workspace.json`, one pointing at an existing folder, one at a missing one | exactly the missing one is removed (dry-run and real) |
-| `Find-StaleArtefacts` | a fixture project with `package.json` + `node_modules`, source file 400 days old; a second project with a fresh source file | the first artefact is listed with its age, the second is not; a folder without a marker is skipped |
-| Report export smoke | write a minimal schema-1 report JSON, run `Convert-ReportToMarkdown` and `Convert-ReportToHtml` | both files exist, contain `total_reclaimed_human` value and the tool name; HTML has no unescaped `<` from the title |
-| `--json` shape | run `Write-JsonSummary` with a stub report | the single stdout line parses; keys `tool version mode dry_run freed_bytes sections refusals` present |
-| Prompt asymmetry (from RW-002) | `$ws.Yes = $true; $ws.Interactive = $false` | `Read-MultiSelect -NoAutoYes` -> empty; without the switch -> 1..N |
+- **What.** Sections 22, 24 and 25 report only; section 23 deletes to the Recycle Bin. The owner has not yet
+  reviewed what they list on his machine. MANUAL-TASKS row 19.
+- **Command.** `windowsweep --profile audit` (0, 21, 22, 24, 25 - all read-only), then
+  `windowsweep --only 23 --dry-run`.
+- **Success criteria.** Section 22's candidate list contains no package manager and nothing a recent project
+  references; section 24 lists programs by size with a working uninstall hint; section 25's enabled/disabled
+  column matches Task Manager; **section 23 lists nothing that belongs to a program still installed.**
 
-- **Success criteria.** Each new check turned red on a planted defect at least once (record the plant and
-  the message in the commit body), then green; CI green on both hosts; total check count printed in the
-  final line and reflected in README ("Self-test" feature line) and `docs/quick-start.md`.
-- **Do not.** Do not add a test runner or a dependency; the self-test is the suite.
+## 7. Phase P3 - the docs site, its residue
 
-## 8. Phase P3 - the docs site and the AI guide
+### RW-040 - The write-back after the domain answers 200 (owner rows 11-12, then agent 30 min)
 
-### RW-040 - `windowsweep-docs` on GitHub Pages (agent 1 session; owner 2 rows)
+- **What.** `windowsweep-docs.aoneahsan.com` is pinned in `static/CNAME`, matched by `url` in
+  `docusaurus.config.ts`, and the Pages deployment is green - but the domain probes `000`, so every link still
+  points at GitHub. Two owner rows unblock it: **row 11** Hostinger DNS `CNAME windowsweep-docs ->
+  aoneahsan.github.io`; **row 12** GitHub Settings -> Pages -> custom domain + Enforce HTTPS.
+- **Evidence.** `curl -s -o /dev/null -w '%{http_code}' https://windowsweep-docs.aoneahsan.com/` -> `000`;
+  `gh api repos/aoneahsan/windowsweep-docs/pages` -> `"https_enforced": false`.
+- **Success criteria.** The probe returns **200** and `https_enforced` is `true`. Only then does anything switch.
+- **Acceptance points (one commit each side).**
+  1. `package.json` `homepage` -> the site.
+  2. README: the header `Docs` link and every `docs/*.md` link in the Documentation and Links tables -> the
+     site pages, keeping one GitHub link labelled "Documentation index (source)".
+  3. `WS_DOCS` in `lib/constants.ps1` -> the site (a version-cascade-adjacent change: no version bump needed,
+     but `--version` output is checked afterwards).
+  4. `gh repo edit aoneahsan/windowsweep --homepage <site>` and the same for `windowsweep-docs`.
+  5. The master links JSON `links.docs`, and the portfolio file's Docs URL row.
+  6. `docs/MANUAL-TASKS.md` rows 11 and 12 move to Completed with the date.
+- **Do not.** Do not switch a single link before the 200 probe; do not put relative links from the package
+  README to the site.
 
-- **What.** Both siblings publish their manual as a Docusaurus site (`linux-cleanup-docs.aoneahsan.com`,
-  `macleanup-docs.aoneahsan.com`). The fleet docs ladder puts an npm package with no marketing site at
-  `<npm-name>-docs.aoneahsan.com`, so the domain is `windowsweep-docs.aoneahsan.com` (probed 2026-09-03:
-  `000`, unset; repo name `aoneahsan/windowsweep-docs` free).
-- **Stack (mirror `linux-cleanup-docs`).** Docusaurus `^3.10`, `@docusaurus/preset-classic`,
-  `@docusaurus/theme-mermaid`, `@easyops-cn/docusaurus-search-local`, React 19, TypeScript `~6.0.3`,
-  yarn 4 (`.yarnrc.yml` with `npmMinimalAgeGate: 0`), a port from `~/.dev-ports.json` in 5900-5999, `.env.example`
-  only, `.github/workflows/deploy-pages.yml` (`actions/upload-pages-artifact` + `actions/deploy-pages`,
-  `permissions: contents read / pages write / id-token write`, `concurrency group pages`), `static/CNAME` =
-  `windowsweep-docs.aoneahsan.com`, `docusaurus.config.ts` `url` matching, `baseUrl: '/'`,
-  `organizationName: 'aoneahsan'`, `projectName: 'windowsweep-docs'`.
-- **Content.** One page per existing `docs/*.md` page (intro from `docs/README.md`, getting-started from
-  installation + quick-start, sections, cli-reference, profiles, safety-model, developer-mode,
-  admin-and-elevation, reports-and-logs, troubleshooting, faq, about from author), a changelog page fed
-  from `CHANGELOG.md`, `title` + `description` front matter on every page, sidebars in that order,
-  `llms.txt` and `sitemap.xml` emitted, `docs/MANUAL-TASKS.md` and `docs/story/**` excluded from the docs
-  plugin (`exclude` restates the defaults), zero secrets (`git ls-files | grep -iE 'secret|credential|\.npmrc|\.env$'`
-  empty).
-- **Governance (public repo).** Root `CONTRIBUTING.md`, Issues on, a `main` ruleset with Repository-admin
-  bypass and the Pages workflow as the required check, `CLAUDE.md` = `AGENTS.md`, `docs/MANUAL-TASKS.md`
-  holding the DNS and Pages rows.
-- **Success criteria.** `yarn build` green (it is also the link checker); `find build -iname '*MANUAL*'`
-  empty; the Pages deployment succeeds; after the owner's DNS row, `curl -s -o /dev/null -w '%{http_code}'
-  https://windowsweep-docs.aoneahsan.com` returns 200 with HTTPS enforced.
-- **Write-back (agent, only after the 200 probe).** `package.json` `homepage` -> the docs site; README
-  header link row `Docs` and the Documentation table -> the site; `code/projects/project-live-urls.json`
-  `docsUrl` (if that registry exists on the machine; else note it); `CLAUDE.md` + `AGENTS.md` Links block;
-  GitHub repository homepage (`gh repo edit --homepage`).
-- **Owner rows (add to both repos' `docs/MANUAL-TASKS.md`).** Hostinger DNS `CNAME windowsweep-docs ->
-  aoneahsan.github.io`; GitHub Settings -> Pages -> custom domain + Enforce HTTPS.
-- **Do not.** No Firebase files in a docs repo; no `docs/MANUAL-TASKS.md` in the build; no relative links
-  from the package README to the site; do not switch README links before the probe returns 200.
+### RW-043 - A PNG Open Graph image (agent 20 min)
 
-### RW-041 - AI integration guide (agent, 1 h)
+- **What.** `themeConfig.image` is `img/social-card.svg`. Most social scrapers ignore SVG, so the card is
+  effectively missing. The SVG stays the master (the SVG-first rule); a PNG export sits beside it.
+- **Success criteria.** `static/img/social-card.png` exists at **1200x630**, committed beside the master;
+  `themeConfig.image: 'img/social-card.png'`; the `og:image:width`/`height` meta stay 1200/630.
+- **Acceptance points.** After the deploy, `curl -sI <site>/img/social-card.png` returns 200 with
+  `content-type: image/png`; a card validator renders it; the text in the export is legible (outline the
+  fonts or use faces the exporter has).
+- **Do not.** Do not hand-edit the PNG; re-export it from the SVG whenever the master changes.
 
-- **What.** The fleet's npm-package pattern ships an `AI-INTEGRATION-GUIDE.md` when one exists. For a CLI it
-  is short: how an agent runs windowsweep safely (`--scan` and `--dry-run` first, `--json` for the single
-  stdout line, exit codes 0/1/2/3, `--no-color --no-report` in automation, what `--yes` covers and never
-  covers, no network calls, where logs and reports land, how to read the schema-1 report).
-- **Success criteria.** `AI-INTEGRATION-GUIDE.md` at the repo root, added to `files` and to the README link
-  row as `AI Guide`, mirrored as a docs-site page; every command in it executed once (dry-run) before the
-  release that ships it (1.0.1 or 1.1.0).
+### RW-045 - The local install of the docs site (agent 30 min)
 
-## 9. Phase P4 - repository hygiene and the owner's records
+- **What.** `node_modules/` has never existed in `windowsweep-docs/`. The lockfile was inherited from
+  `linux-cleanup-docs` with only its workspace identity renamed - valid exactly while the dependency set is
+  identical, which is why adding or bumping a dependency has been forbidden. The owner lifted the download gate
+  on 2026-09-05.
+- **Success criteria.** `yarn install` completes; `yarn.lock` is regenerated and committed; `yarn build` and
+  `yarn typecheck` are green locally with zero warnings; the Pages run with `--immutable` stays green on the
+  new lockfile.
+- **Acceptance points.** The "inherited lockfile" note in the docs repo's `CLAUDE.md` and `AGENTS.md` is
+  retired in the same commit; the dependency set is unchanged by the install (diff the lockfile's package list).
+- **Do not.** Do not add `corepack prepare yarn@stable --activate` to the workflow - it installs a newer Yarn
+  than the one that produced the lockfile and breaks `--immutable` with YN0028.
 
-### RW-050 - Topics, homepage, wiki, tags, releases (agent 20 min)
+### RW-046 - A feed: deliberately not built (record, no work)
 
-- **What.** `gh repo view aoneahsan/windowsweep` shows no topics, no homepage, wiki enabled, no tags, no
-  releases (`macleanup` tags its releases; adopt that from now on).
-- **To complete.** `gh repo edit aoneahsan/windowsweep --add-topic windows --add-topic cleanup --add-topic
-  disk-cleanup --add-topic powershell --add-topic cli --add-topic developer-tools --add-topic npm
-  --add-topic cache --enable-wiki=false`; homepage = repository until the docs site probes 200 (RW-040);
-  annotated tag `v1.0.0` on `70c6738` (the commit the 1.0.0 tarball was built from) plus a GitHub Release
-  with the 1.0.0 changelog entry; from 1.0.1 on, every release tags `vX.Y.Z` and creates the Release in
-  the publish session.
-- **Success criteria.** `gh api repos/aoneahsan/windowsweep/tags` lists `v1.0.0` (and `v1.0.1` after
-  RW-001); `gh release list` shows both; topics visible on the repository page.
-- **Do not.** Do not enable Discussions (issues are the single support channel); do not tag `main` HEAD as
-  `v1.0.0` (HEAD is not the published tree).
+The fleet rule asks every frontend project for `/feed` and `/feed.xml`. This site has **no blog and no dated
+content**: its pages mirror a manual, and the only chronological surface is the changelog page, which mirrors
+`CHANGELOG.md`. A feed over it would be a second copy of the release notes with no subscriber. Recorded as a
+deliberate omission rather than a gap. **If the owner wants one:** add `@docusaurus/plugin-content-blog` over
+changelog entries, emit `/feed.xml` and a `/feed` page, link both in the footer, and leave the `Sitemap:`
+directive unchanged.
 
-### RW-051 - Portfolio-info file, master links JSON, ORCID (agent 1 h; owner 15 min)
+## 8. Phase P4 - hygiene and the owner's records, residue
 
-- **What.** Both siblings carry `<NAME>_portfolio-info_<date>.md` at their root, an entry in the master
-  links JSON and an ORCID work with a `.bib` file; windowsweep has none (MANUAL-TASKS row 5 asks for the
-  owner's passes).
-- **To complete (agent).**
-  1. Write `packages/WINDOWSWEEP_portfolio-info_<date>.md` in the notebook's
-     `projects-info-as-portfolio-item/` tree (identity and distribution table, brand assets from
-     `assets/logo/`, feature summary, honest claims only, update-history rows) and a byte-identical copy at
-     this repo's root, following `~/.claude/rules-detail/portfolio-and-social.md` rule 3.
-  2. Add the windowsweep entry to `PROJECT-LINKS-IDENTIFIERS-CONTACT.json` (main link = the npm page,
-     repository, docs URL once live, license MIT, contact email, support URL) for the owner's `ownerReview`.
-  3. Write `orcid-project-projects-files/windowsweep.bib`, refresh the combined `aoneahsan-all-works.bib`,
-     and add the ORCID block to `CLAUDE.md` + `AGENTS.md` exactly as the siblings carry it (skills
-     `aoneahsan-cccs-orcid-profile` + `-bibtex`, agent `aoneahsan-ccca-orcid`); every URL probed live first.
-- **Owner.** Review the JSON entry, import the `.bib` into ORCID and retype the work type (MANUAL-TASKS
-  rows).
-- **Success criteria.** The three records exist with matching facts (version, links, license); the repo copy
-  of the portfolio file equals the notebook copy (`cmp`).
-- **Do not.** No social content in this repository (the notebook holds it); no invented numbers.
+### RW-051 - The owner's two record rows (owner 15 min)
 
-### RW-052 - Folder rename on the build machine (owner, 2 min)
+- **Row 5.** Review the `windowsweep` entry in `PROJECT-LINKS-IDENTIFIERS-CONTACT.json` and set `ownerReview`.
+  The entry now reads `Published v1.1.0 (2026-09-04)` with 26 sections and the 151-check self-test.
+- **Row 13.** Import `orcid-project-projects-files/windowsweep.bib` into ORCID and retype the work from
+  "Other" to "Software" (BibTeX cannot express the type).
+- **Success criteria.** `ownerReview` is non-empty; the ORCID record lists windowsweep as Software with the npm
+  URL. The agent records both in the notebook's own `MANUAL-TASKS.md`.
 
-`Rename-Item D:\work\windows-cleanup D:\work\windowsweep` after every session in it is closed
-(MANUAL-TASKS row 4). The agent then updates `docs/PROJECT-CONTEXT.md` and the memory note.
+### RW-055 - The portfolio refresh cadence (agent, recurring)
 
-### RW-053 - CI tarball sweep covers the planning files (agent, 5 min)
+- **What.** The portfolio file refreshes **at least weekly** and not more often than every 3 days. This audit
+  moved it to 1.1.0 and renamed it to `WINDOWSWEEP_portfolio-info_2026-09-05.md`; **next eligible 2026-09-12**.
+- **Acceptance points.** Update the facts and add one history row (max 10 rows kept); rename to the new date in
+  **both** locations and delete the old file in both; update `hasPortfolioFile` in the master JSON; `cmp` the
+  two copies; commit the notebook with explicit paths.
+- **Do not.** Never leave two dated portfolio files in one location; never invent a number.
 
-Add `remaining-work.md`, `remaining-work-summary.md`, `what-this-project-consists-of.md` and
-`AI-INTEGRATION-GUIDE.md` (allowed) to the forbidden/allowed handling in `.github/workflows/ci.yml:57` so a
-future `files` edit cannot ship the planning files. `npm pack --dry-run` today lists 37 files.
+## 9. Phase P5 - the 1.1 residue (all blocked on one owner probe)
 
-### RW-054 - Docs index and README rows for the new root files (done 2026-09-03)
+Common rules: a path becomes a `New-Target` row **only once it has been seen on a real machine holding only
+regenerable data**. Everything unverifiable stays in the "candidate targets awaiting verification" table in
+`docs/sections.md`. One owner row settles all of it: **MANUAL-TASKS row 20**, a read-only probe he runs on any
+machine that has the software. Shipped rows land in **1.2.0** with `docs/sections.md`, `docs/cli-reference.md`,
+`docs/profiles.md`, the README section table and `CHANGELOG.md` moving in the same commit.
 
-Recorded here for completeness: `README.md` Documentation table and `docs/README.md` Meta table point at
-`remaining-work-summary.md`; keep those rows current when the files move or close.
+### RW-064 - Target rows for sections 8 and 9 (agent half a session, after the probe)
 
-## 10. Phase P5 - 1.1 family-parity features (owner decision 2026-09-03)
-
-Common rules for every item: a new section is a `New-Target` declaration plus an `Invoke-SectionNN`, added to
-`WS_SECTIONS` with the next free number (22 onward), a tier, `Admin`, `Batch` and `Dev` flags, a `Get-TargetsNN`
-so `--scan`, `--list-targets` and self-test check [6] see it; every path is **verified on a real machine** (the
-folder exists for that app and holds only regenerable data) before it becomes a target, and the verification
-is written into the item's commit body; every new target passes `--dry-run` review on the owner's machine;
-`docs/sections.md`, `docs/cli-reference.md`, `docs/profiles.md`, the README section table and `CHANGELOG.md`
-move in the same commit. The phase closes with **1.1.0** (minor: new sections and flags) through the same
-gate as RW-001.
-
-### RW-060 - Section 22: global packages audit, read-only (agent, half a session)
-
-- **Mirrors.** `linux-cleanup --globals`.
-- **What.** Lists globally installed npm, pnpm, yarn, bun and deno packages with version, install date and a
-  staleness verdict, then prints the exact uninstall command per candidate. Never deletes.
-- **Where to look (verify each).** npm: `npm root -g` (falls back to `%APPDATA%\npm\node_modules`), plus
-  nvm-windows per-version roots `%APPDATA%\nvm\v*\node_modules` when present; pnpm:
-  `%LOCALAPPDATA%\pnpm\global\*\node_modules`; yarn v1: `%LOCALAPPDATA%\Yarn\Data\global\node_modules`;
-  bun: `%USERPROFILE%\.bun\install\global\node_modules`; deno: `%USERPROFILE%\.deno\bin` (one shim per
-  installed script). Reading inside protected roots is allowed; the section declares no deletable target
-  (`Get-Targets22` returns `cmd` rows only).
-- **Staleness (Windows has no reliable last-invocation signal).** Candidate when the package folder's newest
-  timestamp is older than `--days` AND no `package.json` under the section-17 scan roots modified within the
-  window names it (dependencies, devDependencies, scripts text) AND it is not one of the always-keep names
-  (`npm`, `corepack`, `pnpm`, `yarn`, `windowsweep`). Also flag "shadowed by a local install" when a project
-  under the roots has the same bin in `node_modules\.bin`.
-- **Acceptance points.** Report format matches the linux-cleanup page (kept / candidate lines, then the
-  uninstall commands); `--json` adds nothing; runs in the `audit` profile (`0,21,22`); dry-run and real run
-  identical (read-only); self-test [6] green; docs page section written.
-- **Do not.** Never uninstall; never enter `node_modules` of a global recursively (read its `package.json`).
-
-### RW-061 - Section 23: orphaned application data, interactive, Recycle Bin (agent, one session)
-
-- **Mirrors.** `macleanup` section 12 (orphaned app-data scan).
-- **What.** Folders directly under `%APPDATA%` and `%LOCALAPPDATA%` that belong to no installed program:
-  no matching uninstall entry (`HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall`, the
-  `WOW6432Node` twin, and the `HKCU` twin; match on `DisplayName`, `Publisher` and `InstallLocation`), no
-  matching folder under `Program Files*`, `%LOCALAPPDATA%\Programs` or `WindowsApps`, no running process
-  with that name, and not on the exclusion list (Microsoft, Windows, Packages, Programs, Temp, Comms,
-  ConnectedDevicesPlatform, D3DSCache, Google, Mozilla, every vendor folder a `Get-TargetsNN` already
-  declares, and every protected pattern). Sizes shown; the user multi-selects; selected folders go to the
-  Recycle Bin (`Send-ToRecycleBin`, `--permanent` bypasses). Interactive only; `--dry-run` lists.
-- **Acceptance points.** On the owner's machine the list contains no folder of an installed program (owner
-  review of the first dry-run is the acceptance); a folder named for a running process never appears;
-  `--yes` never selects (RW-002 rule); tier `recycle`; batch `interactive`; profile `audit` does not include
-  it (it deletes); docs page written with the exclusion list.
-- **Do not.** Never treat an empty uninstall list as "everything is orphaned" (fail closed: no registry read
-  means no candidates); never touch `Packages\*` (Store apps have their own lifecycle).
-
-### RW-062 - Section 24: installed programs idle N+ days, report-only (agent, half a session)
-
-- **Mirrors.** The report half of `macleanup` section 21 (unused apps).
-- **What.** Reads the three uninstall hives (`DisplayName`, `DisplayVersion`, `Publisher`, `InstallDate`
-  yyyymmdd, `EstimatedSize` KB, `InstallLocation`, `UninstallString`); idle = days since the newest
-  timestamp under `InstallLocation` (skipped when empty); lists programs idle `--days`+ largest first with
-  the removal command: `winget uninstall --id <id>` when `winget list --exact` resolves it, else the
-  `UninstallString`. Never runs an uninstaller (the recorded non-goal "driver or service changes" and the
-  Program Files protection stand).
-- **Acceptance points.** Read-only in every mode; runs in `audit`; the report is also written to
-  `reports\installed-programs-<stamp>.txt`; Store apps are listed separately from `Get-AppxPackage` with
-  `Remove-AppxPackage` hints only for non-system packages; docs written.
-
-### RW-063 - Section 25: startup items audit, report-only (agent, 2 h)
-
-- **Mirrors.** `macleanup` section 25 (launch items), minus removal.
-- **What.** One table of everything that starts with the user or the machine: `Run` and `RunOnce` keys
-  (HKCU, HKLM, `WOW6432Node`), the two Startup folders (`%APPDATA%\Microsoft\Windows\Start
-  Menu\Programs\Startup`, `%ProgramData%\Microsoft\Windows\Start Menu\Programs\Startup`), scheduled tasks
-  with a logon trigger, `Win32_StartupCommand`, and the enabled/disabled state from
-  `Explorer\StartupApproved`. Section 0 keeps its count line and points here.
-- **Acceptance points.** Read-only; report-only; runs in `audit`; the recorded non-goal "startup-item
-  management" is unchanged (the tool shows, the user decides in Task Manager); docs written.
-
-### RW-064 - New target rows in sections 8 and 9 (agent, half a session, paths verified first)
-
-| Section | Target | Path (verify on a real machine) | Mode / guard |
+| Section | Target | Path | Mode / guard |
 |---|---|---|---|
 | 8 | Telegram Desktop cache | `%APPDATA%\Telegram Desktop\tdata\user_data\cache` and `...\media_cache` | clear; guard `Telegram` |
-| 8 | WhatsApp (Store) cache | the `5319275A.WhatsAppDesktop_*` package's `LocalCache` cache folder (exact leaf to verify) | clear; guard `WhatsApp` |
-| 8 | Microsoft Office file cache | `%LOCALAPPDATA%\Microsoft\Office\16.0\OfficeFileCache` | prune idle only; guards `WINWORD`, `EXCEL`, `POWERPNT`, `OUTLOOK`, `ONENOTE` (unsynced changes live here; never clear) |
-| 8 | Steam shader cache | `steamapps\shadercache` in every library folder listed in `<Steam>\steamapps\libraryfolders.vdf` | clear; guard `steam` |
-| 8 | WebView2 per-app caches | `%LOCALAPPDATA%\*\EBWebView\Default` handled as `chromium` kind (cache leaves only) | layout kind; guard the host app when known |
-| 9 | Microsoft Store cache | `wsreset.exe` as a `cmd` target run through `Invoke-External -Destructive` | dry-run prints, real run executes |
+| 8 | WhatsApp (Store) cache | the `5319275A.WhatsAppDesktop_*` package's `LocalCache` leaf (exact name from the probe) | clear; guard `WhatsApp` |
+| 8 | Microsoft Office file cache | `%LOCALAPPDATA%\Microsoft\Office\16.0\OfficeFileCache` | **prune idle only**; guards `WINWORD`, `EXCEL`, `POWERPNT`, `OUTLOOK`, `ONENOTE` (unsynced changes live here; never clear) |
+| 8 | Steam shader cache | `steamapps\shadercache` in every library in `libraryfolders.vdf` | clear; guard `steam` |
+| 8 | WebView2 per-app caches | `%LOCALAPPDATA%\*\EBWebView\Default` as the `chromium` layout kind | layout kind; guard the host app when known |
 
-- **Acceptance points.** Each path verified present on a machine with the app installed (commit body names
-  the machine and the observed size); the layout-kind allowlist in `lib/actions.ps1` unchanged unless a new
-  leaf is needed (then self-test proves the second guard still refuses non-cache leaves); dry-run reviewed.
+`wsreset.exe` already ships in section 9 as an **offered next step** rather than an execution (it has no silent
+mode and always opens the Store).
 
-### RW-065 - New target rows in section 1 (agent, 2 h, paths verified first)
+- **Acceptance points.** Each path verified present on a machine with the app installed, with the observed size
+  named in the commit body; the layout-kind allowlist in `lib/actions.ps1` unchanged unless a new leaf is
+  genuinely needed (then the self-test proves the second guard still refuses a non-cache leaf); dry-run reviewed
+  by the owner; self-test [6] green.
 
-| Target | Path or command | Mode |
-|---|---|---|
-| Hugging Face hub cache | `%USERPROFILE%\.cache\huggingface\hub` | prune, dev-gated (models are 1-20 GB each; keep-newest per model folder) |
-| PyTorch hub cache | `%USERPROFILE%\.cache\torch` | prune, dev-gated |
-| conda package cache | `conda clean --all --yes` through `Invoke-External -Destructive` when `conda` is present | tool-native, dev-gated |
-| Chocolatey | `%TEMP%\chocolatey` (already covered by section 10 - document, no new row) and `C:\ProgramData\chocolatey\lib-bad` (admin, section 12 row) | clear |
-| winget | installers land in `%TEMP%\WinGet` - already covered by section 10; document, no new row | - |
-| Expo / Metro | `%USERPROFILE%\.expo` holds state, not cache - do not add; Metro's cache is under Temp - already covered | - |
+### RW-065 - Target rows for section 1 (agent 2 h, after the probe)
 
-- **Acceptance points.** `$U\.cache\claude*`, `codex*`, `gemini*`, `copilot*` stay protected
-  (`lib/safety.ps1:59`); the two `.cache` targets are explicitly allowed by self-test [5]; dry-run reviewed.
+The Hugging Face hub cache shipped in 1.1.0 (prune, developer-gated; snapshots link into blobs, so keep-newest
+would orphan blobs - prune is correct). Still awaiting verification: `%USERPROFILE%\.cache\torch` (prune,
+developer-gated) and `conda clean --all --yes` through `Invoke-External -Destructive` when `conda` is on PATH.
+Chocolatey's `%TEMP%\chocolatey` and winget's `%TEMP%\WinGet` are already covered by section 10 - document, no
+new row. `%USERPROFILE%\.expo` holds state, not cache - do not add.
 
-### RW-066 - Section 26: driver and upgrade installer leftovers, admin, opt-in (agent, 2 h)
+- **Acceptance points.** The AI-agent caches under `.cache` (`claude*`, `codex*`, `gemini*`, `copilot*`) stay
+  protected; each new `.cache` target is explicitly allowed by self-test [5]; dry-run reviewed.
 
-- **What.** Folders installers leave on the system drive and never remove: `C:\NVIDIA` (driver extraction),
-  `C:\ProgramData\NVIDIA Corporation\Downloader` (GeForce Experience downloads), `C:\AMD`, `C:\Intel`,
-  `C:\ESD` (feature-upgrade payload, safe once the upgrade completed). All regenerable; all admin-owned.
-- **Acceptance points.** `Admin = $true`, `Batch = 'optin'`, tier `rebuilds`; `--scan` shows sizes
-  unelevated (read access is enough); the folders are outside every protected root (self-test [6]);
-  `C:\$WinREAgent`, `C:\Windows.old` and `Windows\Installer` are explicitly NOT targets (Windows.old goes
-  through section 13's "Previous Installations" handler; the others are protected by design); docs written.
+### RW-066 - Section 26: driver and upgrade installer leftovers (agent 2 h, after the probe)
 
-### RW-067 - Section 17 artefact list additions (agent, 30 min)
-
-Add `.nx`, `.mypy_cache`, `.ruff_cache`, `.tox`, `.eggs`, `.output`, `.serverless` to `WS_ARTEFACT_DIRS`
-(`modules/projects.ps1:3`); add `.cache` only when the same folder holds a project marker (Gatsby, Parcel).
-Do not add `.venv`/`venv` (users do not expect an environment to vanish) or `.terraform` (holds provider
-binaries and lock state). Update `docs/sections.md` section 17 and the README row.
-
-### RW-068 - `--notify`: a Windows toast when a run ends (agent, 2 h)
-
-- **Mirrors.** `macleanup --notify`.
-- **What.** After the session summary, show "windowsweep freed X in Y sections" (or the dry-run estimate).
-  Windows PowerShell 5.1: WinRT `Windows.UI.Notifications.ToastNotificationManager` with the PowerShell
-  AppUserModelId; PowerShell 7 (no WinRT projection by default): a `System.Windows.Forms.NotifyIcon`
-  balloon; both wrapped in try/catch so a notification failure never changes the exit code. Off by default;
-  `--install-task` adds it to the task action so the Sunday run reports itself.
-- **Acceptance points.** Toast seen once on 5.1 and balloon once on pwsh (owner confirms); `--json` output
-  unchanged; `--quiet` still notifies (it is the point of the flag); no network; documented in
-  `docs/cli-reference.md` and the README options table.
-
-### RW-071 - `--select L` and `--select-file P`: scripted selection for the interactive sections (agent, 2 h)
-
-- **What.** The interactive sections (17, 18, 19 and 23 when it lands) can only be driven by a person typing
-  indexes. A GUI, and any script, needs a way to pass the selection in. `--select L` queues index lists
-  consumed once per interactive prompt in the order the prompts appear; `--select-file P` reads a UTF-8 file
-  of one full path per line, matched case-insensitively against the candidate paths that prompt is offering
-  (`Read-MultiSelect -Candidates $paths`), warning about every line that matches nothing.
-- **Why.** It is the prerequisite that lets the desktop app list candidates with `--dry-run --only 17 --json`
-  and then remove exactly the user's picks. Without it a GUI would have to re-implement the finders.
-- **Success criteria.** Either flag lifts the batch refusal for interactive sections, because a person did
-  choose - the refusal exists to stop unattended deletion, not scripted deletion. Neither flag makes `--yes`
-  select anything (RW-002 stands).
-- **Acceptance points.** Self-test: `--select 1,3` against 5 candidates returns `1,3`; a `--select-file` with
-  one matching and one bogus path returns one index and warns once. Documented in `docs/cli-reference.md`
-  under "Scripting the interactive sections", in `docs/sections.md`, `docs/safety-model.md` and the AI guide.
-
-### RW-072 - `--json` additions and `--list --json` (agent, 2 h)
-
-- **What.** In `--json` mode the interactive sections collect `candidates[]`
-  (`section`, `index`, `path`, `bytes`, `idle_days`, `project`), scan mode emits `targets[]`
-  (`section`, `label`, `path`, `bytes`), and every section brackets itself on stderr with
-  `##windowsweep section=NN event=start|end status=<status> freed_bytes=<n>` so a caller can show progress.
-  `--list --json` prints the catalogue: `sections[]` (id, key, title, tier, admin, batch, dev), `safe_batch`,
-  `safe_batch_admin`, `profiles`, `walkthrough`.
-- **Why.** The same GUI prerequisite as RW-071: a front end reads the catalogue rather than hard-coding it,
-  and shows progress from the machine channel rather than parsing the human log.
-- **Acceptance points.** The self-test parses each shape; the progress lines appear only in `--json` mode, so
-  the human log is unchanged; `bin/windowsweep.js` passes the flags through untouched.
-
+- **What.** `C:\NVIDIA` (driver extraction), `C:\ProgramData\NVIDIA Corporation\Downloader`, `C:\AMD`, `C:\ESD`
+  (feature-upgrade payload, safe once the upgrade completed). All regenerable, all admin-owned. **`C:\Intel` was
+  inspected and REJECTED** - it holds `Thunderbolt`, `Logs` and `GfxCPLBatchFiles`, which are driver support
+  content, not extraction leftovers. None of the others exists on the build machine, so **section 26 was never
+  created and the number is still free.**
+- **Acceptance points.** `Admin = $true`, `Batch = 'optin'`, tier `rebuilds`; `--scan` shows sizes unelevated;
+  the folders are outside every protected root (self-test [6]); `C:\$WinREAgent`, `C:\Windows.old` and
+  `Windows\Installer` are explicitly **not** targets; docs written.
 
 ### RW-069 - Sibling features deliberately not adopted (record, no work)
 
 | Sibling feature | Why not |
 |---|---|
-| `linux-cleanup --tui` (whiptail/dialog) | no dependency-free Windows equivalent; the menu covers it |
+| `linux-cleanup --tui` (whiptail/dialog) | no dependency-free Windows equivalent; the menu covers it, and the desktop app supersedes the need |
 | `linux-cleanup --doctor` (shell-init repair) | Linux-specific; Windows PATH repair is out of scope |
-| `macleanup --check-update` | contradicts the no-network design, which the README advertises |
-| `macleanup` System Restore-style permanent sections (Time Machine snapshots) | Windows restore points are a recovery mechanism; deleting them is out of scope |
-| `macleanup` section 27 (font/QuickLook caches) | the Windows font cache is a system service store; clearing it is a repair step, not cleanup |
+| `macleanup --check-update` | contradicts the no-network design the README advertises |
+| `macleanup` Time Machine snapshot sections | Windows restore points are a recovery mechanism; deleting them is out of scope |
+| `macleanup` section 27 (font / QuickLook caches) | the Windows font cache is a system service store; clearing it is a repair step, not cleanup |
 
-## 11. Phase P6 - Windows desktop app (decided 2026-09-03; not counted toward CLI completion)
+## 10. Phase P6 - the Windows desktop app
 
-The owner opened this phase on 2026-09-03 and settled its three open questions. The decisions are recorded
-verbatim in `docs/PROJECT-CONTEXT.md` ("Session 3 decisions"); this section is the specification derived from
-them. The execution plan is `C:/Users/PC/.claude/plans/please-plan-and-get-agile-fairy.md` section 8.
+The scope was decided on 2026-09-03 and the design approved on 2026-09-05. **Gates 1, 2 and 3 are recorded**
+(GATE 1 explicitly, gates 2 and 3 pre-authorised by *"Straight through to the app"*), which is the sole
+authority for creating anything under `desktop/` beyond `design/`; **GATE 4 (parity) closes only after the app
+exists.** The blocks below correspond to sections O-Z of
+`C:\Users\PC\.claude\plans\please-plan-and-get-agile-fairy.md` section 18, which holds the long form.
 
-### RW-070 - The decided scope
+**Settled, not to be re-litigated:** optional Google sign-in for **sync only** (email, settings, run history;
+settings restored on sign-in); **runs are never gated, no paid tier, no plan set**; full observability (GA4,
+Amplitude, Clarity, Sentry) behind a first-run consent dialog with every provider off until accepted, while the
+CLI keeps zero network calls; `desktop/` in this repository, excluded from the npm allowlist and asserted absent
+by CI; identifier `com.aoneahsan.windowsweep` (permanent); app version = the bundled CLI version; releases
+tagged `desktop-vX.Y.Z` with NSIS + MSI + `.sig` + `latest.json`; the admin surface is the Firebase console for
+this phase.
 
-| Question | Decision |
-|---|---|
-| Account model | **Optional Google sign-in, for sync only.** The account stores the user's email, their settings and their run history, and restores settings on sign-in. **Runs are never gated**, there is no paid tier and no plan set - an explicit owner exemption from the fleet plan-set rule |
-| Telemetry | **Full fleet observability** - GA4, Amplitude, Clarity and Sentry - behind a first-run consent dialog with every provider off until accepted. The CLI keeps its zero-network promise; the desktop app discloses what it sends in its README, the docs site and the root README |
-| Location | `desktop/` in this repository (the macleanup pattern), excluded from the npm `files` allowlist and asserted absent by CI |
-| Identity | Identifier `com.aoneahsan.windowsweep` (permanent once released); product name `windowsweep`; the app version equals the CLI version it bundles |
-| Releases | Tag `desktop-vX.Y.Z`, built by `tauri-action`, NSIS + MSI + `.sig` + `latest.json` on a GitHub Release; the in-app updater reads that manifest |
-| Admin surface | The Firebase console for this phase (Authentication -> Users, Firestore). A web admin panel is a later, separate phase - a recorded deviation from the platform-admin rule |
-| Toolchain | 🔴 **No download happens on this machine until the owner gives the go-ahead** (`PENDING-TASKS.md` TASK-001, `docs/MANUAL-TASKS.md` row 14). CI compiles the Rust core meanwhile |
+### RW-073 - Finish Block Q: the A4 screens, the inventory and the promotions (agent 1 h)
 
-### The two sub-phases
+- **What.** The eight screens (`splash`, `consent`, `picker`, `history`, `report`, `account`, `settings`,
+  `elevation`) plus `pages.html` were committed as WIP in `2721b75`. What Block Q still owes:
+  `desktop/design/CLICK-DUMMY-INVENTORY.md` (the parity ledger, with **rows and files as separate totals** so
+  the arithmetic is checkable), the house-promotion panel in `settings.html`, and a look at every page.
+- **Acceptance points.**
+  1. The inventory lists all 20 HTML files, 28 JS, 4 CSS and the vendor set, with per-screen rows naming the
+     archetype, the regime and what it covers.
+  2. **House promotions ship in `settings.html` in two layers** (`rules/post-install-onboarding.md`): the
+     ecosystem roster is vendored with `windowsweep` **dropped**, and the display resolver filters that id
+     **again**. Prove each layer with the other removed. It is the only promotion surface; no ad network,
+     because the app's privacy copy promises none.
+  3. `grep -c '<textarea' *.html` -> **0** (the one multi-line input is `contenteditable`, tiptap-shaped).
+  4. The "no pricing page, no admin batch" exemptions are restated on the inventory rather than silently absent.
+  5. Every page opened and looked at: four of session 4's defects had no gate and were found only that way.
+- **Do not.** Do not change the approved layout or wording of the three original screens in this item.
 
-- **P6-A (no downloads).** The design argument and a static click dummy of every screen for the owner to
-  react to; the Firebase project, its Google provider, Firestore rules and indexes, and the FilesHub vault
-  entries; the `desktop/` application written in full and compiled by CI (`desktop-ci.yml`); the records.
-  The CLI prerequisites RW-071 and RW-072 ship first, in 1.1.0.
-- **P6-B (after the go-ahead).** rustup and the C++ Build Tools, `yarn install` for both trees, the lockfiles
-  committed, the local gates, run-to-verify over the app's own WebView2, the updater keypair into
-  `~/.secrets/tauri/` and the repository Actions secrets, and the first `desktop-v` release.
+### RW-074 - Block R: the wiring batch (agent 1.5 h)
 
-### Do not
+- **What.** The prototype becomes one working thing: the `NAV` registry is real for all eleven pages (done in
+  `2721b75` - verify no `soon: true` remains), and the store carries six flows end to end.
+- **Acceptance points.**
+  1. First run -> consent -> settings round-trip -> a run -> a history entry that survives a reload -> sign in
+     unlocks the cloud rows -> sign out resets to first-run.
+  2. Consent state gates the Home privacy ledger and the Account screen; **declining is a first-class path.**
+  3. 🔴 Every link verified by **clicking**, not by reading `href`s.
+  4. Demo axes stay in the URL and are **never persisted**; preferences persist. Decorate from the pristine
+     authored href.
+  5. The storage namespace is proved by reading a **physical `localStorage` key** back, never by reading config.
 
-- Do not reimplement any cleanup logic in the desktop app: it runs the bundled `windowsweep.ps1` with
-  `--json --no-color` and nothing else.
-- Do not gate a run behind sign-in, add a paid tier, or add a plan set to this app without a new owner
-  decision.
-- Do not enable any telemetry provider before the consent dialog is accepted, and never send a filesystem
-  path, host name or user name in a synced run summary.
-- Do not download a toolchain or a dependency tree before the owner's go-ahead.
+### RW-075 - Block S: verify the dummy and hand it over (agent 1.5 h)
 
+- **What.** Re-run the instruments already built, now across eleven screens plus eight gallery files.
+- **Acceptance points.**
+  1. **Contrast sweep** on the rendered DOM: fresh load per appearance, colours compared as **pixels not
+     strings** (Chrome returns `oklch()`), probe canvas cleared to transparent, **SVG `fill` included**.
+  2. **Type audit**: nothing user-visible below 12px, no paragraph below 15px, measured from the page.
+  3. **The four gates** (`overlayContrast`, `axes`, `storageNamespace`, `overflow`) at 390 / 1440 / 1920, each
+     still red on its own planted defect **plus a second, different plant** - one plant only proves the gate
+     against the shape already imagined. Verify each plant actually applied.
+  4. Keyboard throughout with a visible ring; reduced motion via both the OS query and the in-app axis.
+  5. Screenshots at 1440 and 390 in all three treatments, light and dark.
+- **Browser.** 🔴 Headless Chrome is broken on this machine (GPU crash, `--virtual-time-budget` never idles).
+  Launch `$CHROME_WS_BROWSER` **headed** with `--remote-debugging-port=9222`, assert the profile is
+  `ahsan-automation` before the first navigation, drive CDP from Node's built-in `WebSocket`, and kill only the
+  browser this session launched.
+- **Then hand back** the screenshots and the numbers. Gates 2 and 3 are already recorded; this is a hand-back,
+  not a request.
+
+### RW-076 - The story gate on the desktop copy (agent, depends on P7)
+
+The dummy's words are the specification. Before RW-077 translates a screen, that screen's copy must have passed
+the story pipeline (RW-093), and the amended words must be **in the dummy**. See §11.
+
+### RW-077 - Block T: `desktop/`, the web layer (agent 4 h)
+
+- **What.** The first creation under `desktop/` beyond `design/`, permitted by the recorded gate 3.
+- **Acceptance points.**
+  1. `desktop/package.json`: Vite 8, React 19, TypeScript **`~6.0.3`** (🔴 the fleet pin - TS 7 removes
+     `yarn lint`), Tailwind v4, React Aria Components, TanStack Router (**hash history**), i18next, `motion`,
+     the d3 modules the charts use, `@tauri-apps/api` + `cli`. Dev port **5974**. `.yarnrc.yml` with
+     `npmMinimalAgeGate: 0`. Then `yarn install`.
+  2. 🔴 `tokens.css` is **promoted once, in one direction**, into `desktop/src/styles/tokens.css` wrapped in
+     `@theme inline`. The app's copy is authoritative from that moment; there is never a two-way sync.
+  3. `src/lib/cli.ts` parses the summary, `candidates[]`, `targets[]` and the `##windowsweep` progress lines
+     1.1.0 added for exactly this consumer. **It reimplements no cleanup logic.**
+  4. `src/lib/catalogue.ts` is built from `--list --json`, 🔴 never hard-coded, so a new section appears
+     without an app change.
+  5. `src/lib/auth.ts`: PKCE, system browser, loopback -> Identity Toolkit REST.
+  6. `src/lib/sync.ts`: Firestore REST; settings newest-wins **with an undo toast**; runs paginated (limit 20 +
+     cursor, per the fetch budget); 🔴 no paths, host name or user name ever synced.
+  7. The **ten-axis theme registry**, one table, applied **pre-paint** from a head script - appearance applied
+     late is a flash, density or text size applied late is a reflow.
+  8. 🔴 **i18n from day one**: every user-visible string through `t()`, plus the `no-restricted-syntax` lint
+     gate (AST selectors, **no new dependency for one rule**). Land as `warn`, sweep, flip to `error`. The
+     acceptance test is one sentence: *is a second language ONE new catalogue file, and nothing else?*
+  9. One consent-gated `track()` fanning out to GA4 + Amplitude + Clarity **inside the report function**, plus
+     Sentry with release tagging and path scrubbing. 🔴 Amplitude's flag is set on the init **promise**, never
+     the call; a hand-rolled gtag shim pushes `arguments`, never a spread array.
+  10. Every screen translated from the dummy, composed from the gallery's vocabulary; 🔴 external links open in
+      the system browser through one `ExternalLink` + policy module.
+
+### RW-078 - Block U: `src-tauri/` (agent 2 h)
+
+- **Acceptance points.** Identifier **`com.aoneahsan.windowsweep`** (permanent), product name `windowsweep`,
+  window 1000x720 / min 760x560, `createUpdaterArtifacts`, bundles **nsis + msi**; a CSP allowing only the
+  analytics, Sentry, Google and Firestore hosts; least-privilege capabilities; resources
+  `resources/windowsweep/**` copied by a `sync:cli` package script; four commands - `app_version`, `run_clean`,
+  `oauth_listen`, `read_run_report`. `run_clean` spawns `powershell.exe -NoProfile -NoLogo -ExecutionPolicy
+  Bypass -File <res>\windowsweep.ps1 --json --no-color ...` with `WINDOWSWEEP_LAUNCHER=desktop`; stderr ->
+  `clean:log`, `##windowsweep` -> `clean:progress`, stdout -> `clean:done`. Elevated runs go through the
+  engine's own `--elevate` with `--reports-dir`/`--logs-dir` under
+  `%LOCALAPPDATA%\windowsweep-desktop\runs\<id>`, and the app **tails the log**.
+- **Do not.** The app never elevates itself, and no agent session triggers that path.
+
+### RW-079 - Block V: Firebase and the vault (agent 1.5 h)
+
+- **Acceptance points.** `npx -y firebase-tools@latest`; project `windowsweep` (fallback `windowsweep-app`),
+  Google provider, Firestore + indexes. 🔴 **Never `deploy --only firestore`** bare - name
+  `firestore:rules,firestore:indexes`. `desktop/firebase/firestore.rules`: `users/{uid}` readable and writable
+  only by that uid with
+  `keys().hasOnly(['email','displayName','settings','settingsUpdatedAt','createdAt','lastSeenAt'])`;
+  `users/{uid}/runs/{runId}` create/read/delete by the owner, **no update**; everything else denied. 🔴 A list
+  query must prove its rule from its own filters - the runs query carries them. FilesHub project **60**
+  (`windowsweep`) seeded with the web config; the token is read at runtime with `grep -oE 'fh_pat_[A-Za-z0-9]+'`,
+  never echoed, never committed.
+- **Owner rows.** The Google OAuth **desktop** client id (row 15) and the four telemetry keys (row 16) are his
+  Cloud-Console clicks. The app reads them from config; **an absent key skips that provider and never blocks
+  boot**, so sign-in and telemetry compile and ship dormant rather than blocking the release.
+
+### RW-080 - Block W: CI (agent 1 h)
+
+- **Acceptance points.** `desktop-ci.yml` (windows-latest): `yarn install --immutable`, `typecheck`, `lint`,
+  `build`, `cargo fmt --check`, `cargo clippy -- -D warnings`, `tauri build --no-bundle`.
+  `desktop-release.yml`: `tauri-action` on a `desktop-v*` tag, manual dispatch until the signing secrets exist.
+  🔴 The existing tarball sweep in `ci.yml` already forbids `desktop/`; **confirm it still passes** now that the
+  folder has real content, and that `npm pack --dry-run` shows the allowlist only.
+
+### RW-081 - Block X: local gates, run-to-verify, and GATE 4 (agent 2.5 h)
+
+- **Needs** the Build Tools (owner row 22). If the UAC click has not happened, everything Rust is reported as
+  **CI-verified only** and that half moves to a row - stated plainly, never rounded up.
+- **Acceptance points.**
+  1. `yarn typecheck && yarn lint && yarn build` (zero warnings), `cargo fmt --check`,
+     `cargo clippy -D warnings`, `yarn tauri build`.
+  2. 🔴 **Watch each gate fail before trusting it**: plant one broken line, confirm the script goes red, delete
+     it. A `tsc --noEmit` in a project-references layout compiles nothing and exits 0 - use `tsc -b` there.
+  3. **Run-to-verify over the app's own WebView2**
+     (`WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=<port>`): light and dark screenshots; a
+     **`--dry-run` only** safe batch; a picker flow driven by `--select-file`; sign-in with the
+     `aoneahsan.apps.t1+1@gmail.com` alias, **password read at runtime from `~/.secrets/test-accounts/` and
+     never echoed**; a settings round-trip through sign-out and back; **consent proven by inspecting the
+     network, not by reading the flag**; the process killed afterwards.
+  4. 🔴 **GATE 4 - parity.** Every screen, the dummy and the app side by side at **1440 and 390**, as screenshot
+     pairs in the report. The dummy owns the **words** as well as the layout; anything the app declines to ship
+     is declared with a reason.
+
+### RW-082 - Block Y: the first release (agent 1 h)
+
+- **Acceptance points.** Updater keypair -> `~/.secrets/tauri/windowsweep.key` (chmod 600) with a row in
+  `~/.secrets/INDEX.md`; the public key into `tauri.conf.json`; the private key + password via `gh secret set`.
+  🔴 The key never touches the repo and is never printed. App version = the bundled CLI version = **1.1.0**;
+  tag `desktop-v1.1.0`; a GitHub Release with NSIS + MSI + `.sig` + `latest.json`. 🔴 **Installers carry a
+  unique, build-stamped name** - `windowsweep-v1.1.0-<yyyy-MM-dd>-<HHmm>`, stamped by the build, never renamed
+  by hand. SmartScreen warns on an unsigned installer on first run: **say so in the README and on the docs
+  page** rather than letting a user meet it unexplained.
+
+### RW-083 - Block Z: the records (agent 1.5 h)
+
+- **Acceptance points.** README gains a **Desktop app** section; the docs site gains `desktop.md` and is
+  re-mirrored (fix the CLI repo first, then mirror - never patch the docs repo directly), Pages run watched;
+  `docs/PROJECT-CONTEXT.md`, `docs/PACKAGES.md` (the desktop manifest is a second manifest unit - record it),
+  `CLAUDE.md` = `AGENTS.md` (both **under 28 KB**, verified by byte count); the tracker flipped per block with
+  its SHA; a `docs/work-history/` record ending in a continuation prompt; the memory note refreshed;
+  `remaining-work-summary.md` recomputed.
+
+### RW-084 - The owner's three desktop rows (blocked)
+
+Row **15** the Google OAuth desktop client id · row **16** the GA4, Amplitude, Clarity and Sentry keys · row
+**22** the Visual Studio 2022 Build Tools UAC click
+(`winget install --id Microsoft.VisualStudio.2022.BuildTools --override "--quiet --wait --add
+Microsoft.VisualStudio.Workload.VCTools --includeRecommended"`, about 5 GB). rustup and cargo 1.98.1 are already
+installed per-user; without the MSVC linker nothing Rust-side builds locally and the Tauri half stays
+CI-verified.
+
+### RW-085 - Code signing (owner decision + cost)
+
+Unsigned installers trigger SmartScreen. Signing needs a certificate and money, so it is an owner decision, not
+an assumption. Until then the warning is **documented, never hidden**.
+
+## 11. Phase P7 - the storytelling retrofit (owner decision 2026-09-05)
+
+The owner chose *"Retrofit everything"*: this project has shipped its README, its thirteen docs pages, its
+store-style copy and its click-dummy words without a Story Bible, and the desktop app's UI copy is about to be
+written. Law: `~/.claude/rules/storytelling-content.md`. The system is installed globally; nothing needs to be
+built here except this project's own `docs/story/`.
+
+**Cost, stated plainly.** The full panel is about ten dispatches per surface and roughly 1.3M tokens, because
+every dispatch pays the whole fixed payload. That is why RW-091 groups pages into surfaces rather than treating
+each of the thirteen docs pages as one.
+
+### RW-090 - `/story-init`: the Story Bible (agent 1 session, then GATE 1)
+
+- **What.** Discover from repo evidence (README, `docs/`, `CHANGELOG.md`, the design argument, the portfolio
+  file), then an interview in small batches, producing `docs/story/story-bible.md` (eleven sections),
+  `voice-fingerprint.md`, `decision-log.md` and `run-state.json`.
+- **Acceptance points.**
+  1. 🔴 **Before any file lands**, the docs repo's `exclude` carries `story/**` and its deploy workflow's sweep
+     matches `*story-bible*`, `*decision-log*`, `*run-state*`, `*voice-fingerprint*`, `*content-map*` (done in
+     the 2026-09-05 audit - verify it is still there). The CLI repo's CI already forbids `docs/` in the tarball.
+  2. The voice runs the three-test uniqueness check against `~/.claude/story-system/registry/`; the slug is
+     **`windowsweep`** (the palette-registry slug); the remote index is read before writing, because the
+     registry has parallel writers. A collision is shown at GATE 1 with two differentiation proposals, never
+     accepted silently.
+  3. The Bible's raw material is what this product already is: a destructive tool that earns trust by naming
+     every path first; the honesty rules (no undo for caches, it cannot promise a number); the developer-aware
+     idle gate; zero network calls. The emotional palette must allow for **safety surfaces**.
+  4. **Stop at GATE 1.** Only the owner's written approval advances it.
+- **Do not.** Do not write any surface before approval; do not blend with another project's voice.
+
+### RW-091 - The content map (agent half a session, then GATE 2)
+
+- **What.** `docs/story/content-map.md`: one row per surface with awareness level, structure, tone band,
+  length, CTA, schema and status, plus the SEO/AEO question map with answer-first sentences.
+- **Candidate surfaces** (the map decides the final grouping; the count is what bounds the cost):
+
+  | Surface | Notes |
+  |---|---|
+  | README | the elevator pitch; the anchor + TOC contract is fixed, the words are not |
+  | `package.json` description + `WS_TAGLINE` + the docs-site tagline | one surface, three places that must agree |
+  | The docs pages, grouped 4-5 ways | start here (intro, installation, quick-start) · safety (safety-model, developer-mode) · reference (sections, cli-reference, profiles, admin-and-elevation, reports-and-logs) · help (troubleshooting, faq) · about (author) |
+  | `AI-INTEGRATION-GUIDE.md` | a machine-facing contract; voice applies to its prose only |
+  | Docs-site intro + `llms.txt` | the site's own front door |
+  | CLI console strings | prompts, walkthrough, menu, summary. 🔴 **ASCII-only** - the engine's IRON rule; no typographic quotes or dashes |
+  | The desktop screens, grouped by regime | moment (Home, Run, Splash, Consent, Account, Elevation) · cockpit (Sections, Picker, History, Settings, Report) |
+  | The desktop README + the docs site's `desktop.md` | written with RW-083 |
+
+- 🔴 **Consent and elevation are safety surfaces**: humor off, no shame or urgency language, no claim about
+  what the user's data is worth. So is any error state that costs the reader something.
+- **Not surfaces:** `CHANGELOG.md` (factual record), the portfolio file (an owner record), social content (the
+  notebook holds it by fleet rule), this file and the trackers (internal).
+- **Stop at GATE 2.**
+
+### RW-092 - `/story-write` per surface (agent 3-4 sessions, GATE 4 each)
+
+- **What.** For each mapped surface: the writer, then the full panel (dev-editor -> writer revises ->
+  line-editor -> copy-editor -> the four specialists in parallel -> the bible-keeper), at most two rounds, then
+  the finalizer, then GATE 4.
+- **Acceptance points.**
+  1. A lint FAIL on `docs/story/drafts/*.md` is **fixed, not silenced**; a deliberate exception carries
+     `<!-- story-lint: allow "..." -->` and a reason.
+  2. 🔴 **The lint hook is blind to copy inside a code fence.** A slot-shaped surface (the CLI strings, later
+     the `.tsx` copy) has none of its real words checked, so the fact-checker and the human reader are the only
+     gate there. Say so in the packet; never read a green hook on such a surface as evidence.
+  3. After GATE 4 the file in the CLI repo is edited, the docs site is **re-mirrored** (never patched
+     directly), and the Pages run is watched.
+  4. The CLI's gates stay green: the self-test's ASCII check [4] and the 151-check total are unaffected by a
+     console-string change - re-run and quote it.
+  5. The keeper records each approved surface into the Bible, the decision log and the global registry.
+
+### RW-093 - The desktop copy, through the dummy (agent 1 session, GATE 4)
+
+- **What.** The approved words for the eleven screens are written **into the click dummy's HTML first**
+  (`~/.claude/rules/frontend-ui-standards.md` §10a: a divergence is written into the dummy, not only into a
+  decisions log), the design README records why the dummy changed, and only then does RW-077 translate it.
+- **Acceptance points.** Every capability whose wave has not shipped is declared in the dummy and exempted as
+  `pending-wave` - the dummy specifies the finished product, never today's build progress. The four exemption
+  classes are `prototype`, `demo-data`, `live-number`, `pending-wave` and no others.
+- **Do not.** Do not change the dummy's layout in this item; do not edit app copy that the dummy does not carry.
+
+**Recommended order for P6 + P7:** RW-073 -> RW-074 -> RW-075 (layout and behaviour settled) -> RW-090 ->
+RW-091 -> RW-093 (the desktop words into the dummy) -> RW-077 -> RW-078 -> RW-079 -> RW-080 -> RW-081 ->
+RW-082 -> RW-083, with RW-092's CLI and docs surfaces folded in wherever a session has room.
 
 ## 12. What "100%" looks like at the end
 
-- Every P0-P5 sub-task in `docs/features/windowsweep-completion/00-tracker.json` is `complete`, each with a
-  commit SHA in `runHistory`, and every owner row is ticked in `docs/MANUAL-TASKS.md`.
-- `npm view windowsweep version` equals `VERSION` on `main`; `git tag` lists `v1.0.0`, `v1.0.1`, `v1.1.0`
-  with GitHub Releases; the ruleset is unchanged.
-- `windowsweep-docs.aoneahsan.com` answers 200 with HTTPS and is the `homepage` in `package.json` and the
-  `Docs` link in the README.
-- The self-test prints about 120 checks green on Windows PowerShell 5.1 and PowerShell 7 in CI.
-- `docs/PROJECT-CONTEXT.md` "Verified runs" records the elevated run, the Windows 11 run, the Scheduled
-  Task run and the sections 4/5/7/8/17-19 runs; "Open material unknowns" lists only the desktop-app
-  account-model decision.
-- The portfolio-info file, the master links JSON entry and the ORCID work exist and agree.
-- README, `docs/sections.md`, `docs/cli-reference.md`, `docs/profiles.md` and `lib/constants.ps1` describe
-  the same 27 sections (0-26), the same flags and the same tiers.
+- Every sub-task in `docs/features/windowsweep-completion/00-tracker.json` is `complete`, or `blocked` on a
+  named owner row, each with a commit SHA in `runHistory`.
+- `npm view windowsweep version` equals `VERSION` on `main`; `git tag` lists every released version with a
+  GitHub Release; the rulesets are unchanged.
+- `windowsweep-docs.aoneahsan.com` answers 200 with HTTPS, is the `homepage` in `package.json`, the `Docs` link
+  in the README and `WS_DOCS` in `lib/constants.ps1`, and serves a PNG social card.
+- The self-test prints 151 or more checks green on Windows PowerShell 5.1 and PowerShell 7 in CI.
+- `docs/PROJECT-CONTEXT.md` "Verified runs" records the elevated run, the Windows 11 run, the Scheduled Task
+  run, the sections 4/5/7/8/17-19/23 runs and both `--notify` hosts.
+- The portfolio file, the master links JSON entry and the ORCID work exist, agree, and are owner-reviewed.
+- README, `docs/sections.md`, `docs/cli-reference.md`, `docs/profiles.md` and `lib/constants.ps1` describe the
+  same sections, flags and tiers.
+- `gh release view desktop-v1.1.0` lists the NSIS installer, the MSI, the `.sig` and `latest.json`; GATE 4
+  screenshot pairs exist for all eleven screens at 1440 and 390; both desktop workflows are green.
+- `docs/story/` holds an approved Story Bible, voice fingerprint and content map, every in-scope surface has
+  passed GATE 4, and the voice is registered in `~/.claude/story-system/registry/`.
 
 ## 13. Effort estimate
 
-| Phase | Agent effort (sessions of 3-4 h) | Owner effort |
+| Phase | Agent sessions (3-4 h) | Owner time |
 |---|---|---|
-| P0 release sync + defects | 1 | - |
-| P1 verification | 0.5 (fold in the findings) | about 2-3 h at the keyboard |
-| P2 self-test coverage | 0.5 | - |
-| P3 docs site + AI guide | 1 | 15 min (DNS + Pages) |
-| P4 hygiene + records | 0.5 | 15 min (JSON review, ORCID import) |
-| P5 1.1 features | 3-4 | dry-run reviews, about 1 h |
-| **Total P0-P5** | **6.5-7.5 sessions** | **about 4 h** |
-| P6 desktop app (separate) | 3-8 | the account-model decision |
+| P1 verification | 0.5 (folding in the findings) | about 3 h at the keyboard |
+| P3 residue (RW-040, 043, 045) | 0.5 | 15 min (DNS + Pages) |
+| P4 residue (RW-051, 055) | 0.25 | 15 min (JSON review, ORCID import) |
+| P5 residue (RW-064, 065, 066) | 0.5 after the probe | 10 min (the probe) |
+| P6 desktop (RW-073 to RW-083) | 6-7 | 1 h (Build Tools, Cloud Console rows) |
+| P7 storytelling (RW-090 to RW-093) | 4-5 | about 2 h across the gates |
+| **Total** | **12-14 sessions** | **about 8 h** |

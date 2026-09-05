@@ -1,6 +1,6 @@
 # windowsweep desktop - the design argument
 
-Last Updated: 2026-09-04 (round 4) · Direction **02, "Reclaim"** · Phase P6-A, gate 1 pending
+Last Updated: 2026-09-05 · Direction **02, "Reclaim"** · Phase P6-A, gates 1-3 recorded 2026-09-05; gate 4 (parity) closes after the app exists
 
 The reasoning behind the click dummy in `windowsweep-click-dummy/`. Written so the owner can disagree with
 the *argument* rather than only with the pixels. Nothing here was put to him as a choice; the decisions are

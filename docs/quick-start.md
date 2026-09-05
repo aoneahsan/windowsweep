@@ -10,7 +10,7 @@ npx windowsweep --self-test
 
 The self-test parses every script, checks that every declared target lies outside the protected paths, and runs
 fixtures with a real junction to prove links are never followed, that `--dry-run` writes nothing, and that
-`--yes` never selects a personal or project item. It ends with a pass count (124 at 1.0.1) and exits non-zero
+`--yes` never selects a personal or project item. It ends with a pass count (151 at 1.1.0) and exits non-zero
 on any failure.
 
 ## 2. See what is there

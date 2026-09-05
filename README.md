@@ -418,7 +418,7 @@ More: [FAQ](https://github.com/aoneahsan/windowsweep/blob/main/docs/faq.md).
 | [Reports and logs](https://github.com/aoneahsan/windowsweep/blob/main/docs/reports-and-logs.md) | parsing the JSON or finding a log |
 | [AI integration guide](https://github.com/aoneahsan/windowsweep/blob/main/AI-INTEGRATION-GUIDE.md) | an agent or a script runs it for you |
 | [Troubleshooting](https://github.com/aoneahsan/windowsweep/blob/main/docs/troubleshooting.md) | something failed |
-| [Roadmap and remaining work](https://github.com/aoneahsan/windowsweep/blob/main/remaining-work-summary.md) | you want to know what is verified, what is planned (1.1, the docs site) and what is still open |
+| [Roadmap and remaining work](https://github.com/aoneahsan/windowsweep/blob/main/remaining-work-summary.md) | you want to know what is verified and what is still open: the desktop app, the story pass and the verification runs |
 
 <a id="changelog"></a>
 ## 🔄 Changelog&nbsp;[#](#changelog)

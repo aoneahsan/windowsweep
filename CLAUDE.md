@@ -1,6 +1,6 @@
 # windowsweep - Project Rules
 
-Last Updated: 2026-09-04 (session 3: desktop click dummy direction 01 rejected and archived; direction 02 "Reclaim" built and at GATE 1) · Context pass: 2026-09-03 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
+Last Updated: 2026-09-05 (session 7: audit - the desktop app and the storytelling retrofit added to the 100% scope; the A4 screens committed as WIP; every record refreshed) · Context pass: 2026-09-05 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
 
 Safe, developer-aware Windows cleanup CLI: a Windows PowerShell 5.1 engine behind a dependency-free Node
 launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macleanup` (Bash). Public repo
@@ -15,38 +15,41 @@ launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macl
 - Dependency and manifest record: `docs/PACKAGES.md`
 - Follow-ups the agent owes this project: `PENDING-TASKS.md` (root)
 
-## Current state (session 3, 2026-09-04)
+## Current state (session 7, 2026-09-05 - audit)
 
-**1.1.0 is published on npm and equals `main`'s engine** (built from `3c4d54e`; tags `v1.0.0`, `v1.0.1`,
-`v1.1.0`, each with a GitHub Release, and every release from here gets both). Sections 0-25, `--select` /
-`--select-file`, `--notify`, `candidates[]` / `targets[]` and `##windowsweep` progress lines in `--json`,
-`--list --json`. The self-test runs **151 checks**. A documentation site lives at `aoneahsan/windowsweep-docs`
-(Docusaurus on GitHub Pages, deployed and green) - its domain still returns 000, so `package.json` `homepage`,
-the README links and `WS_DOCS` still point at GitHub and switch only after it probes 200.
+**1.1.0 is published on npm and equals `main`'s engine** (built from `3c4d54e`; `git diff 3c4d54e..HEAD -- lib
+modules windowsweep.ps1 bin` is empty; tags `v1.0.0`, `v1.0.1`, `v1.1.0`, each with a GitHub Release). Sections
+0-25, `--select` / `--select-file`, `--notify`, `candidates[]` / `targets[]` and `##windowsweep` progress lines
+in `--json`, `--list --json`. The self-test runs **151 checks** (green on 2026-09-05, exit 0). The documentation
+site `aoneahsan/windowsweep-docs` is deployed and green; `windowsweep-docs.aoneahsan.com` still probes **000**
+(owner DNS rows 11-12), so `package.json` `homepage`, the README links and `WS_DOCS` point at GitHub until it
+probes 200.
 
-Open: **P6**, the desktop app. 🔴 **Its click dummy is at GATE 1 with direction 02, "Reclaim".** Direction 01
-was rejected by the owner on 2026-09-04 (*"very basic and not attractive at all"*) and is archived
-byte-identical, with a five-point post-mortem, at
-`desktop/design/windowsweep-click-dummy/_rejected/01-instrument-panel-2026-09-04/`. The root cause was a wrong
-design read - dashboard dials on what is really a premium-consumer surface - plus the two craft skills whose
-omission is a recorded cause of exactly that rejection. Direction 02 is three screens (Home in 14 zones,
-Sections, Run) x three treatments x light and dark, fully interactive, **entirely offline**, with a D3 treemap
-as the signature element. **Only the owner's written words advance it** (`docs/MANUAL-TASKS.md` row 17), and
-nothing is created under `desktop/` beyond `design/` until gate 3 is recorded.
+**Open: P6 (the desktop app), P7 (the storytelling retrofit), the owner rows.** Desktop direction 02 "Reclaim"
+was **approved on 2026-09-05** (*"approved, looks great, get all remaining work fully done now"*); gates 2 and 3
+were **pre-authorised** in the same message (*"Straight through to the app"*), so `desktop/` may hold app code;
+GATE 4 (parity) closes after the app exists. The click dummy holds all eleven screens plus the eight-file
+component library (A3 in `45953b7`, A4 handed over as WIP in `2721b75`); Block Q's inventory ledger, Block R's
+wiring and Block S's verification are still open (RW-073 to RW-075). No app code, no Firebase project, no
+desktop CI exists yet. rustup 1.98.1 is installed per-user; **Visual Studio Build Tools is not** (row 22), so
+Rust links only in CI. TASK-001 (the download gate) was lifted in full on 2026-09-05.
 
-🔴 **P5 is closed but two of its rows are not:** RW-064 and RW-065 shipped only their verified halves and
-RW-066 was **deferred, not shipped**, because that software is not installed on this machine. What is
-outstanding is a documented candidate table in `docs/sections.md` plus one owner probe (`MANUAL-TASKS`
-row 20) - not code. **Section 26 is still free.** `C:\Intel` was inspected and **rejected**: it holds
-`Thunderbolt` and driver support content, not extraction leftovers.
+**Owner decisions of 2026-09-05 (audit session), verbatim in `docs/PROJECT-CONTEXT.md`:** "100%" **includes the
+desktop app**; the WIP screens were committed as their own `design:` commit; the folder layout
+`D:\work\windows-cleanup-root\{windows-cleanup, windowsweep-docs}` is durable (row 4 closed as superseded);
+and **every product-voice surface is retrofitted through the storytelling system** (P7: Story Bible first, then
+the README, the docs pages, `llms.txt`, the CLI strings and the desktop copy -
+`~/.claude/rules/storytelling-content.md`). 🔴 No new product-voice prose before the approved Bible; factual
+corrections of false statements are allowed; in the docs repo `docs/story/**` is excluded from the build.
 
-Phase P1 is entirely owner-run. Owner decisions of 2026-09-03, recorded in full in
-`docs/PROJECT-CONTEXT.md`: "feature-complete" means the 1.0 catalogue plus the 1.1 family-parity features;
-the docs site is in scope; the desktop app is a Tauri wrapper in `desktop/` with **optional Google sign-in for
-sync only and runs always free** (no paid tier, no plan set - an explicit exemption), **full fleet
-observability behind a first-run consent dialog** while the CLI keeps zero network calls; distribution stays
-npm and git clone only; and **no toolchain or dependency downloads happen on this machine until he gives the
-go-ahead** (`PENDING-TASKS.md` TASK-001).
+🔴 **P5 is closed but two of its rows are not:** RW-064 and RW-065 shipped only their verified halves and RW-066
+was **deferred, not shipped**, because that software is not installed on this machine - a candidate table in
+`docs/sections.md` plus one owner probe (`MANUAL-TASKS` row 20). **Section 26 is still free.** `C:\Intel` was
+inspected and **rejected**: it holds `Thunderbolt` and driver support content, not extraction leftovers.
+
+Phase P1 is entirely owner-run (rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21). The specification of every open item is
+`remaining-work.md`; the one-page view with the two percentages (whole project about 53%, CLI-only scope about
+87%) is `remaining-work-summary.md`.
 
 ## Per-Project Stack Override (binding)
 
@@ -54,12 +57,13 @@ go-ahead** (`PENDING-TASKS.md` TASK-001).
 |---|---|
 | Language / runtime | Windows PowerShell 5.1-compatible scripts (`windowsweep.ps1`, `lib/`, `modules/`) that also run on PowerShell 7. `bin/windowsweep.js` is a Node >=14 launcher with zero dependencies; `windowsweep.cmd` is the no-Node launcher |
 | Package manager | nothing at runtime; `npm` only for `npm pack` and publishing |
-| Gates | `node bin\windowsweep.js --self-test --no-color` (fixture-based, exit 0), `npm run version:check`, `npm pack --dry-run` shows the `files` allowlist only, PSScriptAnalyzer with `PSScriptAnalyzerSettings.psd1`. CI job `ci` (windows-latest) runs the self-test and a dry-run on both hosts |
-| Tests | the self-test fixtures are the test suite (real junction, nested junction, dry-run hash, stale prune, keep-newest, long path, extension-leftover plan). No Vitest, no Jest. New checks for pure logic are pre-approved (P2 in `remaining-work.md`) |
+| Gates | `node bin\windowsweep.js --self-test --no-color` (fixture-based, exit 0), `npm run version:check`, `npm pack --dry-run` shows the `files` allowlist only, PSScriptAnalyzer with `PSScriptAnalyzerSettings.psd1` (🔴 it only loads under `powershell.exe -NoProfile -ExecutionPolicy Bypass` + `Import-Module`; without that the import fails and a bare `.Count` prints a vacuous 0). CI job `ci` (windows-latest) runs the self-test and a dry-run on both hosts |
+| Tests | the self-test fixtures are the test suite (real junction, nested junction, dry-run hash, stale prune, keep-newest, long path, extension-leftover plan). No Vitest, no Jest. New checks for pure logic are pre-approved |
 | Typecheck / lint / build | no build output, so the fleet source-map rule is satisfied by construction; PSScriptAnalyzer is the lint |
 | UI rules | none apply to the CLI - no frontend, i18n surface, theme, plans or admin panel. They apply to the desktop app (P6) |
-| Docs site | `aoneahsan/windowsweep-docs` at `D:\work\windowsweep-docs`: Docusaurus 3 + React 19 + TS ~6.0.3 + yarn 4, GitHub Pages only, ports 5972/5973. Its pages MIRROR `docs/` - fix a wording error here first, then re-mirror |
-| Desktop app (P6) | `desktop/` in this repo: Tauri 2 + React 19 + Vite + Tailwind v4 + React Aria, port 5974, identifier `com.aoneahsan.windowsweep`. It runs the bundled script with `--json` and reimplements no cleanup logic. Only `desktop/design/` exists so far - the argument in its `README.md` and the click dummy in `windowsweep-click-dummy/` (plain CSS + vendored D3, zero network, `tokens.css` promotes into the app in ONE direction). External design-craft skills are vendored per-project in `.claude/skills/` - see `EXTERNAL-SKILLS.md` |
+| Docs site | `aoneahsan/windowsweep-docs` at `D:\work\windows-cleanup-root\windowsweep-docs`: Docusaurus 3 + React 19 + TS ~6.0.3 + yarn 4, GitHub Pages only, ports 5972/5973. Its pages MIRROR `docs/` - fix a wording error here first, then re-mirror. `docs/MANUAL-TASKS.md` and `docs/story/**` are excluded from its build |
+| Desktop app (P6) | `desktop/` in this repo: Tauri 2 + React 19 + Vite + Tailwind v4 + React Aria, port 5974, identifier `com.aoneahsan.windowsweep`. It runs the bundled script with `--json` and reimplements no cleanup logic. Today only `desktop/design/` exists - the argument in its `README.md` and the **approved** click dummy in `windowsweep-click-dummy/` (eleven screens + eight gallery files, plain CSS + vendored D3, zero network; `tokens.css` promotes into the app in ONE direction). Gates 1-3 are recorded, so app code may now be created; GATE 4 (parity) closes after it exists. External design-craft skills are vendored per-project in `.claude/skills/` - see `EXTERNAL-SKILLS.md` |
+| Storytelling (P7) | `docs/story/` does not exist yet. Owner decision 2026-09-05: retrofit everything - `/story-init` first (GATE 1), then the content map (GATE 2), then every product-voice surface through `/story-write`. The dummy's words are amended before the app's (`~/.claude/rules/frontend-ui-standards.md` §10a) |
 
 ## IRON rules for this repository
 
@@ -72,7 +76,7 @@ go-ahead** (`PENDING-TASKS.md` TASK-001).
    `New-Target` row in its section's `Get-TargetsNN`; layout kinds (`chromium`, `firefox`, `electron`,
    `editor`) may only clear the cache folder names allowlisted in `lib/actions.ps1`. The protected lists only
    grow. Self-test check [6] asserts no declared target sits inside a protected path - run it after any change.
-   Interactive sections (17, 18, 19 and any new one) present a selection that `--yes` never answers.
+   Interactive sections (17, 18, 19, 23 and any new one) present a selection that `--yes` never answers.
 3. **Everything honours `--dry-run`.** Deletion helpers short-circuit; destructive external commands go
    through `Invoke-External -Destructive`; dry-run output aggregates per folder. Self-test check [7c]
    (tree hash unchanged) stays.
@@ -93,13 +97,19 @@ go-ahead** (`PENDING-TASKS.md` TASK-001).
 8. **Public repository.** No secrets, no credentials, no machine-specific paths beyond the owner's records in
    `docs/PROJECT-CONTEXT.md` and `docs/MANUAL-TASKS.md`. The author block is name, site, GitHub, LinkedIn and
    the public email; never a phone number. The tarball is the `files` allowlist only (`.github/`, `docs/`,
-   `temp/`, `CLAUDE.md`, `AGENTS.md` and the three root planning files never ship).
+   `desktop/`, `temp/`, `CLAUDE.md`, `AGENTS.md`, the portfolio file and the three root planning files never
+   ship; CI sweeps the listing by name).
 9. **Governance.** `main` is protected by a ruleset (owner-only bypass, required check `ci`); the owner pushes
    directly, everyone else through a reviewed PR (`CONTRIBUTING.md`). Publishing follows the gate in
    `~/.claude/rules/publishing-compliance.md`; a bad release is deprecated, never unpublished.
 10. **Running the tool from an agent session:** `--dry-run` before any real run; real runs only within the
     scope the owner named; admin sections are never launched from an agent session (they need a UAC click).
 11. `temp/` holds read-only clones of the sibling tools for reference; it is gitignored and never edited.
+12. 🔴 **The click dummy owns the desktop app's words as well as its layout.** A divergence is written into
+    the dummy first, then the app matches - GATE 4 parity is checked page by page as screenshot pairs at 1440
+    and 390 (`~/.claude/rules/frontend-ui-standards.md` §10 and §10a). Anything the app declines to ship is
+    declared with a reason, never quietly dropped. The desktop app reimplements no cleanup logic: it runs the
+    bundled `windowsweep.ps1` with `--json --no-color` and reads its catalogue from `--list --json`.
 
 ## Sub-agents & Skills - Main-Context-First (IRON-SOLID)
 
@@ -116,7 +126,8 @@ skill-less. (Owner directive 2026-07-11; full text in `~/.claude/CLAUDE.md`.)
 2. **Skills always:** before any task, scan the available-skills list and invoke EVERY relevant skill
    (`aoneahsan-cccs-coding-standards`, `-nodejs`, `-javascript`, `-npm-package`, `-npm-package-readme`,
    `-markdown`, `-copywriting`, `-documentation`, `-git-workflow`, `-packages-up-to-date`, `-verification`
-   are the usual loadout here; `-docusaurus` for the docs site, `-tauri*` for the desktop phase).
+   are the usual loadout here; `-docusaurus` for the docs site, `-tauri*` and the React/design family for the
+   desktop phase, `-story*` for phase P7).
 3. **Model workflow:** PLAN and REVIEW on **Fable 5**; EXECUTE the approved plan on **Opus 5 or newer**. The
    global model floor (Fable 5 / Opus 5, never Opus 4.8 or older) applies here as everywhere. Plans live in
    `~/.claude/plans/`; the tracker above is resumed, never re-planned from zero.

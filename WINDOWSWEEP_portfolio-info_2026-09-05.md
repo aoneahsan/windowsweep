@@ -1,12 +1,12 @@
 # windowsweep — Portfolio Info
 
-Reference Date: 2026-09-03
+Reference Date: 2026-09-05
 Project Type: CLI utility — safe, developer-aware Windows disk and cache cleanup (Windows PowerShell 5.1 engine + zero-dependency Node.js launcher, published to npm)
 Project Slug: windowsweep
 Primary Email Reference: aoneahsan@gmail.com
-Current Version Reviewed: `1.0.1` (npm + git, same tree)
-Last Portfolio Update: 2026-09-03
-Next Eligible Update After: 2026-09-10
+Current Version Reviewed: `1.1.0` (npm + git, same engine)
+Last Portfolio Update: 2026-09-05
+Next Eligible Update After: 2026-09-12
 
 ---
 
@@ -28,7 +28,7 @@ Next Eligible Update After: 2026-09-10
 | iOS Bundle ID / Scheme | N/A |
 | Chrome Extension ID | N/A |
 | PyPI Package | N/A |
-| Docs URL | `windowsweep-docs.aoneahsan.com` — repository and GitHub Pages deployment exist and are green; the domain does not resolve yet (DNS CNAME is an owner task), so it is **not yet a live link** |
+| Docs URL | `windowsweep-docs.aoneahsan.com` — repository and GitHub Pages deployment exist and are green; the domain does not resolve yet (DNS CNAME is an owner task), so it is **not yet a live link**. Its page labels and repository topics were refreshed 2026-09-05 |
 | License | MIT (standard `LICENSE` file; `package.json` declares `MIT`) |
 | Author | Ahsan Mahmood — aoneahsan@gmail.com — https://aoneahsan.com |
 | Payment / Support URL | https://aoneahsan.com/payment?project-id=windowsweep&project-identifier=windowsweep |
@@ -104,6 +104,9 @@ The mark is a hazy window pane being wiped clean along a diagonal sweep, with th
 
 | Date | Type | Notes |
 | --- | --- | --- |
+| 2026-09-05 | Portfolio refresh | Facts moved to 1.1.0: 26 numbered sections (0–25), a 151-check self-test, the scripted-selection flags and the machine-readable `--json` contract, the deployed documentation site (domain pending an owner DNS record), and the desktop app's approved design direction 02 "Reclaim" (gates 1–3 recorded 2026-09-05). |
+| 2026-09-04 | Release `1.1.0` | Four new sections — a read-only global-packages audit (22), orphaned application data under AppData (23, interactive, Recycle Bin, fails closed on an unreadable registry), an idle installed-programs report (24) and a startup-items audit (25); `--select` and `--select-file` so a script or a GUI can drive the interactive sections; `--notify`; `candidates[]`, `targets[]`, per-section progress lines and `--list --json`; the Hugging Face hub cache; seven artefact-directory additions. Self-test 124 → 151. Tagged `v1.1.0` with a GitHub Release. |
+| 2026-09-03 | Documentation site | `aoneahsan/windowsweep-docs` (Docusaurus on GitHub Pages) built and deployed, mirroring `docs/`; `AI-INTEGRATION-GUIDE.md` written and shipped in the npm tarball. |
 | 2026-09-03 | Portfolio file created | First dated portfolio profile, written at version 1.0.1. Facts sourced from `README.md`, `package.json`, `CHANGELOG.md`, `LICENSE`, `docs/`, and the running tool. |
 | 2026-09-03 | Release `1.0.1` | Every P0 defect from the launch-day audit: `--yes` no longer selects anything in the personal and project sections, the `recycle` tier, the typed `--purge-all` confirmation, the VSIX cache split out from the running-editor guard, the npx installer refusal, engine exit 130, `--uninstall-data` always asking. Self-test grew from 108 to 124 checks. Tagged `v1.0.1` with a GitHub Release. |
 | 2026-09-03 | Release `1.0.0` | First release: 22 numbered sections, developer mode, the deletion chokepoint, a real dry-run, JSON session reports with Markdown and HTML export, the self-test, crash bundles, the Node and `.cmd` launchers, CI on both PowerShell hosts. |
@@ -124,7 +127,7 @@ windowsweep is the Windows member of a three-tool family with `linux-cleanup` (B
 
 Safety is the design constraint rather than a feature. Every byte removed passes `Remove-PathSafe` or `Send-ToRecycleBin` with a declared `-Within` root; the chokepoint refuses relative segments, UNC paths, drive roots, an explicit list of protected subtrees and patterns, and anything outside the declared root. Since 1.0.1 no flag combination selects a personal or project file: sections 17, 18 and 19 show their prompt even under `--yes` and default to none. The idle gate reads the newest of write, access and creation time, because Windows disables last-access tracking on most volumes — a rule that can only make a file look fresher than it is, so a mistake keeps a cache rather than removing one.
 
-Honest framing: this is Windows-only (`os: ["win32"]`), it deletes rather than archives, there is no undo for caches, and correctness rests on a 124-check self-test plus dry-runs and real runs rather than a conventional unit-test suite. Sections that need Administrator rights are skipped with the exact command when the console is not elevated, and the admin, Windows 11 and Scheduled Task paths are still on the verification list.
+Honest framing: this is Windows-only (`os: ["win32"]`), it deletes rather than archives, there is no undo for caches, and correctness rests on a 151-check self-test plus dry-runs and real runs rather than a conventional unit-test suite. Sections that need Administrator rights are skipped with the exact command when the console is not elevated, and the admin, Windows 11 and Scheduled Task paths are still on the verification list.
 
 ## Vision
 
@@ -140,19 +143,19 @@ Know modern developer caches better than a generic cleaner does; refuse to touch
 | --- | --- |
 | Core engine | Windows PowerShell 5.1-compatible script (`windowsweep.ps1`), also runs on PowerShell 7 |
 | Library | `lib/` — constants and the section catalogue, UI and prompts, logging and the JSON report, a long-path-safe filesystem walker, the safety chokepoint, config, the read-only scanners, the target-list engine |
-| Modules | 21 single-responsibility `modules/*.ps1` (one per section group, plus walkthrough, menu, runner, reports, crash trap, release helpers and the extra self-test groups) |
+| Modules | 26 single-responsibility `modules/*.ps1` (one per section group, plus walkthrough, menu, runner, reports, crash trap, notifications, release helpers and the extra self-test groups) |
 | Distribution | npm package `windowsweep` — zero-dependency Node.js launcher `bin/windowsweep.js` (`preferGlobal`, `engines.node >=14`, `os: ["win32"]`), plus `windowsweep.cmd` for machines without Node |
 | Reports | Schema-versioned JSON (schema 1); Markdown and self-contained dark-mode HTML export, generated in PowerShell with no external tools |
-| Documentation | In-repo `docs/` (12 pages) plus a Docusaurus site on GitHub Pages |
+| Documentation | In-repo `docs/` (13 pages) plus an AI integration guide and a Docusaurus site on GitHub Pages |
 | Scheduling | Weekly Scheduled Task installer (Sunday 03:00, safe batch) and a PowerShell profile alias |
 | Privacy | Zero network calls — no telemetry, no analytics, no update check; feedback is a user-initiated browser page and local zip bundles |
-| Verification | `--self-test` (124 checks: syntax, ASCII-only source, the protection lists, a real junction fixture, a 400-character path, the dry-run guarantee, keep-newest, prompt asymmetry, pure helpers and export fixtures); CI on both PowerShell hosts; PSScriptAnalyzer |
+| Verification | `--self-test` (151 checks: syntax, ASCII-only source, the protection lists, a real junction fixture, a 400-character path, the dry-run guarantee, keep-newest, prompt asymmetry, pure helpers and export fixtures); CI on both PowerShell hosts; PSScriptAnalyzer |
 | Versioning | Semantic Versioning; Keep a Changelog; a plain-text `VERSION` file; annotated tags and GitHub Releases |
 | License | MIT (permissive, OSI-approved) |
 
 ## Feature Catalog
 
-- **22 numbered sections (0–21)** — package-manager caches, build-tool caches, test-runner browsers, Android emulators, Docker, editor caches and extension leftovers, browser caches, desktop-app caches, Windows user caches, user temp, the Recycle Bin, Windows Update and system temp, the Disk Cleanup engine, DISM component store, the hibernation file, event logs, stale project build artefacts, partial downloads, large stale personal files, disk-image compaction, and a disk-usage report. Numbers are a public contract.
+- **26 numbered sections (0–25)** — package-manager caches, build-tool caches, test-runner browsers, Android emulators, Docker, editor caches and extension leftovers, browser caches, desktop-app caches, Windows user caches, user temp, the Recycle Bin, Windows Update and system temp, the Disk Cleanup engine, DISM component store, the hibernation file, event logs, stale project build artefacts, partial downloads, large stale personal files, disk-image compaction, a disk-usage report, and four audits that change nothing: globally installed packages, orphaned application data, installed programs nobody has touched, and everything that starts with Windows. Numbers are a public contract.
 - **Developer mode** — one question on the first run decides whether package, build and test-runner caches are pruned on the 100-day idle gate (keeping the newest version of every versioned tool) or cleared completely.
 - **One deletion chokepoint** — refuses drive roots, Windows, Program Files, the profile root, personal folders, credentials, toolchains, browser and editor state; asserts every deletion sits inside its declared target root; never follows a junction or symlink; handles paths beyond 260 characters; skips files another program holds open.
 - **A dry-run that writes nothing** — short-circuits every deletion helper and every destructive external command, reporting an exact estimate. `--scan` and `--list-targets` are read-only.
@@ -161,14 +164,16 @@ Know modern developer caches better than a generic cleaner does; refuse to touch
 - **Admin awareness** — admin sections skip with the exact command when the console is not elevated; `--elevate` relaunches through a UAC prompt into a new window with its own log and report.
 - **Running-app guard** — an open browser, editor or app keeps its caches, and the tool names which to close.
 - **Session reports** — schema-versioned JSON, a reports manager, Markdown and self-contained HTML export, run history and `--json` for scripting.
-- **Self-test** — 124 checks that prove the guards on the user's own machine before they trust it.
+- **Scripted selection and a machine-readable contract** — `--select` and `--select-file` answer an interactive section's selection in advance, by index or by full path; `--json` carries `candidates[]`, `targets[]` and per-section progress lines; `--list --json` prints the section catalogue so a front end never hard-codes it.
+- **Four read-only audits** — global packages, orphaned application data, idle installed programs and startup items. The `audit` profile runs the report-only ones; none of them uninstalls or changes a startup entry.
+- **Self-test** — 151 checks that prove the guards on the user's own machine before they trust it.
 - **Crash bundles** — captured locally on an unexpected exit; nothing is ever transmitted.
 - **Setup helpers** — a weekly Scheduled Task and a `cleanup` profile alias, both of which refuse to install from an npx cache that npm will evict.
 - **An AI integration guide** — the machine-readable contract (`--json` shape, exit codes, guarantees) for agents and scripts.
 
 ## Hidden Facts & Unique Angles
 
-- **One chokepoint, not a scattering of `Remove-Item` calls** — every deletion in 22 sections passes through a single function with a declared root, and the self-test asserts no declared target sits inside a protected path.
+- **One chokepoint, not a scattering of `Remove-Item` calls** — every deletion in 26 sections passes through a single function with a declared root, and the self-test asserts no declared target sits inside a protected path.
 - **The idle gate reads the newest of three timestamps** (write, access, creation) because Windows disables last-access updates on most volumes. The rule can only make a file look fresher than it is, so its failure mode is keeping a cache rather than deleting one.
 - **`--yes` cannot reach personal or project data.** That was not true at 1.0.0 — the launch-day audit found that auto-yes pre-selected every item in the interactive sections — and 1.0.1 fixed it with a `-NoAutoYes` switch plus a self-test that reads the module ASTs and fails if any picker call omits it.
 - **Zero network code, verified mechanically** — the self-test greps the source for HTTP and socket calls and fails the run if it finds one.
@@ -188,26 +193,26 @@ Know modern developer caches better than a generic cleaner does; refuse to touch
 
 ## Value & Potential
 
-windowsweep pairs a concrete recurring pain — a development machine filling up with regenerable caches — with an unusually disciplined safety and reporting model: a single chokepoint, an idle gate, layout-aware cache expansion with a second guard, schema-versioned reports, and a verifiable no-network stance. As a portfolio piece it demonstrates systems engineering in PowerShell against a hostile target (long paths, reparse points, locked files, an ANSI-reading host), pragmatic distribution (a zero-dependency Node launcher to reach npm users), and evidence-driven quality: a 124-check self-test where every check was proved to fail before it was trusted, and a launch-day audit that found and fixed a real safety defect within the day. Growth paths: the 1.1 family-parity features (a globals audit, orphaned app-data, installed-programs and startup reports, driver leftovers, toast notifications), and a Tauri desktop wrapper over the same script. Monetization is intentionally absent — MIT, free — with support routed through aoneahsan.com/payment.
+windowsweep pairs a concrete recurring pain — a development machine filling up with regenerable caches — with an unusually disciplined safety and reporting model: a single chokepoint, an idle gate, layout-aware cache expansion with a second guard, schema-versioned reports, and a verifiable no-network stance. As a portfolio piece it demonstrates systems engineering in PowerShell against a hostile target (long paths, reparse points, locked files, an ANSI-reading host), pragmatic distribution (a zero-dependency Node launcher to reach npm users), and evidence-driven quality: a 151-check self-test where every check was proved to fail before it was trusted, and a launch-day audit that found and fixed a real safety defect within the day. Growth paths: the remaining candidate target rows (driver leftovers, Telegram, Office, Steam shader caches), and a Windows desktop app — a Tauri 2 wrapper over the same script whose design was approved on 2026-09-05 and which reimplements no cleanup logic. Monetization is intentionally absent — MIT, free — with support routed through aoneahsan.com/payment.
 
 ## Resume / CV Bullets
 
-- Built windowsweep, a safe-by-default Windows disk and cache cleanup CLI (Windows PowerShell 5.1 engine, 21 single-responsibility modules, zero-dependency Node.js launcher) published on npm and runnable with one `npx` command.
-- Designed a single deletion chokepoint through which all 22 sections delete: it refuses drive roots, system directories, the profile root, personal folders, credentials, toolchains and browser or editor state, asserts every path lies inside the root its section declared, and never follows a junction or symlink.
+- Built windowsweep, a safe-by-default Windows disk and cache cleanup CLI (Windows PowerShell 5.1 engine, 26 single-responsibility modules, zero-dependency Node.js launcher) published on npm and runnable with one `npx` command.
+- Designed a single deletion chokepoint through which all 26 sections delete: it refuses drive roots, system directories, the profile root, personal folders, credentials, toolchains and browser or editor state, asserts every path lies inside the root its section declared, and never follows a junction or symlink.
 - Shipped an idle-gate model that prunes only caches untouched for 100+ days and keeps the newest version of every versioned tool, reading the newest of write, access and creation time because Windows disables last-access tracking.
-- Wrote a 124-check self-test (script syntax, ASCII-only source, protection lists, a real junction fixture, a 400-character path, the dry-run guarantee, AST checks on prompt call sites, pure-helper and export fixtures) and proved every check red against a planted defect before trusting it.
+- Wrote a 151-check self-test (script syntax, ASCII-only source, protection lists, a real junction fixture, a 400-character path, the dry-run guarantee, AST checks on prompt call sites, pure-helper and export fixtures) and proved every check red against a planted defect before trusting it.
 - Diagnosed and fixed a hot-path performance defect found in a real run — a per-file protection check costing 10.6 ms — by pre-normalising path prefixes and precompiling wildcard patterns, reaching 0.58 ms per call with identical verdicts across 35 probe paths.
 - Found and fixed a launch-day safety defect where auto-confirm pre-selected every item in the interactive personal and project sections, adding a switch plus an AST-based self-test check that fails if any picker call omits it.
 - Delivered schema-versioned JSON session reports with Markdown and self-contained HTML export generated without external tools, plus CI on both PowerShell hosts and a documentation site on GitHub Pages.
 
 ## LinkedIn / Portfolio Paragraph
 
-windowsweep is a safe, developer-aware Windows cleanup CLI I built and published on npm. Its PowerShell engine reclaims the disk space that quietly disappears on a development machine — npm, Yarn, pnpm, bun, NuGet, Cargo, Go, Gradle and Android caches, Docker layers, browser and editor caches, Windows Update leftovers, stale `node_modules`, half-finished downloads — while treating deletion as a reviewable operation. Every byte removed passes one chokepoint that refuses protected paths and asserts the target sits inside the root its section declared; junctions are never followed; personal files are listed for you to pick and go to the Recycle Bin. It asks once whether you are a developer and then keeps every cache used in the last 100 days, so the next install is still fast. It makes zero network calls — no telemetry, no update check — and a 124-check self-test proves the guards on your own machine, including a real junction and a 400-character path. A zero-dependency Node launcher means there is nothing to install: `npx windowsweep --scan`. MIT licensed, Windows 10 and 11, with a documentation site and an integration guide for agents and scripts.
+windowsweep is a safe, developer-aware Windows cleanup CLI I built and published on npm. Its PowerShell engine reclaims the disk space that quietly disappears on a development machine — npm, Yarn, pnpm, bun, NuGet, Cargo, Go, Gradle and Android caches, Docker layers, browser and editor caches, Windows Update leftovers, stale `node_modules`, half-finished downloads — while treating deletion as a reviewable operation. Every byte removed passes one chokepoint that refuses protected paths and asserts the target sits inside the root its section declared; junctions are never followed; personal files are listed for you to pick and go to the Recycle Bin. It asks once whether you are a developer and then keeps every cache used in the last 100 days, so the next install is still fast. It makes zero network calls — no telemetry, no update check — and a 151-check self-test proves the guards on your own machine, including a real junction and a 400-character path. A zero-dependency Node launcher means there is nothing to install: `npx windowsweep --scan`. MIT licensed, Windows 10 and 11, with a documentation site and an integration guide for agents and scripts.
 
 ## Social Content Angles (for the content project)
 
 - The caches a Windows dev machine hoards, and which of them are actually safe to delete.
-- One chokepoint, 22 sections: how a cleanup tool should be structured so a new section cannot invent its own delete.
+- One chokepoint, 26 sections: how a cleanup tool should be structured so a new section cannot invent its own delete.
 - Why the idle gate reads three timestamps on Windows, and why that bias is deliberate.
 - The launch-day audit that found `--yes` pre-selecting personal files — and the AST-based test that makes the fix permanent.
 - Watching a gate fail before trusting it: six planted defects and what each one proved.
@@ -237,7 +242,7 @@ windowsweep is a safe, developer-aware Windows cleanup CLI I built and published
 - **The idle gate is conservative by design** and will leave old caches behind; `--days` and `--purge-all` exist for that.
 - **Admin sections need an elevated console** and a UAC click, so a Scheduled Task runs the safe batch only. The admin path, a Windows 11 run and the Scheduled Task have not yet been exercised for real — they are on the verification list.
 - **Disk Cleanup (section 13) cannot preview** how much it will free; its dry-run lists the handlers only.
-- **No automated test suite beyond `--self-test`.** Correctness rests on 124 fixture-based checks, dry-runs, and real runs on Windows 10.
+- **No automated test suite beyond `--self-test`.** Correctness rests on 151 fixture-based checks, dry-runs, and real runs on Windows 10.
 - **The documentation site is deployed but its domain does not resolve yet** — the DNS record is an owner task.
 
 ## Generic Hashtags (always include in posts)

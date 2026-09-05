@@ -29,7 +29,7 @@ version, mode, host, user, elevation and dry-run state. `--cleanup-logs` deletes
 ```json
 {
   "schema_version": 1,
-  "credits": { "tool": "windowsweep", "tool_version": "1.0.0", "author": { "name": "...", "email": "...", "website": "...", "linkedin": "..." } },
+  "credits": { "tool": "windowsweep", "tool_version": "1.1.0", "author": { "name": "...", "email": "...", "website": "...", "linkedin": "..." } },
   "meta": { "started_at": "...", "finished_at": "...", "duration_seconds": 217, "host": "...", "user": "...",
             "os": "...", "powershell": "5.1.19041.7663", "mode": "all", "dry_run": false, "elevated": false,
             "developer_mode": true, "idle_days": 100, "temp_days": 3, "log_file": "...", "launcher": "node", "via_npx": true },

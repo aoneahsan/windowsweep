@@ -1,15 +1,17 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-09-03
-Verified Against: commit 84c732f on `main`, 2026-09-03 (1.0.0 released the same day; full audit the same day)
+Last Updated: 2026-09-05
+Verified Against: commit 2721b75 on `main`, 2026-09-05 (full audit; the 1.1.0 engine at 3c4d54e is unchanged since)
 
 ## Identity and outcome
 - Purpose: safe, developer-aware disk and cache cleanup CLI for Windows; the Windows member of the family with
   `linux-cleanup` (Bash) and `macleanup` (Bash).
 - Primary users: developers and power users on Windows 10/11 who want to see and control every deletion.
-- Current status: **1.0.1 released** (2026-09-03) - it carries the internal `Write-LogLine` rename plus every
-  P0 fix (RW-002 to RW-011). The self-test runs 114 checks. The docs site and the 1.1 feature set are the open
-  work; `remaining-work.md` holds the specification and the tracker holds the status.
+- Current status: **1.1.0 released** (2026-09-04) and equal to `main`: sections 0-25, the scripted-selection
+  flags, the `--json` contract, 151 self-test checks. The documentation site is deployed; its domain waits on
+  the owner DNS record. The desktop app design is approved (gates 1-3, 2026-09-05) and its code has not
+  started. The storytelling retrofit (P7) has not started. `remaining-work.md` holds the specification and the
+  tracker holds the status.
 - Distribution: `npx windowsweep`, `npm install -g windowsweep`, or a clone run through `windowsweep.cmd`.
   No other channel (owner decision 2026-09-03).
 - What is open, with evidence and acceptance criteria: `remaining-work.md` (root); status:
@@ -46,8 +48,10 @@ Verified Against: commit 84c732f on `main`, 2026-09-03 (1.0.0 released the same 
   never touched by design.
 - On the owner's machine (2026-09-03): hibernation to be disabled fully (`--hiberfil off`) in the admin step;
   the real run in the build session covered the safe batch in developer mode only.
-- The repo folder on the build machine stays `D:\work\windows-cleanup` until the owner renames it
-  (renaming the working directory mid-session breaks the session).
+- The two repositories live side by side under `D:\work\windows-cleanup-root\` (`windows-cleanup` = the
+  product, `windowsweep-docs` = the site). Owner decision 2026-09-05, asked which layout is durable: **"Keep
+  this layout as is"** - the inner folder names do not change. The 2026-09-03 rename row is closed as
+  superseded.
 - **Scope of "feature-complete" (2026-09-03):** the 1.0 catalogue plus the family-parity features shipped as
   1.1 - a read-only globals audit (22), an orphaned-AppData scan (23), an installed-programs idle report (24),
   a startup-items audit (25), driver/upgrade installer leftovers (26, admin), new target rows in sections 1, 8
@@ -60,6 +64,33 @@ Verified Against: commit 84c732f on `main`, 2026-09-03 (1.0.0 released the same 
   (free local GUI vs sign-in with plans) is decided when the phase opens.
 - **Releases (2026-09-03):** every release from 1.0.1 on gets an annotated tag `vX.Y.Z` and a GitHub Release;
   `v1.0.0` is tagged retroactively on `70c6738`, the commit the published tarball was built from.
+
+### Session 7 decisions (2026-09-05, the audit) - scope, the WIP commit, the layout, storytelling
+
+Asked to audit the whole project and rewrite its records, the owner settled four questions. His answers,
+verbatim, and what each one changed:
+
+- **"Yes, include it"** - asked whether "100% feature-complete and production-ready" includes the desktop app,
+  given that the 2026-09-03 decision had excluded it from the CLI percentage. So the headline number now
+  covers the whole project (CLI, docs site, records, desktop app, storytelling); the narrower 2026-09-03 scope
+  is still reported beside it, because that is the number the earlier records were written against.
+- **"Commit as its own design commit"** - the previous desktop session left twenty-one files uncommitted
+  (the eight A4 screens, their `page-*.js`, the contents index and the NAV wiring). They were committed as
+  `2721b75` after a static check resolved 456 local links and every NAV href, and pushed before the audit
+  commit, so the work could not be lost. This is the owner's explicit authorisation for a second commit in one
+  prompt.
+- **"Keep this layout as is"** - the two repositories now sit under `D:\work\windows-cleanup-root\` and the
+  inner folder names stay. `MANUAL-TASKS` row 4 (rename to `windowsweep`) is closed as superseded.
+- **"Retrofit everything"** - asked how the fleet storytelling rule applies to a project that shipped its
+  README, thirteen docs pages and a click dummy without a Story Bible, he chose the full retrofit. Phase P7:
+  `/story-init` and the Bible (GATE 1), the content map (GATE 2), then every product-voice surface through the
+  pipeline - the README, the docs pages, `llms.txt`, the CLI console strings and the desktop copy, whose words
+  are amended in the click dummy before the app is written.
+
+He also directed the session split: **"make sure fable 5.1 save the whole implementation plan fully and
+properly for opus 5, and once done stop"** - Fable wrote the handoff at
+`C:\Users\PC\.claude\plans\please-audit-the-whole-streamed-nest.md` and stopped; Opus 5 executed it without
+re-planning.
 
 ### Session 6 decisions (2026-09-05) - the dummy approved, both gates pre-authorised, downloads lifted
 
@@ -167,13 +198,14 @@ Derived from those decisions by the agent, under the standing rules:
   Registered 2026-09-03 in `~/.claude/palettes/project-palettes.json`.
 - **Dev ports:** 5972 (docs site start), 5973 (docs site serve), 5974 (desktop Vite dev URL), in
   `~/.dev-ports.json`.
-- **Portfolio:** `apps/WINDOWSWEEP_portfolio-info_2026-09-03.md` in the notebook, with a byte-identical copy at
-  this repository's root (outside the npm `files` allowlist). Entry added to the master links JSON with
-  `ownerReview` empty.
+- **Portfolio:** `apps/WINDOWSWEEP_portfolio-info_2026-09-05.md` in the notebook, with a byte-identical copy at
+  this repository's root (outside the npm `files` allowlist). Refreshed to 1.1.0 by the 2026-09-05 audit; the
+  master links entry reads `Published v1.1.0 (2026-09-04)` with `ownerReview` still empty (owner row 5).
 - **ORCID:** `windowsweep.bib` (`aoneahsan-windowsweep-2026`) in the notebook's ORCID folder and appended to
   `aoneahsan-all-works.bib`; the import and the work-type retype are owner rows in that folder's
   `MANUAL-TASKS.md` (row 24).
-- **Documentation site:** `aoneahsan/windowsweep-docs`, deployed to GitHub Pages and green. The domain
+- **Documentation site:** `aoneahsan/windowsweep-docs` at `D:\work\windows-cleanup-root\windowsweep-docs`,
+  deployed to GitHub Pages and green. The domain
   `windowsweep-docs.aoneahsan.com` does not resolve yet; `package.json` `homepage`, the README links and
   `WS_DOCS` in `lib/constants.ps1` switch only after it probes 200.
 
@@ -191,7 +223,8 @@ Derived from those decisions by the agent, under the standing rules:
 - `lib/safety.ps1` - the chokepoint and the protected lists; every change here is a safety change.
 - `lib/constants.ps1` - section catalogue, profiles, safe batch, version fallback (must equal `package.json` and `VERSION`).
 - `lib/actions.ps1` - `New-Target` rows + `Invoke-TargetList`; the cache-folder name allowlist for layout kinds.
-- `modules/release_helpers.ps1` - the self-test (108 checks incl. junction, dry-run, keep-newest, extension fixtures).
+- `modules/release_helpers.ps1` - the self-test groups [1]-[12]; `modules/self_test_extra.ps1` carries groups
+  [13]-[17]. 151 checks in total (junction, dry-run, keep-newest, extension, catalogue and contract fixtures).
 - `docs/sections.md`, `docs/cli-reference.md`, README section table - must agree with the catalogue.
 
 ## Verification
@@ -271,8 +304,12 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
   failed extraction can never read as "nothing disappeared".
 - Verify a published version from a directory OUTSIDE this repo: inside it, npx resolves the same-named local
   package and reports `'windowsweep' is not recognized` (`docs/troubleshooting.md`).
-- GitHub state after the audit: no topics, no homepage, wiki enabled, no tags, no Releases (RW-050).
 
 ## Open material unknowns
-- None for the CLI. The desktop app's account model (free local GUI vs sign-in with plans and an admin
-  panel) is decided when phase P6 opens.
+
+- **None for the CLI, and none for the desktop app's design** - both were settled by the owner decisions
+  recorded above. What is outstanding is owner *input*, not owner *decisions*: rows 15 (the Google OAuth
+  desktop client id), 16 (the GA4 / Amplitude / Clarity / Sentry keys) and 22 (the Build Tools UAC click); the
+  P1 verification runs (rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21); row 20 (the candidate-path probe that settles
+  RW-064, RW-065 and RW-066); rows 11-12 (the docs DNS record and Pages HTTPS); rows 5 and 13 (the
+  master-links review and the ORCID import); and the four storytelling gates as phase P7 reaches them.

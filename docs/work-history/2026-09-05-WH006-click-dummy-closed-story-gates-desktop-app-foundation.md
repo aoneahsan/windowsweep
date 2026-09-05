@@ -3,19 +3,20 @@
 | | |
 |---|---|
 | Date | 2026-09-05 |
-| Task | RW-073 to RW-075 (finish and verify the click dummy) · RW-043, RW-045 (docs-site residue) · RW-090, RW-091 (story init and content map) · RW-092 part 1 (the three desktop surfaces) · RW-077, RW-078, RW-080 (the desktop app's web layer, Tauri shell and CI) |
+| Task | RW-073 to RW-075 (the click dummy) · RW-043, RW-045 (docs-site residue) · RW-090, RW-091 (story init and content map) · RW-092 part 1 and GATE 4 (the three desktop surfaces) · RW-093 (the approved words into the dummy) · RW-076 · RW-077, RW-078, RW-080 in full · RW-079 agent half · RW-081 part one |
 | Duration | one long session, continued from WH005 |
-| Status | complete for the items named; blocked on the owner for GATE 4 and seven `NEEDS DECISION` answers |
+| Status | complete for the items named. Now blocked on the owner for rows 22 (Build Tools, which gates GATE 4 proper and the release) and 23 (creating the Firebase project), and on rows 11/12, 15, 16, 20 and the P1 runs |
 | Project | windowsweep, `D:\work\windows-cleanup-root\windows-cleanup` |
 | Developer | Ahsan Mahmood (aoneahsan) |
 | Model | Opus 5, executing the saved plan at `C:\Users\PC\.claude\plans\please-audit-the-whole-streamed-nest.md` and then the tracker |
 
 ## Executive summary
 
-The project moved from **55.45% to 70.55%** of the whole-project scope. Three things happened: the click dummy
+The project moved from **55.45% to 78.07%** of the whole-project scope. Four things happened: the click dummy
 was finished and verified and turned up four real defects; the storytelling system cleared both of its
 approval gates and produced the eleven desktop screens as a numbered slot inventory; and the desktop
-application stopped being a design and became a codebase that typechecks, lints and builds.
+application stopped being a design and became a codebase whose CI is green end to end; and the owner granted
+GATE 4 on the desktop copy, so the approved words are in the dummy and the app follows it.
 
 The single most valuable finding of the day was one character. A premature `*/` in `shared.css` had closed a
 comment five lines early, which made the CSS parser discard the entire `.band-bleed` ink reset while
@@ -114,6 +115,94 @@ instead; that, the fact-checker and a human reader are the real gate here.
   sweep, `cargo fmt --check`, `clippy -D warnings`, `cargo test`, `tauri build --no-bundle`) and
   `desktop-release.yml`, manual-dispatch only until the updater signing secrets exist.
 
+### 5. GATE 4, and the words into the dummy (RW-093)
+
+The owner granted GATE 4 on the three desktop surfaces and answered the two
+blocking questions. **No pricing claim anywhere** — Home and Account now say only
+what signing in does. **The installer ships unsigned**, the SmartScreen note
+stays, and the copy names the two verifiable artefacts exactly: a SHA-256
+checksum and the minisign signature the app's own updater checks, with the
+statement that neither is a code-signing certificate.
+
+All 38 approved slots went into the click dummy, then the app followed the dummy.
+Two internal identifiers were renamed with their labels (`clean`→`reclaim`,
+`preview`→`dryRun`, `cleanBtn`→`reclaimBtn`) — **an identifier still carrying the
+retired word is how the retired word comes back**, in the next component someone
+writes by copying its neighbour. Verified in both directions: every
+`data-ws-text` and `data-ws-action` a page declares has a writer or handler (43
+and 29), and no writer targets a key no page declares.
+
+### 6. The remaining seven screens (RW-077 complete)
+
+Splash, Picker, History, Report, Settings, Account and Elevation. The
+`Placeholder` scaffolding is deleted because it has no callers left. Three of them
+deliberately differ from the dummy, each for a stated reason: **Report derives
+every section key from the catalogue** rather than listing them (the dummy had
+named four sections by keys the engine does not use, on the one screen whose own
+disclosure claims it cannot disagree with the file on disk); **History shows the
+engine's own vocabulary**; and **Settings' Privacy tab reloads the window** when a
+destination is switched off, because a third-party script already loaded cannot be
+unloaded and a reload is the only way "revoking stops it immediately" is true.
+
+### 7. Four CI cycles, three real defects, and the check that made them local
+
+`desktop-ci` went green end to end on `4c031d7` — `cargo fmt`, `clippy -D
+warnings`, `cargo test` and `tauri build --no-bundle`. Getting there cost four
+cycles at roughly ten minutes each:
+
+1. `protocol-asset` enabled with no matching `tauri.conf.json` allowlist entry.
+   Nothing here loads a file through `asset://`, so the **feature** went, not the
+   config gained an entry.
+2. `bundle.resources` ended in `**`. In the Rust glob crate a trailing `**`
+   matches full path *components*, so tauri-build found four directories and no
+   files: `didn't match any files`. Now `**/*`.
+3. A `_resourcesNote` comment key, added in good faith. The config schema refuses
+   unknown fields outright.
+
+🔴 **All three were only findable in CI**, because the validation happens inside
+`tauri-build`, which needs the MSVC linker this machine does not have.
+`scripts/check-tauri-config.mjs` now validates against
+`node_modules/@tauri-apps/cli/config.schema.json` — the exact installed version —
+in `prebuild` and in CI. **Its own first three findings were all its own bugs**:
+it merged `required` across `anyOf` branches, and treated a free-form map as
+"nothing declared, therefore everything unknown". Fixed, `--self-check` plants an
+unknown field to prove it still catches one, and union-`required` is now left
+*unchecked* rather than checked wrongly — stated in the comment rather than
+hidden.
+
+### 8. A dev stand-in, a gate that leaked, and 264 combinations
+
+Outside a Tauri window there is no `invoke`, so every screen showed its
+engine-error state and could not be compared with the dummy at all — putting a
+design gate behind a 5 GB owner-only install. `src/lib/dev-engine.ts` answers the
+engine's contract in a development build: the real captured catalogue, plausible
+sizes, always a dry-run, every log line saying it is not the real engine.
+
+🔴 **Its gate took two attempts.** The first gated the call sites on
+`import.meta.env.DEV` and imported the module statically. Measured against
+`dist/`: the identifiers were gone and two of its string literals were still
+there — branches eliminated, module still in the graph. The import is now dynamic
+behind the same constant, re-measured, with a control string that must be found.
+**Gating a body is not gating a module.**
+
+The pass itself: the automation Chrome, headed, own profile and port. 11 screens ×
+4 widths × 3 treatments × light and dark = **264 combinations, 10,684 text
+nodes**, and zero failures on all six checks. Widths 760/1024/1440/1920 — **390 is
+deliberately absent**, because `minWidth` is 760 and a failure there is
+unactionable. Both gates watched failing on two different plants.
+
+🔴 **And the audit nearly missed the defect it found.** Vite's error overlay is a
+custom element in a shadow root, so the text walk never saw it — the first run
+reported eleven broken screens as clean, and only the overlay's own 9.6px "Hide
+Error" leaking into the tiny-text list gave it away. The defect: `Shell.tsx`
+resolved `getCurrentWindow()` during render, which throws outside a Tauri window,
+so every screen using the shell was broken with typecheck, lint and build all
+green. After the audit was corrected, 1,504 text nodes became **10,684** — the
+measure of how much of each screen the overlay had been hiding.
+
+**GATE 4 itself is still owed:** screenshot pairs judged by eye in the app's own
+WebView2, which needs owner row 22.
+
 ## Files created or modified
 
 `desktop/` gained ~30 files: `package.json`, `yarn.lock`, `.yarnrc.yml`, `.gitignore`, `.env.example`,
@@ -127,7 +216,7 @@ tracker, `docs/story/{run-state.json,decision-log.md,drafts/}`, and two workflow
 
 ## Current status
 
-Whole project **70.55%**; CLI-only scope **87.75%**. The engine is untouched: `git diff 3c4d54e..HEAD -- lib
+Whole project **78.07%**; CLI-only scope **87.75%**. The engine is untouched: `git diff 3c4d54e..HEAD -- lib
 modules windowsweep.ps1 bin` is still empty, so npm 1.1.0 still equals `main`.
 
 ## Next steps

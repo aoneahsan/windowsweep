@@ -3,7 +3,7 @@
   "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md at the repository root; this file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-09-05",
+  "lastUpdated": "2026-09-06",
   "planFile": "C:/Users/PC/.claude/plans/please-plan-and-get-agile-fairy.md",
   "overview": "docs/features/windowsweep-completion/00-overview.md",
   "specification": "remaining-work.md",
@@ -466,15 +466,15 @@
         {
           "id": "P6.toolchain",
           "title": "Install rustup and the C++ Build Tools, yarn install both trees, commit the lockfiles",
-          "status": "in_progress",
-          "note": "TASK-001 lifted 2026-09-05. rustup installed per-user via rustup-init.exe - rustc/cargo 1.98.1 verified. NOTE: winget install --id Rustlang.Rustup --scope user exits 0 having installed nothing (\"No applicable installer found\"), which reads exactly like success. Visual Studio 2022 Build Tools needs a UAC click and is MANUAL-TASKS row 22; until it lands nothing Rust-side links here and the Tauri half is CI-verified only. yarn install for both trees follows once desktop/package.json exists | 2026-09-05: rustc and cargo 1.98.1 verified present; cl.exe absent, so the Rust half stays CI-verified until MANUAL-TASKS row 22. The docs-site install is RW-045",
+          "status": "complete",
+          "note": "TASK-001 lifted 2026-09-05. rustup installed per-user via rustup-init.exe - rustc/cargo 1.98.1 verified. NOTE: winget install --id Rustlang.Rustup --scope user exits 0 having installed nothing (\"No applicable installer found\"), which reads exactly like success. Visual Studio 2022 Build Tools needs a UAC click and is MANUAL-TASKS row 22; until it lands nothing Rust-side links here and the Tauri half is CI-verified only. yarn install for both trees follows once desktop/package.json exists | 2026-09-05: rustc and cargo 1.98.1 verified present; cl.exe absent, so the Rust half stays CI-verified until MANUAL-TASKS row 22. The docs-site install is RW-045 | 2026-09-06: CLOSED. The owner lifted the UAC constraint (\"do not ask for any download part\"), so VS 2022 Build Tools 17.14.39 was installed by winget (exit 0), workload VCTools --includeRecommended, redirected to D:\\BuildTools with --nocache because C: had only 11.23 GB free; the Windows SDK path is fixed and still landed on C:. Cost 3.03 GB on C: and 3.37 GB on D:. Verified from the catalogue rather than from a green build: MSVC 14.44.35207 and Windows SDK 10.0.26100.0. Both yarn trees were already installed (desktop --immutable clean, docs site present). Cargo.lock is committed here and drops http-range, left over from the removed protocol-asset feature - CI found that feature but never pushed the lockfile.",
           "awaitingUser": false
         },
         {
           "id": "P6.verify-release",
           "title": "Local gates, run-to-verify over WebView2, updater keypair, first desktop-v release",
-          "status": "pending",
-          "note": "needs P6.toolchain for the Rust half; specification: remaining-work.md RW-081 (local gates, WebView2 run-to-verify, GATE 4) and RW-082 (the desktop-v1.1.0 release)",
+          "status": "in_progress",
+          "note": "needs P6.toolchain for the Rust half; specification: remaining-work.md RW-081 (local gates, WebView2 run-to-verify, GATE 4) and RW-082 (the desktop-v1.1.0 release) | 2026-09-06: the LOCAL GATES quarter is done - the whole desktop-ci chain ran green on this machine (cargo fmt --check, clippy -D warnings 1m19s, cargo test 1 passed, tauri build --no-bundle 3m57s for a 5.2 MB binary), and beyond CI both installers were produced: windowsweep_1.1.0_x64-setup.exe 2,483,662 B sha256 df1bd02f7a4fd85b557376fc302489c55c68edf59b5c6ae823a060575252ab00, and windowsweep_1.1.0_x64_en-US.msi 3,207,168 B sha256 dcd9509c331b26fabd150684362570ef873bd5dc816371e8af4060082d492061. Built with --config {\"bundle\":{\"createUpdaterArtifacts\":false}} so no committed file changed. The MSI was checked by reading its own File table, not the bundler exit code: 39 entries, windowsweep-desktop.exe at exactly 5,477,888 B plus all 38 engine files. STILL OPEN: run-to-verify over WebView2 (GATE 4 eye pass), the updater keypair, and the first desktop-v release.",
           "awaitingUser": false
         }
       ]
@@ -635,6 +635,12 @@
       "date": "2026-09-05",
       "phase": "P6",
       "summary": "Backend switched from Firebase to Supabase on the owner standing directive. Drizzle schema + two migrations (tables/RLS, and the paired privilege block), auth.ts on Supabase Auth PKCE reusing the Rust loopback listener unchanged, sync.ts on PostgREST at limit 20 keyset, CSP narrowed to *.supabase.co, desktop/firebase deleted, rows 15 and 23 rewritten. Gates green: typecheck 0, lint 0, build 0 warnings and no source maps, drizzle-kit check clean, the equivalence gate reports no schema changes, the dev-surface gate still absent from dist with its control found, anon granted nothing. 🔴 Blocked on row 23 by Supabase free-tier capacity - 14 of 14 slots used across 7 accounts.",
+      "commit": "pending"
+    },
+    {
+      "date": "2026-09-06",
+      "phase": "P6",
+      "summary": "The desktop build toolchain was installed and the desktop app was compiled, linked and packaged on this machine for the first time. MANUAL-TASKS row 22 is closed. VS 2022 Build Tools 17.14.39 -> D:\\BuildTools (MSVC 14.44.35207, Windows SDK 10.0.26100.0), installed off C: because it had 11.23 GB free; 3.03 GB landed on C: anyway for the SDK. Every desktop-ci step then ran locally and green: check:prepaint, check:tauri-config, typecheck, lint, build (zero warnings, no source maps), sync:cli, the bundled-engine floor at 38 files, cargo fmt --check, clippy -D warnings, cargo test (1 passed) and tauri build --no-bundle. Then NSIS and MSI installers, which CI does not produce at all. CLI self-test 151/151 and version parity 1.1.0 both unchanged - no engine file was touched. THREE CORRECTIONS came out of it. 1) The recorded cause of the old link failure was wrong: the GNU coreutils link.exe is STILL first on PATH and everything links regardless, because rustc resolves the MSVC linker by absolute path through the VS Setup COM API - the toolchain was simply absent and PATH order never mattered. 2) Cargo.lock still carried http-range from the removed protocol-asset feature, because CI compiles but never pushes a lockfile. 3) A first run of the Rust chain reported \"clippy exit 1\" that was really a failed log redirect into a non-existent scratchpad directory - clippy had not run at all, and reporting it as a Rust failure would have been wrong.",
       "commit": "pending"
     }
   ],

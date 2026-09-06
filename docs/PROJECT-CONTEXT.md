@@ -94,11 +94,14 @@ the pre-paint pass cannot be a module script (deferred, so it would flash) and t
 is retyping the table where it can drift. `yarn check:prepaint` fails the build on drift and was watched
 failing on a planted default change.
 
-🔴 **Rust cannot be compiled on this machine, and the error does not say so.** `cargo fmt --check` runs and is
-clean. `cargo clippy` fails at link time with `link: extra operand ...rcgu.o / Try 'link --help'` - because a
-GNU coreutils `link.exe` precedes MSVC's on PATH, so Cargo invokes the wrong program entirely. It reads like a
-Rust or Cargo bug. It is owner row 22, and `.github/workflows/desktop-ci.yml` is the only Rust evidence until
-that UAC click.
+🔴 **Rust compiles here as of 2026-09-06, and the reason recorded for why it could not was wrong about the
+mechanism.** Visual Studio 2022 Build Tools was installed to `D:\BuildTools` (MSVC 14.44.35207, Windows SDK
+10.0.26100.0) once the owner lifted the UAC constraint. The old note blamed a GNU coreutils `link.exe`
+preceding MSVC's on PATH and expected installing Build Tools to put MSVC's ahead of it. **It was right that
+the toolchain was absent and wrong about PATH**: the coreutils `link.exe` is still first on PATH and
+everything links regardless, because rustc resolves the MSVC linker by absolute path through the VS Setup COM
+API. PATH order never mattered. The whole `desktop-ci` chain now runs locally - `cargo fmt --check`,
+`clippy -D warnings`, `cargo test` (1 passed) and `tauri build --no-bundle` (3m57s, a 5.2 MB binary).
 
 **The storytelling pass reached GATE 4 for three surfaces and stopped there.** 375 numbered slots across the
 eleven desktop screens; 331 kept as already on voice. 🔴 **Seven `NEEDS DECISION` items went to the owner,

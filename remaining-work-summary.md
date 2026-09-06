@@ -24,7 +24,7 @@ production-ready, with the verification runs that only you can do still open.**
 | Docs site | 8 | 95% | DNS + HTTPS (rows 11-12) and the one-commit write-back that follows. The PNG OG card and the local install both closed 2026-09-05 |
 | Repository hygiene + owner records | 5 | 85% | homepage fields after DNS; your review of the master-links entry (row 5); the ORCID import (row 13) |
 | Desktop design (click dummy) | 8 | **100%** | nothing - closed 2026-09-05 with four defects fixed and every gate proved against a planted defect |
-| Desktop app (code, Tauri, Supabase, CI, release) | 24 | 68% | **all eleven screens are built, `desktop-ci` is green end to end, and a 264-combination browser pass found zero contrast, type or overflow defects.** Open: the Firebase project (owner row 23); Rust compiled locally (owner row 22 - CI-verified until then); **GATE 4 proper** - screenshot pairs judged by eye in the app own WebView2, which needs row 22; the `desktop-v1.1.0` release (RW-082) |
+| Desktop app (code, Tauri, Supabase, CI, release) | 24 | 68% | **all eleven screens are built, `desktop-ci` is green end to end, and a 264-combination browser pass found zero contrast, type or overflow defects.** Open: the Supabase project (owner row 23); **GATE 4 proper** - screenshot pairs judged by eye in the app own WebView2, now unblocked; the `desktop-v1.1.0` release (RW-082). Rust compiles, links and packages locally as of 2026-09-06 (row 22 closed) |
 | Storytelling retrofit (P7) | 10 | 55% | GATE 1 and GATE 2 are cleared and the three desktop surfaces are drafted (375 slots). Still open: your GATE 4 on those, the seven `NEEDS DECISION` answers, then eleven more surfaces - README, tagline, docs pages, `llms.txt`, CLI strings |
 
 Score = sum(weight x done) / 100 = 25 + 1.2 + 1.2 + 4 + 5 + 7.6 + 4.25 + 8 + 16.32 + 5.5 = **78.07**.
@@ -52,8 +52,8 @@ self-test 5, release 5, hygiene 5, records 5) = 30 + 18 + 1.5 + 10 + 8.5 + 5 + 5
    Supabase accounts are at the 2-project free-tier limit** - 14 of 14 slots, every one a real project -
    so windowsweep needs a **new account** before it can have a project, and both are yours to create
    (row 23). Row 15 follows it and is a **Web** OAuth client, not the Desktop one Firebase wanted.
-7. **Rows 15, 16, 22 (you).** The Google OAuth desktop client id, the four telemetry keys, the Build Tools UAC
-   click. Rust is CI-verified only until row 22.
+7. **Rows 15, 16 (you).** The Google OAuth client id and the four telemetry keys. Row 22, the Build Tools
+   install, was closed on 2026-09-06 - Rust now compiles locally, so nothing Rust-side is CI-only any more.
 8. **RW-081, RW-082 (agent).** The WebView2 run-to-verify pass, GATE 4 parity as screenshot pairs, then the
    `desktop-v1.1.0` release with NSIS, MSI and the updater artefacts.
 9. **Rows 11, 12 (you), then RW-040 (agent).** DNS `CNAME windowsweep-docs -> aoneahsan.github.io`, Pages
@@ -63,8 +63,8 @@ self-test 5, release 5, hygiene 5, records 5) = 30 + 18 + 1.5 + 10 + 8.5 + 5 + 5
 
 ## Owner-only rows (never executed by an agent)
 
-Rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21 (the P1 runs) · 11, 12 (DNS and Pages HTTPS) · 15, 16, 22 (the desktop
-credentials and the Build Tools click) · 20 (the candidate-path probe) · 5, 13 (master JSON review, ORCID
+Rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21 (the P1 runs) · 11, 12 (DNS and Pages HTTPS) · 15, 16 (the desktop
+credentials) · 20 (the candidate-path probe) · 5, 13 (master JSON review, ORCID
 import) · the four story gates as they arrive. All are rows in `docs/MANUAL-TASKS.md`; the story gates are asked
 in the session that reaches them.
 
@@ -73,8 +73,7 @@ in the session that reaches them.
 About **12-14 agent sessions** (3-4 hours each): 6-7 for the desktop app, 4-5 for the storytelling retrofit
 (about ten dispatches and roughly 1.3M tokens per surface, so surfaces are grouped), 0.5 for the docs-site
 residue, 0.5 for the candidate rows once the probe arrives, the rest for records and releases. About **8 hours
-of your time**: 3 for the P1 runs, 2 for the story gates, 1 for the desktop credentials and the Build Tools
-install, and the small rows.
+of your time**: 3 for the P1 runs, 2 for the story gates, 1 for the desktop credentials, and the small rows.
 
 Full detail with evidence, success criteria and acceptance points: `remaining-work.md`. Status of every item:
 `docs/features/windowsweep-completion/00-tracker.json`. What exists today: `what-this-project-consists-of.md`.

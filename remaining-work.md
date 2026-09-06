@@ -41,7 +41,7 @@ an approved Story Bible with every in-scope surface through GATE 4.**
 | Docs site | 8 | 95% | DNS + HTTPS (rows 11-12) and the write-back that follows. The PNG OG card and the local install closed 2026-09-05 |
 | Repository hygiene + owner records | 5 | 85% | homepage fields after DNS; the owner's review of the master-links entry (row 5); the ORCID import (row 13) |
 | Desktop design (click dummy) | 8 | **100%** | nothing - RW-073 to RW-075 closed 2026-09-05, four defects fixed, every gate proved red on its own plant |
-| Desktop app (code, Tauri, Supabase, CI, release) | 24 | 68% | all eleven screens built; RW-079 waits on owner row 23; Rust compiled locally (row 22); RW-081 run-to-verify and GATE 4 parity; RW-082 the release |
+| Desktop app (code, Tauri, Supabase, CI, release) | 24 | 68% | all eleven screens built; RW-079 waits on owner row 23; Rust compiles and packages locally since 2026-09-06 (row 22 closed); RW-081 run-to-verify and GATE 4 parity; RW-082 the release |
 | Storytelling retrofit (P7) | 10 | 55% | GATE 4 on the three drafted desktop surfaces, seven `NEEDS DECISION` answers, RW-093, then eleven more surfaces |
 
 Score = sum(weight x done) / 100 = 25 + 1.2 + 1.2 + 4 + 5 + 7.6 + 4.25 + 8 + 16.32 + 5.5 = **78.07% of the whole
@@ -530,8 +530,9 @@ the story pipeline (RW-093), and the amended words must be **in the dummy**. See
 
 ### RW-081 - Block X: local gates, run-to-verify, and GATE 4 (agent 2.5 h)
 
-- **Needs** the Build Tools (owner row 22). If the UAC click has not happened, everything Rust is reported as
-  **CI-verified only** and that half moves to a row - stated plainly, never rounded up.
+- **The Build Tools dependency is satisfied** (row 22 closed 2026-09-06; VS 2022 Build Tools at
+  `D:\BuildTools`, MSVC 14.44.35207, Windows SDK 10.0.26100.0). The local half of the acceptance points
+  below has been run and is green; what remains is the run-to-verify pass and GATE 4 itself.
 - **Acceptance points.**
   1. `yarn typecheck && yarn lint && yarn build` (zero warnings), `cargo fmt --check`,
      `cargo clippy -D warnings`, `yarn tauri build`.
@@ -568,12 +569,12 @@ the story pipeline (RW-093), and the amended words must be **in the dummy**. See
 
 ### RW-084 - The owner's three desktop rows (blocked)
 
-Row **15** the Google OAuth desktop client id · row **16** the GA4, Amplitude, Clarity and Sentry keys · row
-**22** the Visual Studio 2022 Build Tools UAC click
-(`winget install --id Microsoft.VisualStudio.2022.BuildTools --override "--quiet --wait --add
-Microsoft.VisualStudio.Workload.VCTools --includeRecommended"`, about 5 GB). rustup and cargo 1.98.1 are already
-installed per-user; without the MSVC linker nothing Rust-side builds locally and the Tauri half stays
-CI-verified.
+Row **15** the Google OAuth client id · row **16** the GA4, Amplitude, Clarity and Sentry keys. Both are
+still owner-only.
+
+🔴 Row **22** (the Visual Studio 2022 Build Tools install) is **CLOSED - 2026-09-06**, so this section is two
+rows, not three. The owner lifted the "never raise a UAC prompt" constraint and the install ran to
+`D:\BuildTools` (MSVC 14.44.35207, Windows SDK 10.0.26100.0). Nothing Rust-side is CI-only any more.
 
 ### RW-085 - Code signing (owner decision + cost)
 
@@ -691,6 +692,6 @@ RW-082 -> RW-083, with RW-092's CLI and docs surfaces folded in wherever a sessi
 | P3 residue (RW-040, 043, 045) | 0.5 | 15 min (DNS + Pages) |
 | P4 residue (RW-051, 055) | 0.25 | 15 min (JSON review, ORCID import) |
 | P5 residue (RW-064, 065, 066) | 0.5 after the probe | 10 min (the probe) |
-| P6 desktop (RW-073 to RW-083) | 6-7 | 1 h (Build Tools, Cloud Console rows) |
+| P6 desktop (RW-073 to RW-083) | 6-7 | 30 min (Cloud Console rows; Build Tools done) |
 | P7 storytelling (RW-090 to RW-093) | 4-5 | about 2 h across the gates |
 | **Total** | **12-14 sessions** | **about 8 h** |

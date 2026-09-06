@@ -1,6 +1,6 @@
 # windowsweep - Project Rules
 
-Last Updated: 2026-09-05 (session 8: the click dummy closed, all four story gates cleared for the desktop screens, the desktop app foundation built and gated) · Context pass: 2026-09-05 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
+Last Updated: 2026-09-06 (session 9: the C++ build tools installed, so the desktop app compiles, links and installs on this machine - row 22 closed) · Context pass: 2026-09-05 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
 
 Safe, developer-aware Windows cleanup CLI: a Windows PowerShell 5.1 engine behind a dependency-free Node
 launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macleanup` (Bash). Public repo
@@ -42,8 +42,10 @@ from it and a `--check` drift gate, i18n on every string behind a `no-restricted
 five Rust commands behind an **argument allowlist with its own unit test**, and an icon set exported from an SVG
 master carrying the sweep motif in the registered hue. 🔴 **All eleven screens are built** - Splash, Consent,
 Home, Run, Sections, Picker, History, Report, Settings, Account, Elevation - so RW-077 is complete and the
-placeholder scaffolding is deleted. 🔴 **Rust has not been compiled locally** - Visual Studio Build Tools is
-still absent (row 22), so `desktop-ci.yml` is the only Rust evidence, and it earned its place immediately by
+placeholder scaffolding is deleted. 🔴 **Rust compiles locally as of 2026-09-06** - row 22 is closed: VS 2022
+Build Tools 17.14 lives at `D:\BuildTools` (MSVC 14.44.35207, Windows SDK 10.0.26100.0), installed off C:
+because it had 11.2 GB free. For the whole build before that `desktop-ci.yml` was the only Rust evidence,
+and it earned its place immediately by
 catching **three** real defects across four cycles: the `protocol-asset` Cargo feature with no matching
 allowlist entry, a `bundle.resources` glob whose trailing `**` matches path COMPONENTS (four directories, no
 files), and a comment key the config schema refuses outright. 🔴 **`desktop-ci` is now GREEN end to end** on
@@ -61,7 +63,19 @@ DEV-only stand-in behind a **dynamic** import; 🔴 the first version gated the 
 shipped, so **gating a body is not gating a module** - verify with a grep of `dist/` plus a control. It found
 one defect no static gate could: `Shell.tsx` resolved `getCurrentWindow()` during render, which throws
 outside a Tauri window. 🔴 **GATE 4 itself is still owed** - screenshot pairs judged by eye in the app's own
-WebView2, which needs row 22.
+WebView2. Row 22 no longer blocks it: the app builds and installs here now, so the pass is unblocked and
+waiting only on the eye.
+
+**The local toolchain, proved 2026-09-06.** The whole `desktop-ci` chain ran green on this machine -
+`cargo fmt --check`, `clippy -D warnings` (1m19s), `cargo test` (1 passed) and `tauri build --no-bundle`
+(3m57s, a 5.2 MB binary) - and then, beyond anything CI does, real installers:
+`windowsweep_1.1.0_x64-setup.exe` (2.37 MB) and `windowsweep_1.1.0_x64_en-US.msi` (3.06 MB), built with
+`--config '{"bundle":{"createUpdaterArtifacts":false}}'` so no committed file changed and the updater keypair
+stays a separate release decision. 🔴 **The MSI was verified by reading its own File table, not the bundler's
+exit code**: 39 entries, `windowsweep-desktop.exe` at exactly 5,477,888 bytes plus all 38 engine files.
+🔴 **And the recorded cause of the old failure was wrong** - the GNU coreutils `link.exe` is still first on
+PATH and everything links regardless, because rustc resolves the MSVC linker by absolute path through the VS
+Setup COM API. The toolchain was simply absent; PATH order never mattered.
 
 **Gates run 2026-09-05, all green:** `yarn typecheck` exit 0 · `yarn lint` exit 0, with the i18n gate watched
 failing on two different plants (a literal JSX string and a literal `aria-label`) · `yarn build` zero warnings,

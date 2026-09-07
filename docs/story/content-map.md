@@ -31,6 +31,10 @@ The tone bands are the Bible's: **P** precision-before-an-irreversible-act (60),
 | 13 | `desktop-cockpit` (Sections, Picker, History, Settings, Report) | working | dense tables with a plain line above each | P, W in the empty states | a screen | varies per screen | none | **recorded** (GATE 4, 2026-09-05) |
 | 14 | `desktop-readme` (+ the docs-site desktop page) | evaluating the app | what it adds over the CLI, what it sends, the SmartScreen note | P, R | **~900 words** (raised from ~600, 2026-09-07) | download | none | **GATE 4 approved 2026-09-07, awaiting apply** |
 | 15 | `report-bodies` (the exported Markdown and HTML a run writes) | reading a record after the fact | headings and labels only; every number keeps the console's own vocabulary | P only | about thirty strings | none | none | **added 2026-09-07**, unwritten |
+| 16 | `site-home` (the marketing site's home bands and `/download`) | unaware to problem-aware, arriving cold | hero promise -> the gamble they already lost -> the guarantees as refusals -> proof -> the two install paths | P dominant, R strong, W once | a landing page, 12-15 bands | `npx windowsweep --scan` and the desktop download | SoftwareApplication, 🔴 **no `offers`, no `isAccessibleForFree`** | **added 2026-09-08**, unwritten |
+| 17 | `site-privacy` (`/privacy` and the footer notice line) | being told, not asked | the one line -> the four destinations -> the refusals -> the CLI's zero-network fact | **P and R only. 🔴 No humor at all** | one page | none | none | **added 2026-09-08**, unwritten |
+| 18 | `site-app` (sign-in, `/contact`, `/account`, `/admin`, empty and error states, 404) | working | plain lines above dense tables; every action names what it does | P, W in the empty states | a screen each | varies per screen | none | **added 2026-09-08**, unwritten |
+| 19 | `site-front` for the SITE (its `llms.txt`, per-route `<title>`/description, the JSON-LD text) | a machine, or a search result | answer-first | P only | short | none | WebSite + Organization | **added 2026-09-08**, unwritten |
 
 **Order of writing** (owner decision 2026-09-05, "story first, then the app"): rows **11, 12, 13** first,
 because RW-093 writes their approved words into the click dummy before any app code is built against them.
@@ -127,3 +131,38 @@ two places. Two surfaces describing one number in two vocabularies is exactly wh
 **Tone band P only, and no CTA.** A report is read after the fact, often to check what happened rather than
 to decide anything, so there is nothing to persuade and nothing to click. It ships with the same 1.2.0
 cascade as `cli-strings`, because it edits the same engine.
+
+## Amendment - 2026-09-08: rows 16 to 19, the marketing site
+
+The site did not exist when GATE 2 closed on 2026-09-05, and it does now: `aoneahsan/windowsweep-web`, a
+private repository deploying to `windowsweep.aoneahsan.com`, decided by the owner on 2026-09-07 as a web
+**app** rather than a brochure. Four of its surfaces carry the product's voice and therefore need rows.
+**GATE 2 for these four rows and GATE 4 for each finished surface are both pre-authorised** under the same
+standing condition as the eleven (owner decision D12, 2026-09-07): a lean review panel, the finalizer's
+fact-consistency check PASSING, and zero unanswered `NEEDS DECISION`. Either one failing pauses that surface
+alone and the run continues.
+
+**Row 17 `site-privacy` is a safety surface** and is marked so deliberately. It is the page that tells a
+reader their behaviour is recorded, that a session replay exists, and that **there is no switch** - the
+owner's decision of 2026-09-07, which is a statement of fact rather than a persuasion problem. Humor is off,
+the humor-emotion reviewer is mandatory, and no sentence may soften the absence of an opt-out into a
+promise it is not. It also has to hold two facts side by side without either one contaminating the other:
+**the command-line tool makes no network calls at all** and its own self-test fails the build if any appear,
+while **the desktop window and this site do send analytics**. Those are three different programs, and the
+page says which is which.
+
+**Row 16 is written first**, because the click dummy's home page is handed to the owner for its own design
+approval with placeholder-shaped structure in the bands this surface will fill. If GATE 1 is answered before
+row 16 finishes, the amended words are a GATE-4 parity change with a line in the design README - not a
+re-approval. Then 17, then 19, then 18.
+
+**Not surfaces, and the reasons matter.** `/changelog` renders `CHANGELOG.md` and inherits its existing
+exclusion - a factual record in Keep a Changelog format, which voice would make worse. The `/sitemap` page's
+labels are navigation. The `/admin` audit rows are data. And the site duplicates **no** documentation page:
+the docs site owns those words, so nothing here re-authors them.
+
+🔴 **No pricing claim appears on any of these four surfaces.** The product carries a standing exemption -
+no plan set, no paid tier - and the honest consequence is silence about price rather than an advertisement
+of free. `SoftwareApplication` on row 16 therefore carries **no `offers` and no `isAccessibleForFree`**:
+both would be pricing claims wearing schema clothing, and the second one has already had to be removed from
+two other artefacts in this project.

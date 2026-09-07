@@ -3,8 +3,8 @@
   "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md, which since 2026-09-07 lives at the WORKSPACE ROOT one level above this repository and is OUTSIDE git (a clone does not carry it - copy the whole windows-cleanup-root folder). The method is ../completion-plan-2026-09-07.md. This file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-09-07",
-  "planFile": "C:/Users/PC/.claude/plans/we-have-remaining-work-md-in-purrfect-wind.md",
+  "lastUpdated": "2026-09-08",
+  "planFile": "C:/Users/PC/.claude/plans/please-go-through-whole-binary-melody.md",
   "overview": "docs/features/windowsweep-completion/00-overview.md",
   "specification": "../remaining-work.md (the workspace root D:\\work\\windows-cleanup-root\\, OUTSIDE git since 2026-09-07 - copy the folder, not the clone). The method is ../completion-plan-2026-09-07.md.",
   "userDecisions": {
@@ -39,7 +39,12 @@
     "plannerDeviations": "Three calls the Fable planning session took and flagged for veto rather than hiding: (1) installer file names stay Tauri's canonical windowsweep_<version>_x64-setup.exe / _x64_en-US.msi rather than the build-stamped pattern the publishing rule asks of an APK, because latest.json and each .sig are keyed to the bundler's names and the updater downloads by that URL - the version already makes each name unique and the build date plus SHA-256 ride in the release body and SHA256SUMS.txt; (2) GATE 4 parity is measured at 1440 and 760, not 390, because tauri.conf.json sets minWidth 760; (3) the updater UI needs no new words - splash.html in the click dummy already specifies the whole update gate, so building it is a GATE 4 parity fix using approved copy.",
     "analyticsNoOptOut": "NO OPT-OUT (owner, 2026-09-07, verbatim): \"do not give user option to turn off any of those analytics or anything, it's a free production, just mention we use that to improve the product, with no option to opt out, they can just not use the product if they so not like it\", then \"keep it simple 1 line we collect to improve the product for everyone, sweet and simple\". SUPERSEDES the 2026-09-03 consent-dialog decision. Two boundaries he confirmed when asked: (1) RED the CLI STAYS OFFLINE - zero network calls is published in the README, the docs, llms.txt and the FAQ and self-test check [9] fails the build on any network call, so this covers the desktop window and the marketing site only; (2) Clarity session replay runs on both surfaces, with the marketing site carrying a plain notice. A concern was raised once (UK/EU web analytics needs consent rather than notice, and session replay is the sharpest case) and he confirmed, so it stands - the exposure is the marketing site, not the app. Applied dummy-first per frontend-ui-standards section 10a: consent.html is now a notice with one Continue, page-consent.js writes a seen-it flag rather than a per-provider map, Home's ledger states the four destinations instead of offering switches. RED The \"Never sent\" list was deliberately KEPT - a notice with nothing checkable in it is an announcement, and band R delivers reassurance as a specific refusal. RED This re-opens desktop-safety, a GATE-4-recorded surface; the keeper owes it a pass. And every string promising a destination can be revoked or turned off in Settings is now false - swept as a class.",
     "plannerDeviations2": "Three further calls the session took and flagged for veto rather than interrupting him. (1) The CONSOLE BANNER takes a short guarantee - \"names every path before it touches one\", 67 glyphs - instead of the shipped \"safe, developer-aware Windows cleanup\". Reason: the most-printed line in the product uses \"safe\" as an adjective, which the Bible forbids outright, and the approved 99-character tagline would draw a 107-glyph box that wraps in an 80-column console. The cli-strings writer recommended exactly this. (2) The TEN THEME AXES LEAVE THE SETTINGS TAB, because the dummy's page-settings.js explicitly states \"The theme axes are NOT duplicated here\" - so this was never an open question, the app had diverged from the specification. Settings instead GAINS the four engine preferences the dummy specifies and the app omitted: --days, --temp-days, --large-mb and --install-task. (3) The update band DROPS \"It installs when you close the app\", because Tauri's updater does not install on close - the approved sentence promised a behaviour the product cannot deliver, so the dummy was amended rather than the promise being shipped.",
-    "reportBodiesMapped": "The exported Markdown and HTML report bodies GET a content-map row (session decision, 2026-09-07). reports.ps1 emits about thirty user-visible strings with no map row and no recorded exclusion, and the cli-strings pass changed the console to \"Would reclaim (est.)\" while the report bodies keep the old verb. A surface that ships words a person reads is mapped; leaving it unmapped is how the two drift."
+    "reportBodiesMapped": "The exported Markdown and HTML report bodies GET a content-map row (session decision, 2026-09-07). reports.ps1 emits about thirty user-visible strings with no map row and no recorded exclusion, and the cli-strings pass changed the console to \"Would reclaim (est.)\" while the report bodies keep the old verb. A surface that ships words a person reads is mapped; leaving it unmapped is how the two drift.",
+    "siteRepoVisibility": "D9 (owner, 2026-09-07, verbatim option): \"Private\". aoneahsan/windowsweep-web is a PRIVATE repository, so .env MAY be committed as the recovery copy - every value in it is a public client identifier, and a server secret still never sits in a VITE_ var. No public docs site for it and no portfolio link to the repo; links point at the live site. It is NOT a client project: it lives under D:\\work, so auto-commit, auto-push and auto-deploy all apply.",
+    "siteAdminSurface": "D10 (owner, 2026-09-07, verbatim option): \"Minimal /admin\". A contact-request inbox with a status field, a users list and an immutable audit log; gated SERVER-SIDE by RLS on a platform role seeded out of band for zaionsmanager@gmail.com and aoneahsan@gmail.com. No plan administration - the standing no-paid-tier exemption, and no pricing claim anywhere. House promotions stay a static roster. Derived at windowsweep-web/docs/admin/ADMIN-SURFACE.md.",
+    "concurrencyCeiling": "D11 (owner, 2026-09-07, verbatim option): \"Six concurrent\". The 2026-09-07 exception is renewed for THIS run: up to six aoneahsan-ccca-* agents at once, scopes pairwise disjoint and verified before every dispatch. The standing rule (two) returns when this run ends. At least five distinct custom agents are dispatched in any case.",
+    "siteGates": "D12 (owner, 2026-09-07, verbatim option): \"Stop only at dummy GATE 1\". The site's home page and its three treatments are built EARLY and handed back for the owner's written approval; on his yes, click-dummy gates 2 and 3 are pre-authorised. The site's story surfaces are added to the content map, and story GATE 2 (the new rows) and GATE 4 (each surface) are pre-authorised on the same condition as the eleven: lean review, finalizer fact-consistency PASS, zero unanswered NEEDS DECISION. Everything else in the run proceeds while GATE 1 waits.",
+    "plannerDeviations3": "Nine further calls the 2026-09-07 late planning session took and flagged for veto rather than interrupting him; all stand unless he says otherwise. P4: the updater manifest's MSI default entry is NOT a defect - tauri-plugin-updater 2.11.0 searches [{os}-{arch}-{installer}, {os}-{arch}] and yields nsis for an NSIS-installed app, so no manifest post-processing. P5: the pending-wave declarations are BUILT, not declared away; seven of the eight ship, and pending.runProgress is re-classed prototype permanently (the dummy's sliding bar is prototype animation over invented phases, as its own text says). P6: the 1.2.0 cascade gains three ADDITIVE engine fields - targets[].newest_write_utc in --scan --json, protected in --list --json, and --exclude-path honoured by the deletion chokepoint for every section rather than only section 17. No deletion behaviour widens. P7: heldBack needs no engine change - it is the safe-batch scan subset minus the dry-run's estimated_bytes, and reads \"not measured\" until a dry-run has run this session. P8-D1: the site's contact requests REQUIRE sign-in (no captcha, no Edge Function, no new secret). P8-D2: the Supabase schema keeps ONE home in desktop/src/db/schema plus desktop/supabase/migrations; the site repo never runs db push and reads generated types instead. P8-D3: no android/ platform folder yet - Capacitor is wired, the platform is one command later. P8-D4: the site's theme control is a ONE-WAY promotion of the desktop's axes.json; same registered hue 128. P8-D5: the page set is /, /download, /changelog, /privacy, /contact, /account, /admin/*, /sitemap, /feed, /404. P9: the ecosystem roster had no windowsweep entry - added 2026-09-08."
   },
   "knownRisks": [
     "RESOLVED 2026-09-07, and it is the finding of the session: the app had NEVER been able to run its engine. RunRequest carried no #[serde(rename_all = \"camelCase\")] while engine.ts sends runId, so every run_clean was refused; and --list was absent from ALLOWED_FLAGS, so every catalogue load was refused. RED THEY WERE STACKED - fixing either alone leaves the app dead. Home rendered 0 of its 14 specified zones. Nothing could have caught it: cargo test exercised the argument validator rather than the deserialiser, and typecheck, lint and build have NO view across the IPC boundary. Two tests now cover it, each watched failing against the unfixed code; the deserialiser test also asserts snake_case is REJECTED, so the pair moves together and cannot pass for the wrong reason.",
@@ -71,7 +76,9 @@
     "The docs site's `story/**` build exclusion is VACUOUS and must not be cited as evidence. Measured 2026-09-07 while mirroring desktop.md: `docs/story/` does not exist in the windowsweep-docs repo at all - the story artefacts live in the CLI repo - so its zero matches in `build/` prove nothing. It is a pre-emptive defence, not a tested one. The MANUAL-TASKS exclusion beside it IS genuine: that file exists in the docs repo and produces zero matches, so the entry is doing real work. Two checks that look identical in a report, one of which means something.",
     "🔴 `docs/desktop.md` is the FIRST source page that arrives carrying its own front matter, and the docs repo now has a `.gitattributes` because of it. Every other CLI-repo page has none, and the docs site's CLAUDE.md section 4 describes front matter as something 'added on top of the mirrored body' - phrasing that assumes the source has none and says nothing about this case. The reading applied yields a byte-identical file (cmp clean, md5 300ab6ec83be1487ed13cec24f30aa39 both sides), so a re-mirror is a copy with no transformation. That is only durable because the docs repo had NO .gitattributes at all: with core.autocrlf true the mirror would have become CRLF while its source stayed LF, cmp would report a difference that is not a difference, and the natural response would be to 'fix' a file that was never wrong. Section 4 may want a sentence recording both.",
     "🔴 BEFORE desktop-v1.2.0: latest.json's DEFAULT entry points at the MSI, and the MSI is per-machine. Measured on the published 1.1.0 manifest: `windows-x86_64` resolves to windowsweep_1.1.0_x64_en-US.msi, with `windows-x86_64-msi` and `windows-x86_64-nsis` beside it and all three signatures correctly paired. But the app INSTALLS via NSIS with installMode currentUser, and its shipped copy says the installer is per-user and needs no administrator rights - while Tauri's WiX template is perMachine with no config knob. So an in-app update would download the MSI and raise a UAC prompt, contradicting the page. It does not affect 1.1.0, because nothing updates TO it; it affects the Wave 5 proof, which is a stated success criterion (the updater verified 1.1.0 -> 1.2.0 on this machine). tauri.conf.json's plugins.updater has no `windows` block today. Decide it deliberately before 1.2.0 and test the real flow rather than the manifest.",
-    "The release workflow lost a race with GitHub's own consistency on 2026-09-07, and the diagnosis nearly went the wrong way. tauri-action created the draft, and `gh release upload` one step later failed with a bare `release not found` - which reads exactly like 'you cannot upload to a draft'. The identical command from a workstation eight minutes on succeeded against the same draft, so it is eventual consistency and the fix is a retry, not a change of mechanism. The cost of losing that race is specific and nasty: the five artefacts tauri-action attaches all arrive, the release LOOKS complete, and the one file the shipped copy promises by name - SHA256SUMS.txt - is the one missing, so the failure lands exactly where a reader would go to check the promise. The assertion step that would have caught it never ran, because the upload failed first. Now six attempts over about a minute."
+    "The release workflow lost a race with GitHub's own consistency on 2026-09-07, and the diagnosis nearly went the wrong way. tauri-action created the draft, and `gh release upload` one step later failed with a bare `release not found` - which reads exactly like 'you cannot upload to a draft'. The identical command from a workstation eight minutes on succeeded against the same draft, so it is eventual consistency and the fix is a retry, not a change of mechanism. The cost of losing that race is specific and nasty: the five artefacts tauri-action attaches all arrive, the release LOOKS complete, and the one file the shipped copy promises by name - SHA256SUMS.txt - is the one missing, so the failure lands exactly where a reader would go to check the promise. The assertion step that would have caught it never ran, because the upload failed first. Now six attempts over about a minute.",
+    "RESOLVED at planning time 2026-09-07 (P4), from the plugin SOURCE rather than the manifest: the recorded risk that an in-app update would download the MSI and raise UAC does not apply to the NSIS install path. tauri-plugin-updater-2.11.0/src/updater.rs:618-624 searches [{os}-{arch}-{installer}, {os}-{arch}] in that order, and installer_for_bundle_type(bundle_type()) at :1504-1509 yields nsis for an NSIS-installed app - so the app resolves windows-x86_64-nsis and never touches the MSI entry. No manifest post-processing. The Wave 5 updater proof still exercises the real flow, and the platform key the plugin actually resolved is READ FROM THE REQUEST URL rather than inferred, which is what settles it.",
+    "RESOLVED 2026-09-08 (P9): the ecosystem roster at ~/.claude/rules/ecosystem-products.json had 12 entries and none of them was windowsweep - measured, not assumed. Added as entry 13, which is what makes every other product able to promote this one AND makes the two-layer self-exclusion meaningful here (D-9). The roster is vendored into the desktop dummy and the app with windowsweep dropped at vendor time, and the id filtered again in the display resolver; each layer is proved with the other removed."
   ],
   "phases": [
     {
@@ -299,6 +306,13 @@
           "status": "pending",
           "note": "Owner decision 2026-09-07 (needsDecisionAnswers). docs/faq.md becomes faq.mdx with a Head block; the payload is drafted in docs/story/drafts/docs-help.md, marked BLOCKED there. Gate: FAQPage present once in build/faq/index.html and zero times in build/cli-reference/index.html, watched failing.",
           "awaitingUser": false
+        },
+        {
+          "id": "P3.https-writeback",
+          "title": "RW-102: enforce HTTPS once GitHub issues the certificate, then the one-commit-per-repo link switch",
+          "status": "pending",
+          "note": "Blocked on GitHub, not on the owner: https:// probes 000 and the Pages API reports https_enforced false (re-polled 2026-09-08). When https:// answers 200: PUT the Pages API https_enforced=true, then switch README links, package.json homepage, WS_DOCS (inside the 1.2.0 cascade), gh repo edit --homepage on both repos, the master links JSON, the portfolio Docs row, and MANUAL-TASKS rows 11/12 plus the docs repo rows 1/2. Never switch one link early.",
+          "awaitingUser": false
         }
       ]
     },
@@ -363,6 +377,13 @@
           "status": "blocked",
           "note": "MANUAL-TASKS row 13. BibTeX cannot express the work type, so the retype is a manual step in the ORCID UI. Added 2026-09-07 for the same reason as row 5.",
           "awaitingUser": true
+        },
+        {
+          "id": "P4.close-out",
+          "title": "RW-111: portfolio refresh, master JSON, memory note, the summary recompute and the second-machine handoff text",
+          "status": "pending",
+          "note": "Wave 8. The portfolio file was eligible from 2026-09-08. BOTH pricing claims must go: line 35 \"N/A (free CLI tool; no paid tiers)\" and line 196 \"Monetization is intentionally absent - MIT, free\". Rename to WINDOWSWEEP_portfolio-info_<date>.md in BOTH locations, delete the old in both, cmp.",
+          "awaitingUser": false
         }
       ]
     },
@@ -561,6 +582,41 @@
           "status": "pending",
           "note": "Completion plan Wave 5. The only proof that .sig verification works end to end; the evidence goes in desktop/design/gate4/GATE4-REPORT.md and PROJECT-CONTEXT Verified runs.",
           "awaitingUser": false
+        },
+        {
+          "id": "P6.filed-defects",
+          "title": "RW-103: the five filed GATE 4 defects - D-8, D-9, D-13, D-21 (verify), D-22",
+          "status": "pending",
+          "note": "Wave 1, A-WEB. D-8: four Settings preferences (--days shared with Home's idle window, --temp-days, --large-mb, the --install-task toggle) plus the second theme surface removed from Settings. D-9: the ecosystem roster panel with two-layer self-exclusion, each layer proved with the other removed. D-13: the Splash skipped-note copy (\"says so\", not \"silently\") and the retry result delivered inline, dummy amended first. D-21: verify by READING the rendered runCmd slot, not the source. D-22: Run's idle hero shows 0 B and \"0 of N sections - not started\".",
+          "awaitingUser": false
+        },
+        {
+          "id": "P6.pending-tasks",
+          "title": "RW-104: PENDING-TASKS 003 to 007",
+          "status": "pending",
+          "note": "TASK-003 closed 2026-09-08 in the main session (the CRLF working-tree refresh; lib/constants.ps1 went from 0 to 93 CR bytes, windowsweep.ps1 to 316, README.md stayed 0, self-test 151/151). TASK-004 (elevated run: the log tail, the per-section choice, the --i-understand-deep gate) is Wave 1 batch 2 because it needs A-TAURI's list_run_files. TASK-005/006/007 are Wave 1 batch 1.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P6.pending-waves",
+          "title": "RW-105: the pending-wave declarations that need no engine change",
+          "status": "pending",
+          "note": "Wave 1. Picker's \"Remove these\" through a new Rust write_select_file; runCancel through cancel_run; the drives band and capacity ring through list_drives; the schedule toggle once --install-task is allowlisted; heldBack derived in lib/reclaim.ts (P7 - the safe-batch scan subset minus the dry-run estimate, reading \"not measured\" until a dry-run has run); runProgress re-classed prototype and declared permanently.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P6.pending-waves-1.2.0",
+          "title": "RW-106: the three pending waves that need the 1.2.0 contract fields",
+          "status": "pending",
+          "note": "Wave 4b, after yarn sync:cli against the 1.2.0 engine. mapIdle (tile shading and the Sections Idle column from targets[].newest_write_utc), protectedChips (from --list --json protected.subtrees and the five fixed category sentences), mapExclude (a tile click toggles a persisted exclusion that every run passes as --exclude-path).",
+          "awaitingUser": false
+        },
+        {
+          "id": "P6.telemetry-live",
+          "title": "RW-101: the four telemetry destinations live in a build",
+          "status": "pending",
+          "note": "The agent half is DONE 2026-09-08: the GA4 measurement id was read from the Firebase web app (1:123008957321:web:2f5720c514fc6dc5267f58), written to the FilesHub vault firebase service - confirmed by the response's own changes list, 8 fields created, and configured_services now names firebase and google_cloud - and the four VITE_* ids are GitHub repository VARIABLES on aoneahsan/windowsweep, listed back by name and value. The docs repo has its GA_MEASUREMENT_ID secret. Remaining: configuredFeatures().telemetry reporting per destination, the events TASK-005 promises, and the landing proof in all four dashboards (Wave 3 and Wave 5).",
+          "awaitingUser": false
         }
       ]
     },
@@ -603,6 +659,154 @@
           "title": "cli-strings: the one unwritten story surface, written last because it changes engine source and so lands with the 1.2.0 cascade",
           "status": "pending",
           "note": "Completion plan W3 (write + lean review + finalize) and W4-T1 (apply). RED ASCII-only - the engine's IRON rule 1 and self-test check [4]; no typographic quotes, dashes or ellipses. RED the story lint hook is blind to copy inside a code fence, so on this slot-shaped surface the fact-checker and a human reader are the only real gate.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P7.readme",
+          "title": "story surface readme: lean panel, finalizer, GATE 4 under the pre-authorisation, then apply",
+          "status": "pending",
+          "note": "Wave 2. Applies to README.md; the anchor and TOC contract is kept - every H2 keeps its <a id> and the TOC is regenerated in the same edit. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P7.site-front",
+          "title": "story surface site-front: lean panel, finalizer, GATE 4 under the pre-authorisation, then apply",
+          "status": "pending",
+          "note": "Wave 2. Applies to windowsweep-docs/docs/intro.md and static/llms.txt; applied by A-DOCS in the docs repo. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P7.docs-start",
+          "title": "story surface docs-start: lean panel, finalizer, GATE 4 under the pre-authorisation, then apply",
+          "status": "pending",
+          "note": "Wave 2. Applies to docs/installation.md and docs/quick-start.md; a developmental round already ran, so it continues at the line editor. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P7.docs-safety",
+          "title": "story surface docs-safety: lean panel, finalizer, GATE 4 under the pre-authorisation, then apply",
+          "status": "pending",
+          "note": "Wave 2. Applies to docs/safety-model.md and docs/developer-mode.md; a SAFETY surface - humor off, humor-emotion mandatory in the panel. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P7.docs-reference",
+          "title": "story surface docs-reference: lean panel, finalizer, GATE 4 under the pre-authorisation, then apply",
+          "status": "pending",
+          "note": "Wave 2. Applies to docs/sections.md, docs/cli-reference.md, docs/profiles.md, docs/admin-and-elevation.md, docs/reports-and-logs.md. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P7.docs-help",
+          "title": "story surface docs-help: lean panel, finalizer, GATE 4 under the pre-authorisation, then apply",
+          "status": "pending",
+          "note": "Wave 2. Applies to docs/troubleshooting.md and docs/faq.md; A-DOCS re-checks the FAQPage block's five strings against the new visible text. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P7.docs-about",
+          "title": "story surface docs-about: lean panel, finalizer, GATE 4 under the pre-authorisation, then apply",
+          "status": "pending",
+          "note": "Wave 2. Applies to docs/author.md; a developmental round already ran, so it continues at the line editor. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P7.ai-guide",
+          "title": "story surface ai-guide: lean panel, finalizer, GATE 4 under the pre-authorisation, then apply",
+          "status": "pending",
+          "note": "Wave 2. Applies to AI-INTEGRATION-GUIDE.md. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P7.report-bodies",
+          "title": "story surface report-bodies (content-map row 15): written, panelled, finalised, applied in the 1.2.0 cascade",
+          "status": "pending",
+          "note": "Wave 2 for the writing, Wave 4 for the apply. Written from modules/reports.ps1 strings as numbered slots, ASCII only, tone P, no CTA. The \"Would reclaim (est.)\" verb lands here too - it is row 15's reason for existing.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P7.keeper-batch",
+          "title": "the bible-keeper records every approved surface at once, last",
+          "status": "pending",
+          "note": "Wave 2, after the last surface. Records the Bible motifs and glossary additions, the decision-log run blocks, the global voice-registry entry and run-state recorded. Includes RE-recording desktop-safety with the notice-shaped Consent and the reworded Amplitude sentence (\"The same events, in a second analytics tool.\").",
+          "awaitingUser": false
+        }
+      ]
+    },
+    {
+      "id": "P8",
+      "title": "Marketing site (windowsweep-web) at windowsweep.aoneahsan.com",
+      "status": "in_progress",
+      "completedAt": null,
+      "subTasks": [
+        {
+          "id": "P8.repo",
+          "title": "The private repository, its folder, records and ports",
+          "status": "complete",
+          "note": "DONE 2026-09-08: gh repo create --private, git init at D:\\work\\windows-cleanup-root\\windowsweep-web, remote origin, branch main, .gitattributes/.editorconfig/.gitignore/.yarnrc.yml, README, CLAUDE.md = AGENTS.md, docs/PROJECT-CONTEXT.md, docs/MANUAL-TASKS.md, PENDING-TASKS.md, design/. Ports 5975 dev and 5976 preview registered in ~/.dev-ports.json (and the stale windowsweep-desktop path corrected there). FilesHub project repo_url set to the PRODUCT repo and three links recorded. First commit cb11936, pushed.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P8.dummy-gate1",
+          "title": "GATE 1: the owner approves the site dummy's home page and three treatments",
+          "status": "pending",
+          "note": "D12. The dummy is built early and handed back; everything else in the run continues while this waits. If GATE 1 is still unanswered when everything else is done, the run ends with the hand-back as its only open owner item.",
+          "awaitingUser": true
+        },
+        {
+          "id": "P8.dummy-complete",
+          "title": "The gallery and every remaining page, wired into one prototype that remembers",
+          "status": "pending",
+          "note": "Pre-authorised by D12 on the owner's yes to GATE 1. Eight gallery files with a playground each; the pages download, changelog, privacy, contact, account, admin-inbox, admin-users, admin-audit, sign-in, 404; six state flows; the four measured gates at 390/760/1440/1920 each watched red on two plants.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P8.schema",
+          "title": "The shared Supabase tables, from the DESKTOP repo (P8-D2)",
+          "status": "pending",
+          "note": "Wave 6, A-DB alone. profiles (platform_role written by nobody through the API), contact_requests (insert-own with a BEFORE INSERT rate-limit trigger and length CHECKs; admins update only status, handled_at, handled_by through a column-scoped grant), admin_audit (insert-only, immutable). Verified from information_schema.role_table_grants, pg_policies and pg_proc.proacl - never from the migration text - and probed as a seeded non-admin AFTER seeding, because a (200, 0) probe passes vacuously on an empty table.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P8.app",
+          "title": "The site app: every page in section 7.5 of the v2 plan",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P8.admin",
+          "title": "The /admin surface and its derived docs/admin/ADMIN-SURFACE.md with the three sweeps at zero gaps",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P8.seo",
+          "title": "Prerendered static HTML per route, JSON-LD with no offers, llms.txt, sitemap, feed, canonicals verified in the BUILT output",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P8.story",
+          "title": "The four site surfaces: site-home, site-privacy (a safety surface), site-app, site-front",
+          "status": "pending",
+          "note": "GATE 2 (the new content-map rows) and GATE 4 (each surface) are pre-authorised under D12 on the standing condition. Order: site-home first, because it unblocks the dummy hand-back with real words.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P8.deploy-verify",
+          "title": "firebase deploy --only hosting, then verification over the DEPLOYED origin",
+          "status": "pending",
+          "note": "The custom domain already answers with a valid certificate and returns 404 (probed 2026-09-08), so it is connected and nothing is deployed. The first 200 is what proves it; if 404 persists, that is MANUAL-TASKS row 24 and a console step.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P8.records",
+          "title": "The write-back once the site answers 200",
+          "status": "pending",
+          "note": "package.json homepage, gh repo edit --homepage on both repos, the README header link, the docs site's navbar Website item and its \"no separate marketing site\" comment, the master links JSON, the palette registry domain, the portfolio URL rows, both PROJECT-CONTEXT files.",
           "awaitingUser": false
         }
       ]
@@ -784,7 +988,9 @@
       ]
     }
   ],
-  "resumeInstructions": "RED Read ../completion-plan-2026-09-07.md (or C:/Users/PC/.claude/plans/we-have-remaining-work-md-in-purrfect-wind.md) - it is the METHOD, this file is the STATUS, and ../remaining-work.md is the SPECIFICATION. Never re-plan, and never re-derive the backend, the layout, the tagline or the release sequence: the eight owner decisions of 2026-09-07 are in userDecisions above. Poll three owner rows at the start of every session - 11/12 (does windowsweep-docs.aoneahsan.com probe 200 and is https_enforced true), 16 (are the telemetry fields non-blank in the FilesHub vault), and 15 (does https://nlmetjyytgwaxcliusuo.supabase.co/auth/v1/settings report external.google true) - and run the wave each one unblocks. Row 23 has landed, so Wave S runs right after Wave 0. Then take the first pending sub-task below.",
+  "resumeInstructions": "RED Read ../completion-plan-v2-2026-09-07.md - it is the METHOD (the morning plan ../completion-plan-2026-09-07.md keeps its sections 1, 4 and 9 in force; its waves W0/W1/W2/W-S are done). This file is the STATUS and ../remaining-work.md is the SPECIFICATION. Never re-plan, and never re-derive the backend, the layout, the tagline, the release sequence, the analytics decision or the site's scope - twelve owner decisions are in userDecisions above (D1-D8 from the morning, D9-D12 from the v2 planning session) and the planner's flagged calls are in plannerDeviations, plannerDeviations2 and plannerDeviations3. POLL AT THE START OF EVERY SESSION and run whatever each one unblocks: rows 11/12 (does https://windowsweep-docs.aoneahsan.com/ probe 200, and does the Pages API report https_enforced true), row 15 (does auth/v1/settings on nlmetjyytgwaxcliusuo report external.google true), and the site dummy's GATE 1 answer. Polled 2026-09-08 00:0x local: docs http 200 / https 000 / https_enforced false; external.google FALSE; https://windowsweep.aoneahsan.com/ 404 from Firebase Hosting with a valid certificate (connected, nothing deployed); ci green on e9dd863. Row 16 is CLOSED by the agent's own evidence: the Firebase web config is in the vault and the four VITE_* ids are GitHub repository variables. Then take the first pending sub-task below.",
   "auditPlanFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-streamed-nest.md",
-  "planCopy": "../completion-plan-2026-09-07.md"
+  "planCopy": "../completion-plan-v2-2026-09-07.md",
+  "planFileV1": "C:/Users/PC/.claude/plans/we-have-remaining-work-md-in-purrfect-wind.md",
+  "planCopyV1": "../completion-plan-2026-09-07.md"
 }

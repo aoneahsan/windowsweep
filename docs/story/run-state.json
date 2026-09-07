@@ -4,17 +4,17 @@
   "bibleApproved": true,
   "contentMapApproved": true,
   "phase": "approved",
-  "surface": "desktop-readme is GATE-4 APPROVED (2026-09-07) under the pre-authorisation - finalizer fact-consistency PASS, zero unanswered NEEDS DECISION - and is awaiting APPLY to README.md and a new docs/desktop.md. Four surfaces are now through gate 4; ten await their lean review. The keeper's Bible-and-registry pass is owed and batched.",
+  "surface": "The completion run's second session (2026-09-08). Nine product surfaces plus report-bodies await their lean panel; the marketing site added four more (rows 16-19). Developmental rounds are in flight on readme and docs-safety. The keeper's Bible-and-registry pass is owed and batched to the end, and it must RE-record desktop-safety, whose Consent half changed when the owner removed the analytics opt-out.",
   "round": 1,
   "gate": 4,
   "openDecisions": [
     "Open, not blocking: the voice fingerprint is still calibrated:false. It was built from repository evidence rather than from writing samples the owner supplied; /voice-calibrate would settle it.",
     "🔴 REOPENED 2026-09-07 - desktop-safety (Consent, Elevation) passed GATE 4 on 2026-09-05 and its Consent half no longer describes the product. The owner removed the analytics opt-out, so the screen is a notice rather than a choice. The new words came from amending the click dummy, which is where section 10a puts them; what is owed is the KEEPER pass, not a writer.",
     "🔴 FINGERPRINT SENTENCE 9 IS NOW FALSE. voice-fingerprint.md line 25 reads \"Nothing leaves this machine unless you turn it on.\" That was the app's thesis and it is no longer true of the desktop window - though it remains exactly true of the command-line engine, which is the whole subtlety. Recorded rather than edited, because the fingerprint is a GATE 1 artefact and narrowing a reference sentence re-runs that gate. Two shapes worth considering when it is taken up: narrow it to the engine (\"Nothing leaves this machine when you run the command-line tool\"), or replace it with the refusal that survived the change (\"Never a file path, never your user name, never the contents of anything\"). 🔴 AND BIBLE §3'S THIRD COMMITMENT HAS THE SAME PROBLEM - \"not telemetry, not an update check\" - found by the desktop-readme finalizer on 2026-09-07. It needs SCOPING TO THE ENGINE, not deleting: the engine still earns every word of it and its own self-test asserts so; the window no longer does. Both are GATE 1 artefacts, so both are reported and neither was edited.",
-    "NEEDS DECISION from the cli-strings draft, deferred rather than dropped: do the exported Markdown and HTML report BODIES get a content-map row? reports.ps1 emits about thirty user-visible strings with no row and no recorded exclusion. The session decided YES and recorded it in the tracker; the map row itself is still to be written."
+    "Open, not blocking, added 2026-09-08: content-map rows 16-19 (the marketing site) were added under D12's pre-authorisation of GATE 2. They are recorded as an AMENDMENT with the reason, not as a re-approval, because the map was approved on 2026-09-05 when the site did not exist. Row 17 site-privacy is flagged a SAFETY surface: it is the page that says there is no opt-out, and it must hold two true facts side by side without either softening the other - the command-line engine makes no network calls at all, and the desktop window and the site do send analytics."
   ],
   "escalatedAt": null,
-  "lastUpdated": "2026-09-07",
+  "lastUpdated": "2026-09-08",
   "notes": "The completion run opened 2026-09-07 under the plan at ../completion-plan-2026-09-07.md. GATE 4 is pre-authorised for the eleven remaining surfaces on a stated condition (gate4PreAuthorised), so a session applies an approved surface without stopping - but a finalizer FAIL or a fresh NEEDS DECISION still pauses that one surface. RED Two defects were found in copy this system had already approved: splash.html promises that the updater checks for a newer build and NOTHING in the app ever called the updater, and tauri.conf.json carried a plugins.updater.dialog key the plugin does not accept. Both were found by grepping for the mechanism rather than for the words, which is the sharpened form of the 2026-09-05 clause about approved artefacts holding claims nobody re-reads. RED And the story lint hook is blind to copy inside a code fence, so on the slot-shaped surfaces - cli-strings, and any .tsx copy - the fact-checker and a human reader are the only real gate; a green hook there is not evidence. | 2026-09-07 later: the analytics opt-out was removed by the owner mid-run, which re-opened a recorded surface - the first time that has happened here. The handling worth repeating: the words were changed in the CLICK DUMMY first and the reason written into the design README beside them (section 10a), so the person who reads the dummy to approve it sees why it changed; only then did the app follow. The voice decision inside that change was to KEEP the \"Never sent\" list against an instruction to keep it to one line, because band R delivers reassurance as a specific refusal and a notice with nothing checkable in it is an announcement. 🔴 And the cli-strings writer PROVED the fenced-copy blindness on its own file rather than citing the precedent: two banned words inside a slot fence went undetected (exit 0), the same two words in the commentary were both named (exit 2). That is a reproducible two-command proof and it belongs in the global record.",
   "gate4PreAuthorised": {
     "grantedAt": "2026-09-07",
@@ -29,17 +29,25 @@
       "docs-help",
       "docs-about",
       "ai-guide",
-      "cli-strings"
+      "cli-strings",
+      "report-bodies",
+      "site-home",
+      "site-privacy",
+      "site-app",
+      "site-front-site"
     ],
     "condition": "The finalizer's fact-consistency check PASSES and the surface carries zero unanswered NEEDS DECISION. Either one failing stops THAT surface only: the question goes verbatim into openDecisions below and into docs/MANUAL-TASKS.md the turn it arrives, and the run moves to the next surface rather than guessing.",
     "panel": "lean (/story-review --lean), the owner-named override for this run, then the finalizer",
-    "ownerWords": "Pre-approve after a lean review: each surface gets /story-review --lean then the finalizer. You grant GATE 4 in advance for all eleven, conditional on the finalizer's fact-consistency PASS and zero unanswered NEEDS DECISION. Opus applies each surface to the real files and re-mirrors the docs site; a new NEEDS DECISION pauses only that surface."
+    "ownerWords": "Pre-approve after a lean review: each surface gets /story-review --lean then the finalizer. You grant GATE 4 in advance for all eleven, conditional on the finalizer's fact-consistency PASS and zero unanswered NEEDS DECISION. Opus applies each surface to the real files and re-mirrors the docs site; a new NEEDS DECISION pauses only that surface.",
+    "extendedAt": "2026-09-08",
+    "extension": "Owner decision D12 (2026-09-07) extends this pre-authorisation to the marketing site: story GATE 2 for content-map rows 16-19 and story GATE 4 for each of those surfaces are pre-authorised on the SAME condition. Row 15 report-bodies joins on the same terms, having been mapped by the session decision of 2026-09-07. Note on the scope list: 'site-front' (row 9) is the DOCS site's intro plus llms.txt and was already in scope; 'site-front-site' is row 19, the marketing site's own machine-facing text. They are two surfaces with one unfortunate name, and keeping both spelled out here is cheaper than discovering the collision at apply time."
   },
   "resolvedDecisions": [
     "ANSWERED 2026-09-07 - GATE 4 on the ten drafted surfaces: granted in advance under the condition recorded in gate4PreAuthorised.",
     "ANSWERED 2026-09-07 - docs-about \"independent software engineer\": keep it, unchanged, one wording across every surface.",
     "ANSWERED 2026-09-07 - the tagline lives in FIVE places and the docs site carried a different sentence: the recommended line is approved and all five move together in the 1.2.0 cascade, which is also the decision to end the divergence.",
     "ANSWERED 2026-09-07 - content-map row 14 desktop-readme: cap raised from ~600 to ~900 words, so the what-it-sends disclosure survives instead of being cut to fit.",
-    "ANSWERED 2026-09-07 - row 6 declared a FAQPage schema that did not exist: implement it PAGE-SCOPED on the faq page only, as a docs-site code change. Adding it to headTags would claim the CLI reference is an FAQ."
+    "ANSWERED 2026-09-07 - row 6 declared a FAQPage schema that did not exist: implement it PAGE-SCOPED on the faq page only, as a docs-site code change. Adding it to headTags would claim the CLI reference is an FAQ.",
+    "ANSWERED 2026-09-07, applied 2026-09-08 - the exported report bodies DO get a content-map row. Row 15 exists and is now inside the GATE 4 pre-authorisation; it ships with the same 1.2.0 cascade as cli-strings because it edits the same engine."
   ]
 }

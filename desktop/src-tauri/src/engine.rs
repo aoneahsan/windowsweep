@@ -13,7 +13,7 @@
 //! never documented.
 
 use std::io::{BufRead, BufReader};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
 use serde::{Deserialize, Serialize};
@@ -129,6 +129,39 @@ fn validate(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
+/// 🔴 Turn a Windows VERBATIM path (`\\?\C:\...`) into an ordinary one.
+///
+/// This exists because of a defect that presented as total success. Tauri's resource
+/// resolver returns a verbatim path, and PowerShell's `Join-Path` **throws** on one:
+/// a verbatim path has no PSDrive, so `Join-Path` reports
+/// *"the value of argument \"drive\" is null"*. `windowsweep.ps1` dot-sources its eight
+/// libraries with `Join-Path $Script:WS_ROOT "lib\$lib.ps1"`, so **every one of them
+/// failed to load**, the script produced nothing at all, and PowerShell still exited
+/// **0** because a dot-source failure is non-terminating.
+///
+/// Measured on 2026-09-07 with the same script and only the path form differing:
+/// `\\?\C:\...\windowsweep.ps1` gave **0 bytes** of stdout; `C:\...\windowsweep.ps1`
+/// gave **4,397 bytes** listing 26 sections.
+///
+/// Nothing could see it. The path is valid, the file exists, `std::fs` reads it happily,
+/// and the process returns success — so typecheck, clippy, `cargo test` and a green
+/// build all passed while the app could not run its own engine. It took putting the two
+/// path forms side by side.
+///
+/// The UNC arm matters as much as the drive arm: `\\?\UNC\server\share` must become
+/// `\\server\share`, not `UNC\server\share`, or an install on a network path breaks in a
+/// new and more confusing way.
+fn strip_verbatim_prefix(path: &Path) -> PathBuf {
+    let s = path.to_string_lossy();
+    if let Some(rest) = s.strip_prefix(r"\\?\UNC\") {
+        return PathBuf::from(format!(r"\\{rest}"));
+    }
+    if let Some(rest) = s.strip_prefix(r"\\?\") {
+        return PathBuf::from(rest);
+    }
+    path.to_path_buf()
+}
+
 /// The bundled engine, resolved from the app's own resources.
 fn script_path(app: &AppHandle) -> Result<PathBuf, String> {
     let dir = app
@@ -139,7 +172,10 @@ fn script_path(app: &AppHandle) -> Result<PathBuf, String> {
     if !script.exists() {
         return Err("the bundled engine is missing from this installation".into());
     }
-    Ok(script)
+    // 🔴 Existence is checked on the ORIGINAL path, because `std::fs` is perfectly
+    // happy with a verbatim one - it is only PowerShell that is not. Stripping
+    // afterwards keeps the check strict and hands the shell something it can use.
+    Ok(strip_verbatim_prefix(&script))
 }
 
 /// Where this run's report and log are written, so an elevated second window and
@@ -236,10 +272,41 @@ pub async fn run_clean(app: AppHandle, request: RunRequest) -> Result<RunFinishe
         .map_err(|e| format!("the engine stopped unexpectedly: {e}"))?;
     let _ = pump.join();
 
+    let exit_code = output.status.code().unwrap_or(-1);
+    let stdout = String::from_utf8_lossy(&output.stdout).into_owned();
+
+    // 🔴 A SILENT TOTAL FAILURE MUST NOT PRESENT AS SUCCESS.
+    //
+    // `--json` guarantees exactly one summary line on stdout. When the engine could
+    // not load its own libraries, it printed nothing at all and PowerShell still
+    // exited 0, because a dot-source failure is non-terminating - so this command
+    // returned `exit_code: 0` with empty stdout and the screen showed a finished run
+    // that had done nothing. Exit code alone is not an outcome.
+    //
+    // So: if the caller asked for the machine contract, the absence of that one line
+    // is a failure whatever the process said. The message names the streams, because
+    // the log lines the window already received are where the real cause is.
+    //
+    // ⚠️ `--json` is appended to EVERY invocation above, so the condition has to be
+    // read off what the CALLER asked for, not off the built argument vector - and two
+    // read-only flags print their own shape rather than a summary, so they are exempt
+    // by name. Guarding on the built vector would have turned those two into failures
+    // the first time anything used them.
+    let wants_summary = !request
+        .args
+        .iter()
+        .any(|a| a == "--version" || a == "--self-test");
+    if wants_summary && stdout.trim().is_empty() {
+        return Err(format!(
+            "the engine exited with code {exit_code} and produced no JSON summary. \
+             It did not complete a run - read the log lines above for the reason."
+        ));
+    }
+
     let finished = RunFinished {
         run_id: request.run_id,
-        exit_code: output.status.code().unwrap_or(-1),
-        stdout: String::from_utf8_lossy(&output.stdout).into_owned(),
+        exit_code,
+        stdout,
     };
     let _ = app.emit("clean:done", finished.clone());
     Ok(finished)
@@ -319,6 +386,48 @@ mod tests {
             serde_json::from_str::<RunRequest>(snake).is_err(),
             "snake_case must be rejected, or the rename attribute is not doing anything"
         );
+    }
+
+    /// 🔴 The test for the defect that presented as total success.
+    ///
+    /// Tauri's resource resolver hands back a VERBATIM path (`\\?\C:\...`), and
+    /// PowerShell's `Join-Path` throws on one because a verbatim path has no PSDrive.
+    /// `windowsweep.ps1` dot-sources all eight of its libraries through `Join-Path`,
+    /// so every one failed, the script printed nothing, and PowerShell still exited 0.
+    /// Measured with only the path form differing: 0 bytes of stdout against 4,397.
+    ///
+    /// The last assertion is the one that matters. The first three could all pass
+    /// while a fourth prefix form slipped through; "the result never starts with the
+    /// verbatim prefix" is the property the shell actually depends on.
+    #[test]
+    fn strips_the_verbatim_prefix_powershell_cannot_use() {
+        let cases: [(&str, &str); 4] = [
+            // the ordinary install case
+            (
+                r"\\?\C:\Users\PC\AppData\Local\windowsweep\windowsweep\windowsweep.ps1",
+                r"C:\Users\PC\AppData\Local\windowsweep\windowsweep\windowsweep.ps1",
+            ),
+            // a network install: UNC must come back as \\server\share, never UNC\server\share
+            (
+                r"\\?\UNC\fileserver\apps\windowsweep\windowsweep.ps1",
+                r"\\fileserver\apps\windowsweep\windowsweep.ps1",
+            ),
+            // an already-ordinary path is returned untouched
+            (r"C:\tools\windowsweep.ps1", r"C:\tools\windowsweep.ps1"),
+            // and a plain UNC path is not mangled by the UNC arm
+            (
+                r"\\fileserver\apps\windowsweep.ps1",
+                r"\\fileserver\apps\windowsweep.ps1",
+            ),
+        ];
+        for (input, want) in cases {
+            let got = strip_verbatim_prefix(Path::new(input));
+            assert_eq!(got.to_string_lossy(), want, "input was {input}");
+            assert!(
+                !got.to_string_lossy().starts_with(r"\\?\"),
+                "a verbatim prefix survived, and PowerShell cannot use it: {input}"
+            );
+        }
     }
 
     /// The app reads what the engine can do rather than hard-coding it, so the

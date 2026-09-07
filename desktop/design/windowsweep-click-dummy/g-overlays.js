@@ -112,7 +112,7 @@
     body: ['It walks every target a real run would, measures what it would free, and writes the same ' +
            'report – then deletes nothing.',
            'Running it first costs a few seconds and is the only way to see the list before it goes.'],
-    actions: [['Close', '', true], ['Run the preview', 'btn-primary']] });
+    actions: [['Close', '', true], ['Run the dry run', 'btn-primary']] });
   dialog('ov-lg', { size: 'lg', title: 'Everything section 1 would remove', sub: '4.21 GB across 6 targets',
     scroll: true, actions: [['Close', '', true], ['Exclude all of these', 'btn-danger']] });
   dialog('ov-alert', { size: 'sm', danger: true, icon: '!', title: 'Delete 402 files permanently?',

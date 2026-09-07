@@ -28,7 +28,7 @@
       } else if (v.state === 'empty') {
         var val0 = el('div', 'stat-v', '—');
         st.appendChild(val0);
-        st.appendChild(el('div', 'stat-l', 'No run yet. Press Preview to find out.'));
+        st.appendChild(el('div', 'stat-l', 'No run yet. Press Dry run to find out.'));
       } else {
         var nums = { zero: 0, small: 4.2e6, typical: 4.271e10, huge: 1.4e13, widest: 999999.99e9 };
         var val = el('div', 'stat-v', db.fmt.bytes(nums[v.value]));
@@ -169,7 +169,7 @@
   /* ---- empty states -------------------------------------------------------- */
   var e = G.section('empty', 'Empty state', 'history, picker, report');
   var erow = el('div', 'spec-row');
-  [['No runs yet', 'windowsweep has not cleaned anything on this machine. A preview costs nothing and deletes nothing.', 'Preview what is reclaimable'],
+  [['No runs yet', 'windowsweep has not run on this machine yet. A dry-run costs nothing and deletes nothing.', 'See what is reclaimable'],
    ['Nothing to reclaim', 'Every cache is already empty or still inside its idle window. This is the good outcome.', null],
    ['Nothing matched that file', 'None of the 402 paths in your selection file matched a candidate this section offered. Check the paths, or drop the file again.', 'Choose another file']].forEach(function (x) {
     var cell = el('div', 'spec-cell');

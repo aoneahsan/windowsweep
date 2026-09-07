@@ -83,7 +83,7 @@
   var s = G.section('buttons', 'Button', 'every screen');
   G.row(s, [
     { label: 'primary', node: G.btn('Start the safe run', 'btn-primary') },
-    { label: 'default', node: G.btn('Preview first') },
+    { label: 'default', node: G.btn('Dry run first') },
     { label: 'ghost', node: G.btn('Cancel', 'btn-ghost') },
     { label: 'danger', node: G.btn('Delete permanently', 'btn-danger') },
     { label: 'link-style', node: (function () { var a = el('a', 'lnk', 'What does this delete?'); a.href = '#buttons'; return a; })() }

@@ -192,7 +192,7 @@
     var list2 = el('div', 'cmdk-list');
     list2.setAttribute('role', 'listbox');
     list2.appendChild(el('div', 'menu-label', 'Commands'));
-    [['Preview everything (dry run)', 'D'], ['Start the safe run', '⏎'], ['Open the last report', 'R']].forEach(function (x) {
+    [['Dry-run everything', 'D'], ['Start the safe run', '⏎'], ['Open the last report', 'R']].forEach(function (x) {
       var i = el('button', 'menu-item');
       i.type = 'button';
       i.appendChild(el('span', null, x[0]));

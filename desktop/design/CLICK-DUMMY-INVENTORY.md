@@ -426,3 +426,68 @@ The run finished.` where the dummy says `Ready to run`, the consent buttons' equ
 only in a source comment instead of in the dummy, the theme control missing on `consent` and `splash` (the
 dummy carries it on both), four Settings preferences silently absent, and the whole **More from the same
 developer** roster of §5 missing from About with no `pending-wave` note. Each is itemised in the report.
+
+---
+
+## 11. GATE 4 round two — 2026-09-07, the 15:40 build
+
+Section 10 recorded the first GATE 4 pass against the 13:46 build and its twenty defective pairs. The IPC
+boundary was fixed and the app reinstalled; this records the second pass. Full detail, both rounds:
+`desktop/design/gate4/GATE4-REPORT.md`. Round-one captures for the six re-judged screens are preserved at
+`gate4-evidence\round1\`.
+
+### Nine of eleven defects closed, and the app still cannot reach its engine
+
+`run_clean` now works: the camelCase payload the web layer sends is accepted and snake_case is **rejected**, so
+the pair moves together, and `--list` is allowed. Boot goes through `/splash`, Splash and Consent carry the real
+chrome, the title-bar buttons are no longer 0x0, Run's never-run state reads correctly, and the runs folder is
+named correctly on both sides.
+
+🔴 **But the engine still produces nothing, and the reason was in round one's report as prose rather than as a
+numbered defect — which is why it was not picked up.** Tauri's resource resolver returns a **verbatim `\?\`
+path**; `windowsweep.ps1:33` does `Join-Path $Script:WS_ROOT "lib\$lib.ps1"`, and **`Join-Path` throws on a
+verbatim path because it has no PSDrive**, so none of the eight libraries load, nothing prints, and
+`run_clean` returns **exit 0**. Measured through the app's own `clean:log`: 187 stderr lines, 33 naming
+`Join-Path`, 0 progress lines. The decisive pair — same engine, same arguments, one difference:
+
+| script path | stdout |
+|---|---|
+| `\?\C:\…\windowsweep.ps1` | **0 bytes** |
+| `C:\…\windowsweep.ps1` | **4,397 bytes** - v1.1.0, **26 sections, ids 0-25** |
+
+**A finding without its own number reads as commentary.** Number every one.
+
+### The lesson for this ledger: put the scope inside the number
+
+| | round 1 | round 2 | dummy Home |
+|---|---|---|---|
+| text nodes measured across 44 combinations | 1,188 | **1,194** | - |
+| **SVG text nodes** | **0** | **0** | **46** |
+| overflow / tiny text / contrast / focus-in-hidden | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 | - |
+
+Six zeroes again, and they mean the same narrow thing they meant in round one. **Home renders 2 of the ten
+marked zones** (`.titlebar` and `.statusbar` - the shell chrome, not content), **1 content band against the
+dummy's 7**, `innerText` 323 characters against 2,554, and **0 `<svg><text>` nodes against 46**. The treemap
+and the capacity ring have still never been measured in the packaged app. **A clean sweep is only as wide as
+what painted, so the node and SVG counts now travel beside every result rather than being argued afterwards.**
+
+### Two traps met while measuring, both worth keeping
+
+🔴 **`requestAnimationFrame` is throttled to zero in a headed Chrome window that is occluded**, so a settle
+helper awaiting two frames hangs forever the moment another window takes focus - and the failure looks exactly
+like a wedged renderer. It cost two `Runtime.evaluate` timeouts before the cause was found. Race rAF against a
+timer.
+
+🔴 **Check file mtimes before writing up a word divergence.** The app window rendered *"windowsweep is free,
+and this is how it gets better…"* where the dummy rendered *"This is how windowsweep gets better…"*. A pricing
+claim on a consent notice would be a serious finding. It was not one: `consent.html` and `en.json` were both
+edited at **15:52:11** and now agree, while the installed build is frozen at **15:40** - a stale artefact, not
+a live defect. `grep "is free"` finds zero hits in either file.
+
+### One live copy divergence found by comparing the words
+
+`splash.html:46` promises the update check *"is **skipped and says so**"*; `en.json:144`, edited **later**, says
+*"is **skipped silently**"*. Opposite promises, and the app's behaviour (a skipped note with `Try again`)
+matches the dummy rather than its own string. The amended consent notice itself is a **match**: one `Continue`,
+zero switches, and the `Never sent` panel present on Consent and on the Settings privacy tab with its four `on`
+badges and `refused`. Home's ledger could not be judged - the band never mounted.

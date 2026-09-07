@@ -1,23 +1,47 @@
 # desktop-readme — the desktop app's own page
 
-<!-- story-lint: allow "elevate" -->
-
 Content-map row **14** · surfaces a new **Desktop app** section in `README.md` and a new docs page
 `desktop.md` · awareness **evaluating the app** · structure **what it adds over the CLI, what it sends, the
-SmartScreen note** · tone bands **P, R** · length **~600 words total** · CTA **download** · schema **none**.
+SmartScreen note** · tone bands **P, R** · length **~900 words total** (raised from ~600 on 2026-09-07) ·
+CTA **download** · schema **none**.
+
+**Revision round, 2026-09-07.** Three developmental findings are applied, seven contradictions are closed,
+and one line-editor note is fixed. An owner decision landed between the two rounds and rewrote this
+surface's central beat, so the round-1 thesis is not patched here. It is replaced.
+
+**Line edit, 2026-09-07.** Five slots touched at sentence level - S-010, S-011, S-012, S-013 and S-016 - and
+the self-check's numbers brought into line with them. No fact, heading or slot moved. Word-neutral at 913.
 
 Slot-shaped, for two reasons. The README section has to be inserted into a file whose heading set is
 otherwise fixed, and `desktop.md` has to land in two trees at once.
 
-Everything below about what the app sends was written from `desktop/src/lib/sync.ts` rather than from the
-consent screen's summary of it, and the SmartScreen paragraph reproduces the wording approved on 2026-09-05
-and already shipping in `elevation.html` and `src/i18n/locales/en.json`. Where the two disagree, the code
-wins. The disagreement is reported.
+## What changed under this draft, and where its facts come from
 
-🔴 **One thing has to be settled before either artefact ships.** No desktop release exists.
-`gh release list` returns `v1.0.0`, `v1.0.1` and `v1.1.0`, all of them the command-line tool.
-`desktop-release.yml` is `workflow_dispatch` only until the updater signing secrets exist. So the download
-sentence has nothing to point at yet, and the slot at S-007 carries the question.
+The switches are gone. The owner removed the analytics opt-out - *"do not give user option to turn off any
+of those analytics or anything… just mention we use that to improve the product, with no option to opt
+out"* - and the click dummy was amended the same day, so the dummy's words are the specification for
+everything below about collection. `consent.html` is now a notice with a single **Continue**. Home's ledger
+states the four destinations as facts with an `on` badge, and the `Never sent` list survived on purpose,
+because band R delivers reassurance as a specific refusal rather than as an adjective. Nothing here
+re-litigates that.
+
+Everything about behaviour was read from the code rather than from a screen's summary of it: `sync.ts` for
+what a synced row carries, `analytics.ts` and `config.ts` for what this build can send, `engine.rs` for the
+flags and the run folder, `tauri.conf.json` and the built MSI's own Property table for what the two
+installers do. Where the app's `en.json` and the dummy disagree, the dummy wins and the divergence is
+reported. Where either disagrees with the code, the code wins.
+
+**The download CTA is real, with one ordering condition.** Round 1 carried a `NEEDS DECISION` because there
+was nothing to download; that is answered, and the section ships with the download line. The condition is
+the one the recommended option already named: **this section and this page land in the same change that
+publishes `desktop-v1.1.0`.** The tag comes first. Measured today, `git tag --list` returns `v1.0.0`,
+`v1.0.1` and `v1.1.0`, while `gh release list` returns their three releases and no drafts - so the desktop
+tag does not exist yet. The workflow behind it does. `desktop-release.yml` fires on a `desktop-v*` tag, the
+updater public key in `tauri.conf.json` is a real minisign key rather than the old placeholder, and its last
+two steps refuse to leave behind a release missing any of the six artefacts: both installers, both `.sig`
+files, `latest.json` and `SHA256SUMS.txt`. Applying the copy before the tag would put a live link in front
+of a reader with nothing behind it, which is the only thing the round-1 question was ever protecting
+against.
 
 | Artefact | Slot range | Count |
 |---|---|---|
@@ -25,114 +49,127 @@ sentence has nothing to point at yet, and the slot at S-007 carries the question
 | §B `desktop.md` (docs site + `windowsweep/docs/`) | S-009 – S-021 | 13 |
 | **Total** | | **21** |
 
+**Changed this round: 16** - S-001, S-003, S-004, S-005, S-007, S-009, S-010, S-011, S-012, S-013, S-014,
+S-015, S-016, S-017, S-019 (withdrawn), S-021. **Kept as drafted: 5** - S-002, S-006, S-008, S-018, S-020.
+Slot numbers are not reused or renumbered, so S-019 stays in the inventory as withdrawn rather than
+vanishing and taking its reason with it.
+
 ---
 
 ## §A `README.md` — the Desktop app section
 
-### S-001 · README.md:59 · the table-of-contents entry
+### S-001 · `README.md`, the Table of Contents · the entry
 ```
 - [🖥️ Desktop app](#desktop-app)
 ```
 **Was:** (new.)
 
-**Change:** added, between `[🎛️ Advanced Features]` and `[🚑 Recovery & Troubleshooting]`. That is the
-insertion point for the section itself as well: after Advanced Features, before Recovery. The CLI narrative
-runs from Why to Examples without a second product interrupting it, and a reader who has finished the
-capability list is the reader who wants to know whether there is a window. This is the only change to the
-file's heading set. It adds one `##` heading and one `<a id>`, taking the count from 28 to 29.
+**Change:** added, between the `[🎛️ Advanced Features]` and `[🚑 Recovery & Troubleshooting]` entries -
+lines 60 and 61 today. They are named by their text rather than by number because the `readme` surface's own
+edits move them. That is the insertion point for the section itself as well: after Advanced Features, before
+Recovery. The CLI narrative runs from Why to Examples without a second product interrupting it, and a reader
+who has finished the capability list is the reader who wants to know whether there is a window.
 
-### S-002 · README.md · the section heading and anchor
+**Corrected this round.** Round 1 said the file's heading set goes "from 28 to 29". It is **24 to 25**:
+`grep -c '^## ' README.md` returns 24, and `grep -c '<a id=' README.md` returns 24 as well. The 28 is the
+count of every heading level (`grep -c '^#\+ ' README.md`), which is what the `readme` draft's own parity
+line measures. Two drafts counting different things is how a parity check ends up arguing with itself, so
+the command is written down beside the number.
+
+### S-002 · `README.md` · the section heading and anchor
 ```
 <a id="desktop-app"></a>
 ## 🖥️ Desktop app&nbsp;[#](#desktop-app)
 ```
 **Was:** (new.)
 
-**Change:** added, in the file's existing heading shape: an explicit anchor, an emoji, and the self-link that
-every other section carries.
+**Change:** added, in the file's existing heading shape: an explicit anchor, an emoji, and the self-link
+every other section carries. Unchanged this round.
 
-### S-003 · README.md · the lede
+### S-003 · `README.md` · the lede
 ```
-A Tauri window that drives this engine rather than reimplementing it. It runs the bundled `windowsweep.ps1` with `--json --no-color`, reads its section list from `--list --json`, and contains no cleanup logic of its own - so the chokepoint, the protected lists and the refusals are the same ones the command line uses.
+A Tauri window that drives this engine rather than reimplementing it: it runs the bundled `windowsweep.ps1` with `--json --no-color` and carries no cleanup logic of its own. The chokepoint, the protected lists and every refusal are the command line's.
 ```
-**Was:** (new.)
+**Was (round 1):** three sentences ending *"…and contains no cleanup logic of its own - so the chokepoint,
+the protected lists and the refusals are the same ones the command line uses."*
 
-**Change:** added. The first thing a sceptical reader wants from a graphical wrapper over a destructive tool
-is confirmation that the wrapper cannot change the rules, and this says so with the two flags that prove it.
-Verified in `desktop/src/lib/engine.ts` and `lib/catalogue.ts`.
+**Change:** rewritten for two reasons. The line editor's note - that sentence ran **41 words against the
+fingerprint's 34-word ceiling** - and the single-home rule, since S-010 is the full version of the same fact
+and this is the pointer to it. Now 28 words and 12. Verified in `desktop/src-tauri/src/engine.rs:186`, where
+`--json` and `--no-color` are prepended to every invocation, and in `desktop/src/lib/catalogue.ts`, which
+refuses to hard-code a section list.
 
-### S-004 · README.md · what it adds
+### S-004 · `README.md` · what it adds
 ```
-- **A run you can watch** - the engine's own log as it arrives, beside a per-section table of what was reclaimed.
-- **A picker** for the sections that ask a person to choose, item by item.
-- **Settings that are flags.** Every control maps to a flag the engine already has.
+- **A run you can watch.**
+- **A picker** for the four sections that ask a person to choose.
+- **Settings that are flags.**
 
 Screen by screen: [Desktop app](https://github.com/aoneahsan/windowsweep/blob/main/docs/desktop.md).
 ```
-**Was:** (new.)
+**Was (round 1):** the same three bullets carrying their own explanations - the log as it arrives beside a
+per-section table, choosing item by item, every control mapping to a flag.
 
-**Change:** added, then cut from five bullets to three plus a pointer. The docs page is the single home for
-the screen list, and a README that repeats it is the trap the README surface reference names outright. Each
-surviving bullet names a screen that exists: `Run.tsx`, `Picker.tsx`, `Settings.tsx`. The third is the app's
-own Settings lede, shortened.
+**Change:** cut to the three labels and the pointer, from 54 words to 26. Two of the three explanations they
+carried are on the page in S-011, near enough word for word, and the picker's "item by item" went out of
+both. A README that repeats the page is the trap the README surface reference names outright. The vague
+plural also became a number: four rows in `lib/constants.ps1` carry
+`Batch = 'interactive'` - sections 17, 18, 19 and 23 - so "four" is checkable where "the sections" was not.
+Each label names a screen that exists: `Run.tsx`, `Picker.tsx`, `Settings.tsx`.
 
-### S-005 · README.md · what it sends
+### S-005 · `README.md` · what it sends
 ```
-Nothing, until you say so. The engine still makes no network calls. The window adds two switches: analytics to four named destinations, and an optional Google sign-in that syncs your settings and a summary of each run between your own machines. Both start off, and each is revocable. Never sent either way: a file path, a folder name, a drive label, your machine name or your user name.
+The engine still makes no network calls at all. The window sends usage and crash reports to improve the product for everyone, and there is no switch. Never sent: a file path, a folder name, a drive label, your user name, your machine name, or the contents of anything. Sign-in is separate and optional.
 ```
-**Was:** (new.)
+**Was (round 1):** *"Nothing, until you say so."* Analytics was one switch and sign-in the other - four
+named destinations behind the first, an optional Google account behind the second - both starting off and
+both revocable.
 
-**Change:** added, then cut. The nine fields a synced run actually carries live on the docs page at S-013,
-transcribed from the `SyncedRun` type in `desktop/src/lib/sync.ts`; enumerating them in both artefacts is the
-same single-home fault as S-004. What stays here is the refusal, which matches that module's own header
-comment and is the sentence a reader of this section needs. Reported below: the click dummy's Account table
-describes a run summary more narrowly than the code sends it.
+**Change:** rewritten. Every clause of the round-1 version described a product that no longer exists. There
+are no switches. Nothing starts off, and nothing is revocable. What replaces it is the shape the notice
+itself now uses: the collection stated as a fact, then the refusal that makes it checkable. The never-sent
+list is `consent.neverSent` and the dummy's own panel, word for word. The four destination names live once,
+on the page, and this beat no longer carries a fourth link to it - S-004 and S-006 already point there, and
+a README section that links the same page four times reads like it does not trust the reader to click.
 
-### S-006 · README.md · the SmartScreen line
+### S-006 · `README.md` · the SmartScreen line
 ```
 The installer is not signed with a paid code-signing certificate, so SmartScreen warns on first run. Every release publishes a SHA-256 checksum and a minisign signature the app's own updater checks; neither is a code-signing certificate. What to do about the dialog: [Desktop app](https://github.com/aoneahsan/windowsweep/blob/main/docs/desktop.md).
 ```
 **Was:** (new.)
 
-**Change:** added, then cut to two sentences and a pointer. The two artefacts are still named exactly, and
-"neither is a code-signing certificate" still lands here, because "not signed" followed by "publishes a
-signature" invites a reader to conclude one of the two is wrong - that reasoning is the decision log's,
-recorded 2026-09-05. What moved to the docs page is the *instruction*: More info, then Run anyway, plus the
-two paragraphs of context. The full three-paragraph disclosure ships once, verbatim, at S-015.
+**Change:** unchanged this round. Both artefacts are still named exactly. The clause "neither is a
+code-signing certificate" still lands here too, because "not signed" followed by "publishes a signature"
+invites a reader to conclude one of the two is wrong. The round-1 report that no step produced a checksum is
+**closed**: `desktop-release.yml` now hashes every installer into `SHA256SUMS.txt`, uploads it, then fails
+if the release is missing any of the six promised artefacts.
 
-### S-007 · README.md · how to install it
-
-**NEEDS DECISION:** this section needs a download sentence and there is nothing to download. No desktop
-release exists, `desktop-release.yml` runs on manual dispatch only until `TAURI_SIGNING_PRIVATE_KEY` exists,
-and `tauri.conf.json` still carries `"pubkey": "REPLACE_WITH_UPDATER_PUBLIC_KEY"`. Confirm one of: (a) the
-whole Desktop app section is held back and inserted in the same change that publishes the first desktop
-release, which is the option that keeps the README free of a claim a reader cannot act on; (b) it ships now
-with the interim sentence below, which says the app is not released and points at building from source;
-(c) it ships now with a link to the releases page, which is **not** recommended, because a reader who follows
-it finds three command-line releases and no installer. Option (a) is recommended.
-
-The release-day sentence, for whichever of (a) or (c) is chosen:
+### S-007 · `README.md` · how to install it
 ```
-Download the `.msi` or the `.exe` installer from [Releases](https://github.com/aoneahsan/windowsweep/releases). It installs for the current user, so it needs no administrator rights of its own; the sections that do open a second, elevated window when you ask for them.
+Download the `.msi` or the `.exe` installer from [Releases](https://github.com/aoneahsan/windowsweep/releases). What each one installs, and what Windows says the first time: [Desktop app](https://github.com/aoneahsan/windowsweep/blob/main/docs/desktop.md).
 ```
+**Was (round 1):** a `NEEDS DECISION` with three options, plus two candidate sentences - one for release
+day, one interim - and neither chosen.
 
-The interim sentence, for (b):
-```
-The desktop app is built and not yet released. Until the first installer is published, `git clone` the repository and run `yarn install && yarn tauri build` inside `desktop/`.
-```
+**Change:** the decision is resolved and this is the release-day sentence, shortened to the CTA and a
+pointer. The round-1 candidate also claimed the installer "installs for the current user, so it needs no
+administrator rights of its own", which is **false for the `.msi`**. Both instances are corrected. The
+evidence lives with the fix, at S-014. Install detail belongs on the page; the README's job here is the
+download.
 
-### S-008 · README.md:96 · the companion edit to `readme.md` S-021
+### S-008 · `README.md` · the companion edit to `readme.md` S-021
 ```
 **Not the right tool when** you want a set-and-forget cleaner that runs itself; when you are on Linux or macOS (use the siblings); when you want an undo for caches (there is none - they regenerate); or when you are looking for a security scanner or a registry cleaner. It reclaims disk space, nothing else.
 ```
-**Was:** **Not the right tool when** you want a graphical, set-and-forget cleaner; when you are on Linux or
-macOS (use the siblings); ... (unchanged from there).
+**Was:** `**Not the right tool when** you want a graphical, set-and-forget cleaner; when you are on Linux or
+macOS (use the siblings); …` (unchanged from there) - the paragraph beginning *"Not the right tool when"*,
+line 97 today.
 
-**Change:** the word "graphical" goes, in the same change that inserts the Desktop app section and not
-before. A file that offers a window fifty lines below cannot also list "graphical" as a reason to use
-something else. The clause keeps the half that stays true, which is the set-and-forget half: neither surface
-runs itself, and the Scheduled Task runs the safe batch only. Flagged from `readme.md` S-021 so the two
-drafts cannot drift.
+**Change:** unchanged this round. Only the line reference was off by one, and it is now given as text. The
+word "graphical" goes, in the same change that inserts the Desktop app section and not before. A file that
+offers a window fifty lines below cannot also list "graphical" as a reason to use something else. The clause
+keeps the half that stays true, which is the set-and-forget half. Neither surface runs itself, and the
+Scheduled Task runs the safe batch only. Flagged from `readme.md` S-021 so the two drafts cannot drift.
 
 ---
 
@@ -141,99 +178,168 @@ drafts cannot drift.
 Lands in **both** trees: `windowsweep-docs/docs/desktop.md` and `windowsweep/docs/desktop.md`, the
 repository copy first, per `CLAUDE.md`.
 
-### S-009 · desktop.md:1-5 · front matter
+### S-009 · `desktop.md:1-5` · front matter
 ```
 ---
 title: 'Desktop app'
-description: 'The windowsweep desktop window: what it adds over the command-line tool, what it sends, and the SmartScreen note on first run.'
+description: 'The windowsweep desktop window: what it adds over the command-line tool, what it collects, and the SmartScreen note on first run.'
 tags: [desktop, tauri, privacy, install]
 ---
 ```
-**Was:** (new.)
+**Was (round 1):** the same block, with the description reading *"…what it sends…"*.
 
-**Change:** added, in the shape every other page on the site uses. The description names the three things
-row 14 asks for, in the order the page answers them.
+**Change:** one word. "Collects" is what the product now does without asking, and "sends" reads as
+conditional next to a page whose whole point is that nothing here is conditional. The description still
+names the three things row 14 asks for, in the order the page answers them.
 
-### S-010 · desktop.md · the H1 and the answer-first paragraph
+### S-010 · `desktop.md` · the H1 and the answer-first paragraph
 ```
 # Desktop app
 
-The desktop app is a window over the same engine. It runs the bundled `windowsweep.ps1` with `--json --no-color` and reads its section list from `--list --json`, so it reimplements no cleanup logic: the deletion chokepoint, the protected lists and every refusal are the ones the command-line tool already enforces. Nothing leaves the machine unless you turn it on.
+The desktop app is a window over the same engine. It runs the bundled `windowsweep.ps1` with `--json --no-color` and reads its section list from `--list --json`. It reimplements no cleanup logic: the chokepoint, the protected lists and every refusal are the ones the command line enforces. The two differ in what leaves the machine, and that has three answers.
 ```
-**Was:** (new.)
+**Was (round 1):** the same opening, ending *"Nothing leaves the machine unless you turn it on."*
 
-**Change:** added. Fifty-nine words, answer-first, ending on voice-fingerprint sentence 9 verbatim, which is
-also the consent screen's heading. Three surfaces, one sentence.
+**Change:** the thesis is replaced, which is finding 1. The old closing sentence was voice-fingerprint
+sentence 9 and the consent screen's heading. It is now false twice over: there is no "unless you turn it
+on", and the startup update check was always a third call the sentence quietly disowned. The open loop it
+carried was a promise the page could not keep, so it is replaced by one it can - a distinction, closed at
+S-013 with exactly three answers.
 
-### S-011 · desktop.md · what it adds
+**Why the new thesis cannot be falsified by a later release.** It asserts a *split*, not a state. The engine
+half is guarded by self-test check [9], which fails the build on a network call. The window half is the
+owner's standing decision, and a later release that added a switch would only make the page cautious rather
+than wrong. The third half - two calls that run regardless - is structural: the updater is a boot step and
+the WebView2 fetch belongs to the installer. Neither is a setting. Nothing in it depends on which keys
+happen to be in a build, which is exactly the mistake the round-1 sentence made.
+
+Fifty-nine words, answer-first, the longest sentence in it 20. The line edit took one word out of the last
+sentence: "Where the two differ is" became "The two differ in", which says the same thing without the cleft.
+
+### S-011 · `desktop.md` · what it adds
 ```
 ## What it adds over the command line
 
 Nothing to the deletion behaviour. Everything to what you can see while it happens.
 
-The catalogue becomes a table you can filter. A run shows the engine's own log as it arrives, beside a per-section table of what was reclaimed. The four sections that ask a person to choose get a picker, where you tick rows one at a time - the decision the command line takes with `--select`. History and reports are on screen, and the report JSON is still written to disk. Every control in Settings maps to a flag the engine already has, so anything you set here you can also type.
+The catalogue becomes a table you can filter. A run shows the engine's own log as it arrives, beside a table of what each section reclaimed. The four sections that ask a person to choose get a picker. Every control in Settings maps to a flag the engine already has, so anything you set here you can also type.
 ```
-**Was:** (new.)
+**Was (round 1):** the same block at 112 words, with a clause on ticking rows one at a time and a sentence
+on History, reports and the report JSON.
 
-**Change:** added. The heading is the question a reader arrives with. The two-sentence answer under it is the
-whole page in fourteen words, and putting "nothing to the deletion behaviour" first is the order this product
-uses everywhere.
+**Change:** trimmed from 112 words to 80, headings included in both. History and the report file have
+their own screens and their own reference page, and the two cut clauses were the least load-bearing words
+in the surface. The heading is the question a
+reader arrives with. Putting "nothing to the deletion behaviour" first is the order this product uses
+everywhere. **Line edit:** "a per-section table of what was reclaimed" is now "a table of what each section
+reclaimed". Active voice, same eight words.
 
-### S-012 · desktop.md · what it does not do
+### S-012 · `desktop.md` · what it does not do
 ```
 ## What it does not do
 
-It never raises its own privileges. Six sections need Windows to ask your permission first; ask for one and the app opens a second, elevated window that runs only those sections and writes its own report, while this window keeps running unelevated and tails the log. It does not remove the deep-section gate. It does not answer a picker for you.
+It never raises its own privileges. Six sections need Windows to ask your permission first. Ask for one, and a second, elevated window runs only those sections and writes its own report, while this one keeps running unelevated and tails the log. It does not remove the deep-section gate.
 ```
-**Was:** (new.)
+**Was (round 1):** the same three claims, with the middle sentence running to 40 words and a fourth
+sentence, *"It does not answer a picker for you."*
 
-**Change:** added. The middle sentence is condensed from the elevation screen's approved lede and timeline
-without altering a claim. Six is checkable: six rows in `WS_SECTIONS` carry `Admin = $true`, and the app's own
-heading counts them rather than hard-coding the number.
+**Change:** the middle sentence was the line editor's second 40-word finding. The writer brought it to 36 and kept it whole,
+on the argument that it carries the whole elevation mechanism; the line edit then split it at its own
+semicolon into 9 and 27. The first half is the fingerprint's sentence 5 word for word, and the second still
+carries the mechanism; a full stop moves no fact and sends nobody off the page. A comma also went in before
+"and a second, elevated window", so "Ask for one and a second" can no longer be read as one request for two
+things. Six is checkable - `grep -c 'Admin = \$true'
+lib/constants.ps1` returns 6, and the app's own heading counts the rows rather than hard-coding the number.
+The picker refusal went because S-011 already says the picker is where a person chooses.
 
-### S-013 · desktop.md · what leaves the machine
+### S-013 · `desktop.md` · what leaves the machine
 ```
 ## What leaves the machine
 
-Two things can. Both are off until you switch them on.
+Three answers, because three different things are running.
 
-**Analytics.** Four destinations, named on the first-run screen: product analytics, behaviour analytics, session replay and crash reports. Each is a separate switch, revocable in Settings, and revoking one stops it immediately. Declining is a first-class answer.
+**The engine sends nothing, ever.** No network calls at all, and a self-test check fails the build if one appears.
 
-**Sign-in and sync.** Optional, Google, and it opens your normal browser rather than a window inside the app, so you can see the address bar. What it uploads, in full:
+**The window sends usage and crash reports, to improve the product for everyone.** There is no switch. The first-run screen is a notice with one **Continue**. Four destinations - product analytics, behaviour analytics, session replay with every piece of text masked, and crash reports with file paths stripped out. In 1.1.0 no analytics key is in the build, so nothing has left the machine yet. That is a fact about this release, not a promise: it stops being true the day a key is added.
+
+**Two requests run without asking, and neither carries anything about you.** On every start the app fetches `latest.json` from this repository's releases; on a machine with no WebView2, the installer downloads it from Microsoft.
+
+**Never sent:** a file path, a folder name, a drive label, your user name, your machine name, or the contents of anything. A run summary is a count and a number of bytes.
+
+### Sign-in and sync
+
+Optional, Google, and it opens your normal browser rather than a window inside the app, so you can see the address bar. What it uploads, in full:
 
 | Your settings | Each run summary |
 |---|---|
 | your preferences | date and duration |
 | the developer answer | mode, dry-run, elevated |
-| your account's email address | the section numbers it ran |
-| | bytes reclaimed, bytes estimated |
+| your email address and display name | the section numbers it ran |
+| a last-seen timestamp | bytes reclaimed, bytes estimated, and an id |
 
-Never sent, by either of them: a file path, a folder name, a drive label, your machine name, your Windows user name, or the contents of anything.
+In 1.1.0 this is dormant: Google is not enabled on the backend project, so the Account screen reports sign-in as unconfigured.
 ```
-**Was:** (new.)
+**Was (round 1):** *"Two things can. Both are off until you switch them on."* Then analytics as four
+separate revocable switches, sign-in as the second switch, and a four-row table with no id and no timestamp
+in it.
 
-**Change:** added, in a table rather than the sentence it started as, which saved forty words and reads
-better on the question a reader is actually asking. The right column is the nine fields of `SyncedRun` in
-`desktop/src/lib/sync.ts`; the left is what `pushSettings` writes. The closing refusal is the consent
-screen's `neverSent` string, with "your user name" expanded to "your Windows user name" - the same field,
-named the way a Windows reader would recognise it.
+**Change:** rewritten, and this is findings 1 and 2 together. The three answers are the page's payoff and
+they close S-010's loop in order. They are written as **this build's fact rather than as a capability**,
+which is finding 2: the destinations exist, there is no way to turn them off, and no key is configured, so
+nothing has actually left. The last clause is dated on purpose - *"it stops being true the day a key is
+added"* - so that a release which fills `VITE_GA4_MEASUREMENT_ID` falsifies nothing on this page.
 
-### S-014 · desktop.md · install it
+Sources, field by field. Four destinations and their one-line descriptions: `consent.DESTINATIONS` and the
+dummy's own ledger in `wire.js:399-402`, whose comment records why they stopped being switches. "No
+analytics key is in the build": `desktop/.env.example` ships all four telemetry variables empty, there is no
+`.env` beside it, and `analytics.ts` constructs a provider only when its key is present - *"a BUILD fact,
+not a user choice"*, in its own header. Four keys, all empty. The startup fetch: `Splash.tsx:105` calls
+`checkForUpdate()` on every boot. The endpoint in `tauri.conf.json` is one static `latest.json` URL, so the
+request carries no identifier and nothing you typed. The WebView2 download: `bundle.windows.webviewInstallMode`
+is `downloadBootstrapper`.
+
+**The table is now actually full**, which was contradiction 1. The right column is the nine fields of
+`SyncedRun` in `sync.ts`, **including `runId`**. The app's approved Account copy has named "and an id" since
+the dummy's table was corrected, and a column headed "in full" with a field missing is the same defect class
+as the "Nothing else" that once covered nine fields. The left column is what `pushSettings` writes: `prefs`,
+`developer`, `email`, `display_name` and `last_seen_at`. Three, not two. The review named the id and the
+timestamp; **`display_name` was missing as well**. The dummy names it outright - *"Display name - Shown in
+this window"* - so that omission was mine rather than the dummy's.
+
+The dormancy sentence is written from `.env.example`'s recorded reason and `configuredFeatures()` in
+`config.ts`. Both Supabase variables are deliberately empty because `GET /auth/v1/settings` reports
+`external.google: false`, and a screen that reports a feature as unconfigured is better than a button that
+fails on press. 🔴 It is **not** taken from `account.notConfiguredNote`, which still blames an absent OAuth
+client id and is stale against the Supabase switch.
+
+**Line edit.** Three touches. None of them a fact. "There is no switch" now stands as its own four-word
+sentence. "nothing has left it yet" reads "nothing has left the machine yet", because "it" sat nearest to
+"the build", which is not what leaves. And the two start-up requests, which were 12 words and 12 words after
+a 12-word lead, share one sentence with a semicolon, which is how the fingerprint joins two related facts.
+The one word this cost is the one S-010 gave back.
+
+### S-014 · `desktop.md` · install it
 ```
 ## Install it
 
-The installer ships as an `.msi` and as an `.exe`, and it installs for the current user, so installing needs no administrator rights. The app carries the engine inside it: there is no separate PowerShell setup, and no Node.
+Download the `.msi` or the `.exe` installer from [Releases](https://github.com/aoneahsan/windowsweep/releases). The `.exe` installs for the current user and asks for no administrator rights; the `.msi` installs for every user, so Windows asks once. The engine ships inside the app: no separate PowerShell setup, and no Node.
 ```
-**Was:** (new.)
+**Was (round 1):** *"…it installs for the current user, so installing needs no administrator rights."* - and
+the download sentence deferred to the open question at S-007.
 
-**Change:** added, and every claim is from `tauri.conf.json`: `targets: ["nsis", "msi"]`,
-`nsis.installMode: "currentUser"`, and `bundle.resources` mapping
-`resources/windowsweep/**/*` into the bundle. **The download sentence itself is the open question at S-007**
-and is not repeated here.
+**Change:** the download line is now the first sentence of the beat, which is finding 3. And 🔴 **the round-1
+install claim was false for one of the two installers.** `installMode: "currentUser"` sits under
+`bundle.windows.nsis` and governs the `.exe` only. The MSI has no `wix` block, so it takes the default
+scope, and the shipped MSI's own Property table reads **`ALLUSERS = 1`** - read out of
+`windowsweep_1.1.0_x64_en-US.msi` through `WindowsInstaller.Installer`, not inferred from the config. The
+MSI needs admin rights. Saying "no administrator rights" over the top of that is exactly the kind of claim
+this product cannot afford to get wrong, and it was the one sentence in the surface a reader could have
+disproved in thirty seconds. The engine claim is from `bundle.resources`, which maps `resources/windowsweep`
+into the bundle; the built MSI's File table carries all 38 engine files.
 
-### S-015 · desktop.md · the SmartScreen note
+### S-015 · `desktop.md` · the SmartScreen note
 ```
-### Windows may warn you the first time
+### Windows may warn you the first time you install this
 
 The installer is not signed with a paid code-signing certificate, so Microsoft SmartScreen shows *"Windows protected your PC"* on first run. That is a statement about the certificate, not about the file.
 
@@ -241,53 +347,71 @@ Choose **More info** and then **Run anyway**. You can verify what you downloaded
 
 This note is here rather than hidden because meeting that dialog unexplained is worse than reading about it in advance.
 ```
-**Was:** (new.)
+**Was (round 1):** the same three paragraphs, under the heading *"Windows may warn you the first time"*.
 
-**Change:** added **verbatim** from the approved elevation screen, three paragraphs unchanged except for the
-en dash becoming a hyphen. This is a safety surface, humour is off, and the words were settled at GATE 4 on
-2026-09-05, so the docs page repeats them rather than paraphrasing. Reported below: the release workflow does
-not currently produce one of the two artefacts this paragraph names.
+**Change:** the heading now matches the approved summary line in `elevation.html` word for word. Nothing in
+the three paragraphs moved: they remain **verbatim** from the copy approved at GATE 4 on 2026-09-05, with
+the en dash written as a hyphen. This is a safety surface and humour is off. The words were settled, so the
+page repeats them rather than paraphrasing. Both artefacts now exist. The checksum step and the asset
+assertion are in `desktop-release.yml`, and the pubkey in `tauri.conf.json` is a real minisign key.
 
-### S-016 · desktop.md · updates
+### S-016 · `desktop.md` · updates
 ```
 ## Updates
 
-The app checks for a newer build on startup and asks before installing one. If the check cannot reach the network it is skipped without a word.
+The check runs on the splash screen. An update is offered rather than applied: **Later**, or **Install and restart**. If the check cannot reach the network, you get a note saying so, with **Try again**, and the app carries on without it.
 ```
-**Was:** (new.)
+**Was (round 1):** *"The app checks for a newer build on startup and asks before installing one. If the
+check cannot reach the network it is skipped without a word."*
 
-**Change:** added. The second sentence is the splash screen's own approved line, condensed. Checkable:
-`plugins.updater.dialog` is `true`, and the endpoint is the repository's `latest.json`.
+**Change:** both sentences rewritten, and the evidence behind the first one re-sourced. Round 1 cited
+`plugins.updater.dialog` being `true`. **That key does not exist and the plugin never accepted it; it was
+removed from the config on 2026-09-07.** The claim that the app asks first is still true on better
+evidence - the Splash screen's own two buttons, `splash.update.later` and `splash.update.now`, which
+`Splash.tsx` renders while `handleRef` holds an update nobody has answered. And "skipped without a word" was
+simply wrong. The note carries a button: the screen shows *"The update check could not reach the network.
+Skipped - nothing else in windowsweep needs it."* beside `Try again`. Describing what a reader will actually
+see cost the surface its only W-band clause, which is no loss on a **P, R** row. **Line edit:** the first sentence is split in two and
+"happens" is "runs"; the offline sentence names "the check" rather than "it", since after the split "it"
+would have sat beside "an update". Word-neutral.
 
-### S-017 · desktop.md · where things are written
+### S-017 · `desktop.md` · where things are written
 ```
 ## Where it writes
 
-Runs, logs and reports land under `%LOCALAPPDATA%\windowsweep-desktop\runs\`, one JSON per run. An elevated run writes a second file beside the first, because two windows each write their own.
+Each run gets its own folder under `%LOCALAPPDATA%\com.aoneahsan.windowsweep\runs\`, holding that run's report and log. An elevated run writes a second report beside the first, because two windows each write their own.
 ```
-**Was:** (new.)
+**Was (round 1):** *"Runs, logs and reports land under `%LOCALAPPDATA%\windowsweep-desktop\runs\`, one JSON
+per run."*
 
-**Change:** added. The path is the elevation screen's, verbatim. Naming it is what lets a sceptical reader check the claim in a
+**Change:** 🔴 **the folder was named wrongly and is corrected.** `run_dir` in `engine.rs:147` joins
+`app_local_data_dir()` with `runs` and the run id. On Windows that base is `%LOCALAPPDATA%` plus the bundle
+identifier, `com.aoneahsan.windowsweep`, out of `tauri.conf.json`. There is no `windowsweep-desktop` folder
+anywhere. The nesting is also one level deeper than round 1 said - a folder per run, not a file per run,
+which is what lets an elevated second window write beside the first with both `--reports-dir` and
+`--logs-dir` pointed at the same place. Naming the path is what lets a sceptical reader check the claim in a
 file browser instead of believing it.
 
-### S-018 · desktop.md · the page's outbound links
+### S-018 · `desktop.md` · the page's outbound links
 ```
 See also: [Safety model](./safety-model.md) · [Admin sections and elevation](./admin-and-elevation.md) · [Sections 0-25](./sections.md)
 ```
 **Was:** (new.)
 
-**Change:** added. The internal-link floor asks every indexed page for a link to the safety model and one
-reference page; this gives it two reference pages, and no page here is more than two clicks from `--scan`.
+**Change:** unchanged this round. The internal-link floor asks every indexed page for a link to the safety
+model and one reference page; this gives it two reference pages, and no page here is more than two clicks
+from `--scan`.
 
-### S-019 · desktop.md · what the page must not claim yet
+### S-019 · **withdrawn**
 ```
-The desktop app is not released yet. This page describes the build in `desktop/`, written down before anyone can install it rather than after.
+(withdrawn - no shipping text)
 ```
-**Was:** (new.)
+**Was (round 1):** an admonition at the top of the page reading *"The desktop app is not released yet. This
+page describes the build in `desktop/`, written down before anyone can install it rather than after."*
 
-**Change:** added as an admonition at the top of the page, and it is the honest form of the same problem
-S-007 raises for the README. A docs page for an unreleased program is defensible; one that reads as though
-the program can be downloaded is not. It is removed in the change that publishes the first installer.
+**Change:** withdrawn, which is finding 3's other half. The page now ships in the same change that publishes
+`desktop-v1.1.0`, so a banner calling the app unreleased would be false on the day it lands. The slot number
+is kept rather than reused, so the reason survives with it.
 
 ### S-020 · `sidebars.ts` · the sidebar entry
 ```
@@ -295,95 +419,134 @@ the program can be downloaded is not. It is removed in the change that publishes
 ```
 **Was:** (new.)
 
-**Change:** required rather than optional. `sidebars.ts` carries the comment "A page that is not in this
-sidebar is effectively unreachable, so categories are updated in the SAME change that adds a page." The entry
-goes after `'sections'` and before the Reference category, which puts the app beside the catalogue it
-displays. Outside this draft's write scope, so it is specified rather than made.
+**Change:** unchanged this round, and required rather than optional. `sidebars.ts` carries the comment "A
+page that is not in this sidebar is effectively unreachable, so categories are updated in the SAME change
+that adds a page." The entry goes after `'sections'` and before the Reference category, which puts the app
+beside the catalogue it displays. Outside this draft's write scope, so it is specified rather than made.
 
-### S-021 · `windowsweep/docs/README.md` and `intro.md` · the index rows
+### S-021 · `windowsweep/docs/README.md` and `windowsweep-docs/docs/intro.md` · the index rows
 ```
-| Desktop app | you want the window rather than the console |
+| Use the window rather than the console | [Desktop app](./desktop.md) |
 ```
-**Was:** (new.)
+```
+| [Desktop app](./desktop.md) | What the window adds over the command line, what it collects, and the SmartScreen note on first run |
+```
+**Was (round 1):** one row, `| Desktop app | you want the window rather than the console |`.
 
-**Change:** a row for the new page in both index tables, in the "If you want to..." voice the existing rows
-use. Without it the page is reachable only from the sidebar.
+**Change:** corrected. Both index files carry **two** tables with **opposite column orders**. The "If you
+want to…" table puts the task first and the link second (`| Install it in under a minute |
+[Installation](./installation.md) |`), while the category tables put the link first
+(`| [Sections 0-25](./sections.md) | Every section: … |`). The round-1 row matched neither, so applying it
+verbatim would have produced a row reading backwards in one table and unlinked in both. Two rows, one per
+table, in each of the two files.
 
 ---
 
 ## Found while writing, reported rather than fixed
 
-**🔴 The SmartScreen paragraph names an artefact the release pipeline does not produce.**
-`desktop-release.yml` builds the two installers and, given `TAURI_SIGNING_PRIVATE_KEY`, emits the minisign
-`.sig` files and `latest.json` through `includeUpdaterJson: true`. There is **no SHA-256 step anywhere in
-it**. The approved copy says "every release publishes a SHA-256 checksum for each installer", which is a
-commitment rather than a description today, and the first release will falsify it unless a checksum step is
-added to that workflow first. `tauri.conf.json` also still holds
-`"pubkey": "REPLACE_WITH_UPDATER_PUBLIC_KEY"`, so the second half of the same sentence has nothing behind it
-either. Neither is a wording problem and neither is fixable from this draft. Both are release-blocking for
-this paragraph.
+Round 1's first three findings are closed and are not re-reported: the checksum step exists, the pubkey is
+real, the Account copy now discloses the last-seen timestamp. What follows is new.
 
-**🔴 The dummy's Account table understates what a synced run contains.**
-`account.html:48` reads *"Run summaries | Date, bytes freed, section count. Nothing else."* `stripRun` in
-`desktop/src/lib/sync.ts` sends nine fields: `runId`, `startedAt`, `mode`, `dryRun`, `elevated`, `sections`,
-`freedBytes`, `estimatedBytes` and `durationMs`. Three of those are visible on the app's own History screen
-as the Mode and Took columns, so the table is contradicted by the screen next to it. "Nothing else" is what
-makes it a defect rather than a summary. The fix belongs in the dummy first, then the app, per §10a.
+**🔴 The dummy's Sync list still narrows a run summary to three fields.** `page-account.js` renders
+*"Run summaries - 3 of 8 runs uploaded – date, bytes, section count"* two panels away from the corrected
+table that now names nine fields plus an id. Same class, second place. It is the defect already fixed in
+`account.html`, surviving somewhere nobody looked - which is the "sweep the class, not the instances" lesson
+the decision log recorded on 2026-09-05, arriving again. One phrase would close it, in the dummy first.
 
-**`pushSettings` sends a field no surface discloses.** Alongside the settings and the email address it writes
-`lastSeenAt`, an ISO timestamp. It is not personal data of the kind the never-sent list rules out, and it is
-not in the Account table's four rows either. One row would close it.
+**The splash disclosure and its own visible note disagree about the offline case.** `splash.html`'s details
+block and `splash.detailsNothing` in `en.json` both say the check "is skipped silently", while the screen
+right below shows a warning note and a `Try again` button. This page describes the button, so nothing here
+is wrong. The two stale sentences belong to `desktop-moment`.
 
-**The app has no treemap.** `reclaim-map.js` draws one in the click dummy and the only mention of it in the
-app tree is a comment in `dev-engine.ts`. Nothing in this draft claims one, and that is deliberate.
+**The consent notice's details call windowsweep free.** Its closing line reads:
 
-**`webviewInstallMode` is `downloadBootstrapper`.** On a machine without WebView2 the installer fetches it
-from Microsoft. That is an install-time network call, made by the installer rather than by the app or the
-engine, and no sentence in this draft says otherwise — but it is the one thing a reader of "no network calls"
-could be surprised by, and it may deserve a line on `desktop.md` once the installer is real.
+*"There is no switch for this and no setting to find. windowsweep is free, and this is how it gets better
+for the next person who runs it."*
+
+That second clause is the class of claim the 2026-09-05 pricing decision removed from Home and Account, and
+"free" is a banned store word besides. It traces to the owner's own wording, so it is his call rather than a
+defect to fix quietly - but it should be settled while `desktop-safety` is already re-opened by the same
+decision, not found later on a store page. **This draft makes no pricing claim.**
+
+**Two of the app's own string groups are stale against the dummy.** Every `consent.*` key still describes
+four switches, an all-on button, an all-off button and revocation in Settings; `account.notConfiguredNote`
+still blames an absent OAuth client id rather than a provider that is not enabled. Both are known and both
+belong to the `desktop-safety` pass. They are named here only so this draft is never read as their source.
 
 ---
 
 ## Self-check
 
-**Palette.** Band **P** carries the mechanism lines: S-003 and S-010 name the two flags, S-005 and S-013 name
-the fields, S-014 names the bundle targets, S-017 names the path. Band **R** carries the refusals, and there
-are five of them: "Nothing, until you say so" (S-005), the never-sent list (S-005 and S-013), "It never
-raises its own privileges" (S-012), "Declining is a first-class answer" (S-013), and "no cleanup logic of its
-own" (S-003). Band **W** appears once. That is S-016's "without a word", nowhere near a destructive control. The SmartScreen slot is a safety surface and carries no humour at all, which is the rule that
+**Palette.** Band **P** carries the mechanism: S-003 and S-010 name the two flags, S-013 names every field
+and every destination, S-014 names the two install scopes, S-016 names the two buttons, S-017 names the
+folder. Band **R** carries the refusals, and there are six of them - "carries no cleanup logic of its own"
+(S-003), the never-sent list (S-005 and S-013), "The engine sends nothing, ever" (S-013), "neither carries
+anything about you" (S-013), "It never raises its own privileges" (S-012), and "It does not remove the
+deep-section gate" (S-012). One band is deliberately absent. Band **W**'s one clause was S-016's "without a
+word", and that sentence was factually wrong; on a **P, R** row losing it is the correct outcome rather than
+a gap. The SmartScreen slot is a safety surface and carries no humour at all, which is the rule that
 governed the approved original.
 
-**Rhythm.** Shortest shipping sentence: "Two things can." at three words, S-013. Then "Declining is a
-first-class answer." and "Nothing, until you say so." at five each, from S-013 and S-005. Longest: the
-elevation sentence in S-012 and the lede's second sentence in S-003, both forty words, each naming a
-mechanism it cannot lose a clause of without losing a fact. S-011 opens on five words and nine before a
-90-word paragraph, and S-013's own answer runs three words then five.
+**Rhythm.** Shortest shipping sentence: "Settings that are flags." at four words, S-004, tied with "The
+source is public." from the approved SmartScreen copy and, since the line edit, "There is no switch." (S-013).
+Then three at five - "Nothing to the deletion
+behaviour." (S-011), "The engine sends nothing, ever." (S-013), "Sign-in is separate and optional." (S-005).
+Longest authored: 28 words, S-003's first sentence, inside the fingerprint's 34-word ceiling. S-012's
+elevation sentence stood at 36 after the writer's pass and was kept whole on purpose; the line edit split it
+at its own semicolon into 9 and 27, so nothing this surface writes is now over 28. Both 40-word sentences
+are gone. S-003 is 28 and 12. One longer sentence sits in the count and is **not** this surface's: S-008's 48-word
+"Not the right tool when…" paragraph is already in `README.md`, and this edit removes a word from it rather
+than writing it.
 
-**Length. 🔴 This is the one place the draft misses its row, and by a lot.** Row 14 asks for about 600 words
-across both artefacts. Measured on the shipping text only, with every **Was** and **Change** line excluded
-and markup stripped: the README section is **222** words (S-001 to S-006) plus the install sentence at 40, so
-**262**; `desktop.md` is **625**. Total **887**, which is **287 over**.
+**Length. 913 words**, against row 14's **~900** - measured, not estimated, and 13 over. The two halves:
+**§A `README.md` 192** (S-001 to S-007), **§B `desktop.md` 721** (S-009 to S-018). The line edit is
+word-neutral: S-010 gave one word and S-013 took one, so both halves stand.
 
-Two rounds of cuts are already in it and they took 186 words out. S-004 went from five bullets to three plus
-a pointer, S-005 stopped enumerating the nine sync fields, S-006 dropped to two sentences and a pointer,
-S-011 lost fifteen words, S-013 became a table, and S-016, S-017 and S-019 each lost a clause. The
-single-home rule drove most of that, which is why the page is the home and the README section points at it.
+The method, because a word count with no method behind it is not comparable to anything. Extract the fenced
+slot bodies, drop the YAML front matter, resolve `[text](url)` to its text, remove emphasis marks, backticks
+and table pipes, keep table cell text, then `wc -w` - so `--no-color` and `windowsweep.ps1` each count as
+one word. Four slots are outside the count. **S-019** is withdrawn, **S-020** and **S-021** are structural
+plumbing in other files, and **S-008** is a paragraph already in `README.md` that this surface edits by
+removing one word.
 
-What is left will not compress much further. The arithmetic says why. Three items account for **362** of the
-887. The SmartScreen disclosure at S-015 is **114 words reproduced verbatim** from copy the owner
-approved at GATE 4. The what-leaves-the-machine block at S-013 is **137**, and it is the surface's whole
-reason for existing. What-it-adds at S-011 is **111**, and it is one of the three things row 14 names. Add
-the answer-first paragraph, whose 61 words sit against a 40-60 floor, and the README's own required beats,
-and the honest floor for the content row 14 mandates is near **800**.
+Run against round 1 out of git, the same method returns **918** - not the 887 its self-check reported, which
+was an estimate with no command beside it. So this round is **five words shorter while carrying more
+facts**, and the two rounds miss the cap by 18 and 13 respectively. One caveat on that comparison: round-1
+§A included both of S-007's mutually exclusive candidate sentences at 67 words, only one of which could ever
+have shipped, so 918 slightly flatters this round.
 
-So this goes back as a **requested change to the map rather than a further cut**, since the row is not this
-draft's to edit. Three ways out, in the order recommended: raise row 14's cap to about **850**, which is what
-the required content costs; or drop "Updates" (S-016) and "Where it writes" (S-017) from the page, saving 61
-words and losing two things a person will look for; or move the whole what-leaves-the-machine block onto the
-safety page and link to it, saving 137 at the cost of splitting the app's privacy story across two pages,
-which is the option with the worst outcome for a reader.
+Where the words went, slot by slot, and the deltas close to exactly -5. Up: **S-013 +134** for the three
+answers, the build-fact pair and the two missing table fields; **S-016 +15** for the offline note the app
+actually shows; **S-014 +6** for the corrected install scopes. Down: **S-007 -45** as the decision resolved
+into one sentence and a pointer, **S-011 -32** and **S-004 -28** and **S-003 -13** to the single-home rule,
+**S-019 -24** withdrawn, **S-005 -14** with the switches, **S-012 -12** with the picker refusal. Nothing was
+cut to fit. Every cut was a duplication of something the page says better.
 
-**Unsure.** One `NEEDS DECISION`, at **S-007**, on whether the Desktop app section ships before the first
-desktop release. Three options, one recommendation. One phrase is allowed on purpose: "elevate" is on
-the shared list as an inflation verb and is, here, the Windows term for what a second window does and the
-name of the engine's `--elevate` flag.
+**Unsure.** No `NEEDS DECISION`. The round-1 question at S-007 is answered. Its ordering condition - that
+this section lands in the same change as the `desktop-v1.1.0` tag - is recorded above rather than re-asked,
+because it follows from the answer. The findings reported above are defects in other surfaces' artefacts,
+not questions about this one, so none of them pauses this surface.
+
+**Allow markers.** None. How that was checked is worth writing down. Round 1 carried a
+`story-lint: allow` marker for the word `elevat` + `e`, and it is dropped, because the banned list matches
+that word on boundaries only: the surface uses "elevated", "elevates", "unelevated" and "elevation", never
+the bare verb. 🔴 **The marker is deliberately not reproduced in full anywhere above.** The hook reads its
+pattern out of the raw file before it strips anything, HTML comments and code spans included, so a draft
+that merely *quotes* a marker in order to say it dropped it still arms it. Written out here for the record,
+the sentence would have re-enabled the very phrase it claims to have removed - and the self-check would have
+read "None" while the hook held one.
+
+**Lint caveat.** The story lint hook strips every fenced block before it counts anything
+(`posttooluse-story-lint.sh:61`), so on a slot-shaped surface like this one **none of the shipping copy is
+checked**. It measures this commentary. A green verdict here says nothing about the
+913 words a reader will see. Those were checked by hand against the banned list, the punctuation budget and
+the fingerprint's diction lists. The facts in them were read out of the code and the dummy rather than out
+of a screen's summary.
+
+**Line-edit measurement.** The hook was run directly against this file after the edit, with the JSON a real
+Write would hand it, and it exited 0; that verdict covers the commentary only. The fenced copy was scored by
+the rubric's own method, headings and table rows zeroed: the README section runs burstiness 0.56 with
+sentences from 4 to 28 words, and the page runs 0.47 with sentences from 4 to 27. Two of the page's 150-word
+windows, the disclosure and the install stretch, hold no sentence of 25 words or more; their longest are 24
+and 23. The only ways to reach 25 there were to extend the dummy's verbatim never-sent list or to join the
+download line to its explanation. Neither was done. It is recorded here instead.

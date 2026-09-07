@@ -142,7 +142,7 @@
    'Disk free space before and after'].forEach(function (t) { ul.appendChild(el('li', null, t)); });
   body.appendChild(ul);
   var ol = el('ol');
-  ['Preview with --dry-run', 'Read the report', 'Run it for real'].forEach(function (t) { ol.appendChild(el('li', null, t)); });
+  ['Rehearse with --dry-run', 'Read the report', 'Run it for real'].forEach(function (t) { ol.appendChild(el('li', null, t)); });
   body.appendChild(ol);
   var bq = el('blockquote');
   bq.appendChild(el('p', null, 'The user must know what will go before it goes.'));

@@ -428,22 +428,24 @@ joke, no adjective doing a number's work, and nothing that reads as reassurance 
 band R would be as wrong here as W, because a label makes no promise. Nothing in the set sits near a
 destructive action: these thirty-three strings are written **after** the run, into a file.
 
-**Rhythm** - the shipping strings are labels, so burstiness is measurable only on this commentary, where it
-is deliberate. Measured over 182 sentences with the split `(?<=[.!?])\s+` after fences and table rows are
-removed: mean 14.8 words, standard deviation 10.8, **burstiness 0.72** against the fingerprint's floor of
-0.45. Shortest sentence: **2 words** (`**Change:** none.`, and `They drifted.` in the opening). Longest real
-sentence: **44 words**, the S-018 note about the word `by`. A 50-word figure appears if the header metadata
-block is counted, which it should not be - it is a field list, not a sentence. Zero em dashes, zero
-exclamation marks, zero `not X but Y`. Shipping strings themselves run from one word (`Drives`, `Sections`)
-to six, the section-counts line.
+**Rhythm** - the shipping strings are labels, so burstiness is measurable only on this commentary, where it is
+deliberate. **Scope and method, written down so a re-measure can match**: the whole finished file with fences,
+table rows and headings removed, split on `(?<=[.!?])\s+`, a word counted as `[A-Za-z0-9][A-Za-z0-9'._:/-]*`.
+On that basis - 227 sentences, mean 14.1 words, standard deviation 10.3, **burstiness 0.73** against the
+fingerprint's floor of 0.45. Shortest sentence: **2 words**. Longest: **42 words**, which is the header's
+field list rather than a sentence; the longest real sentence is **41 words**, S-017's glossary reasoning. Both
+ends of the fingerprint's range appear many times over, and 11 sentences sit above its 34-word ceiling, every
+one of them a slot's reasoning rather than shipping prose. Zero em dashes and zero exclamation marks in the
+prose; the one `!` in this file sits inside the split regex quoted above. Zero `not X but Y`. Shipping strings
+themselves run from one word (`Drives`, `Sections`) to six, the section-counts line.
 
 **Length** - **33 slots** against the row's cap of *about thirty strings*. Inside it. **211 words ship in
-total** across the 33 fences, counted with `str.split()` on the fence contents and counting each
-`$(...)` interpolation as one word; the visible text a reader sees in either export is far less, because
-most fences are a single label wrapped in PowerShell quoting. Ten slots change, twenty-three are kept
+total** across the 33 fences. Counted with `str.split()` over the fence contents, each `$(...)`
+interpolation counting as one word. The visible text a reader sees in either export is far less, because
+most fences are a single label wrapped in PowerShell quoting. Ten slots change; twenty-three are kept
 unchanged and numbered so the applier can see they were considered.
 
-**Unsure spots - zero `NEEDS DECISION`.** Nothing here needed a fact, number, name or quote I did not have;
+**Unsure spots - zero `NEEDS DECISION`**. Nothing here needed a fact, number, name or quote I did not have;
 the one substantive verb came from the approved `cli-strings` C-088 rather than being re-derived. Two calls
 are **flagged for the owner's veto** rather than hidden, each reversible in one edit. The first drops
 `dry-run` from the HTML's dry-run headline (S-020). The second extends the same glossary rule to the
@@ -463,19 +465,18 @@ eye, per the brief's stop rule.
 the commentary and against the fence contents separately. Zero hits in either. The fingerprint's own Never
 list was matched against the fences: zero hits. No allow marker is used, so none needs a reason.
 
-🔴 **This draft is slot-shaped, so the project's lint hook cannot see the copy that ships.**
+🔴 **This draft is slot-shaped, so the project's lint hook cannot see the copy that ships**.
 `posttooluse-story-lint.sh:61` strips every fenced block before it counts anything, and on this file every
 shipping string sits inside a fence. The hook therefore measures this commentary and none of the
 thirty-three strings a reader will actually read. A green hook here is not evidence about the surface. The
 real gates are the both-outputs audit above, the `Was:` verification, and a person opening one run's two
 exports side by side.
 
-**Confidence.** High on the slot inventory, the two reclaim-verb corrections and the both-outputs audit -
-all three were read off the file rather than recalled. Medium on two judgement calls, which is why both
-carry a veto flag. One is whether the HTML's hero label may lose the word `dry-run` (S-020). The other is
-whether `Freed` should follow the glossary to `Reclaimed`, when a dry-run report's column then holds
-estimates under a past-tense header (S-017, S-030). Low-risk but worth naming: `## Run` as a Markdown heading can be read as
-an imperative for a second, which is the cost of taking the HTML's existing word instead of inventing a
-third.
+**Confidence** - high on the slot inventory, the two reclaim-verb corrections and the both-outputs audit - all
+three were read off the file rather than recalled. Medium on two judgement calls, which is why both carry a
+veto flag. One is whether the HTML's hero label may lose the word `dry-run` (S-020). The other is whether
+`Freed` should follow the glossary to `Reclaimed`, when a dry-run report's column then holds estimates under a
+past-tense header (S-017, S-030). Low-risk but worth naming: `## Run` as a Markdown heading can be read as an
+imperative for a second, which is the cost of taking the HTML's existing word instead of inventing a third.
 
 Last Updated: 2026-09-08

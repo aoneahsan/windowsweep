@@ -1075,7 +1075,11 @@ Would free (dry-run estimate)
 ```
 **Was:** the same.
 
-**Change:** none in this draft. These are the headings and labels of a generated document, not console strings, and no content-map row names them. They also contain a fourth "Would free" (`reports.ps1:104`) that C-088's reasoning would change - so leaving them is a real inconsistency, not a clean boundary. Raised as **NEEDS DECISION 2** rather than decided here.
+**Change:** none in this draft, and **NEEDS DECISION 2 is now ANSWERED** - see below.
+
+🔴 **Two line references in this slot and in NEEDS DECISION 2 are WRONG, and an applier following them would patch nothing.** Found by the `report-bodies` writer on 2026-09-08 and verified in the main session by reading the file: `modules/reports.ps1:104` is a CSS rule inside the HTML template (`table{width:100%;border-collapse:collapse;...}`) and `:75` is `$rows = ''`. Neither contains a string. The two real occurrences of the old verb are **`reports.ps1:51`** (the Markdown body) and **`reports.ps1:74`** (the HTML headline), and there are **two**, not "a fourth".
+
+**The decision:** the exported report bodies got their own content-map row - **row 15 `report-bodies`**, added 2026-09-07 - precisely because they had no row and no recorded exclusion, which is the one state the map exists to prevent. That surface is now drafted, and it corrects both strings to the approved C-088 wording `Would reclaim (est.)`. So this slot correctly changes nothing: the strings are owned by row 15 and ship in the same 1.2.0 cascade as this file. The inconsistency this note worried about is closed, by the other surface rather than by this one.
 
 ---
 

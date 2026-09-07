@@ -16,7 +16,7 @@ The tone bands are the Bible's: **P** precision-before-an-irreversible-act (60),
 
 | # | Surface | Awareness | Structure | Tone band | Length | CTA | Schema | Status |
 |---|---|---|---|---|---|---|---|---|
-| 1 | `readme` | problem-aware, solution-sceptical | Problem → the gamble they already lost → the guarantees → proof → install | P dominant, R strong, W once | existing structure, fixed anchors | `npx windowsweep --scan` | SoftwareApplication (docs site only) | planned |
+| 1 | `readme` | problem-aware, solution-sceptical | Problem → the gamble they already lost → the guarantees → proof → install | P dominant, R strong, W twice | existing structure, fixed anchors | `npx windowsweep --scan` | SoftwareApplication (docs site only) | planned |
 | 2 | `tagline` | unaware, scanning a list | one sentence, no context assumed | P only | ≤ 110 chars, 🔴 **FIVE** places must agree | none | none | **approved (GATE 4, 2026-09-07)** - lands with 1.2.0 |
 | 3 | `docs-start` (intro, installation, quick-start) | problem-aware | What it is → what it refuses → four commands in order | P, R | ~400 words per page | run `--scan` | none | planned |
 | 4 | `docs-safety` (safety-model, developer-mode) | solution-sceptical | The chokepoint → the refusals, listed → the idle gate → what has no undo | **P and R only, no W** | as long as the subject needs | none | none | planned |
@@ -166,3 +166,26 @@ no plan set, no paid tier - and the honest consequence is silence about price ra
 of free. `SoftwareApplication` on row 16 therefore carries **no `offers` and no `isAccessibleForFree`**:
 both would be pricing claims wearing schema clothing, and the second one has already had to be removed from
 two other artefacts in this project.
+
+## Amendment - 2026-09-08: row 1's W budget was one short of the file it describes
+
+The `readme` developmental round raised it as a `NEEDS DECISION`, verbatim:
+
+> content-map row 1 says tone band "W once"; the draft ships two W lines, both pre-existing and both kept
+> (S-014 "which ones bite back", S-050 "a cleanup run is a cleanup run"), and its self-check measures against
+> the Bible's 15 per cent rather than the row's "once". Options: (a) amend row 1 to "W twice" with an
+> amendment note, the mechanism the map already uses; recommended, since both lines do work, sit about 150
+> lines apart and far from any destructive command, and a 3,000-word file is well inside the Bible's band.
+> (b) Cut one; which one is a voice call I am not ordering. An approved row silently exceeded is the drift
+> the map's own amendment note exists to prevent.
+
+**Taken: (a), and flagged for the owner's veto rather than hidden.** What decided it is that neither line is
+a proposal. Both are **already on disk and already shipped** - `README.md:81` ("remembering which ones bite
+back") and `README.md:235` ("so a cleanup run is a cleanup run") - 154 lines apart, and neither sits near a
+destructive command. So the choice was never "may the draft add a second W line"; it was "does the row
+describe the file it was written about". It did not. Row 1 was written on 2026-09-05 against a README that
+already carried both, which makes this a **map-accuracy correction**, and cutting a shipped line to defend a
+number that was wrong when it was written would be the tail wagging the dog.
+
+Recorded in `run-state.json` `openDecisions` and in `docs/MANUAL-TASKS.md` the turn it arrived, so the owner
+can reverse it in one edit if he reads the budget differently.

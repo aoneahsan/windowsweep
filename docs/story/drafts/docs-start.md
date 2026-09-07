@@ -739,3 +739,45 @@ the long-path fixture length, which belongs to `docs-safety`. Both are choices, 
 **All 26 slots are appliable.** Every `Was:` in this file was matched against the live text mechanically, not
 by eye — building each post-apply page asserted its anchor string occurs exactly once, and all 19 assertions
 passed.
+
+## Main-session rulings on the copy pass's four NEEDS DECISION lines, 2026-09-08
+
+Three were routine calls that the project's own recorded patterns already answer, so they were taken here
+rather than held for the owner. The fourth is a fact-checker question and stays open.
+
+**S-023 - RECORD AS SPENT AND OVERTAKEN.** Its anchor no longer exists. `docs/README.md` has no
+"What the project consists of" Meta row; commit `e1ab607` removed it on 2026-09-07 when the planning files
+left git, and the row it removed already read `2026-09-05`, so the slot had been applied and then deleted
+underneath itself. Re-basing is not possible either: the link pointed at `../what-this-project-consists-of.md`,
+which now lives at the workspace root **outside version control**, so the target 404s for every reader on
+github.com. Verified in the main session: `grep` for both the heading and the filename in `docs/README.md`
+returns only line 47's prose mention, which is a sentence about where those files live rather than a link to
+one. The number is retired and never reused.
+
+**S-024 - RECORD AS SPENT.** Already applied. `docs/README.md:59` reads `Last Updated: 2026-09-05 - tool
+version 1.1.0`, which is the fence text exactly; only the line number moved (54 -> 59). Confirmed by reading
+line 59 off disk.
+
+**Add S-027 for `quick-start.md`'s footer.** The page has ten slots changing it and a footer still dated
+`2026-09-03`, two days older than its siblings - confirmed by reading the file's last line. The draft's own
+principle is that a date moves because the page's changes move it, so the honest fix is a slot rather than a
+silent bump at apply time. Adding it as a slot is also what keeps the applier's `Was:` check meaningful.
+
+### S-027 - quick-start.md:63 - the footer date
+```
+Last Updated: 2026-09-05
+```
+**Was:**
+```
+Last Updated: 2026-09-03
+```
+
+**Change:** the date follows the page. Ten slots on this page change its text, and `installation.md` and
+`docs/README.md` both already carry `2026-09-05` for the same reason. A footer two days behind the page it
+sits under is the smallest kind of untrue.
+
+**S-015 `protected lists` vs `protected paths` - STILL OPEN, and correctly not mine.** The engine uses both
+nouns (`lib/scan.ps1:92` "the protected lists"; `modules/release_helpers.ps1:101` "a protected path"), the
+fence says *lists* where the live page and its `Was:` say *paths*, and the change note does not record the
+noun changing. That is a fact-checker call and it is left for one, with the copy editor's proposed glossary
+row carried forward.

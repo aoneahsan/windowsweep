@@ -82,7 +82,7 @@ OPTIONS
       --scan-roots "P1;P2"   Project roots for section 17     --exclude-path P   (repeatable, all sections)
       --large-file-mb N    Minimum size for section 19 (default 100)
       --hiberfil off|reduced|keep   What section 15 does       --reset-base   DISM /ResetBase in 14
-      --permanent       Sections 18/19 delete instead of using the Recycle Bin
+      --permanent       Sections 18, 19 and 23 delete instead of using the Recycle Bin
       --select L        Pre-answer the next interactive selection, e.g. --select 1,3-5. Repeatable: the
                         lists are consumed in the order the prompts appear
       --select-file P   UTF-8 file of one full path per line, matched against each prompt's candidates.

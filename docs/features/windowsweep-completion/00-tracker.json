@@ -487,8 +487,8 @@
         {
           "id": "P5.release-1.2.0",
           "title": "CLI 1.2.0: the story-approved console strings, the tagline in all five places, two engine string defects, the full cascade, publish, tag, and a GitHub Release with --latest=false",
-          "status": "pending",
-          "note": "Completion plan Wave 4. The engine-string defects are modules/system_admin.ps1:155 vs :162 (the Fast Startup percentage stated two ways) and section 22 carrying Dev = $true with no behavioural branch, so --list --json reports a flag that changes nothing.",
+          "status": "in_progress",
+          "note": "Wave 4 IN PROGRESS. Landed 2026-09-08 in commit 1904b21 (engine only, version deliberately NOT moved): the three additive contract changes - targets[].newest_write_utc in --scan --json, protected{subtrees,categories} in --list --json from ONE shared constant, and --exclude-path enforced at the deletion chokepoint for EVERY section rather than only section 17. Plus two string defects: section 22's Dev flag was $true with no behavioural branch, and --help said --permanent covers 'Sections 18/19' when Send-ToRecycleBin is also called from section 23. docs/sections.md now agrees with the engine on all seven dev-gated sections. Self-test 151 -> 154, each new check watched failing on its own plant, PSScriptAnalyzer 1.25.0 clean. STILL OWED for the release: the cli-strings and report-bodies slots, the tagline in all five places, the version cascade, the publish gate, the tag and a Release with --latest=false.",
           "awaitingUser": false
         }
       ]
@@ -985,6 +985,16 @@
         "b3ea0ee",
         "f9d84f6",
         "cfb85e1"
+      ]
+    },
+    {
+      "date": "2026-09-08",
+      "phase": "Wave 0 records + the 1.2.0 engine window + six agents",
+      "summary": "The session opened with three MANUAL-TASKS rows closed WITHOUT the owner doing anything, because what they asked for already existed somewhere nobody had looked: the GA4 measurement id was sitting in the Firebase project's own registered WEB app, readable with `firebase apps:sdkconfig`. The whole web config went into the vault (confirmed from the write response's own changes list, ten fields, never by a reveal) and the four telemetry ids are now GitHub repository VARIABLES. TASK-003 closed: the CRLF-pinned files went from 0 CR bytes to 93 and 316 while every LF file stayed at 0. 🔴 THE FINDING OF THE SESSION is an engine one: --exclude-path was parsed globally, documented as section 17's, and read by exactly ONE consumer - so a person who excluded a folder was protected in one section and silently unprotected in the other twenty-five. It works where you test it, which is the worst shape a safety flag can have. It is now enforced inside Get-ProtectionReason, which every chokepoint already calls. Two more string defects came out of checking the first: --help understated --permanent as 'Sections 18/19' when it also reaches 23, and sections 4, 17 and 20 are developer-gated in the engine and said so nowhere. 🔴 A process failure worth keeping: a Python edit script asserted its way out mid-file and its earlier, already-applied edits were NEVER SAVED, because the save came after the failing assertion. The tree then held a partial change that read as complete - Add-ExcludedRefusal existed and nothing could ever call it. The self-test caught it. It happened TWICE in one session, on two different files. Six custom agents ran. A-TAURI landed four Rust commands with 10 tests each watched failing on a plant, and found that --large-mb does not exist (the flag is --large-file-mb) - verified independently in the main session before the web agent was warned. A-DOCS found the AI guide telling automated callers that --yes auto-confirms DISM (12-14 rather than 12-13), arbitrated it from the code, and correctly overrode its own dispatch on the tagline by finding the GATE 4 record that ends the divergence. The readme and docs-safety developmental rounds both found their drafts stale or incomplete against disk.",
+      "commits": [
+        "a730bf0",
+        "eb15bec",
+        "1904b21"
       ]
     }
   ],

@@ -1,7 +1,7 @@
 # Project Context - windowsweep
 
 Last Updated: 2026-09-07 (session 10)
-Verified Against: commit 2632e72 on `main`, 2026-09-07 (session 10: the completion run opens - eight owner decisions recorded, the planning files moved to the workspace root, the Supabase project created and its schema applied and verified from the catalogues, the updater keypair generated and signing proved, and eight defects found and fixed including one that made the installed app unable to run its own engine; the 1.1.0 engine at 3c4d54e is still unchanged)
+Verified Against: commit 1904b21 on `main`, 2026-09-08 (session 11: the engine change window for 1.2.0 opened - `--exclude-path` was found to protect ONE section out of twenty-six and is now enforced at the chokepoint; `targets[].newest_write_utc` and `--list --json` `protected` added; the self-test went 151 -> 154 with each new check watched failing on its own plant. Four Rust commands landed in the desktop shell. The marketing site repository exists. 🔴 The 1.1.0 engine at 3c4d54e is NO LONGER unchanged - that invariant ended deliberately here and is replaced by "the engine equals v1.2.0 once tagged")
 
 ## Identity and outcome
 - Purpose: safe, developer-aware disk and cache cleanup CLI for Windows; the Windows member of the family with
@@ -685,6 +685,18 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
   failed extraction can never read as "nothing disappeared".
 - Verify a published version from a directory OUTSIDE this repo: inside it, npx resolves the same-named local
   package and reports `'windowsweep' is not recognized` (`docs/troubleshooting.md`).
+
+## Two traps in this workspace's own layout
+
+🔴 **`remaining-work-summary.md`, `remaining-work.md`, `what-this-project-consists-of.md` and both completion
+plans live at the WORKSPACE ROOT and are outside git** (owner decision, 2026-09-07). Two independent story
+slots reached for a GitHub blob URL to `remaining-work-summary.md` while drafting the README, and every one
+of those URLs **404s for every reader**: `git ls-files` does not list the file, so there is nothing at that
+path on github.com. A link is a promise. When a document needs to point at project status, point at
+`docs/features/windowsweep-completion/00-tracker.json`, which IS tracked.
+
+🔴 **A `git clone` does not carry any of them.** Moving this project to another machine means copying the
+whole `D:\work\windows-cleanup-root` folder, not cloning the two repositories.
 
 ## Open material unknowns
 

@@ -32,6 +32,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- **`--help` said `--permanent` covers "Sections 18/19".** It reaches **18, 19 and 23**: `Send-ToRecycleBin`
+  is called from `modules/personal.ps1` (18, 19) and from `modules/orphaned_appdata.ps1` (23). Someone who
+  passed `--permanent` believing it applied to two sections would have had section 23's orphaned
+  application data deleted outright instead of recycled. The reference docs already said 18, 19 and 23;
+  only the engine's own help text - the one place a person actually reads it from - was wrong.
 - **Section 22 declared `Dev = $true` with no behavioural branch**, so `--list --json` advertised a developer
   flag that changed nothing. It now reads `false`, and the Dev column in `docs/sections.md` agrees.
 

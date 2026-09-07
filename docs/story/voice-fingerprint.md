@@ -22,7 +22,7 @@ These are the target. A writer imitates the rhythm and the stance, not the subje
 6. It cannot promise a number. Your disk decides that, and `--scan` measures it.
 7. Chrome was open, so its cache was left alone; close it and run `windowsweep --only 7 --yes`.
 8. A safe run never touches these — you pick, item by item.
-9. Nothing leaves this machine unless you turn it on.
+9. Never a file path, never your user name, never the contents of anything.
 10. The idle gate keeps anything you have used in the last hundred days, which is the point: the next
     install should still be fast.
 11. Emptying the Recycle Bin is permanent. That section is behind its own flag for exactly that reason.
@@ -91,3 +91,26 @@ runs measured so far" are all in voice, because the product's whole claim is tha
 | "We never touch your personal files" | "Documents, Desktop and Pictures are refused by the chokepoint." |
 | "Smart cleaning technology" | "The idle gate keeps anything used in the last hundred days." |
 | "Simply run the command and you're done!" | "Run `npx windowsweep --scan` first. It deletes nothing." |
+
+---
+
+## Correction, 2026-09-07 - specimen 9
+
+Specimen 9 read **"Nothing leaves this machine unless you turn it on."** It was true when this fingerprint
+was calibrated and it is no longer true of the desktop window: the owner removed the analytics opt-out on
+2026-09-07, so there is nothing to turn on, and the update gate reaches the network on every start. It
+remains exactly true of the command-line engine, whose self-test fails the build on an HTTP or socket call.
+
+A false specimen is worse than a missing one, because a specimen is what every future writer matches against
+- it teaches the wrong sentence rather than merely failing to teach a right one. So it is replaced rather
+than annotated.
+
+Two shapes were considered. Narrowing it to the engine (*"Nothing leaves this machine when you run the
+command-line tool"*) is true but weaker as a specimen: the qualifier is the interesting half and it turns a
+flat statement into a hedge. The replacement above is the refusal that survived the change unaltered, and it
+demonstrates band R the way the Bible defines it - reassurance delivered as a **specific refusal** rather
+than as an adjective. It is also the sentence the product actually ships, in `consent.neverSent` and on
+Home's ledger.
+
+The Bible's §3 commitments 2 and 3 were corrected in the same pass, for the same reason and with the
+measurements beside them.

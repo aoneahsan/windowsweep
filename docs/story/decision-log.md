@@ -446,3 +446,34 @@ approvals - and trading approved words for a variance figure is the wrong trade.
 
 **Still owed on this surface:** the keeper's Bible-and-registry pass, batched with the other surfaces rather
 than run per-surface. Nothing in the apply depends on it.
+
+## 2026-09-07 - two GATE 1 artefacts corrected, because they had become false
+
+Not wording preferences, and not GATE 1 being re-opened: three statements approved on 2026-09-05 stopped
+being true of the product during this run, and a false statement in a reference artefact is worse than a
+missing one, because every future writer matches against it.
+
+**Bible §3, commitment 2** read *"A dry-run that genuinely writes nothing"*. **Measured, not reasoned:** a
+dry-run is not one of the quiet modes - `windowsweep.ps1:285` lists only `help`, `version` and `list` - so it
+initialises a log, and `Initialize-Report` runs unconditionally. A `--only 0 --dry-run --yes` run took the
+logs directory from 154 files to 155 and reports from 11 to 12. It writes exactly **two files, both its own,
+and none of yours**, which is now what the commitment says. The `docs-safety` developmental editor raised
+this as an owner question with two options; it is not one. The engine's behaviour is checkable in one
+command, so the artefact was wrong and the draft that contradicted it was right.
+
+**Bible §3, commitment 3** read *"No network calls at all - not telemetry, not an update check"* of the whole
+product. That remains exactly true of the **engine**, whose self-test check [9] fails the build on an HTTP or
+socket call, and stopped being true of the **desktop window** the moment the owner removed the analytics
+opt-out and the update gate shipped. Scoping the sentence to the engine keeps the strong claim where it is
+still earned, instead of losing it to a product-wide phrasing a reader can falsify.
+
+**Voice fingerprint, specimen 9** read *"Nothing leaves this machine unless you turn it on."* There is no
+longer anything to turn on. Replaced with **"Never a file path, never your user name, never the contents of
+anything."** - the refusal that survived the change unaltered, and a better specimen besides: it demonstrates
+band R as the Bible defines it, reassurance delivered as a *specific refusal* rather than as an adjective,
+and it is a sentence the product actually ships in `consent.neverSent`. The alternative, narrowing it to the
+engine, is true but weaker as a specimen because the qualifier becomes the interesting half and turns a flat
+statement into a hedge.
+
+Each correction carries its evidence beside it in the artefact itself, so the next reader does not have to
+take this log's word for it.

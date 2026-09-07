@@ -44,10 +44,22 @@ Three supporting commitments, in the order the reader cares about them:
 
 1. **Nothing personal, ever.** Documents, Desktop, Pictures, credentials, cloud-sync folders and browser
    state are refused by a single function that no flag can override.
-2. **A dry-run that genuinely writes nothing**, so the rehearsal and the performance are the same command
-   minus one word.
-3. **No network calls at all** - not telemetry, not an update check - and a test that fails the build if any
-   appear.
+2. **A dry-run that writes nothing of yours** - two files of its own, and nothing else - so the rehearsal and
+   the performance are the same command minus one word.
+3. **The engine makes no network calls at all** - not telemetry, not an update check - and a test that fails
+   the build if any appear.
+
+> 🔴 **Both of those were corrected on 2026-09-07, and neither was a wording preference.** Commitment 2 said
+> *"genuinely writes nothing"*, which is false: a dry-run is not one of the quiet modes
+> (`windowsweep.ps1:285` lists only `help`, `version`, `list`), so it initialises a log, and
+> `Initialize-Report` runs unconditionally. Measured rather than reasoned - a `--only 0 --dry-run --yes` run
+> took the logs directory from 154 files to 155 and the reports directory from 11 to 12. It writes exactly
+> two files, both its own, and none of yours. Commitment 3 said *"no network calls at all"* of the whole
+> product; that remains exactly true of the **engine**, whose self-test check [9] fails the build on an HTTP
+> or socket call, and stopped being true of the **desktop window** when the owner removed the analytics
+> opt-out and the update gate shipped. The window is where the collection is stated; the engine is where the
+> promise still holds without qualification. Scoping the sentence keeps the strong claim where it is earned
+> instead of losing it to a product-wide phrasing that a reader can falsify in one command.
 
 ## 4. Emotional palette
 

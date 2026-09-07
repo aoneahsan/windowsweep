@@ -160,11 +160,23 @@ with `readme.md` S-042, which keeps the same first clause. Two files, one mechan
 
 ### S-007 · installation.md:48-49 · PowerShell 7
 ```
-The launchers default to Windows PowerShell 5.1 because every Windows machine has it. To run the engine on PowerShell 7 instead, pass `--pwsh` or set `WINDOWSWEEP_SHELL=pwsh`.
+The launchers default to Windows PowerShell 5.1 because every Windows machine has it; to run the engine on PowerShell 7 instead, pass `--pwsh` or set `WINDOWSWEEP_SHELL=pwsh`.
 ```
-**Was:** identical.
+**Was:**
+```
+The launchers default to Windows PowerShell 5.1 because every Windows machine has it. To run the engine on
+PowerShell 7 instead, pass `--pwsh` or set `WINDOWSWEEP_SHELL=pwsh`.
+```
 
-**Change:** none. The reason comes before the flag, which is the right order for a default nobody chose.
+**Change:** the full stop becomes a semicolon, and `To` becomes `to`. Nothing else moves - the reason still
+comes before the flag, which is the right order for a default nobody chose.
+
+The line editor found and could not make this one. These were the page's only two adjacent 14-word
+sentences, its single metronome bar, and joining them lifts `installation.md` from 0.44 to 0.50 against a
+0.45 floor without adding a claim. It could not apply it because the slot read `Was: identical`, which is a
+relation rather than a quotation and gives the applier no anchor - and writing a quoted `Was:` is the main
+session's job, since the main session owns the apply step. The quotation above was verified character for
+character against `docs/installation.md` before it was written here.
 
 ### S-008 · installation.md:53 · Where output lands · the lead-in
 ```
@@ -192,16 +204,18 @@ page. The remaining occurrences on other pages are listed in the report as a swe
 ### S-010 · installation.md:72 · Uninstall · what removing the data does not remove
 
 ```
-`--uninstall-data` removes the logs, the reports and your saved developer answer. It asks first, and `--yes` does not answer that question. It does not touch anything windowsweep reclaimed, because there is nothing to put back.
+`--uninstall-data` removes the logs, the reports and your saved developer answer. It asks first, and `--yes` does not answer that question. It does not restore what windowsweep reclaimed. There is nothing to put back.
 ```
 **Was:** (new — the section ends on the fence.)
 
 **Change:** added, and this is the page's second refusal beat. An uninstall section on a tool that deletes
 files invites exactly one question, which is whether uninstalling undoes anything. The answer is no, and
-saying it here is cheaper than a reader discovering it. The middle sentence is the guarantee: `Confirm-Ui`
+saying it here is cheaper than a reader discovering it. The second sentence is the guarantee: `Confirm-Ui`
 is called with `-NoAutoYes` for this prompt, so a batch run cannot answer it. Verified against
 `modules/release_helpers.ps1` line 415 and against `AI-INTEGRATION-GUIDE.md`, which already lists
 `--uninstall-data` under "never covered by `--yes`".
+
+<!-- line pass 2026-09-08: the fence's last sentence is now two; see "Line pass, 2026-09-08" below. -->
 
 ### S-011 · installation.md:73 · the closing hand-off
 ```
@@ -263,7 +277,7 @@ the point of a self-test is that it runs where the reader is rather than where t
 
 ### S-015 · quick-start.md:11-14 · step 1 · what the self-test does
 ```
-The self-test parses every script, checks that every path any section declares lies outside the protected lists, and runs fixtures with a real junction to prove links are never followed, that `--dry-run` writes nothing, and that `--yes` never selects a personal or project item. It ends with a pass count (151 at 1.1.0) and exits non-zero on any failure.
+The self-test parses every script and checks that every path any section declares lies outside the protected lists. It runs fixtures with a real junction. They prove that links are never followed, that `--dry-run` writes nothing, and that `--yes` never selects a personal or project item. It ends with a pass count (151 at 1.1.0) and exits non-zero on any failure.
 ```
 **Was:** ... checks that every declared target lies outside the protected paths, and runs fixtures ...
 
@@ -274,6 +288,8 @@ a number printed by the reader's own run is worth more on their screen than in t
 kept because it is a property of the release rather than of a machine. **Verified** by running
 `node bin/windowsweep.js --self-test --no-color --no-report`: `all 151 checks passed`, and check [6] printed
 `105 declared targets, none inside a protected path`.
+
+<!-- line pass 2026-09-08: the 44-word first sentence is now three sentences; see "Line pass, 2026-09-08" below. -->
 
 ### S-016 · quick-start.md:16 · step 2 · heading
 ```
@@ -346,7 +362,7 @@ so the headings and the opener now agree word for word.
 
 ### S-021 · quick-start.md:41-44 · step 4 · the walkthrough
 ```
-The guided walkthrough. On the first run it asks whether you are a developer (see [Developer mode](./developer-mode.md)), shows a pre-scan, then visits each section: `a` run, `s` skip, `q` quit. **Enter runs the section** - `a` is the default at that prompt. Every section names what it removes before it acts, keeps a running total, and the summary at the end lists the log, the report and the follow-up commands (admin sections, browsers that were open).
+The guided walkthrough. On the first run it asks whether you are a developer (see [Developer mode](./developer-mode.md)), shows a pre-scan, then visits each section: `a` run, `s` skip, `q` quit. **Enter runs the section** - `a` is the default at that prompt. Every section names what it removes before it acts and keeps a running total. The summary at the end lists the log, the report and the follow-up commands (admin sections, browsers that were open).
 ```
 **Was:** ... then visits each section: `a` runs it, `s` skips it, `q` stops. Every section names what it
 removes ...
@@ -358,6 +374,8 @@ therefore runs the section**, and no page in this documentation said so. On a to
 that nothing happens by accident, a default that acts is the one keystroke a reader must know before they
 reach the prompt. It is stated as the mechanism rather than as a warning, because it is a reasonable default
 and the sentence is not a scold.
+
+<!-- line pass 2026-09-08: the 34-word closing sentence is now two; see "Line pass, 2026-09-08" below. -->
 
 ### S-022 · quick-start.md:53-61 · step 5 · the admin step
 ```
@@ -547,10 +565,54 @@ introduced it while fixing the older one. A slot re-approved on sight would have
 
 ---
 
+## Line pass, 2026-09-08 — three fences
+
+Fences only. Every `Was:` stands as the writer left it, every fact, number, path and flag is where it was,
+and the slot order is the developmental round's. Three fences changed, each for a rhythm or clarity reason
+the fingerprint names; each slot carries a pointer comment to this section.
+
+**S-010.** The last sentence read *"It does not touch anything windowsweep reclaimed, because there is
+nothing to put back"* and now reads *"It does not restore what windowsweep reclaimed. There is nothing to
+put back."* "Touch" pointed the wrong way. On an uninstall page it reads first as one more thing the command
+will not delete and only on a second pass as the answer the paragraph exists to give, which is that nothing
+comes back. The refusal is now named as a refusal to restore and the reason stands on its own, so the
+paragraph ends on its shortest line. No fact moved.
+
+**S-015.** The first sentence ran to 44 words against the fingerprint's ceiling of 34, and the earlier
+self-check had reported it rather than fixed it because it sat outside that round's changes. It is now three
+sentences of 18, 7 and 21 words. Every clause is kept, in order. The three fixture proofs stay one list
+because there are exactly three of them, and "that" now leads each so the list is parallel.
+
+**S-021.** The closing sentence was 34 words with a change of subject in the middle, from *every section* to
+*the summary*, which is the join a tired reader goes back over. It is split at that join into 14 and 20
+words. Nothing else in the slot moved. The Enter sentence and its dash stand as the revision left them, and
+that dash is the page's only one.
+
+**Recommended and not made: S-007.** Its two sentences are 14 words each, the one paragraph on
+`installation.md` where two equal lengths sit side by side. Joined on a semicolon (*"…has it; to run the
+engine…"*) they would be the page's one sentence over 23 words and would lift its burstiness from 0.44 to
+0.50 without adding a claim. The slot is kept-identical. Its `Was:` is a relation rather than a quotation, so
+it gives the applier no anchor; a line editor may not write one. Left for the main session, which owns the
+apply step.
+
+**Left alone; who owns each.** S-003 refuses for *both installers* and explains with *a task registered
+there*, which names one of the two; whether the alias case wants its own noun is the fact-checker's call.
+S-022's *"16 is the event logs and is permanent"* carries a double *is* the copy editor may smooth without
+touching the permanence mark. S-017's second sentence has two *and*s before its semicolon; a comma before the
+second would mark the clause boundary, which is a punctuation call and so the copy editor's.
+`quick-start.md` has no footer slot, so its *Last Updated* stays 2026-09-03 while `installation.md` and
+`docs/README.md` move to 2026-09-05; S-012's note that every page carries the same slot is one page short.
+Two kept shapes were left. S-019 opens without a subject where S-017 now opens on *It*, and S-013's *look*
+sits under a heading that says *See*. S-013's verbs are matched to `readme.md` S-044 by design and S-019 is
+a kept slot, so neither is a line edit.
+
+---
+
 ## SELF-CHECK
 
-Rewritten on 2026-09-07. Every figure below was re-measured rather than carried forward, and each carries the
-tokenizer and the inclusion rule that produced it.
+Rewritten on 2026-09-07. The rhythm and length figures were re-measured on 2026-09-08, after the line pass.
+Every figure below was re-measured rather than carried forward, and each carries the tokenizer and the
+inclusion rule that produced it.
 
 **Palette.** P dominant and carried by S-015, S-017, S-019, S-021, S-022 and S-026, each stating a mechanism
 with its file, its schedule or its exact value. S-026 names the day and the hour the weekly task runs rather
@@ -562,31 +624,37 @@ nothing."*) and **S-025**, seven words standing above the command they describe.
 only P and R, and neither page is a place for an aside.
 
 **Rhythm.** Measured on the **post-apply** pages with every slot applied, tokenizer `\b[\w'-]+\b`, sentences
-split per paragraph on `(?<=[.!?])\s+`, fenced blocks and table rows and headings excluded.
-`installation.md`: 22 sentences, 3 to 23 words, median 13.5, burstiness **0.41**; shortest is *"Nothing else
-is installed."* (four words, S-002) and longest is S-006's execution-policy sentence at 23.
-`quick-start.md`: 21 sentences, 3 to 44 words, median 11, burstiness **0.70**; shortest is *"It deletes
-nothing."* (three words, S-017) and longest is S-015's self-test sentence at 44. The re-base is what moved
-that page: S-017 restores the three-word refusal and S-022 adds a 30, a 9 and a 7 where there had been one
-flat line.
+split per paragraph on `(?<=[.!?])\s+`, fenced blocks and table rows and headings excluded, and re-measured
+on 2026-09-08 after the line pass with the same rules, where the pre-pass build reproduced every figure of
+the previous revision to the digit. `installation.md`: 23 sentences, 3 to 23 words, median 12, burstiness
+**0.44**, from 0.41; shortest is *"Nothing else is installed."* (four words, S-002) and longest is S-006's
+execution-policy sentence at 23, tied with S-001's second. `quick-start.md`: 24 sentences, 3 to 30 words,
+median 12.5, burstiness **0.59**, from 0.70; shortest is *"It deletes nothing."* (three words, S-017) and
+longest is S-022's sentence naming the three deep sections at 30. The fall is the 44 leaving.
+An outlier lifts a variance figure while breaking the range rule, and the range rule is the one the
+fingerprint states. The re-base is what moved the page before that: S-017 restores the three-word refusal
+and S-022 adds a 30, a 9 and a 7 where there had been one flat line.
 
-🔴 **Two rhythm facts are reported rather than fixed.** S-015's 44-word sentence exceeds the fingerprint's
-34-word ceiling, and the first self-check attributed that 44 to S-021, which measures 34 — the figure was
-right and its owner was wrong. Neither is one of this round's changes. Separately, `installation.md` sits at
-**0.41** against the rubric's 0.45, because that page now has no sentence over 23 words. Its obvious lever is
-S-011: extending the hand-off to explain what `--self-test` does would clear the threshold in one edit. It is
-refused deliberately. That explanation is `quick-start`'s own opening paragraph, a pointer that restates the
-page it points at breaks the single-home rule, and buying a variance figure with a duplicated claim is the
-wrong trade.
+🔴 **Two rhythm facts were reported rather than fixed in the writer's round; the line pass closed one.**
+S-015's 44-word sentence exceeded the fingerprint's 34-word ceiling, and the first self-check attributed that
+44 to S-021, which measures 34 — the figure was right and its owner was wrong. S-015 is now 18, 7 and 21.
+The other stands. `installation.md` sits at **0.44** against the rubric's 0.45, because that page has no
+sentence over 23 words. Its obvious lever is S-011: extending the hand-off to explain what `--self-test` does
+would clear the threshold in one edit. It is refused deliberately. That explanation is `quick-start`'s own
+opening paragraph, a pointer that restates the page it points at breaks the single-home rule, and buying a
+variance figure with a duplicated claim is the wrong trade. The line pass found a second lever in S-007 and
+left it, for the reason its own section gives.
 
 **Length.** Tokenizer `\b[\w'-]+\b`. **Inclusion rule: prose, headings and table cells; fenced code blocks
 excluded**, since a command is a copy target rather than something read. Scope: the two whole files as they
 would stand after **every** slot lands, the re-based S-017 and S-022 included. `installation.md`
-**258 → 372**; `quick-start.md` **305 → 367**. The cap is ~400 per page. Both are inside it, installation
-clearing by 28 words and quick-start by 33 — rather than by the 75 the review packet estimated. Under the
-stricter rule that also drops table rows the same two pages read 184 → 298 and 305 → 367; under a plain
-`wc -w` over the whole file, 347 → 480 and 341 → 403. 🔴 **The re-base cost quick-start 54 words**, which is
-the price of a correction that names three sections, their gate and three nouns. The page still clears.
+**258 → 371**; `quick-start.md` **305 → 369**. The cap is ~400 per page. Both are inside it, installation
+clearing by 29 words and quick-start by 31 — rather than by the 75 the review packet estimated. Under the
+stricter rule that also drops table rows the same two pages read 184 → 297 and 305 → 369; under a plain
+`wc -w` over the whole file, 347 → 479 and 341 → 405. The line pass moved these by one word down and two
+up: S-010's split is one word shorter and S-015's is two words longer. 🔴 **The re-base cost quick-start 54
+words**, which is the price of a correction that names three sections, their gate and three nouns. The page
+still clears.
 
 🔴 **Two `wc -w` figures in the previous revision of this section were extrapolated from the other tokenizer
 rather than run, and read 483 and 415.** They are corrected above from `wc -w` itself. A number carried

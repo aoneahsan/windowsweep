@@ -1,6 +1,6 @@
 # windowsweep - Project Rules
 
-Last Updated: 2026-09-07 (session 10: the completion run opened - eight owner decisions recorded, the three planning files moved to the workspace root, the Supabase project landed, the updater keypair generated, and a marketing site scoped as phase P8) · Context pass: 2026-09-05 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
+Last Updated: 2026-09-08 (session 11: the 1.2.0 engine window opened and `--exclude-path` turned out to protect one section out of twenty-six; four Rust commands landed; the marketing-site repository exists; three owner rows closed by evidence rather than by asking) - Context pass: 2026-09-05 (CLAUDE.md and AGENTS.md mirrored, both under 28 KB)
 
 Safe, developer-aware Windows cleanup CLI: a Windows PowerShell 5.1 engine behind a dependency-free Node
 launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macleanup` (Bash). Public repo
@@ -18,100 +18,86 @@ launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macl
 - Dependency and manifest record: `docs/PACKAGES.md`
 - Follow-ups the agent owes this project: `PENDING-TASKS.md` (root)
 
-## Current state (session 8, 2026-09-05 - the desktop foundation and the story gates)
+## Current state (session 11, 2026-09-08 - the 1.2.0 engine window)
 
-**1.1.0 is published on npm and equals `main`'s engine** (built from `3c4d54e`; `git diff 3c4d54e..HEAD -- lib
-modules windowsweep.ps1 bin` is empty; tags `v1.0.0`, `v1.0.1`, `v1.1.0`, each with a GitHub Release). Sections
-0-25, `--select` / `--select-file`, `--notify`, `candidates[]` / `targets[]` and `##windowsweep` progress lines
-in `--json`, `--list --json`. The self-test runs **151 checks** (green 2026-09-05, exit 0). 🔴 **No engine file
-has been touched since 1.1.0 and none should be** without a version cascade.
+**The CLI is published at 1.1.0 and the engine is now DELIBERATELY ahead of it.** 🔴 The long-standing
+invariant *"`git diff 3c4d54e..HEAD -- lib modules windowsweep.ps1 bin` is empty"* **ended on purpose** in
+commit `1904b21`; it is replaced by *"the engine equals `v1.2.0` once tagged"*. Do not read the non-empty
+diff as drift - read every hunk of it, and it should classify as exactly: the three additive contract
+changes, two string fixes, and nothing else.
 
-**The docs site** is deployed and green, now with a real PNG Open Graph card and its own regenerated lockfile;
-`windowsweep-docs.aoneahsan.com` still probes **000** (owner DNS rows 11-12), so `package.json` `homepage`,
-the README links and `WS_DOCS` point at GitHub until it probes 200.
+**What went into the engine for 1.2.0 (unreleased; the version has NOT moved):**
 
-**The click dummy is CLOSED** (RW-073 to RW-075, 2026-09-05). Eleven screens, eight gallery files, a parity
-ledger at `desktop/design/CLICK-DUMMY-INVENTORY.md`. Four real defects were fixed, including a premature `*/`
-that had disabled the whole bleed-band ink reset and left 87 text nodes at 1.09:1 in light mode. Gates: 8,034
-contrast measurements across three treatments in light and dark with zero failures, zero focusable-while-hidden
-controls, no HTML text under 12px - each watched failing on its own plant.
+- 🔴 **`--exclude-path` was protecting ONE section out of twenty-six.** It was parsed globally, documented as
+  section 17's, and read by exactly one consumer at `modules/projects.ps1:102`. Someone who excluded a folder
+  was protected in section 17 and silently unprotected everywhere else - it worked where you tested it. It is
+  now enforced inside `Get-ProtectionReason`, the guard every chokepoint already calls, so it holds in every
+  section: refused, logged `excluded: <path>`, reported once in a new `excluded[]` array. The check runs
+  **last**, so a path that is both protected and excluded reports the PROTECTED reason - the stronger claim,
+  and the one no flag can lift. `Initialize-Exclusions` is called from `Initialize-Settings`, **not** from
+  `Initialize-Safety`, because the config file is merged after the safety tables are built.
+- `targets[].newest_write_utc` in `--scan --json`, ISO 8601 UTC or `null`. It costs no extra walk: under
+  `--json` the size pass is `Get-DirectoryStats`, which already returns the newest stamp from the same
+  enumeration. A human `--scan` keeps the faster robocopy path.
+- `protected` in `--list --json` - the subtrees plus the four category sentences, both readers now taking the
+  category list from **one** constant (`WS_PROTECT_CATEGORIES`).
+- Section 22 declared `Dev = $true` with no behavioural branch; and checking that against the docs found the
+  mirror-image gap - sections **4, 17 and 20 are developer-gated and said so nowhere**. Both fixed; the table
+  and the engine now agree on all seven, verified by parsing both.
+- `--help` said `--permanent` covers "Sections 18/19"; it reaches **18, 19 and 23**.
 
-**The desktop app now has a built foundation** (RW-077, RW-078, RW-080 largely done). `desktop/` holds a Vite 8
-+ React 19 + TS ~6.0.3 web layer and `src-tauri/`. What exists and is proved: the engine bridge (`lib/cli.ts`
-parses the `--json` contract, `lib/catalogue.ts` reads `--list --json` so no section list is hard-coded
-anywhere), PKCE sign-in, Firestore REST sync that pages at 20 and syncs no path, one consent-gated `track()`
-fan-out, the **ten-axis theme registry in ONE file** (`src/lib/axes.json`) with `public/prepaint.js` GENERATED
-from it and a `--check` drift gate, i18n on every string behind a `no-restricted-syntax` gate at `error`, and
-five Rust commands behind an **argument allowlist with its own unit test**, and an icon set exported from an SVG
-master carrying the sweep motif in the registered hue. 🔴 **All eleven screens EXIST as routes** - Splash, Consent,
-Home, Run, Sections, Picker, History, Report, Settings, Account, Elevation - and the placeholder scaffolding
-is deleted. 🔴 **But "built" was overstated and is corrected here (2026-09-07).** The GATE 4 round-3 pass,
-the first to judge them against a build that could actually reach the engine, found **Home implementing 4 of
-the dummy's 12 bands** with none of the eight gaps declared - the Reclaim Map (the dummy's signature element)
-absent, along with the drives band, the capacity ring, "these need a person", the protected-path chips, the
-last-eight-runs sparkline, the schedule and sections-needing-admin. Sections lacks its filter row, its
-four-run-policy disclosure and the dummy's tier vocabulary; Run lacks its per-section band, so progress
-events arrive with nowhere to render. **Rounds 1 and 2 could not have seen any of this** - they measured a
-Home that rendered one band because three stacked defects refused every engine call, so their zeroes were
-right by accident. Open as D-14, D-15 and D-16; **GATE 4 closes on eight of eleven screens and not on those
-three.** 🔴 **Rust compiles locally as of 2026-09-06** - row 22 is closed: VS 2022
-Build Tools 17.14 lives at `D:\BuildTools` (MSVC 14.44.35207, Windows SDK 10.0.26100.0), installed off C:
-because it had 11.2 GB free. For the whole build before that `desktop-ci.yml` was the only Rust evidence,
-and it earned its place immediately by
-catching **three** real defects across four cycles: the `protocol-asset` Cargo feature with no matching
-allowlist entry, a `bundle.resources` glob whose trailing `**` matches path COMPONENTS (four directories, no
-files), and a comment key the config schema refuses outright. 🔴 **`desktop-ci` is now GREEN end to end** on
-`4c031d7` - `cargo fmt`, `clippy -D warnings`, `cargo test` and `tauri build --no-bundle` all pass. Because
-that class of failure was only findable in CI, `scripts/check-tauri-config.mjs` now validates the config
-against the installed CLI's own schema in `prebuild` and in CI; its `--self-check` plants an unknown field to
-prove it is not vacuous.
+**Self-test 151 -> 154, exit 0**, each new check watched failing on its own plant. PSScriptAnalyzer 1.25.0
+clean. 🔴 **Still owed before 1.2.0 ships:** the `cli-strings` and `report-bodies` slots, the tagline in all
+five places, the version cascade, the publish gate, the tag, and a Release with `--latest=false`.
 
-**A browser pass over all eleven screens** (2026-09-05): 264 combinations - 11 screens x 4 widths x 3
-treatments x light and dark - **10,684 text nodes, zero contrast failures**, zero overflow, zero text under
-12px, zero focusable-in-hidden, zero runtime errors; both gates watched failing on two different plants.
-🔴 Widths are **760/1024/1440/1920** and **390 is deliberately absent** - `minWidth` is 760, so the product
-cannot be narrower and a failure there is unactionable. It was made possible by `src/lib/dev-engine.ts`, a
-DEV-only stand-in behind a **dynamic** import; 🔴 the first version gated the call sites and its strings still
-shipped, so **gating a body is not gating a module** - verify with a grep of `dist/` plus a control. It found
-one defect no static gate could: `Shell.tsx` resolved `getCurrentWindow()` during render, which throws
-outside a Tauri window. 🔴 **GATE 4 itself is still owed** - screenshot pairs judged by eye in the app's own
-WebView2. Row 22 no longer blocks it: the app builds and installs here now, so the pass is unblocked and
-waiting only on the eye.
+**The desktop app is released and has gained four Rust commands.** `desktop-v1.1.0` is on GitHub Releases,
+marked Latest, with both installers, both minisign signatures, `latest.json` and `SHA256SUMS.txt`, and the
+updater endpoint resolves. GATE 4 closed on all eleven screens after six rounds. New in the shell:
+`write_select_file`, `cancel_run`, `list_drives`, `list_run_files`, plus `--install-task` /
+`--uninstall-task` in the argument allowlist - 15 Rust tests, each watched failing on a plant.
+🔴 **`--large-mb` DOES NOT EXIST; the flag is `--large-file-mb`** (default 100). Allowlisting the misspelling
+would have compiled, passed every gate, and thrown from the engine the first time a person moved the size
+control. 🔴 `engine.rs` was already over the 500-line ceiling before this work; the allowlist moved whole to
+`args.rs`. 🔴 A custom Tauri command needs no ACL entry **only while the app has no `src-tauri/permissions/`
+directory** - adding one flips `has_app_acl_manifest` true and every command starts needing an explicit entry,
+at runtime, with a green build.
 
-**The local toolchain, proved 2026-09-06.** The whole `desktop-ci` chain ran green on this machine -
-`cargo fmt --check`, `clippy -D warnings` (1m19s), `cargo test` (1 passed) and `tauri build --no-bundle`
-(3m57s, a 5.2 MB binary) - and then, beyond anything CI does, real installers:
-`windowsweep_1.1.0_x64-setup.exe` (2.37 MB) and `windowsweep_1.1.0_x64_en-US.msi` (3.06 MB), built with
-`--config '{"bundle":{"createUpdaterArtifacts":false}}'` so no committed file changed and the updater keypair
-stays a separate release decision. 🔴 **The MSI was verified by reading its own File table, not the bundler's
-exit code**: 39 entries, `windowsweep-desktop.exe` at exactly 5,477,888 bytes plus all 38 engine files.
-🔴 **And the recorded cause of the old failure was wrong** - the GNU coreutils `link.exe` is still first on
-PATH and everything links regardless, because rustc resolves the MSVC linker by absolute path through the VS
-Setup COM API. The toolchain was simply absent; PATH order never mattered.
+**Open GATE 4 items, none blocking:** D-8 (four Settings preferences), D-9 (the ecosystem roster panel),
+D-13 (Splash skipped-note copy), D-22 (Run idle hero). `PENDING-TASKS.md` holds TASK-004 to TASK-007;
+TASK-003 closed 2026-09-08 (the CRLF working tree: `lib/constants.ps1` went 0 -> 93 CR bytes,
+`windowsweep.ps1` 0 -> 316, every LF file stayed at 0).
 
-**Gates run 2026-09-05, all green:** `yarn typecheck` exit 0 · `yarn lint` exit 0, with the i18n gate watched
-failing on two different plants (a literal JSX string and a literal `aria-label`) · `yarn build` zero warnings,
-zero source maps · the prepaint drift gate watched failing on a planted axis change · the CI tarball sweep
-watched failing on a planted `desktop/` entry · CLI self-test 151/151 · `version parity OK: 1.1.0`.
+**The docs site is live over HTTP** at `windowsweep-docs.aoneahsan.com`. 🔴 **HTTPS still probes 000** -
+GitHub has not issued the certificate, `https_enforced` is `false`, and that is blocked on GitHub rather than
+on the owner. Every link switch waits for one 200 and they all move together, never one early. Its AI guide
+was telling automated callers that `--yes` auto-confirms DISM (`12-14` rather than `12-13`); arbitrated from
+`lib/constants.ps1:66` and fixed on the site, where the product's own copy was already right.
 
-**The storytelling retrofit has both approval gates.** GATE 1 (the Bible) and GATE 2 (the content map) were
-approved 2026-09-05; the voice is the eleventh entry in the global registry. The three desktop surfaces are
-drafted as numbered slot inventories at `docs/story/drafts/desktop-{moment,safety,cockpit}.md` - 375 slots,
-331 kept as already on voice, 38 changed - and **GATE 4 was granted on 2026-09-05**. RW-093 wrote all 38 into
-the click dummy, and the app then followed the dummy. Two owner answers came with it: **the pricing claim is
-gone** (Home and Account now say only what sign-in does, so nothing claims there is no paid tier), and **the
-installer ships unsigned** with the SmartScreen note kept and its two verifiable artefacts named exactly - a
-SHA-256 checksum and the updater's minisign signature, neither of which is a code-signing certificate.
-🔴 **Eleven surfaces are still unwritten**: readme, tagline, docs-start, docs-safety, docs-reference,
-docs-help, docs-about, ai-guide, site-front, cli-strings, desktop-readme.
+**Telemetry is configured and nothing was asked of the owner to get there.** The GA4 measurement id was
+sitting in the Firebase project's own registered WEB app all along. The whole web config is in the FilesHub
+vault (confirmed from the write response's own `changes` list, never by a reveal) and the four ids are GitHub
+repository **variables** on `aoneahsan/windowsweep` - public client identifiers, so variables rather than
+secrets. MANUAL-TASKS rows 16, 18 and 25 are closed on that evidence.
 
-🔴 **P5 is closed but two of its rows are not:** RW-064 and RW-065 shipped only their verified halves and RW-066
-was **deferred, not shipped**. **Section 26 is still free.** `C:\Intel` was inspected and **rejected**.
+**Phase P8 exists as a repository.** `aoneahsan/windowsweep-web` is created **private** (D9), scaffolded with
+its rules, `docs/PROJECT-CONTEXT.md` and the D9-D12 / P8-D1..D5 decisions, ports 5975/5976 registered. Its
+click dummy is being built to GATE 1, which is the owner's call and the run's one deliberate stopping point.
+🔴 `https://windowsweep.aoneahsan.com/` answers **404 with a valid certificate** - the custom domain is
+connected and nothing is deployed.
 
-Phase P1 is entirely owner-run (rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21) and moved to a **second machine** on
-2026-09-07, along with row 20, because this one has neither the software nor the operating systems those rows
-need. The specification of every open item is `../remaining-work.md` and the percentage lives in
-`../remaining-work-summary.md` - **read it there rather than here**, so one number cannot drift in two files.
+**Storytelling:** GATE 1 and GATE 2 are closed and GATE 4 is pre-authorised for every remaining surface on a
+stated condition. Content-map rows **16-19** were added for the marketing site as an amendment, and row 1's
+tone band was corrected from "W once" to "W twice" because both W lines were already shipped in `README.md`.
+🔴 **Two independent blind spots in the story lint hook**, both now fleet law: it strips every code fence
+before counting, so on a slot-shaped surface it reads none of the shipping copy; and its sentence splitter
+does not split on a period followed by `**`, so `**Short.**` is absorbed into its neighbour and a burstiness
+FAIL cannot be fixed by adding one. Write `**Short**.` A green hook on these surfaces is evidence about the
+writer's commentary and nothing else.
+
+🔴 **P5 residue:** RW-064 and RW-065 shipped only their verified halves, RW-066 was deferred, and
+**section 26 is still free**. Phase P1 is entirely owner-run and moved to a **second machine** on 2026-09-07,
+with row 20. The specification of every open item is `../remaining-work.md`; the percentage lives in
+`../remaining-work-summary.md` - **read it there**, so one number cannot drift in two files.
 
 ## Per-Project Stack Override (binding)
 

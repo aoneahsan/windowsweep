@@ -131,11 +131,34 @@ jobs:
           }
           Write-Host "checksums for $($files.Count) installer(s) -> $out"
 
+      # 🔴 THIS STEP RACES THE RELEASE INTO EXISTENCE, and it lost on 2026-09-07.
+      # tauri-action had just created the draft, and `gh release upload` one step
+      # later failed with a bare `release not found` - then the identical command
+      # from a workstation eight minutes on succeeded against the same draft. So it
+      # is eventual consistency, NOT drafts being unreachable, which is the wrong
+      # diagnosis to reach for and would have sent the fix in the wrong direction.
+      #
+      # The cost of losing is specific: the five artefacts tauri-action attaches all
+      # arrive, the release LOOKS complete, and the one file the shipped copy
+      # promises by name is the one missing - so the failure lands exactly where a
+      # reader would check the promise.
       - name: Attach the checksum file to the release
+        shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ inputs.tag || github.ref_name }}
-        run: gh release upload "$TAG" SHA256SUMS.txt --clobber
+        run: |
+          for attempt in 1 2 3 4 5 6; do
+            if gh release upload "$TAG" SHA256SUMS.txt --clobber; then
+              echo "attached on attempt $attempt"
+              exit 0
+            fi
+            echo "release not visible yet (attempt $attempt of 6); waiting 10s"
+            sleep 10
+          done
+          echo "::error::could not attach SHA256SUMS.txt to $TAG after 6 attempts over ~60s."
+          echo "The release exists but is missing the checksum file the shipped copy promises by name."
+          exit 1
 
       # 🔴 THE ASSET LIST IS THE ONLY EVIDENCE THAT THE PROMISE HELD. Every step
       # above can pass while the release is missing the half a user cannot see:

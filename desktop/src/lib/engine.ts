@@ -200,10 +200,18 @@ export function selectionArgs(selectFilePath: string, sections: number[], develo
  * is what the Elevation screen tells the reader, and this is the line that makes
  * it true.
  */
-export function elevatedArgs(sections: number[], dryRun: boolean): string[] {
+export function elevatedArgs(sections: number[], dryRun: boolean, developer: boolean): string[] {
   const args = ['--only', sections.join(','), '--elevate'];
   if (dryRun) args.push('--dry-run');
   else args.push('--yes');
+  /* 🔴 This was the one run path of four that did NOT carry the answer, so the
+     engine fell back to its own saved config while the window showed a switch. It
+     matters here specifically: the Elevation screen selects every admin section and
+     section 20 carries `Dev = $true`, so an elevated run really can include a
+     dev-flagged section - and it would have used a different answer from the one on
+     screen. Found by a docs writer checking a sentence I had asserted, not by a
+     gate; scanArgs, safeBatchArgs and selectionArgs always passed it. */
+  args.push(developer ? '--developer' : '--not-developer');
   return args;
 }
 

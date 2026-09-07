@@ -40,3 +40,9 @@ Thumbs.db
 desktop.ini
 *.bak
 *.orig
+
+# Agent scratch. A .payload.tmp appeared under docs/story/drafts/ while three story
+# writers were working in parallel; it was cleaned up, but it was NOT ignored, so a
+# `git add docs/story/drafts` would have swept it into a commit.
+*.tmp
+.payload.tmp

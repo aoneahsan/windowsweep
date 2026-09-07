@@ -27,6 +27,7 @@ export function Elevation() {
   const catalogue = useStore((s) => s.catalogue);
   const startRun = useStore((s) => s.startRun);
   const appendLog = useStore((s) => s.appendLog);
+  const developer = useStore((s) => s.developer);
   const applyProgress = useStore((s) => s.applyProgress);
   const finishRun = useStore((s) => s.finishRun);
   /* 🔴 WHICH one is running, not just that something is. Pressing "Ask for
@@ -42,7 +43,7 @@ export function Elevation() {
     const id = newRunId();
     startRun(id);
     if (!dryRun) void navigate({ to: '/run' });
-    void run(elevatedArgs(admin.map((s) => s.id), dryRun), id, {
+    void run(elevatedArgs(admin.map((s) => s.id), dryRun, developer), id, {
       onLog: appendLog,
       onProgress: (section, event, status, freedBytes) => {
         applyProgress({

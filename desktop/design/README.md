@@ -328,3 +328,42 @@ Open `windowsweep-click-dummy/index.html` by double-click. It works offline.
 - A link can carry a look without saving it: `index.html?palette=plum&theme=light`.
 - `sections.html` is the cockpit regime; `run.html` is the moment, and its Start button drives the whole
   thing from simulated `##windowsweep` lines.
+
+---
+
+## Amendment - 2026-09-07: the consent screen becomes a notice
+
+🔴 **Recorded here because `frontend-ui-standards.md` §10a requires a divergence to be written into the dummy
+first and the reason recorded beside it**, rather than left in a decisions log the reader of the dummy never
+opens.
+
+**Owner decision, verbatim:** *"do not give user option to turn off any of those analytics or anything, it's
+a free production, just mention we use that to improve the product, with no option to opt out, they can just
+not use the product if they so not like it"*, and then *"keep it simple 1 line we collect to improve the
+product for everyone, sweet and simple"*.
+
+That supersedes the 2026-09-03 decision this dummy was drawn against, which put four providers behind a
+first-run dialog with every one off until accepted.
+
+**Files amended, and what moved:**
+
+| File | Change |
+|---|---|
+| `consent.html` | Four switches and two answers become one heading, a `Never sent` panel, a disclosure, and one `Continue`. Title now `What the window sends` |
+| `page-consent.js` | Writes a *seen it* flag rather than a per-provider map. The comment at its head records what survived and why |
+| `index.html` | Home's privacy ledger lists the four destinations as facts with an `on` badge, and gains the `Never sent` paragraph |
+| `wire.js` | `renderConsent` paints stated facts, not switches |
+| `elevation.html` | The runs folder is `%LOCALAPPDATA%\com.aoneahsan.windowsweep\runs\`. It said `windowsweep-desktop`, and so did the app - **parity was a match, so no parity check could find it** |
+| `splash.html` | The update band no longer promises installation on close, which Tauri's updater does not do. Now *"Install it now, or carry on and install it later."* |
+
+**Two things kept deliberately.** The engine's zero-network fact, because it is a published claim and still
+true - the decision covers the desktop window, never the command-line tool. And the `Never sent` list,
+because a notice with nothing checkable in it is an announcement: the Bible's band R delivers reassurance as
+a **specific refusal**, and naming what never leaves is that refusal. Cutting it would have made the screen
+shorter and worse.
+
+**One thing removed on principle.** A switch a person can press that changes nothing is worse than no switch,
+because it is a promise the product does not keep. So the ledger states rather than offers.
+
+⚠️ **This re-opens `desktop-safety`**, a GATE-4-recorded storytelling surface covering Consent and Elevation.
+The keeper owes it a pass.

@@ -354,3 +354,75 @@ defect and no runtime error. The visual comparison is still owed.
 
 Reproduce: `yarn dev` in `desktop/`, then the CDP script recorded in that
 session's work-history entry.
+
+---
+
+## 10. GATE 4 itself — 2026-09-07, against the INSTALLED app
+
+Section 9 recorded a browser pass over the React screens in a development build. This is **GATE 4**: the
+screenshot pairs, taken in the app's own WebView2 from the **installed** 1.1.0 build
+(`%LOCALAPPDATA%\windowsweep\windowsweep-desktop.exe`, built 13:46), beside the dummy pages over `file://`.
+
+**Full report, with every verdict and every defect:** `desktop/design/gate4/GATE4-REPORT.md`.
+Six representative pairs sit beside it; all 88 captures and 68 logs are outside git at
+`D:\work\windows-cleanup-root\gate4-evidence\`.
+
+### What was taken
+
+**11 screens x {1440, 760} x light and dark = 44 pairs, 88 captures**, lime treatment, all present.
+760 rather than 390, because `minWidth` is 760 and a failure at 390 is unactionable — as section 9 already
+recorded. The dummy's review toolbar is hidden before each capture (2 nodes, declared).
+
+🔴 **The first 44 captures were wrong and had to be retaken.** Both the dummy and the app are app-shell
+layouts: `document.scrollHeight === innerHeight` and `main.content` is what scrolls. A `captureBeyondViewport`
+"full page" screenshot therefore returned **only the fold** — measured on the dummy Home at 1440, where
+`main.content` held **3205px** of content inside an **832px** box, and every capture came back a uniform
+`1440x900`. The instrument now grows the viewport until the shell scroller has nothing left, re-measuring each
+time. **A capture that looks complete is not the same as a capture that is complete.**
+
+### The verdict, in one line
+
+| verdict | pairs |
+|---|---|
+| match | 4 |
+| declared divergence (a permitted class, with a reason) | 16 |
+| blocked — no honest judgement possible | 4 |
+| **defect** | **20** |
+
+🔴 **The installed build cannot run its engine, and that is what dominates the matrix.** The bundled tree is
+intact (38 files, 26 sections when run directly) and the Rust side spawns it fine — the break is two stacked
+defects at the IPC boundary: `RunRequest` declares `run_id` with no `#[serde(rename_all = "camelCase")]` while
+the web layer sends `runId`, and `--list` is missing from the Rust argument allowlist. So **Home renders 0 of
+its 14 zones** and shows `The engine did not answer.`; dummy Home has **286** visible text nodes against the
+app's **19**.
+
+### The axis parity probe passed, and was watched failing
+
+**10 of 10** axes match, all written to `<html>`, with the dummy's defaults **parsed out of `app.js`'s own
+`AXES` table** rather than restated — a restated copy is what drifts. The attribute set is byte-identical at
+1440, 760 **and** 390, so its width-independence is measured rather than assumed. Two plants on the two
+different arms — a mutated **copy** of `app.js` (`density: comfortable`→`spacious`; the real file byte-identical
+afterwards) and `data-radius` removed from the live `<html>` — were each verified applied and each caught.
+
+### Two things this ledger should carry forward
+
+🔴 **A clean sweep can answer a much narrower question than it appears to.** The sweep found 0 overflow, 0
+text under 12px, **0 contrast failures** and 0 focusable-while-hidden across all 44 combinations — over
+**1,188** text nodes, against section 9's **10,684**, and with **0 SVG text nodes**. The treemap, the section
+table, the report table and the capacity ring never painted, and those are precisely where every previously
+recorded contrast and type defect lived. The SVG count of 0 *is* the proof the signature element was absent.
+Re-run the sweep once the engine bridge is fixed; today it clears only the empty-state chrome.
+
+🔴 **The dummy is carrying a false claim, and the app inherited it faithfully.** `elevation.html:59` names
+`%LOCALAPPDATA%\windowsweep-desktop\runs\`; the shell actually writes to
+`%LOCALAPPDATA%\com.aoneahsan.windowsweep\runs\`, because `app_local_data_dir()` uses the bundle
+**identifier**, not the product name, and the folder the sentence names **does not exist**. Parity is a
+*match* — which is exactly why no parity check could find it. It had already propagated into a session handoff
+note. Amend the dummy first (§10a), then the catalogue string.
+
+Also found by comparing the **words** rather than the arrangement: one approved sentence silently reworded
+`nags` → `asks`, the Amplitude description replaced, the Run screen's never-run state reading `Finished /
+The run finished.` where the dummy says `Ready to run`, the consent buttons' equal-weight decision living
+only in a source comment instead of in the dummy, the theme control missing on `consent` and `splash` (the
+dummy carries it on both), four Settings preferences silently absent, and the whole **More from the same
+developer** roster of §5 missing from About with no `pending-wave` note. Each is itemised in the report.

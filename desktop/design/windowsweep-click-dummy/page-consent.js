@@ -1,81 +1,50 @@
-/* Consent - the first-run decision. Every provider starts OFF and stays off
-   until this screen is answered; declining is a first-class path that degrades
-   nothing. */
+/* Consent - the first-run NOTICE.
+
+   🔴 This was a four-switch decision until 2026-09-07, when the owner decided
+   there is no opt-out: "do not give user option to turn off any of those
+   analytics or anything, it's a free production, just mention we use that to
+   improve the product, with no option to opt out". So the screen states what is
+   collected and continues; it no longer asks.
+
+   What survived the change, deliberately: the engine's zero-network fact (it is a
+   published promise and still true), and the "never sent" list. That list is the
+   whole reason the one line is credible - a notice with nothing checkable in it is
+   just an announcement. The Bible's band R delivers reassurance as a specific
+   refusal rather than as an adjective, and "never a file path, never your user
+   name" is that refusal.
+
+   The screen still writes a record, so the app knows the notice has been seen and
+   does not show it on every launch. That record is not consent and is not
+   revocable; it is a "seen it" flag. */
 (function () {
   'use strict';
-  var ws = window.ws, db = window.wsdb, el = ws.el;
+  var ws = window.ws, db = window.wsdb;
 
-  var PROVIDERS = [
-    ['ga4', 'Product analytics', 'Which screens you opened and which buttons you pressed.',
-     'Google Analytics 4'],
-    ['amplitude', 'Behaviour analytics', 'The same events, kept longer so trends over months are visible.',
-     'Amplitude'],
-    ['clarity', 'Session replay', 'A recording of this window with every piece of text masked.',
-     'Microsoft Clarity'],
-    ['sentry', 'Crash reports', 'A stack trace when something breaks, with file paths stripped out.',
-     'Sentry']
+  /* What the window sends, kept here because the disclosure copy in consent.html
+     and the Settings privacy panel must not drift from each other. The dummy has
+     no live provider; this is the vocabulary, not a config. */
+  var COLLECTED = [
+    'Which screens you opened and which buttons you pressed.',
+    'A recording of this window with every piece of text masked.',
+    'A stack trace when something breaks, with file paths stripped out.'
   ];
 
-  var state = { ga4: false, amplitude: false, clarity: false, sentry: false };
-
-  function paint() {
-    var host = document.querySelector('[data-ws-consent]');
-    if (!host) return;
-    host.textContent = '';
-    PROVIDERS.forEach(function (p) {
-      var row = el('div', 'lst-i');
-      var txt = el('div');
-      txt.style.flex = '1';
-      var top = el('div');
-      top.style.cssText = 'display:flex;align-items:baseline;gap:var(--sp-2);flex-wrap:wrap';
-      top.appendChild(el('span', 't-base', p[1]));
-      top.appendChild(el('span', 'badge badge-outline', p[3]));
-      txt.appendChild(top);
-      txt.appendChild(el('div', 't-sm ink-3', p[2]));
-      row.appendChild(txt);
-
-      var sw = el('button', 'switch');
-      sw.type = 'button';
-      sw.setAttribute('role', 'switch');
-      sw.setAttribute('aria-checked', state[p[0]] ? 'true' : 'false');
-      sw.setAttribute('aria-label', p[1]);
-      sw.addEventListener('ws:toggle', function (e) { state[p[0]] = e.detail.on; summary(); });
-      var ctl = el('div', 'lst-x');
-      ctl.appendChild(sw);
-      row.appendChild(ctl);
-      host.appendChild(row);
-    });
-    window.wsWidgets.boot(host);
-    summary();
-  }
-
-  function summary() {
-    var on = Object.keys(state).filter(function (k) { return state[k]; });
-    window.wsWire.setText('consentSummary',
-      on.length === 0 ? 'Nothing is switched on. The app works exactly the same.'
-        : on.length === 4 ? 'All four are on. You can revoke any of them in Settings, and it stops immediately.'
-        : on.length + ' of 4 are on. The rest stay off until you say otherwise.');
-  }
-
-  function finish(accepted) {
-    db.set('consent', accepted ? Object.assign({}, state)
-                               : { ga4: false, amplitude: false, clarity: false, sentry: false });
-    ws.toast(accepted ? 'Saved. You can change any of this in Settings.'
-                      : 'Nothing was switched on. Nothing will ask again.');
+  function finish() {
+    /* `seen` rather than `accepted`: there is nothing to accept. The date is kept
+       so a later release that changes what is collected can tell whether this
+       person has seen the current wording. */
+    db.set('consent', { seen: true, seenAt: new Date().toISOString(), collected: COLLECTED.length });
+    ws.toast('Thanks - that is all. Nothing else to set up.');
     setTimeout(function () { location.href = 'index.html'; }, 800);
   }
 
   window.wsPage = {
     init: function () {
-      paint();
+      window.wsWire.setText('consentSummary', 'Nothing above needs an answer.');
       document.addEventListener('click', function (e) {
         var t = e.target.closest('[data-ws-action]');
         if (!t) return;
-        var a = t.dataset.wsAction;
-        if (a === 'consentAll') { Object.keys(state).forEach(function (k) { state[k] = true; }); paint(); }
-        if (a === 'consentNone') { Object.keys(state).forEach(function (k) { state[k] = false; }); paint(); }
-        if (a === 'consentAccept') finish(true);
-        if (a === 'consentDecline') finish(false);
+        if (t.dataset.wsAction === 'consentContinue') finish();
       });
     }
   };

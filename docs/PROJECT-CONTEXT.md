@@ -215,6 +215,81 @@ tokens and every credential are absent - swept and confirmed - so nothing is lea
 forbids naming that tooling is scoped to client and work projects, and pre-existing mentions are the owner's
 call, so this is reported and not rewritten.
 
+### Session 10, later - analytics has no opt-out, and the app could not run at all
+
+**Owner decision 2026-09-07, verbatim:** *"do not give user option to turn off any of those analytics or
+anything, it's a free production, just mention we use that to improve the product, with no option to opt out,
+they can just not use the product if they so not like it"*, then *"keep it simple 1 line we collect to improve
+the product for everyone, sweet and simple"*.
+
+This **supersedes** the 2026-09-03 decision that put every provider behind a first-run consent dialog with all
+four off until accepted. Two boundaries he confirmed when asked:
+
+- 🔴 **The command-line tool stays offline.** Zero network calls is a published claim in the README, the docs
+  pages, `llms.txt` and the FAQ, and self-test check [9] fails the build if any network call appears. The
+  decision covers the desktop window and the marketing site only.
+- **Microsoft Clarity, which records session replays rather than events, runs on both surfaces**, and the
+  marketing site carries a plain notice saying so.
+
+One concern was raised and he confirmed the decision, so it stands: consent-free analytics is defensible for a
+desktop app under a privacy notice, but for **web** surfaces in the UK and EU analytics storage needs consent
+rather than notice, and session replay is the sharpest case. The exposure is on the marketing site, not on the
+desktop app.
+
+**What changed, in the order the design law requires.** The click dummy first, then the app:
+
+| Surface | Was | Is |
+|---|---|---|
+| `consent.html` | four switches, `Turn all on` / `Turn all off`, and two answers - `Continue with everything off` and `Save and continue` | a **notice**: one heading stating collection, the engine's zero-network fact, a `Never sent` panel, a disclosure of what the window sends, and one `Continue` |
+| `page-consent.js` | wrote a per-provider map | writes `{ seen, seenAt, collected }` - a *seen it* flag, not consent, and not revocable |
+| Home's privacy ledger | four live switches | the four destinations as stated facts with an `on` badge, plus the `Never sent` paragraph |
+
+🔴 **The `Never sent` list was deliberately kept.** A notice with nothing checkable in it is an announcement;
+the Bible's band R delivers reassurance as a **specific refusal**, and "never a file path, never your user
+name, never the contents of anything" is that refusal. Removing it would have made the screen shorter and
+worse.
+
+⚠️ **A switch that changes nothing is worse than no switch**, which is why the ledger states rather than
+offers. And every string promising that a destination can be revoked or turned off in Settings is now false -
+that class is swept, not just the instances anyone happened to name.
+
+⚠️ **`desktop-safety` (Consent, Elevation) is a GATE-4-recorded surface**, so this change re-opens it and the
+keeper owes it a pass.
+
+### The two defects that meant the app had never actually worked
+
+🔴 **Every `run_clean` call was refused, and so was every catalogue load.** Found by running the installed
+build: Home rendered **0 of its 14 specified zones** and said *"The engine did not answer."* The dummy's Home
+has 286 visible text nodes; the app had 19.
+
+1. **`RunRequest` had no `#[serde(rename_all = "camelCase")]`** while `engine.ts` sends `runId`. Tauri's
+   `#[command]` macro converts a bare snake_case **parameter** to camelCase for you - which is exactly why
+   `read_run_report(run_id, file_name)` worked and hid the pattern - but it does not reach inside a struct.
+   Serde deserialised by the struct's own field names, so it wanted `run_id`, got `runId`, and refused.
+2. **`--list` was absent from `ALLOWED_FLAGS`.** `catalogue.ts` calls `--list --json` at boot precisely so no
+   section list is ever hard-coded, and the allowlist did not carry it.
+
+🔴 **They were stacked: fixing either alone leaves the app dead.** And nothing could have caught either -
+`cargo test` exercised the argument validator rather than the deserialiser, and typecheck, lint and build have
+**no view across the IPC boundary at all**. Two tests now cover it, each watched failing against the unfixed
+code and passing with the fix: one deserialises the webview's exact wire payload and asserts snake_case is
+**rejected** (so the pair moves together and cannot pass for the wrong reason), and one asserts the read-only
+flags the app needs at boot while still refusing an undocumented one.
+
+⚠️ **A third defect of the same family:** shipped copy on the Elevation screen named
+`%LOCALAPPDATA%\windowsweep-desktop\runs\`, and the shell writes to
+`%LOCALAPPDATA%\com.aoneahsan.windowsweep\runs\` because `app_local_data_dir()` resolves to the bundle
+identifier. **The dummy and the app said the same wrong thing, so parity was a MATCH** - no parity check could
+ever have found it. Corrected in the dummy first, then the app.
+
+### And on the documentation site: 50 of 51 pages disowned themselves
+
+`headTags` carried a hardcoded canonical pointing at the site root, and everything in that array is emitted on
+**every** page. So `/faq`, `/cli-reference` and 47 others each declared the home page as their canonical
+version - a site-wide duplicate-content signal, sitting *after* the correct per-page tag, so a last-wins
+parser took the wrong one. **The same shape as the FAQPage defect fixed hours earlier: a page-specific tag
+living in a global array.**
+
 ### Session 8 (2026-09-05, later the same day) - what was built and what it turned up
 
 No new owner decisions were taken; this records what the session established, because two of the findings

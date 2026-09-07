@@ -16,7 +16,7 @@
  * actually bite - unknown properties, and a required property that is missing -
  * rather than pulling in a JSON-Schema validator for one file.
  */
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -112,6 +112,64 @@ function walk(value, node, path) {
 }
 
 walk(conf, schema, '');
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * A SEMANTIC check the schema cannot make: a GLOB resource key FLATTENS the tree.
+ *
+ * 🔴 This shipped. On 2026-09-07 the installed app could not run its own engine,
+ * because `bundle.resources` was `{"resources/windowsweep/**\/*": "windowsweep/"}`
+ * and every one of the 38 engine files landed in ONE directory - no `bin/`, no
+ * `lib/`, no `modules/` - so `windowsweep.ps1` could not dot-source
+ * `lib/constants.ps1`. The config is SCHEMA-VALID, the build is green, CI passes,
+ * and the file count is right. Only installing the app and running the engine
+ * shows it.
+ *
+ * The rule comes from the bundler's own source, not from a guess
+ * (tauri-utils/src/resources.rs, `resource_from_path`):
+ *
+ *   key contains '*'  -> the Glob branch  -> dest.join(path.file_name())
+ *                        "we put all globbed paths under current_dest
+ *                         PRESERVING THE FILE NAME AS IT IS"   <- flattens
+ *
+ *   key is a directory -> the Walk branch -> dest.join(strip_prefix(pattern))
+ *                        "if processing a directory, preserve directory
+ *                         structure under current_dest"        <- correct
+ *
+ * So a glob key is safe only when the tree it matches is FLAT. Name the
+ * directory instead and the bundler walks it.
+ *
+ * ⚠️ Three forms of the same mistake have now been made here: a trailing `**`
+ * matched only directories and yielded no files at all; `**\/*` matched the files
+ * and flattened them; the directory form is the answer.
+ * ───────────────────────────────────────────────────────────────────────────── */
+function checkResourceGlobs(resources, reportTo) {
+  if (!resources || typeof resources !== 'object' || Array.isArray(resources)) return;
+  for (const key of Object.keys(resources)) {
+    if (!key.includes('*')) continue;
+    // The literal prefix before the first wildcard is the tree it reaches into.
+    const prefix = key.slice(0, key.indexOf('*')).replace(/[/\\][^/\\]*$/, '');
+    const abs = join(root, 'src-tauri', prefix);
+    if (!existsSync(abs)) {
+      reportTo.push(
+        `bundle.resources["${key}"]: a glob key whose source tree "${prefix}" does not exist - run \`yarn sync:cli\` first, or the bundler will fail late with a message about a glob`,
+      );
+      continue;
+    }
+    let subdirs = [];
+    try {
+      subdirs = readdirSync(abs, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
+    } catch {
+      continue;
+    }
+    if (subdirs.length > 0) {
+      reportTo.push(
+        `bundle.resources["${key}"]: a GLOB key FLATTENS the tree. "${prefix}" has subdirectories (${subdirs.sort().join(', ')}) and the bundler's Glob branch joins only each file's NAME onto the destination, so all of them land in one folder and any script that loads a sibling by relative path breaks at runtime. Use the DIRECTORY as the key instead - {"${prefix}": "<dest>"} - which takes the Walk branch and preserves the structure.`,
+      );
+    }
+  }
+}
+
+checkResourceGlobs(conf.bundle?.resources, problems);
 
 // The plant that proves this checker is not vacuous: a field the schema cannot
 // know about must be reported. Run with --self-check to see it fail on purpose.

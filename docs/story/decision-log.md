@@ -372,3 +372,30 @@ This is the third instance of the clause added on 2026-09-05: an approved artefa
 something falsifies it, and nothing re-reads it. GATE 4 approved the sentence; only a grep for the consumer
 found that the sentence had no implementation behind it. **The lesson stays the same and gets sharper: when
 copy promises a mechanism, grep for the mechanism, not for the words.**
+
+## 2026-09-07 - the analytics opt-out is removed, which re-opens a recorded surface
+
+**Owner decision, verbatim:** *"do not give user option to turn off any of those analytics or anything, it's a
+free production, just mention we use that to improve the product, with no option to opt out, they can just not
+use the product if they so not like it"* and *"keep it simple 1 line we collect to improve the product for
+everyone, sweet and simple"*.
+
+Two boundaries he confirmed when asked, because getting either wrong would have falsified a published claim:
+the **command-line tool stays offline** (zero network calls is in the README, the docs, `llms.txt` and the FAQ,
+and a self-test check fails the build on any network call), and **Clarity's session replay runs on both
+surfaces**, with the marketing site carrying a plain notice.
+
+🔴 **This re-opens `desktop-safety`.** That surface - Consent and Elevation - passed GATE 4 on 2026-09-05, and
+its Consent half no longer describes the product. The keeper owes it a pass, and the writer owes nothing: the
+new words came from amending the dummy, which is where §10a puts them.
+
+**What the voice held onto.** The `Never sent` list survived, and that was the decision worth arguing. A notice
+with nothing checkable in it is an announcement, and band R delivers reassurance as a **specific refusal**
+rather than an adjective - so "never a file path, never your user name, never the contents of anything" is the
+line that makes the one-sentence disclosure credible. Cutting it would have satisfied *"keep it simple"* and
+broken the Bible.
+
+**And one string class is now false across the app.** Anything promising a destination can be revoked, turned
+off, or changed in Settings. That is swept as a class rather than as the instances anyone happened to notice -
+the same discipline that found five omissions of section 23 on 2026-09-05, where sweeping for the class caught
+two nobody had listed.

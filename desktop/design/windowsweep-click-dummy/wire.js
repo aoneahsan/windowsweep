@@ -386,32 +386,34 @@
     setText('lastWhen', cap(fmt.relDate(last.at)) + ' · ' + last.sections + ' sections · ' + last.mode);
   }
 
-  /* --------------------------------------------------------------- consent */
+  /* --------------------------------------------------------------- collected
+     🔴 These were four SWITCHES until 2026-09-07. The owner decided there is no
+     opt-out, so the ledger states what is collected rather than offering a
+     control that does not exist. A switch a person can press that changes
+     nothing is worse than no switch: it is a promise the product does not keep.
+     The list stays because naming the destinations is what the notice is for. */
   function renderConsent() {
     var mount = $('[data-ws-consent]');
     if (!mount) return;
     mount.textContent = '';
-    [['Product analytics', 'Google Analytics 4'], ['Behaviour analytics', 'Amplitude'],
-     ['Session replay', 'Microsoft Clarity'], ['Crash reports', 'Sentry']].forEach(function (p) {
-      var row = el('div');
-      row.style.display = 'flex'; row.style.alignItems = 'center'; row.style.gap = 'var(--sp-3)';
-      var sw = el('button', 'switch');
-      sw.setAttribute('role', 'switch');
-      sw.setAttribute('aria-checked', 'false');
-      sw.setAttribute('aria-label', p[0]);
-      sw.addEventListener('click', function () {
-        var on = sw.getAttribute('aria-checked') !== 'true';
-        sw.setAttribute('aria-checked', on ? 'true' : 'false');
-        ws.toast(on ? p[0] + ' is on. Nothing is sent in this dummy.'
-                    : p[0] + ' is off, from now.');
+    [['Product analytics', 'Google Analytics 4', 'Which screens you opened and which buttons you pressed.'],
+     ['Behaviour analytics', 'Amplitude', 'The same events, kept longer so trends over months are visible.'],
+     ['Session replay', 'Microsoft Clarity', 'A recording of this window with every piece of text masked.'],
+     ['Crash reports', 'Sentry', 'A stack trace when something breaks, with file paths stripped out.']]
+      .forEach(function (p) {
+        var row = el('div');
+        row.style.display = 'flex'; row.style.alignItems = 'baseline'; row.style.gap = 'var(--sp-3)';
+        var dot = el('span', 'badge badge-outline', 'on');
+        row.appendChild(dot);
+        var lab = el('div');
+        var top = el('div');
+        top.appendChild(el('span', 't-sm', p[0]));
+        top.appendChild(el('span', 't-xs ink-3', '  ' + p[1]));
+        lab.appendChild(top);
+        lab.appendChild(el('div', 't-xs ink-3', p[2]));
+        row.appendChild(lab);
+        mount.appendChild(row);
       });
-      row.appendChild(sw);
-      var lab = el('div');
-      lab.appendChild(el('span', 't-sm', p[0]));
-      lab.appendChild(el('span', 't-xs ink-3', '  ' + p[1]));
-      row.appendChild(lab);
-      mount.appendChild(row);
-    });
   }
 
   /* --------------------------------------------------------------- refresh */

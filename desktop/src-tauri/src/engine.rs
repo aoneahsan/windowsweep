@@ -39,6 +39,20 @@ const ALLOWED_FLAGS: &[&str] = &[
     "--i-understand-deep",
     "--permanent",
     "--elevate",
+    // 🔴 `--list` is how the app learns what the engine can do. `catalogue.ts`
+    // calls `windowsweep --list --json` at boot precisely so no section list is
+    // ever hard-coded in the app, and this allowlist did not carry it — so the
+    // catalogue load was refused with "refusing an argument this window is not
+    // allowed to pass: --list" and every screen that reads the catalogue was
+    // empty. It is read-only: it prints the catalogue and touches nothing.
+    "--list",
+    // Read-only companions of `--list`, allowed for the same reason: they print
+    // and exit. Keeping them out would mean the app can never show what a
+    // section targets without hard-coding it, which is the thing `--list` exists
+    // to prevent.
+    "--list-targets",
+    "--version",
+    "--self-test",
 ];
 
 /// Flags that take exactly one value.
@@ -56,7 +70,23 @@ const ALLOWED_VALUE_FLAGS: &[&str] = &[
     "--select-file",
 ];
 
+/// 🔴 `rename_all = "camelCase"` is LOAD-BEARING, and its absence made every
+/// `run_clean` call fail — the app could not run a cleanup at all.
+///
+/// Tauri's `#[command]` macro converts a bare snake_case **parameter** to camelCase
+/// for you, which is why `read_run_report(run_id, file_name)` works from
+/// `readRunReport(runId, fileName)` with no attribute anywhere. It does **not**
+/// reach inside a struct: serde deserialises `RunRequest` by its own field names,
+/// so `pub run_id` wanted `run_id` while `engine.ts` sent `runId`, and the command
+/// was refused before it ever started PowerShell.
+///
+/// The two halves are each correct in isolation, which is why nothing caught it:
+/// `cargo test` exercises `sanitise_args` rather than the deserialiser, and
+/// typecheck, lint and build have no view across the IPC boundary at all. Found by
+/// running the installed app on 2026-09-07, where Home rendered 0 of its 14 zones
+/// and said "The engine did not answer."
 #[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct RunRequest {
     /// A caller-supplied id, used for the per-run report folder and for the events.
     pub run_id: String,
@@ -257,5 +287,57 @@ mod tests {
         assert!(ok(vec!["--only", "--yes"]).is_err());
         // the run folder is chosen by this process, never by the caller
         assert!(ok(vec!["--reports-dir", "C:\\Windows"]).is_err());
+    }
+
+    /// 🔴 The test that was missing, and its absence cost the whole app.
+    ///
+    /// `RunRequest` is deserialised by serde from the JSON the webview sends, and
+    /// serde uses the STRUCT's field names - not the camelCase conversion Tauri's
+    /// macro applies to bare command parameters. So `pub run_id` silently wanted
+    /// `run_id` while `engine.ts` sent `runId`, every `run_clean` was refused, and
+    /// Home rendered none of its fourteen zones.
+    ///
+    /// Nothing else could have caught it: the test above exercises `validate`
+    /// rather than the deserialiser, and typecheck, lint and `cargo build` have no
+    /// view across the IPC boundary. So this asserts the wire shape the TypeScript
+    /// actually sends, verbatim.
+    #[test]
+    fn deserialises_the_camel_case_payload_the_webview_sends() {
+        let wire = r#"{"runId":"run-1","args":["--scan","--json"]}"#;
+        let req: RunRequest =
+            serde_json::from_str(wire).expect("the webview's own payload must deserialise");
+        assert_eq!(req.run_id, "run-1");
+        assert_eq!(req.args, vec!["--scan", "--json"]);
+
+        // And the control, so this test cannot pass for the wrong reason: with
+        // `rename_all` in place, snake_case is NOT accepted. If someone removes the
+        // attribute, the line above fails and this one starts passing - the pair
+        // moves together, which is what makes the assertion real rather than
+        // satisfied by any configuration.
+        let snake = r#"{"run_id":"run-1","args":[]}"#;
+        assert!(
+            serde_json::from_str::<RunRequest>(snake).is_err(),
+            "snake_case must be rejected, or the rename attribute is not doing anything"
+        );
+    }
+
+    /// The app reads what the engine can do rather than hard-coding it, so the
+    /// read-only flags it depends on at boot must be passable. `--list` was absent,
+    /// which refused the catalogue load and emptied every screen that reads it.
+    ///
+    /// These four print and exit. None of them deletes anything, so allowing them
+    /// costs nothing and refusing one breaks a screen.
+    #[test]
+    fn allows_the_read_only_flags_the_app_needs_at_boot() {
+        let ok = |v: Vec<&str>| validate(&v.into_iter().map(String::from).collect::<Vec<_>>());
+        for flag in ["--list", "--list-targets", "--version", "--self-test"] {
+            assert!(
+                ok(vec![flag, "--json"]).is_ok(),
+                "{flag} is read-only and the app needs it; refusing it empties a screen"
+            );
+        }
+        // The boundary still holds: a read-only-looking flag that is NOT documented
+        // is still refused, so this test did not widen the allowlist to anything.
+        assert!(ok(vec!["--list-everything"]).is_err());
     }
 }

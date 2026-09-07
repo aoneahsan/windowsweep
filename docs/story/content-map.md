@@ -30,6 +30,7 @@ The tone bands are the Bible's: **P** precision-before-an-irreversible-act (60),
 | 12 | `desktop-safety` (Consent, Elevation) | being asked for permission | what is being asked → exactly what happens → how to revoke | **P and R only. 🔴 No humor at all** | a screen | accept or decline, equally weighted | none | **recorded** (GATE 4, 2026-09-05) |
 | 13 | `desktop-cockpit` (Sections, Picker, History, Settings, Report) | working | dense tables with a plain line above each | P, W in the empty states | a screen | varies per screen | none | **recorded** (GATE 4, 2026-09-05) |
 | 14 | `desktop-readme` (+ the docs-site desktop page) | evaluating the app | what it adds over the CLI, what it sends, the SmartScreen note | P, R | **~900 words** (raised from ~600, 2026-09-07) | download | none | drafted, awaiting apply |
+| 15 | `report-bodies` (the exported Markdown and HTML a run writes) | reading a record after the fact | headings and labels only; every number keeps the console's own vocabulary | P only | about thirty strings | none | none | **added 2026-09-07**, unwritten |
 
 **Order of writing** (owner decision 2026-09-05, "story first, then the app"): rows **11, 12, 13** first,
 because RW-093 writes their approved words into the click dummy before any app code is built against them.
@@ -109,3 +110,20 @@ which is the same drift this note exists to prevent.
 
 **One thing did not change.** Row 10 `cli-strings` is still the last surface written, deliberately: it edits
 engine source, so it can only land with a version cascade. It ships with 1.2.0.
+
+## Amendment - 2026-09-07, later: row 15 added
+
+The `cli-strings` draft raised it as a `NEEDS DECISION` and the session answered **yes, map it**.
+
+`modules/reports.ps1` emits about thirty user-visible strings into the exported Markdown and HTML reports.
+They had **no row and no recorded exclusion** - so they were neither in scope nor deliberately out of it,
+which is the one state this map exists to prevent. §2 lists what is deliberately not a surface, and a
+reader's own report was never on that list.
+
+It became urgent rather than tidy because the console and the report had already begun to drift: the
+`cli-strings` pass changes the console to `Would reclaim (est.)` while `reports.ps1` keeps the older verb in
+two places. Two surfaces describing one number in two vocabularies is exactly what a shared map prevents.
+
+**Tone band P only, and no CTA.** A report is read after the fact, often to check what happened rather than
+to decide anything, so there is nothing to persuade and nothing to click. It ships with the same 1.2.0
+cascade as `cli-strings`, because it edits the same engine.

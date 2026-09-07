@@ -458,7 +458,7 @@ use for the same three sections. One word.
 
 ### S-019 · safety-model.md:82-85 · the batch policy table
 ```
-| safe | 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 21 (+12, 13 when elevated); 22, 24, 25 carry the same policy and are read-only, but `--all` does not include them | run with `--yes` |
+| safe | 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 21 (+12, 13 when elevated); 22, 24, 25 carry the same policy and delete nothing, but `--all` does not include them | run with `--yes` |
 | opt-in | 4, 14 | run only when named in `--only` or a profile, with `--yes` |
 | deep | 11, 15, 16, 20 | refused without `--i-understand-deep`; `--dry-run` runs are allowed |
 | interactive | 17, 18, 19, 23 | never, unless a selection was supplied; they need a person choosing items |
@@ -816,9 +816,9 @@ for either. They are on the line pass's list instead.
 
 ### S-034 · developer-mode.md:26-28 · developer mode off
 ```
-- Sections 1, 2, 3 **clear** their caches completely - there is no work to keep warm.
+- Sections 1, 2, 3 **clear** their caches completely - with no development work on the machine, the idle gate has nothing to keep.
 - Section 5 runs `docker system prune -a -f` (volumes still untouched).
-- Sections 4, 17 and 20 are skipped with a note, because each of them removes something a developer chose to keep: an emulator image, a project's build output, a virtual disk.
+- Sections 4, 17 and 20 are skipped with a note, because each of them touches something a developer chose to keep: an emulator image, a project's build output, a virtual disk.
 ```
 **Was:** the third bullet read "Sections 4, 17 and 20 are skipped with a note."
 
@@ -1149,3 +1149,47 @@ change, so it is not made here.
 no `>` although the slot names it the opening blockquote, so the applier needs to know whether the
 blockquote is meant to survive. S-028 says *the same answer* and *this same engine* in one sentence; the
 second *same* is deliberate emphasis and was left. Neither changes a fact.
+
+## Safety review, 2026-09-08 - the humor-emotion round, and what the main session did with it
+
+**Verdict on arrival: HARD FAIL by one phrase**, plus four misfires and a coverage gap. Three were applied
+here; the gap was a defect in the LIVE PAGE rather than in this draft and was fixed there.
+
+**HF-1 (applied).** S-019's `safe` row read *"22, 24, 25 carry the same policy and are read-only"*. The
+reviewer was right and the draft condemned the word twice in its own commentary: S-019's note calls the
+cell's adjective "the adjective this voice replaces with a refusal" and then removed only *safe*, and S-026
+strikes *read-only* elsewhere as "the same overclaim". It now reads **"and delete nothing"**, which is the
+refusal form S-015's Report label already uses on the same page. One adjective in 45 fences - and the rule
+does not grade by size.
+
+**M-1 (applied).** S-034 bullet 3 said the three sections were skipped *"because each of them removes
+something a developer chose to keep"*, and S-045 refutes that four bullets later: section 20 *"rewrites an
+image without dropping anything from it ... a size change rather than a deletion"*. **`touches`** is true of
+all three and is on the fingerprint's diction list.
+
+**M-2 (applied).** S-034 bullet 1 ended *"- there is no work to keep warm"*, a warm-cache idiom read by the
+person who has just answered *not a developer*. Replaced with its plain reason.
+
+🔴 **The coverage gap was mine, and it was in the shipped page.** The reviewer found a live section on
+`docs/safety-model.md` that no slot covered **and that sat after the `Last Updated` footer** - so the page no
+longer ended on *Inspect before you trust*, which is the closing image S-002's opening promise depends on.
+The main session had appended it earlier that day when `--exclude-path` became chokepoint-enforced, and
+appending to a file whose last line is its footer puts the new text after it. Two things were wrong and both
+are fixed **in the page, not in this draft**: it now sits directly after *The chokepoint*, which is where the
+behaviour it describes is actually enforced, so the page closes on *Inspect before you trust* again; and its
+opening *"Since 1.2.0"* is gone, because 1.2.0 is not released and the docs site mirrors this file.
+
+The page was checked before the fix and the section had **not** yet reached the live site, so no reader ever
+saw either problem.
+
+**Left for the fact-checker, unchanged here:** S-004's *"anything on your machine"* against the tool's own
+housekeeping; S-015's Configuration cell *"Nothing is removed"* for a section that removes `hiberfil.sys`;
+the AVD download claim; S-045's compaction guarantee, which vouches for Docker and WSL's own tooling.
+
+🔴 **And a self-check defect worth recording, because it is the shape that hides drift.** The writer reported
+band R landing 14 times. The reviewer, stating its unit and its scope, measured **35 clauses across 30 of the
+45 fences** - and found the writer's list counted S-015's *No undo* cells as R (they are P: a statement of
+loss reassures nobody) while omitting sixteen R-bearing fences, including S-016, whose own note calls its
+last clause "the band-R sentence of the whole page". R is present and well distributed; it is the count that
+was wrong. **The keeper records 30/35 with the reviewer's scope written beside it**, per the standing rule
+that a keeper re-measures and names the scope beside the number rather than inheriting one.

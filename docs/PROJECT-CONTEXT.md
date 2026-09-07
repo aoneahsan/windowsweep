@@ -693,10 +693,32 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
   above, the last eight of them on 2026-09-07. What remains is owner *input*, not owner *decisions*.
 - **Landed:** row 22 (the Build Tools install, 2026-09-06) and row 23 (the Supabase account and project,
   2026-09-07).
-- **Still owed by the owner, and polled at the start of every session:** rows 11-12 (the docs DNS record and
-  Pages HTTPS - the domain still returned 000 on 2026-09-07), row 15 (the Google OAuth **web** client, after
-  which `external.google` flips true), rows 16 and 18 (the GA4 / Amplitude / Clarity / Sentry keys), and rows
-  5 and 13 (the master-links review and the ORCID import).
+- **Still owed by the owner, and polled at the start of every session.** Re-polled 2026-09-07 late, and the
+  picture is finer than "the keys have not landed":
+  - **Rows 11-12, the docs domain: the DNS is DONE and correct, and only the certificate is missing.**
+    `windowsweep-docs.aoneahsan.com` is a CNAME to `aoneahsan.github.io` - the right record type for a
+    subdomain - and the site answers **HTTP 200**. But HTTPS answers **000** and the Pages API reports the
+    certificate as **not requested**. The configuration is identical to `native-update-docs`, whose own
+    certificate reads `approved` / `enforced: true` on the same account and parent domain, so the pattern is
+    proven and nothing here is misconfigured: `static/CNAME` exists, ships in `build/`, and the deployed site
+    serves it back. The custom domain was re-saved through the API to re-trigger provisioning. **This is
+    GitHub's queue, not an owner row any more** - it needs waiting, not doing. RW-040's write-back stays held
+    until HTTPS answers 200, and no link is switched early.
+  - **Rows 16/18, telemetry: three of the four keys have landed.** The vault's `vite` block now carries
+    `VITE_SENTRY_DSN`, `VITE_CLARITY_PROJECT_ID` and `VITE_AMPLITUDE_API_KEY` (plus
+    `VITE_ONESIGNAL_APP_ID` and `VITE_FILESHUB_API_URL`, neither of which the desktop app uses).
+    `configured_services` lists supabase, sentry, onesignal, clarity, amplitude and general - **`firebase`
+    and `google_cloud` are absent**, so the **GA4 measurement id is still missing**. That matters more than a
+    partial usually would: `configuredFeatures().telemetry` is true if **any one** key is present, so a build
+    carrying these three would report telemetry as configured while GA4 silently received nothing.
+  - **Row 15, Google sign-in: still off.** Probed against `auth/v1/settings` with the publishable key from
+    `GET /supabase-projects/nlmetjyytgwaxcliusuo`: providers ON = **`email` only**, `external.google` =
+    **false**. The database half is finished - G1 (`endpoints.api` + `publishable_key`) and G2
+    (`db_password` + `db_url_session_pooler`) both pass and the schema is applied - so what is blocked is
+    only the **client**. Writing `VITE_SUPABASE_URL`/`VITE_SUPABASE_PUBLISHABLE_KEY` into a release build now
+    would advertise a sign-in the app cannot complete, because `configuredFeatures()` derives `signIn` and
+    `sync` from those two vars alone and cannot see whether a provider exists.
+  - **Rows 5 and 13** (the master-links review and the ORCID import) are unchanged.
 - **Moved to a second machine** by his 2026-09-07 decision, because this one does not have the software or
   the operating systems they need: row 20 (the candidate-path probe that settles RW-064, RW-065 and RW-066)
   and the P1 verification runs (rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21). The handoff is §9 of

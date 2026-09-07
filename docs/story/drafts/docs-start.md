@@ -21,10 +21,20 @@ Those two are S-023 and S-024 below.
 
 | File | Slot range | Count |
 |---|---|---|
-| §A `docs/installation.md` | S-001 – S-012 | 12 |
+| §A `docs/installation.md` | S-001 – S-012, plus S-025 and S-026 | 14 |
 | §B `docs/quick-start.md` | S-013 – S-022 | 10 |
 | §C `docs/README.md` (mirror drift only) | S-023 – S-024 | 2 |
-| **Total** | | **24** |
+| **Total** | | **26** |
+
+Slots are listed in **page order**, not numeric order, so the apply step walks each file from the top. S-025
+and S-026 were added in the revision round of 2026-09-07 and took the next two free numbers; they sit inside
+§A where they belong on the page. Nothing was renumbered. No number was reused.
+
+✅ **S-017 and S-022 were stopped on drifted `Was:` lines and are now RE-BASED**, on the live text, keeping
+both numbers. Commit `89e4888` had corrected `docs/quick-start.md` directly, hours after this draft was
+written, so each slot's opening argument was already spent. Both `Was:` lines now quote the live file and
+each `Change:` argues only what is still true of it. Every slot in this file is appliable. The record of the
+drift, what it cost and what it saved is kept in "Drift against the live files" at the end.
 
 ---
 
@@ -32,17 +42,28 @@ Those two are S-023 and S-024 below.
 
 ### S-001 · installation.md:3 · the opener
 ```
-windowsweep is a PowerShell engine with a thin Node launcher. Installing it adds no service and no startup entry: the weekly Scheduled Task and the `cleanup` alias are separate commands you run yourself. Pick whichever path fits the machine.
+windowsweep is a PowerShell engine with a thin Node launcher. Installing it adds no service and no startup entry: the weekly Scheduled Task and the `cleanup` alias are separate commands you run yourself. Pick whichever path fits the machine. The [desktop app](./desktop.md) is a window over the same engine.
 ```
 **Was:** windowsweep is a PowerShell engine with a thin Node launcher. Pick whichever path fits the machine.
 
-**Change:** one sentence added between the two. Row 3's structure is what it is, then what it refuses, then
+**Change:** in the first round, one sentence added between the two. Row 3's structure is what it is, then what it refuses, then
 the commands, and the second beat was missing from the page a reader reaches from npm. The added sentence is
 a refusal rather than an adjective, which is band R's whole rule. It is also checkable: nothing in the tree
 registers a service, and the two things that do persist across sessions are `--install-task` and
 `--install-alias`, both of which the reader types. **Change** verified against `modules/release_helpers.ps1`
 (`Install-WeeklyTask`, `Install-ProfileAlias`) and a grep for `New-Service` across `lib/` and `modules/`,
 which returns nothing.
+
+**Second revision, 2026-09-07 — the desktop pointer.** One sentence added at the end. The page offered three
+paths as the complete set while S-002, ten lines below, qualifies its no-network claim to "the **command-line**
+tool" — a distinction drawn against something the page never named, which leaves a careful reader hunting for
+the other thing. `docs/desktop.md` exists and is committed; it measures 782 words (`wc -w`), not the 750 the
+review packet estimated. The borrowed phrase is that page's own opening line, so the fact keeps one home and
+this page keeps a link. It is a separate sentence rather than a clause on "Pick whichever path fits the
+machine", because that sentence frames the three `##` install paths underneath it and the desktop app is not
+one of them; folding it in would imply a fourth way to install the command-line tool. Position matters as
+much as wording here: at line 3 the referent arrives before the qualifier that needs it, which a fourth
+heading between `## Without Node` and `## PowerShell 7` could not have done.
 
 ### S-002 · installation.md:13 · the requirements closing line
 ```
@@ -57,6 +78,21 @@ stale first. "Of its own" is the second half. It is not hedging. `--report-issue
 URL to the reader's browser after they ask, and the reports manager opens an exported HTML file the same way.
 Saying "of its own" is what keeps the sentence true in the presence of those three. Verified: `package.json`
 has no `dependencies` key, and self-test check [9] greps every source file for seven call shapes and passed.
+
+### S-025 · installation.md:16 · Zero install with npx · the lead-in before the fence
+```
+`--scan` measures every target and deletes nothing:
+```
+**Was:** (new — the heading at line 15 was followed straight by the fence at line 17.)
+
+**Change:** added, and this is where change 1 lands. Row 3's CTA was on the page but naked: `npx windowsweep
+--scan` sat under a heading about installing, with nothing between the heading and the fence, and the sentence
+that makes a sceptic willing to run it — *"It measures every target and deletes nothing"* — was fifty-five
+lines further down under `## Uninstall`, where it read as the next uninstall step rather than as the reason to
+type the first command. So the beat moves to the moment of copy. The words are the ones S-011 already carried,
+with the flag as the subject instead of a pronoun that had no antecedent under a heading. It ends on a colon,
+which is the lead-in shape S-005 and S-008 already use on this page. Band R, seven words. It stands
+immediately above the thing it describes, which is the whole point of moving it.
 
 ### S-003 · installation.md:21-22 · the npx caveat
 ```
@@ -79,6 +115,30 @@ two different explanations. **Change** verified: `$Script:WS.ExitCode = $Script:
 **Was:** identical.
 
 **Change:** none.
+
+### S-026 · installation.md:26-29 · Global install · the fence
+```
+npm install -g windowsweep
+windowsweep --help
+windowsweep --install-task      # weekly Scheduled Task, Sundays 03:00, the safe batch
+windowsweep --install-alias     # adds a 'cleanup' function to your PowerShell profile
+```
+**Was:** the fence held the first two lines only.
+
+**Change:** two lines added, and this is change 4 — the page paying a promise S-001 makes in its second
+sentence. S-001 says the weekly Scheduled Task and the `cleanup` alias are separate commands you run
+yourself; S-003 says both need the global install; S-009 then shows `--uninstall-task` and
+`--uninstall-alias` under `## Uninstall`. The page therefore taught a reader how to remove two things it
+never taught them to add, which is the one arrangement that cannot be defended. They land here rather than
+anywhere else because S-003 is the sentence that says where they must run. The inverses are already shown,
+so the shape is set. Comments are aligned on the same column as S-009's, and they use straight quotes and
+no backtick, because a backtick inside a `powershell` fence is an escape character and would read as one.
+**Verified against source, not recalled:** `windowsweep.ps1:151` and `:153` accept `--install-task` and
+`--install-alias`; `Install-WeeklyTask` builds its trigger with `New-ScheduledTaskTrigger -Weekly -DaysOfWeek
+Sunday -At 3am` and its action from `--all --yes --quiet --no-color --notify`, which is the safe batch;
+`Install-ProfileAlias` appends the literal `function cleanup { ... }` to `$PROFILE.CurrentUserAllHosts`.
+Both descriptions also match the engine's own `--help` at `windowsweep.ps1:65-66`, so the page and the
+console will not tell two stories.
 
 ### S-005 · installation.md:33 · Without Node · the lead-in
 ```
@@ -143,16 +203,28 @@ is called with `-NoAutoYes` for this prompt, so a batch run cannot answer it. Ve
 `modules/release_helpers.ps1` line 415 and against `AI-INTEGRATION-GUIDE.md`, which already lists
 `--uninstall-data` under "never covered by `--yes`".
 
-### S-011 · installation.md:73 · the closing pointer
+### S-011 · installation.md:73 · the closing hand-off
 ```
-Next: `npx windowsweep --scan`. It measures every target and deletes nothing. Then [Quick start](./quick-start.md), which is four commands in order.
+## Next
+
+[Quick start](./quick-start.md) is four commands in order. The first is `--self-test`, which proves the guards on this machine before anything is deleted.
 ```
 **Was:** (new — the page ended on `npm uninstall -g windowsweep`.)
 
-**Change:** added. Row 3's CTA is `npx windowsweep --scan` and the page's last words were an uninstall
-command, which is a strange note to leave an installation page on. The first sentence is the CTA, the second
-is why a sceptical reader will run it, and the third hands over to the page that owns the sequence. It also
-discharges the internal-link floor, which asks every indexed page to reach one more page in the set.
+**Change:** added, then revised on 2026-09-07 as the second half of change 1. The page's last words were an
+uninstall command, which is a strange note to leave an installation page on, so a hand-off was always owed.
+The first draft of it did three jobs in three sentences. Two landed wrong. Its CTA sat
+under `## Uninstall` with S-010 above it, so a reader scanning headings met the reason to run `--scan` as
+though it were the next thing to uninstall; that beat now lives at S-025, above the command it describes.
+And its last sentence said *scan, then Quick start* — but Quick start's first command is `--self-test`, so a
+reader who obeyed arrived one step out of order, at a page whose step 1 they had just been told to skip.
+
+Three fixes, then. **The heading is its own.** `## Next` separates the hand-off from S-010's uninstall
+paragraph, which is the whole complaint. The CTA restatement is dropped rather than repeated, because S-025
+now carries those words at the moment of copy and a page that says them twice weakens both. And the sequence
+is named in the order the next page actually runs it, with `--self-test` first and the band-R clause that
+says why nothing is at risk yet. The internal-link floor is still discharged: the page reaches `quick-start`
+here and `desktop` at S-001.
 
 ### S-012 · installation.md:74 · the footer
 ```
@@ -211,23 +283,36 @@ kept because it is a property of the release rather than of a machine. **Verifie
 
 **Change:** none. Five words, and the right five.
 
-### S-017 · quick-start.md:22-23 · step 2 · what `--scan` does
+### S-017 · quick-start.md:22-24 · step 2 · what `--scan` does
 ```
 It deletes nothing. It writes this run's log and one JSON report under `%USERPROFILE%\.windowsweep` and touches nothing else; add `--no-report` to skip the report. What it prints: a health report (drives, hibernation file, disk images, running apps that block cache steps), every target with its size on disk, and the personal-file scanners' findings.
 ```
-**Was:** Read-only. Prints a health report (drives, hibernation file, disk images, running apps that block
-cache steps), every target with its size on disk, and the personal-file scanners' findings.
+**Was:** Deletes nothing. Prints a health report (drives, hibernation file, disk images, running apps that
+block cache steps), every target with its size on disk, and the personal-file scanners' findings. It does
+write its own log and a report under `~\.windowsweep`; pass `--no-report` if you would rather it wrote
+nothing at all.
 
-**Change:** rewritten, and this is the most consequential slot in the draft. **"Read-only." is not true.**
-`--scan` calls `Initialize-Log`, which creates the data directories and opens a session log, and it ends in
-`Show-SessionSummary`, which writes a JSON report unless `--no-report` was passed. The tool's own console
-message is honest about this: it prints `read-only scan - nothing is deleted`, which is a claim about
-deletion rather than about writing. So is `AI-INTEGRATION-GUIDE.md`, which says `--dry-run` and `--scan`
-"write nothing but the log and the report". Two surfaces of this product had it right and this one had it
-wrong, on the page a sceptical reader runs first. The replacement leads on the deletion claim, then names
-the two files, then names the flag that removes one of them. **Verified** against `lib/log.ps1`
-(`Initialize-Log`, and the `NoReport` short-circuit at line 100), `modules/runner.ps1` (`Invoke-ScanMode`)
-and `windowsweep.ps1` line 251.
+**Change:** 🔴 **Re-based on the live text, 2026-09-07, keeping the number.** The original `Was:` read
+*"Read-only. Prints a health report…"* and the whole slot existed to say that "Read-only." is not true.
+Commit `89e4888` fixed that directly in the file, hours after this draft was written. That argument is
+**spent**. It is not re-made here, and what follows is only what is still true of the sentence now on the page.
+
+**One of the three is a false claim, not a matter of taste.** *"pass `--no-report` if you would rather it
+wrote nothing at all"* offers something the flag does not do. `--no-report` suppresses the report and
+nothing else: `Initialize-Log` at `lib/log.ps1:3-9` creates the data directories and opens the session log
+with no reference to `NoReport`, and only the report writer short-circuits, at `lib/log.ps1:100`
+(`if ($ws.NoReport -or -not $ws.Report) { return $null }`). `modules/runner.ps1:193` proves it from the other
+end: with the flag set it still prints the log path and reports `Report: (disabled via --no-report)`. So a
+reader who wanted nothing written still gets a log. The replacement says `add --no-report to skip the
+report`, which is the exact scope of the flag.
+
+The other two are craft and stand on their own. The live sentence writes `~\.windowsweep`, the shell
+shorthand that expands in PowerShell and in nothing else — S-009 removes exactly that notation from the
+sibling page, so leaving it here would put the two pages back into disagreement one slot after fixing it.
+And the order is wrong for the audience. A solution-sceptical reader needs the deletion claim first and the
+printing last; the live sentence buries *deletes nothing* behind a list and then adds the writing as an
+afterthought beginning *"It does write"*. The replacement leads on the refusal, names the two files it
+writes, names the flag that removes one of them, and puts the inventory last.
 
 ### S-018 · quick-start.md:25 · step 3 · heading
 ```
@@ -274,29 +359,61 @@ that nothing happens by accident, a default that acts is the one keystroke a rea
 reach the prompt. It is stated as the mechanism rather than as a warning, because it is a reasonable default
 and the sentence is not a scold.
 
-### S-022 · quick-start.md:52-60 · step 5 · the admin step
+### S-022 · quick-start.md:53-61 · step 5 · the admin step
 ```
 ## 5. The admin step
 
-Sections 12, 13, 14, 15, 16 and 20 change things only an administrator may change. The `system` profile covers the three that are not deep-gated:
+Sections 12, 13, 14, 15, 16 and 20 change things only an administrator may change. The `system` profile covers 12, 13 and 14:
 
 npx windowsweep --profile system --yes --elevate
 
-Sections 15, 16 and 20 are in no profile. Each needs `--i-understand-deep` and its own `--only`, because two of them cannot be undone and the third stops Docker and WSL. Details and the hibernation decision: [Admin sections and elevation](./admin-and-elevation.md).
+The other three are deep sections and the profile leaves them out: 15 is the hibernation file, 16 is the event logs and is permanent, 20 stops Docker and WSL. A batch run refuses a deep section without `--i-understand-deep`. Name the ones you want with `--only`. Details and the hibernation decision: [Admin sections and elevation](./admin-and-elevation.md).
 ```
-**Was:** ## 5. The admin step / Sections 12-16 need an elevated console. When you are at the keyboard: /
-`npx windowsweep --profile system --yes --elevate` / Details and the hibernation decision:
-[Admin sections and elevation](./admin-and-elevation.md).
+**Was:**
+```
+## 5. The admin step
 
-**Change:** rewritten, and it corrects two false statements in three lines of text. First, **the list was
-wrong**: `Admin = $true` in `lib/constants.ps1` is set on 12, 13, 14, 15, 16 **and 20**, and section 20 stops
-Docker Desktop and every WSL distro, which is the last section a reader should meet unannounced.
-`docs/admin-and-elevation.md` and `AI-INTEGRATION-GUIDE.md` both list all six, so this page was the outlier.
-Second, **the command did not cover the sections the sentence named**: `WS_PROFILES['system']` is
-`@(12, 13, 14)`, so a reader who read "12-16" and ran the command got three of the five they were promised,
-with 15 and 16 refused. The replacement names the six, says what the profile actually covers, and then says
-why the other three are not in it. `docs/profiles.md` already carries the same fact in its notes, which is
-where the disagreement was visible.
+Sections 12, 13, 14, 15, 16 and 20 need an elevated console. When you are at the keyboard:
+
+npx windowsweep --profile system --yes --elevate
+
+Details and the hibernation decision: [Admin sections and elevation](./admin-and-elevation.md).
+```
+
+**Change:** 🔴 **Re-based on the live text, 2026-09-07, keeping the number.** The original `Was:` opened
+*"Sections 12-16 need an elevated console"* and the slot's first argument was that the list omitted 20.
+Commit `89e4888` fixed it. **Spent, and not re-made here.** The second defect it found was
+not fixed, and it is still on the page today.
+
+**The command still does not cover the sections the sentence names.** `lib/constants.ps1:72` reads
+`'system' = @(12, 13, 14)`. Six sections carry `Admin = $true` — 12, 13, 14, 15, 16 and 20, at lines 48 to
+56 — so the page names six, offers one command directly beneath, and that command runs three. A reader who
+follows the sentence gets half of what it promised. Nothing tells them so, and the three that were skipped
+are the three with the largest consequences.
+
+**The omission is a rule, not an oversight, and the page never says which.** The three left out are exactly
+the three admin sections carrying `Batch = 'deep'` (`lib/constants.ps1:51`, `:52`, `:56`), and
+`modules/runner.ps1:89-92` refuses a deep section in batch mode without `--i-understand-deep`, in the
+engine's own words: *"section $Id is deep (irreversible or system-changing): refused in batch mode without
+--i-understand-deep."* So the profile could not include them. That causal link is what the page was missing;
+a bare count would have left the reader thinking the profile was simply incomplete.
+
+**Change 3 of this round lands here: one noun each.** §10 asks for the no-undo distinction wherever it is relevant,
+and a sentence about three sections a reader must invoke deliberately is the most relevant place on either
+page. Each gets one noun: 15 the hibernation file, 16 the event logs, 20 Docker and WSL.
+
+🔴 **And the stop caught a false claim in this slot's own earlier draft.** It read *"because two of them
+cannot be undone and the third stops Docker and WSL"*. Only one cannot be undone. Section
+16 is `Tier = 'permanent'` and clears every log with `wevtutil cl`. Section 15 is `Tier = 'config'` and runs
+`powercfg /hibernate off`, which `powercfg /hibernate on` reverses; section 20 is `Tier = 'config'` and
+compacts a disk image, which removes none of the reader's data. Shipping that sentence would have put a
+false permanence claim on a safety beat — the exact failure §10 exists to prevent, in the one place the
+Bible most wants it right. The replacement marks 16 permanent and marks nothing else, and the deep gate
+carries the rest of the weight, which is what it is for.
+
+`docs/admin-and-elevation.md` agrees on every point: line 3 names the same six, lines 14 to 16 give the same
+three nouns, and lines 18 to 19 already say *"15, 16 and 20 are deep-gated."* The link at the end of the slot
+therefore leads somewhere that does not contradict it.
 
 Note for the transcription: the fence in the file stays a `powershell` fence with the command alone; it is
 reproduced inline above only so the slot reads as one unit.
@@ -305,7 +422,7 @@ reproduced inline above only so the slot reads as one unit.
 
 ## §C `docs/README.md` — the two strings that drifted
 
-Both of these exist in two trees. `CLAUDE.md` fixes the direction: the repository copy is corrected first,
+Both exist in two trees. `CLAUDE.md` fixes the direction: the repository copy is corrected first,
 then re-mirrored. In both cases the **site** copy is already right and the **repository** copy is stale,
 which is the wrong way round for a source of truth and is why they are slots rather than a footnote.
 
@@ -342,21 +459,160 @@ anyway and are correct: the data-directory paths match `lib/config.ps1` and `lib
 
 ---
 
+## Drift against the live files — two slots stopped, then re-based, 2026-09-07
+
+🔴 **Every fence in this section is a QUOTATION, not a slot.** Nothing here is applied.
+
+**Resolved.** Both slots were re-based on the live text, keeping their numbers, and each `Change:` was
+rewritten to argue only what survives. Two rules decided it between them and neither left room for a
+judgement call: slot numbers are never reused or renumbered, which ruled out withdrawing these two and
+re-issuing them as S-027 and S-028; and a drifted `Was:` is a stop rather than a guess, which ruled out
+applying them untouched. This section is kept as the record of why, because the reason is worth more than
+the tidy file it would leave behind.
+
+Every `Was:` line was re-read against the live `docs/installation.md` and `docs/quick-start.md` before a word
+was changed. Twenty-two of the twenty-four match exactly. Two do not, both in `quick-start.md`, and both are
+stopped rather than refreshed: **S-017 and S-022**.
+
+**The cause is known and is not a mystery to solve.** Commit `89e4888`, *"fix(docs): seventeen factual defects
+the documentation pass found, all verified against the source"* (2026-09-05 21:04:16 +0500), is the commit
+that added this draft to the repository **and** corrected two of the defects the draft was arguing about, in
+the live file, directly. Its own message names them: *"quick-start called `--scan` 'Read-only' when it writes
+a log and a report; it said sections 12-16 need elevation, omitting 20, then gave a command covering only 12,
+13 and 14."* So the draft did not go stale over two days. It was overtaken within the hour.
+
+### S-017 — `--scan` is no longer described as read-only
+
+Draft `Was:`, verbatim:
+
+```
+Read-only. Prints a health report (drives, hibernation file, disk images, running apps that block cache steps), every target with its size on disk, and the personal-file scanners' findings.
+```
+
+Live `docs/quick-start.md:22-24`, verbatim:
+
+```
+Deletes nothing. Prints a health report (drives, hibernation file, disk images, running apps that block cache
+steps), every target with its size on disk, and the personal-file scanners' findings. It does write its own
+log and a report under `~\.windowsweep`; pass `--no-report` if you would rather it wrote nothing at all.
+```
+
+The slot's whole argument was that **"Read-only." is not true**. That word is gone, and the log, the report
+and `--no-report` are all named, so the argument is spent. **What survives is not merely craft, which is the
+part a quick re-approval would have missed.** The live sentence ends *"pass `--no-report` if you would rather
+it wrote nothing at all"*, and that is false: the flag suppresses the report and leaves the log
+(`lib/log.ps1:3-9` against `:100`). Two smaller things stand beside it — `~\.windowsweep` is the shorthand
+S-009 removes from the sibling page, and the deletion claim is buried third when a sceptical reader needs it
+first. **The slot is re-based on all three and keeps its number.**
+
+### S-022 — the section list was fixed; the profile-coverage correction was not
+
+Draft `Was:`, first line, verbatim:
+
+```
+Sections 12-16 need an elevated console. When you are at the keyboard:
+```
+
+Live `docs/quick-start.md:55`, verbatim:
+
+```
+Sections 12, 13, 14, 15, 16 and 20 need an elevated console. When you are at the keyboard:
+```
+
+The rest of the slot's `Was:` — the `--profile system --yes --elevate` fence and the hibernation link —
+matched the live file exactly. So this one was two-thirds spent and one-third live. **The second defect the
+slot found is still on the page, untouched:** `lib/constants.ps1:72` reads `'system' = @(12, 13, 14)`, so the
+command under a sentence naming six sections runs three, and nothing on the page says which three or why.
+That sentence had never been written. **It is written now, in the re-based S-022, with the deep gate as its
+reason and one noun for each of the three.**
+
+### What the stop cost, and what it bought
+
+It cost one round. Change 3 could not attach to a slot whose `Was:` no longer matched, so it waited for the
+re-base and landed in S-022 rather than beside it.
+
+🔴 **It bought a false claim caught before it shipped, on the one beat the Bible is strictest about.** The
+slot's earlier text said *"because two of them cannot be undone and the third stops Docker and WSL"*. Only
+section 16 cannot be undone. Section 15 runs `powercfg /hibernate off`, which `powercfg /hibernate on`
+reverses, and section 20 compacts a disk image without removing any of the reader's data — both are
+`Tier = 'config'`, not `'permanent'`. Applying the slot as written would have printed a false permanence
+claim on a safety sentence, which is the failure §10 exists to prevent. Nobody was looking for it; it
+surfaced only because the drift forced every line of the slot to be re-read against the source instead of
+re-approved on sight. That is the argument for the stop rule, and it is a stronger one than the bookkeeping.
+
+The second is smaller. It is still real. Re-reading S-017 against the live sentence turned up
+*"pass `--no-report` if you would rather it wrote nothing at all"*, which is on the page now and is untrue —
+`--no-report` suppresses the report and leaves the log. That defect is younger than the draft: `89e4888`
+introduced it while fixing the older one. A slot re-approved on sight would have carried it.
+
+---
+
 ## SELF-CHECK
 
-**Palette.** P dominant and carried by S-015, S-017, S-019, S-021 and S-022, each of which states a
-mechanism with its file or its exact value. R lands four times and always as a specific refusal rather than
-an adjective: S-001 (no service, no startup entry), S-002 (no network calls of its own), S-010 (uninstalling
-puts nothing back), S-017 (deletes nothing, writes two files). W is absent. Row 3 lists only P and R, and
-neither of these two pages is a place for an aside.
+Rewritten on 2026-09-07. Every figure below was re-measured rather than carried forward, and each carries the
+tokenizer and the inclusion rule that produced it.
 
-**Rhythm.** Shortest shipping sentence: *"It deletes nothing."* (three words, S-017). Longest: the
-walkthrough sentence in S-021 at 44 words. Median across the changed strings is around 20.
+**Palette.** P dominant and carried by S-015, S-017, S-019, S-021, S-022 and S-026, each stating a mechanism
+with its file, its schedule or its exact value. S-026 names the day and the hour the weekly task runs rather
+than calling it weekly and stopping. S-022 is the densest of them after the re-base: three sections in the
+profile, the deep gate that excludes the other three, and one noun each. R lands six times, always as a
+specific refusal rather than an adjective — S-001 (no service, no startup entry), S-002 (no network calls of
+its own), S-010 (uninstalling puts nothing back), S-011 (nothing is deleted yet), S-017 (*"It deletes
+nothing."*) and **S-025**, seven words standing above the command they describe. W is absent. Row 3 lists
+only P and R, and neither page is a place for an aside.
 
-**Length.** `installation.md` measures 263 words today and lands at roughly 325 after these slots;
-`quick-start.md` measures 246 and lands at roughly 310. The cap is ~400 per page, so both stay inside it with
-room. `docs/README.md` is site-front's page and gains nothing but two corrected dates.
+**Rhythm.** Measured on the **post-apply** pages with every slot applied, tokenizer `\b[\w'-]+\b`, sentences
+split per paragraph on `(?<=[.!?])\s+`, fenced blocks and table rows and headings excluded.
+`installation.md`: 22 sentences, 3 to 23 words, median 13.5, burstiness **0.41**; shortest is *"Nothing else
+is installed."* (four words, S-002) and longest is S-006's execution-policy sentence at 23.
+`quick-start.md`: 21 sentences, 3 to 44 words, median 11, burstiness **0.70**; shortest is *"It deletes
+nothing."* (three words, S-017) and longest is S-015's self-test sentence at 44. The re-base is what moved
+that page: S-017 restores the three-word refusal and S-022 adds a 30, a 9 and a 7 where there had been one
+flat line.
 
-**Unsure spots.** None that changed a string. Two facts were deliberately left numberless — the declared
-target count in S-015, which is printed per machine, and the long-path fixture length, which belongs to
-`docs-safety` and is discussed there.
+🔴 **Two rhythm facts are reported rather than fixed.** S-015's 44-word sentence exceeds the fingerprint's
+34-word ceiling, and the first self-check attributed that 44 to S-021, which measures 34 — the figure was
+right and its owner was wrong. Neither is one of this round's changes. Separately, `installation.md` sits at
+**0.41** against the rubric's 0.45, because that page now has no sentence over 23 words. Its obvious lever is
+S-011: extending the hand-off to explain what `--self-test` does would clear the threshold in one edit. It is
+refused deliberately. That explanation is `quick-start`'s own opening paragraph, a pointer that restates the
+page it points at breaks the single-home rule, and buying a variance figure with a duplicated claim is the
+wrong trade.
+
+**Length.** Tokenizer `\b[\w'-]+\b`. **Inclusion rule: prose, headings and table cells; fenced code blocks
+excluded**, since a command is a copy target rather than something read. Scope: the two whole files as they
+would stand after **every** slot lands, the re-based S-017 and S-022 included. `installation.md`
+**258 → 372**; `quick-start.md` **305 → 367**. The cap is ~400 per page. Both are inside it, installation
+clearing by 28 words and quick-start by 33 — rather than by the 75 the review packet estimated. Under the
+stricter rule that also drops table rows the same two pages read 184 → 298 and 305 → 367; under a plain
+`wc -w` over the whole file, 347 → 480 and 341 → 403. 🔴 **The re-base cost quick-start 54 words**, which is
+the price of a correction that names three sections, their gate and three nouns. The page still clears.
+
+🔴 **Two `wc -w` figures in the previous revision of this section were extrapolated from the other tokenizer
+rather than run, and read 483 and 415.** They are corrected above from `wc -w` itself. A number carried
+across tokenizers is a guess wearing a measurement's clothes, and it is the same failure this section was
+written to close.
+
+🔴 **The previous self-check's figures cannot be reproduced by any of those four rules** — it recorded
+`installation.md` at 263 and `quick-start.md` at 246, and the closest match here is 258 and 305. Part of the
+quick-start gap is real drift: commit `89e4888` added about 29 words to that page after the figure was taken.
+The rest is an inclusion rule that was never written down, which is exactly the ambiguity this section now
+closes. `docs/README.md` belongs to site-front. It gains two corrected dates and nothing else.
+
+**The allow marker.** `<!-- story-lint: allow "elevate" -->` sits at the top of this file and its reason had
+never been recorded. Here it is: `elevate` is on the shared banned list as a marketing verb, and every
+occurrence in this draft is the literal CLI flag `--elevate` inside S-022's command or in prose naming it.
+The flag is a frozen public identifier. Renaming it is not available. Quoting it is not a claim.
+
+**Unsure spots.** No string was changed on a guess. **Zero open `NEEDS DECISION` lines**, in the shipping
+copy or anywhere else in this file. The one raised earlier in the round — whether S-017 and S-022 should be
+re-based or re-issued — was answered on 2026-09-07 by the two rules that govern it rather than by anyone's
+preference: numbers are never reused or renumbered, and a drifted `Was:` is a stop rather than a guess.
+Re-base was the only option both allowed. It is done, and change 3 landed inside the re-based S-022.
+
+Two facts stay deliberately numberless: the declared target count in S-015, which is printed per machine, and
+the long-path fixture length, which belongs to `docs-safety`. Both are choices, not gaps.
+
+**All 26 slots are appliable.** Every `Was:` in this file was matched against the live text mechanically, not
+by eye — building each post-apply page asserted its anchor string occurs exactly once, and all 19 assertions
+passed.

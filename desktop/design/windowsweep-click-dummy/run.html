@@ -126,7 +126,10 @@
   <footer class="statusbar">
     <span class="dot" aria-hidden="true"></span>
     <span>engine <span class="mono" data-ws-text="engineVersion">1.1.0</span></span>
-    <span class="only-wide mono" style="opacity:.8" data-ws-text="runCmd">windowsweep --all --yes --json</span>
+    <!-- Built from the same helpers that construct the real arguments, so it cannot drift from what the
+         app actually runs. --json is prepended by the Rust side, hence its position, and --days is a
+         real flag the window passes on every run. Amended 2026-09-07. -->
+    <span class="only-wide mono" style="opacity:.8" data-ws-text="runCmd">windowsweep --json --all --yes --developer --days 100</span>
     <span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span>
   </footer>
 </div>

@@ -40,6 +40,7 @@ export function RunScreen() {
   const catalogue = useStore((s) => s.catalogue);
   const scanTargets = useStore((s) => s.scanTargets);
   const developer = useStore((s) => s.developer);
+  const idleDays = useStore((s) => s.idleDays);
   const startRun = useStore((s) => s.startRun);
   const appendLog = useStore((s) => s.appendLog);
   const applyProgress = useStore((s) => s.applyProgress);
@@ -106,7 +107,7 @@ export function RunScreen() {
     setStarting(true);
     const id = newRunId();
     startRun(id);
-    void run(safeBatchArgs({ dryRun: false, developer }), id, {
+    void run(safeBatchArgs({ dryRun: false, developer, idleDays }), id, {
       onLog: appendLog,
       onProgress: (section, event, status, freedBytes) => {
         applyProgress({
@@ -127,7 +128,7 @@ export function RunScreen() {
         finishRun(null, true);
       })
       .finally(() => { setStarting(false); });
-  }, [queue.length, startRun, developer, appendLog, applyProgress, finishRun, setScanTargets]);
+  }, [queue.length, startRun, developer, idleDays, appendLog, applyProgress, finishRun, setScanTargets]);
 
   const inFlight = starting || phase === 'running';
 

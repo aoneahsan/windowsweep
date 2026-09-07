@@ -53,6 +53,7 @@ import { NeedsAPerson } from '../components/NeedsAPerson';
 import { HomeSafety } from '../components/HomeSafety';
 import { LastRuns } from '../components/LastRuns';
 import { AdminNotice } from '../components/AdminNotice';
+import { DeveloperMode } from '../components/DeveloperMode';
 import type { MapTarget } from '../components/ReclaimMap';
 
 /** Brand names, not copy: they are the same in every language. */
@@ -103,8 +104,11 @@ export function Home() {
   const candidates = useStore((s) => s.candidates);
   const history = useStore((s) => s.history);
   const phase = useStore((s) => s.phase);
+  const scannedAt = useStore((s) => s.scannedAt);
   const developer = useStore((s) => s.developer);
   const setDeveloper = useStore((s) => s.setDeveloper);
+  const idleDays = useStore((s) => s.idleDays);
+  const setIdleDays = useStore((s) => s.setIdleDays);
   const startRun = useStore((s) => s.startRun);
   const appendLog = useStore((s) => s.appendLog);
   const applyProgress = useStore((s) => s.applyProgress);
@@ -121,6 +125,23 @@ export function Home() {
   /* One home for this figure, in lib/reclaim.ts - it was computed here AND in
      Shell.tsx, and both copies read a run's result off a scan's summary. */
   const reclaimable = reclaimableBytes(summary, scanTargets);
+
+  /* 🔴 `measured N minutes ago` is a RELATIVE time, so it has to be re-rendered or
+     it starts lying the moment it is painted. The dummy can print a fixed 4 because
+     nothing in it ages; this window ticks instead, every half minute, and only while
+     there is a measurement to age. The interval restarts with each new scan, so the
+     ticks land on that scan's own minute boundaries.
+     🔴 The clock is NOT re-read synchronously when a scan lands - the lint rule
+     refuses a setState in an effect body, and it is right that this does not need
+     one: a `now` from up to half a minute ago makes the elapsed time NEGATIVE for a
+     fresh scan, and the clamp below reads that as 0 minutes, which is what it is. */
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (scannedAt === null) return;
+    const tick = window.setInterval(() => { setNow(Date.now()); }, 30_000);
+    return () => { window.clearInterval(tick); };
+  }, [scannedAt]);
+  const minutesAgo = scannedAt === null ? null : Math.max(0, Math.floor((now - scannedAt) / 60_000));
 
   const drive = useCallback(
     async (args: string[], goToRun: boolean) => {
@@ -180,13 +201,13 @@ export function Home() {
 
   const onDryRun = useCallback(() => {
     setBusy('dryRun');
-    void drive(safeBatchArgs({ dryRun: true, developer }), true).finally(() => { setBusy(null); });
-  }, [drive, developer]);
+    void drive(safeBatchArgs({ dryRun: true, developer, idleDays }), true).finally(() => { setBusy(null); });
+  }, [drive, developer, idleDays]);
 
   const onReclaim = useCallback(() => {
     setBusy('reclaim');
-    void drive(safeBatchArgs({ dryRun: false, developer }), true).finally(() => { setBusy(null); });
-  }, [drive, developer]);
+    void drive(safeBatchArgs({ dryRun: false, developer, idleDays }), true).finally(() => { setBusy(null); });
+  }, [drive, developer, idleDays]);
 
   /* The map's tiles: one per scanned target, coloured by its section's tier and
      grouped by its section. Every field is the engine's. */
@@ -261,13 +282,38 @@ export function Home() {
                 </>
               )}
             </p>
+            {/* 🔴 The dummy's whole sub-line: when it was measured, what it spans,
+                and the re-scan beside it (`index.html:48-53`). The freshness clause
+                needs a measurement to be fresh OF - after a real run the targets
+                have been spent and the figure comes from the run's own summary, so
+                that state keeps the span and drops the clause rather than dating a
+                number no scan produced. */}
             <p className="hero-sub">
-              {reclaimable === null
-                ? t('home.heroSubUnmeasured')
-                : t('home.heroSub', {
-                    targets: reclaimableTargetCount(summary, scanTargets),
-                    sections: reclaimableSectionCount(summary, scanTargets),
-                  })}
+              {reclaimable === null ? (
+                t('home.heroSubUnmeasured')
+              ) : (
+                <>
+                  {minutesAgo === null
+                    ? t('home.heroSub', {
+                        targets: reclaimableTargetCount(summary, scanTargets),
+                        sections: reclaimableSectionCount(summary, scanTargets),
+                      })
+                    : t('home.heroSubMeasured', {
+                        count: minutesAgo,
+                        targets: reclaimableTargetCount(summary, scanTargets),
+                        sections: reclaimableSectionCount(summary, scanTargets),
+                      })}
+                  {' · '}
+                  {/* The dummy's own acknowledgement for this control is on the
+                      Scan button, not on the link: `wire.js:486` hands the pending
+                      state to `[data-ws-action="scan"]` when the press came from
+                      the link. `onScan` does exactly that here - one handler, so
+                      the button beside it goes pending within a frame. */}
+                  <button className="link-q" type="button" onClick={onScan} disabled={running}>
+                    {t('home.rescan')}
+                  </button>
+                </>
+              )}
             </p>
           </div>
           <div className="hero-actions">
@@ -326,18 +372,12 @@ export function Home() {
             <div className="zone-label" style={{ marginTop: 'var(--sp-6)' }}>
               <span className="caps">{t('home.developerTitle')}</span>
             </div>
-            <div className="panel pad">
-              <button
-                className="switch"
-                type="button"
-                role="switch"
-                aria-checked={developer}
-                aria-label={t('home.developerTitle')}
-                onClick={() => { setDeveloper(!developer); }}
-              />
-              <p className="t-sm">{developer ? t('home.developerOn') : t('home.developerOff')}</p>
-              <p className="t-sm ink-3">{t('home.developerNote')}</p>
-            </div>
+            <DeveloperMode
+              developer={developer}
+              onDeveloper={setDeveloper}
+              idleDays={idleDays}
+              onIdleDays={setIdleDays}
+            />
           </div>
 
           <div className="c5 rise">

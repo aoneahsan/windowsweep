@@ -135,15 +135,46 @@ export function scanArgs(developer: boolean): string[] {
   return ['--scan', ...(developer ? ['--developer'] : ['--not-developer'])];
 }
 
-/** The safe batch, as the engine defines it. `--dry-run` makes it a rehearsal. */
-export function safeBatchArgs(options: { dryRun: boolean; developer: boolean; sections?: number[] }): string[] {
+/**
+ * The safe batch, as the engine defines it. `--dry-run` makes it a rehearsal.
+ *
+ * 🔴 `--days` is passed on EVERY run, never only when it differs from the
+ * engine's default of 100. The engine falls back to its own `config.json` when
+ * the flag is absent, and a person who has run `windowsweep --days 30` once has
+ * changed that file - so the window would be showing 100 beside a run that used
+ * 30. Passing it always makes the number on the screen the number that runs.
+ */
+export function safeBatchArgs(options: {
+  dryRun: boolean;
+  developer: boolean;
+  idleDays: number;
+  sections?: number[];
+}): string[] {
   const args: string[] = [];
   if (options.sections && options.sections.length > 0) args.push('--only', options.sections.join(','));
   else args.push('--all');
   args.push('--yes');
   if (options.dryRun) args.push('--dry-run');
   args.push(options.developer ? '--developer' : '--not-developer');
+  args.push('--days', String(options.idleDays));
   return args;
+}
+
+/**
+ * The same invocation as a line a person could type, for the status bar.
+ *
+ * 🔴 Built from the argument list that actually runs, never from a sentence: a
+ * hand-written string is free to drift from the flags, and the whole point of the
+ * line is that it is what this window does.
+ *
+ * Two honest omissions, both plumbing the Rust side adds per run and neither of
+ * them a mode: `--no-color`, and the `--reports-dir` / `--logs-dir` pair pointing
+ * at that run's own folder (`src-tauri/src/engine.rs` -> `run_clean`). `--json`
+ * is included because it is what makes the summary readable, and it is prepended
+ * there in exactly this position.
+ */
+export function commandLine(args: string[]): string {
+  return ['windowsweep', '--json', ...args].join(' ');
 }
 
 /**

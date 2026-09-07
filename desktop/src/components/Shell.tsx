@@ -9,7 +9,7 @@
  */
 
 import { useState } from 'react';
-import { Link, useRouterState } from '@tanstack/react-router';
+import { Link, useRouterState, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 /* 🔴 `getCurrentWindow` is imported lazily, inside the handler. Calling it during
    render reads `window.__TAURI_INTERNALS__`, which does not exist outside a Tauri
@@ -23,6 +23,9 @@ import { ThemePanel } from './ThemePanel';
 import { useStore } from '../state/store';
 import { reclaimableBytes, reclaimableSectionCount } from '../lib/reclaim';
 import { formatBytes } from '../lib/format';
+import { logDirectory } from '../lib/cli';
+import { commandLine, safeBatchArgs } from '../lib/engine';
+import { filterSections, SECTION_FILTERS, type SectionFilter } from '../lib/catalogue';
 
 interface NavGroup {
   group: string;
@@ -181,14 +184,87 @@ function Rail() {
   );
 }
 
+interface StatusNote {
+  text: string;
+  /** A path or a command line, which the dummy sets in mono and dims to .8. */
+  machine?: boolean;
+}
+
+/**
+ * The status bar's middle slot, which the click dummy gives a different fact on
+ * every screen. Three of them are live, so they are derived here rather than
+ * passed down: a screen renders INSIDE this shell and cannot hand its chrome a
+ * prop.
+ *
+ *  - Home     `index.html:307` a logs path
+ *  - Sections `sections.html:114` `N of 26 shown`
+ *  - Run      `run.html:129` the command line this window runs
+ *
+ * 🔴 Each one calls the same function its screen calls. The count comes from
+ * `filterSections`, which is what the Sections table itself renders from, and the
+ * command comes from `safeBatchArgs`, which is what the Start button actually
+ * runs - a status bar that recomputed either would be free to disagree with the
+ * screen above it, which is precisely how `reclaimableBytes` went wrong twice.
+ */
+function useRouteStatusNote(): StatusNote | null {
+  const { t } = useTranslation();
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  const search: { filter?: SectionFilter; q?: string } = useSearch({ strict: false });
+  const summary = useStore((s) => s.summary);
+  const catalogue = useStore((s) => s.catalogue);
+  const developer = useStore((s) => s.developer);
+  const idleDays = useStore((s) => s.idleDays);
+
+  if (path === '/') {
+    /* 🔴 The engine's own `log_file`, not the command-line tool's fixed folder.
+       `run_clean` passes `--logs-dir` per run (`src-tauri/src/engine.rs`), so this
+       window's logs are NOT under `~\.windowsweep\logs` and printing that would be
+       a path the reader could not find anything at. Before the first run there is
+       nothing to point at, and it says so. */
+    const dir = logDirectory(summary);
+    return dir ? { text: dir, machine: true } : { text: t('app.logsPending') };
+  }
+
+  if (path === '/sections') {
+    if (!catalogue) return null;
+    const filter: SectionFilter = SECTION_FILTERS.includes(search.filter ?? 'all')
+      ? (search.filter ?? 'all')
+      : 'all';
+    return {
+      text: t('sections.shownCount', {
+        shown: filterSections(catalogue, filter, search.q ?? '').length,
+        total: catalogue.sections.length,
+      }),
+    };
+  }
+
+  if (path === '/run') {
+    return {
+      text: commandLine(safeBatchArgs({ dryRun: false, developer, idleDays })),
+      machine: true,
+    };
+  }
+
+  return null;
+}
+
 function StatusBar({ note }: { note?: string }) {
   const { t } = useTranslation();
   const version = useStore((s) => s.engineVersion);
+  const derived = useRouteStatusNote();
+  const shown: StatusNote | null = note ? { text: note } : derived;
   return (
     <footer className="statusbar">
       <span className="dot" aria-hidden="true" />
       <span>{t('app.engine', { version: version || '-' })}</span>
-      {note ? <span className="only-wide">{note}</span> : null}
+      {shown ? (
+        <span
+          className={shown.machine ? 'only-wide sb-note mono' : 'only-wide sb-note'}
+          {...(shown.machine ? { style: { opacity: 0.8 } } : {})}
+        >
+          {shown.text}
+        </span>
+      ) : null}
     </footer>
   );
 }

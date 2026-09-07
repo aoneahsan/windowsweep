@@ -26,35 +26,11 @@ import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
-import type { Catalogue, Section } from '../lib/catalogue';
+import { filterSections, SECTION_FILTERS, type SectionFilter } from '../lib/catalogue';
 import { newRunId, run, safeBatchArgs } from '../lib/engine';
 import { formatBytes } from '../lib/format';
 import { SectionsTable } from '../components/SectionsTable';
 import { SectionSelbar } from '../components/SectionSelbar';
-
-type Filter = 'all' | 'safe' | 'interactive' | 'admin' | 'deep' | 'report' | 'dev';
-
-/** `sections.html:46-52`, in the dummy's own order. */
-const FILTERS: Filter[] = ['all', 'safe', 'interactive', 'admin', 'deep', 'report', 'dev'];
-
-function matches(section: Section, filter: Filter, catalogue: Catalogue): boolean {
-  switch (filter) {
-    case 'safe':
-      return catalogue.safe_batch.includes(section.id) || catalogue.safe_batch_admin.includes(section.id);
-    case 'interactive':
-      return section.batch === 'interactive';
-    case 'admin':
-      return section.admin;
-    case 'deep':
-      return section.batch === 'deep';
-    case 'report':
-      return section.tier === 'report';
-    case 'dev':
-      return section.dev;
-    default:
-      return true;
-  }
-}
 
 export function Sections() {
   const { t } = useTranslation();
@@ -62,6 +38,7 @@ export function Sections() {
 
   const catalogue = useStore((s) => s.catalogue);
   const developer = useStore((s) => s.developer);
+  const idleDays = useStore((s) => s.idleDays);
   const scanTargets = useStore((s) => s.scanTargets);
   const selection = useStore((s) => s.sectionSelection);
   const toggleSectionSelection = useStore((s) => s.toggleSectionSelection);
@@ -71,9 +48,11 @@ export function Sections() {
   const applyProgress = useStore((s) => s.applyProgress);
   const finishRun = useStore((s) => s.finishRun);
 
-  const search: { filter?: Filter; q?: string } = useSearch({ strict: false });
-  const filter: Filter = FILTERS.includes(search.filter ?? 'all') ? (search.filter ?? 'all') : 'all';
-  const query = (search.q ?? '').trim().toLowerCase();
+  const search: { filter?: SectionFilter; q?: string } = useSearch({ strict: false });
+  const filter: SectionFilter = SECTION_FILTERS.includes(search.filter ?? 'all')
+    ? (search.filter ?? 'all')
+    : 'all';
+  const query = search.q ?? '';
 
   const [busy, setBusy] = useState<'dry' | 'run' | null>(null);
   const [blocked, setBlocked] = useState<string | null>(null);
@@ -81,14 +60,9 @@ export function Sections() {
   /* Memoised because `go` closes over it: a fresh array literal every render
      makes the callback's dependency list change every render too. */
   const all = useMemo(() => catalogue?.sections ?? [], [catalogue]);
-  const rows = catalogue
-    ? all
-        .filter((s) => matches(s, filter, catalogue))
-        .filter((s) => {
-          if (!query) return true;
-          return `${s.key} ${s.title} ${String(s.id)}`.toLowerCase().includes(query);
-        })
-    : [];
+  /* The same call the status bar makes, so the table and `N of 26 shown` cannot
+     disagree about what is on screen. */
+  const rows = filterSections(catalogue, filter, query);
 
   const bytesOf = useCallback(
     (id: number): number | null => {
@@ -119,7 +93,7 @@ export function Sections() {
       const id = newRunId();
       startRun(id);
       void navigate({ to: '/run' });
-      void run(safeBatchArgs({ dryRun, developer, sections: selection }), id, {
+      void run(safeBatchArgs({ dryRun, developer, idleDays, sections: selection }), id, {
         onLog: appendLog,
         onProgress: (section, event, status, freedBytes) => {
           applyProgress({
@@ -140,7 +114,7 @@ export function Sections() {
     /* The two setState functions are stable, so listing them costs nothing and
        is what the React Compiler infers - a mismatch there disables optimisation
        for the whole component. */
-    [all, selection, t, startRun, navigate, developer, appendLog, applyProgress,
+    [all, selection, t, startRun, navigate, developer, idleDays, appendLog, applyProgress,
       finishRun, setBusy, setBlocked],
   );
 
@@ -175,7 +149,7 @@ export function Sections() {
             <span className="caps ink-3" style={{ marginInlineEnd: 'var(--sp-2)' }}>
               {t('sections.show')}
             </span>
-            {FILTERS.map((f) => (
+            {SECTION_FILTERS.map((f) => (
               <button
                 className="fchip"
                 type="button"

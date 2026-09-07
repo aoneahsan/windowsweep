@@ -415,3 +415,37 @@ vanishing.
 ⚠️ **Still owed against this amendment:** the `index.html:74` sentence *"Click one to keep it."* and the six
 curated admin labels at `index.html:252-257` are now covered by the table above, but the dummy's own text
 still reads as though both ship. Settling that wording is a dummy edit, not an app one.
+
+## Amendment - 2026-09-07 (later still): D-18, and a sentence that was backwards
+
+Closing D-18's five divergences turned up a copy defect that had nothing to do with them, and it is the one
+worth reading first.
+
+🔴 **The developer-mode state line was inverted, in the direction that understates destruction.** The app
+said *"Off. Toolchain caches are left alone."* The engine says the opposite, in its own words at
+`lib/actions.ps1:209-210`: with developer mode **off** these caches are *"cleared completely"*; with it
+**on**, *"only files idle N+ days go"*. `lib/actions.ps1:130` is the mechanism - a dev target's `prune` or
+`units` mode becomes `clear` when developer mode is off. So the window told a reader their toolchain caches
+were safe at precisely the setting that empties them.
+
+The dummy had it right all along (`wire.js:451-453`), and the app now carries the dummy's two lines verbatim:
+*"On - keeping anything used in the last {N} days"* and *"Off - every cache is offered in full"*. The
+supporting note also lost its hardcoded *"last hundred days"*, which had begun contradicting the adjustable
+idle window directly beneath it; the dummy's own numberless sentence replaces it.
+
+**Two amendments here, both because the dummy was describing the CLI where the window differs:**
+
+| Where | Was | Now, and why |
+|---|---|---|
+| `index.html:307` | `%USERPROFILE%\.windowsweep\logs` | That is the CLI's default. The window passes `--logs-dir` on **every** run, so no log ever lands there. It now shows the engine's own answer - the directory of the `log_file` the run reported - and says so plainly before any run has written one |
+| `run.html:129` | `windowsweep --all --yes --json` | Built from the same helpers that construct the real arguments, so it cannot drift from what the app runs. `--json` is prepended by the Rust side, hence its position, and `--days` is now a real flag the window passes |
+
+**One capability declared rather than built, and the dummy keeps specifying it:** *"Held back right now"*. The
+engine sizes each target with `Get-DirectoryBytes` - its size **on disk** - and prints that caveat itself at
+`lib/scan.ps1:77`. Nothing in the `--json` summary reports how much the idle gate would keep, so a figure
+there would be invented. The **Idle window** beside it is real and is now built: it drives `--days`, which the
+engine documents and the Rust allowlist already permitted.
+
+⚠️ **Still owed against this amendment:** six screens - history, report, picker, settings, account, elevation
+- carry a status-bar middle text in the dummy that the app does not render. Not part of D-18; recorded so it
+is not rediscovered.

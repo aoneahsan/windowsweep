@@ -304,7 +304,11 @@
     <span class="dot" aria-hidden="true"></span>
     <span>engine <span class="mono" data-ws-text="engineVersion">1.1.0</span></span>
     <span class="only-wide">app <span class="mono" data-ws-text="appVersion">0.1.0</span></span>
-    <span class="only-wide mono" style="opacity:.8">%USERPROFILE%\.windowsweep\logs</span>
+    <!-- The CLI writes here by default; the WINDOW does not. It passes --logs-dir on every run, so it
+         shows the engine's own answer - the directory of the log_file the run reported - and says so
+         plainly before any run has written one. Amended 2026-09-07, after the app was found printing
+         a path that no log ever lands in. -->
+    <span class="only-wide mono" style="opacity:.8" data-ws-text="logPath">the log path appears once a run has written one</span>
     <span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span>
   </footer>
 

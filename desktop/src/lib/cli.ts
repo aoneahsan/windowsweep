@@ -82,6 +82,23 @@ export function isCleanupRun(summary: RunSummary | null): boolean {
   return summary !== null && summary.mode !== 'scan';
 }
 
+/**
+ * The folder the engine wrote this run's log into, or null when it has not
+ * written one yet.
+ *
+ * 🔴 Read from the engine's own `log_file`, never assembled from a known layout.
+ * The command-line tool logs into one fixed folder under `~\.windowsweep`; this
+ * window passes `--logs-dir` per run, so the answer is different for every run
+ * and only the engine knows it. Verified against a real `--scan --json` on
+ * 2026-09-07: `log_file` is populated in scan mode and honours `--logs-dir`.
+ */
+export function logDirectory(summary: RunSummary | null): string | null {
+  const file = summary?.log_file;
+  if (!file) return null;
+  const cut = Math.max(file.lastIndexOf('\\'), file.lastIndexOf('/'));
+  return cut > 0 ? file.slice(0, cut) : file;
+}
+
 /** A parsed `##windowsweep` progress line. `end` carries status and freed bytes. */
 export interface ProgressEvent {
   section: number;

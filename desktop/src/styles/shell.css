@@ -149,6 +149,15 @@ button, [role='button'] {
   font-size: var(--fs-2xs); color: var(--c-ink-3);
 }
 .statusbar .dot { width: 6px; height: 6px; border-radius: var(--r-pill); background: var(--c-ok); }
+/* 🔴 The middle slot carries a REAL logs path and a REAL command line, both varying
+   by machine, where the dummy carries a fixed 32-character string. A flex item
+   defaults to min-width:auto, so a path too long to wrap widens the bar past the
+   window. Measured in the built stylesheet, 2026-09-07: this machine's real run
+   folder (84 chars) fits and needs no help, but a deep profile name with an
+   unbreakable run id (165 chars) overflowed the document by 216px at 1024 without
+   this rule and ellipsised cleanly with it. Below 900px `.only-wide` hides the slot
+   outright, so 760 - the product's minimum width - is safe either way. */
+.statusbar .sb-note { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* ---------------------------------------------------------------------------
    BANDS - the rhythm system. 🔴 Consecutive zones differ in at least two of
@@ -333,6 +342,12 @@ button, [role='button'] {
   text-decoration-style: dotted; text-underline-offset: 3px;
 }
 .link-q:hover { text-decoration-style: solid; }
+/* 🔴 A state the dummy has no opinion on, because nothing in it actually runs: the
+   hero's re-scan is refused while a run is in flight - one engine, one run at a
+   time - and without this it would look identical to a live control and swallow
+   the press in silence. The values are the ones this stylesheet already uses for
+   every other disabled control (`.field:disabled`, `.switch[aria-disabled]`). */
+.link-q:disabled { opacity: .5; cursor: not-allowed; text-decoration-style: dotted; }
 
 /* ---------------------------------------------------------------------------
    ZONE 3 - THE RECLAIM MAP (the signature element)

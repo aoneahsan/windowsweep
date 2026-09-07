@@ -41,6 +41,7 @@ export function Settings() {
   const tab: Tab = TABS.includes(search.tab ?? 'general') ? (search.tab ?? 'general') : 'general';
 
   const developer = useStore((s) => s.developer);
+  const idleDays = useStore((s) => s.idleDays);
   const setDeveloper = useStore((s) => s.setDeveloper);
   const features = configuredFeatures();
 
@@ -101,7 +102,7 @@ export function Settings() {
                     <div style={{ flex: 1 }}>
                       <div className="t-base">{t('home.developerTitle')}</div>
                       <div className="t-sm ink-3">
-                        {developer ? t('home.developerOn') : t('home.developerOff')}
+                        {developer ? t('home.developerOn', { days: idleDays }) : t('home.developerOff')}
                       </div>
                     </div>
                     <div className="lst-x">

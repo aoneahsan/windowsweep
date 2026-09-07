@@ -71,6 +71,52 @@ export function sectionById(catalogue: Catalogue, id: number): Section | undefin
   return catalogue.sections.find((s) => s.id === id);
 }
 
+/** The Sections screen's filter chips, in the dummy's own order (`sections.html:46-52`). */
+export type SectionFilter = 'all' | 'safe' | 'interactive' | 'admin' | 'deep' | 'report' | 'dev';
+
+export const SECTION_FILTERS: readonly SectionFilter[] = [
+  'all', 'safe', 'interactive', 'admin', 'deep', 'report', 'dev',
+] as const;
+
+function matchesFilter(section: Section, filter: SectionFilter, catalogue: Catalogue): boolean {
+  switch (filter) {
+    case 'safe':
+      return catalogue.safe_batch.includes(section.id) || catalogue.safe_batch_admin.includes(section.id);
+    case 'interactive':
+      return section.batch === 'interactive';
+    case 'admin':
+      return section.admin;
+    case 'deep':
+      return section.batch === 'deep';
+    case 'report':
+      return section.tier === 'report';
+    case 'dev':
+      return section.dev;
+    default:
+      return true;
+  }
+}
+
+/**
+ * The rows the Sections screen is showing, for one chip and one search box.
+ *
+ * 🔴 ONE derivation with two consumers: the table draws these rows and the status
+ * bar counts them. Two copies of a filter is exactly how `reclaimableBytes` came
+ * to be wrong in two files at once - a chip that narrowed the table while the
+ * count said 26 would be the same defect in a smaller place.
+ */
+export function filterSections(
+  catalogue: Catalogue | null,
+  filter: SectionFilter,
+  query: string,
+): Section[] {
+  if (!catalogue) return [];
+  const needle = query.trim().toLowerCase();
+  return catalogue.sections
+    .filter((s) => matchesFilter(s, filter, catalogue))
+    .filter((s) => !needle || `${s.key} ${s.title} ${String(s.id)}`.toLowerCase().includes(needle));
+}
+
 /**
  * The sections a plain, unelevated safe run would touch. Derived from the engine's
  * own `safe_batch`, never from a rule this app invents about which tier is safe.

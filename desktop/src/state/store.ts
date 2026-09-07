@@ -63,6 +63,16 @@ interface StoreState {
      the Reclaimable column off the live summary meant a dry-run blanked both.
      A real run DOES spend them, and `setScanTargets([])` says so. */
   scanTargets: ScanTarget[];
+  /**
+   * When those targets were measured, or null when nothing has been.
+   *
+   * 🔴 Stamped here rather than at the call site, so it cannot disagree with the
+   * rows it describes: one setter, one timestamp. Clearing the rows clears it,
+   * because after a real run those measurements have been spent and a time that
+   * outlived its figures would be a stale "measured 2 minutes ago" over nothing.
+   * Deliberately NOT persisted - a measurement is only true of this session.
+   */
+  scannedAt: number | null;
   setScanTargets: (rows: ScanTarget[]) => void;
 
   /* --- selection -------------------------------------------------------- */
@@ -87,6 +97,18 @@ interface StoreState {
   setAxis: (key: string, value: string) => void;
   developer: boolean;
   setDeveloper: (on: boolean) => void;
+  /**
+   * The idle window in days - the engine's `--days N`, whose own default is 100
+   * (`lib/config.ps1` -> Get-DefaultConfig). A file goes only when its newest
+   * timestamp is at least this old, so lowering it includes more caches.
+   *
+   * 🔴 The app passes it on every run rather than only when it differs from 100:
+   * the engine would otherwise read its own saved config, which a person may have
+   * changed from the command line, and this window would be showing one number
+   * while the run used another.
+   */
+  idleDays: number;
+  setIdleDays: (days: number) => void;
 
   /* --- account ---------------------------------------------------------- */
   user: AuthUser | null;
@@ -95,6 +117,14 @@ interface StoreState {
 
 const HISTORY_KEY = 'windowsweep:history';
 const DEVELOPER_KEY = 'windowsweep:developer';
+const IDLE_DAYS_KEY = 'windowsweep:idleDays';
+
+/** The engine's own default idle threshold - `lib/config.ps1`, `days = 100`. Not
+    exported: nothing outside this module has a reason to know the seed value. */
+const DEFAULT_IDLE_DAYS = 100;
+/** The range the click dummy's own control offers (`index.html:138`). */
+export const MIN_IDLE_DAYS = 7;
+export const MAX_IDLE_DAYS = 365;
 
 /** When the run in flight began, so `finishRun` can record how long it took. */
 let startedAt = Date.now();
@@ -108,6 +138,17 @@ function readLocal<T>(key: string, fallback: T): T {
   } catch {
     return fallback;
   }
+}
+
+/**
+ * The engine refuses `--days` unless it is a whole number, and the Rust side
+ * refuses a value that looks like a flag, so the one place this value is set is
+ * also the place it is made safe to pass. A stored value from an older build - or
+ * a hand-edited one - is clamped rather than trusted.
+ */
+function clampIdleDays(days: number): number {
+  if (!Number.isFinite(days)) return DEFAULT_IDLE_DAYS;
+  return Math.min(MAX_IDLE_DAYS, Math.max(MIN_IDLE_DAYS, Math.round(days)));
 }
 
 function writeLocal(key: string, value: unknown): void {
@@ -167,7 +208,8 @@ export const useStore = create<StoreState>()((set, get) => ({
   },
 
   scanTargets: [],
-  setScanTargets: (rows) => { set({ scanTargets: rows }); },
+  scannedAt: null,
+  setScanTargets: (rows) => { set({ scanTargets: rows, scannedAt: rows.length > 0 ? Date.now() : null }); },
 
   candidates: [],
   selectedPaths: new Set<string>(),
@@ -216,6 +258,12 @@ export const useStore = create<StoreState>()((set, get) => ({
   setDeveloper: (on) => {
     writeLocal(DEVELOPER_KEY, on);
     set({ developer: on });
+  },
+  idleDays: clampIdleDays(readLocal<number>(IDLE_DAYS_KEY, DEFAULT_IDLE_DAYS)),
+  setIdleDays: (days) => {
+    const value = clampIdleDays(days);
+    writeLocal(IDLE_DAYS_KEY, value);
+    set({ idleDays: value });
   },
 
   user: null,

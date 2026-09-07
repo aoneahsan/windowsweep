@@ -17,7 +17,7 @@ $Script:WS = @{
   DryRun = $false; Yes = $false; Deep = $false; Elevate = $false; ElevatedChild = $false; BatchMode = $false
   Days = $null; TempDays = $null; LargeFileMb = $null; PurgeAll = $false
   DeveloperFlag = $null; ForgetDeveloper = $false; Developer = $null; DeveloperSource = ''
-  ScanRoots = @(); ExcludePaths = @(); Hiberfil = ''; ResetBase = $false; Permanent = $false
+  ScanRoots = @(); ExcludePaths = @(); Excluded = @(); Hiberfil = ''; ResetBase = $false; Permanent = $false
   OnlyList = ''; Profile = ''; Exclude = ''; ExportFmt = 'both'; ExportId = 'latest'; PruneDays = 90
   LogsDir = ''; ReportsDir = ''; NoReport = $false; CleanupLogs = $false
   JsonMode = $false; Quiet = $false; NoColor = $false; Ascii = $false; Notify = $false
@@ -79,7 +79,7 @@ OPTIONS
       --purge-all       Clear cache targets completely instead of pruning idle files
       --developer / --not-developer   Override the saved developer answer for this run
       --forget-developer   Ask the developer question again
-      --scan-roots "P1;P2"   Project roots for section 17     --exclude-path P   (repeatable)
+      --scan-roots "P1;P2"   Project roots for section 17     --exclude-path P   (repeatable, all sections)
       --large-file-mb N    Minimum size for section 19 (default 100)
       --hiberfil off|reduced|keep   What section 15 does       --reset-base   DISM /ResetBase in 14
       --permanent       Sections 18/19 delete instead of using the Recycle Bin
@@ -238,6 +238,8 @@ function Initialize-Settings {
   if ($null -eq $ws.LargeFileMb) { $ws.LargeFileMb = [int]$cfg.largeFileMb }
   if ($ws.ScanRoots.Count -eq 0 -and $cfg.scanRoots) { $ws.ScanRoots = @($cfg.scanRoots) }
   if ($cfg.excludePaths) { $ws.ExcludePaths = @($ws.ExcludePaths) + @($cfg.excludePaths) }
+  # Must come after the merge above, or every config-file exclusion is silently dropped.
+  Initialize-Exclusions
 }
 
 function Invoke-Main {

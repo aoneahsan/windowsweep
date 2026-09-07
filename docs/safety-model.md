@@ -129,3 +129,19 @@ windowsweep --dry-run --all --yes
 ```
 
 Last Updated: 2026-09-03
+
+## Your own exclusions, and the machine-readable list
+
+`--exclude-path P` (repeatable, or `excludePaths` in the config file) names a tree you want left alone. Since
+1.2.0 it is enforced at the same chokepoint as everything else rather than inside one section, so it holds
+for **every** section: an excluded path is refused, logged as `excluded: <path>`, and reported once in the
+`excluded[]` array of the `--json` summary. A dry-run refuses it in the same place, so the rehearsal and the
+run agree.
+
+A path that is both protected and excluded reports the **protected** reason, not the exclusion. That is
+deliberate: the protected list is the promise no flag can lift, and it is the stronger thing to tell you.
+
+The protected lists are machine-readable. `--list --json` carries a `protected` object with `subtrees` (every
+protected folder, resolved for this machine) and `categories` (the same sentences `--list-targets` prints).
+Both readers take that list from one place, so a front end cannot show you a narrower promise than the
+console does.

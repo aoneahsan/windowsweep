@@ -69,6 +69,15 @@ function Get-NewestTimestampUtc {
   return $t
 }
 
+function Format-Utc8601 {
+  <# .SYNOPSIS ISO 8601 UTC for a timestamp, or $null when nothing was found (the MinValue sentinel).
+     Get-DirectoryStats returns MinValue for an empty or unreadable tree, and "0001-01-01" in a contract
+     field would read as a real date a caller could sort on. #>
+  param([datetime] $When)
+  if ($When -le [datetime]::MinValue) { return $null }
+  return $When.ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
+}
+
 function Get-DirectoryStats {
   <# .SYNOPSIS Walk a tree without following reparse points. Returns Bytes, Files, Dirs, Links, Newest (UTC), Errors. #>
   param([string] $Path)

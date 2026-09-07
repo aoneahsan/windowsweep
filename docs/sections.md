@@ -10,7 +10,7 @@ path each section can reach on your machine.
 | 1 | Package-manager caches | rebuilds | - | safe, developer-gated |
 | 2 | Build-tool caches | rebuilds | - | safe, developer-gated |
 | 3 | Test-runner browsers | rebuilds | - | safe, developer-gated |
-| 4 | Android emulators (AVDs) | slow | - | opt-in |
+| 4 | Android emulators (AVDs) | slow | - | opt-in, developer-gated |
 | 5 | Docker | rebuilds | - | safe, developer-gated |
 | 6 | Editor caches and extensions | rebuilds | - | safe |
 | 7 | Browser caches | rebuilds | - | safe |
@@ -23,10 +23,10 @@ path each section can reach on your machine.
 | 14 | Component store (DISM) | rebuilds | admin | opt-in |
 | 15 | Hibernation file | config | admin | deep |
 | 16 | Event logs | permanent | admin | deep |
-| 17 | Stale project build artefacts | rebuilds | - | interactive |
+| 17 | Stale project build artefacts | rebuilds | - | interactive, developer-gated |
 | 18 | Partial downloads | Recycle Bin | - | interactive |
 | 19 | Large stale personal files | Recycle Bin | - | interactive |
-| 20 | Disk-image compaction | config | admin | deep |
+| 20 | Disk-image compaction | config | admin | deep, developer-gated |
 | 21 | Disk usage report | report | - | safe |
 | 22 | Global packages audit | report | - | safe, audit only |
 | 23 | Orphaned application data | Recycle Bin | - | interactive |

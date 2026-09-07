@@ -348,6 +348,68 @@ function Invoke-SelfTestExtra {
     $gotNodeModules = @($hits | Where-Object { $_ -like "*\normal\node_modules" }).Count -eq 1
     if ($gotGatsbyCache -and $noPlainCache -and $gotNodeModules) { Write-Ok '.cache is an artefact only beside a Gatsby/Parcel marker, and node_modules is unaffected' } else { Write-Err "marked-artefact rule wrong: gatsby=$gotGatsbyCache plainExcluded=$noPlainCache nodeModules=$gotNodeModules"; $fails++ }
 
+
+    Write-Section '[18] The 1.2.0 contract additions: newest_write_utc, protected, --exclude-path'
+
+    # 18a - targets[].newest_write_utc reports the newest timestamp under a target, in ISO 8601 UTC.
+    # A fixture with a KNOWN mtime, so the assertion is about the value and not merely about the shape.
+    $checks++
+    $nw = Join-Path $fx 'newest'
+    New-Item -ItemType Directory -Force -Path (Join-Path $nw 'deep') | Out-Null
+    Set-Content -LiteralPath (Join-Path $nw 'old.txt') -Value 'x'
+    Set-Content -LiteralPath (Join-Path $nw 'deep\\new.txt') -Value 'x'
+    $stampOld = [datetime]::new(2021, 3, 4, 5, 6, 7, [DateTimeKind]::Utc)
+    $stampNew = [datetime]::new(2023, 11, 12, 13, 14, 15, [DateTimeKind]::Utc)
+    foreach ($ts in 'LastWriteTime', 'LastAccessTime', 'CreationTime') {
+      Set-ItemProperty -LiteralPath (Join-Path $nw 'old.txt') -Name $ts -Value $stampOld.ToLocalTime()
+      Set-ItemProperty -LiteralPath (Join-Path $nw 'deep\\new.txt') -Name $ts -Value $stampNew.ToLocalTime()
+    }
+    $st = Get-DirectoryStats $nw
+    $iso = Format-Utc8601 $st.Newest
+    # The DEEPER file is the newer one, so a walk that stopped at the top level would report the older stamp
+    # and still look like a working timestamp - which is the failure this fixture is shaped to catch.
+    $wantIso = '2023-11-12T13:14:15Z'
+    $nullIso = Format-Utc8601 ([datetime]::MinValue)
+    if ($iso -eq $wantIso -and $null -eq $nullIso) { Write-Ok "newest_write_utc reads the deepest newest file ($iso) and is null for an empty tree" } else { Write-Err "newest_write_utc wrong: got $iso want $wantIso; MinValue gave '$nullIso'"; $fails++ }
+
+    # 18b - --list --json publishes the SAME protected lists the console prints, from one constant.
+    $checks++
+    $cat = Get-CatalogueJson
+    $prot = $cat.protected
+    $sameSub = ($null -ne $prot) -and ((@($prot.subtrees) -join '|') -eq (@($Script:WS_PROTECT.Subtrees) -join '|'))
+    $sameCat = ($null -ne $prot) -and ((@($prot.categories) -join '|') -eq (@($Script:WS_PROTECT_CATEGORIES) -join '|'))
+    $nonEmpty = ($null -ne $prot) -and (@($prot.subtrees).Count -gt 0) -and (@($prot.categories).Count -gt 0)
+    if ($sameSub -and $sameCat -and $nonEmpty) { Write-Ok "--list --json publishes the same $(@($prot.subtrees).Count) protected subtrees and $(@($prot.categories).Count) categories the console prints" } else { Write-Err "--list --json protected does not match the printed lists (subtrees=$sameSub categories=$sameCat nonEmpty=$nonEmpty)"; $fails++ }
+
+    # 18c - an excluded path SURVIVES a real fixture run while its sibling goes. Not a dry-run: the whole
+    # point is that the chokepoint refuses the deletion rather than merely declining to print it.
+    $checks++
+    $exRoot = Join-Path $fx 'excl'
+    $keep = Join-Path $exRoot 'keep-me'
+    $go = Join-Path $exRoot 'go-away'
+    foreach ($d in $keep, $go) { New-Item -ItemType Directory -Force -Path $d | Out-Null; Set-Content -LiteralPath (Join-Path $d 'f.txt') -Value 'xxxx' }
+    $savedEx = $ws.ExcludePaths
+    $savedExcluded = $ws.Excluded
+    $savedTable = $Script:WS_EXCLUDE
+    try {
+      $ws.ExcludePaths = @($keep)
+      $ws.Excluded = @()
+      Initialize-Exclusions
+      & $mute
+      $rKeep = Remove-PathSafe -Path $keep -Within $exRoot
+      $rGo = Remove-PathSafe -Path $go -Within $exRoot
+      & $unmute
+      $keptOnDisk = Test-Path -LiteralPath $keep
+      $goneFromDisk = -not (Test-Path -LiteralPath $go)
+      $reported = (@($ws.Excluded).Count -eq 1)
+      $reasonOk = $rKeep.Reason -like 'excluded: *'
+      if ($keptOnDisk -and $goneFromDisk -and $rGo.Removed -and $reported -and $reasonOk) { Write-Ok "--exclude-path is honoured by the chokepoint for every section: the excluded folder survived a real run, its sibling did not, and it is reported once" } else { Write-Err "--exclude-path not honoured (kept=$keptOnDisk siblingGone=$goneFromDisk reported=$reported reason='$($rKeep.Reason)')"; $fails++ }
+    } finally {
+      $ws.ExcludePaths = $savedEx
+      $ws.Excluded = $savedExcluded
+      $Script:WS_EXCLUDE = $savedTable
+    }
+
   } catch {
     & $unmute
     Write-Err "extra self-test crashed: $($_.Exception.Message)"; $fails++

@@ -62,3 +62,21 @@ Logs and reports contain paths from your machine and a snapshot of cache sizes. 
 windowsweep makes no network calls. Review a bundle before attaching it to an issue.
 
 Last Updated: 2026-09-03
+
+## `targets[]` in a `--json` scan
+
+`--scan --json` fills `targets[]` with one entry per resolved path:
+
+```json
+{"section":1,"label":"npm cache (_cacache)",
+ "path":"C:\\\\Users\\\\you\\\\AppData\\\\Local\\\\npm-cache\\\\_cacache",
+ "bytes":1580019157,"newest_write_utc":"2026-09-07T18:52:39Z"}
+```
+
+`newest_write_utc` (added in 1.2.0) is the newest of write, access and creation time found anywhere under
+that target - the same rule the idle gate uses, which is why a cache whose own folder date looks stale can
+still report a recent timestamp. It is **`null`** for a target that is absent or holds no files, rather than
+a zero date that would sort as though it were real.
+
+It costs no extra work: under `--json` the size pass already enumerates every file, so the timestamp comes
+out of that same enumeration. A human `--scan` keeps the faster path and does not compute it.

@@ -92,6 +92,22 @@ function Test-PathWithin {
   return $p.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)
 }
 
+function Initialize-Exclusions {
+  <# .SYNOPSIS Normalise --exclude-path (and config excludePaths) into prefixes Get-ProtectionReason can
+     test with one StartsWith. Called from Initialize-Settings and NOT from Initialize-Safety: the config
+     file is merged AFTER the safety tables are built, so building this table earlier would silently drop
+     every config-file exclusion while the flag ones kept working. #>
+  $ws = $Script:WS
+  $Script:WS_EXCLUDE = @{ Prefixes = @(); Roots = @() }
+  foreach ($x in @($ws.ExcludePaths)) {
+    if ([string]::IsNullOrWhiteSpace($x)) { continue }
+    $fp = Get-FullPath $x
+    if (-not $fp) { continue }
+    $Script:WS_EXCLUDE.Roots += $fp
+    $Script:WS_EXCLUDE.Prefixes += ($fp.TrimEnd('\\') + '\\')
+  }
+}
+
 function Get-ProtectionReason {
   <# .SYNOPSIS Why a path may not be deleted, or $null when it is allowed.
      Hot path: called once per file during a prune, so it uses only the tables Initialize-Safety pre-normalized.
@@ -121,6 +137,16 @@ function Get-ProtectionReason {
   if ($Script:WS.Home -and -not $Script:WS.AllowOwnData) {
     if (-not $pr.HomePrefix) { $pr.HomePrefix = (Get-FullPath $Script:WS.Home) + '\' }
     if ($pSlash.StartsWith($pr.HomePrefix, $ic)) { return 'the tool''s own data directory' }
+  }
+  # A user exclusion is checked LAST, so a path that is both protected and excluded still reports the
+  # PROTECTED reason - the stronger statement, and the one no flag can lift. When nothing is excluded the
+  # loop runs zero times, which is what makes this safe on a hot path called once per file during a prune.
+  if ($Script:WS_EXCLUDE -and $Script:WS_EXCLUDE.Prefixes.Count -gt 0) {
+    for ($i = 0; $i -lt $Script:WS_EXCLUDE.Prefixes.Count; $i++) {
+      if ($pSlash.StartsWith($Script:WS_EXCLUDE.Prefixes[$i], $ic) -or $p.Equals($Script:WS_EXCLUDE.Roots[$i], $ic)) {
+        return "excluded: $($Script:WS_EXCLUDE.Roots[$i])"
+      }
+    }
   }
   return $null
 }
@@ -175,6 +201,19 @@ function Remove-TreeInternal {
   return $allClear
 }
 
+function Add-ExcludedRefusal {
+  <# .SYNOPSIS Record a user exclusion once, for --json `excluded` and the run summary. Deliberately
+     narrow: only a reason starting "excluded: " is recorded, so a PROTECTED-path refusal - the tool
+     refusing on its own account rather than on the user's - never lands in the user-exclusion list. #>
+  param([string] $Reason)
+  if (-not $Reason -or -not $Reason.StartsWith('excluded: ')) { return }
+  $ws = $Script:WS
+  $path = $Reason.Substring(10)
+  if ($ws.Excluded -notcontains $path) { $ws.Excluded += $path }
+  if ($ws.Refusals -notcontains $Reason) { $ws.Refusals += $Reason }
+  Write-LogLine "excluded: $path"
+}
+
 function Remove-PathSafe {
   <# .SYNOPSIS The chokepoint. Removes one file, directory or link after every guard passes. Honours --dry-run. #>
   param([Parameter(Mandatory = $true)][string] $Path, [Parameter(Mandatory = $true)][string] $Within, [string] $Label = '')
@@ -186,7 +225,7 @@ function Remove-PathSafe {
   $w = Get-FullPath $Within
   if (-not $p -or -not $w) { $r.Reason = 'unresolvable path'; Write-Err "REFUSE ($($r.Reason)): $Path"; return $r }
   $why = Get-ProtectionReason $p
-  if ($why) { $r.Reason = $why; Write-Err "REFUSE ($why): $p"; return $r }
+  if ($why) { $r.Reason = $why; Add-ExcludedRefusal $why; Write-Err "REFUSE ($why): $p"; return $r }
   if ($p.Equals($w, [StringComparison]::OrdinalIgnoreCase)) { $r.Reason = 'target is its own declared root'; Write-Err "REFUSE ($($r.Reason)): $p"; return $r }
   if (-not (Test-PathWithin -Path $p -Within $w)) { $r.Reason = "outside declared root $w"; Write-Err "REFUSE ($($r.Reason)): $p"; return $r }
   $info = Get-ItemInfo $p
@@ -253,7 +292,7 @@ function Remove-StaleFiles {
   }
   foreach ($f in $scan.Files) {
     $why = Get-ProtectionReason $f.Path
-    if ($why) { $out.Skipped++; continue }
+    if ($why) { Add-ExcludedRefusal $why; $out.Skipped++; continue }
     try {
       Remove-ReadOnlyAttribute $f.Path
       [IO.File]::Delete($f.Path)
@@ -388,7 +427,7 @@ function Send-ToRecycleBin {
   $r = New-RemoveResult
   $p = Get-FullPath $Path
   $why = Get-ProtectionReason $p
-  if ($why) { $r.Reason = $why; Write-Err "REFUSE ($why): $p"; return $r }
+  if ($why) { $r.Reason = $why; Add-ExcludedRefusal $why; Write-Err "REFUSE ($why): $p"; return $r }
   if (-not (Test-PathWithin -Path $p -Within $Within) -or $p.Equals((Get-FullPath $Within), [StringComparison]::OrdinalIgnoreCase)) {
     $r.Reason = "outside declared root $Within"; Write-Err "REFUSE ($($r.Reason)): $p"; return $r
   }

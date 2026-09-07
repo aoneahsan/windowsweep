@@ -9,6 +9,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- **`targets[].newest_write_utc` in `--scan --json`.** ISO 8601 UTC, the newest of write, access and creation
+  time found anywhere under the target - the same rule the idle gate uses - or `null` when the target is
+  absent or holds no files. It costs no extra walk: under `--json` the size pass already enumerates every
+  file, so the timestamp comes out of that same enumeration. A human `--scan` keeps the faster path.
+- **`protected` in `--list --json`.** `subtrees` (every protected folder, resolved for this machine) and
+  `categories` (the same four sentences `--list-targets` prints). Both readers now take the category list
+  from one constant, so the machine-readable copy cannot quietly promise less than the console does.
+- **`excluded[]` in the `--json` summary**, naming every path an exclusion actually kept, once each.
+
+### Changed
+
+- **`--exclude-path` is honoured in every section, not only section 17.** It was parsed globally and read by
+  exactly one consumer, so someone who excluded a folder was protected in one section and silently not in the
+  other twenty-five. It is now enforced at the deletion chokepoint itself - the one place every section
+  already passes through - and an excluded path is refused, logged as `excluded: <path>` and reported in
+  `excluded[]`. The same reach applies to `excludePaths` in the config file. **No deletion behaviour widens:
+  `--exclude-path` only ever refuses more.** A path that is both protected and excluded still reports the
+  protected reason, because that is the promise no flag can lift.
+
+### Fixed
+
+- **Section 22 declared `Dev = $true` with no behavioural branch**, so `--list --json` advertised a developer
+  flag that changed nothing. It now reads `false`, and the Dev column in `docs/sections.md` agrees.
+
 ## [1.1.0] - 2026-09-04
 
 ### Added

@@ -27,6 +27,16 @@ $Script:WS_EXIT_USAGE = 2
 $Script:WS_EXIT_REFUSED = 3
 $Script:WS_EXIT_INTERRUPT = 130
 
+# The protected-path CATEGORIES, in the wording the tool shows a person. Both --list-targets and
+# --list --json read this one list: the JSON is the same sentences, so a front end cannot show a user
+# a narrower promise than the console does.
+$Script:WS_PROTECT_CATEGORIES = @(
+  'every drive root, Windows, System32, Program Files, ProgramData, the user profile root and AppData roots',
+  'browser profile data (Local Storage, IndexedDB, cookies, history, bookmarks, extensions, PWA CacheStorage)',
+  'editor user data (settings, globalStorage, local History); UWP LocalState; toolchains (nvm, npm globals, corepack, ...)',
+  'NTUSER.DAT, UsrClass.dat, hiberfil/pagefile/swapfile (only powercfg touches hiberfil), Prefetch, Windows\Installer, WinSxS (DISM only)'
+)
+
 # Section catalogue. Numbering is a public contract frozen at 1.0.0: a section may be retired
 # (kept as a no-op that says so) but a number is never reused for something else.
 #   Tier:  report | rebuilds | slow | recycle | permanent | config
@@ -55,7 +65,7 @@ $Script:WS_SECTIONS = @(
   @{ Id = 19; Key = 'large';      Title = 'Large stale personal files (Downloads) -> Recycle Bin';    Tier = 'recycle';   Admin = $false; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section19' }
   @{ Id = 20; Key = 'vhdx';       Title = 'Docker Desktop / WSL disk image compaction (stops Docker + WSL)'; Tier = 'config'; Admin = $true; Batch = 'deep';    Dev = $true;  Fn = 'Invoke-Section20' }
   @{ Id = 21; Key = 'diskusage';  Title = 'Disk usage report (largest entries, drives, disk images)'; Tier = 'report';    Admin = $false; Batch = 'safe';        Dev = $false; Fn = 'Invoke-Section21' }
-  @{ Id = 22; Key = 'globals';    Title = 'Globally installed packages audit (npm, pnpm, yarn, bun, deno) - report only'; Tier = 'report'; Admin = $false; Batch = 'safe'; Dev = $true; Fn = 'Invoke-Section22' }
+  @{ Id = 22; Key = 'globals';    Title = 'Globally installed packages audit (npm, pnpm, yarn, bun, deno) - report only'; Tier = 'report'; Admin = $false; Batch = 'safe'; Dev = $false; Fn = 'Invoke-Section22' }
   @{ Id = 23; Key = 'orphaned';   Title = 'Orphaned application data under AppData -> Recycle Bin';   Tier = 'recycle';   Admin = $false; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section23' }
   @{ Id = 24; Key = 'programs';   Title = 'Installed programs not modified for N+ days - report only'; Tier = 'report';   Admin = $false; Batch = 'safe';        Dev = $false; Fn = 'Invoke-Section24' }
   @{ Id = 25; Key = 'startup';    Title = 'Startup items audit (Run keys, Startup folders, logon tasks) - report only'; Tier = 'report'; Admin = $false; Batch = 'safe'; Dev = $false; Fn = 'Invoke-Section25' }

@@ -48,7 +48,7 @@ delete files (subject to every guard in the [safety model](./safety-model.md)).
 | `--developer` / `--not-developer` | saved answer | Override developer mode for this run only |
 | `--forget-developer` | - | Ask the developer question again |
 | `--scan-roots "P1;P2"` | auto-detected | Project roots for section 17 (semicolon-separated) |
-| `--exclude-path P` | - | Never scan or touch this tree in section 17 (repeatable) |
+| `--exclude-path P` | - | Never scan or touch this tree, in **any** section (repeatable). Since 1.2.0 the deletion chokepoint itself refuses an excluded path, so it holds everywhere rather than only in section 17 |
 | `--exclude L` | - | Drop sections from `--all` or a profile |
 | `--large-file-mb N` | 100 | Minimum size for section 19 |
 | `--hiberfil off|reduced|keep` | ask | What section 15 does |

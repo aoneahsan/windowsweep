@@ -219,7 +219,7 @@ function Get-JsonSummary {
     sections = @($ws.Report.steps | ForEach-Object { [ordered]@{ section = $_.section; status = $_.status; freed_bytes = $_.freed_bytes } })
     # candidates and targets are ALWAYS present, empty when nothing was collected: a caller can rely on the shape.
     candidates = @($ws.Candidates); targets = @($ws.ScanTargets)
-    refusals = @($ws.Refusals); log_file = $ws.LogFile; report_file = $ws.ReportFile
+    refusals = @($ws.Refusals); excluded = @($ws.Excluded); log_file = $ws.LogFile; report_file = $ws.ReportFile
   }
 }
 
@@ -229,6 +229,9 @@ function Get-CatalogueJson {
     tool = $Script:WS_NAME; version = (Get-ToolVersion)
     sections = @($Script:WS_SECTIONS | ForEach-Object { [ordered]@{ id = $_.Id; key = $_.Key; title = $_.Title; tier = $_.Tier; admin = [bool]$_.Admin; batch = $_.Batch; dev = [bool]$_.Dev } })
     safe_batch = @($Script:WS_SAFE_BATCH); safe_batch_admin = @($Script:WS_SAFE_BATCH_ADMIN)
+    # The same two lists --list-targets prints, so a front end shows the engine's own promise rather than
+    # a copy of it that can age. Subtrees is built by Initialize-Safety from this machine's real folders.
+    protected = [ordered]@{ subtrees = @($Script:WS_PROTECT.Subtrees); categories = @($Script:WS_PROTECT_CATEGORIES) }
     profiles = ([ordered]@{} + $Script:WS_PROFILES); walkthrough = @($Script:WS_WALKTHROUGH); walkthrough_admin = @($Script:WS_WALKTHROUGH_ADMIN)
   }
 }

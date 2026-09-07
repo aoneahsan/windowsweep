@@ -1,12 +1,12 @@
 # windowsweep — Portfolio Info
 
-Reference Date: 2026-09-05
+Reference Date: 2026-09-08
 Project Type: CLI utility — safe, developer-aware Windows disk and cache cleanup (Windows PowerShell 5.1 engine + zero-dependency Node.js launcher, published to npm)
 Project Slug: windowsweep
 Primary Email Reference: aoneahsan@gmail.com
-Current Version Reviewed: `1.1.0` (npm + git, same engine)
-Last Portfolio Update: 2026-09-05
-Next Eligible Update After: 2026-09-12
+Current Version Reviewed: `1.1.0` on npm (same engine as `main`); the desktop app is at `desktop-v1.1.0`
+Last Portfolio Update: 2026-09-08
+Next Eligible Update After: 2026-09-15
 
 ---
 
@@ -16,7 +16,7 @@ Next Eligible Update After: 2026-09-12
 | --- | --- |
 | Project Slug | `windowsweep` |
 | Public Brand Name | windowsweep |
-| Public URL (Live) | not applicable (CLI tool — no web app) |
+| Public URL (Live) | `windowsweep.aoneahsan.com` - the product site, **not yet live**. The custom domain is connected to Firebase Hosting and answers with a valid certificate, but nothing is deployed to it yet (probed 404 on 2026-09-08). It becomes the canonical homepage when it first answers 200 |
 | Main Project Link | https://www.npmjs.com/package/windowsweep |
 | Repository | https://github.com/aoneahsan/windowsweep (public) |
 | NPM Package | `windowsweep` — https://www.npmjs.com/package/windowsweep |
@@ -24,17 +24,18 @@ Next Eligible Update After: 2026-09-12
 | Binary | `windowsweep` (`bin/windowsweep.js` → routes to `windowsweep.ps1`) |
 | OS Support | `win32` only (declared `os` in `package.json`); Windows 10 1809+ and Windows 11 |
 | Node Engine | `>=14` (launcher only; `windowsweep.cmd` needs no Node) |
+| Desktop App | `windowsweep` for Windows - a Tauri 2 shell over the same PowerShell engine, identifier `com.aoneahsan.windowsweep`. Released as `desktop-v1.1.0` on GitHub Releases with an NSIS installer, an MSI, a minisign signature for each, `latest.json` and `SHA256SUMS.txt`. 🔴 **The installer is unsigned** - there is no code-signing certificate, so Windows SmartScreen warns on first run; the two verifiable artefacts offered instead are the SHA-256 checksum and the minisign signature, and neither is a certificate |
 | Android Application ID | N/A |
 | iOS Bundle ID / Scheme | N/A |
 | Chrome Extension ID | N/A |
 | PyPI Package | N/A |
-| Docs URL | `windowsweep-docs.aoneahsan.com` — repository and GitHub Pages deployment exist and are green; the domain does not resolve yet (DNS CNAME is an owner task), so it is **not yet a live link**. Its page labels and repository topics were refreshed 2026-09-05 |
+| Docs URL | `windowsweep-docs.aoneahsan.com` - **live over HTTP** (probed 200 on 2026-09-08). HTTPS is not yet available: GitHub has not issued the certificate, `https://` probes 000 and the Pages API reports `https_enforced: false`. Recorded as HTTP-only rather than as a live HTTPS link, because a link that fails in a browser bar is worse than one that is marked pending |
 | License | MIT (standard `LICENSE` file; `package.json` declares `MIT`) |
 | Author | Ahsan Mahmood — aoneahsan@gmail.com — https://aoneahsan.com |
 | Payment / Support URL | https://aoneahsan.com/payment?project-id=windowsweep&project-identifier=windowsweep |
-| Agent-Readable Pricing | N/A (free CLI tool; no paid tiers) |
+| Agent-Readable Pricing | Not applicable - the product makes no pricing claim (owner decision 2026-09-05) |
 
-> **Asks for next refresh:** record the docs URL as live once the DNS CNAME `windowsweep-docs → aoneahsan.github.io` is in place and the domain answers 200. Everything else — repo, npm link, license, contact — is recorded and verified.
+> **Asks for next refresh:** switch the docs URL to `https://` once GitHub issues its certificate (the DNS CNAME landed on 2026-09-07 and HTTP already answers 200); record `windowsweep.aoneahsan.com` as the live canonical homepage once the site is deployed and answers 200; and record CLI 1.2.0 and `desktop-v1.2.0` when they ship. Everything else - repo, npm link, license, contact - is recorded and verified.
 
 ---
 
@@ -104,6 +105,7 @@ The mark is a hazy window pane being wiped clean along a diagonal sweep, with th
 
 | Date | Type | Notes |
 | --- | --- | --- |
+| 2026-09-08 | Portfolio refresh | The desktop app shipped: `desktop-v1.1.0` on GitHub Releases with both installers, both minisign signatures, `latest.json` and `SHA256SUMS.txt`, and an in-app updater whose endpoint resolves. GATE 4 - the click-dummy parity check - closed on all eleven screens after six rounds; along the way the app was found never to have been able to run its own engine, behind three stacked defects. The documentation site went live over HTTP. The backend moved to Supabase before anything existed on Firebase, so it cost code and no data. **Both pricing claims were removed from this file**: the product carries a standing no-paid-tier exemption, and the honest consequence of that is silence about price rather than an advertisement of free. |
 | 2026-09-05 | Portfolio refresh | Facts moved to 1.1.0: 26 numbered sections (0–25), a 151-check self-test, the scripted-selection flags and the machine-readable `--json` contract, the deployed documentation site (domain pending an owner DNS record), and the desktop app's approved design direction 02 "Reclaim" (gates 1–3 recorded 2026-09-05). |
 | 2026-09-04 | Release `1.1.0` | Four new sections — a read-only global-packages audit (22), orphaned application data under AppData (23, interactive, Recycle Bin, fails closed on an unreadable registry), an idle installed-programs report (24) and a startup-items audit (25); `--select` and `--select-file` so a script or a GUI can drive the interactive sections; `--notify`; `candidates[]`, `targets[]`, per-section progress lines and `--list --json`; the Hugging Face hub cache; seven artefact-directory additions. Self-test 124 → 151. Tagged `v1.1.0` with a GitHub Release. |
 | 2026-09-03 | Documentation site | `aoneahsan/windowsweep-docs` (Docusaurus on GitHub Pages) built and deployed, mirroring `docs/`; `AI-INTEGRATION-GUIDE.md` written and shipped in the npm tarball. |
@@ -193,7 +195,7 @@ Know modern developer caches better than a generic cleaner does; refuse to touch
 
 ## Value & Potential
 
-windowsweep pairs a concrete recurring pain — a development machine filling up with regenerable caches — with an unusually disciplined safety and reporting model: a single chokepoint, an idle gate, layout-aware cache expansion with a second guard, schema-versioned reports, and a verifiable no-network stance. As a portfolio piece it demonstrates systems engineering in PowerShell against a hostile target (long paths, reparse points, locked files, an ANSI-reading host), pragmatic distribution (a zero-dependency Node launcher to reach npm users), and evidence-driven quality: a 151-check self-test where every check was proved to fail before it was trusted, and a launch-day audit that found and fixed a real safety defect within the day. Growth paths: the remaining candidate target rows (driver leftovers, Telegram, Office, Steam shader caches), and a Windows desktop app — a Tauri 2 wrapper over the same script whose design was approved on 2026-09-05 and which reimplements no cleanup logic. Monetization is intentionally absent — MIT, free — with support routed through aoneahsan.com/payment.
+windowsweep pairs a concrete recurring pain — a development machine filling up with regenerable caches — with an unusually disciplined safety and reporting model: a single chokepoint, an idle gate, layout-aware cache expansion with a second guard, schema-versioned reports, and a verifiable no-network stance. As a portfolio piece it demonstrates systems engineering in PowerShell against a hostile target (long paths, reparse points, locked files, an ANSI-reading host), pragmatic distribution (a zero-dependency Node launcher to reach npm users), and evidence-driven quality: a 151-check self-test where every check was proved to fail before it was trusted, and a launch-day audit that found and fixed a real safety defect within the day. Growth paths: the remaining candidate target rows (driver leftovers, Telegram, Office, Steam shader caches), which need a machine that has those programs installed - a path becomes a target only once it has been seen on a real machine. The Windows desktop app is no longer a growth path but a shipped one: a Tauri 2 shell over the same script, released as `desktop-v1.1.0`, which reimplements no cleanup logic. Support is routed through aoneahsan.com/payment.
 
 ## Resume / CV Bullets
 

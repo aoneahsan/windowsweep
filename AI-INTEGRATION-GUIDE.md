@@ -75,7 +75,7 @@ choice, and says so.
  "freed_bytes":0,"estimated_bytes":0,
  "sections":[{"section":1,"status":"ran","freed_bytes":0}],
  "candidates":[],"targets":[],
- "refusals":[],"log_file":"...","report_file":"..."}
+ "refusals":[],"excluded":[],"log_file":"...","report_file":"..."}
 ```
 
 | Key | Meaning |
@@ -88,11 +88,17 @@ choice, and says so.
 | `estimated_bytes` | What a dry-run says a real run would remove. `0` in a real run |
 | `sections[]` | One entry per section attempted: `section`, `status`, `freed_bytes` |
 | `candidates[]` | What an interactive section offered: `section`, `index`, `path`, `bytes`, `idle_days`, `project`. Always present, empty when none were collected |
-| `targets[]` | Scan mode only: `section`, `label`, `path`, `bytes`. Always present, empty otherwise |
-| `refusals[]` | Human-readable reasons a section was refused in batch mode |
+| `targets[]` | Scan mode only: `section`, `label`, `path`, `bytes`, `newest_write_utc`. Always present, empty otherwise |
+| `refusals[]` | Human-readable reasons a section was refused in batch mode, plus one `excluded: <path>` line per honoured `--exclude-path` |
+| `excluded[]` | Every path an exclusion actually kept, listed once each. Empty means "nothing was excluded", never "not reported" |
 | `log_file`, `report_file` | Absolute paths, or `null` under `--no-report` |
 
 `status` is one of `ran`, `dry-run`, `skipped`, `refused`, `failed`.
+
+`newest_write_utc` is ISO 8601 UTC (`2026-09-08T13:14:15Z`) - the newest of write, access and creation time
+found anywhere under that target, which is the same rule the idle gate uses. It is **`null`** when the
+target is absent or holds no files, rather than a zero date a caller would sort as if it were real. It is
+emitted only under `--json`, because computing it needs the file walk that `--json` already performs.
 
 ## Where output lands
 
@@ -188,8 +194,8 @@ In `--json` mode every section brackets itself on **stderr**:
 ```
 
 `status` is one of `ran`, `dry-run`, `skipped`, `refused`, `failed`. Scan mode also fills `targets[]`
-(`section`, `label`, `path`, `bytes`) in the final JSON line. `candidates` and `targets` are always present,
-empty when nothing was collected.
+(`section`, `label`, `path`, `bytes`, `newest_write_utc`) in the final JSON line. `candidates` and `targets`
+are always present, empty when nothing was collected.
 
 ## The read-only audits
 

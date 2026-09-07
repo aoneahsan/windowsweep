@@ -59,10 +59,20 @@ function Show-ScanTable {
       if ($paths.Count -eq 0) { Write-UiLine ("  {0,-46} {1,10}  {2}" -f $t.Label, 'absent', $t.Path) 'DarkGray'; continue }
       $bytes = [long]0
       foreach ($p in $paths) {
-        # Sized once per path: a second Get-DirectoryBytes pass for --json would walk every target twice.
-        $b = [long](Get-DirectoryBytes $p)
+        # Sized once per path: a second pass for --json would walk every target twice. Under --json the walk
+        # is Get-DirectoryStats, which returns the newest timestamp out of the SAME enumeration that produces
+        # the byte count - so newest_write_utc costs no extra walk. Outside --json the faster robocopy path in
+        # Get-DirectoryBytes is kept, because a human --scan has no use for the timestamp.
+        $newest = $null
+        if ($Script:WS.JsonMode) {
+          $st = Get-DirectoryStats $p
+          $b = [long]$st.Bytes
+          $newest = Format-Utc8601 $st.Newest
+        } else {
+          $b = [long](Get-DirectoryBytes $p)
+        }
         $bytes += $b
-        if ($Script:WS.JsonMode) { $Script:WS.ScanTargets += [ordered]@{ section = $t.Section; label = $t.Label; path = $p; bytes = $b } }
+        if ($Script:WS.JsonMode) { $Script:WS.ScanTargets += [ordered]@{ section = $t.Section; label = $t.Label; path = $p; bytes = $b; newest_write_utc = $newest } }
       }
       $secTotal += $bytes
       $shown = $t.Path
@@ -93,8 +103,7 @@ function Show-TargetList {
   }
   Write-Section 'PROTECTED - never deleted, no flag bypasses this'
   foreach ($s in $Script:WS_PROTECT.Subtrees) { Write-UiLine "  $($Script:WS.Glyph.bullet) $s" 'DarkGray' }
-  Write-UiLine "  $($Script:WS.Glyph.bullet) every drive root, Windows, System32, Program Files, ProgramData, the user profile root and AppData roots" 'DarkGray'
-  Write-UiLine "  $($Script:WS.Glyph.bullet) browser profile data (Local Storage, IndexedDB, cookies, history, bookmarks, extensions, PWA CacheStorage)" 'DarkGray'
-  Write-UiLine "  $($Script:WS.Glyph.bullet) editor user data (settings, globalStorage, local History); UWP LocalState; toolchains (nvm, npm globals, corepack, ...)" 'DarkGray'
-  Write-UiLine "  $($Script:WS.Glyph.bullet) NTUSER.DAT, UsrClass.dat, hiberfil/pagefile/swapfile (only powercfg touches hiberfil), Prefetch, Windows\Installer, WinSxS (DISM only)" 'DarkGray'
+  # ONE list, read here and by --list --json (Get-CatalogueJson). Printing one wording and publishing another
+  # is exactly the drift a machine-readable copy of a human list invites, so there is only ever one copy.
+  foreach ($c in $Script:WS_PROTECT_CATEGORIES) { Write-UiLine "  $($Script:WS.Glyph.bullet) $c" 'DarkGray' }
 }

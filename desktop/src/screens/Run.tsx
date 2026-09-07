@@ -60,7 +60,13 @@ export function RunScreen() {
      (`summary === null && log.length === 0`) went false after a scan and this
      screen announced `FINISHED / Reclaimed 0 B.` to someone who had pressed a
      button that deletes nothing. isCleanupRun() is the one place that decides. */
-  const notRunYet = phase === 'idle' && !isCleanupRun(summary);
+  /* 🔴 NOT `phase === 'idle'`. A scan is an engine invocation like any other, so
+     it goes running -> done and leaves `phase` at 'done' - which is why the first
+     attempt at this fix still announced `FINISHED / Reclaimed 0 B.` after a scan.
+     Verified by driving the app rather than by reading the edit. The phase says
+     whether the ENGINE is busy; only the summary says whether a CLEANUP happened,
+     and the running and failed cases are already handled ahead of this one. */
+  const notRunYet = !isCleanupRun(summary);
 
   const done = Object.values(progress).filter((p) => p.event === 'end').length;
   const running = Object.values(progress).find((p) => p.event === 'start' && progress[p.section]?.event !== 'end');

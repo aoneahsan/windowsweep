@@ -15,7 +15,7 @@
 import { create } from 'zustand';
 
 import type { Catalogue } from '../lib/catalogue';
-import type { Candidate, RunSummary, ProgressEvent } from '../lib/cli';
+import type { Candidate, RunSummary, ProgressEvent, ScanTarget } from '../lib/cli';
 import type { AuthUser } from '../lib/auth';
 import { readPrefs, writePrefs, applyAllAxes, type AxisPrefs } from '../lib/theme';
 
@@ -57,12 +57,25 @@ interface StoreState {
   applyProgress: (event: ProgressEvent) => void;
   finishRun: (summary: RunSummary | null, failed?: boolean) => void;
 
+  /* --- what a scan measured ---------------------------------------------
+     🔴 Held apart from `summary`, which every run replaces. `targets[]` is
+     populated by `--scan` and empty in every other mode, so reading the map and
+     the Reclaimable column off the live summary meant a dry-run blanked both.
+     A real run DOES spend them, and `setScanTargets([])` says so. */
+  scanTargets: ScanTarget[];
+  setScanTargets: (rows: ScanTarget[]) => void;
+
   /* --- selection -------------------------------------------------------- */
   candidates: Candidate[];
   selectedPaths: Set<string>;
   setCandidates: (rows: Candidate[]) => void;
   toggleCandidate: (path: string) => void;
   setSelection: (paths: string[]) => void;
+
+  /* --- which sections the Sections screen has ticked --------------------- */
+  sectionSelection: number[];
+  toggleSectionSelection: (id: number) => void;
+  setSectionSelection: (ids: number[]) => void;
 
   /* --- history ---------------------------------------------------------- */
   history: HistoryEntry[];
@@ -82,6 +95,9 @@ interface StoreState {
 
 const HISTORY_KEY = 'windowsweep:history';
 const DEVELOPER_KEY = 'windowsweep:developer';
+
+/** When the run in flight began, so `finishRun` can record how long it took. */
+let startedAt = Date.now();
 
 function readLocal<T>(key: string, fallback: T): T {
   try {
@@ -114,7 +130,10 @@ export const useStore = create<StoreState>()((set, get) => ({
   log: [],
   progress: {},
   summary: null,
-  startRun: (runId) => { set({ phase: 'running', runId, log: [], progress: {}, summary: null }); },
+  startRun: (runId) => {
+    startedAt = Date.now();
+    set({ phase: 'running', runId, log: [], progress: {}, summary: null });
+  },
   appendLog: (line) => {
     // The log pane is bounded. A --purge-all run over a large disk produces tens
     // of thousands of lines, and keeping them all is how a window stops repainting.
@@ -122,9 +141,33 @@ export const useStore = create<StoreState>()((set, get) => ({
     set({ log: log.length > 2000 ? log.slice(-2000) : log });
   },
   applyProgress: (event) => { set({ progress: { ...get().progress, [event.section]: event } }); },
+  /**
+   * 🔴 A finished run is RECORDED here, and until now no caller ever reached
+   * `addHistory`: the History screen and Home's last-eight-runs band both read a
+   * list nothing ever wrote, so both were permanently empty whatever you ran.
+   *
+   * A run with no readable summary is not recorded - there is nothing honest to
+   * put in the row - and the mode is the engine's own word for what it did,
+   * never a friendly name invented here.
+   */
   finishRun: (summary, failed = false) => {
     set({ phase: failed ? 'failed' : 'done', summary });
+    if (!summary) return;
+    get().addHistory({
+      runId: get().runId ?? '',
+      startedAt: new Date(startedAt).toISOString(),
+      mode: summary.mode,
+      dryRun: summary.dry_run,
+      elevated: summary.elevated,
+      sections: summary.sections.map((s) => s.section),
+      freedBytes: summary.freed_bytes,
+      estimatedBytes: summary.estimated_bytes,
+      durationMs: Math.max(0, Date.now() - startedAt),
+    });
   },
+
+  scanTargets: [],
+  setScanTargets: (rows) => { set({ scanTargets: rows }); },
 
   candidates: [],
   selectedPaths: new Set<string>(),
@@ -136,6 +179,20 @@ export const useStore = create<StoreState>()((set, get) => ({
     set({ selectedPaths: next });
   },
   setSelection: (paths) => { set({ selectedPaths: new Set(paths) }); },
+
+  /* Section ids, not paths: the Sections screen ticks whole sections and hands
+     them to `--only`. Kept in the store rather than the URL because 26 ids in a
+     query string is not a link anybody would share. */
+  sectionSelection: [],
+  toggleSectionSelection: (id) => {
+    const current = get().sectionSelection;
+    set({
+      sectionSelection: current.includes(id)
+        ? current.filter((x) => x !== id)
+        : [...current, id].sort((a, b) => a - b),
+    });
+  },
+  setSectionSelection: (ids) => { set({ sectionSelection: [...ids].sort((a, b) => a - b) }); },
 
   history: readLocal<HistoryEntry[]>(HISTORY_KEY, []),
   addHistory: (entry) => {

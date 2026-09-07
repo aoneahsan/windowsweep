@@ -48,6 +48,27 @@ const BYTES: Record<number, number> = {
   7: 7.4e9, 8: 3.73e8, 9: 8.1e7, 10: 9.4e8, 21: 0,
 };
 
+/**
+ * How each section's bytes split across its targets.
+ *
+ * 🔴 One target per section was enough while nothing drew them; the reclaim map
+ * groups by section and sizes by target, so a single-tile group per section made
+ * the signature element degenerate - nine identical rectangles - and unjudgeable
+ * against the dummy, for a reason that had nothing to do with the map's code.
+ *
+ * 🔴 These are NOT the engine's declared targets and must never be read as them.
+ * The names are generic cache components and the paths stay under `C:\example`,
+ * exactly so nobody can mistake this fixture for the real target list. The real
+ * ones come from `--scan`, and the dummy transcribes them from the engine.
+ */
+const SPLIT: readonly number[][] = [
+  [0.46, 0.24, 0.16, 0.09, 0.05],
+  [0.52, 0.28, 0.2],
+  [0.61, 0.39],
+  [0.4, 0.31, 0.18, 0.11],
+];
+const PART_NAMES = ['cache', 'metadata', 'downloads', 'index', 'logs'] as const;
+
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => { window.setTimeout(resolve, ms); });
 }
@@ -117,12 +138,21 @@ export async function devRun(
             { section: 18, index: 1, path: 'C:\\Users\\example\\Downloads\\installer.part', bytes: 4.1e8, idle_days: 61, project: null },
           ]
         : [],
-    targets: sections.map((id) => ({
-      section: id,
-      label: `section ${String(id)}`,
-      path: `C:\\example\\section-${String(id)}`,
-      bytes: BYTES[id] ?? 0,
-    })),
+    /* Deterministic, and each section's parts sum back to its own total, so
+       `estimated_bytes` and the map's total cannot disagree. */
+    targets: sections.flatMap((id) => {
+      const total = BYTES[id] ?? 0;
+      if (total <= 0) {
+        return [{ section: id, label: `section ${String(id)}`, path: `C:\\example\\section-${String(id)}`, bytes: 0 }];
+      }
+      const split = SPLIT[id % SPLIT.length] ?? [1];
+      return split.map((fraction, i) => ({
+        section: id,
+        label: `${PART_NAMES[i % PART_NAMES.length] ?? 'part'} ${String(i + 1)}`,
+        path: `C:\\example\\section-${String(id)}\\${PART_NAMES[i % PART_NAMES.length] ?? 'part'}`,
+        bytes: Math.round(total * fraction),
+      }));
+    }),
     refusals: [],
     log_file: null,
     report_file: null,

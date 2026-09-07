@@ -75,6 +75,16 @@
           </div>
 
           <div data-ws-map></div>
+          <!-- Two REAL states the dummy did not specify, added 2026-09-07. A finished
+               product has them: the window before anything has been scanned, and the
+               run history before anything has run. The app had to invent words for
+               both, which is the wrong way round - the dummy owns the words. Reachable
+               rather than described, like run.html?failed=1: index.html?empty=1. -->
+          <div class="panel pad" data-ws-map-empty hidden>
+            <p><strong>Nothing measured yet.</strong></p>
+            <p class="t-sm ink-3">A scan reads the size of every declared target and deletes nothing. The
+              map draws what it finds.</p>
+          </div>
 
           <div style="display:flex;flex-wrap:wrap;gap:var(--sp-4);align-items:center;margin-top:var(--sp-3)">
             <div class="tm-legend" data-ws-legend></div>
@@ -218,6 +228,11 @@
                 <p class="t-sm ink-3" data-ws-text="lastWhen">-</p>
               </div>
               <div style="flex:1;min-width:14rem" data-ws-spark></div>
+              <div class="panel pad" data-ws-spark-empty hidden style="flex:1;min-width:14rem">
+                <p><strong>No run has finished in this window yet.</strong></p>
+                <p class="t-sm ink-3">A dry-run costs nothing and deletes nothing, and it is recorded here
+                  like any other run.</p>
+              </div>
               <a class="btn btn-sm" href="#reports" data-ws-action="soon">Open the report</a>
             </div>
           </div>

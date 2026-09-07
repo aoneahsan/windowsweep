@@ -5,13 +5,28 @@
  * paraphrase of it: the point of this screen is that a person can see exactly
  * what the tool said, in the order it said it, and find the same text in the log
  * file afterwards.
+ *
+ * 🔴 The dummy's layout here is `Per section` beside `Log`, in one `g12` row, and
+ * the app had neither the band nor the two controls above it - so the progress
+ * events Rust was already routing to `clean:progress` had nowhere to render, and
+ * the screen could only be reached by starting a run somewhere else.
+ *
+ * 🔴 CANCEL IS DECLARED, NOT WIRED - `pending.runCancel` (pending-wave). Stopping
+ * a run in flight means signalling the engine process from the Rust side, and this
+ * build carries no command that does it. The control keeps the dummy's position
+ * and is disabled, with the reason beside it: a button that looked as though it
+ * had cancelled and had not is the worse of the two.
  */
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
 import { formatBytes } from '../lib/format';
+import { newRunId, run, safeBatchArgs } from '../lib/engine';
+import { safeRunSections } from '../lib/catalogue';
+import { controlState, stateOf } from '../lib/control-state';
+import { RunPerSection, perSectionRows } from '../components/RunPerSection';
 
 export function RunScreen() {
   const { t } = useTranslation();
@@ -20,6 +35,15 @@ export function RunScreen() {
   const progress = useStore((s) => s.progress);
   const summary = useStore((s) => s.summary);
   const catalogue = useStore((s) => s.catalogue);
+  const scanTargets = useStore((s) => s.scanTargets);
+  const developer = useStore((s) => s.developer);
+  const startRun = useStore((s) => s.startRun);
+  const appendLog = useStore((s) => s.appendLog);
+  const applyProgress = useStore((s) => s.applyProgress);
+  const finishRun = useStore((s) => s.finishRun);
+  const setScanTargets = useStore((s) => s.setScanTargets);
+
+  const [starting, setStarting] = useState(false);
 
   const tailRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
@@ -33,121 +57,175 @@ export function RunScreen() {
   const done = Object.values(progress).filter((p) => p.event === 'end').length;
   const running = Object.values(progress).find((p) => p.event === 'start' && progress[p.section]?.event !== 'end');
 
+  /* The queue the band lists: the engine's own safe batch, which is exactly what
+     the Start button below runs. */
+  const queue = useMemo(
+    () => (catalogue ? safeRunSections(catalogue, developer).map((s) => s.id) : []),
+    [catalogue, developer],
+  );
+
+  const rows = useMemo(
+    () =>
+      perSectionRows({
+        catalogue,
+        queue,
+        progress,
+        results: summary?.sections ?? [],
+        scanTargets,
+        labels: {
+          queued: t('run.statusQueued'),
+          running: t('run.statusRunning'),
+          done: t('run.statusDone'),
+        },
+      }),
+    [catalogue, queue, progress, summary, scanTargets, t],
+  );
+
+  const onStart = useCallback(() => {
+    if (queue.length === 0) return;
+    setStarting(true);
+    const id = newRunId();
+    startRun(id);
+    void run(safeBatchArgs({ dryRun: false, developer }), id, {
+      onLog: appendLog,
+      onProgress: (section, event, status, freedBytes) => {
+        applyProgress({
+          section,
+          event,
+          ...(status ? { status } : {}),
+          ...(freedBytes !== undefined ? { freedBytes } : {}),
+        });
+      },
+    })
+      .then((r) => {
+        finishRun(r.summary, r.exitCode > 1);
+        /* Those targets have just been deleted; redrawing them would be a lie. */
+        if (r.summary && !r.summary.dry_run) setScanTargets([]);
+      })
+      .catch((e: unknown) => {
+        appendLog(e instanceof Error ? e.message : String(e));
+        finishRun(null, true);
+      })
+      .finally(() => { setStarting(false); });
+  }, [queue.length, startRun, developer, appendLog, applyProgress, finishRun, setScanTargets]);
+
+  const inFlight = starting || phase === 'running';
+
   return (
     <>
       <section className="band band-app band-tight">
-        <div className="wrap">
-          {/* 🔴 The never-run state said `Finished` and `The run finished.` on a
-              screen whose own log pane said `Nothing has run yet.` - the app
-              contradicting itself on first open, because "not running" and
-              "finished" were the same branch. The dummy's eyebrow for this state
-              is `Ready to run`, and the heading is the sentence the dummy already
-              uses for it. */}
-          <p className="caps ink-3">
-            {phase === 'running'
-              ? t('run.eyebrowRunning')
-              : phase === 'failed'
-                ? t('run.eyebrowFailed')
-                : neverRun
-                  ? t('run.eyebrowReady')
-                  : t('run.eyebrowDone')}
-          </p>
-          <h1 className="t-xl wide">
-            {phase === 'running'
-              ? t('run.titleRunning', { done })
-              : phase === 'failed'
-                ? t('run.titleFailed')
-                : summary
-                  ? summary.dry_run
-                    ? t('run.titleDryRun', { amount: formatBytes(summary.estimated_bytes) })
-                    : t('run.titleDone', { amount: formatBytes(summary.freed_bytes) })
+        <div className="wrap readout">
+          <div>
+            {/* 🔴 The never-run state said `Finished` and `The run finished.` on a
+                screen whose own log pane said `Nothing has run yet.` - the app
+                contradicting itself on first open, because "not running" and
+                "finished" were the same branch. The dummy's eyebrow for this state
+                is `Ready to run`, and the heading is the sentence the dummy already
+                uses for it. */}
+            <p className="caps ink-3">
+              {phase === 'running'
+                ? t('run.eyebrowRunning')
+                : phase === 'failed'
+                  ? t('run.eyebrowFailed')
                   : neverRun
-                    ? t('run.logEmpty')
-                    : t('run.titleUnknown')}
-          </h1>
-          {/* 🔴 A failed run used to fall through to `run.titleUnknown` - "The run
-              finished." over a run that never started. The dummy had no word for this
-              state at all: it carried Ready, Running, Finished and Cancelled, and
-              Cancelled is a different thing because a person chose it. The failed state
-              was written into run.html first (reachable as run.html?failed=1) and these
-              are its words. */}
-          {phase === 'failed' ? <p className="lede">{t('run.failedNote')}</p> : null}
-          {summary?.dry_run ? <p className="lede">{t('run.dryRunNote')}</p> : null}
-          {running && catalogue ? (
-            <p className="t-sm ink-3">
-              {t('run.currentSection', {
-                id: running.section,
-                title: catalogue.sections.find((s) => s.id === running.section)?.title ?? '',
-              })}
+                    ? t('run.eyebrowReady')
+                    : t('run.eyebrowDone')}
             </p>
-          ) : null}
-        </div>
-      </section>
-
-      <section className="band band-well band-tight">
-        <div className="wrap">
-          <div className="zone-label">
-            <span className="caps">{t('run.logTitle')}</span>
+            <h1 className="t-xl wide">
+              {phase === 'running'
+                ? t('run.titleRunning', { done })
+                : phase === 'failed'
+                  ? t('run.titleFailed')
+                  : summary
+                    ? summary.dry_run
+                      ? t('run.titleDryRun', { amount: formatBytes(summary.estimated_bytes) })
+                      : t('run.titleDone', { amount: formatBytes(summary.freed_bytes) })
+                    : neverRun
+                      ? t('run.logEmpty')
+                      : t('run.titleUnknown')}
+            </h1>
+            {/* 🔴 A failed run used to fall through to `run.titleUnknown` - "The run
+                finished." over a run that never started. The dummy had no word for this
+                state at all: it carried Ready, Running, Finished and Cancelled, and
+                Cancelled is a different thing because a person chose it. The failed state
+                was written into run.html first (reachable as run.html?failed=1) and these
+                are its words. */}
+            {phase === 'failed' ? <p className="lede">{t('run.failedNote')}</p> : null}
+            {summary?.dry_run ? <p className="lede">{t('run.dryRunNote')}</p> : null}
+            {running && catalogue ? (
+              <p className="t-sm ink-3">
+                {t('run.currentSection', {
+                  id: running.section,
+                  title: catalogue.sections.find((s) => s.id === running.section)?.title ?? '',
+                })}
+              </p>
+            ) : null}
           </div>
-          {/* 🔴 `logview` - the dummy's class, which carries the well background,
-              the monospace size, the fixed height and the scroll. The app invented
-              `logpane`, which exists in no stylesheet, so the one surface a person
-              watches while something irreversible happens was an unstyled div.
-              `role="log"` with `aria-live="off"` is the dummy's own wiring:
-              announcing every line of a purge would be an assault, so the region
-              is readable on demand and `aria-busy` says work is ongoing. */}
+
+          {/* `run.html:37-40` - Cancel then Start, at the end of the readout. */}
           <div
-            className="logview"
-            ref={tailRef}
-            role="log"
-            aria-live="off"
-            aria-busy={phase === 'running'}
+            style={{
+              display: 'flex',
+              gap: 'var(--sp-2)',
+              marginInlineStart: 'auto',
+              alignItems: 'center',
+            }}
           >
-            {log.length === 0 ? (
-              <p className="t-sm ink-3">{t('run.logEmpty')}</p>
-            ) : (
-              log.map((entry, i) => (
-                <div className="t-sm mono" key={`${String(entry.at)}-${String(i)}`}>
-                  {entry.line}
-                </div>
-              ))
-            )}
+            <button className="btn" type="button" disabled>
+              <span className="btn-label">{t('run.cancel')}</span>
+            </button>
+            <button
+              className="btn btn-primary btn-lg"
+              type="button"
+              onClick={onStart}
+              disabled={inFlight || queue.length === 0}
+              {...controlState(stateOf(starting))}
+            >
+              <span className="btn-label">{t('run.start')}</span>
+            </button>
           </div>
+        </div>
+        {/* The stated gap that goes with the disabled control above. */}
+        <div className="wrap">
+          <p className="t-xs ink-3">{t('pending.runCancel')}</p>
         </div>
       </section>
 
-      {summary ? (
-        <section className="band band-app band-tight">
-          <div className="wrap">
+      <section className="band band-app">
+        <div className="wrap g12">
+          <RunPerSection rows={rows} />
+
+          <div className="c7 rise">
             <div className="zone-label">
-              <span className="caps">{t('run.perSection')}</span>
+              <span className="caps">{t('run.logTitle')}</span>
             </div>
-            <div className="xscroll" style={{ overflowX: 'auto' }}>
-              <table className="tbl">
-                <thead>
-                  <tr>
-                    <th>{t('run.colSection')}</th>
-                    <th>{t('run.colStatus')}</th>
-                    <th>{t('run.colFreed')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {summary.sections.map((s) => (
-                    <tr key={s.section}>
-                      <td>
-                        <span className="num">{s.section}</span>{' '}
-                        {catalogue?.sections.find((x) => x.id === s.section)?.key ?? ''}
-                      </td>
-                      <td>{s.status}</td>
-                      <td className="num">{formatBytes(s.freed_bytes)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            {/* 🔴 `logview` - the dummy's class, which carries the well background,
+                the monospace size, the fixed height and the scroll. The app invented
+                `logpane`, which exists in no stylesheet, so the one surface a person
+                watches while something irreversible happens was an unstyled div.
+                `role="log"` with `aria-live="off"` is the dummy's own wiring:
+                announcing every line of a purge would be an assault, so the region
+                is readable on demand and `aria-busy` says work is ongoing. */}
+            <div
+              className="logview"
+              ref={tailRef}
+              role="log"
+              aria-live="off"
+              aria-busy={phase === 'running'}
+            >
+              {log.length === 0 ? (
+                <p className="t-sm ink-3">{t('run.logEmpty')}</p>
+              ) : (
+                log.map((entry, i) => (
+                  <div className="t-sm mono" key={`${String(entry.at)}-${String(i)}`}>
+                    {entry.line}
+                  </div>
+                ))
+              )}
             </div>
           </div>
-        </section>
-      ) : null}
+        </div>
+      </section>
 
       <div style={{ height: 'var(--sp-16)' }} />
     </>

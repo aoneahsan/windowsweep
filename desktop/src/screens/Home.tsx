@@ -7,18 +7,47 @@
  *
  * 🔴 The number comes from a real `--scan`, never from a guess. Until one has run,
  * the hero says so rather than showing a zero that reads as "nothing to reclaim".
+ *
+ * THE DUMMY'S FOURTEEN ZONES, and where each one is:
+ *   1  window chrome ................... `components/Shell.tsx`
+ *   2  the reclaim readout ............. here
+ *   3  THE RECLAIM MAP ................. `components/ReclaimMapBand.tsx`
+ *   4  drives + developer mode ......... here (drives DECLARED, see below)
+ *   5  the safe run ladder ............. `components/SafeRunLadder.tsx`
+ *   6  these need a person ............. `components/NeedsAPerson.tsx`
+ *   7  the assurance ................... `components/HomeSafety.tsx`
+ *   8  how that is enforced ............ `components/HomeSafety.tsx`
+ *   10 the last eight runs ............. `components/LastRuns.tsx`
+ *   11 the schedule .................... `components/LastRuns.tsx` (DECLARED)
+ *   12 sections needing admin .......... `components/AdminNotice.tsx`
+ *   13 what leaves this machine ........ here
+ *   14 the status bar .................. `components/Shell.tsx`
+ *
+ * 🔴 THE DRIVES BAND AND THE CAPACITY RING ARE DECLARED, NOT BUILT -
+ * `pending.drives` (pending-wave). The engine's `--json` summary carries no drive
+ * and no free-space field at all (`RunSummary` in `lib/cli.ts` has none, and
+ * `modules/runner.ps1` emits none), so there is no measured figure to draw. The
+ * dummy's own numbers are seeded (`seed.js:142-146`). Getting real ones needs a
+ * new engine field or a new Rust command, and both are frozen for this release.
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
 import { formatBytes } from '../lib/format';
 import { newRunId, run, scanArgs, safeBatchArgs } from '../lib/engine';
-import { safeRunSections } from '../lib/catalogue';
+import { safeRunSections, sectionById } from '../lib/catalogue';
 import { controlState, stateOf } from '../lib/control-state';
 import { DESTINATIONS, type Destination } from '../lib/consent';
+import { ReclaimMapBand } from '../components/ReclaimMapBand';
+import { SafeRunLadder, type LadderRow } from '../components/SafeRunLadder';
+import { NeedsAPerson } from '../components/NeedsAPerson';
+import { HomeSafety } from '../components/HomeSafety';
+import { LastRuns } from '../components/LastRuns';
+import { AdminNotice } from '../components/AdminNotice';
+import type { MapTarget } from '../components/ReclaimMap';
 
 /** Brand names, not copy: they are the same in every language. */
 const VENDOR: Record<Destination, string> = {
@@ -64,6 +93,9 @@ export function Home() {
   const catalogue = useStore((s) => s.catalogue);
   const engineError = useStore((s) => s.engineError);
   const summary = useStore((s) => s.summary);
+  const scanTargets = useStore((s) => s.scanTargets);
+  const candidates = useStore((s) => s.candidates);
+  const history = useStore((s) => s.history);
   const phase = useStore((s) => s.phase);
   const developer = useStore((s) => s.developer);
   const setDeveloper = useStore((s) => s.setDeveloper);
@@ -72,6 +104,7 @@ export function Home() {
   const applyProgress = useStore((s) => s.applyProgress);
   const finishRun = useStore((s) => s.finishRun);
   const setCandidates = useStore((s) => s.setCandidates);
+  const setScanTargets = useStore((s) => s.setScanTargets);
 
   /* 🔴 Which action is in flight, not merely whether one is. The pending state
      belongs on the control that was pressed, and the other two have to refuse a
@@ -105,6 +138,15 @@ export function Home() {
         });
         finishRun(result.summary, result.exitCode > 1);
         if (result.summary) setCandidates(result.summary.candidates);
+        /* 🔴 `targets[]` is filled by `--scan` and empty in every other mode, so
+           this only ever ADDS measurements - a dry-run must not blank the map.
+           A real run is the one case that spends them: those paths have just been
+           deleted, and redrawing them afterwards would be a lie. */
+        if (result.summary && result.summary.targets.length > 0) {
+          setScanTargets(result.summary.targets);
+        } else if (result.summary && !result.summary.dry_run) {
+          setScanTargets([]);
+        }
         return result;
       } catch (e: unknown) {
         appendLog(e instanceof Error ? e.message : String(e));
@@ -112,7 +154,7 @@ export function Home() {
         return null;
       }
     },
-    [startRun, navigate, appendLog, applyProgress, finishRun, setCandidates],
+    [startRun, navigate, appendLog, applyProgress, finishRun, setCandidates, setScanTargets],
   );
 
   const onScan = useCallback(() => {
@@ -142,6 +184,52 @@ export function Home() {
     void drive(safeBatchArgs({ dryRun: false, developer }), true).finally(() => { setBusy(null); });
   }, [drive, developer]);
 
+  /* The map's tiles: one per scanned target, coloured by its section's tier and
+     grouped by its section. Every field is the engine's. */
+  const mapTargets = useMemo<MapTarget[]>(() => {
+    if (!catalogue) return [];
+    return scanTargets.map((target) => {
+      const section = sectionById(catalogue, target.section);
+      return {
+        section: target.section,
+        sectionKey: section?.key ?? String(target.section),
+        tier: section?.tier ?? 'rebuilds',
+        label: target.label,
+        path: target.path,
+        bytes: target.bytes,
+      };
+    });
+  }, [catalogue, scanTargets]);
+
+  /* The ladder's rungs: the engine's own safe batch, with a figure only where a
+     scan measured one. Sorted biggest-first once there is something to sort. */
+  const ladderRows = useMemo<LadderRow[]>(() => {
+    if (!catalogue) return [];
+    const bySection = new Map<number, { bytes: number; count: number }>();
+    for (const target of scanTargets) {
+      if (target.bytes <= 0) continue;
+      const acc = bySection.get(target.section) ?? { bytes: 0, count: 0 };
+      acc.bytes += target.bytes;
+      acc.count += 1;
+      bySection.set(target.section, acc);
+    }
+    const rows = safeRunSections(catalogue, developer).map((section) => {
+      const measured = bySection.get(section.id);
+      return {
+        id: section.id,
+        key: section.key,
+        bytes: measured?.bytes ?? null,
+        count: measured?.count ?? null,
+      };
+    });
+    if (bySection.size > 0) rows.sort((a, b) => (b.bytes ?? -1) - (a.bytes ?? -1));
+    return rows;
+  }, [catalogue, developer, scanTargets]);
+
+  const measured = scanTargets.length > 0;
+  const interactive = (catalogue?.sections ?? []).filter((s) => s.batch === 'interactive');
+  const adminSections = (catalogue?.sections ?? []).filter((s) => s.admin);
+
   if (engineError) {
     return (
       <section className="band band-app">
@@ -156,7 +244,6 @@ export function Home() {
     );
   }
 
-  const safeSections = catalogue ? safeRunSections(catalogue, developer) : [];
   /* 🔴 One gate for all three buttons: a second press must not be able to start a
      second run, whether the first one is still starting up (`busy`) or already
      streaming (`phase`). Either alone leaves a window where two runs can begin. */
@@ -164,6 +251,7 @@ export function Home() {
 
   return (
     <>
+      {/* ZONE 2 - the reclaim readout */}
       <section className="band band-app">
         <div className="wrap readout rise">
           <HeroSweep />
@@ -224,33 +312,24 @@ export function Home() {
         </div>
       </section>
 
+      {/* ZONE 3 - the signature element */}
+      <ReclaimMapBand targets={mapTargets} measured={measured} />
+
+      {/* ZONES 4 + 5 - drives | the safe-run ladder */}
       <section className="band band-app">
         <div className="wrap g12">
           <div className="c7 rise">
             <div className="zone-label">
-              <span className="caps">{t('home.safeRunTitle')}</span>
+              <span className="caps">{t('home.drivesTitle')}</span>
             </div>
+            {/* The stated gap that stands where the rails and the ring would be. */}
             <div className="panel pad">
-              {safeSections.length === 0 ? (
-                <p className="t-sm ink-3">{t('common.loading')}</p>
-              ) : (
-                <div className="lst">
-                  {safeSections.map((s) => (
-                    <div className="lst-i" key={s.id}>
-                      <span className="num t-sm ink-3">{s.id}</span>
-                      <div style={{ flex: 1 }}>
-                        <div className="t-base">{s.key}</div>
-                        <div className="t-sm ink-3">{s.title}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <p className="t-sm ink-3">{t('pending.drives')}</p>
             </div>
-          </div>
 
-          <div className="c5 rise">
-            <div className="zone-label">
+            {/* Developer mode sits here rather than in a band of its own: it is
+                what decides how much of the ladder beside it there is. */}
+            <div className="zone-label" style={{ marginTop: 'var(--sp-6)' }}>
               <span className="caps">{t('home.developerTitle')}</span>
             </div>
             <div className="panel pad">
@@ -266,24 +345,45 @@ export function Home() {
               <p className="t-sm ink-3">{t('home.developerNote')}</p>
             </div>
           </div>
+
+          <div className="c5 rise">
+            <div className="zone-label">
+              <span className="caps">{t('home.safeRunTitle')}</span>
+            </div>
+            {catalogue ? (
+              <SafeRunLadder rows={ladderRows} measured={measured} />
+            ) : (
+              /* Reading the catalogue and having an empty safe batch are two
+                 different facts, and the ladder must not report the second while
+                 the first is still true. */
+              <div className="panel pad">
+                <p className="t-sm ink-3">{t('common.loading')}</p>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* The assurance band: reassurance delivered as a specific refusal, never as
-          an adjective. Its wording is the dummy's, verbatim. */}
-      <section className="band band-bleed band-tight">
-        <div className="wrap rise">
-          <p className="assure">{t('home.assure')}</p>
-        </div>
-      </section>
+      {/* ZONE 6 */}
+      <NeedsAPerson sections={interactive} candidates={candidates} />
 
-      {/* 🔴 The destination ledger - the dummy's zone 13, on request rather than
-          in the way. These were four SWITCHES until 2026-09-07; the owner removed
-          the opt-out, so each destination is now a stated fact carrying an `on`
-          badge. A switch that changes nothing is worse than no switch, and this is
-          the surface a person meets in ordinary use rather than once at first run. */}
+      {/* ZONES 7 + 8 */}
+      <HomeSafety />
+
+      {/* ZONES 10 + 11 */}
+      <LastRuns history={history} />
+
+      {/* ZONES 12 + 13 - admin and privacy, both on request */}
       <section className="band band-app">
         <div className="wrap rise">
+          <AdminNotice sections={adminSections} />
+
+          {/* 🔴 The destination ledger - the dummy's zone 13, on request rather
+              than in the way. These were four SWITCHES until 2026-09-07; the owner
+              removed the opt-out, so each destination is now a stated fact
+              carrying an `on` badge. A switch that changes nothing is worse than
+              no switch, and this is the surface a person meets in ordinary use
+              rather than once at first run. */}
           <details className="disclose">
             <summary>
               <span className="disclose-line">{t('home.privacySummary')}</span>

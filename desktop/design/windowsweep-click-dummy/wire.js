@@ -50,7 +50,23 @@
   }
 
   /* -------------------------------------------------------- the reclaim map */
+  /* index.html?empty=1 renders the two states a finished product has before
+     anything has been scanned or run. A state the dummy only describes is a state
+     nobody checks, so both are reachable. */
+  var showEmpty = new URLSearchParams(location.search).get('empty') === '1';
+
+  function applyEmptyStates() {
+    var pairs = [['[data-ws-map]', '[data-ws-map-empty]'], ['[data-ws-spark]', '[data-ws-spark-empty]']];
+    for (var i = 0; i < pairs.length; i++) {
+      var real = document.querySelector(pairs[i][0]);
+      var empty = document.querySelector(pairs[i][1]);
+      if (real) real.hidden = showEmpty;
+      if (empty) empty.hidden = !showEmpty;
+    }
+  }
+
   function renderMap() {
+    if (showEmpty) { applyEmptyStates(); return; }
     var mount = $('[data-ws-map]');
     if (!mount) return;
     if (!map) map = new window.ReclaimMap(mount, {

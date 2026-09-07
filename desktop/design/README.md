@@ -367,3 +367,51 @@ because it is a promise the product does not keep. So the ledger states rather t
 
 ⚠️ **This re-opens `desktop-safety`**, a GATE-4-recorded storytelling surface covering Consent and Elevation.
 The keeper owes it a pass.
+
+## Amendment - 2026-09-07 (later): Home's twelve bands, and three states the dummy never specified
+
+The GATE 4 round-3 pass was the first to judge these screens against a build that could reach the engine.
+Rounds 1 and 2 had measured a Home that rendered one band, because three stacked defects refused every
+engine call - so their numbers were right by accident. Judged properly, **Home implemented 4 of the 12
+bands** and declared none of the eight gaps, Sections had lost its filter row and its tier vocabulary, and
+Run had no per-section surface for progress events that were already arriving.
+
+Eight bands were built and four gaps are now declared in the app's own UI, which is what §10a requires.
+**Nothing was edited out of the dummy to match what is built** - the dummy keeps specifying the finished
+product, and three of those declarations are `pending-wave` for exactly that reason:
+
+| The dummy still specifies | Why the app declares instead |
+|---|---|
+| The drive rails and the capacity ring | The engine's `--json` summary carries **no drive or free-space field at all**, and the dummy's own figures here are seeded. A real one needs an engine field, which is frozen outside a version cascade |
+| The weekly schedule switch | `--install-task` is not in the Rust argument allowlist, so this window cannot ask the engine to register the task. The engine does it itself from a command line |
+| Idle shading and the `Idle (days)` column | `ScanTarget` is `{section, label, path, bytes}` - the scan reports a size and **no age**. The dummy's own `idleScale` degenerates to exactly the value the app uses when the idle range carries no information |
+| Clicking a tile to keep it out of the next run | `ExcludePaths` is read by `modules/projects.ps1` and nowhere else, so `--exclude-path` cannot keep a browser or npm cache out of a safe run. A tile you had clicked would still be deleted - **which is why sentence two of `index.html:74` cannot ship as written, and this row is the amendment that says so** |
+
+**Three states the dummy did not specify, added here rather than invented in the app.** This is the part
+worth remembering: the app had already written words for two of them, which is the wrong way round. The
+dummy owns the words.
+
+| State | Where | Reachable as |
+|---|---|---|
+| Home before anything has been scanned | `index.html`, `[data-ws-map-empty]` | `index.html?empty=1` |
+| The last-eight-runs band with no history | `index.html`, `[data-ws-spark-empty]` | `index.html?empty=1` |
+| **A run the engine refused** | `run.html`, `[data-ws-run-fail]` | `run.html?failed=1` |
+
+The failed-run state is the one that mattered. The page carried Ready, Running, Finished and Cancelled -
+and `Cancelled` is a different thing, because a person chose it - so a run the engine refused fell through
+to **"The run finished."** over a run that never started. A first draft of those words claimed nothing was
+left half-deleted; that asserts per-step atomicity nobody can promise, since a folder delete can fail
+partway on a locked file, so it was replaced before the app copied it.
+
+**Six labels restored, not substituted.** An implementation pass had shown the engine's own section keys -
+`wu`, `cleanmgr`, `dism`, `hiberfil`, `eventlogs`, `vhdx` - and declared the substitution, reasoning that a
+second set of names would drift out of step with `--list --json`. The rule is the other way round: the dummy
+owns the words, and **section numbers are frozen**, so a map keyed by section id cannot silently drift. The
+catalogue's `title` was not an alternative either - those run to *"Windows Update + system temp
+(SoftwareDistribution, Delivery Optimization, ...)"*, right for a table row and impossible in a chip. A
+future admin section with no label falls back to its title, so it appears in plain sight rather than
+vanishing.
+
+⚠️ **Still owed against this amendment:** the `index.html:74` sentence *"Click one to keep it."* and the six
+curated admin labels at `index.html:252-257` are now covered by the table above, but the dummy's own text
+still reads as though both ship. Settling that wording is a dummy edit, not an app one.

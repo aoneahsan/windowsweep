@@ -95,7 +95,7 @@ the protected lists and the refusals are the same ones the command line uses."*
 
 **Change:** rewritten for two reasons. The line editor's note - that sentence ran **41 words against the
 fingerprint's 34-word ceiling** - and the single-home rule, since S-010 is the full version of the same fact
-and this is the pointer to it. Now 28 words and 12. Verified in `desktop/src-tauri/src/engine.rs:186`, where
+and this is the pointer to it. Now 28 words and 12. Verified in `desktop/src-tauri/src/engine.rs:221-222`, where
 `--json` and `--no-color` are prepended to every invocation, and in `desktop/src/lib/catalogue.ts`, which
 refuses to hard-code a section list.
 
@@ -103,7 +103,7 @@ refuses to hard-code a section list.
 ```
 - **A run you can watch.**
 - **A picker** for the four sections that ask a person to choose.
-- **Settings that are flags.**
+- **Settings, most of them flags.**
 
 Screen by screen: [Desktop app](https://github.com/aoneahsan/windowsweep/blob/main/docs/desktop.md).
 ```
@@ -222,7 +222,7 @@ sentence: "Where the two differ is" became "The two differ in", which says the s
 
 Nothing to the deletion behaviour. Everything to what you can see while it happens.
 
-The catalogue becomes a table you can filter. A run shows the engine's own log as it arrives, beside a table of what each section reclaimed. The four sections that ask a person to choose get a picker. Every control in Settings maps to a flag the engine already has, so anything you set here you can also type.
+The catalogue becomes a table you can filter. A run shows the engine's own log as it arrives, beside a table of what each section reclaimed. The four sections that ask a person to choose get a picker. Most controls in Settings map to a flag the engine already has, so anything you set there you can also type.
 ```
 **Was (round 1):** the same block at 112 words, with a clause on ticking rows one at a time and a sentence
 on History, reports and the report JSON.
@@ -238,7 +238,7 @@ reclaimed". Active voice, same eight words.
 ```
 ## What it does not do
 
-It never raises its own privileges. Six sections need Windows to ask your permission first. Ask for one, and a second, elevated window runs only those sections and writes its own report, while this one keeps running unelevated and tails the log. It does not remove the deep-section gate.
+It never raises its own privileges. Six sections need Windows to ask your permission first. Ask for one, and a second, elevated window runs only those sections and writes its own report, while this one waits unelevated. It does not remove the deep-section gate.
 ```
 **Was (round 1):** the same three claims, with the middle sentence running to 40 words and a fourth
 sentence, *"It does not answer a picker for you."*
@@ -260,9 +260,9 @@ Three answers, because three different things are running.
 
 **The engine sends nothing, ever.** No network calls at all, and a self-test check fails the build if one appears.
 
-**The window sends usage and crash reports, to improve the product for everyone.** There is no switch. The first-run screen is a notice with one **Continue**. Four destinations - product analytics, behaviour analytics, session replay with every piece of text masked, and crash reports with file paths stripped out. In 1.1.0 no analytics key is in the build, so nothing has left the machine yet. That is a fact about this release, not a promise: it stops being true the day a key is added.
+**The window sends usage and crash reports, to improve the product for everyone.** There is no switch. The first-run screen is a notice with one **Continue**. Four destinations - product analytics, behaviour analytics, session replay with every piece of text masked, and crash reports with file paths stripped out. In 1.1.0 no destination is configured in the build, so nothing has left the machine yet. That is a fact about this release, not a promise: it stops being true the day a key is added.
 
-**Two requests run without asking, and neither carries anything about you.** On every start the app fetches `latest.json` from this repository's releases; on a machine with no WebView2, the installer downloads it from Microsoft.
+**Two requests run without asking, and neither carries anything this app knows about you.** On every start the app fetches `latest.json` from this repository's releases; on a machine with no WebView2, the installer downloads it from Microsoft.
 
 **Never sent:** a file path, a folder name, a drive label, your user name, your machine name, or the contents of anything. A run summary is a count and a number of bytes.
 
@@ -272,7 +272,7 @@ Optional, Google, and it opens your normal browser rather than a window inside t
 
 | Your settings | Each run summary |
 |---|---|
-| your preferences | date and duration |
+| your preferences, and when you last changed them | date and duration |
 | the developer answer | mode, dry-run, elevated |
 | your email address and display name | the section numbers it ran |
 | a last-seen timestamp | bytes reclaimed, bytes estimated, and an id |
@@ -291,7 +291,7 @@ added"* - so that a release which fills `VITE_GA4_MEASUREMENT_ID` falsifies noth
 
 Sources, field by field. Four destinations and their one-line descriptions: `consent.DESTINATIONS` and the
 dummy's own ledger in `wire.js:399-402`, whose comment records why they stopped being switches. "No
-analytics key is in the build": `desktop/.env.example` ships all four telemetry variables empty, there is no
+destination is configured in the build": `desktop/.env.example` ships all four telemetry variables empty, there is no
 `.env` beside it, and `analytics.ts` constructs a provider only when its key is present - *"a BUILD fact,
 not a user choice"*, in its own header. Four keys, all empty. The startup fetch: `Splash.tsx:105` calls
 `checkForUpdate()` on every boot. The endpoint in `tauri.conf.json` is one static `latest.json` URL, so the
@@ -335,7 +335,7 @@ scope, and the shipped MSI's own Property table reads **`ALLUSERS = 1`** - read 
 MSI needs admin rights. Saying "no administrator rights" over the top of that is exactly the kind of claim
 this product cannot afford to get wrong, and it was the one sentence in the surface a reader could have
 disproved in thirty seconds. The engine claim is from `bundle.resources`, which maps `resources/windowsweep`
-into the bundle; the built MSI's File table carries all 38 engine files.
+into the bundle; the built MSI's File table carried all 38 engine files, and the bundle now holds 39 - `sync-cli.mjs` began copying `package.json` on 2026-09-07, after that MSI was built.
 
 ### S-015 · `desktop.md` · the SmartScreen note
 ```
@@ -384,7 +384,7 @@ Each run gets its own folder under `%LOCALAPPDATA%\com.aoneahsan.windowsweep\run
 **Was (round 1):** *"Runs, logs and reports land under `%LOCALAPPDATA%\windowsweep-desktop\runs\`, one JSON
 per run."*
 
-**Change:** 🔴 **the folder was named wrongly and is corrected.** `run_dir` in `engine.rs:147` joins
+**Change:** 🔴 **the folder was named wrongly and is corrected.** `run_dir` in `engine.rs:183` joins
 `app_local_data_dir()` with `runs` and the run id. On Windows that base is `%LOCALAPPDATA%` plus the bundle
 identifier, `com.aoneahsan.windowsweep`, out of `tauri.conf.json`. There is no `windowsweep-desktop` folder
 anywhere. The nesting is also one level deeper than round 1 said - a folder per run, not a file per run,

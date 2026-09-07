@@ -154,7 +154,7 @@
   "splash.update.retry": "Try again",
   "splash.update.retriedOffline": "Checked again - still offline. Carrying on without it.",
   "settings.title": "Settings",
-  "settings.lede": "Every one of these maps to a flag the engine already has, so anything you set here you can also pass on a command line.",
+  "settings.lede": "Most of these map to a flag the engine already has, so anything you set here you can also pass on a command line. Privacy is the exception: it states what the window sends rather than setting anything.",
   "settings.tab.general": "General",
   "settings.tab.scanning": "Scanning",
   "settings.tab.notifications": "Notifications",

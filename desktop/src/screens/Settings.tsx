@@ -17,7 +17,6 @@ import { Trans, useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
 import { DESTINATIONS, type Destination } from '../lib/consent';
-import { AXES, axisValue } from '../lib/theme';
 import { configuredFeatures, REPO_URL, SUPPORT_URL } from '../lib/config';
 import { openExternal } from '../lib/links';
 import { controlState, stateOf } from '../lib/control-state';
@@ -41,8 +40,6 @@ export function Settings() {
   const search: { tab?: Tab } = useSearch({ strict: false });
   const tab: Tab = TABS.includes(search.tab ?? 'general') ? (search.tab ?? 'general') : 'general';
 
-  const prefs = useStore((s) => s.prefs);
-  const setAxis = useStore((s) => s.setAxis);
   const developer = useStore((s) => s.developer);
   const setDeveloper = useStore((s) => s.setDeveloper);
   const features = configuredFeatures();
@@ -118,33 +115,13 @@ export function Settings() {
                       />
                     </div>
                   </div>
-                  {AXES.map((axis) => (
-                    <div className="lst-i" key={axis.key}>
-                      <div style={{ flex: 1 }}>
-                        <div className="t-base">{t(axis.labelKey)}</div>
-                      </div>
-                      <div className="lst-x">
-                        {/* 🔴 Labels wrapping real radios. `.seg-opt`'s selected
-                            paint is `:has(input:checked)`, so the previous
-                            `<button role="radio">` matched no rule and every one
-                            of these ten axes looked unset whatever was chosen. */}
-                        <div className="seg" role="radiogroup" aria-label={t(axis.labelKey)}>
-                          {axis.values.map((v) => (
-                            <label className="seg-opt" key={v.value}>
-                              <input
-                                type="radio"
-                                name={`axis-${axis.key}`}
-                                value={v.value}
-                                checked={axisValue(prefs, axis.key) === v.value}
-                                onChange={() => { setAxis(axis.key, v.value); }}
-                              />
-                              <span>{t(`theme.value.${v.value}`, v.label)}</span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                  {/* 🔴 The ten theme axes were duplicated here and the dummy forbids it:
+                      page-settings.js says "The theme axes are NOT duplicated here: they
+                      live in the one theme control, reachable from the title bar on every
+                      screen." Two controls for one setting is also what frontend rule 11
+                      rules out. They were the only controls on this screen with no engine
+                      flag behind them, which is why the README could not honestly say every
+                      control here maps to one. ThemePanel.tsx is that one control. */}
                 </div>
               ) : null}
 

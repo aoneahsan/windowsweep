@@ -37,8 +37,8 @@ protected, and once because its folder name is not one this tool knows how to cl
 `--exclude-path P` (repeatable, or `excludePaths` in the config file) names a tree you want left alone. It is
 enforced at the same chokepoint as everything else rather than inside one section, so it holds for **every**
 section: an excluded path is refused, logged as `excluded: <path>`, and reported once in the
-`excluded[]` array of the `--json` summary. A dry-run refuses it in the same place, so the rehearsal and the
-run agree.
+`excluded[]` array of the `--json` summary. A dry-run applies the same filter before it counts anything, so
+the rehearsal and the run report the same files and the same bytes.
 
 A path that is both protected and excluded reports the **protected** reason, not the exclusion. That is
 deliberate: the protected list is the promise no flag can lift, and it is the stronger thing to tell you.

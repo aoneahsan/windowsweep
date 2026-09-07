@@ -400,14 +400,66 @@ function Invoke-SelfTestExtra {
       $rGo = Remove-PathSafe -Path $go -Within $exRoot
       & $unmute
       $keptOnDisk = Test-Path -LiteralPath $keep
+      # A CHILD, not just the excluded path itself: testing only the exact path let a prefix bug
+      # (a doubled backslash) pass this check while nothing inside an excluded folder was refused.
+      $childReason = Get-ProtectionReason (Join-Path $keep 'f.txt')
+      $childRefused = ($childReason -like 'excluded: *')
       $goneFromDisk = -not (Test-Path -LiteralPath $go)
       $reported = (@($ws.Excluded).Count -eq 1)
       $reasonOk = $rKeep.Reason -like 'excluded: *'
-      if ($keptOnDisk -and $goneFromDisk -and $rGo.Removed -and $reported -and $reasonOk) { Write-Ok "--exclude-path is honoured by the chokepoint for every section: the excluded folder survived a real run, its sibling did not, and it is reported once" } else { Write-Err "--exclude-path not honoured (kept=$keptOnDisk siblingGone=$goneFromDisk reported=$reported reason='$($rKeep.Reason)')"; $fails++ }
+      if ($keptOnDisk -and $goneFromDisk -and $rGo.Removed -and $reported -and $reasonOk -and $childRefused) { Write-Ok "--exclude-path is honoured by the chokepoint for every section: the excluded folder AND a file inside it are both refused, its sibling is not, and it is reported once" } else { Write-Err "--exclude-path not honoured (kept=$keptOnDisk siblingGone=$goneFromDisk reported=$reported childRefused=$childRefused reason='$($rKeep.Reason)')"; $fails++ }
     } finally {
       $ws.ExcludePaths = $savedEx
       $ws.Excluded = $savedExcluded
       $Script:WS_EXCLUDE = $savedTable
+    }
+
+
+    # 18d - the rehearsal and the run agree about an EXCLUDED file inside a pruned cache.
+    # Remove-StaleFiles used to apply Get-ProtectionReason only in its real-run loop, so a dry-run
+    # counted files the run then skipped and the estimate came out higher than the run - for exactly
+    # the files a person most wants the two numbers to agree about.
+    $checks++
+    $pr = Join-Path $fx 'prune'
+    $prKeep = Join-Path $pr 'keep'
+    New-Item -ItemType Directory -Force -Path $prKeep | Out-Null
+    $goFile = Join-Path $pr 'go.bin'
+    $keepFile = Join-Path $prKeep 'keep.bin'
+    Set-Content -LiteralPath $goFile -Value ('x' * 400)
+    Set-Content -LiteralPath $keepFile -Value ('y' * 400)
+    foreach ($f in @($goFile, $keepFile)) {
+      foreach ($ts in 'LastWriteTime', 'LastAccessTime', 'CreationTime') {
+        Set-ItemProperty -LiteralPath $f -Name $ts -Value $ancient
+      }
+    }
+    $savedEx2 = $ws.ExcludePaths
+    $savedTbl2 = $Script:WS_EXCLUDE
+    $savedDry = $ws.DryRun
+    $savedFreed = $ws.TotalFreed
+    $savedEst = $ws.TotalEstimated
+    try {
+      $ws.ExcludePaths = @($prKeep)
+      Initialize-Exclusions
+      & $mute
+      $ws.DryRun = $true
+      $dry = Remove-StaleFiles -Root $pr -Within $pr -Days 1
+      $ws.DryRun = $false
+      $real = Remove-StaleFiles -Root $pr -Within $pr -Days 1
+      & $unmute
+      $agree = ($dry.Files -eq $real.Files) -and ($dry.Freed -eq $real.Freed)
+      $keptOnDisk2 = Test-Path -LiteralPath $keepFile
+      $goneFromDisk2 = -not (Test-Path -LiteralPath $goFile)
+      if ($agree -and $keptOnDisk2 -and $goneFromDisk2 -and $dry.Files -eq 1) {
+        Write-Ok "a dry-run and a real prune agree exactly when a file is excluded: both report $($dry.Files) file, the excluded one survives"
+      } else {
+        Write-Err "rehearsal and run disagree (dryFiles=$($dry.Files) realFiles=$($real.Files) dryBytes=$($dry.Freed) realBytes=$($real.Freed) kept=$keptOnDisk2 siblingGone=$goneFromDisk2)"; $fails++
+      }
+    } finally {
+      $ws.ExcludePaths = $savedEx2
+      $Script:WS_EXCLUDE = $savedTbl2
+      $ws.DryRun = $savedDry
+      $ws.TotalFreed = $savedFreed
+      $ws.TotalEstimated = $savedEst
     }
 
   } catch {

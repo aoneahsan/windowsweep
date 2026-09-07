@@ -32,6 +32,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- 🔴 **`--exclude-path` only ever refused the path you named, never anything inside it.** The normalised
+  prefix was built with a PowerShell literal `'\'`, which is **two** characters, so the prefix ended in a
+  doubled backslash and no child path could ever match it. Excluding a folder protected the folder and
+  nothing in it - which is the opposite of what anyone excluding a folder means. The self-test check that
+  was supposed to cover this asserted only on the excluded path itself, so it passed throughout; it now
+  asserts on a child, and the fix was watched failing on the original bug reintroduced.
+- 🔴 **A dry-run counted files a real run would skip.** `Remove-StaleFiles` applied the protection guard
+  only in its real-run loop, so the rehearsal's estimate included protected and excluded files that the run
+  then refused - for exactly the files a person most wants the two numbers to agree about. One filter now
+  decides both, and a check proves a dry-run and a real prune report the same count and the same bytes.
 - **`--help` said `--permanent` covers "Sections 18/19".** It reaches **18, 19 and 23**: `Send-ToRecycleBin`
   is called from `modules/personal.ps1` (18, 19) and from `modules/orphaned_appdata.ps1` (23). Someone who
   passed `--permanent` believing it applied to two sections would have had section 23's orphaned

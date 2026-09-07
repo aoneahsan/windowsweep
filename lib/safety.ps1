@@ -104,7 +104,7 @@ function Initialize-Exclusions {
     $fp = Get-FullPath $x
     if (-not $fp) { continue }
     $Script:WS_EXCLUDE.Roots += $fp
-    $Script:WS_EXCLUDE.Prefixes += ($fp.TrimEnd('\\') + '\\')
+    $Script:WS_EXCLUDE.Prefixes += ($fp.TrimEnd('\') + '\')
   }
 }
 
@@ -281,18 +281,27 @@ function Remove-StaleFiles {
   if ($why) { Write-Err "REFUSE ($why): $root"; return $out }
   if (-not (Test-PathWithin -Path $root -Within $Within)) { Write-Err "REFUSE (outside declared root): $root"; return $out }
   $scan = Get-StaleFiles -Root $root -Days $Days
-  $total = [long]0
-  foreach ($f in $scan.Files) { $total += $f.Bytes }
-  if ($scan.Files.Count -eq 0) { Write-Info "$Label - nothing idle for $Days+ days"; return $out }
-  if ($ws.DryRun) {
-    Write-DryRun ("would prune {0} in {1} files idle {2}+ days from {3}" -f (Format-Bytes $total), $scan.Files.Count, $Days, $root)
-    $out.Freed = $total; $out.Files = $scan.Files.Count
-    Add-Freed $total
-    return $out
-  }
+  # The guard runs ONCE, here, and both the rehearsal and the run read its result. It used to run only
+  # in the real-run loop below, so a dry-run counted protected and excluded files the real run then
+  # skipped - the estimate was higher than the run, for the one kind of file a person most wants the
+  # two to agree about. "The rehearsal is the same command as the performance, minus one word" is the
+  # product's promise; it is only true if the same filter decides both.
+  $keep = New-Object System.Collections.Generic.List[object]
   foreach ($f in $scan.Files) {
     $why = Get-ProtectionReason $f.Path
     if ($why) { Add-ExcludedRefusal $why; $out.Skipped++; continue }
+    $keep.Add($f)
+  }
+  $total = [long]0
+  foreach ($f in $keep) { $total += $f.Bytes }
+  if ($keep.Count -eq 0) { Write-Info "$Label - nothing idle for $Days+ days"; return $out }
+  if ($ws.DryRun) {
+    Write-DryRun ("would prune {0} in {1} files idle {2}+ days from {3}" -f (Format-Bytes $total), $keep.Count, $Days, $root)
+    $out.Freed = $total; $out.Files = $keep.Count
+    Add-Freed $total
+    return $out
+  }
+  foreach ($f in $keep) {
     try {
       Remove-ReadOnlyAttribute $f.Path
       [IO.File]::Delete($f.Path)

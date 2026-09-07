@@ -37,7 +37,7 @@ Two more patterns are missing from the same group and produced the same warning 
 written: `*.rs` (added in `8f0008e` after git warned that `engine.rs` would flip) and **`.env.example`**,
 which matches no extension rule at all. Add `.env*` when working this task.
 
-A number is never reused: the next task is TASK-006.
+A number is never reused: the next task is TASK-008.
 
 ### TASK-004 - the elevated run has three gaps, all found by the 2026-09-07 fact-check
 
@@ -66,7 +66,7 @@ per-section confirmation.
 **3. It runs all six at once.** `elevation.lede` implies choosing ("ask for one"); the screen passes every
 admin id. Either the copy or the screen is wrong, and the dummy decides which.
 
-A number is never reused: the next task is TASK-006.
+A number is never reused: the next task is TASK-008.
 
 ### TASK-005 - the consent notice promises analytics events that do not exist
 
@@ -89,4 +89,36 @@ owns the words, so it changes first either way.
 is a vendor-retention statement with no source in this repository. `desktop-safety` raised it as a
 `NEEDS DECISION` on 2026-09-05 and the decision log records no answer. It needs the owner, not a code change.
 
-A number is never reused: the next task is TASK-006.
+A number is never reused: the next task is TASK-008.
+
+### TASK-006 - the catalogue's punctuation drifts from the dummy's, tree-wide
+
+The click dummy uses U+2013 and U+2014 where a dash is meant; the app's catalogue strings mostly use ASCII
+hyphens. Found while closing D-14/15/16 on 2026-09-07, and **deliberately not swept then**: only the keys
+inside those three defects were corrected, because a half-swept punctuation pass is worse than either end -
+it leaves no way to tell a deliberate ASCII hyphen from a missed one.
+
+**Why it is not urgent:** nothing breaks and no claim is false. It is a parity difference a GATE 4 pair can
+legitimately flag as a mismatch on a screen nobody has changed.
+
+**What to do:** one sweep across every `en.json` value against the dummy's source characters, in a commit
+that does nothing else. 🔴 **Never sed it** - the engine's own console strings are ASCII-only by IRON rule 1,
+so a global replace that reaches `lib/` or `modules/` breaks the ASCII self-test check. Scope the sweep to
+`desktop/src/i18n/locales/` and prove it with the self-test still green.
+
+A number is never reused: the next task is TASK-008.
+
+### TASK-007 - `selbar-note` is styled nowhere, and `Picker.tsx` uses it
+
+The class `selbar-note` appears in neither the app's CSS nor the dummy's, and `desktop/src/screens/Picker.tsx`
+renders a note with it - so that note has no styling today. Found 2026-09-07 while building the Sections
+selection bar, which is why the new `SectionSelbar.tsx` deliberately does **not** use it.
+
+This is the same family as the `logpane` defect: a class name that reads as intentional, resolves to nothing,
+and is invisible to every gate because unknown CSS classes are not an error anywhere.
+
+**What to do:** decide whether the note wants the dummy's existing note treatment or its own rule, add it to
+the dummy first, then the app. And sweep for siblings - `grep` every `className` string in `desktop/src`
+against the selectors that actually exist in the app's CSS. That sweep is the valuable half of this task.
+
+A number is never reused: the next task is TASK-008.

@@ -381,8 +381,8 @@
         {
           "id": "P4.close-out",
           "title": "RW-111: portfolio refresh, master JSON, memory note, the summary recompute and the second-machine handoff text",
-          "status": "pending",
-          "note": "Wave 8. The portfolio file was eligible from 2026-09-08. BOTH pricing claims must go: line 35 \"N/A (free CLI tool; no paid tiers)\" and line 196 \"Monetization is intentionally absent - MIT, free\". Rename to WINDOWSWEEP_portfolio-info_<date>.md in BOTH locations, delete the old in both, cmp.",
+          "status": "in_progress",
+          "note": "Done 2026-09-08: the portfolio refreshed to 2026-09-08 in both locations with BOTH pricing claims deleted and the two copies verified byte-identical; the master links JSON updated (portfolio file, docs link as HTTP with its reason, statusNote, dataGapsNote); the project memory and its index line; the summary recomputed from its own table (68.01% overall, 83.5% excluding P8) with the story row derived from an explicit per-surface list rather than asserted; what-this-project-consists-of.md corrected and given a section 15 for the site; WH008 written. Still owed: the second-machine handoff text, and the owner's own rows 5 and 13.",
           "awaitingUser": false
         }
       ]
@@ -720,8 +720,8 @@
         {
           "id": "P7.report-bodies",
           "title": "story surface report-bodies (content-map row 15): written, panelled, finalised, applied in the 1.2.0 cascade",
-          "status": "pending",
-          "note": "Wave 2 for the writing, Wave 4 for the apply. Written from modules/reports.ps1 strings as numbered slots, ASCII only, tone P, no CTA. The \"Would reclaim (est.)\" verb lands here too - it is row 15's reason for existing.",
+          "status": "in_progress",
+          "note": "DRAFTED 2026-09-08: 33 slots, 211 shipping words, 10 changed and 23 kept as considered. All 33 Was: lines matched against modules/reports.ps1 by fixed-string search AND all 10 new strings confirmed absent from the file, which together prove each change is real rather than a no-op. It also found cli-strings citing reports.ps1:104 and :75 - a CSS rule and `$rows = ''` - where the real lines are :51 and :74. Still owed: the panel, the finalizer, and the apply inside the 1.2.0 cascade.",
           "awaitingUser": false
         },
         {
@@ -749,15 +749,15 @@
         {
           "id": "P8.dummy-gate1",
           "title": "GATE 1: the owner approves the site dummy's home page and three treatments",
-          "status": "pending",
-          "note": "D12. The dummy is built early and handed back; everything else in the run continues while this waits. If GATE 1 is still unanswered when everything else is done, the run ends with the hand-back as its only open owner item.",
-          "awaitingUser": true
+          "status": "complete",
+          "note": "APPROVED 2026-09-08. The owner chose 'Approve - build the rest' when shown the fifteen bands, three treatments in light and dark, and the measured gates (9,996 text nodes at zero contrast failures, zero overflow at 390/760/1440/1920, each gate watched failing on a verified plant). Under D12 that also pre-authorises click-dummy GATE 2 and GATE 3, so the build continues without stopping again. One change came with it: the success hue moves 158 -> 150 to match the desktop - the dummy argued for 158 and its reasoning is kept in tokens.css rather than deleted, but one product carries one success hue. Recorded in windowsweep-web/design/README.md and PARITY-MANIFEST.json; commit b52a0fa.",
+          "awaitingUser": false
         },
         {
           "id": "P8.dummy-complete",
           "title": "The gallery and every remaining page, wired into one prototype that remembers",
-          "status": "pending",
-          "note": "Pre-authorised by D12 on the owner's yes to GATE 1. Eight gallery files with a playground each; the pages download, changelog, privacy, contact, account, admin-inbox, admin-users, admin-audit, sign-in, 404; six state flows; the four measured gates at 390/760/1440/1920 each watched red on two plants.",
+          "status": "in_progress",
+          "note": "In flight since the GATE 1 approval: the eight gallery files, then download, changelog, privacy, contact, account, admin-inbox, admin-users, admin-audit, sign-in, 404 and their index, wired into one prototype that remembers across six flows. Every new page takes the same measured gates the home page passed.",
           "awaitingUser": false
         },
         {

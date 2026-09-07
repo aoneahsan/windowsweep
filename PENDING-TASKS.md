@@ -33,4 +33,60 @@ uncommitted tracked work, and a story writer or editor mid-dispatch is holding a
 🔴 **Guard the measurement against a missing path.** `tr -dc '\r' < nosuchfile | wc -c` prints `0`, which
 reads identically to a correct LF result - a vacuous pass. Test `-f` first.
 
-A number is never reused: the next task is TASK-004.
+Two more patterns are missing from the same group and produced the same warning while this was being
+written: `*.rs` (added in `8f0008e` after git warned that `engine.rs` would flip) and **`.env.example`**,
+which matches no extension rule at all. Add `.env*` when working this task.
+
+A number is never reused: the next task is TASK-006.
+
+### TASK-004 - the elevated run has three gaps, all found by the 2026-09-07 fact-check
+
+The Elevation screen works and is not broken, but three things it implies are not true. Found while
+fact-checking the `desktop-readme` surface; the copy was corrected so nothing false shipped, and the code
+was left for its own task.
+
+**1. Nothing tails the elevated child's log.** `readReport()` at `desktop/src/lib/engine.ts:179` has **no
+caller anywhere** in `desktop/src`. The elevated child runs in its own console window (`lib/safety.ps1`
+relaunches with `-Verb RunAs -Wait`), so its output never reaches the parent's stderr. The dummy's
+`elevation.html` says the unelevated window "tails the log"; the draft's sentence was cut to "waits
+unelevated" instead. **To do:** read the child's own report and log from the run folder
+(`%LOCALAPPDATA%\com.aoneahsan.windowsweep\runs\<id>\`) and stream it into the Run screen's log pane -
+`readReport` already exists for exactly this and has been dead code since it was written. Then restore the
+dummy's wording, dummy first.
+
+**2. Sections 15, 16 and 20 are refused on every elevated run.** `elevatedArgs()` at `engine.ts:172` builds
+`['--only', ids, '--elevate', '--yes']` and never passes `--i-understand-deep`, which IS in the Rust
+allowlist (`engine.rs:39`). `modules/runner.ps1:89-92` refuses any `Batch = 'deep'` section without it - 11,
+15, 16 and 20. So the screen offers six admin sections and can only run three. The refusals do reach the
+report, so the user is told; nothing is silent. 🔴 **This is not a straightforward "add the flag" fix** -
+`--i-understand-deep` authorises irreversible, system-changing work, and the app adding it on the user's
+behalf is a decision, not a default. Needs a dummy amendment naming the gate, and probably an explicit
+per-section confirmation.
+
+**3. It runs all six at once.** `elevation.lede` implies choosing ("ask for one"); the screen passes every
+admin id. Either the copy or the screen is wrong, and the dummy decides which.
+
+A number is never reused: the next task is TASK-006.
+
+### TASK-005 - the consent notice promises analytics events that do not exist
+
+🔴 **Not a 1.1.0 problem and it must not be treated as one:** no telemetry key is configured in that build,
+so nothing is collected at all. It becomes a live inaccuracy the day a GA4 or Amplitude key lands - owner
+row 16, three of whose four keys have already arrived.
+
+`consent.provider.ga4.what` promises "Which screens you opened and which buttons you pressed" and
+`consent.provider.amplitude.what` promises "The same events, kept longer". The only `track()` callers in the
+whole tree are three updater events in `desktop/src/lib/updater.ts`. There is no screen-view event and no
+button event, `send_page_view: false`, and Amplitude's `autocapture: false`. So GA4 would receive
+`update.check.*` plus gtag's automatic session events, and nothing the sentence describes.
+
+**To do, before any GA4 or Amplitude key reaches a build:** either emit the events the notice describes - a
+route-change event and a button event, fanned out inside `track()` and never at the call sites - or amend the
+dummy's `consent.html` and Home's ledger to describe what is actually sent, then match `en.json`. The dummy
+owns the words, so it changes first either way.
+
+⚠️ A second, separate claim in the same panel is **unverifiable rather than wrong**: Amplitude "kept longer"
+is a vendor-retention statement with no source in this repository. `desktop-safety` raised it as a
+`NEEDS DECISION` on 2026-09-05 and the decision log records no answer. It needs the owner, not a code change.
+
+A number is never reused: the next task is TASK-006.

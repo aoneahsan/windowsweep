@@ -41,6 +41,22 @@
         </div>
       </section>
 
+      <!-- The engine refusing to run is a REAL state and it had no words at all: the
+           page said "Finished" and "The run finished." over a run that never started.
+           Cancelled is a different thing - a person pressed Cancel - so it keeps its
+           own word. Reachable rather than described, like splash.html?offline=1:
+           run.html?failed=1 renders this. -->
+      <section class="band band-app band-tight" data-ws-run-fail hidden>
+        <div class="wrap">
+          <div class="note note-warn">
+            <span aria-hidden="true">&#9888;</span>
+            <span><strong>The run stopped before it finished.</strong> Whatever it had
+              already reclaimed is in the log below, and the last line says why it
+              stopped.</span>
+          </div>
+        </div>
+      </section>
+
       <!-- the map DRAINS as the run proceeds: the one memorable moment -->
       <section class="band band-well">
         <div class="wrap rise">

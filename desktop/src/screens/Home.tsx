@@ -90,15 +90,27 @@ export function Home() {
       const id = newRunId();
       startRun(id);
       if (goToRun) void navigate({ to: '/run' });
-      const result = await run(args, id, {
-        onLog: appendLog,
-        onProgress: (section, event, status, freedBytes) => {
-          applyProgress({ section, event, ...(status ? { status } : {}), ...(freedBytes !== undefined ? { freedBytes } : {}) });
-        },
-      });
-      finishRun(result.summary, result.exitCode > 1);
-      if (result.summary) setCandidates(result.summary.candidates);
-      return result;
+      /* 🔴 The rejection path is not hypothetical and it is not rare. The engine
+         refuses a run for ordinary reasons - a missing library, a refused path, an
+         exit before the summary - and until this try/catch existed every one of
+         them left `phase` on 'running' for ever, because the callers below only
+         chain `.finally()` and that does not handle a rejection. The reason is
+         appended to the log pane, beside the engine's own output. */
+      try {
+        const result = await run(args, id, {
+          onLog: appendLog,
+          onProgress: (section, event, status, freedBytes) => {
+            applyProgress({ section, event, ...(status ? { status } : {}), ...(freedBytes !== undefined ? { freedBytes } : {}) });
+          },
+        });
+        finishRun(result.summary, result.exitCode > 1);
+        if (result.summary) setCandidates(result.summary.candidates);
+        return result;
+      } catch (e: unknown) {
+        appendLog(e instanceof Error ? e.message : String(e));
+        finishRun(null, true);
+        return null;
+      }
     },
     [startRun, navigate, appendLog, applyProgress, finishRun, setCandidates],
   );

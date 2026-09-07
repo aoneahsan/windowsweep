@@ -54,6 +54,17 @@ export function Elevation() {
       },
     })
       .then((r) => { finishRun(r.summary, r.exitCode > 1); })
+      .catch((e: unknown) => {
+        /* 🔴 Without this the screen hung for ever. The elevated parent hands the
+           work to a new window and exits before printing a summary, so run()
+           rejects; `void promise.finally()` does not handle a rejection, so
+           finishRun never fired and the Run screen stayed on "Running" while the
+           child had already finished. The reason goes into the log pane, which is
+           where the run's own output already is, rather than into a toast that
+           disappears. */
+        appendLog(e instanceof Error ? e.message : String(e));
+        finishRun(null, true);
+      })
       .finally(() => { setBusy(null); });
   }
 

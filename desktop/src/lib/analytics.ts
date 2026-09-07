@@ -60,10 +60,18 @@ declare global {
  * destination. The consent screen promises that no file path, folder name, drive
  * label, user name or machine name is ever sent; this function is where that
  * promise is kept, rather than in the discipline of every call site.
+ *
+ * 🔴 The drive-letter rule needs TWO backslashes and had one. `\[` is an escaped
+ * bracket, so the pattern read "letter, colon, a literal [" and matched nothing;
+ * the UNC rule below then caught everything from the first backslash onward and
+ * left the drive letter standing, so `C:\Users\PC\x.ts` scrubbed to `C:<unc>`.
+ * No folder or user name escaped - but a DRIVE LABEL did, and the consent notice
+ * lists a drive label among the things never sent. One character, invisible to
+ * typecheck, lint and review because both forms are valid regexes.
  */
 export function scrub(value: string): string {
   return value
-    .replace(/[A-Za-z]:\[^\s"']*/g, '<path>')
+    .replace(/[A-Za-z]:\\[^\s"']*/g, '<path>')
     .replace(/\\[^\s"']+/g, '<unc>')
     .replace(/\/(?:home|Users)\/[^/\s"']+/g, '<home>');
 }

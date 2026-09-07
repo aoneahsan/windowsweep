@@ -80,6 +80,8 @@
   "run.titleDone": "Reclaimed {{amount}}.",
   "run.titleDryRun": "A dry-run would reclaim {{amount}}.",
   "run.titleUnknown": "The run finished.",
+  "run.titleFailed": "The run stopped before it finished.",
+  "run.failedNote": "Whatever it had already reclaimed is in the log below, and the last line says why it stopped.",
   "run.dryRunNote": "This was a dry-run. Run the same thing without it to reclaim the space.",
   "run.currentSection": "Section {{id}} - {{title}}",
   "run.logTitle": "The engine's own log",

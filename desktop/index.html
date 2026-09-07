@@ -11,7 +11,16 @@
 <script src="/prepaint.js"></script>
 </head>
 <body>
-<div id="root"></div>
+<!-- 🔴 data-clarity-mask masks this element and every descendant, which is the whole
+     app. The consent notice promises "a recording of this window with every piece of
+     text masked", and Clarity does NOT do that by default - a project ships in
+     Balanced mode, which masks only text it judges sensitive. Nothing in
+     startClarity() configured it either: it loads the tag and nothing else. So the
+     promise lived in the copy and in no code. This attribute keeps it regardless of
+     the dashboard setting, and it is here rather than in the loader because a replay
+     can begin before any module has run. No Clarity project id is in this build yet;
+     the masking is in place before the key arrives, not after. -->
+<div id="root" data-clarity-mask="true"></div>
 <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

@@ -151,6 +151,18 @@ fn validate(args: &[String]) -> Result<(), String> {
 /// The UNC arm matters as much as the drive arm: `\\?\UNC\server\share` must become
 /// `\\server\share`, not `UNC\server\share`, or an install on a network path breaks in a
 /// new and more confusing way.
+/// Whether this invocation should produce a JSON summary on stdout.
+///
+/// Read off what the CALLER asked for, never off the built argument vector, because
+/// `--json` is appended to every invocation. Three flags legitimately produce no
+/// summary and are exempt by name; the exemption list is the whole of the logic, so
+/// it is here where a test can reach it rather than inline in `run_clean`.
+fn wants_summary(args: &[String]) -> bool {
+    !args
+        .iter()
+        .any(|a| a == "--version" || a == "--self-test" || a == "--elevate")
+}
+
 fn strip_verbatim_prefix(path: &Path) -> PathBuf {
     let s = path.to_string_lossy();
     if let Some(rest) = s.strip_prefix(r"\\?\UNC\") {
@@ -288,15 +300,18 @@ pub async fn run_clean(app: AppHandle, request: RunRequest) -> Result<RunFinishe
     // the log lines the window already received are where the real cause is.
     //
     // ⚠️ `--json` is appended to EVERY invocation above, so the condition has to be
-    // read off what the CALLER asked for, not off the built argument vector - and two
-    // read-only flags print their own shape rather than a summary, so they are exempt
-    // by name. Guarding on the built vector would have turned those two into failures
-    // the first time anything used them.
-    let wants_summary = !request
-        .args
-        .iter()
-        .any(|a| a == "--version" || a == "--self-test");
-    if wants_summary && stdout.trim().is_empty() {
+    // read off what the CALLER asked for, not off the built argument vector - and three
+    // flags legitimately produce no summary, so they are exempt by name. Guarding on the
+    // built vector would have turned them into failures the first time anything used them.
+    //
+    // 🔴 `--elevate` is the third, and leaving it out cost a hang. The parent process
+    // hands the work to a NEW elevated window and exits at windowsweep.ps1:291-295,
+    // before the runner that prints the summary is ever reached - so an elevated run
+    // has no summary on the parent's stdout by design, not by failure. Without this
+    // exemption the guard rejected every elevated run, and because Elevation.tsx had
+    // no catch the Run screen stayed on "Running" for ever. The child's own summary
+    // lands in the run folder; reading it is a separate, unbuilt piece of work.
+    if wants_summary(&request.args) && stdout.trim().is_empty() {
         return Err(format!(
             "the engine exited with code {exit_code} and produced no JSON summary. \
              It did not complete a run - read the log lines above for the reason."
@@ -436,6 +451,42 @@ mod tests {
     ///
     /// These four print and exit. None of them deletes anything, so allowing them
     /// costs nothing and refusing one breaks a screen.
+    #[test]
+    fn exempts_only_the_invocations_that_produce_no_summary() {
+        // A real run must be held to the contract: no summary line is a failure.
+        for args in [
+            vec!["--all".to_string(), "--yes".to_string()],
+            vec!["--only".to_string(), "12,13".to_string()],
+            vec!["--dry-run".to_string()],
+            vec!["--list".to_string(), "--json".to_string()],
+        ] {
+            assert!(
+                wants_summary(&args),
+                "{args:?} completes a run or prints the machine contract, so the summary is owed"
+            );
+        }
+
+        // These three print their own shape instead, and demanding a summary from them
+        // turns a working path into a hard error. `--elevate` is the one that cost a
+        // hang: the parent hands off to an elevated window and exits before the runner
+        // that prints the summary is reached.
+        for args in [
+            vec!["--version".to_string()],
+            vec!["--self-test".to_string(), "--no-color".to_string()],
+            vec![
+                "--only".to_string(),
+                "12,13,14".to_string(),
+                "--elevate".to_string(),
+                "--yes".to_string(),
+            ],
+        ] {
+            assert!(
+                !wants_summary(&args),
+                "{args:?} produces no summary by design, so the guard must not fire"
+            );
+        }
+    }
+
     #[test]
     fn allows_the_read_only_flags_the_app_needs_at_boot() {
         let ok = |v: Vec<&str>| validate(&v.into_iter().map(String::from).collect::<Vec<_>>());

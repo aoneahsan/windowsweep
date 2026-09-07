@@ -55,14 +55,23 @@ export function RunScreen() {
           <h1 className="t-xl wide">
             {phase === 'running'
               ? t('run.titleRunning', { done })
-              : summary
-                ? summary.dry_run
-                  ? t('run.titleDryRun', { amount: formatBytes(summary.estimated_bytes) })
-                  : t('run.titleDone', { amount: formatBytes(summary.freed_bytes) })
-                : neverRun
-                  ? t('run.logEmpty')
-                  : t('run.titleUnknown')}
+              : phase === 'failed'
+                ? t('run.titleFailed')
+                : summary
+                  ? summary.dry_run
+                    ? t('run.titleDryRun', { amount: formatBytes(summary.estimated_bytes) })
+                    : t('run.titleDone', { amount: formatBytes(summary.freed_bytes) })
+                  : neverRun
+                    ? t('run.logEmpty')
+                    : t('run.titleUnknown')}
           </h1>
+          {/* 🔴 A failed run used to fall through to `run.titleUnknown` - "The run
+              finished." over a run that never started. The dummy had no word for this
+              state at all: it carried Ready, Running, Finished and Cancelled, and
+              Cancelled is a different thing because a person chose it. The failed state
+              was written into run.html first (reachable as run.html?failed=1) and these
+              are its words. */}
+          {phase === 'failed' ? <p className="lede">{t('run.failedNote')}</p> : null}
           {summary?.dry_run ? <p className="lede">{t('run.dryRunNote')}</p> : null}
           {running && catalogue ? (
             <p className="t-sm ink-3">

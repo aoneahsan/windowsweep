@@ -17,6 +17,8 @@
   var db = window.wsdb, ws = window.ws;
   var el = ws.el, fmt = db.fmt;
   var map = null, timer = null, cancelled = false;
+  /* Reachable, not described: run.html?failed=1 renders the engine-refused state. */
+  var failed = new URLSearchParams(location.search).get('failed') === '1';
   var freed = 0, doneCount = 0, startedAt = 0;
   var queue = [];
 
@@ -77,9 +79,11 @@
     clearInterval(timer);
     document.querySelector('[data-ws-action="runStart"]').disabled = false;
     document.querySelector('[data-ws-action="runCancel"]').disabled = true;
-    window.wsWire.setText('runState', cancelled ? 'Cancelled' : 'Finished');
+    window.wsWire.setText('runState', failed ? 'Stopped' : cancelled ? 'Cancelled' : 'Finished');
+    var failBand = document.querySelector('[data-ws-run-fail]');
+    if (failBand) failBand.hidden = !failed;
     var fin = document.querySelector('[data-ws-finish]');
-    if (fin && !cancelled) {
+    if (fin && !cancelled && !failed) {
       fin.hidden = false;
       window.wsWire.setText('finishLine',
         'Freed ' + fmt.bytes(freed) + ' across ' + doneCount + ' sections in ' +

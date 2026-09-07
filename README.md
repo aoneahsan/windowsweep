@@ -58,6 +58,7 @@ It is the Windows member of a family with [linux-cleanup](https://github.com/aon
 - [💻 Command Line](#command-line)
 - [🧪 Examples](#examples)
 - [🎛️ Advanced Features](#advanced-features)
+- [🖥️ Desktop app](#desktop-app)
 - [🚑 Recovery & Troubleshooting](#recovery-troubleshooting)
 - [🚧 Limitations](#limitations)
 - [❓ FAQ](#faq)
@@ -94,9 +95,7 @@ the lot again, and your afternoon is gone. `windowsweep` takes the narrower path
 
 Nothing here can promise a number. How much comes back depends on your disk; `--scan` measures it.
 
-**Not the right tool when** you want a graphical, set-and-forget cleaner; when you are on Linux or macOS (use the
-siblings); when you want an undo for caches (there is none - they regenerate); or when you are looking for a
-security scanner or a registry cleaner. It reclaims disk space, nothing else.
+**Not the right tool when** you want a set-and-forget cleaner that runs itself; when you are on Linux or macOS (use the siblings); when you want an undo for caches (there is none - they regenerate); or when you are looking for a security scanner or a registry cleaner. It reclaims disk space, nothing else.
 
 <a id="features"></a>
 ## ✨ Features&nbsp;[#](#features)
@@ -352,6 +351,23 @@ Every flag, exit code and environment variable:
   [Docs](https://github.com/aoneahsan/windowsweep/blob/main/docs/reports-and-logs.md)
 - **Crash bundles** - captured locally on an unexpected exit, never transmitted.
 
+<a id="desktop-app"></a>
+## 🖥️ Desktop app&nbsp;[#](#desktop-app)
+
+A Tauri window that drives this engine rather than reimplementing it: it runs the bundled `windowsweep.ps1` with `--json --no-color` and carries no cleanup logic of its own. The chokepoint, the protected lists and every refusal are the command line's.
+
+- **A run you can watch.**
+- **A picker** for the four sections that ask a person to choose.
+- **Settings, most of them flags.**
+
+Screen by screen: [Desktop app](https://github.com/aoneahsan/windowsweep/blob/main/docs/desktop.md).
+
+The engine still makes no network calls at all. The window sends usage and crash reports to improve the product for everyone, and there is no switch. Never sent: a file path, a folder name, a drive label, your user name, your machine name, or the contents of anything. Sign-in is separate and optional.
+
+The installer is not signed with a paid code-signing certificate, so SmartScreen warns on first run. Every release publishes a SHA-256 checksum and a minisign signature the app's own updater checks; neither is a code-signing certificate. What to do about the dialog: [Desktop app](https://github.com/aoneahsan/windowsweep/blob/main/docs/desktop.md).
+
+Download the `.msi` or the `.exe` installer from [Releases](https://github.com/aoneahsan/windowsweep/releases). What each one installs, and what Windows says the first time: [Desktop app](https://github.com/aoneahsan/windowsweep/blob/main/docs/desktop.md).
+
 <a id="recovery-troubleshooting"></a>
 ## 🚑 Recovery & Troubleshooting&nbsp;[#](#recovery-troubleshooting)
 
@@ -420,6 +436,7 @@ More: [FAQ](https://github.com/aoneahsan/windowsweep/blob/main/docs/faq.md).
 | [Admin sections and elevation](https://github.com/aoneahsan/windowsweep/blob/main/docs/admin-and-elevation.md) | before running the system profile or touching the hibernation file |
 | [Reports and logs](https://github.com/aoneahsan/windowsweep/blob/main/docs/reports-and-logs.md) | parsing the JSON or finding a log |
 | [AI integration guide](https://github.com/aoneahsan/windowsweep/blob/main/AI-INTEGRATION-GUIDE.md) | an agent or a script runs it for you |
+| [Desktop app](https://github.com/aoneahsan/windowsweep/blob/main/docs/desktop.md) | you want the window rather than the command line |
 | [Troubleshooting](https://github.com/aoneahsan/windowsweep/blob/main/docs/troubleshooting.md) | something failed |
 | [Project status](https://github.com/aoneahsan/windowsweep/blob/main/docs/features/windowsweep-completion/00-tracker.json) | you want to know what is verified and what is still open: every phase and sub-task with its state and evidence |
 

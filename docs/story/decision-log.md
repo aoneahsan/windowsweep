@@ -315,3 +315,60 @@ There is no `FAQPage` JSON-LD anywhere on the docs site, and the four blocks tha
 so they are emitted on **every** page - adding `FAQPage` there would claim the CLI reference is an FAQ. It
 needs a page-scoped head tag, which is a docs-site code change rather than a copy change. The draft carries
 the ready payload for five questions, marked BLOCKED.
+
+## 2026-09-07 - GATE 4 pre-authorised for eleven surfaces, and three answers that were open
+
+The owner was asked, at the start of the completion run, how the remaining surfaces should reach GATE 4 while
+Opus worked unattended. He chose the option quoted here verbatim, because a pre-authorisation is exactly the
+kind of thing that must not be paraphrased later:
+
+> Pre-approve after a lean review: each surface gets `/story-review --lean` then the finalizer. You grant
+> GATE 4 in advance for all eleven, conditional on the finalizer's fact-consistency PASS and zero unanswered
+> NEEDS DECISION. Opus applies each surface to the real files and re-mirrors the docs site; a new
+> NEEDS DECISION pauses only that surface.
+
+So `--lean` is his named override for this run rather than a default the pipeline chose, and the eleven are
+`readme`, `tagline`, `site-front`, `desktop-readme`, `docs-start`, `docs-safety`, `docs-reference`,
+`docs-help`, `docs-about`, `ai-guide` and `cli-strings`. **The condition is the gate.** A finalizer FAIL or a
+fresh `NEEDS DECISION` stops that surface and only that surface; the question goes into `run-state.json` and
+`docs/MANUAL-TASKS.md` the turn it arrives, and the run moves to the next surface rather than guessing.
+
+### GATE 4 for surface 2, the tagline - approved
+
+```
+Developer-aware Windows cleanup CLI: dry-run first, personal folders refused, zero install via npx.
+```
+
+99 characters, ASCII only. He took the writer's recommendation over both alternates, which settles the finding
+the draft raised rather than answered: **the line lives in five places, not the three the brief named, and the
+docs site carried a different sentence entirely.** Adopting it is therefore also the decision to end that
+divergence, and all five move together inside the 1.2.0 cascade - `package.json`, `WS_TAGLINE`, the README
+header, `docusaurus.config.ts`, and the bundled engine copy that `yarn sync:cli` regenerates.
+
+The known cosmetic overflow stands and is not a defect: `Write-Box` draws a 78-glyph rule, so any line over
+75 characters runs past it in the terminal. Every candidate did, including the one shipping today at 91.
+
+### The three open NEEDS DECISION items - all answered as recommended
+
+1. **`docs-about`, the author description.** *"is 'independent software engineer' the description you want on
+   this page?"* - **keep it.** One wording across every surface; no file changes beyond leaving it alone.
+2. **Content-map row 14's length cap.** `desktop-readme` measured 887 words against a ~600 cap after two
+   rounds of cuts, with an honest floor near 800. **Raised to ~900**, so the what-it-sends disclosure, the
+   verbatim SmartScreen copy and the third mandated item all survive. That is a map change, and the map now
+   says so.
+3. **Row 6's declared `FAQPage` schema, which did not exist.** **Implement it, page-scoped.** The four
+   existing JSON-LD blocks sit in `headTags` and are emitted on every page, so adding `FAQPage` there would
+   claim the CLI reference is an FAQ. `docs/faq.md` becomes `faq.mdx` with a `<Head>` block, and its questions
+   are the visible text byte for byte, because schema that disagrees with the page is worse than none.
+
+### Two things the same session found in already-approved copy, and why that keeps happening
+
+Neither was a writer's error; both were in text approved earlier. **`splash.html` promises "the updater checks
+whether a newer build exists" and nothing in the app ever called the updater** - the plugin is registered and
+the permission granted, but no module imports it. And `tauri.conf.json` carried `plugins.updater.dialog`, a
+key the plugin's own `Config` does not accept, so it was silently ignored.
+
+This is the third instance of the clause added on 2026-09-05: an approved artefact holds its claim until
+something falsifies it, and nothing re-reads it. GATE 4 approved the sentence; only a grep for the consumer
+found that the sentence had no implementation behind it. **The lesson stays the same and gets sharper: when
+copy promises a mechanism, grep for the mechanism, not for the words.**

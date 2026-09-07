@@ -71,23 +71,41 @@ must produce **"No schema changes, nothing to migrate"**. A residual statement i
 either a `schema.ts` defect — fix the file, never the database — or a documented
 lossless difference. Nothing proceeds past a diff nobody has explained.
 
-## Still owner-only, and one of them is blocked on capacity
+## The project — created, linked, applied
 
-Creating a Supabase project is owner-only by rule. 🔴 **And right now there is
-nowhere to put one:** measured 2026-09-05, all **7** registered accounts hold **2
-projects each** — the free-tier limit, 14 of 14 slots used, every one a real named
-project. So `docs/MANUAL-TASKS.md` row 23 is two steps: a new account, then a
-project under it.
+`docs/MANUAL-TASKS.md` row 23 **landed on 2026-09-07**. It needed two steps
+because all 7 registered accounts held 2 projects each — the free-tier limit, 14
+of 14 slots used — so the owner created an eighth account first.
 
-Row 15 changes shape too. Supabase owns the OAuth redirect, so Google sign-in
-needs a **Web** client whose authorised redirect URI is
-`https://<ref>.supabase.co/auth/v1/callback`, with its id and secret entered in
-Supabase's own Auth → Providers form. The app never sees either — it asks Supabase
-for a provider URL and gets a code back on its loopback listener.
+| | |
+|---|---|
+| ref | `nlmetjyytgwaxcliusuo` |
+| region | `ap-south-1` |
+| account | FilesHub id 8, `aoneahsan.amp.p1@gmail.com` |
+| Postgres | 17.6.1 (so migration 2's `MAINTAIN` is valid — it arrived in PG 17) |
 
-Until both land, sign-in and sync are compiled and dormant: `configuredFeatures()`
-reports them absent, the Account screen says so instead of failing on press, and
-every cleanup feature works exactly as it does now.
+🔴 **Resolve the ref from the FilesHub vault, never from this table.** The vault
+is the source; a table in a file is a snapshot, and a wrong ref migrates someone
+else's database. `GET /projects/windowsweep/vault` → the `supabase` block.
+
+Both migrations were applied with `supabase db push --linked` on 2026-09-07 and
+verified from the catalogs (below), not from these files.
+
+## Row 15 is what still blocks sign-in
+
+🔴 **Google is not enabled** — `GET /auth/v1/settings` reports
+`external.google: false`. Supabase owns the OAuth redirect, so it needs a **Web**
+client whose authorised redirect URI is
+`https://nlmetjyytgwaxcliusuo.supabase.co/auth/v1/callback`, with its id and
+secret entered in Supabase's own Auth → Providers form. The app never sees
+either — it asks Supabase for a provider URL and gets a code back on its loopback
+listener.
+
+So `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` stay **empty** even
+though the database is ready: filling them would make `configuredFeatures()`
+advertise sign-in that cannot complete. Sign-in and sync remain compiled and
+dormant, the Account screen says so instead of failing on press, and every
+cleanup feature works exactly as it does now.
 
 ## Verify against the database, never against these files
 
@@ -110,3 +128,44 @@ the first on a table, and a SELECT policy with no `USING` is `USING (true)` — 
 every artefact it writes carries the same loss and no gate built from them can see
 it. This project is greenfield, so `pull` never runs; the note is here so it stays
 that way.
+
+### Which instrument, and one that does not work
+
+🔴 **There is no `psql` on this machine, and `supabase db query --linked` returns
+403** on CLI 2.107.0 (`Your account does not have the necessary privileges to
+access this endpoint`) — while the Management API endpoint it wraps answers the
+identical query as `postgres`. Use the endpoint directly:
+
+```
+POST https://api.supabase.com/v1/projects/<ref>/database/query
+Authorization: Bearer <sbp_ PAT from the FilesHub ACCOUNT vault>
+{"query":"select ..."}
+```
+
+🔴 **And it is the wrong instrument for the other question.** It runs as
+`postgres`, which holds `rolbypassrls`, so it proves what the schema *is* and
+nothing about whether a policy *holds*. Two questions, two instruments: catalogs
+over the Management API; behaviour over PostgREST with a real user's JWT, against
+**seeded** rows — a `(200, 0)` on an empty table passes vacuously.
+
+### Two objects in `public` that are NOT ours
+
+Both were verified on 2026-09-07 and neither is a hole. Recorded so the next
+session neither panics nor "fixes" them.
+
+- **`fileshub-project-status-check`** — FilesHub's keepalive table, which is what
+  stops the free project auto-pausing at ~7 days idle. RLS is enabled with **0
+  policies** and `anon`/`authenticated` hold **no grant on it**, so nothing but a
+  `bypassrls` role reads it. `service_role` holds `arwdDxtm`. Leave it alone:
+  revoking would break the keepalive.
+- **`rls_auto_enable()`** — a `SECURITY DEFINER` **event trigger** function
+  (`ensure_rls`, on `ddl_command_end`) that enables RLS on any new `public` table.
+  Its ACL grants `EXECUTE` to PUBLIC, so Supabase's advisors raise two WARNs
+  claiming `anon` can call it at `/rest/v1/rpc/rls_auto_enable`. 🔴 **That is a
+  false positive, and it was probed rather than assumed:** the call returns
+  `400 0A000 cannot display a value of type event_trigger` for both `anon` and
+  `authenticated` — it never enters the body — and PostgREST does not advertise it
+  in the OpenAPI surface at all. Its only effect is to *enable* RLS. A
+  `revoke execute … from public, anon, authenticated` would silence the advisors;
+  it is not applied here because the function is not ours and a migration
+  referencing it would not replay against a fresh database.

@@ -10,6 +10,7 @@ feedback/
 # Secrets and local overrides - never commit these
 .env
 .env.*
+!.env.example
 .npmrc
 *.pem
 *.p12

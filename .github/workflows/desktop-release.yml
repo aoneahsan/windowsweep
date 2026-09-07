@@ -2,13 +2,27 @@ name: desktop-release
 
 # Builds the NSIS and MSI installers and publishes them to a GitHub Release.
 #
-# 🔴 Manual dispatch only until the updater signing secrets exist. A tag-triggered
-# release that runs without `TAURI_SIGNING_PRIVATE_KEY` produces installers with
-# no `.sig` and no `latest.json`, which means the updater silently has nothing to
-# verify - a release that looks complete and cannot be updated from. The tag
-# trigger is added in the same change that adds the secrets.
+# Runs on a `desktop-v*` tag push, and by manual dispatch when a tag needs
+# rebuilding. The updater signing secrets - `TAURI_SIGNING_PRIVATE_KEY` and
+# `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` - are set on the repository, so a tag
+# push produces signed artefacts. The release is created as a DRAFT: a person
+# reads the asset list before anything is published.
+#
+# 🔴 Why the last step asserts the asset list. Without
+# `bundle.createUpdaterArtifacts` in tauri.conf.json, or without the signing
+# key in the build environment, the bundler produces installers with no `.sig`
+# beside them. Nothing earlier fails: the build is green, the release looks
+# complete, and the updater has nothing to verify - so every install is
+# stranded on the version it already has, and the only symptom is an update
+# that never arrives. The Elevation screen and the desktop README both promise
+# a SHA-256 checksum for each installer and a minisign signature the app's own
+# updater checks, so the release either carries all six artefacts or this
+# workflow fails.
 
 on:
+  push:
+    tags:
+      - 'desktop-v*'
   workflow_dispatch:
     inputs:
       tag:
@@ -26,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          ref: ${{ inputs.tag }}
+          ref: ${{ inputs.tag || github.ref_name }}
 
       - uses: actions/setup-node@v5
         with:
@@ -59,9 +73,10 @@ jobs:
           fi
 
       # 🔴 The same sentence promises "a minisign signature the app's own updater
-      # checks". tauri.conf.json still carries REPLACE_WITH_UPDATER_PUBLIC_KEY, so
-      # that half has nothing behind it. Refuse here rather than publish a release
-      # whose shipped copy describes an artefact it does not contain.
+      # checks". A placeholder pubkey leaves that half of the promise with nothing
+      # behind it, and a placeholder is also the shape a bad merge or a reverted
+      # config takes. Refuse here rather than publish a release whose shipped copy
+      # describes an artefact it does not contain.
       - name: The updater public key is real
         shell: bash
         run: |
@@ -89,8 +104,8 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           projectPath: desktop
-          tagName: ${{ inputs.tag }}
-          releaseName: 'windowsweep desktop ${{ inputs.tag }}'
+          tagName: ${{ inputs.tag || github.ref_name }}
+          releaseName: 'windowsweep desktop ${{ inputs.tag || github.ref_name }}'
           releaseDraft: true
           prerelease: false
           includeUpdaterJson: true
@@ -119,4 +134,55 @@ jobs:
       - name: Attach the checksum file to the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload "${{ inputs.tag }}" SHA256SUMS.txt --clobber
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: gh release upload "$TAG" SHA256SUMS.txt --clobber
+
+      # 🔴 THE ASSET LIST IS THE ONLY EVIDENCE THAT THE PROMISE HELD. Every step
+      # above can pass while the release is missing the half a user cannot see:
+      # the two `.sig` files exist only if `bundle.createUpdaterArtifacts` is
+      # true AND the signing key reached the bundler, and `latest.json` only if
+      # `includeUpdaterJson` produced one. A release missing any of them is
+      # worse than a failed one, because it looks finished - so read what is
+      # actually attached and refuse to leave behind a draft that cannot be
+      # updated from. Both installers are updater-enabled targets on Windows, so
+      # both are expected to carry a signature.
+      - name: The release carries every artefact the shipped copy promises
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          assets="$(gh release view "$TAG" --json assets --jq '.assets[].name')"
+          echo "assets attached to $TAG:"
+          echo "$assets"
+          have() {
+            while IFS= read -r name; do
+              [ -n "$name" ] || continue
+              case "$name" in ($1) return 0 ;; esac
+            done <<< "$assets"
+            return 1
+          }
+          missing=''
+          for spec in \
+            '*-setup.exe|the NSIS installer' \
+            '*-setup.exe.sig|the NSIS installer minisign signature' \
+            '*.msi|the MSI installer' \
+            '*.msi.sig|the MSI installer minisign signature' \
+            'latest.json|the updater manifest' \
+            'SHA256SUMS.txt|the SHA-256 checksums'; do
+            if ! have "${spec%%|*}"; then
+              missing="${missing}  ${spec%%|*}  (${spec##*|})"$'\n'
+            fi
+          done
+          if [ -n "$missing" ]; then
+            echo "this release does not carry what the shipped copy promises. Missing:"
+            printf '%s' "$missing"
+            echo "A missing .sig means the bundler ran without TAURI_SIGNING_PRIVATE_KEY or"
+            echo "without bundle.createUpdaterArtifacts, so the updater has nothing to verify"
+            echo "and every install stays stranded on the version it already has."
+            echo "A missing latest.json means includeUpdaterJson produced no manifest, so the"
+            echo "endpoint in tauri.conf.json would 404."
+            echo "Do not publish this draft. Fix the cause and re-run the tag."
+            exit 1
+          fi
+          echo "all six promised artefacts are attached: both installers, both signatures, latest.json, SHA256SUMS.txt"

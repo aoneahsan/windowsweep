@@ -39,9 +39,13 @@ The [README](https://github.com/aoneahsan/windowsweep#readme) is the elevator pi
 |---|---|
 | [Author](./author.md) | Who built this, the sibling tools, how to support the work |
 | [Packages](./PACKAGES.md) | The dependency and manifest record (there are no dependencies) |
-| [What the project consists of](../what-this-project-consists-of.md) | Every part of the project with its evidence, as audited on 2026-09-05 |
-| [Remaining work](../remaining-work.md) | The specification of every open item: evidence, success criteria, acceptance points |
-| [Remaining work, one page](../remaining-work-summary.md) | Percentages, the next ten actions, the owner-only rows |
+| [Project status](./features/windowsweep-completion/00-tracker.json) | Every phase and sub-task with its state, its evidence and its commit |
+
+🔴 **The three planning files are no longer in this repository.** Since 2026-09-07 (owner decision)
+`remaining-work.md` (the specification of every open item), `remaining-work-summary.md` (the one-page view
+with the percentage) and `what-this-project-consists-of.md` (what exists today) live one level above the
+repository, in the workspace folder that holds it - **outside version control**. A `git clone` does not carry
+them; the whole `windows-cleanup-root` folder has to be copied. The status record above stays here.
 
 ## Quick contact
 

@@ -20,7 +20,30 @@ const dest = join(desktop, 'src-tauri', 'resources', 'windowsweep');
 
 // The `files` array in the CLI's package.json is the authority on what ships.
 const pkg = JSON.parse(readFileSync(join(cli, 'package.json'), 'utf8'));
-const entries = ['windowsweep.ps1', 'VERSION', 'LICENSE', ...pkg.files.filter((f) => f.endsWith('/'))];
+
+// 🔴 `package.json` is copied EXPLICITLY because npm puts it in every tarball
+// regardless of the `files` array, so it never appears in that array and a
+// files-driven copy silently omits the one file npm always ships. Two things
+// depended on it and both were wrong until 2026-09-07:
+//
+//   bin/windowsweep.js:42 reads it for the version, inside a try/catch that
+//   falls back to the literal in lib/constants.ps1 - so the bundled launcher
+//   took a code path no npm user ever takes, and reported the right number for
+//   the wrong reason.
+//
+//   The self-test's version-parity check compares VERSION, package.json and
+//   lib/constants.ps1. With the file absent it read '' and FAILED - 150 of 151
+//   from the installed app while the repository copy passed 151/151.
+//
+// The comment above promises the bundle is "exactly what the published npm
+// tarball contains". This is what makes that true.
+const entries = [
+  'windowsweep.ps1',
+  'VERSION',
+  'LICENSE',
+  'package.json',
+  ...pkg.files.filter((f) => f.endsWith('/')),
+];
 
 rmSync(dest, { recursive: true, force: true });
 mkdirSync(dest, { recursive: true });

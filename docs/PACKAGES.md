@@ -60,10 +60,11 @@ are missing.
 `npm pack` emits the launcher, `lib/`, `modules/`, both entry files, `README.md`, `LICENSE`, `CHANGELOG.md`,
 `SECURITY.md`, `VERSION`, `AI-INTEGRATION-GUIDE.md` and `package.json`. The 1.1.0 release tarball is 44
 files, 108.9 kB packed and 365.6 kB unpacked (1.0.1: 38 files, 81.4 kB / 273.1 kB; 1.0.0: 37 files, 78.1 kB /
-263.2 kB). `docs/` is not shipped; the README links every page by absolute URL. The three
-root planning files (`remaining-work.md`, `remaining-work-summary.md`, `what-this-project-consists-of.md`),
-`PENDING-TASKS.md` and the portfolio-info copy are outside the allowlist and never ship; CI asserts each by
-name.
+263.2 kB). `docs/` is not shipped; the README links every page by absolute URL. `PENDING-TASKS.md` and the
+portfolio-info copy are outside the allowlist and never ship; CI asserts each by name. The three planning
+files (`remaining-work.md`, `remaining-work-summary.md`, `what-this-project-consists-of.md`) **left this
+repository on 2026-09-07** for the workspace folder above it, so they cannot reach a tarball at all - CI
+still names them, which is now a guard against one being put back rather than a live exclusion.
 
 Confirmed absent from the tarball: `CLAUDE.md`, `AGENTS.md`, `docs/`, `temp/`, `.github/`, `.npmrc`, `.env*`,
 logs, reports, bundles.

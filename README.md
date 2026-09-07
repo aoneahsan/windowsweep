@@ -132,7 +132,7 @@ security scanner or a registry cleaner. It reclaims disk space, nothing else.
 
 | Platform | Supported | Notes |
 |---|---|---|
-| Windows 11 | ✅ | Same engine and PowerShell hosts; a real run on Windows 11 is on the verification list ([roadmap](https://github.com/aoneahsan/windowsweep/blob/main/remaining-work-summary.md)) |
+| Windows 11 | ✅ | Same engine and PowerShell hosts; a real run on Windows 11 is on the verification list ([project status](https://github.com/aoneahsan/windowsweep/blob/main/docs/features/windowsweep-completion/00-tracker.json)) |
 | Windows 10 (1809 and later) | ✅ | The primary development target; every real run so far |
 | Windows Server 2019+ | ⚠️ | Uses nothing newer than 1809; CI runs the self-test and a dry-run on Windows Server (`windows-latest`) on every push to `main` and every pull request, but no real cleanup has been run on Server |
 | Linux | ❌ | `os: ["win32"]` makes npm refuse to install; use [linux-cleanup](https://github.com/aoneahsan/linux-cleanup) |
@@ -421,7 +421,7 @@ More: [FAQ](https://github.com/aoneahsan/windowsweep/blob/main/docs/faq.md).
 | [Reports and logs](https://github.com/aoneahsan/windowsweep/blob/main/docs/reports-and-logs.md) | parsing the JSON or finding a log |
 | [AI integration guide](https://github.com/aoneahsan/windowsweep/blob/main/AI-INTEGRATION-GUIDE.md) | an agent or a script runs it for you |
 | [Troubleshooting](https://github.com/aoneahsan/windowsweep/blob/main/docs/troubleshooting.md) | something failed |
-| [Roadmap and remaining work](https://github.com/aoneahsan/windowsweep/blob/main/remaining-work-summary.md) | you want to know what is verified and what is still open: the desktop app, the story pass and the verification runs |
+| [Project status](https://github.com/aoneahsan/windowsweep/blob/main/docs/features/windowsweep-completion/00-tracker.json) | you want to know what is verified and what is still open: every phase and sub-task with its state and evidence |
 
 <a id="changelog"></a>
 ## 🔄 Changelog&nbsp;[#](#changelog)

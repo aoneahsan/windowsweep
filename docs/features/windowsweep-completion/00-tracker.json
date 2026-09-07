@@ -1,12 +1,12 @@
 {
   "$schema": "windowsweep-completion-tracker",
-  "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md at the repository root; this file is the ONLY status record.",
+  "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md, which since 2026-09-07 lives at the WORKSPACE ROOT one level above this repository and is OUTSIDE git (a clone does not carry it - copy the whole windows-cleanup-root folder). The method is ../completion-plan-2026-09-07.md. This file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-09-06",
-  "planFile": "C:/Users/PC/.claude/plans/please-plan-and-get-agile-fairy.md",
+  "lastUpdated": "2026-09-07",
+  "planFile": "C:/Users/PC/.claude/plans/we-have-remaining-work-md-in-purrfect-wind.md",
   "overview": "docs/features/windowsweep-completion/00-overview.md",
-  "specification": "remaining-work.md",
+  "specification": "../remaining-work.md (the workspace root D:\\work\\windows-cleanup-root\\, OUTSIDE git since 2026-09-07 - copy the folder, not the clone). The method is ../completion-plan-2026-09-07.md.",
   "userDecisions": {
     "scope": "1.0 catalogue plus family-parity features as 1.1 (owner, 2026-09-03)",
     "docsSite": "in scope: aoneahsan/windowsweep-docs at windowsweep-docs.aoneahsan.com, Docusaurus on GitHub Pages (owner, 2026-09-03)",
@@ -25,17 +25,28 @@
     "clickDummyGates": "GATE 1 approved 2026-09-05: \"approved, looks great, get all remaining work fully done now\". GATES 2 and 3 approved IN ADVANCE in the same message - asked where to stop he chose \"Straight through to the app\", which is the sole authority for creating anything under desktop/ beyond design/. GATE 4 (parity) still closes only after the app exists",
     "scopeOf100": "INCLUDES the desktop app and the storytelling retrofit (owner, 2026-09-05, asked directly: \"Yes, include it\"). The 2026-09-03 CLI-only scope still exists and is reported beside it, because the earlier records were written against that number.",
     "wipCommit": "The eight A4 click-dummy screens, their page-*.js, pages.html and the NAV wiring were committed as their own design commit 2721b75 before the audit commit (owner, 2026-09-05: \"Commit as its own design commit\"). A static check resolved 456 local links and every NAV href first.",
-    "folderLayout": "D:\\work\\windows-cleanup-root\\{windows-cleanup, windowsweep-docs} is durable and the inner folder names do not change (owner, 2026-09-05: \"Keep this layout as is\"). MANUAL-TASKS row 4 is closed as superseded.",
+    "folderLayout": "D:\\work\\windows-cleanup-root\\ holding the two repositories side by side is durable (owner, 2026-09-05: \"Keep this layout as is\"), and MANUAL-TASKS row 4 is closed as superseded. RED: the inner product folder is now windowsweep\\, NOT windows-cleanup\\ - renamed on disk and confirmed final by the owner on 2026-09-07, superseding the \"inner folder names do not change\" half of the 2026-09-05 answer.",
     "storytelling": "Retrofit EVERYTHING (owner, 2026-09-05: \"Retrofit everything\"). Phase P7: /story-init and the Story Bible (GATE 1), the content map (GATE 2), then the README, the docs pages, llms.txt, the CLI console strings and the desktop copy through the pipeline. The desktop words are amended in the click dummy before the app is written (frontend-ui-standards.md section 10a). No product-voice prose before GATE 1; correcting a false statement is not new prose.",
-    "backend": "Supabase, not Firebase (owner directive 2026-09-05: \"moving forward use supabase as backend for all new projects unless i ask otherwise\"). Asked whether it reached this project, he chose to switch it now rather than at release - nothing had been created on Firebase, so it cost code and no data."
+    "backend": "Supabase, not Firebase (owner directive 2026-09-05: \"moving forward use supabase as backend for all new projects unless i ask otherwise\"). Asked whether it reached this project, he chose to switch it now rather than at release - nothing had been created on Firebase, so it cost code and no data.",
+    "planningFiles": "Workspace root, all three (owner, 2026-09-07): remaining-work.md, remaining-work-summary.md and what-this-project-consists-of.md live at D:\\work\\windows-cleanup-root\\. They are OUTSIDE git, so another machine needs the whole folder copied rather than a clone. The README's two public roadmap links now point at this tracker, which stays in the repository.",
+    "storyGate4PreApproval": "Pre-approve after a lean review (owner, 2026-09-07, verbatim option): \"Each surface gets /story-review --lean then the finalizer. You grant GATE 4 in advance for all eleven, conditional on the finalizer's fact-consistency PASS and zero unanswered NEEDS DECISION. Opus applies each surface to the real files and re-mirrors the docs site; a new NEEDS DECISION pauses only that surface.\" The eleven: readme, tagline, site-front, desktop-readme, docs-start, docs-safety, docs-reference, docs-help, docs-about, ai-guide, cli-strings. --lean is his named override for this run.",
+    "tagline": "GATE 4 for content-map surface 2, granted 2026-09-07: \"Developer-aware Windows cleanup CLI: dry-run first, personal folders refused, zero install via npx.\" 99 characters, ASCII only. It replaces \"Safe-by-default...\" in all FIVE places inside the 1.2.0 cascade - package.json description, WS_TAGLINE in lib/constants.ps1, README.md header, windowsweep-docs/docusaurus.config.ts (which carried a DIFFERENT sentence), and the bundled engine copy via yarn sync:cli. Adopting it ends that divergence.",
+    "releaseSequence": "Two desktop releases (owner, 2026-09-07): desktop-v1.1.0 first with sync and telemetry dormant; then the console strings and the tagline as CLI 1.2.0, whose GitHub Release is created with --latest=false; then desktop-v1.2.0, and the in-app updater verified 1.1.0 -> 1.2.0 on this machine. RED: every future CLI release is --latest=false, because the updater endpoint reads releases/latest/download/latest.json and must always resolve to a DESKTOP release.",
+    "ownerRowsInFlight": "The owner does rows 11/12 (Hostinger DNS + Pages HTTPS), 16 and 18 (telemetry keys) and 23 then 15 (Supabase account+project, then the Google OAuth web client) while the sessions run. Row 23 LANDED 2026-09-07. About row 20 he said, verbatim: \"complete all that you can on this system, and then i will clone this project completed from this system to another system and ask you to do all that on that system and you can cover whatever you get from that system, as i do not have much more than that\" - so row 20 and the P1 runs move to a second-machine handoff (completion plan section 9) rather than blocking this run.",
+    "realRunAuthorised": "Yes, the unelevated safe batch (owner, 2026-09-07): during run-to-verify of the installed desktop app, ONE real --all --yes developer-mode run is authorised - the same scope as the 2026-09-03 real run. No interactive section, no admin section, never elevated, and the dry-run runs first. It doubles as the first real run through the app and relieves C:, which had 6.34 GB free.",
+    "needsDecisionAnswers": "All three as recommended (owner, 2026-09-07): keep \"independent software engineer\" on docs/author.md; raise content-map row 14 (desktop-readme) from ~600 to ~900 words so the what-it-sends disclosure survives; implement a PAGE-SCOPED FAQPage JSON-LD on the FAQ page only (the four existing blocks sit in headTags and are emitted on every page, so adding it there would claim the CLI reference is an FAQ).",
+    "folderRename": "Yes, windowsweep\\ is final (owner, 2026-09-07). The inner product folder was renamed from windows-cleanup to windowsweep on disk; asked whether that was durable, he confirmed it. This SUPERSEDES the second half of the session-7 folderLayout decision below. The enclosing root layout is unchanged.",
+    "plannerDeviations": "Three calls the Fable planning session took and flagged for veto rather than hiding: (1) installer file names stay Tauri's canonical windowsweep_<version>_x64-setup.exe / _x64_en-US.msi rather than the build-stamped pattern the publishing rule asks of an APK, because latest.json and each .sig are keyed to the bundler's names and the updater downloads by that URL - the version already makes each name unique and the build date plus SHA-256 ride in the release body and SHA256SUMS.txt; (2) GATE 4 parity is measured at 1440 and 760, not 390, because tauri.conf.json sets minWidth 760; (3) the updater UI needs no new words - splash.html in the click dummy already specifies the whole update gate, so building it is a GATE 4 parity fix using approved copy."
   },
   "knownRisks": [
-    "The Visual Studio Build Tools UAC click (MANUAL-TASKS row 22) has not happened, so nothing Rust-side links on this machine and the Tauri half of P6 is CI-verified only. Report that plainly; never round it up to \"verified\".",
-    "The docs domain still probes 000. Every link, homepage field and WS_DOCS switch waits on the owner DNS rows 11-12 and a 200 probe - never switch one early.",
-    "The storytelling retrofit gates the desktop copy: RW-077 must not write UI strings before RW-090, RW-091 and RW-093 have run, or the app ships words the Bible never approved.",
-    "P5 target paths wait on the owner probe (row 20). A path becomes a target only once it has been seen on a real machine holding regenerable data - C:\\Intel was in the specification, exists, and was rejected on inspection.",
-    "The click dummy A4 screens are committed but unverified: Block Q's inventory, Block R's wiring and Block S's sweep (RW-073 to RW-075) are open, so the dummy is not yet the finished specification the app is built against.",
-    "Supabase free-tier capacity: all 7 registered accounts are full at 2 projects each (14/14 measured 2026-09-05), so windowsweep needs a NEW account before it can have a project. Both are owner-only."
+    "RESOLVED 2026-09-06 (row 22): the C++ toolchain is installed at D:\\BuildTools, so the whole desktop-ci chain plus NSIS and MSI installers build locally. RED: the recorded CAUSE of the old link failure was wrong - the GNU coreutils link.exe is STILL first on PATH and everything links regardless, because rustc resolves the MSVC linker by absolute path through the VS Setup COM API. The toolchain was simply absent; PATH order never mattered.",
+    "RESOLVED 2026-09-07 (row 23): the Supabase project exists - ref nlmetjyytgwaxcliusuo, id 15, account aoneahsan.amp.p1@gmail.com - and the FilesHub link is recorded. G1, G2 and G3 all pass. What is still owner-only is row 15, the Google OAuth web client: external.google reads false, so VITE_SUPABASE_* stay out of release builds until it flips.",
+    "RED, found by the 2026-09-07 planning session: NOTHING IN THE APP CALLS THE UPDATER. tauri-plugin-updater is registered in lib.rs and updater:default is granted, but no module under desktop/src imports @tauri-apps/plugin-updater - only two copy strings promise the check. The click dummy specified the whole update gate in splash.html and it was never built. It is a GATE 4 parity defect, not a new feature.",
+    "RED, same session: plugins.updater.dialog in tauri.conf.json is a DEAD KEY. tauri-plugin-updater 2.11.0 Config accepts only endpoints, pubkey, windows and three dangerous_* flags, so it was silently ignored. Removed in Wave 0.",
+    "The docs domain still probes 000 (owner rows 11-12). Every link, homepage field and WS_DOCS switch waits on a 200 probe - never switch one early, and never switch just one.",
+    "The three planning files left git on 2026-09-07 (they now live at the workspace root). A git clone of this repository does NOT carry them: the second machine needs the whole D:\\work\\windows-cleanup-root folder.",
+    "No engine file may change outside the 1.2.0 cascade commit. The invariant is published engine == main's engine, re-proved with: git diff 3c4d54e..HEAD -- lib modules windowsweep.ps1 bin (empty until that commit).",
+    "C: had 6.34 GB free on 2026-09-07 and the cargo registry plus the WebView2 profiles live there. Watch it; the authorised real safe batch is the relief valve."
   ],
   "phases": [
     {
@@ -256,6 +267,13 @@
           "status": "complete",
           "note": "yarn install completed (40m on a cold cache, 846 packages) and THE LOCKFILE DID NOT CHANGE, which vindicates the inherited one: the dependency set really was identical. yarn build and yarn typecheck green locally; verified in the BUILT output that the OG PNG ships, og:image points at it, the corrected labels are present and the owner-only sweep is clean across 202 files. docs commit 8e5a87e",
           "awaitingUser": false
+        },
+        {
+          "id": "P3.faqpage",
+          "title": "A page-scoped FAQPage JSON-LD on the docs site's faq page only, gated so it appears on that page and nowhere else",
+          "status": "pending",
+          "note": "Owner decision 2026-09-07 (needsDecisionAnswers). docs/faq.md becomes faq.mdx with a Head block; the payload is drafted in docs/story/drafts/docs-help.md, marked BLOCKED there. Gate: FAQPage present once in build/faq/index.html and zero times in build/cli-reference/index.html, watched failing.",
+          "awaitingUser": false
         }
       ]
     },
@@ -306,6 +324,20 @@
           "status": "complete",
           "note": "WINDOWSWEEP_portfolio-info_2026-09-05.md in the repo root and the notebook apps/ folder (cmp verified, the 09-03 file deleted in both); master JSON hasPortfolioFile, statusNote and notes updated. Next eligible refresh 2026-09-12",
           "awaitingUser": false
+        },
+        {
+          "id": "P4.owner-row-5",
+          "title": "Owner: review the windowsweep entry in PROJECT-LINKS-IDENTIFIERS-CONTACT.json and set ownerReview",
+          "status": "blocked",
+          "note": "MANUAL-TASKS row 5. The entry reads \"Published v1.1.0 (2026-09-04)\" with 26 sections and the 151-check self-test; ownerReview is empty. Added 2026-09-07 because P4 read in_progress with no row explaining why.",
+          "awaitingUser": true
+        },
+        {
+          "id": "P4.owner-row-13",
+          "title": "Owner: import windowsweep.bib into ORCID and retype the work from Other to Software",
+          "status": "blocked",
+          "note": "MANUAL-TASKS row 13. BibTeX cannot express the work type, so the retype is a manual step in the ORCID UI. Added 2026-09-07 for the same reason as row 5.",
+          "awaitingUser": true
         }
       ]
     },
@@ -405,6 +437,13 @@
           "status": "complete",
           "note": "windowsweep@1.1.0 published 2026-09-04 from 3c4d54e (44 files, 109.0 kB packed, 365.6 kB unpacked); publish gate ran in full including a content-regression diff against the 1.0.1 tarball (no file lost, six added). Tag v1.1.0 and a GitHub Release; docs site re-mirrored (Pages run 33857426599 green)",
           "awaitingUser": false
+        },
+        {
+          "id": "P5.release-1.2.0",
+          "title": "CLI 1.2.0: the story-approved console strings, the tagline in all five places, two engine string defects, the full cascade, publish, tag, and a GitHub Release with --latest=false",
+          "status": "pending",
+          "note": "Completion plan Wave 4. The engine-string defects are modules/system_admin.ps1:155 vs :162 (the Fast Startup percentage stated two ways) and section 22 carrying Dev = $true with no behavioural branch, so --list --json reports a flag that changes nothing.",
+          "awaitingUser": false
         }
       ]
     },
@@ -430,16 +469,16 @@
         },
         {
           "id": "P6.firebase-vault",
-          "title": "Firebase project, Google provider, Firestore rules and indexes, FilesHub vault seeded",
-          "status": "blocked",
-          "note": "🔴 RW-079 is now SUPABASE, not Firebase (owner directive 2026-09-05; he chose to switch this project the same day, before anything had been created, so it cost code and no data). Written and committed: the Drizzle schema at desktop/src/db/schema/sync.ts, two migrations (tables + RLS with seven policies, and the paired privilege block that Drizzle cannot emit), auth.ts on Supabase Auth PKCE reusing the Rust loopback listener unchanged, sync.ts on PostgREST paginated at 20 with a keyset cursor. The equivalence gate reports no schema changes, so schema and migrations agree. 🔴 BLOCKED on owner row 23, and on a constraint the code could not reveal: all 7 registered Supabase accounts hold 2 projects each - the free-tier limit, 14 of 14 used - so there is nowhere to put one and creating an account is owner-only too. Row 15 also changed shape: Supabase owns the redirect, so Google sign-in needs a WEB client at https://<ref>.supabase.co/auth/v1/callback, not a Desktop client.",
-          "awaitingUser": true
+          "title": "Supabase: the project, the schema applied, and grants/policies verified from the catalogues",
+          "status": "complete",
+          "note": "🔴 RW-079 is now SUPABASE, not Firebase (owner directive 2026-09-05; he chose to switch this project the same day, before anything had been created, so it cost code and no data). Written and committed: the Drizzle schema at desktop/src/db/schema/sync.ts, two migrations (tables + RLS with seven policies, and the paired privilege block that Drizzle cannot emit), auth.ts on Supabase Auth PKCE reusing the Rust loopback listener unchanged, sync.ts on PostgREST paginated at 20 with a keyset cursor. The equivalence gate reports no schema changes, so schema and migrations agree. 🔴 BLOCKED on owner row 23, and on a constraint the code could not reveal: all 7 registered Supabase accounts hold 2 projects each - the free-tier limit, 14 of 14 used - so there is nowhere to put one and creating an account is owner-only too. Row 15 also changed shape: Supabase owns the redirect, so Google sign-in needs a WEB client at https://<ref>.supabase.co/auth/v1/callback, not a Desktop client. | 2026-09-07 CLOSED. The owner created the project (row 23, which needed a NEW account because all seven existing ones were at the two-project free-tier limit): FilesHub Supabase id 15, ref nlmetjyytgwaxcliusuo, region ap-south-1, account id 8 aoneahsan.amp.p1@gmail.com. The url matches the ref (checked, not trusted - that field silently drives every derived endpoint). G1, G2 and G3 all pass; the link is recorded via PATCH supabase_project_id=15 so nobody re-derives it. Both migrations applied with supabase db push --linked on Postgres 17.6.1 (which is what makes migration 2 MAINTAIN legal - on PG 15/16 it is a syntax error and the push would half-apply). Equivalence gate clean: yarn db:generate reports no schema changes. VERIFIED FROM THE CATALOGUES, never the migration text: anon holds nothing on any table; authenticated has table-level SELECT+DELETE and column-scoped INSERT/UPDATE; user_settings.user_id is outside the UPDATE grant and runs has no UPDATE privilege at all; all seven policies present with correct qual/with_check; RLS enabled on both. Behaviour probed as two seeded non-admin users: own rows read, other user 0 rows, forbidden UPDATE 200-with-0-rows, cross-user INSERT 403/42501, .upsert() carrying user_id refused with permission denied for table user_settings, anon refused everywhere; test users deleted afterwards. 🔴 Row 15 (the Google WEB OAuth client) is the ONLY remaining blocker - external.google reads false, so VITE_SUPABASE_* stay empty deliberately rather than advertising sign-in that cannot complete.",
+          "awaitingUser": false
         },
         {
           "id": "P6.code-ci",
           "title": "desktop/ app written and compiled by CI (desktop-ci.yml, desktop-release.yml)",
           "status": "in_progress",
-          "note": "RW-077 COMPLETE 2026-09-05: all eleven screens built (Splash, Consent, Home, Run, Sections, Picker, History, Report, Settings, Account, Elevation) - the Placeholder scaffolding is deleted because it has no callers left. RW-078 src-tauri written, 5 commands, least-privilege capabilities, an argument allowlist with a unit test, an icon set exported from a new SVG master. RW-080 both workflows; desktop-ci found two real defects on its first runs - the protocol-asset feature with no allowlist entry, and a resource glob whose trailing ** matches directories rather than files. Rust still CI-only (owner row 22). | desktop-ci GREEN on 4c031d7: every step including cargo fmt, clippy -D warnings, cargo test and tauri build --no-bundle.",
+          "note": "RW-077 COMPLETE 2026-09-05: all eleven screens built (Splash, Consent, Home, Run, Sections, Picker, History, Report, Settings, Account, Elevation) - the Placeholder scaffolding is deleted because it has no callers left. RW-078 src-tauri written, 5 commands, least-privilege capabilities, an argument allowlist with a unit test, an icon set exported from a new SVG master. RW-080 both workflows; desktop-ci found two real defects on its first runs - the protocol-asset feature with no allowlist entry, and a resource glob whose trailing ** matches directories rather than files. Rust still CI-only (owner row 22). | desktop-ci GREEN on 4c031d7: every step including cargo fmt, clippy -D warnings, cargo test and tauri build --no-bundle. | 2026-09-07: desktop-release.yml is now tag-triggered on desktop-v*, every inputs.tag reference carries a github.ref_name fallback, releaseDraft stays true, and a final step refuses unless the release carries all six promised artefacts (both installers, both .sig files, latest.json, SHA256SUMS.txt) - watched failing on five hand-made asset lists including an empty one and a sig-only one that proves *-setup.exe is a whole-name match. cargo fmt, clippy -D warnings and cargo test all green locally. 🔴 A trap for this machine only: the cargo cache holds absolute paths from the folder's old name, so any tauri.conf.json edit makes build.rs fail with os error 3 naming a path that no longer exists. cargo clean -p the eleven affected packages, per profile - dev cost 3.3 GB, release a further 0.35 GB. CI never sees it.",
           "awaitingUser": false
         },
         {
@@ -476,6 +515,27 @@
           "status": "in_progress",
           "note": "needs P6.toolchain for the Rust half; specification: remaining-work.md RW-081 (local gates, WebView2 run-to-verify, GATE 4) and RW-082 (the desktop-v1.1.0 release) | 2026-09-06: the LOCAL GATES quarter is done - the whole desktop-ci chain ran green on this machine (cargo fmt --check, clippy -D warnings 1m19s, cargo test 1 passed, tauri build --no-bundle 3m57s for a 5.2 MB binary), and beyond CI both installers were produced: windowsweep_1.1.0_x64-setup.exe 2,483,662 B sha256 df1bd02f7a4fd85b557376fc302489c55c68edf59b5c6ae823a060575252ab00, and windowsweep_1.1.0_x64_en-US.msi 3,207,168 B sha256 dcd9509c331b26fabd150684362570ef873bd5dc816371e8af4060082d492061. Built with --config {\"bundle\":{\"createUpdaterArtifacts\":false}} so no committed file changed. The MSI was checked by reading its own File table, not the bundler exit code: 39 entries, windowsweep-desktop.exe at exactly 5,477,888 B plus all 38 engine files. STILL OPEN: run-to-verify over WebView2 (GATE 4 eye pass), the updater keypair, and the first desktop-v release.",
           "awaitingUser": false
+        },
+        {
+          "id": "P6.updater-gate",
+          "title": "The in-app update gate: Splash calls check() -> downloadAndInstall() -> relaunch() with the click dummy's approved words, and the dead plugins.updater.dialog key is removed",
+          "status": "in_progress",
+          "note": "Completion plan W0-T5 (the dead key, the real pubkey) and W1-T2 (the gate itself). The dummy specifies it at desktop/design/windowsweep-click-dummy/splash.html:52-80 and page-splash.js; the app never built it. Approved copy, so no new story surface. | 2026-09-07: the CONFIG half is done. The dead plugins.updater.dialog key is removed (tauri-plugin-updater 2.11.0 Config accepts only endpoints, pubkey, windows and three dangerous_* flags, so it was silently ignored), and a REAL minisign public key is in tauri.conf.json. The keypair is at ~/.secrets/tauri/ with rows in INDEX.md, mirrored into the vault so a second machine can sign, and set as the two TAURI_SIGNING_PRIVATE_KEY* repository secrets. 🔴 A carriage return in the first password broke signing and the error blamed the password - openssl under Git Bash emits CRLF and tr -d '\\n' leaves the \\r; regenerated with node's CSPRNG straight to the file and proved by signing a probe BEFORE the rebuild. The Splash UI half is being implemented against the click dummy's approved words.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P6.release-1.1.0",
+          "title": "desktop-v1.1.0: the updater keypair, the tag trigger, a signed local build, then the GitHub Release with NSIS + MSI + .sig + latest.json + SHA256SUMS.txt",
+          "status": "in_progress",
+          "note": "Completion plan Wave 2. RW-082. The README Desktop app section and docs/desktop.md land in the same change, which is why the desktop-readme story surface is written first. | 2026-09-07: signed artefacts now build locally - both installers plus both .sig files (424 bytes each), produced with the real key. 🔴 AND A SHIPPING DEFECT WAS FOUND AND FIXED FIRST: the installer FLATTENED the engine tree, so the installed app could not run the engine at all. bundle.resources used a GLOB key, and the bundler's Glob branch does dest.join(file_name()) which drops every directory component by design (tauri-utils-2.9.3/src/resources.rs:196-211); a DIRECTORY key takes the Walk branch and preserves the tree. Proved fixed in the MSI's own Directory table (bin, lib, modules present) and by a clean install that runs --version, reads a 26-section catalogue and passes the self-test. Second fix: package.json now reaches the bundle, because npm ships it in every tarball regardless of the files array, so a files-driven copy omitted the one file npm always includes - the self-test scored 150/151 from the installed copy against 151/151 from the repository. Now 39 bundled files and 151/151, with the version gate watched failing on a planted 9.9.9. STILL OPEN: the tag, the workflow run, and publishing the draft release.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P6.release-1.2.0",
+          "title": "desktop-v1.2.0 after the CLI 1.2.0 cascade, and the in-app updater PROVED 1.1.0 -> 1.2.0 on this machine",
+          "status": "pending",
+          "note": "Completion plan Wave 5. The only proof that .sig verification works end to end; the evidence goes in desktop/design/gate4/GATE4-REPORT.md and PROJECT-CONTEXT Verified runs.",
+          "awaitingUser": false
         }
       ]
     },
@@ -511,6 +571,13 @@
           "title": "The desktop copy written into the click dummy first, the design README recording why the dummy changed, then the app matches at GATE 4",
           "status": "complete",
           "note": "All 38 approved changes written into the click dummy, plus the owner two answers of 2026-09-05: the pricing claim on Home and Account replaced by a sentence about what sign-in does, and the installer ships unsigned with the SmartScreen note kept and the two verifiable artefacts named exactly. Two internal identifiers renamed alongside their labels (clean/preview -> reclaim/dryRun, cleanBtn -> reclaimBtn) and verified in both directions by a static check. The app then followed the dummy: three catalogue keys, all gates re-run green.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P7.cli-strings",
+          "title": "cli-strings: the one unwritten story surface, written last because it changes engine source and so lands with the 1.2.0 cascade",
+          "status": "pending",
+          "note": "Completion plan W3 (write + lean review + finalize) and W4-T1 (apply). RED ASCII-only - the engine's IRON rule 1 and self-test check [4]; no typographic quotes, dashes or ellipses. RED the story lint hook is blind to copy inside a code fence, so on this slot-shaped surface the fact-checker and a human reader are the only real gate.",
           "awaitingUser": false
         }
       ]
@@ -642,8 +709,15 @@
       "phase": "P6",
       "summary": "The desktop build toolchain was installed and the desktop app was compiled, linked and packaged on this machine for the first time. MANUAL-TASKS row 22 is closed. VS 2022 Build Tools 17.14.39 -> D:\\BuildTools (MSVC 14.44.35207, Windows SDK 10.0.26100.0), installed off C: because it had 11.23 GB free; 3.03 GB landed on C: anyway for the SDK. Every desktop-ci step then ran locally and green: check:prepaint, check:tauri-config, typecheck, lint, build (zero warnings, no source maps), sync:cli, the bundled-engine floor at 38 files, cargo fmt --check, clippy -D warnings, cargo test (1 passed) and tauri build --no-bundle. Then NSIS and MSI installers, which CI does not produce at all. CLI self-test 151/151 and version parity 1.1.0 both unchanged - no engine file was touched. THREE CORRECTIONS came out of it. 1) The recorded cause of the old link failure was wrong: the GNU coreutils link.exe is STILL first on PATH and everything links regardless, because rustc resolves the MSVC linker by absolute path through the VS Setup COM API - the toolchain was simply absent and PATH order never mattered. 2) Cargo.lock still carried http-range from the removed protocol-asset feature, because CI compiles but never pushes a lockfile. 3) A first run of the Rust chain reported \"clippy exit 1\" that was really a failed log redirect into a non-existent scratchpad directory - clippy had not run at all, and reporting it as a Rust failure would have been wrong.",
       "commit": "pending"
+    },
+    {
+      "date": "2026-09-07",
+      "phase": "W0 + Wave S",
+      "summary": "Session 10 opened the completion run on the Fable 5.1 plan. Eight owner decisions recorded verbatim; the three planning files moved to the workspace root and every pointer repointed (the README's two public roadmap links now name the tracker, which stays in the repo); the folder rename made final in every record; the two owner rows that landed during the session closed (22 earlier, 23 today). Supabase applied and verified from the catalogues with a seeded non-admin probe matrix. The updater keypair generated, proved, and mirrored to the secrets store, the vault and the repository secrets. The docs site gained a page-scoped FAQPage schema, watched failing when planted into headTags, and three links that were about to 404 were repointed. EIGHT DEFECTS found and fixed, every one invisible to typecheck, lint, build and CI - the headline being that the installer flattened the engine tree so the installed app could not run its own engine, root-caused from the bundler's source and proved fixed from the MSI's Directory table and a clean install. Gates: self-test 151/151 from both the repository and the bundled copy, the version gate proved on a plant, the markdown table gate proved on two different plants, the .env.example ignore fix proved with controls.",
+      "commit": "pending"
     }
   ],
-  "resumeInstructions": "🔴 Two owner rows now gate the desktop app: row 22 (Build Tools - Rust locally, the WebView2 run-to-verify, GATE 4 screenshot pairs, the release) and row 23 (a NEW Supabase account, then a project - all 7 existing accounts are at the free-tier limit). Row 15 follows 23 and is a WEB OAuth client, not a Desktop one. Everything not depending on those is done: the app has all eleven screens, desktop-ci is green end to end, and the Supabase schema and migrations are written and self-consistent. P7 has ten of fourteen surfaces drafted and awaiting GATE 4; only cli-strings is unwritten, deliberately last because it changes engine source and so belongs with a 1.2.0 version cascade. Never re-plan; the specs are remaining-work.md.",
-  "auditPlanFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-streamed-nest.md"
+  "resumeInstructions": "RED Read ../completion-plan-2026-09-07.md (or C:/Users/PC/.claude/plans/we-have-remaining-work-md-in-purrfect-wind.md) - it is the METHOD, this file is the STATUS, and ../remaining-work.md is the SPECIFICATION. Never re-plan, and never re-derive the backend, the layout, the tagline or the release sequence: the eight owner decisions of 2026-09-07 are in userDecisions above. Poll three owner rows at the start of every session - 11/12 (does windowsweep-docs.aoneahsan.com probe 200 and is https_enforced true), 16 (are the telemetry fields non-blank in the FilesHub vault), and 15 (does https://nlmetjyytgwaxcliusuo.supabase.co/auth/v1/settings report external.google true) - and run the wave each one unblocks. Row 23 has landed, so Wave S runs right after Wave 0. Then take the first pending sub-task below.",
+  "auditPlanFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-streamed-nest.md",
+  "planCopy": "../completion-plan-2026-09-07.md"
 }

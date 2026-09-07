@@ -1,6 +1,6 @@
 # windowsweep - Project Rules
 
-Last Updated: 2026-09-06 (session 9: the C++ build tools installed, so the desktop app compiles, links and installs on this machine - row 22 closed) · Context pass: 2026-09-05 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
+Last Updated: 2026-09-07 (session 10: the completion run opened - eight owner decisions recorded, the three planning files moved to the workspace root, the Supabase project landed, the updater keypair generated, and a marketing site scoped as phase P8) · Context pass: 2026-09-05 (CLAUDE.md and AGENTS.md mirrored, both well under 28 KB)
 
 Safe, developer-aware Windows cleanup CLI: a Windows PowerShell 5.1 engine behind a dependency-free Node
 launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macleanup` (Bash). Public repo
@@ -10,8 +10,11 @@ launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macl
 - Owner-only tasks (never ticked off by an agent): `docs/MANUAL-TASKS.md`
 - Resumable state: `docs/features/windowsweep-completion/00-tracker.json` (read it first, resume the first
   pending sub-task; the 1.0.0 tracker `docs/features/windowsweep-v1/00-tracker.json` is closed)
-- The specification of every open item: `remaining-work.md` (root); the one-page view:
-  `remaining-work-summary.md`; what exists today: `what-this-project-consists-of.md`
+- 🔴 **The three planning files live at the WORKSPACE ROOT, one level up, and are OUTSIDE git**
+  (owner decision 2026-09-07): `../remaining-work.md` (the specification of every open item),
+  `../remaining-work-summary.md` (the one-page view with the percentage), `../what-this-project-consists-of.md`
+  (what exists today). **A `git clone` does not carry them** - another machine needs the whole
+  `windows-cleanup-root` folder copied. The method for finishing the work is `../completion-plan-2026-09-07.md`
 - Dependency and manifest record: `docs/PACKAGES.md`
 - Follow-ups the agent owes this project: `PENDING-TASKS.md` (root)
 
@@ -96,9 +99,10 @@ docs-help, docs-about, ai-guide, site-front, cli-strings, desktop-readme.
 🔴 **P5 is closed but two of its rows are not:** RW-064 and RW-065 shipped only their verified halves and RW-066
 was **deferred, not shipped**. **Section 26 is still free.** `C:\Intel` was inspected and **rejected**.
 
-Phase P1 is entirely owner-run (rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21). The specification of every open item is
-`remaining-work.md`; the one-page view (whole project about **71%**, CLI-only about **88%**) is
-`remaining-work-summary.md`.
+Phase P1 is entirely owner-run (rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21) and moved to a **second machine** on
+2026-09-07, along with row 20, because this one has neither the software nor the operating systems those rows
+need. The specification of every open item is `../remaining-work.md` and the percentage lives in
+`../remaining-work-summary.md` - **read it there rather than here**, so one number cannot drift in two files.
 
 ## Per-Project Stack Override (binding)
 
@@ -113,7 +117,8 @@ Phase P1 is entirely owner-run (rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21). The speci
 | Docs site | `aoneahsan/windowsweep-docs` at `D:\work\windows-cleanup-root\windowsweep-docs`: Docusaurus 3 + React 19 + TS ~6.0.3 + yarn 4, GitHub Pages only, ports 5972/5973. Its pages MIRROR `docs/` - fix a wording error here first, then re-mirror. `docs/MANUAL-TASKS.md` and `docs/story/**` are excluded from its build |
 | Backend | 🔴 **Supabase**, since the owner's standing directive of 2026-09-05 (`~/.claude/rules/services-integrations.md`): Supabase is the default backend for every new project, never Firebase. The desktop app was switched the same day, before anything had been created on Firebase, so it cost code and no data. Hosted-only, owner-created, FilesHub-gated; the schema is **Drizzle** TypeScript at `desktop/src/db/schema/`, `supabase db push` is the only applier. 🔴 **No project exists yet and there is nowhere to put one** - all 7 registered accounts are at the 2-project free-tier limit (row 23) |
 | Desktop app (P6) | `desktop/` in this repo: Tauri 2 + React 19 + Vite 8 + Tailwind v4 + React Aria + TanStack Router (hash history), port 5974, identifier `com.aoneahsan.windowsweep`. It runs the bundled script with `--json --no-color` and reimplements no cleanup logic. `desktop/design/` holds the approved click dummy and its inventory; `desktop/src` and `desktop/src-tauri` hold the app. 🔴 `tokens.css`, `shared.css` and `components.css` were promoted **once, in one direction** on 2026-09-05 - the app's copies are authoritative and are never synced back. Its own gates are `yarn typecheck && yarn lint && yarn build` plus `yarn check:prepaint`, and `desktop-ci.yml` adds `cargo fmt --check`, `clippy -D warnings` and `cargo test`. GATE 4 (parity) is still open. External design-craft skills are vendored per-project in `.claude/skills/` - see `EXTERNAL-SKILLS.md` |
-| Storytelling (P7) | `docs/story/` holds the approved Bible, the voice fingerprint (`calibrated: false`, open and not blocking), the approved 14-surface content map, the decision log, `run-state.json` and `drafts/`. GATE 1 and GATE 2 are cleared; three desktop surfaces are drafted and awaiting GATE 4. The dummy's words are amended before the app's (`~/.claude/rules/frontend-ui-standards.md` §10a) |
+| Storytelling (P7) | `docs/story/` holds the approved Bible, the voice fingerprint (`calibrated: false`, open and not blocking), the approved 14-surface content map, the decision log, `run-state.json` and `drafts/`. GATE 1 and GATE 2 are cleared and the three desktop surfaces are **recorded**. 🔴 **GATE 4 is pre-authorised for the eleven remaining surfaces** (owner, 2026-09-07) on a stated condition: the finalizer's fact-consistency check PASSES and the surface carries zero unanswered `NEEDS DECISION`. Either one failing pauses **that surface only**. The dummy's words are amended before the app's (`~/.claude/rules/frontend-ui-standards.md` §10a) |
+| Marketing site (P8, **not started**) | 🔴 A new repository `aoneahsan/windowsweep-web` at `windowsweep.aoneahsan.com`, decided 2026-09-07 and scheduled **after** both desktop releases. It is a web **app**, not a brochure: Supabase for the backend (accounts, contact requests - the **same** project as the desktop app, so one Auth pool means one sign-in across the family), **Firebase for hosting and analytics only**, plus GA4 + Amplitude + Clarity and Sentry, and **Capacitor from day one** so an Android build is possible later without a rewrite. It becomes the product's **canonical homepage**, which changes what `package.json` `homepage` and the repo fields point at. A click dummy comes first. Full scope: `docs/PROJECT-CONTEXT.md` |
 
 ## IRON rules for this repository
 
@@ -156,10 +161,18 @@ Phase P1 is entirely owner-run (rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21). The speci
     scope the owner named; admin sections are never launched from an agent session (they need a UAC click).
 11. `temp/` holds read-only clones of the sibling tools for reference; it is gitignored and never edited.
 12. 🔴 **The click dummy owns the desktop app's words as well as its layout.** A divergence is written into
-    the dummy first, then the app matches - GATE 4 parity is checked page by page as screenshot pairs at 1440
-    and 390 (`~/.claude/rules/frontend-ui-standards.md` §10 and §10a). Anything the app declines to ship is
-    declared with a reason, never quietly dropped. The desktop app reimplements no cleanup logic: it runs the
-    bundled `windowsweep.ps1` with `--json --no-color` and reads its catalogue from `--list --json`.
+    the dummy first, then the app matches - GATE 4 parity is checked page by page as screenshot pairs at
+    **1440 and 760** (`~/.claude/rules/frontend-ui-standards.md` §10 and §10a). 🔴 **760, not 390**:
+    `tauri.conf.json` sets `minWidth: 760`, so the product cannot be narrower and a failure at 390 is one
+    nobody can act on. Anything the app declines to ship is declared with a reason, never quietly dropped. The
+    desktop app reimplements no cleanup logic: it runs the bundled `windowsweep.ps1` with `--json --no-color`
+    and reads its catalogue from `--list --json`.
+13. 🔴 **Every CLI release is created with `gh release create ... --latest=false`** (owner decision
+    2026-09-07). The desktop updater's endpoint is
+    `https://github.com/aoneahsan/windowsweep/releases/latest/download/latest.json`, so the repository's
+    "Latest" release must always be a **desktop** release. A CLI release marked latest would point every
+    installed app at a release that carries no `latest.json`, and the updater would silently stop finding
+    updates. Desktop releases are created with `--latest`.
 
 ## Sub-agents & Skills - Main-Context-First (IRON-SOLID)
 

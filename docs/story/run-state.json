@@ -4,18 +4,39 @@
   "bibleApproved": true,
   "contentMapApproved": true,
   "phase": "recorded",
-  "surface": "10 of 14 surfaces drafted; awaiting GATE 4 on readme, tagline, site-front, desktop-readme, docs-start, docs-safety, docs-reference, docs-help, docs-about, ai-guide. Unwritten: cli-strings",
+  "surface": "Three of fourteen recorded (desktop-moment, desktop-safety, desktop-cockpit). Ten drafted and now covered by the 2026-09-07 GATE 4 pre-authorisation, each still owing its lean review, finalizer pass and apply: readme, tagline (wording already approved), site-front, desktop-readme, docs-start, docs-safety, docs-reference, docs-help, docs-about, ai-guide. One unwritten: cli-strings, deliberately last because it edits engine source and lands with the 1.2.0 cascade.",
   "round": 1,
   "gate": 4,
   "openDecisions": [
-    "GATE 4 on ten drafted surfaces (readme, tagline, site-front, desktop-readme, docs-start, docs-safety, docs-reference, docs-help, docs-about, ai-guide)",
-    "NEEDS DECISION docs-about: is \"independent software engineer\" the description you want? Keeping it is recommended; one wording across every surface changes five files",
-    "The tagline lives in FIVE places, not three, and the docs site already carries a different sentence",
-    "Content-map change requested: row 14 desktop-readme caps at ~600 words, honest floor near 800",
-    "Row 6 declares FAQPage schema and there is none on the site; it needs a page-scoped head tag, a docs-site code change",
-    "Open, not blocking: the voice fingerprint is calibrated:false"
+    "Open, not blocking: the voice fingerprint is still calibrated:false. It was built from repository evidence rather than from writing samples the owner supplied, and /voice-calibrate would settle it. Nothing waits on it."
   ],
   "escalatedAt": null,
-  "lastUpdated": "2026-09-05",
-  "notes": "Ten of fourteen surfaces drafted. 🔴 SEVENTEEN factual defects found in the current text and corrected immediately, the sharpest being: safety-model.md claiming No flag bypasses steps 1-5 when --prune-history and --uninstall-data both lift step 5 and the engine header says 1-3; the AI guide claiming --yes covers sections 12-14 when WS_SAFE_BATCH_ADMIN is (12,13) so a scheduled DISM cleanup would be recorded done and never run; and section 23 omitted from five Recycle Bin lists, two of which were found by sweeping for the CLASS rather than the instance. All corrected in the CLI repo and re-mirrored to the site with front matter preserved; the site build passes with onBrokenLinks throw."
+  "lastUpdated": "2026-09-07",
+  "notes": "The completion run opened 2026-09-07 under the plan at ../completion-plan-2026-09-07.md. GATE 4 is pre-authorised for the eleven remaining surfaces on a stated condition (gate4PreAuthorised), so a session applies an approved surface without stopping - but a finalizer FAIL or a fresh NEEDS DECISION still pauses that one surface. RED Two defects were found in copy this system had already approved: splash.html promises that the updater checks for a newer build and NOTHING in the app ever called the updater, and tauri.conf.json carried a plugins.updater.dialog key the plugin does not accept. Both were found by grepping for the mechanism rather than for the words, which is the sharpened form of the 2026-09-05 clause about approved artefacts holding claims nobody re-reads. RED And the story lint hook is blind to copy inside a code fence, so on the slot-shaped surfaces - cli-strings, and any .tsx copy - the fact-checker and a human reader are the only real gate; a green hook there is not evidence.",
+  "gate4PreAuthorised": {
+    "grantedAt": "2026-09-07",
+    "scope": [
+      "readme",
+      "tagline",
+      "site-front",
+      "desktop-readme",
+      "docs-start",
+      "docs-safety",
+      "docs-reference",
+      "docs-help",
+      "docs-about",
+      "ai-guide",
+      "cli-strings"
+    ],
+    "condition": "The finalizer's fact-consistency check PASSES and the surface carries zero unanswered NEEDS DECISION. Either one failing stops THAT surface only: the question goes verbatim into openDecisions below and into docs/MANUAL-TASKS.md the turn it arrives, and the run moves to the next surface rather than guessing.",
+    "panel": "lean (/story-review --lean), the owner-named override for this run, then the finalizer",
+    "ownerWords": "Pre-approve after a lean review: each surface gets /story-review --lean then the finalizer. You grant GATE 4 in advance for all eleven, conditional on the finalizer's fact-consistency PASS and zero unanswered NEEDS DECISION. Opus applies each surface to the real files and re-mirrors the docs site; a new NEEDS DECISION pauses only that surface."
+  },
+  "resolvedDecisions": [
+    "ANSWERED 2026-09-07 - GATE 4 on the ten drafted surfaces: granted in advance under the condition recorded in gate4PreAuthorised.",
+    "ANSWERED 2026-09-07 - docs-about \"independent software engineer\": keep it, unchanged, one wording across every surface.",
+    "ANSWERED 2026-09-07 - the tagline lives in FIVE places and the docs site carried a different sentence: the recommended line is approved and all five move together in the 1.2.0 cascade, which is also the decision to end the divergence.",
+    "ANSWERED 2026-09-07 - content-map row 14 desktop-readme: cap raised from ~600 to ~900 words, so the what-it-sends disclosure survives instead of being cut to fit.",
+    "ANSWERED 2026-09-07 - row 6 declared a FAQPage schema that did not exist: implement it PAGE-SCOPED on the faq page only, as a docs-site code change. Adding it to headTags would claim the CLI reference is an FAQ."
+  ]
 }

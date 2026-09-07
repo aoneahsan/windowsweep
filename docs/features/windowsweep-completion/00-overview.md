@@ -48,5 +48,7 @@ product-voice surface passes through the fleet's storytelling system.
 
 ## Phases
 
-`00-tracker.json` holds the status of every phase and sub-task; `remaining-work.md` at the repository root
-holds the specification of every `RW-` item (evidence, success criteria, acceptance points, what not to do).
+`00-tracker.json` holds the status of every phase and sub-task; `remaining-work.md` holds the specification of
+every `RW-` item (evidence, success criteria, acceptance points, what not to do). 🔴 **Since 2026-09-07 that
+file lives at the workspace root, one level above this repository, and is outside version control** - a clone
+does not carry it. The method for finishing the work is `../completion-plan-2026-09-07.md` beside it.

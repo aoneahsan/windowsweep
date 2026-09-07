@@ -43,9 +43,18 @@ anywhere), PKCE sign-in, Firestore REST sync that pages at 20 and syncs no path,
 fan-out, the **ten-axis theme registry in ONE file** (`src/lib/axes.json`) with `public/prepaint.js` GENERATED
 from it and a `--check` drift gate, i18n on every string behind a `no-restricted-syntax` gate at `error`, and
 five Rust commands behind an **argument allowlist with its own unit test**, and an icon set exported from an SVG
-master carrying the sweep motif in the registered hue. 🔴 **All eleven screens are built** - Splash, Consent,
-Home, Run, Sections, Picker, History, Report, Settings, Account, Elevation - so RW-077 is complete and the
-placeholder scaffolding is deleted. 🔴 **Rust compiles locally as of 2026-09-06** - row 22 is closed: VS 2022
+master carrying the sweep motif in the registered hue. 🔴 **All eleven screens EXIST as routes** - Splash, Consent,
+Home, Run, Sections, Picker, History, Report, Settings, Account, Elevation - and the placeholder scaffolding
+is deleted. 🔴 **But "built" was overstated and is corrected here (2026-09-07).** The GATE 4 round-3 pass,
+the first to judge them against a build that could actually reach the engine, found **Home implementing 4 of
+the dummy's 12 bands** with none of the eight gaps declared - the Reclaim Map (the dummy's signature element)
+absent, along with the drives band, the capacity ring, "these need a person", the protected-path chips, the
+last-eight-runs sparkline, the schedule and sections-needing-admin. Sections lacks its filter row, its
+four-run-policy disclosure and the dummy's tier vocabulary; Run lacks its per-section band, so progress
+events arrive with nowhere to render. **Rounds 1 and 2 could not have seen any of this** - they measured a
+Home that rendered one band because three stacked defects refused every engine call, so their zeroes were
+right by accident. Open as D-14, D-15 and D-16; **GATE 4 closes on eight of eleven screens and not on those
+three.** 🔴 **Rust compiles locally as of 2026-09-06** - row 22 is closed: VS 2022
 Build Tools 17.14 lives at `D:\BuildTools` (MSVC 14.44.35207, Windows SDK 10.0.26100.0), installed off C:
 because it had 11.2 GB free. For the whole build before that `desktop-ci.yml` was the only Rust evidence,
 and it earned its place immediately by

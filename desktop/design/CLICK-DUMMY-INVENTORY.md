@@ -491,3 +491,67 @@ a live defect. `grep "is free"` finds zero hits in either file.
 matches the dummy rather than its own string. The amended consent notice itself is a **match**: one `Continue`,
 zero switches, and the `Never sent` panel present on Consent and on the Settings privacy tab with its four `on`
 badges and `refused`. Home's ledger could not be judged - the band never mounted.
+
+---
+
+## 12. GATE 4 round three — 2026-09-07, the 16:16 build: Home judged at last
+
+D-12 (the verbatim `\?\` path) is closed, the catalogue loads, and the screens rounds 1 and 2 could not judge
+are judgeable. Full detail: `desktop/design/gate4/GATE4-REPORT.md`, where §R2.3's table is **rewritten in
+place** with both rounds' numbers. Round-two captures preserved at `gate4-evidence\round2\`.
+
+### The premise, and it holds
+
+Sections renders **26 rows, ids 0-25**; the rail reads **Sections 26**; the status bar reads `engine 1.1.0`;
+no engine error. The full flow works in the app for the first time: **Home → Dry-run first → `#/run`
+(`A dry-run would reclaim 310.0 MB.`, 247 log lines) → `#/report` (11 rows)**.
+
+### 🔴 The instrument this ledger recommended was measuring the wrong key set
+
+§10's zone table counted the dummy's `data-ws-*` markers in the app. Measured in round three:
+
+| | `data-ws-*` attributes |
+|---|---|
+| dummy `index.html` | **48** across 22 distinct names |
+| the app's Home | **0** |
+
+**A React app renders components; it has no reason to reproduce the dummy's JS mount points.** So a `0`
+could mean *the zone is missing* or *the app names it differently* - different findings entirely. While the
+app was broken the zeroes were right by accident; against a working build the same table yields **twelve
+false defects**. It is replaced by a match on an **anchored band label** - a whole line, in the dummy's own
+caps, with every `<details>` opened first.
+
+Two false readings that version caught in its own first attempt, both worth keeping:
+
+- 🔴 A bare `has('DRIVES')` matched **section 21's title** - *"Disk usage report (largest entries, drives,
+  disk images)"* - inside the safe-run list, and reported a drives band that does not exist. **Anchor a label
+  to its own line; a substring search over a page that lists 26 section titles will find almost any word.**
+- 🔴 `Never sent` read as absent because it sits inside a **collapsed `<details>`**, which `innerText` omits.
+  Open every disclosure before reading, or approved copy reads as missing when it is merely closed.
+
+And a third, about state rather than matching: the capture helper sets the appearance mode by writing the
+prefs key and **reloading**, which is right for testing pre-paint and wrong for this - a reload discards the
+store and with it the scan, so Home photographed as `not measured` and would have been compared against the
+dummy's measured Home. **Both halves of a pair must be in the same state**, which is the same error as
+round two's empty catalogue wearing different clothes.
+
+### What the honest count is
+
+**Anchored: the dummy shows 12 bands, the app shows 4.** Eight are missing, and the absence is corroborated
+from source rather than inferred: `Home.tsx` calls 19 `t('home.*')` keys and **no treemap component exists
+anywhere** (`src/components/` is `Icon`, `Shell`, `ThemePanel`), with zero occurrences of `sparkline`,
+`schedule`, `protected`, `needsPerson` or `admin`. So they are unimplemented, not dataless.
+
+Missing: **the Reclaim Map** (§3 zone 3, the declared *signature element*), the drives band, the capacity
+ring, these-need-a-person, the protected-path chips, the last-eight-runs sparkline, schedule, and
+sections-needing-admin. 🔴 **None is declared on Home**, unlike the Settings *Scanning* and *Notifications*
+tabs, which declare themselves correctly. That is also why `<svg><text>` is still **0 against the dummy's
+46** - the treemap and the ring are the two surfaces that carry it.
+
+**Home's consent ledger passes**: 4/4 destinations with an adjacent `on` badge and the `Never sent`
+paragraph, on both sides. With the Consent screen and the Settings Privacy tab, all three notice surfaces
+are verified.
+
+**GATE 4 can close on eight of the eleven screens. It cannot close on Home, Sections or Run** - the three
+catalogue-driven ones, each carrying unimplemented dummy content that is not declared. The blocker is no
+longer infrastructural; it is content parity against this dummy.

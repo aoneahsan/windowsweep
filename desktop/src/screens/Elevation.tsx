@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
 import { elevatedArgs, newRunId, run } from '../lib/engine';
+import { controlState, stateOf } from '../lib/control-state';
 
 export function Elevation() {
   const { t } = useTranslation();
@@ -28,12 +29,16 @@ export function Elevation() {
   const appendLog = useStore((s) => s.appendLog);
   const applyProgress = useStore((s) => s.applyProgress);
   const finishRun = useStore((s) => s.finishRun);
-  const [busy, setBusy] = useState(false);
+  /* 🔴 WHICH one is running, not just that something is. Pressing "Ask for
+     permission and run" hands over to Windows' own UAC prompt, which can take
+     seconds to appear - and both buttons looked untouched the whole time. */
+  const [busy, setBusy] = useState<'run' | 'measure' | null>(null);
 
   const admin = (catalogue?.sections ?? []).filter((s) => s.admin);
 
   function go(dryRun: boolean) {
-    setBusy(true);
+    if (busy !== null) return;
+    setBusy(dryRun ? 'measure' : 'run');
     const id = newRunId();
     startRun(id);
     if (!dryRun) void navigate({ to: '/run' });
@@ -49,7 +54,7 @@ export function Elevation() {
       },
     })
       .then((r) => { finishRun(r.summary, r.exitCode > 1); })
-      .finally(() => { setBusy(false); });
+      .finally(() => { setBusy(null); });
   }
 
   return (
@@ -108,11 +113,23 @@ export function Elevation() {
           <div
             style={{ marginTop: 'var(--sp-5)', display: 'flex', gap: 'var(--sp-2)', flexWrap: 'wrap' }}
           >
-            <button className="btn btn-primary" type="button" disabled={busy} onClick={() => { go(false); }}>
-              {t('elevation.askAndRun')}
+            <button
+              className="btn btn-primary"
+              type="button"
+              disabled={busy !== null}
+              onClick={() => { go(false); }}
+              {...controlState(stateOf(busy === 'run'))}
+            >
+              <span className="btn-label">{t('elevation.askAndRun')}</span>
             </button>
-            <button className="btn" type="button" disabled={busy} onClick={() => { go(true); }}>
-              {t('elevation.measureOnly')}
+            <button
+              className="btn"
+              type="button"
+              disabled={busy !== null}
+              onClick={() => { go(true); }}
+              {...controlState(stateOf(busy === 'measure'))}
+            >
+              <span className="btn-label">{t('elevation.measureOnly')}</span>
             </button>
           </div>
           <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-2)' }}>

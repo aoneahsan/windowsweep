@@ -26,6 +26,10 @@ export function RunScreen() {
     tailRef.current?.scrollTo({ top: tailRef.current.scrollHeight });
   }, [log.length]);
 
+  /* Nothing has been started in this session: `idle` with no summary and no log.
+     Distinct from a run that finished without a readable summary. */
+  const neverRun = phase === 'idle' && summary === null && log.length === 0;
+
   const done = Object.values(progress).filter((p) => p.event === 'end').length;
   const running = Object.values(progress).find((p) => p.event === 'start' && progress[p.section]?.event !== 'end');
 
@@ -33,8 +37,20 @@ export function RunScreen() {
     <>
       <section className="band band-app band-tight">
         <div className="wrap">
+          {/* 🔴 The never-run state said `Finished` and `The run finished.` on a
+              screen whose own log pane said `Nothing has run yet.` - the app
+              contradicting itself on first open, because "not running" and
+              "finished" were the same branch. The dummy's eyebrow for this state
+              is `Ready to run`, and the heading is the sentence the dummy already
+              uses for it. */}
           <p className="caps ink-3">
-            {phase === 'running' ? t('run.eyebrowRunning') : phase === 'failed' ? t('run.eyebrowFailed') : t('run.eyebrowDone')}
+            {phase === 'running'
+              ? t('run.eyebrowRunning')
+              : phase === 'failed'
+                ? t('run.eyebrowFailed')
+                : neverRun
+                  ? t('run.eyebrowReady')
+                  : t('run.eyebrowDone')}
           </p>
           <h1 className="t-xl wide">
             {phase === 'running'
@@ -43,7 +59,9 @@ export function RunScreen() {
                 ? summary.dry_run
                   ? t('run.titleDryRun', { amount: formatBytes(summary.estimated_bytes) })
                   : t('run.titleDone', { amount: formatBytes(summary.freed_bytes) })
-                : t('run.titleUnknown')}
+                : neverRun
+                  ? t('run.logEmpty')
+                  : t('run.titleUnknown')}
           </h1>
           {summary?.dry_run ? <p className="lede">{t('run.dryRunNote')}</p> : null}
           {running && catalogue ? (
@@ -62,7 +80,20 @@ export function RunScreen() {
           <div className="zone-label">
             <span className="caps">{t('run.logTitle')}</span>
           </div>
-          <div className="panel pad logpane" ref={tailRef} style={{ maxHeight: '26rem', overflowY: 'auto' }}>
+          {/* 🔴 `logview` - the dummy's class, which carries the well background,
+              the monospace size, the fixed height and the scroll. The app invented
+              `logpane`, which exists in no stylesheet, so the one surface a person
+              watches while something irreversible happens was an unstyled div.
+              `role="log"` with `aria-live="off"` is the dummy's own wiring:
+              announcing every line of a purge would be an assault, so the region
+              is readable on demand and `aria-busy` says work is ongoing. */}
+          <div
+            className="logview"
+            ref={tailRef}
+            role="log"
+            aria-live="off"
+            aria-busy={phase === 'running'}
+          >
             {log.length === 0 ? (
               <p className="t-sm ink-3">{t('run.logEmpty')}</p>
             ) : (

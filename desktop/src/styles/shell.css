@@ -1599,3 +1599,80 @@ hr.rule { border: 0; border-top: 1px solid var(--c-line); margin: var(--sp-4) 0;
 }
 /* the house-promotion panel - the ecosystem roster, self-excluded */
 .promo { display: grid; gap: var(--sp-3); grid-template-columns: repeat(auto-fit, minmax(min(14rem,100%),1fr)); }
+
+/* ---------------------------------------------------------------------------
+   §12 - THE INTERACTION FLOOR, the part no gate can see
+
+   Every rule below closes a control that answered hover and focus but NOT press,
+   or a selected state that the app's markup could not reach. Each one composes
+   from the vocabulary already above it - no new visual language.
+   --------------------------------------------------------------------------- */
+
+/* The window controls answered hover only, so a click on Minimise looked exactly
+   like a miss until the window moved. */
+.wc:active { background: color-mix(in oklab, var(--c-ink) 20%, transparent); }
+.wc-close:active { background: color-mix(in oklab, var(--c-danger) 82%, var(--c-ink)); color: var(--c-on-semantic); }
+
+/* A rail item is a link, and a link that only answers hover reads as dead on the
+   press that matters - the one that changes route. */
+.rail-item:active { background: color-mix(in oklab, var(--c-ink) 12%, transparent); }
+
+/* The filter chips answer press as well as pressed-ness. */
+.fchip:active { background: color-mix(in oklab, var(--c-ink) 12%, transparent); }
+.fchip[aria-pressed='true']:active { background: color-mix(in oklab, var(--c-accent) 84%, var(--c-ink)); }
+
+/* The switch: `aria-checked` was the only state it had, so pressing one and
+   changing nothing (a re-press of the same value) was silent. */
+.switch:active::after { scale: .92; }
+
+/* A chosen row in a `.lst`. The dummy marks a chosen table row `data-selected`
+   and paints `--c-accent-soft`; the picker renders a list rather than a table, so
+   the same attribute and the same token carry it here.
+   🔴 `data-selected`, not `aria-selected`: `aria-selected` is invalid on a plain
+   div and would be a worse defect than the missing paint. */
+.lst-i[data-selected='true'] { background: var(--c-accent-soft); --c-ink-3: var(--c-ink-2); }
+
+/* The theme panel is a React Aria Modal, so one element sits between `.sheet` and
+   its header and body. It is a pass-through: the sheet keeps its own column
+   layout and the body keeps its own scroll. */
+.sheet > .sheet-dlg {
+  display: flex; flex-direction: column; min-height: 0; height: 100%;
+  outline: none;
+}
+.sheet > .sheet-dlg > .sheet-bd { flex: 1 1 auto; min-height: 0; }
+
+/* The theme panel's axis block and its cards. `.card-sel` is a React Aria Radio
+   here, so the selected state arrives as `data-selected` rather than
+   `aria-checked` - both are listed, because the dummy's button anatomy is what
+   the gallery shows and the app's is what ships. */
+.axis { display: block; }
+.card-sel { cursor: pointer; }
+.card-sel[data-selected] {
+  border-color: var(--c-accent); background: var(--c-accent-soft);
+  color: var(--c-accent-ink); font-weight: 600;
+}
+.card-sel[data-hovered] { border-color: var(--c-ink-3); }
+.card-sel[data-pressed] { background: color-mix(in oklab, var(--c-ink) 10%, var(--c-well)); }
+.card-sel[data-focus-visible] { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+
+/* 🔴 `.t-2xl` is used by `splash.html` AND by `Splash.tsx`, and is defined in
+   NEITHER stylesheet. That is invisible in the dummy, which has no CSS reset and
+   lands on the UA's `h1 { font-size: 2em }` - measured 32px at 1440 over CDP. The
+   app imports Tailwind, whose Preflight resets `h1 { font-size: inherit }`, so the
+   same markup measured 16px: the product's first screen carried its wordmark at
+   half the approved size, with every gate green. Found by the screenshot pair.
+
+   Pinned to the token whose value EQUALS the approved render (2rem x the
+   type-scale axis = 32px), so the pair is identical and the Text size axis still
+   moves it. ⚠️ `--fs-2xl` (2.75rem = 44px) exists and nothing consumes it, so the
+   intended size may be that instead - but that is a change to what was approved
+   on screen, and it belongs in the dummy first. */
+.t-2xl { font-size: var(--fs-xl); }
+
+/* 🔴 The rail-less shell. `.shell` is `grid-template-columns: auto minmax(0,1fr)`,
+   and an `auto` column sizes to MAX-CONTENT - so with no rail the single content
+   column collapses to its widest line and every band's background stops there,
+   mid-window. Splash and Consent are the two routes with no rail. The same thing
+   is visible in the dummy's splash.html and consent.html, where the band edge
+   lands around 880px in a 1440px window; this is the app's half of that fix. */
+.shell-bare { grid-template-columns: minmax(0, 1fr); }

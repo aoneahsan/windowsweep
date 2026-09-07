@@ -100,7 +100,7 @@
   [['General', 'Developer mode, the idle window, the temp window and the large-file threshold.'],
    ['Scanning', 'Which folders are searched for stale build artefacts, and what is excluded.'],
    ['Notifications', 'Whether a finished run raises a toast, and whether the weekly task does.'],
-   ['Privacy', 'The four analytics destinations, each individually revocable.'],
+   ['Privacy', 'The four analytics destinations, stated rather than switched.'],
    ['Disabled', null]].forEach(function (x, i) {
     var id = 'tab-' + i;
     var b = el('button', 'tab', x[0]);

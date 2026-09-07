@@ -93,6 +93,17 @@ button, [role='button'] {
 
 .shell { display: grid; grid-template-columns: auto minmax(0, 1fr); min-height: 0; min-width: 0; }
 
+/* 🔴 The two rail-less screens need this, and without it their bands stop mid-window.
+   An `auto` column sizes to MAX-CONTENT. With the rail present that is exactly right -
+   the rail gets its width and the content takes the rest. With the rail absent the
+   content lands in that auto column instead, so it sizes to its own max-content and
+   every band's background ends partway across a wide window: measured at about 880px
+   in a 1440px viewport on splash.html and consent.html.
+   Found on 2026-09-07 by putting the dummy page and the app page side by side. It was
+   in the dummy first and the app inherited it the moment those two screens joined the
+   shell, so the fix is the same one character-for-character in both. */
+.shell-bare { grid-template-columns: minmax(0, 1fr); }
+
 .rail {
   width: calc(13.5rem * var(--density));
   display: flex; flex-direction: column; gap: var(--sp-1);

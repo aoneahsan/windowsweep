@@ -17,12 +17,14 @@ import { useTranslation } from 'react-i18next';
 import { useStore } from '../state/store';
 import { signIn, signOut } from '../lib/auth';
 import { configuredFeatures } from '../lib/config';
+import { controlState, stateOf } from '../lib/control-state';
 
 export function Account() {
   const { t } = useTranslation();
   const user = useStore((s) => s.user);
   const setUser = useStore((s) => s.setUser);
   const [busy, setBusy] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const features = configuredFeatures();
 
@@ -33,6 +35,17 @@ export function Account() {
       .then(setUser)
       .catch((e: unknown) => { setError(e instanceof Error ? e.message : String(e)); })
       .finally(() => { setBusy(false); });
+  }
+
+  /* 🔴 Sign-in opens a browser and waits for a redirect - the slowest thing on
+     any of these screens, and until now the only sign that it had started was
+     nothing at all. `busy` was already tracked and never rendered. */
+  function onSignOut() {
+    setSigningOut(true);
+    void signOut().finally(() => {
+      setUser(null);
+      setSigningOut(false);
+    });
   }
 
   return (
@@ -61,9 +74,11 @@ export function Account() {
                       <button
                         className="btn btn-sm"
                         type="button"
-                        onClick={() => { void signOut().finally(() => { setUser(null); }); }}
+                        onClick={onSignOut}
+                        disabled={signingOut}
+                        {...controlState(stateOf(signingOut))}
                       >
-                        {t('account.signOut')}
+                        <span className="btn-label">{t('account.signOut')}</span>
                       </button>
                     </div>
                   </div>
@@ -82,8 +97,11 @@ export function Account() {
                     type="button"
                     disabled={busy || !features.signIn}
                     onClick={onSignIn}
+                    {...controlState(stateOf(busy))}
                   >
-                    {features.signIn ? t('account.signIn') : t('account.notConfigured')}
+                    <span className="btn-label">
+                      {features.signIn ? t('account.signIn') : t('account.notConfigured')}
+                    </span>
                   </button>
                 </div>
                 {!features.signIn ? (
@@ -91,8 +109,10 @@ export function Account() {
                     {t('account.notConfiguredNote')}
                   </p>
                 ) : null}
+                {/* 🔴 `role="alert"`: a failed sign-in must interrupt, because the
+                    person is about to act on the belief that it worked. */}
                 {error ? (
-                  <div className="note note-warn" style={{ marginTop: 'var(--sp-3)' }}>
+                  <div className="note note-warn" style={{ marginTop: 'var(--sp-3)' }} role="alert">
                     <span aria-hidden="true">⚠</span>
                     <span className="t-sm">{error}</span>
                   </div>

@@ -197,33 +197,37 @@
     window.wsWidgets.boot(host);
   }
 
+  /* 🔴 These were four SWITCHES until 2026-09-07, and the note above them promised
+     that "revoking any of it takes effect immediately". The owner removed the
+     opt-out, so both were false: the switches did nothing a person could rely on,
+     and the sentence described a control that no longer exists.
+
+     The panel now STATES rather than offers. Everything else on this screen sets
+     something; this tab is the one that reports, which is why the page lede says so.
+     The "Never sent" row stays and is the point of the tab - a notice with nothing
+     checkable in it is an announcement. */
   function privacy() {
     var host = document.querySelector('[data-ws-set-priv]');
     if (!host) return;
     host.textContent = '';
     var g = el('div', 'set-grp');
-    var c = db.facts.consent || { ga4: false, amplitude: false, clarity: false, sentry: false };
 
     var note = el('div', 'note note-info');
     note.appendChild(el('span', null, 'i'));
     note.appendChild(el('span', null,
       'The cleanup engine makes zero network calls, and its own test suite asserts that. Everything ' +
-      'below is about this desktop window only, and revoking any of it takes effect immediately.'));
+      'below is about this desktop window only. windowsweep collects it to improve the product for ' +
+      'everyone, and there is no switch for it.'));
     g.appendChild(note);
 
-    [['ga4', 'Product analytics', 'Which screens and which buttons.'],
-     ['amplitude', 'Behaviour analytics', 'The same events, kept longer.'],
-     ['clarity', 'Session replay', 'This window, with all text masked.'],
-     ['sentry', 'Crash reports', 'Stack traces with paths stripped.']].forEach(function (p) {
-      g.appendChild(row(p[1], p[2], swx(!!c[p[0]], p[1], function (on) {
-        var next = Object.assign({}, db.facts.consent || {});
-        next[p[0]] = on;
-        db.set('consent', next);
-        ws.toast(on ? p[1] + ' is on.' : p[1] + ' is off, from now.');
-      }), ''));
+    [['Product analytics', 'Which screens and which buttons.'],
+     ['Behaviour analytics', 'The same events, kept longer.'],
+     ['Session replay', 'This window, with all text masked.'],
+     ['Crash reports', 'Stack traces with paths stripped.']].forEach(function (p) {
+      g.appendChild(row(p[0], p[1], el('span', 'badge badge-outline', 'on'), ''));
     });
 
-    g.appendChild(row('Never sent, by any of them',
+    g.appendChild(row('Never sent',
       'A file path, a folder name, a drive label, your machine name, your Windows user name, or the ' +
       'contents of anything.', el('span', 'badge badge-ok', 'refused'), ''));
     host.appendChild(g);

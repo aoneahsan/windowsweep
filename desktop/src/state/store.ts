@@ -2,10 +2,14 @@
  * The one store. Everything the screens share lives here; nothing here reaches
  * for a provider, a network client or the filesystem directly.
  *
- * 🔴 Consent is read at construction and is the gate every destination passes
- * through. Sign-in is never a gate on anything else: every cleanup capability
- * works signed out, and the store models that by keeping `user` beside the rest
- * rather than wrapping the app in it.
+ * 🔴 There is no consent state here any more. The owner removed the opt-out on
+ * 2026-09-07, so the first-run record is a "seen the notice" flag that only two
+ * places read - the boot route and the notice itself - and it is read straight
+ * from `lib/consent.ts` rather than mirrored into shared state nothing observes.
+ *
+ * 🔴 Sign-in is never a gate on anything: every cleanup capability works signed
+ * out, and the store models that by keeping `user` beside the rest rather than
+ * wrapping the app in it.
  */
 
 import { create } from 'zustand';
@@ -13,7 +17,6 @@ import { create } from 'zustand';
 import type { Catalogue } from '../lib/catalogue';
 import type { Candidate, RunSummary, ProgressEvent } from '../lib/cli';
 import type { AuthUser } from '../lib/auth';
-import { readConsent, writeConsent, type ConsentState } from '../lib/consent';
 import { readPrefs, writePrefs, applyAllAxes, type AxisPrefs } from '../lib/theme';
 
 export type RunPhase = 'idle' | 'running' | 'done' | 'failed';
@@ -66,14 +69,11 @@ interface StoreState {
   addHistory: (entry: HistoryEntry) => void;
   setHistory: (entries: HistoryEntry[]) => void;
 
-  /* --- preferences and consent ------------------------------------------ */
+  /* --- preferences ------------------------------------------------------- */
   prefs: AxisPrefs;
   setAxis: (key: string, value: string) => void;
   developer: boolean;
   setDeveloper: (on: boolean) => void;
-
-  consent: ConsentState;
-  setConsent: (next: ConsentState) => void;
 
   /* --- account ---------------------------------------------------------- */
   user: AuthUser | null;
@@ -159,12 +159,6 @@ export const useStore = create<StoreState>()((set, get) => ({
   setDeveloper: (on) => {
     writeLocal(DEVELOPER_KEY, on);
     set({ developer: on });
-  },
-
-  consent: readConsent(),
-  setConsent: (next) => {
-    writeConsent(next);
-    set({ consent: next });
   },
 
   user: null,

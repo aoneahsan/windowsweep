@@ -54,10 +54,15 @@ export function Sections() {
           <h1 className="t-xl wide">{t('sections.title', { count: catalogue?.sections.length ?? 0 })}</h1>
           <p className="lede">{t('sections.lede')}</p>
 
-          <div className="chipfield" style={{ marginTop: 'var(--sp-4)' }}>
+          {/* 🔴 `fchip` inside `filters`, which is what the dummy uses here.
+              `chip`/`chipfield` is its protected-PATH token: it has NO pressed
+              state, so the active filter was indistinguishable from the others,
+              and its hover turns danger-red - reading as "press to remove" on a
+              control that selects. The class was the whole defect. */}
+          <div className="filters" style={{ marginTop: 'var(--sp-4)' }}>
             {FILTERS.map((f) => (
               <button
-                className="chip"
+                className="fchip"
                 type="button"
                 key={f}
                 aria-pressed={filter === f}

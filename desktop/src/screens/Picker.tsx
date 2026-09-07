@@ -83,13 +83,23 @@ export function Picker() {
                 </div>
                 <div className="lst">
                   {rows.map((r) => (
-                    <div className="lst-i" key={r.path}>
+                    <div className="lst-i" key={r.path} data-selected={selectedPaths.has(r.path)}>
                       <div className="lst-x">
-                        <input
-                          type="checkbox"
-                          checked={selectedPaths.has(r.path)}
-                          aria-label={r.path}
-                          onChange={() => { toggleCandidate(r.path); }}
+                        {/* 🔴 The dummy's row control is a switch at a reduced
+                            width, not a bare `<input type="checkbox">`. The bare
+                            input had no style in this design system at all - a
+                            raw UA control on the one screen where what is ticked
+                            decides what gets deleted. The row itself now carries
+                            `data-selected`, so the choice is legible from across
+                            the row rather than from one 16px box. */}
+                        <button
+                          className="switch"
+                          type="button"
+                          role="switch"
+                          aria-checked={selectedPaths.has(r.path)}
+                          aria-label={t('picker.chooseRow', { path: r.path })}
+                          style={{ ['--sw-w' as string]: 'calc(1.9rem * var(--density))' }}
+                          onClick={() => { toggleCandidate(r.path); }}
                         />
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
@@ -126,37 +136,50 @@ export function Picker() {
             <div
               style={{ marginInlineStart: 'auto', display: 'flex', gap: 'var(--sp-2)', alignItems: 'center' }}
             >
+              {/* 🔴 A label wrapping a real radio, which is what `.seg-opt` is
+                  styled for: the selected paint is `.seg-opt:has(input:checked)`,
+                  so the previous `<button role="radio" aria-checked>` matched NO
+                  rule - the control that chooses between the Recycle Bin and
+                  permanent deletion showed no selection at all. Native radios in
+                  one group also bring arrow-key traversal with them. */}
               <div className="seg" role="radiogroup" aria-label={t('picker.howToDelete')}>
-                <button
-                  className="seg-opt"
-                  type="button"
-                  role="radio"
-                  aria-checked={!permanent}
-                  onClick={() => { setPermanent(false); }}
-                >
+                <label className="seg-opt">
+                  <input
+                    type="radio"
+                    name="pick-mode"
+                    value="recycle"
+                    checked={!permanent}
+                    onChange={() => { setPermanent(false); }}
+                  />
                   <span>{t('picker.recycleBin')}</span>
-                </button>
-                <button
-                  className="seg-opt"
-                  type="button"
-                  role="radio"
-                  aria-checked={permanent}
-                  onClick={() => { setPermanent(true); }}
-                >
+                </label>
+                <label className="seg-opt">
+                  <input
+                    type="radio"
+                    name="pick-mode"
+                    value="permanent"
+                    checked={permanent}
+                    onChange={() => { setPermanent(true); }}
+                  />
                   <span>{t('picker.permanent')}</span>
-                </button>
+                </label>
               </div>
-              <button
-                className="btn btn-sm btn-primary"
-                type="button"
-                disabled={selectedPaths.size === 0}
-              >
-                {t('picker.remove')}
+              {/* 🔴 Disabled, and declared. The removal needs the engine's
+                  `--select-file`, which is a file the Rust side has to write, and
+                  no such command exists in this build. It was accepting presses
+                  and doing nothing at all, which is the worst reading of the two:
+                  a person could tick rows, press it, and believe a deletion had
+                  been queued. */}
+              <button className="btn btn-sm btn-primary" type="button" disabled>
+                <span className="btn-label">{t('picker.remove')}</span>
               </button>
             </div>
           </div>
           {/* 🔴 Beside the control, not after the deletion. */}
           <p className="t-sm ink-3 selbar-note">{t('picker.consequence')}</p>
+          {/* The stated gap that goes with the disabled button above. Named here
+              rather than hidden, per §10a's `pending-wave` exemption. */}
+          <p className="t-xs ink-3">{t('pending.body')}</p>
         </div>
       </section>
 

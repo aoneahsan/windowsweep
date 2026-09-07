@@ -68,24 +68,67 @@ async function windowAction(action: WindowAction): Promise<void> {
   }
 }
 
+/**
+ * 🔴 The classes here are the dummy's, and that is not cosmetic. The first
+ * translation invented `tb-name`, `tb-spacer`, `tb-btn` and `tb-close`, none of
+ * which exists in `shell.css` - so all four controls had no hover, no press and no
+ * close-red, and the whole title bar was four dead-looking buttons. `tb-title`,
+ * `wincontrols`, `wc` and `wc-close` are the real vocabulary.
+ *
+ * 🔴 `tb-interactive` is `-webkit-app-region: no-drag`. The title bar itself is
+ * the drag region, so a control inside it WITHOUT that class can be swallowed by
+ * the drag in a real window - a button that looks live and never fires.
+ */
+/**
+ * The wordmark's sweep, transcribed from `app.js`'s title-bar builder. Decorative,
+ * so it is `aria-hidden`; the name beside it is the accessible one.
+ */
+function TitleMark() {
+  return (
+    <svg className="tb-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M2 17c4.5 0 5-9 10-9s5.5 6 10 6"
+        stroke="var(--c-accent)"
+        strokeWidth="3.4"
+        strokeLinecap="round"
+      />
+      <path
+        d="M2 21c4.5 0 5-6 10-6s5.5 4 10 4"
+        stroke="var(--c-accent)"
+        strokeWidth="2"
+        strokeLinecap="round"
+        opacity=".45"
+      />
+    </svg>
+  );
+}
+
 function Titlebar({ onOpenTheme }: { onOpenTheme: () => void }) {
   const { t } = useTranslation();
+  const version = useStore((s) => s.engineVersion);
   return (
     <header className="titlebar" data-tauri-drag-region>
-      <span className="tb-name">{t('app.name')}</span>
-      <div className="tb-spacer" />
-      <button className="tb-btn" type="button" onClick={onOpenTheme} aria-label={t('theme.title')}>
-        <Icon name="sun" />
-      </button>
-      <button className="tb-btn" type="button" onClick={() => { void windowAction('minimize'); }} aria-label={t('window.minimise')}>
-        <Icon name="min" />
-      </button>
-      <button className="tb-btn" type="button" onClick={() => { void windowAction('toggleMaximize'); }} aria-label={t('window.maximise')}>
-        <Icon name="max" />
-      </button>
-      <button className="tb-btn tb-close" type="button" onClick={() => { void windowAction('close'); }} aria-label={t('window.close')}>
-        <Icon name="close" />
-      </button>
+      <TitleMark />
+      <span className="tb-title">{t('app.name')}</span>
+      {/* The ENGINE's version, which is what the dummy's badge carries - the one
+          number a person can check against the command-line tool. */}
+      <span className="badge badge-outline mono">{version || '-'}</span>
+      <div className="wincontrols tb-interactive">
+        <button className="btn btn-ghost btn-sm" type="button" onClick={onOpenTheme} aria-label={t('theme.title')}>
+          <Icon name="sun" />
+        </button>
+      </div>
+      <div className="wincontrols tb-interactive">
+        <button className="wc" type="button" onClick={() => { void windowAction('minimize'); }} aria-label={t('window.minimise')}>
+          <Icon name="min" size={13} />
+        </button>
+        <button className="wc" type="button" onClick={() => { void windowAction('toggleMaximize'); }} aria-label={t('window.maximise')}>
+          <Icon name="max" size={13} />
+        </button>
+        <button className="wc wc-close" type="button" onClick={() => { void windowAction('close'); }} aria-label={t('window.close')}>
+          <Icon name="close" size={13} />
+        </button>
+      </div>
     </header>
   );
 }
@@ -147,13 +190,34 @@ function StatusBar({ note }: { note?: string }) {
   );
 }
 
-export function Shell({ children, statusNote }: { children: React.ReactNode; statusNote?: string }) {
+/**
+ * 🔴 `rail` is how Splash and Consent drop the navigation and keep everything
+ * else. They rendered their own bare `.app` + empty `.titlebar` before, which
+ * left the theme control - the ONE appearance control, owed on every route at
+ * every width - missing on 2 of 11 routes while the dummy carries it on all of
+ * them. The rail is what those two screens must not have, because nothing is
+ * navigable yet; the title bar and status bar are not.
+ */
+export function Shell({
+  children,
+  statusNote,
+  rail = true,
+}: {
+  children: React.ReactNode;
+  statusNote?: string;
+  rail?: boolean;
+}) {
   const [themeOpen, setThemeOpen] = useState(false);
   return (
     <div className="app">
       <Titlebar onOpenTheme={() => { setThemeOpen(true); }} />
-      <div className="shell">
-        <Rail />
+      {/* 🔴 `shell-bare` is load-bearing, not cosmetic. `.shell` is a two-column
+          grid whose first column is `auto`, which sizes to MAX-CONTENT - with the
+          rail gone, the content column collapses to the width of its widest line
+          and every band's background stops there. It is visible in the dummy's own
+          splash and consent pages, where the band ends mid-window. */}
+      <div className={rail ? 'shell' : 'shell shell-bare'}>
+        {rail ? <Rail /> : null}
         <main className="content">{children}</main>
       </div>
       <StatusBar {...(statusNote ? { note: statusNote } : {})} />

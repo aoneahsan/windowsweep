@@ -18,6 +18,8 @@ import {
   createRouter,
   Outlet,
   RouterProvider,
+  useNavigate,
+  useRouterState,
 } from '@tanstack/react-router';
 
 import { Shell } from './components/Shell';
@@ -35,9 +37,33 @@ import { Elevation } from './screens/Elevation';
 import { useStore } from './state/store';
 import { loadCatalogue } from './lib/engine';
 
+/**
+ * 🔴 THE APP BOOTS THROUGH SPLASH, and until now it did not.
+ *
+ * `/splash` and `/consent` were both registered and NOTHING ever navigated to
+ * either one, so the boot sequence never ran, the update check never happened,
+ * and a first-run person never saw the notice - three built things that no route
+ * reached. A launch opens at `#/`, so the redirect fires there, exactly once.
+ *
+ * 🔴 Once per process, and only from the default location. A deep link - which in
+ * a desktop window means a reload on `#/settings` - keeps the place it was given
+ * rather than being thrown back to a boot screen, and returning to Home after the
+ * splash must not bounce straight back into it.
+ */
+let booted = false;
+
 function RootLayout() {
   const setCatalogue = useStore((s) => s.setCatalogue);
   const setEngineError = useStore((s) => s.setEngineError);
+  const navigate = useNavigate();
+  const path = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    if (booted) return;
+    booted = true;
+    if (path !== '/') return;
+    void navigate({ to: '/splash' });
+  }, [path, navigate]);
 
   useEffect(() => {
     let cancelled = false;

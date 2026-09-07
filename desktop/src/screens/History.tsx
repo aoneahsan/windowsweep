@@ -36,10 +36,12 @@ export function History() {
         <div className="wrap">
           <p className="caps ink-3">{t('history.eyebrow')}</p>
           <h1 className="t-xl wide">{t('history.title')}</h1>
-          <div className="chipfield" style={{ marginTop: 'var(--sp-4)' }}>
+          {/* `fchip` inside `filters` - the dummy's filter vocabulary, which
+              carries a pressed state. See the note in `Sections.tsx`. */}
+          <div className="filters" style={{ marginTop: 'var(--sp-4)' }}>
             {FILTERS.map((f) => (
               <button
-                className="chip"
+                className="fchip"
                 type="button"
                 key={f}
                 aria-pressed={filter === f}

@@ -6,10 +6,15 @@
  * three of the four - the recorded failure is a product where two destinations
  * silently received a different set of events from the third.
  *
- * 🔴 A provider is CONSTRUCTED only when its consent flag is true and its key is
- * present. An absent key skips its provider and never blocks boot; an absent
- * consent does the same. Gating the report call instead of the construction still
- * opens the connection, which is the thing being consented to.
+ * 🔴 THERE IS NO CONSENT GATE, since 2026-09-07. The owner removed the opt-out:
+ * the product is free, it collects usage data to improve itself, and the first-run
+ * screen is a notice rather than a decision. A provider is therefore constructed
+ * whenever its KEY is present, and nothing here reads a stored flag.
+ *
+ * 🔴 A missing key still skips its provider silently and never blocks boot. That
+ * is a BUILD fact, not a user choice - no key is configured in this build, so
+ * nothing is actually sent from it - and it is the one thing that must not be
+ * confused with the setting that no longer exists.
  *
  * 🔴 Amplitude's ready flag is set on the init PROMISE, never on the init call.
  * `init()` returns before its destination plugins attach, so every event fired in
@@ -22,8 +27,6 @@
  * that catches it: `dataLayer.push === Array.prototype.push` being true means
  * gtag.js never took over.
  */
-
-import { readConsent, type ConsentState } from './consent';
 
 export interface AnalyticsKeys {
   ga4MeasurementId?: string | undefined;
@@ -152,33 +155,25 @@ async function startSentry(dsn: string): Promise<void> {
 }
 
 /**
- * Start exactly the providers that are both consented to and configured.
- * Safe to call more than once; later calls are ignored until `reset()`.
+ * Start every provider this build has a key for. Safe to call more than once.
+ *
+ * 🔴 The only condition is the KEY. There is no consent parameter and no stored
+ * flag to read - the notice tells the person what is collected and there is no
+ * switch, so a gate here would be a control nobody can reach.
  */
-export async function startAnalytics(keys: AnalyticsKeys, version: string, consent?: ConsentState): Promise<void> {
+export async function startAnalytics(keys: AnalyticsKeys, version: string): Promise<void> {
   if (started) return;
   started = true;
   appVersion = version;
-  const c = consent ?? readConsent();
 
   const jobs: Promise<void>[] = [];
-  if (c.ga4 && keys.ga4MeasurementId) jobs.push(startGa4(keys.ga4MeasurementId));
-  if (c.amplitude && keys.amplitudeApiKey) jobs.push(startAmplitude(keys.amplitudeApiKey));
-  if (c.clarity && keys.clarityProjectId) jobs.push(startClarity(keys.clarityProjectId));
-  if (c.sentry && keys.sentryDsn) jobs.push(startSentry(keys.sentryDsn));
+  if (keys.ga4MeasurementId) jobs.push(startGa4(keys.ga4MeasurementId));
+  if (keys.amplitudeApiKey) jobs.push(startAmplitude(keys.amplitudeApiKey));
+  if (keys.clarityProjectId) jobs.push(startClarity(keys.clarityProjectId));
+  if (keys.sentryDsn) jobs.push(startSentry(keys.sentryDsn));
 
   // A destination that fails to start must never take the app down with it.
   await Promise.allSettled(jobs);
-}
-
-/**
- * Revoking a destination has to stop it immediately, and the only way to be
- * certain a loaded third-party script has stopped is to reload the window with
- * the new record already written. The caller writes consent, then calls this.
- */
-export function reset(): void {
-  providers.length = 0;
-  started = false;
 }
 
 /** The one call site vocabulary. Nothing outside this module names a provider. */
@@ -194,7 +189,3 @@ export function track(event: string, props: EventProps = {}): void {
   }
 }
 
-/** Test seam: which destinations actually came up. Used by the settings screen. */
-export function activeProviders(): string[] {
-  return providers.filter((p) => p.ready).map((p) => p.name);
-}

@@ -7,7 +7,6 @@ import { applyDocumentLanguage } from './i18n';
 import { App } from './App';
 import { applyAllAxes, readPrefs } from './lib/theme';
 import { startAnalytics } from './lib/analytics';
-import { readConsent } from './lib/consent';
 import { keys, appVersionFallback } from './lib/config';
 
 /* The pre-paint script already wrote every axis to <html>. This second pass is
@@ -17,10 +16,11 @@ import { keys, appVersionFallback } from './lib/config';
 applyAllAxes(readPrefs());
 applyDocumentLanguage();
 
-/* 🔴 Consent-gated, and it never blocks boot. A destination whose key is absent
-   is skipped; a destination that fails to start is swallowed. The window opens
-   whether or not anything here succeeds. */
-void startAnalytics(keys, appVersionFallback, readConsent());
+/* 🔴 No consent gate, since the owner removed the opt-out on 2026-09-07: every
+   destination this build has a KEY for starts here, and the first-run screen is a
+   notice rather than a decision. A destination whose key is absent is skipped and
+   one that fails to start is swallowed - the window opens either way. */
+void startAnalytics(keys, appVersionFallback);
 
 const host = document.getElementById('root');
 if (!host) throw new Error('the application root is missing from index.html');

@@ -9,7 +9,7 @@
  * the hero says so rather than showing a zero that reads as "nothing to reclaim".
  */
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -17,6 +17,16 @@ import { useStore } from '../state/store';
 import { formatBytes } from '../lib/format';
 import { newRunId, run, scanArgs, safeBatchArgs } from '../lib/engine';
 import { safeRunSections } from '../lib/catalogue';
+import { controlState, stateOf } from '../lib/control-state';
+import { DESTINATIONS, type Destination } from '../lib/consent';
+
+/** Brand names, not copy: they are the same in every language. */
+const VENDOR: Record<Destination, string> = {
+  ga4: 'Google Analytics 4',
+  amplitude: 'Amplitude',
+  clarity: 'Microsoft Clarity',
+  sentry: 'Sentry',
+};
 
 /** The product's one visual metaphor, at the hero only - decoration belongs here,
     not on every card. Copied from the dummy's markup. */
@@ -63,7 +73,11 @@ export function Home() {
   const finishRun = useStore((s) => s.finishRun);
   const setCandidates = useStore((s) => s.setCandidates);
 
-  const [busy, setBusy] = useState<'scan' | null>(null);
+  /* 🔴 Which action is in flight, not merely whether one is. The pending state
+     belongs on the control that was pressed, and the other two have to refuse a
+     press while it runs - one engine, one run at a time. */
+  const [busy, setBusy] = useState<'scan' | 'dryRun' | 'reclaim' | null>(null);
+  const [scanDone, setScanDone] = useState(false);
 
   const reclaimable = summary
     ? summary.estimated_bytes > 0
@@ -91,15 +105,29 @@ export function Home() {
 
   const onScan = useCallback(() => {
     setBusy('scan');
-    void drive(scanArgs(developer), false).finally(() => { setBusy(null); });
+    void drive(scanArgs(developer), false).finally(() => {
+      setBusy(null);
+      setScanDone(true);
+    });
   }, [drive, developer]);
 
+  /* The tick is an acknowledgement, not a state: it says "that finished" and then
+     gets out of the way, which is what the dummy's own busy() helper does. The
+     hero number changing is the primary answer; this is the one at the control. */
+  useEffect(() => {
+    if (!scanDone) return;
+    const to = window.setTimeout(() => { setScanDone(false); }, 700);
+    return () => { window.clearTimeout(to); };
+  }, [scanDone]);
+
   const onDryRun = useCallback(() => {
-    void drive(safeBatchArgs({ dryRun: true, developer }), true);
+    setBusy('dryRun');
+    void drive(safeBatchArgs({ dryRun: true, developer }), true).finally(() => { setBusy(null); });
   }, [drive, developer]);
 
   const onReclaim = useCallback(() => {
-    void drive(safeBatchArgs({ dryRun: false, developer }), true);
+    setBusy('reclaim');
+    void drive(safeBatchArgs({ dryRun: false, developer }), true).finally(() => { setBusy(null); });
   }, [drive, developer]);
 
   if (engineError) {
@@ -117,6 +145,10 @@ export function Home() {
   }
 
   const safeSections = catalogue ? safeRunSections(catalogue, developer) : [];
+  /* 🔴 One gate for all three buttons: a second press must not be able to start a
+     second run, whether the first one is still starting up (`busy`) or already
+     streaming (`phase`). Either alone leaves a window where two runs can begin. */
+  const running = busy !== null || phase === 'running';
 
   return (
     <>
@@ -145,17 +177,30 @@ export function Home() {
             </p>
           </div>
           <div className="hero-actions">
-            <button className="btn" type="button" onClick={onScan} disabled={busy === 'scan' || phase === 'running'}>
+            <button
+              className="btn"
+              type="button"
+              onClick={onScan}
+              disabled={running}
+              {...controlState(stateOf(busy === 'scan', scanDone))}
+            >
               <span className="btn-label">{summary ? t('home.scanAgain') : t('home.scanFirst')}</span>
             </button>
-            <button className="btn" type="button" onClick={onDryRun} disabled={phase === 'running'}>
+            <button
+              className="btn"
+              type="button"
+              onClick={onDryRun}
+              disabled={running}
+              {...controlState(stateOf(busy === 'dryRun'))}
+            >
               <span className="btn-label">{t('home.dryRunFirst')}</span>
             </button>
             <button
               className="btn btn-primary btn-lg"
               type="button"
               onClick={onReclaim}
-              disabled={phase === 'running' || reclaimable === null}
+              disabled={running || reclaimable === null}
+              {...controlState(stateOf(busy === 'reclaim'))}
             >
               <span className="btn-label">
                 {reclaimable === null
@@ -217,6 +262,46 @@ export function Home() {
       <section className="band band-bleed band-tight">
         <div className="wrap rise">
           <p className="assure">{t('home.assure')}</p>
+        </div>
+      </section>
+
+      {/* 🔴 The destination ledger - the dummy's zone 13, on request rather than
+          in the way. These were four SWITCHES until 2026-09-07; the owner removed
+          the opt-out, so each destination is now a stated fact carrying an `on`
+          badge. A switch that changes nothing is worse than no switch, and this is
+          the surface a person meets in ordinary use rather than once at first run. */}
+      <section className="band band-app">
+        <div className="wrap rise">
+          <details className="disclose">
+            <summary>
+              <span className="disclose-line">{t('home.privacySummary')}</span>
+              <span className="disclose-more">{t('consent.detailsMore')}</span>
+            </summary>
+            <div className="disclose-body">
+              <p>{t('home.privacyIntro')}</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+                {DESTINATIONS.map((d) => (
+                  <div
+                    key={d}
+                    style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--sp-3)' }}
+                  >
+                    <span className="badge badge-outline">{t('consent.badgeOn')}</span>
+                    <div>
+                      <div>
+                        <span className="t-sm">{t(`consent.provider.${d}.name`)}</span>{' '}
+                        <span className="t-xs ink-3">{VENDOR[d]}</span>
+                      </div>
+                      <div className="t-xs ink-3">{t(`consent.provider.${d}.what`)}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p>
+                <strong>{t('consent.neverSentLabel')}</strong> {t('consent.neverSent')}
+              </p>
+              <p>{t('home.privacySignIn')}</p>
+            </div>
+          </details>
         </div>
       </section>
 

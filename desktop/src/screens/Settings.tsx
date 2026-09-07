@@ -11,19 +11,24 @@
  * what `revoke` does, and the copy says so.
  */
 
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
-import { CONSENT_PROVIDERS, type ConsentProvider } from '../lib/consent';
+import { DESTINATIONS, type Destination } from '../lib/consent';
 import { AXES, axisValue } from '../lib/theme';
 import { configuredFeatures, REPO_URL, SUPPORT_URL } from '../lib/config';
 import { openExternal } from '../lib/links';
+import { controlState, stateOf } from '../lib/control-state';
 
 type Tab = 'general' | 'scanning' | 'notifications' | 'privacy' | 'about';
 const TABS: Tab[] = ['general', 'scanning', 'notifications', 'privacy', 'about'];
 
-const VENDOR: Record<ConsentProvider, string> = {
+/** The two external links the About tab offers. */
+type Link = 'source' | 'support';
+
+const VENDOR: Record<Destination, string> = {
   ga4: 'Google Analytics 4',
   amplitude: 'Amplitude',
   clarity: 'Microsoft Clarity',
@@ -40,16 +45,30 @@ export function Settings() {
   const setAxis = useStore((s) => s.setAxis);
   const developer = useStore((s) => s.developer);
   const setDeveloper = useStore((s) => s.setDeveloper);
-  const consent = useStore((s) => s.consent);
-  const setConsent = useStore((s) => s.setConsent);
   const features = configuredFeatures();
 
-  function revoke(provider: ConsentProvider, on: boolean) {
-    setConsent({ ...consent, [provider]: on, answered: true, answeredAt: new Date().toISOString() });
-    // 🔴 A script already loaded cannot be unloaded. Reloading with the new
-    // record written is the only way "revoking stops it immediately" is true.
-    if (!on) window.location.reload();
-  }
+  const [opening, setOpening] = useState<Link | null>(null);
+  const [opened, setOpened] = useState<Link | null>(null);
+
+  const openLink = useCallback((which: Link, href: string) => {
+    setOpening(which);
+    void openExternal(href)
+      .then(() => { setOpened(which); })
+      .catch(() => {
+        /* 🔴 Caught rather than dropped: `void promise.finally()` still leaves an
+           unhandled rejection, and outside a Tauri window there is no opener at
+           all. The control returns to idle and claims nothing, because the dummy
+           carries no sentence for a browser that would not open - reported. */
+      })
+      .finally(() => { setOpening(null); });
+  }, []);
+
+  /* The tick says "handed to your browser" and then gets out of the way. */
+  useEffect(() => {
+    if (opened === null) return;
+    const to = window.setTimeout(() => { setOpened(null); }, 900);
+    return () => { window.clearTimeout(to); };
+  }, [opened]);
 
   return (
     <>
@@ -105,18 +124,22 @@ export function Settings() {
                         <div className="t-base">{t(axis.labelKey)}</div>
                       </div>
                       <div className="lst-x">
+                        {/* 🔴 Labels wrapping real radios. `.seg-opt`'s selected
+                            paint is `:has(input:checked)`, so the previous
+                            `<button role="radio">` matched no rule and every one
+                            of these ten axes looked unset whatever was chosen. */}
                         <div className="seg" role="radiogroup" aria-label={t(axis.labelKey)}>
                           {axis.values.map((v) => (
-                            <button
-                              className="seg-opt"
-                              type="button"
-                              role="radio"
-                              key={v.value}
-                              aria-checked={axisValue(prefs, axis.key) === v.value}
-                              onClick={() => { setAxis(axis.key, v.value); }}
-                            >
+                            <label className="seg-opt" key={v.value}>
+                              <input
+                                type="radio"
+                                name={`axis-${axis.key}`}
+                                value={v.value}
+                                checked={axisValue(prefs, axis.key) === v.value}
+                                onChange={() => { setAxis(axis.key, v.value); }}
+                              />
                               <span>{t(`theme.value.${v.value}`, v.label)}</span>
-                            </button>
+                            </label>
                           ))}
                         </div>
                       </div>
@@ -133,8 +156,19 @@ export function Settings() {
 
               {tab === 'privacy' ? (
                 <>
+                  {/* 🔴 Four SWITCHES until 2026-09-07. The owner removed the
+                      opt-out, so this panel states what is collected and says
+                      plainly that there is no switch. A control a person can
+                      press that changes nothing is worse than no control: it is a
+                      promise the product does not keep. */}
+                  <div className="note note-info">
+                    <span aria-hidden="true">i</span>
+                    <span className="t-sm">
+                      <Trans i18nKey="consent.lede" components={{ 1: <strong /> }} />
+                    </span>
+                  </div>
                   <div className="lst">
-                    {CONSENT_PROVIDERS.map((p) => (
+                    {DESTINATIONS.map((p) => (
                       <div className="lst-i" key={p}>
                         <div style={{ flex: 1 }}>
                           <div
@@ -151,14 +185,7 @@ export function Settings() {
                           <div className="t-sm ink-3">{t(`consent.provider.${p}.what`)}</div>
                         </div>
                         <div className="lst-x">
-                          <button
-                            className="switch"
-                            type="button"
-                            role="switch"
-                            aria-checked={consent[p]}
-                            aria-label={t(`consent.provider.${p}.name`)}
-                            onClick={() => { revoke(p, !consent[p]); }}
-                          />
+                          <span className="badge badge-outline">{t('consent.badgeOn')}</span>
                         </div>
                       </div>
                     ))}
@@ -172,8 +199,13 @@ export function Settings() {
                       <span className="badge badge-ok">{t('settings.refused')}</span>
                     </div>
                   </div>
+                  <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-3)' }}>
+                    {t('consent.noSwitch')}
+                  </p>
+                  {/* A BUILD fact, not a setting: no key is configured here, so
+                      nothing is actually sent from this build. */}
                   {!features.telemetry ? (
-                    <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-3)' }}>
+                    <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-2)' }}>
                       {t('settings.noKeys')}
                     </p>
                   ) : null}
@@ -186,11 +218,27 @@ export function Settings() {
                   <div
                     style={{ display: 'flex', gap: 'var(--sp-2)', flexWrap: 'wrap', marginTop: 'var(--sp-3)' }}
                   >
-                    <button className="btn btn-sm" type="button" onClick={() => { void openExternal(REPO_URL); }}>
-                      {t('settings.source')}
+                    {/* 🔴 Handing a URL to the system browser takes a moment and
+                        the app window does not change, so without a state on the
+                        control the press is invisible - and `void openExternal()`
+                        also dropped its rejection on the floor. */}
+                    <button
+                      className="btn btn-sm"
+                      type="button"
+                      onClick={() => { openLink('source', REPO_URL); }}
+                      disabled={opening !== null}
+                      {...controlState(stateOf(opening === 'source', opened === 'source'))}
+                    >
+                      <span className="btn-label">{t('settings.source')}</span>
                     </button>
-                    <button className="btn btn-sm" type="button" onClick={() => { void openExternal(SUPPORT_URL); }}>
-                      {t('settings.support')}
+                    <button
+                      className="btn btn-sm"
+                      type="button"
+                      onClick={() => { openLink('support', SUPPORT_URL); }}
+                      disabled={opening !== null}
+                      {...controlState(stateOf(opening === 'support', opened === 'support'))}
+                    >
+                      <span className="btn-label">{t('settings.support')}</span>
                     </button>
                   </div>
                 </div>

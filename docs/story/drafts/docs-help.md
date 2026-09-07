@@ -4,31 +4,34 @@
 
 Content-map row **6** · surfaces `docs/troubleshooting.md` and `docs/faq.md` · awareness **stuck, mid-task**
 · structure **symptom → cause → the exact command** · tone bands **P, W allowed once per page** · length
-**short answers** · CTA **the fixing command** · schema **FAQPage (docs site)**.
+**short answers** · CTA **the fixing command** · schema **FAQPage, page-scoped on `faq` only**.
 
 A reader here is not evaluating anything. They are stuck. They have a message on screen or a question in
 their way, and the useful answer is the shortest one that ends in something they can run. Every fix on both
 pages was checked against the string the engine actually prints.
 
-## 🔴 The schema row 6 declares does not exist
+## 🔴 The `FAQPage` schema is live, so §C is an edit rather than a proposal
 
-`content-map.md` row 6 assigns **FAQPage** to this surface. There is no `FAQPage` block anywhere in the docs
-site. `windowsweep-docs/docusaurus.config.ts` carries four JSON-LD scripts - `WebSite`,
-`SoftwareSourceCode`, `SoftwareApplication` and `Organization` - and every one of them sits in `headTags`,
-which Docusaurus emits on **every page**. So a `FAQPage` block added there would claim that the installation
-page and the CLI reference are also FAQs, which is worse than having none.
+`content-map.md` row 6 assigns **FAQPage** to this surface and the docs site now carries it.
+`windowsweep-docs/docs/faq.mdx` holds a page-scoped `<Head>` block with four questions - correctly
+page-scoped rather than in the `headTags` array, where the site's four other JSON-LD scripts sit and are
+emitted on every page.
 
-Making it real needs a page-scoped head tag, and that is a change to the docs site rather than to a draft.
-§C below carries the `mainEntity` payload, written from the answers this draft ships, so whoever implements
-the mechanism does not have to re-derive the text. Its correctness rests on one rule: **every question and
-answer in the block must be visible on the rendered page**, which is why it is generated from §B rather than
-composed separately.
+It was built from `faq.md` as that file stands today, not from this draft, and it is in sync: parsed and
+compared on 2026-09-07, four names and four answer texts, all eight matching the visible page once markdown
+is stripped. So there is no desync to repair here, and the earlier reading of this row as unimplemented was
+wrong.
+
+What that costs is stated plainly, because the file's own comment already says it: **every question and
+answer in the block must be visible on the rendered page**, so an answer that changes above changes the block
+in the same edit. This draft changes all four of the block's entries and adds a fifth. §C carries the
+replacement payload so nobody has to re-derive it.
 
 | File | Slot range | Count |
 |---|---|---|
 | §A `docs/troubleshooting.md` | S-001 – S-013 | 13 |
 | §B `docs/faq.md` | S-014 – S-028 | 15 |
-| §C the `FAQPage` payload (blocked) | S-029 | 1 |
+| §C the `FAQPage` payload | S-029 | 1 |
 | **Total** | | **29** |
 
 ---
@@ -36,21 +39,41 @@ composed separately.
 ## §A `docs/troubleshooting.md`
 
 The whole page is one table. Its Cause and Fix cells are explanation rather than a record of engine
-vocabulary, so they are in scope. Nine of the twenty-two rows are already exactly right and are recorded as
-kept without a slot of their own; the thirteen below are the ones that change or that carry a fact worth
-stating.
+vocabulary, so they are in scope.
+
+**Counted from the live file, 2026-09-07.** `docs/troubleshooting.md` lines 5-21 are the table body - `sed
+-n '5,21p' docs/troubleshooting.md | grep -c '^|'` returns **17**, the header and delimiter rows excluded.
+**Ten** of those rows change and carry a slot below, S-002 to S-011; the remaining **seven** are already
+right and are listed as kept at the end of this section. Three slots here are not rows at all: S-001 is the
+line above the table, S-012 the line below it, S-013 the footer. The earlier counts - twenty-two rows, nine
+kept, thirteen changed - were never true of this file: the table has held 17 rows since `5109557`, and this
+page is unchanged in the working tree, so the numbers were a miscount rather than drift. Counted, not
+remembered.
 
 ### S-001 · troubleshooting.md:3 · NEW · the line above the table
 ```
-Every symptom below is a line windowsweep prints. If yours is not here, the session log under `%USERPROFILE%\.windowsweep\logs\` records every skip and every refusal with its reason, and `windowsweep --report-issue` opens a pre-filled GitHub issue after you confirm.
+The left column is what you are looking at: a line windowsweep printed, a line PowerShell, npm or the shell printed, or an outcome with no message at all. Every row here belongs to the command-line tool. A problem that appears only in the desktop window is on [Desktop app](./desktop.md).
 ```
 **Was:** (new — the table follows the H1 directly.)
 
-**Change:** added. A troubleshooting page that opens on a table gives a reader nothing when their symptom is
-absent, and this one already has the answer at the bottom of the file in a sentence about the log. Moving
-that fact above the table and adding the reporting command beside it makes the page work for the reader it
-currently fails. `--report-issue` is the right CTA here because it is the only channel and it is opt-in:
-`Start-Process` hands the URL to the browser after a confirmation.
+**Change:** added, and it is deliberately not the sentence this slot carried in the first draft. That opener
+read *"Every symptom below is a line windowsweep prints"*, which is false for **nine of the seventeen rows**.
+Three are other programs talking: PowerShell's `running scripts is disabled`, npm's `notsup`, and cmd's
+`is not recognized`. Six print nothing at all - the two reclaimed-less rows, the glyph row, the extension
+row, the kept-version row and the crash-bundle row, each of which is an outcome a reader notices rather than
+a message they can search for. Eight rows are windowsweep's own lines, confirmed by grepping `lib/`,
+`modules/` and `windowsweep.ps1` for each quoted string. So the line orients instead of classifying: it says
+what the left column holds, and a reader who cannot find their exact string now knows why.
+
+The desktop clause is the rest. `docs/desktop.md` is live at `/desktop` and nothing on this page
+pointed at it, so a reader whose problem is only in the window had no way out of a table that cannot help
+them. It states the boundary rather than duplicating anything: these rows are the engine's.
+
+**The escape hatch moves to the bottom, at S-012.** The session log and `--report-issue` are the right last
+word and the wrong first one - offered above the table they invite a reader to give up before they have read
+seventeen rows. The FAQ's own closing pointer at S-026 puts "not here?" at the end for exactly that reason,
+and S-012 already carries the log sentence, so the beat lands where it was half-written already. Last word,
+not first.
 
 ### S-002 · troubleshooting.md:6 · the refusal row
 ```
@@ -90,16 +113,19 @@ profile covers turns one command into a complete answer. The other three get the
 
 ### S-005 · troubleshooting.md:10 · the deep-section row
 ```
-| `section 11 is deep (irreversible or system-changing): refused in batch mode without --i-understand-deep.` | A deep section (11, 15, 16, 20) was named in `--only` or a profile | Add `--i-understand-deep` with `--yes`, or run it from the menu. Read what the section does first: 11 and 16 cannot be undone |
+| `section 11 is deep (irreversible or system-changing): refused in batch mode without --i-understand-deep.` | A deep section (11, 15, 16, 20) was named in `--only` or a profile. The gate is there because 11 empties the Recycle Bin and 16 clears the event logs, and neither can be undone | Read what the section does, then run it from the menu or add `--i-understand-deep` with `--yes` |
 ```
 **Was:** Symptom: `refused in batch mode without --i-understand-deep`; Fix: Add `--i-understand-deep` with
 `--yes`, or run it from the menu
 
-**Change:** the symptom is quoted in full from `modules/runner.ps1` line 90, and the Fix gains a sentence.
-This is the only row on the page whose fix hands a reader a permanent deletion, and a troubleshooting table
-that answers "how do I make the refusal go away" without saying what the refusal was for is answering the
-wrong question. Two of the four deep sections have no undo of any kind, which is one clause and is the whole
-point of the gate.
+**Change:** the symptom is quoted in full from `modules/runner.ps1` line 90, and the deciding fact moves into
+the **Cause** cell. This is the only row on the page whose fix hands a reader a permanent deletion, and the
+first version of this slot put the flag first and the warning after it. A reader scanning a table copies the
+first runnable thing they see, which means the sentence that decides whether to run it arrives too late to
+decide anything. Cause now carries what the gate protects - `docs/sections.md` lists 11 (Recycle Bin) and 16
+(event logs) at tier `permanent`, while 15 and 20 are `config`, so "neither can be undone" is exact rather
+than a rounding of "deep" - and the Fix ends on the command, which is the shape row 6 asks for: symptom,
+cause, the exact command. The runnable thing goes last.
 
 ### S-006 · troubleshooting.md:11 · the interactive-section row
 ```
@@ -167,13 +193,17 @@ clause settles it in the row where the question arises.
 
 ### S-012 · troubleshooting.md:23 · the closing line
 ```
-Every skipped or refused path is in the session log at `%USERPROFILE%\.windowsweep\logs\` with its reason. The log is a record of what happened, not a way to undo it.
+Every skipped or refused path is in the session log at `%USERPROFILE%\.windowsweep\logs\` with its reason. The log is a record of what happened, not a way to undo it. If your symptom is not in the table, that log is the place to look; `windowsweep --report-issue` opens a pre-filled GitHub issue after you confirm.
 ```
 **Was:** Every skipped or refused path is in the session log at `~\.windowsweep\logs\` with its reason.
 
-**Change:** the path notation, and the second sentence that `docs-safety` S-025 and `docs-reference` S-066
-also carry. A reader who arrives at a troubleshooting page because something is missing will read "every path
-is in the log" as a lead, and the honest answer belongs in the same place as the offer.
+**Change:** the path notation, the second sentence that `docs-safety` S-025 and `docs-reference` S-066 also
+carry, and the third, which is the beat S-001 no longer opens with. A reader who arrives at a
+troubleshooting page because something is missing will read "every path is in the log" as a lead, and the
+honest answer belongs in the same place as the offer. The log first, then the issue. `--report-issue` is the
+right CTA to end on because it is the only channel and it is opt-in: `Start-Process` hands the URL to the
+browser after a confirmation, and a reader who has just failed to find their symptom is the reader that
+command exists for. That is where it belongs.
 
 ### S-013 · troubleshooting.md:25 · the footer
 ```
@@ -192,9 +222,14 @@ explanation is the longest cell on the page and is worth every word.
 
 ## §B `docs/faq.md`
 
-Twelve questions today, one of which is missing. `content-map.md` assigns question 2 of the question map -
-how to delete `node_modules` from old projects - to surfaces 5 and 6, and this page does not answer it.
-S-016 adds it.
+**Eleven questions today**, and one more is owed - `grep -c '^\*\*' docs/faq.md` returns 11.
+`content-map.md` assigns question 2 of the question map - how to delete `node_modules` from old projects - to
+surfaces 5 and 6, and this page does not answer it. S-016 adds it, which takes the page to twelve.
+
+🔴 **Every line reference in this section was re-anchored to the live file on 2026-09-07.** `docs/faq.md`
+was edited on 2026-09-05 at 21:01, thirteen minutes after this draft was first written, by the seventeen-defect
+documentation pass in `89e4888`. Three `Was:` lines drifted with it and are corrected in place below, each
+with what the live file actually says: S-017, S-022 and S-024.
 
 ### S-014 · faq.md:3-6 · will it delete my files
 ```
@@ -212,17 +247,67 @@ the answer is one clause long.
 ### S-015 · faq.md:8-10 · does it phone home
 ```
 **Does it phone home?**
-No. Self-test check [9] greps every source file for seven call shapes - `Invoke-WebRequest`, `Invoke-RestMethod`, `Net.WebClient`, `HttpClient`, `Sockets.TcpClient`, `curl.exe` and `wget` - and fails the run if it finds one. `--report-issue` opens your browser at a pre-filled GitHub page after you confirm, and you submit it yourself.
+No. The command-line tool makes no network calls at all. Self-test check [9] greps every source file for seven call shapes - `Invoke-WebRequest`, `Invoke-RestMethod`, `Net.WebClient`, `HttpClient`, `Sockets.TcpClient`, `curl.exe` and `wget` - and fails the run if it finds one. `--report-issue` opens your browser at a pre-filled GitHub page after you confirm, and you submit it yourself. The desktop window is a different answer: it sends usage and crash reports to improve the product, and there is no switch. What it sends is listed on the [Desktop app](./desktop.md) page.
 ```
 **Was:** No. The source contains no HTTP or socket call; the self-test greps for them. `--report-issue`
 opens your browser at a pre-filled GitHub page after you confirm, and you submit it yourself.
 
-**Change:** the mechanism is named. "The self-test greps for them" asks the reader to take the grep on trust;
-listing the seven needles lets them run the same search themselves in one command. They are the literal
-strings in `modules/release_helpers.ps1` line 224, reassembled there from fragments so the check does not
-match its own source.
+**Change:** the mechanism is named, and the answer gains the scope word it was missing plus a desktop clause.
 
-### S-016 · faq.md:11 · NEW · deleting node_modules
+The mechanism first. "The self-test greps for them" asks the reader to take the grep on trust; listing the
+seven needles lets them run the same search themselves in one command. They are the literal strings in
+`modules/release_helpers.ps1` line 224, reassembled there from fragments so the check does not match its own
+source.
+
+The scope is the larger correction. This answer described the engine and then stood as the product's answer,
+which stopped being true when the desktop window shipped: it checks for an update on every start, and it
+sends analytics with no opt-out since the owner removed one on 2026-09-07. **Both halves are now said, in
+that order**, because the engine's claim is the stronger one and rescoping it is what keeps it - the same
+correction Bible §3 commitment 3 took on 2026-09-07, where *"no network calls at all"* went from a
+product-wide sentence a reader can falsify to an engine-scoped one that is exactly true.
+
+Content-map question 7 is the row behind this slot, its freshness is *"re-check on every desktop release"*,
+and a desktop release landed on 2026-09-07. 🔴 **Its answer text is itself out of date** - it ends *"The
+desktop app can send analytics and sends nothing until you accept"*, and there is nothing to accept any more.
+The clause above is written from the product rather than from the row, and the row is a keeper item, not a
+writer's edit.
+
+**The disclosure itself is not duplicated here.** `docs/desktop.md` owns what it sends - four destinations,
+what each one is, and the fact that no key is configured in this release - and a second copy of that list is
+a second thing to keep in step. One sentence of substance, one pointer, and the detail stays where it lives.
+One home per fact.
+
+### S-017 · faq.md:12-15 · why is there no undo
+```
+**Why is there no undo?**
+Caches regenerate; an undo copy would consume the disk you are trying to free. Personal files - sections 18, 19 and 23 - go to the Recycle Bin instead, which is Windows' undo. Every deletion is recorded in the session log, which is a record rather than a restore.
+```
+**Was (corrected 2026-09-07 - the live file had moved):** Caches regenerate; an undo copy would consume the
+disk you are trying to free. Personal files - sections 18, 19 and 23 - go to the Recycle Bin instead, which is
+Windows' undo. Every deletion is recorded in the session log.
+
+**Change:** one clause. It is the only one left. The first draft's `Was:` read *"Personal files (sections
+18 and 19)"* and its whole argument was that **section 23 was missing** - the same defect `docs-safety` S-015
+corrects in the tier table. That correction has since landed on its own: `89e4888` added 23 to the live
+answer thirteen minutes after this draft was written, so the claim is now true of the page and this slot no
+longer makes it.
+
+What remains is the closing clause, eight words: *"which is a record rather than a restore"*. A reader who
+has just been told every deletion is recorded will read that as a way back, and it is not. It matches S-012
+above, and the same sentence is what `docs-safety` S-025 and `docs-reference` S-066 carry. Eight words, no
+more.
+
+### S-018 · faq.md:17-20 · why keep 100 days
+```
+**Why does it keep files used in the last 100 days?**
+Because a developer's caches are what make the next install or build fast. The idle gate keeps recent work; `--days`, `--purge-all` and answering the developer question with no are the knobs when you want more. See [Developer mode](./developer-mode.md).
+```
+**Was:** ... `--days`, `--purge-all` and developer mode off are the knobs when you want more.
+
+**Change:** "developer mode off" becomes "answering the developer question with no", which is what the reader
+does rather than a state they must find. The glossary calls it the developer answer for this reason.
+
+### S-016 · after faq.md:20 · NEW · deleting node_modules · **moved: it now follows S-018**
 ```
 **How do I delete `node_modules` from old projects?**
 Section 17. It lists build artefacts in projects you have not touched for 100 days and removes only the ones you select. It never scans a whole drive - it looks in your project roots, which it auto-detects or which you name with `--scan-roots "P1;P2"`. Run `windowsweep --only 17` from a console, or `--only 17 --dry-run --json` to see the list without a prompt.
@@ -235,31 +320,13 @@ refusal that makes the answer trustworthy, and it is the fear the question carri
 6 asks for, in two forms, because a reader who searched this question may be on a machine without an
 interactive console.
 
-### S-017 · faq.md:12-14 · why is there no undo
-```
-**Why is there no undo?**
-Caches regenerate; an undo copy would consume the disk you are trying to free. Personal files - sections 18, 19 and 23 - go to the Recycle Bin instead, which is Windows' undo. Every deletion is recorded in the session log, which is a record rather than a restore.
-```
-**Was:** Caches regenerate; an undo copy would consume the disk you are trying to free. Personal files
-(sections 18 and 19) go to the Recycle Bin instead, which is Windows' undo. Every deletion is recorded in the
-session log.
+**Moved, 2026-09-07.** It sat third on the page, between "Does it phone home?" and "Why is there no undo?",
+and it spends the term *100 days* three questions before the page defines it. S-018 is where the page
+explains the idle gate, so this now follows it: cause, then consequence. Nothing in the text changes and the
+slot number does not move - only its position on the page does, which is also why the `FAQPage` payload in
+§C needs no `text` edit on this account.
 
-**Change:** **section 23 was missing**, which is the same defect `docs-safety` S-015 corrects in the tier
-table and the same one the README carried this morning about section 23 being an audit. Its catalogue tier is
-`recycle` and what a reader picks goes to the Recycle Bin, so an answer listing every section that does that
-had to name it. The log clause also gains four words, matching S-012 above.
-
-### S-018 · faq.md:16-19 · why keep 100 days
-```
-**Why does it keep files used in the last 100 days?**
-Because a developer's caches are what make the next install or build fast. The idle gate keeps recent work; `--days`, `--purge-all` and answering the developer question with no are the knobs when you want more. See [Developer mode](./developer-mode.md).
-```
-**Was:** ... `--days`, `--purge-all` and developer mode off are the knobs when you want more.
-
-**Change:** "developer mode off" becomes "answering the developer question with no", which is what the reader
-does rather than a state they must find. The glossary calls it the developer answer for this reason.
-
-### S-019 · faq.md:21-22 · why is Chrome skipped
+### S-019 · faq.md:22-23 · why is Chrome skipped
 ```
 **Why is Chrome skipped?**
 An open browser keeps its cache files locked and half-written. Close it and run `windowsweep --only 7 --yes`.
@@ -268,7 +335,7 @@ An open browser keeps its cache files locked and half-written. Close it and run 
 
 **Change:** none. Two sentences: a cause and a command. It is the model the rest of this page follows.
 
-### S-020 · faq.md:24-26 · why never Prefetch
+### S-020 · faq.md:25-27 · why never Prefetch
 ```
 **Why never Prefetch?**
 Windows uses Prefetch to start programs faster and repopulates it if cleared, so clearing it makes the machine slower for a while and frees little. It is a protected subtree, so no flag reaches it.
@@ -281,7 +348,7 @@ measurement behind it and the second is a plain judgement. And the second senten
 is in the subtree list at `lib/safety.ps1` line 40, so the answer to "why never" is a refusal rather than a
 preference, which is the stronger and the truer answer.
 
-### S-021 · faq.md:28-30 · will freeing space make it faster
+### S-021 · faq.md:29-31 · will freeing space make it faster
 ```
 **Will freeing space make my PC faster?**
 Mostly no. Disk cleanup is about space. The exception is a system drive with very little room left: Windows needs free space to page, to stage updates and to hold temp files, and below roughly 10% those start competing. Section 0 warns at that line, so `windowsweep --scan` tells you whether you are in that zone.
@@ -297,24 +364,31 @@ the command that tells them whether it applies to their machine. Section 0 does 
 `modules/health.ps1` computes the percentage and flags it - so the last sentence is checkable rather than
 rhetorical.
 
-### S-022 · faq.md:32-35 · is a weekly task safe
+### S-022 · faq.md:33-37 · is a weekly task safe
 ```
 **What does the weekly Scheduled Task actually run?**
 `--install-task` registers `--all --yes --quiet --no-color --notify`, weekly on Sundays at 03:00, as your user: the safe batch only, no admin sections, no personal files, no deep sections. It catches up if the PC was off, and it stops itself after three hours. Review the first run's report before scheduling. Install globally first (`npm install -g windowsweep`); from `npx` the installer refuses, because the task would point at a cache npm evicts.
 ```
-**Was:** **Is a weekly Scheduled Task safe?** / `--install-task` schedules `--all --yes`: the safe batch only,
-under your account, no admin sections, no personal files, no deep sections. Review the first run's report
-before scheduling. Install globally first (`npm install -g windowsweep`); from `npx` the installer refuses
-because that cache is evicted.
+**Was (corrected 2026-09-07 - the live file had moved):** **Is a weekly Scheduled Task safe?** /
+`--install-task` schedules `--all --yes --quiet --no-color --notify`: the safe batch only, under your account,
+no admin sections, no personal files, no deep sections. Review the first run's report before scheduling.
+Install globally first (`npm install -g windowsweep`); from `npx` the installer refuses because that cache is
+evicted.
 
-**Change:** the question and the answer both. "Is it safe?" invites the adjective the voice replaces. The
-question a reader actually has is what the task will do at three in the morning. The answer now names the
-whole action line from `modules/release_helpers.ps1` line 347. It includes `--notify`, so the task tells the
-reader it ran. No page mentioned it. Two settings come from line 354: `-StartWhenAvailable` is the catch-up;
-the three-hour `ExecutionTimeLimit` is the stop. The npx clause gains its mechanism, matching `docs-start`
-S-003.
+**Change:** the question and the answer. "Is it safe?" invites the adjective the voice replaces. The
+question a reader actually has is what the task will do at three in the morning.
 
-### S-023 · faq.md:37-39 · why PowerShell
+🔴 **One of the first draft's claims here is no longer true and is withdrawn.** It said the answer "now names
+the whole action line" and that no page mentioned `--notify`; `89e4888` added the full line
+`--all --yes --quiet --no-color --notify` to the live answer on 2026-09-05, so the page has named it for two
+days. The action line above is therefore a match with the live file rather than a correction of it.
+
+What this slot still changes: the question; *schedules* becomes **registers**; the schedule constants
+**weekly on Sundays at 03:00, as your user** from `modules/release_helpers.ps1` line 347; the two settings
+from line 354 - `-StartWhenAvailable` is the catch-up, the three-hour `ExecutionTimeLimit` is the stop; and
+the npx clause, which gains its mechanism to match `docs-start` S-003. The rest already landed.
+
+### S-023 · faq.md:39-41 · why PowerShell
 ```
 **Why PowerShell rather than an .exe?**
 Every Windows machine has PowerShell 5.1, so there is no runtime to install and no binary to trust. The engine is 5,393 lines of readable script across `windowsweep.ps1`, `lib/` and `modules/`, and `--self-test` runs 151 checks of it on your machine.
@@ -326,23 +400,27 @@ The source is readable in an afternoon and the self-test runs on your machine.
 an adjective standing in for a number - and it is the one claim on the page a reader could disprove by
 opening the folder. 5,393 lines is the sum of `windowsweep.ps1`, `lib/*.ps1` and `modules/*.ps1` on this
 tree, and the number invites the reader to judge for themselves rather than being told the answer. The 151 is
-the self-test's own count, printed at the end of every run.
+the self-test's own count, printed at the end of every run. Anyone can count both.
 
-### S-024 · faq.md:41-44 · Windows Server
+### S-024 · faq.md:43-46 · Windows Server
 ```
 **Does it run on Windows Server?**
 The engine uses nothing newer than Windows 10 1809 / Server 2019. CI runs the self-test and a dry-run of the safe batch on GitHub's `windows-latest` Server image, on every push to `main` and on every pull request. Real cleanups have been verified on Windows 10 so far; a Windows 11 run is on the verification list.
 ```
-**Was:** ... CI runs the self-test and a dry-run of the safe batch on Windows Server (GitHub's
-`windows-latest`) on every push. ...
+**Was (corrected 2026-09-07 - the live file had moved):** ... CI runs the self-test and a dry-run of the safe
+batch on Windows Server (GitHub's `windows-latest`) on every push to `main` and on every pull request. ...
 
-**Change:** "on every push" is not what the workflow says. `.github/workflows/ci.yml` triggers on
-`push: branches: [main]` and on `pull_request`, so a push to any other branch runs nothing. The corrected
-form is longer by five words and is the difference between a verifiable claim and one a reader could check
-and find wrong. The last sentence is unchanged and is the most valuable one in the answer, because it says
-what has **not** been verified.
+**Change:** phrasing only, and the substantive half is withdrawn. The first draft argued that *"on every
+push"* misstated `.github/workflows/ci.yml`, which triggers on `push: branches: [main]` and on
+`pull_request`. That was right when it was written and `89e4888` has since fixed it on the page, so the
+trigger sentence above matches the live file rather than correcting it.
 
-### S-025 · faq.md:46-47 · where are the logs
+What is left is one phrase: *"on Windows Server (GitHub's `windows-latest`)"* becomes *"on GitHub's
+`windows-latest` Server image"*, which drops a parenthesis and says which is the name and which is the fact.
+It is a small change and it is recorded as small. The last sentence is untouched and is still the most
+valuable one in the answer, because it says what has **not** been verified.
+
+### S-025 · faq.md:48-49 · where are the logs
 ```
 **Where are the logs?**
 `%USERPROFILE%\.windowsweep\logs\`. Reports are beside them; `windowsweep --reports` browses them, and `--stats` prints the run history and the total reclaimed.
@@ -353,7 +431,7 @@ what has **not** been verified.
 so far, and `--stats` answers that in one command rather than by reading files. It is in the mode table on
 the CLI reference and appears nowhere a stuck reader would look.
 
-### S-026 · faq.md:48 · NEW · the closing pointer
+### S-026 · after faq.md:49 · NEW · the closing pointer
 ```
 Not here? [Troubleshooting](./troubleshooting.md) is symptom by symptom, and the [safety model](./safety-model.md) covers every guard in full.
 ```
@@ -363,7 +441,7 @@ Not here? [Troubleshooting](./troubleshooting.md) is symptom by symptom, and the
 safety model and one reference page, and neither was present on this page. Two words then two links, which is
 as short as the row's "short answers" allows a navigational line to be.
 
-### S-027 · faq.md:49 · the footer
+### S-027 · faq.md:51 · the footer
 ```
 Last Updated: 2026-09-05
 ```
@@ -382,66 +460,157 @@ without a trace of tone, which is correct: a reader reading it has been stuck fo
 
 ## §C the `FAQPage` payload
 
-### S-029 · `windowsweep-docs` · a page-scoped head tag on `faq.md` · BLOCKED
+### S-029 · `windowsweep-docs/docs/faq.mdx` · the page-scoped `FAQPage` block · **it exists; this replaces it**
 ```
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    { "@type": "Question", "name": "Will it delete my code, documents or photos?",
-      "acceptedAnswer": { "@type": "Answer", "text": "No. Documents, Pictures, Desktop, Music, Videos and cloud-sync folders are protected subtrees the chokepoint refuses outright, and no flag changes that. The only project-adjacent target is section 17, which lists build artefacts in idle projects and removes nothing you did not select." } },
-    { "@type": "Question", "name": "Does it phone home?",
-      "acceptedAnswer": { "@type": "Answer", "text": "No. Self-test check 9 greps every source file for seven call shapes and fails the run if it finds one. --report-issue opens your browser at a pre-filled GitHub page after you confirm, and you submit it yourself." } },
-    { "@type": "Question", "name": "How do I delete node_modules from old projects?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Section 17. It lists build artefacts in projects you have not touched for 100 days and removes only the ones you select. It never scans a whole drive - it looks in your project roots, which it auto-detects or which you name with --scan-roots." } },
-    { "@type": "Question", "name": "Why is there no undo?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Caches regenerate; an undo copy would consume the disk you are trying to free. Personal files - sections 18, 19 and 23 - go to the Recycle Bin instead, which is Windows' undo. Every deletion is recorded in the session log, which is a record rather than a restore." } },
-    { "@type": "Question", "name": "What does the weekly Scheduled Task actually run?",
-      "acceptedAnswer": { "@type": "Answer", "text": "--install-task registers --all --yes --quiet --no-color --notify, weekly on Sundays at 03:00, as your user: the safe batch only, no admin sections, no personal files, no deep sections. It catches up if the PC was off, and it stops itself after three hours." } }
+    {
+      "@type": "Question",
+      "name": "Will it delete my code, documents or photos?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Documents, Pictures, Desktop, Music, Videos and cloud-sync folders are protected subtrees the chokepoint refuses outright, and no flag changes that. The only project-adjacent target is section 17, which lists build artefacts (node_modules, dist, ...) in idle projects and removes nothing you did not select."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it phone home?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. The command-line tool makes no network calls at all. Self-test check [9] greps every source file for seven call shapes - Invoke-WebRequest, Invoke-RestMethod, Net.WebClient, HttpClient, Sockets.TcpClient, curl.exe and wget - and fails the run if it finds one. --report-issue opens your browser at a pre-filled GitHub page after you confirm, and you submit it yourself. The desktop window is a different answer: it sends usage and crash reports to improve the product, and there is no switch. What it sends is listed on the Desktop app page."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is there no undo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Caches regenerate; an undo copy would consume the disk you are trying to free. Personal files - sections 18, 19 and 23 - go to the Recycle Bin instead, which is Windows' undo. Every deletion is recorded in the session log, which is a record rather than a restore."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I delete node_modules from old projects?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Section 17. It lists build artefacts in projects you have not touched for 100 days and removes only the ones you select. It never scans a whole drive - it looks in your project roots, which it auto-detects or which you name with --scan-roots \"P1;P2\". Run windowsweep --only 17 from a console, or --only 17 --dry-run --json to see the list without a prompt."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does the weekly Scheduled Task actually run?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "--install-task registers --all --yes --quiet --no-color --notify, weekly on Sundays at 03:00, as your user: the safe batch only, no admin sections, no personal files, no deep sections. It catches up if the PC was off, and it stops itself after three hours. Review the first run's report before scheduling. Install globally first (npm install -g windowsweep); from npx the installer refuses, because the task would point at a cache npm evicts."
+      }
+    }
   ]
 }
 ```
-**Was:** (nothing — there is no FAQPage block on the site.)
+**Was:** the live block, four entries, page-scoped in `<Head>` inside `faq.mdx`: *"Will it delete my code,
+documents or photos?"*, *"Does it phone home?"*, *"Why is there no undo?"* and *"Is a weekly Scheduled Task
+safe?"*. Each `text` is the current `faq.md` answer with its markdown removed - parsed and compared on
+2026-09-07, four names visible on the page and four texts matching character for character.
 
-**Change:** written, and **not deliverable from this draft**. Two things block it. The mechanism is missing:
-every JSON-LD block on the site is a global `headTags` entry, so this needs a page-scoped head tag, which is
-a docs-site code change outside this draft's scope. And the site is unreachable in any case -
-`windowsweep-docs.aoneahsan.com` returns 000, as `site-front.md` records.
+**Change:** all four entries, plus a fifth. The first draft of this slot recorded the block as missing and
+marked itself `BLOCKED`; that was wrong, and the correction matters more than the payload. The block was
+built from the live page, it is page-scoped exactly as `content-map.md` row 6 now specifies, and it is in
+sync today. **There is nothing here to repair - only something to keep in step.**
 
-Five questions rather than twelve, on purpose. Google's own guidance is that every question and answer in a
+Which is the whole risk. The file's own comment says it: *"if an answer changes below, this block changes in
+the same edit"*. This draft changes all four.
+
+| Block entry | Why it changes |
+|---|---|
+| Will it delete my code, documents or photos? | S-014 - *roots* becomes *subtrees*, and *"no flag changes that"* is added |
+| Does it phone home? | S-015 - the answer is scoped to the command-line tool and gains the desktop clause |
+| Why is there no undo? | S-017 - the log sentence gains *"which is a record rather than a restore"* |
+| Is a weekly Scheduled Task safe? | S-022 - **the question itself is renamed** to *"What does the weekly Scheduled Task actually run?"*, so this entry's `name` changes, not only its `text` |
+| *(new)* How do I delete node_modules from old projects? | S-016 - a new visible question on the page, and the one the content map assigns here |
+
+**Five questions rather than twelve, on purpose.** Google's guidance is that every question and answer in a
 `FAQPage` block must be visible on the page, and a block repeating all twelve doubles the page's weight for
 no gain. These five are the ones the question map assigns to this surface or names as the audience's real
-queries. Each `text` value is the rendered answer with its markdown removed, which is the rule that keeps the
-block honest: if an answer changes above, this block changes in the same edit or it becomes a claim the page
-does not make.
+queries.
+
+🔴 **The payload above was generated from this draft's own fences, not typed beside them.** Each `text` is
+the slot's shipping answer with links flattened to their visible words and backticks and bold markers
+removed, which is what a reader sees. That closes two parity gaps the first draft had opened by hand: its
+first entry had dropped *"(node_modules, dist, ...)"* and its second had dropped the seven call shapes, so
+two of five `text` values were already shorter than the page they claimed to mirror. The order follows the
+page, which is why the `node_modules` entry sits fourth - S-016 now comes after S-018. Parity, checked by
+machine.
 
 ---
 
 ## SELF-CHECK
 
-**Palette.** P throughout. That is what a stuck reader needs, and every changed cell ends either in
-something runnable or in the one fact that decides whether to run it. R appears where a fix could be read as a workaround: S-002
-(no flag for this refusal), S-005 (two of the four have no undo), S-011 (nothing is sent), S-014 (no flag
-changes that), S-020 (a protected subtree, not a preference). W is unspent on both pages, deliberately. S-028
-records why.
+**Palette.** P throughout, which is what a stuck reader needs: every changed cell ends either in something
+runnable or in the one fact that decides whether to run it. R lands where a fix could otherwise read as a
+workaround - S-002 (no flag for this refusal), S-005 (the Recycle Bin and the event logs cannot be undone),
+S-011 (nothing is sent), S-014 (no flag changes that), S-015 (the command-line tool makes no network calls at
+all), S-020 (a protected subtree rather than a preference). W is unspent on both pages, deliberately, and
+S-028 records why. Neither page needs one.
 
-**Rhythm.** Shortest shipping sentence: *"Section 17."* (two words, S-016) and *"Mostly no."* at two (S-021).
-Longest: the Scheduled Task answer's first sentence at 38 words. Table cells run short by construction, which
-suits the row.
+🔴 **One band note for the keeper, not a defect here.** Row 6's tone field reads *"P, W allowed once per
+page"* and does not name R - yet the map's own answer-first sentences for questions 4 and 7 are R-shaped,
+because on this surface the refusal *is* the answer. Six slots above are R and none of them is decorative:
+strip the R clauses and the reader loses the answer rather than a flourish. That is a row-wording gap in
+`content-map.md`, and it is flagged rather than acted on.
 
-**Length.** Row 6 asks for short answers. `troubleshooting.md` measures 545 words today and lands near 700,
-almost all of it inside cells; `faq.md` measures 429 and lands near 560 with one new question and one new
-pointer. The longest single answer is S-022, at 92 words. That is the ceiling. It belongs to the only answer on
-either page describing something that runs at three in the morning with nobody watching, which is the one
-place on this surface where completeness beats brevity.
+**Rhythm.** Measured over 99 sentence units across every shipping fence, table rows split cell by cell and
+sentences split on a full stop followed by whitespace and a capital, backtick or bracket. Shortest: **"No."**
+- one word, S-014 and S-015. Longest: **32 words**, S-021's exception sentence, which is unchanged approved
+copy and sits inside the fingerprint's 4-34 range. Median 11.
 
-**Unsure spots.** One, and it is structural rather than textual: S-029's payload cannot ship until the docs
-site gains a page-scoped head tag, so row 6's declared schema stays unmet after this draft.
+One sentence was split during this round for exactly that reason. S-015's mechanism clause measured **36
+words**, over the ceiling, and is now two - which also lets the answer-first line stand on its own: *"No. The
+command-line tool makes no network calls at all."*
 
-**Banned-phrase sweep.** Run with a script over the fenced shipping strings only, 1,441 words of them,
-against the shared list plus this project's own bans. Three hits, all the same word and all deliberate:
-**`safe`** in "the safe batch" at S-022 and S-024, which is the engine's frozen term `WS_SAFE_BATCH`. Four
-were removed rather than kept: the adjective in the old question "Is a weekly Scheduled Task safe?" at
-S-022; "almost nothing" at S-020; "readable in an afternoon" at S-023; "helps a lot" at S-021. Nothing
-matched `clean` or `sweep` as a verb, `just`, `simply`, `easily`, `preview`, a superlative or a
-first-person plural.
+**Length.** Row 6 asks for *short answers* rather than a number, so both pages are measured and each answer
+is measured separately. **Tokenizer:** whitespace split, keeping tokens that contain at least one
+alphanumeric character, so the table's `|` separators and its `---` delimiter row do not count.
+**Inclusion rule:** the whole rendered page - the H1, the table header row, every cell, the paragraphs above
+and below the table, and the `Last Updated` footer.
+
+| Page | Live | After this draft |
+|---|---|---|
+| `docs/troubleshooting.md` | 468 | 737 |
+| `docs/faq.md` | 439 | 669 |
+
+The longest single answer is now **S-015 at 86 words**, taking the ceiling from S-022 at 72. It earns it by
+answering for two products: the engine's claim and the window's disclosure are different facts, and an
+answer carrying only the first is what this round was convened to fix. Two facts, one answer. Every other
+answer on the FAQ sits between 18 and 72 words.
+
+**Unsure spots.** None structural, and the one this draft used to carry is withdrawn. The `FAQPage` block
+exists, is page-scoped on `faq.mdx`, and is in sync with the live page - parsed and compared, four names and
+four texts. §C's replacement payload was generated from this draft's own fences and checked back against
+them, **5 of 5 matching**. What remains is an ordinary apply: §C lands in the same edit as the docs-site mirror of §B, or the
+block starts making claims the page does not. Both repos, one pass.
+
+**Banned-phrase sweep.** Run over the fenced shipping strings only - **1,220 words**, S-029's payload
+excluded because it is a derived duplicate of §B - against the shared list plus this project's own "Never"
+diction and the store words. 119 phrases checked, six hits, each deliberate:
+
+- **`elevate`**, twice, S-004: both the literal flag `--elevate`. It is on the shared list, which is why this
+  file carries `<!-- story-lint: allow "elevate" -->` at the top. The flag is a frozen public identifier, and
+  renaming it in prose would send a reader to a switch that does not exist. It is a name.
+- **`safe`**, twice, S-022 and S-024: both *"the safe batch"*, the engine's own term `WS_SAFE_BATCH`. The
+  Bible bans `safe` as an adjective of reassurance, not as the name of a constant. Four adjectives were
+  removed rather than kept - the old question *"Is a weekly Scheduled Task safe?"*, *"almost nothing"* at
+  S-020, *"readable in an afternoon"* at S-023 and *"helps a lot"* at S-021.
+- **`free`**, twice, S-017 and S-021: both about disk space - *"the disk you are trying to free"*, *"needs
+  free space to page"*. The store ban on *free* is a pricing word, and neither page makes a pricing claim of
+  any kind.
+
+Nothing matched `clean` or `sweep` as a verb, `simply`, `just`, `easily`, `preview`, a superlative or a
+first-person plural. Every fence is ASCII: zero em-dashes, zero exclamation marks, zero *not X but Y*.
+Straight quotes throughout.
+
+🔴 **The lint hook's silence is not evidence on this surface.** `posttooluse-story-lint.sh` strips fenced
+blocks before it counts anything, and here the fences *are* the shipping copy - so it has read this
+commentary and none of the words a reader will ever see. Its silence proves nothing. The sweep above was run
+by hand over the fences for that reason. The fact-checker and a human reader are the real gate.

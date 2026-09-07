@@ -202,8 +202,16 @@
       queue = db.derive.safeRunSections();
       buildList();
       window.wsWire.setText('runTotal', String(queue.length));
+      /* 🔴 This line silently overwrote the amendment made to run.html on 2026-09-07:
+         the static slot said one thing and the page rendered another, so the dummy
+         disagreed with the app it is supposed to specify. A grep of the HTML confirmed
+         only that the intention had been written down. Order matters - --json is
+         prepended by the Rust side - and --days is a real flag the window passes on
+         every run. */
       window.wsWire.setText('runCmd',
-        'windowsweep --all --yes --json' + (db.facts.developer ? ' --developer' : ' --not-developer'));
+        'windowsweep --json --all --yes'
+        + (db.facts.developer ? ' --developer' : ' --not-developer')
+        + ' --days ' + db.facts.idleDays);
       log('idle - press "Start the safe run"', 'l-dim');
 
       document.addEventListener('click', function (e) {

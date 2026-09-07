@@ -27,6 +27,8 @@ import { newRunId, run, safeBatchArgs } from '../lib/engine';
 import { safeRunSections } from '../lib/catalogue';
 import { controlState, stateOf } from '../lib/control-state';
 import { RunPerSection, perSectionRows } from '../components/RunPerSection';
+import { ReclaimMap } from '../components/ReclaimMap';
+import { drainMapTargets, toMapTargets } from '../lib/reclaim';
 
 export function RunScreen() {
   const { t } = useTranslation();
@@ -62,6 +64,12 @@ export function RunScreen() {
   const queue = useMemo(
     () => (catalogue ? safeRunSections(catalogue, developer).map((s) => s.id) : []),
     [catalogue, developer],
+  );
+
+  /* The draining map's tiles: every scanned target whose section has not finished. */
+  const drainTargets = useMemo(
+    () => drainMapTargets(toMapTargets(catalogue, scanTargets), progress),
+    [catalogue, scanTargets, progress],
   );
 
   const rows = useMemo(
@@ -191,6 +199,23 @@ export function RunScreen() {
         </div>
       </section>
 
+      {/* The dummy's "What is going" band (`run.html:60-68`) - the SAME map as Home's,
+          draining. Its hint is the whole idea: a tile leaves when the engine reports
+          that section's `end`, never at `start`, because a tile that vanished on start
+          would claim the space back before it was freed. Shown only while there is
+          something to drain, which is what the dummy's own idle state does. */}
+      {drainTargets.length > 0 ? (
+        <section className="band band-well">
+          <div className="wrap rise">
+            <div className="zone-label">
+              <span className="caps">{t('run.drainTitle')}</span>
+              <span className="t-sm ink-3" style={{ flex: 'none' }}>{t('run.drainHint')}</span>
+            </div>
+            <ReclaimMap targets={drainTargets} measured />
+          </div>
+        </section>
+      ) : null}
+
       <section className="band band-app">
         <div className="wrap g12">
           <RunPerSection rows={rows} />
@@ -223,6 +248,17 @@ export function RunScreen() {
                 ))
               )}
             </div>
+            {/* `run.html:85-94` - the window displays the engine's own reporting and
+                does none of the deleting. The sentence is the dummy's, verbatim. */}
+            <details className="disclose">
+              <summary>
+                <span className="disclose-line">{t('run.provenanceSummary')}</span>
+                <span className="disclose-more">{t('consent.detailsMore')}</span>
+              </summary>
+              <div className="disclose-body">
+                <p>{t('run.provenanceBody')}</p>
+              </div>
+            </details>
           </div>
         </div>
       </section>

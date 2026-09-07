@@ -36,9 +36,15 @@ import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
+import {
+  reclaimableBytes,
+  reclaimableSectionCount,
+  reclaimableTargetCount,
+  toMapTargets,
+} from '../lib/reclaim';
 import { formatBytes } from '../lib/format';
 import { newRunId, run, scanArgs, safeBatchArgs } from '../lib/engine';
-import { safeRunSections, sectionById } from '../lib/catalogue';
+import { safeRunSections } from '../lib/catalogue';
 import { controlState, stateOf } from '../lib/control-state';
 import { DESTINATIONS, type Destination } from '../lib/consent';
 import { ReclaimMapBand } from '../components/ReclaimMapBand';
@@ -112,11 +118,9 @@ export function Home() {
   const [busy, setBusy] = useState<'scan' | 'dryRun' | 'reclaim' | null>(null);
   const [scanDone, setScanDone] = useState(false);
 
-  const reclaimable = summary
-    ? summary.estimated_bytes > 0
-      ? summary.estimated_bytes
-      : summary.freed_bytes
-    : null;
+  /* One home for this figure, in lib/reclaim.ts - it was computed here AND in
+     Shell.tsx, and both copies read a run's result off a scan's summary. */
+  const reclaimable = reclaimableBytes(summary, scanTargets);
 
   const drive = useCallback(
     async (args: string[], goToRun: boolean) => {
@@ -186,20 +190,10 @@ export function Home() {
 
   /* The map's tiles: one per scanned target, coloured by its section's tier and
      grouped by its section. Every field is the engine's. */
-  const mapTargets = useMemo<MapTarget[]>(() => {
-    if (!catalogue) return [];
-    return scanTargets.map((target) => {
-      const section = sectionById(catalogue, target.section);
-      return {
-        section: target.section,
-        sectionKey: section?.key ?? String(target.section),
-        tier: section?.tier ?? 'rebuilds',
-        label: target.label,
-        path: target.path,
-        bytes: target.bytes,
-      };
-    });
-  }, [catalogue, scanTargets]);
+  const mapTargets = useMemo<MapTarget[]>(
+    () => toMapTargets(catalogue, scanTargets),
+    [catalogue, scanTargets],
+  );
 
   /* The ladder's rungs: the engine's own safe batch, with a figure only where a
      scan measured one. Sorted biggest-first once there is something to sort. */
@@ -268,12 +262,12 @@ export function Home() {
               )}
             </p>
             <p className="hero-sub">
-              {summary
-                ? t('home.heroSub', {
-                    targets: summary.targets.length,
-                    sections: summary.sections.length,
-                  })
-                : t('home.heroSubUnmeasured')}
+              {reclaimable === null
+                ? t('home.heroSubUnmeasured')
+                : t('home.heroSub', {
+                    targets: reclaimableTargetCount(summary, scanTargets),
+                    sections: reclaimableSectionCount(summary, scanTargets),
+                  })}
             </p>
           </div>
           <div className="hero-actions">

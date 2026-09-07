@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { Icon, type IconName } from './Icon';
 import { ThemePanel } from './ThemePanel';
 import { useStore } from '../state/store';
+import { reclaimableBytes, reclaimableSectionCount } from '../lib/reclaim';
 import { formatBytes } from '../lib/format';
 
 interface NavGroup {
@@ -139,10 +140,12 @@ function Rail() {
   const summary = useStore((s) => s.summary);
   const catalogue = useStore((s) => s.catalogue);
 
-  const reclaimable = summary
-    ? formatBytes(summary.estimated_bytes > 0 ? summary.estimated_bytes : summary.freed_bytes)
-    : '-';
-  const sectionCount = summary?.sections.length ?? 0;
+  /* Read from lib/reclaim.ts, not recomputed. This copy and Home's disagreed with
+     the map and the ladder on the same screen: after a scan both showed 0 B. */
+  const scanTargets = useStore((s) => s.scanTargets);
+  const bytes = reclaimableBytes(summary, scanTargets);
+  const reclaimable = bytes === null ? '-' : formatBytes(bytes);
+  const sectionCount = reclaimableSectionCount(summary, scanTargets);
 
   return (
     <nav className="rail" aria-label={t('nav.label')}>

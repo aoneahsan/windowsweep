@@ -21,15 +21,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useStore } from '../state/store';
+import { useRunPreferences, useStore } from '../state/store';
 import { formatBytes } from '../lib/format';
 import { isCleanupRun } from '../lib/cli';
 import { newRunId, run, safeBatchArgs } from '../lib/engine';
 import { safeRunSections } from '../lib/catalogue';
-import { controlState, stateOf } from '../lib/control-state';
+import { stateOf } from '../lib/control-state';
 import { RunPerSection, perSectionRows } from '../components/RunPerSection';
 import { ReclaimMap } from '../components/ReclaimMap';
-import { drainMapTargets, toMapTargets } from '../lib/reclaim';
+import { drainMapTargets, reclaimableBytes, toMapTargets } from '../lib/reclaim';
+import { PrimaryButton } from '../components/PrimaryButton';
 
 export function RunScreen() {
   const { t } = useTranslation();
@@ -40,7 +41,7 @@ export function RunScreen() {
   const catalogue = useStore((s) => s.catalogue);
   const scanTargets = useStore((s) => s.scanTargets);
   const developer = useStore((s) => s.developer);
-  const idleDays = useStore((s) => s.idleDays);
+  const prefs = useRunPreferences();
   const startRun = useStore((s) => s.startRun);
   const appendLog = useStore((s) => s.appendLog);
   const applyProgress = useStore((s) => s.applyProgress);
@@ -71,6 +72,45 @@ export function RunScreen() {
 
   const done = Object.values(progress).filter((p) => p.event === 'end').length;
   const running = Object.values(progress).find((p) => p.event === 'start' && progress[p.section]?.event !== 'end');
+
+  /* 🔴 D-22: THE HERO AND ITS PROGRESS LINE, and the dummy's real value for them.
+     The GATE 4 report recorded the dummy's idle hero as `0 B`, which is what
+     `run.html`'s STATIC markup says - but `wire.js`'s shared `refresh()` runs on
+     every page and calls `paintHero(db.derive.reclaimable())`, so the RENDERED
+     dummy shows the reclaimable total (29.73 GB on its seed), and only
+     `page-run.js` replaces it with the freed figure once a run starts. Read out of
+     the loaded page over CDP rather than out of the source - which is the same
+     lesson D-21 exists for, one file away.
+
+     So: what is there to reclaim, until a run starts spending it. `not measured`
+     when nothing has been scanned is this app's own honest state - the dummy's
+     seed always has data, so it never renders it - and it is the word Home and
+     the rail already use for the same figure. */
+  const freedSoFar = Object.values(progress).reduce(
+    (total, p) => total + (p.event === 'end' ? (p.freedBytes ?? 0) : 0),
+    0,
+  );
+  const measured = reclaimableBytes(summary, scanTargets);
+  const heroBytes = isCleanupRun(summary) && summary
+    ? (summary.dry_run ? summary.estimated_bytes : summary.freed_bytes)
+    : phase === 'running'
+      ? freedSoFar
+      : measured;
+
+  /* Elapsed from the engine's own first and last line rather than a stopwatch
+     this screen keeps: the log is what the run actually did, and it stops growing
+     when the run stops, which freezes the figure at the right value with no timer
+     left running. */
+  const firstAt = log[0]?.at ?? null;
+  const lastAt = log.length > 0 ? (log[log.length - 1]?.at ?? null) : null;
+  const [clock, setClock] = useState(() => Date.now());
+  useEffect(() => {
+    if (phase !== 'running') return;
+    const tick = window.setInterval(() => { setClock(Date.now()); }, 1000);
+    return () => { window.clearInterval(tick); };
+  }, [phase]);
+  const elapsedMs =
+    firstAt === null ? null : (phase === 'running' ? clock : (lastAt ?? firstAt)) - firstAt;
 
   /* The queue the band lists: the engine's own safe batch, which is exactly what
      the Start button below runs. */
@@ -107,7 +147,7 @@ export function RunScreen() {
     setStarting(true);
     const id = newRunId();
     startRun(id);
-    void run(safeBatchArgs({ dryRun: false, developer, idleDays }), id, {
+    void run(safeBatchArgs({ dryRun: false, ...prefs }), id, {
       onLog: appendLog,
       onProgress: (section, event, status, freedBytes) => {
         applyProgress({
@@ -128,7 +168,7 @@ export function RunScreen() {
         finishRun(null, true);
       })
       .finally(() => { setStarting(false); });
-  }, [queue.length, startRun, developer, idleDays, appendLog, applyProgress, finishRun, setScanTargets]);
+  }, [queue.length, startRun, prefs, appendLog, applyProgress, finishRun, setScanTargets]);
 
   const inFlight = starting || phase === 'running';
 
@@ -152,23 +192,54 @@ export function RunScreen() {
                     ? t('run.eyebrowReady')
                     : t('run.eyebrowDone')}
             </p>
-            <h1 className="t-xl wide">
-              {/* 🔴 Order matters here and got it wrong once: `summary` was tested
-                  BEFORE the idle case, so a scan's summary - which is truthy -
-                  reached `titleDone` and announced `Reclaimed 0 B.` The idle test
-                  has to come first, because a scan leaves a summary behind. */}
-              {phase === 'running'
-                ? t('run.titleRunning', { done })
-                : phase === 'failed'
-                  ? t('run.titleFailed')
-                  : notRunYet
-                    ? t('run.idleHint')
+            {/* 🔴 The dummy's hero, which this screen did not have (D-22). The
+                number is `.hero-num` with the unit in its own `.unit` span - the
+                same shape Home uses, because it is the same component in the
+                dummy. */}
+            <p className="hero-num">
+              {heroBytes === null ? (
+                <span>{t('home.notMeasured')}</span>
+              ) : (
+                <>
+                  <span>{formatBytes(heroBytes).split(' ')[0]}</span>
+                  <span className="unit">{formatBytes(heroBytes).split(' ')[1]}</span>
+                </>
+              )}
+            </p>
+            {/* `run.html:30-34` - done, of the total, then the elapsed clause. The
+                total is the QUEUE's length, derived from the catalogue's own safe
+                batch; a literal here would be wrong the day a section is added. */}
+            <p className="hero-sub">
+              {t('run.progress', { done, total: queue.length })}
+              {' · '}
+              {elapsedMs === null || (notRunYet && phase !== 'running')
+                ? t('run.notStarted')
+                : t('run.elapsed', { seconds: Math.max(0, Math.round(elapsedMs / 1000)) })}
+            </p>
+            {/* 🔴 Order matters here and got it wrong once: `summary` was tested
+                BEFORE the idle case, so a scan's summary - which is truthy -
+                reached `titleDone` and announced `Reclaimed 0 B.` The idle test
+                has to come first, because a scan leaves a summary behind.
+
+                🔴 The IDLE branch is gone, and deliberately. It rendered
+                `run.idleHint` - the dummy's own idle LOG line - as this screen's
+                heading, and it was only ever standing in for the hero above,
+                which did not exist. Now that the hero is here, keeping the
+                stand-in would print the substitute and the thing it substituted
+                for, one under the other. */}
+            {phase === 'running' || phase === 'failed' || !notRunYet ? (
+              <h1 className="t-xl wide">
+                {phase === 'running'
+                  ? t('run.titleRunning', { done })
+                  : phase === 'failed'
+                    ? t('run.titleFailed')
                     : summary
                       ? summary.dry_run
                         ? t('run.titleDryRun', { amount: formatBytes(summary.estimated_bytes) })
                         : t('run.titleDone', { amount: formatBytes(summary.freed_bytes) })
                       : t('run.titleUnknown')}
-            </h1>
+              </h1>
+            ) : null}
             {/* 🔴 A failed run used to fall through to `run.titleUnknown` - "The run
                 finished." over a run that never started. The dummy had no word for this
                 state at all: it carried Ready, Running, Finished and Cancelled, and
@@ -199,15 +270,14 @@ export function RunScreen() {
             <button className="btn" type="button" disabled>
               <span className="btn-label">{t('run.cancel')}</span>
             </button>
-            <button
-              className="btn btn-primary btn-lg"
-              type="button"
-              onClick={onStart}
+            <PrimaryButton
+              control="run.start"
+              size="lg"
+              onPress={onStart}
               disabled={inFlight || queue.length === 0}
-              {...controlState(stateOf(starting))}
-            >
-              <span className="btn-label">{t('run.start')}</span>
-            </button>
+              state={stateOf(starting)}
+              label={t('run.start')}
+            />
           </div>
         </div>
         {/* The stated gap that goes with the disabled control above. */}

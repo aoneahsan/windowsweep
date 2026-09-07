@@ -22,6 +22,7 @@
     developer: true,       // developer mode - keeps caches used in the last N days
     idleDays: 100,
     tempDays: 3,
+    largeFileMb: 100,     // section 19's 'large enough to offer you' threshold; --large-file-mb
     consent: null,         // null = never asked; otherwise {ga4,amplitude,clarity,sentry}
     signedIn: false,
     email: null,

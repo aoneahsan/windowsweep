@@ -8,67 +8,20 @@
 //!
 //! There is no shell plugin in this app's capability set. The executable is fixed,
 //! the script path is resolved from the bundle, and every argument the webview
-//! sends is checked against the allowlist below before it reaches a process. A
+//! sends is checked against the allowlist in `args.rs` before it reaches a process. A
 //! front end cannot aim this at another program, and cannot pass a flag the engine
 //! never documented.
 
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Read};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
+use std::sync::{Arc, Mutex};
 
 use serde::{Deserialize, Serialize};
-use tauri::{AppHandle, Emitter, Manager};
+use tauri::{AppHandle, Emitter, Manager, State};
 
-/// Flags the desktop window may pass through. Anything else is refused with the
-/// flag named, rather than silently dropped - a dropped flag would mean a run that
-/// quietly did something other than what the screen said it would.
-const ALLOWED_FLAGS: &[&str] = &[
-    "--all",
-    "--scan",
-    "--dry-run",
-    "--yes",
-    "--json",
-    "--no-color",
-    "--ascii",
-    "--quiet",
-    "--no-report",
-    "--notify",
-    "--developer",
-    "--not-developer",
-    "--purge-all",
-    "--i-understand-deep",
-    "--permanent",
-    "--elevate",
-    // 🔴 `--list` is how the app learns what the engine can do. `catalogue.ts`
-    // calls `windowsweep --list --json` at boot precisely so no section list is
-    // ever hard-coded in the app, and this allowlist did not carry it — so the
-    // catalogue load was refused with "refusing an argument this window is not
-    // allowed to pass: --list" and every screen that reads the catalogue was
-    // empty. It is read-only: it prints the catalogue and touches nothing.
-    "--list",
-    // Read-only companions of `--list`, allowed for the same reason: they print
-    // and exit. Keeping them out would mean the app can never show what a
-    // section targets without hard-coding it, which is the thing `--list` exists
-    // to prevent.
-    "--list-targets",
-    "--version",
-    "--self-test",
-];
-
-/// Flags that take exactly one value.
-const ALLOWED_VALUE_FLAGS: &[&str] = &[
-    "--only",
-    "--profile",
-    "--exclude",
-    "--days",
-    "--temp-days",
-    "--large-file-mb",
-    "--hiberfil",
-    "--scan-roots",
-    "--exclude-path",
-    "--select",
-    "--select-file",
-];
+use crate::args::{validate, wants_summary};
+use crate::cancel::{ChildHandle, RunRegistry};
 
 /// 🔴 `rename_all = "camelCase"` is LOAD-BEARING, and its absence made every
 /// `run_clean` call fail — the app could not run a cleanup at all.
@@ -98,35 +51,22 @@ pub struct RunFinished {
     pub run_id: String,
     pub exit_code: i32,
     pub stdout: String,
+    /// 🔴 True when this run ended because someone pressed Cancel, rather than
+    /// because it finished.
+    ///
+    /// The two are indistinguishable from the exit code - a killed PowerShell
+    /// reports a non-zero code exactly like one that failed - and they need
+    /// opposite words on screen. A cancelled run also produces no JSON summary,
+    /// which is the same shape as the silent-total-failure case guarded below, so
+    /// this flag is what keeps that guard from reporting a deliberate stop as an
+    /// engine fault.
+    pub cancelled: bool,
 }
 
 #[derive(Debug, Serialize, Clone)]
 pub struct LogLine {
     pub run_id: String,
     pub line: String,
-}
-
-fn validate(args: &[String]) -> Result<(), String> {
-    let mut i = 0;
-    while i < args.len() {
-        let a = &args[i];
-        if ALLOWED_FLAGS.contains(&a.as_str()) {
-            i += 1;
-        } else if ALLOWED_VALUE_FLAGS.contains(&a.as_str()) {
-            if i + 1 >= args.len() {
-                return Err(format!("{a} needs a value"));
-            }
-            if args[i + 1].starts_with("--") {
-                return Err(format!("{a} was given another flag instead of a value"));
-            }
-            i += 2;
-        } else {
-            return Err(format!(
-                "refusing an argument this window is not allowed to pass: {a}"
-            ));
-        }
-    }
-    Ok(())
 }
 
 /// 🔴 Turn a Windows VERBATIM path (`\\?\C:\...`) into an ordinary one.
@@ -151,18 +91,6 @@ fn validate(args: &[String]) -> Result<(), String> {
 /// The UNC arm matters as much as the drive arm: `\\?\UNC\server\share` must become
 /// `\\server\share`, not `UNC\server\share`, or an install on a network path breaks in a
 /// new and more confusing way.
-/// Whether this invocation should produce a JSON summary on stdout.
-///
-/// Read off what the CALLER asked for, never off the built argument vector, because
-/// `--json` is appended to every invocation. Three flags legitimately produce no
-/// summary and are exempt by name; the exemption list is the whole of the logic, so
-/// it is here where a test can reach it rather than inline in `run_clean`.
-fn wants_summary(args: &[String]) -> bool {
-    !args
-        .iter()
-        .any(|a| a == "--version" || a == "--self-test" || a == "--elevate")
-}
-
 fn strip_verbatim_prefix(path: &Path) -> PathBuf {
     let s = path.to_string_lossy();
     if let Some(rest) = s.strip_prefix(r"\\?\UNC\") {
@@ -217,7 +145,11 @@ pub fn run_dir(app: &AppHandle, run_id: &str) -> Result<PathBuf, String> {
 /// prompt. This process never requests elevation for itself. The screen that
 /// offers an admin section says exactly that, and this is what makes it true.
 #[tauri::command]
-pub async fn run_clean(app: AppHandle, request: RunRequest) -> Result<RunFinished, String> {
+pub async fn run_clean(
+    app: AppHandle,
+    registry: State<'_, RunRegistry>,
+    request: RunRequest,
+) -> Result<RunFinished, String> {
     validate(&request.args)?;
     let script = script_path(&app)?;
     let dir = run_dir(&app, &request.run_id)?;
@@ -258,6 +190,25 @@ pub async fn run_clean(app: AppHandle, request: RunRequest) -> Result<RunFinishe
         .stderr
         .take()
         .ok_or_else(|| String::from("no error stream from the engine"))?;
+    // 🔴 stdout is drained on its own thread now, and it has to be.
+    //
+    // This used to be `wait_with_output()`, which reads both pipes and waits in one
+    // call - but it CONSUMES the child, so there was no handle left for Cancel to
+    // reach. Waiting separately means draining stdout separately: a pipe nobody
+    // reads fills its buffer at around 4 KB and blocks the writer for ever, so an
+    // engine printing a large `--list --json` catalogue would hang instead of
+    // finishing. That deadlock would look exactly like a slow run.
+    let stdout_pipe = child
+        .stdout
+        .take()
+        .ok_or_else(|| String::from("no output stream from the engine"))?;
+    let collector = std::thread::spawn(move || {
+        let mut buf = Vec::new();
+        let mut pipe = stdout_pipe;
+        let _ = pipe.read_to_end(&mut buf);
+        buf
+    });
+
     let run_id = request.run_id.clone();
     let handle = app.clone();
     let pump = std::thread::spawn(move || {
@@ -279,13 +230,50 @@ pub async fn run_clean(app: AppHandle, request: RunRequest) -> Result<RunFinishe
         }
     });
 
-    let output = child
-        .wait_with_output()
-        .map_err(|e| format!("the engine stopped unexpectedly: {e}"))?;
-    let _ = pump.join();
+    // Registered before the wait, so Cancel can reach this process for the whole
+    // time it is alive. `--elevate` is recorded now because after the parent hands
+    // off and exits there is nothing left to read it from.
+    let elevated = request.args.iter().any(|a| a == "--elevate");
+    let shared: ChildHandle = Arc::new(Mutex::new(child));
+    registry.track(&request.run_id, shared.clone(), elevated)?;
 
-    let exit_code = output.status.code().unwrap_or(-1);
-    let stdout = String::from_utf8_lossy(&output.stdout).into_owned();
+    // 🔴 Poll rather than block on `wait()`, because `wait()` needs `&mut Child`
+    // and would hold the mutex for the entire run - so Cancel could never take the
+    // lock to kill it, and the Cancel button would hang instead of working. The
+    // guard is taken and dropped inside the loop body; it is never held across the
+    // sleep, and never across an await.
+    //
+    // The whole loop runs on the blocking pool. The previous `wait_with_output()`
+    // blocked an async runtime thread for the length of a cleanup, which could be
+    // minutes.
+    let waiter = shared.clone();
+    let status = tauri::async_runtime::spawn_blocking(move || loop {
+        {
+            let mut child = match waiter.lock() {
+                Ok(c) => c,
+                Err(_) => return Err(String::from("the run's process is in a bad state")),
+            };
+            match child.try_wait() {
+                Ok(Some(status)) => return Ok(status),
+                Ok(None) => {}
+                Err(e) => return Err(format!("the engine stopped unexpectedly: {e}")),
+            }
+        }
+        std::thread::sleep(std::time::Duration::from_millis(100));
+    })
+    .await
+    .map_err(|e| format!("the engine could not be waited on: {e}"))?;
+
+    // Retire the run first, whatever the wait said, or a failed run stays in the
+    // map for ever and a later run re-using the id looks already-live.
+    let cancelled = registry.finish(&request.run_id)?;
+    let status = status?;
+
+    let _ = pump.join();
+    let stdout_bytes = collector.join().unwrap_or_default();
+
+    let exit_code = status.code().unwrap_or(-1);
+    let stdout = String::from_utf8_lossy(&stdout_bytes).into_owned();
 
     // 🔴 A SILENT TOTAL FAILURE MUST NOT PRESENT AS SUCCESS.
     //
@@ -311,7 +299,15 @@ pub async fn run_clean(app: AppHandle, request: RunRequest) -> Result<RunFinishe
     // exemption the guard rejected every elevated run, and because Elevation.tsx had
     // no catch the Run screen stayed on "Running" for ever. The child's own summary
     // lands in the run folder; reading it is a separate, unbuilt piece of work.
-    if wants_summary(&request.args) && stdout.trim().is_empty() {
+    // 🔴 ...and a CANCELLED run is the fourth exemption, for the opposite reason to
+    // the other three. It produces no summary because someone stopped it, which is
+    // the guard's own condition met by a deliberate act. Without this clause,
+    // pressing Cancel would raise "the engine did not complete a run" - reporting
+    // the person's own choice back to them as an engine fault, on the one path
+    // where the app is working exactly as asked. The flag is read from the
+    // registry rather than from the exit code, because a killed PowerShell and a
+    // failed one report the same code.
+    if !cancelled && wants_summary(&request.args) && stdout.trim().is_empty() {
         return Err(format!(
             "the engine exited with code {exit_code} and produced no JSON summary. \
              It did not complete a run - read the log lines above for the reason."
@@ -322,6 +318,7 @@ pub async fn run_clean(app: AppHandle, request: RunRequest) -> Result<RunFinishe
         run_id: request.run_id,
         exit_code,
         stdout,
+        cancelled,
     };
     let _ = app.emit("clean:done", finished.clone());
     Ok(finished)
@@ -354,22 +351,6 @@ pub fn app_version(app: AppHandle) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    /// The allowlist is the whole security argument for this command, so it is the
-    /// one thing here carrying a test: a flag the engine never documented, and a
-    /// value flag whose value is missing, must both be refused rather than passed.
-    #[test]
-    fn refuses_arguments_outside_the_allowlist() {
-        let ok = |v: Vec<&str>| validate(&v.into_iter().map(String::from).collect::<Vec<_>>());
-        assert!(ok(vec!["--all", "--dry-run"]).is_ok());
-        assert!(ok(vec!["--only", "1,3"]).is_ok());
-        // --uninstall-data would delete the user's history; the window may not ask for it.
-        assert!(ok(vec!["--uninstall-data"]).is_err());
-        assert!(ok(vec!["--only"]).is_err());
-        assert!(ok(vec!["--only", "--yes"]).is_err());
-        // the run folder is chosen by this process, never by the caller
-        assert!(ok(vec!["--reports-dir", "C:\\Windows"]).is_err());
-    }
 
     /// 🔴 The test that was missing, and its absence cost the whole app.
     ///
@@ -443,61 +424,5 @@ mod tests {
                 "a verbatim prefix survived, and PowerShell cannot use it: {input}"
             );
         }
-    }
-
-    /// The app reads what the engine can do rather than hard-coding it, so the
-    /// read-only flags it depends on at boot must be passable. `--list` was absent,
-    /// which refused the catalogue load and emptied every screen that reads it.
-    ///
-    /// These four print and exit. None of them deletes anything, so allowing them
-    /// costs nothing and refusing one breaks a screen.
-    #[test]
-    fn exempts_only_the_invocations_that_produce_no_summary() {
-        // A real run must be held to the contract: no summary line is a failure.
-        for args in [
-            vec!["--all".to_string(), "--yes".to_string()],
-            vec!["--only".to_string(), "12,13".to_string()],
-            vec!["--dry-run".to_string()],
-            vec!["--list".to_string(), "--json".to_string()],
-        ] {
-            assert!(
-                wants_summary(&args),
-                "{args:?} completes a run or prints the machine contract, so the summary is owed"
-            );
-        }
-
-        // These three print their own shape instead, and demanding a summary from them
-        // turns a working path into a hard error. `--elevate` is the one that cost a
-        // hang: the parent hands off to an elevated window and exits before the runner
-        // that prints the summary is reached.
-        for args in [
-            vec!["--version".to_string()],
-            vec!["--self-test".to_string(), "--no-color".to_string()],
-            vec![
-                "--only".to_string(),
-                "12,13,14".to_string(),
-                "--elevate".to_string(),
-                "--yes".to_string(),
-            ],
-        ] {
-            assert!(
-                !wants_summary(&args),
-                "{args:?} produces no summary by design, so the guard must not fire"
-            );
-        }
-    }
-
-    #[test]
-    fn allows_the_read_only_flags_the_app_needs_at_boot() {
-        let ok = |v: Vec<&str>| validate(&v.into_iter().map(String::from).collect::<Vec<_>>());
-        for flag in ["--list", "--list-targets", "--version", "--self-test"] {
-            assert!(
-                ok(vec![flag, "--json"]).is_ok(),
-                "{flag} is read-only and the app needs it; refusing it empties a screen"
-            );
-        }
-        // The boundary still holds: a read-only-looking flag that is NOT documented
-        // is still refused, so this test did not widen the allowlist to anything.
-        assert!(ok(vec!["--list-everything"]).is_err());
     }
 }

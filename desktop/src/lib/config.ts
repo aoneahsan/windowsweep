@@ -49,8 +49,37 @@ export const SUPPORT_URL =
 
 export const REPO_URL = 'https://github.com/aoneahsan/windowsweep';
 
+/**
+ * Which destinations this build actually has a key for.
+ *
+ * 🔴 FOUR BOOLEANS, NOT ONE. A single `telemetry` flag was `ga4 ?? amplitude ??
+ * clarity ?? sentry`, so a build with a Sentry DSN and nothing else reported
+ * "telemetry: configured" while three of the four destinations received nothing -
+ * and the Privacy tab, which reads this to decide whether to say so, would have
+ * stayed silent about the gap. A partially-configured build must never read as
+ * configured, and the only way to state that honestly is to answer per
+ * destination. The four ids are build-time repository variables on
+ * `aoneahsan/windowsweep`; a clone without them still builds and simply reports
+ * every one of these as false.
+ */
+export interface TelemetryConfigured {
+  ga4: boolean;
+  amplitude: boolean;
+  clarity: boolean;
+  sentry: boolean;
+}
+
+/** True only when NO destination is configured - the one claim `settings.noKeys` makes. */
+export function noDestinationConfigured(t: TelemetryConfigured): boolean {
+  return !t.ga4 && !t.amplitude && !t.clarity && !t.sentry;
+}
+
 /** Which of these are configured, for the settings screen to state honestly. */
-export function configuredFeatures(): { signIn: boolean; sync: boolean; telemetry: boolean } {
+export function configuredFeatures(): {
+  signIn: boolean;
+  sync: boolean;
+  telemetry: TelemetryConfigured;
+} {
   const supabaseReady = Boolean(supabaseConfig.url && supabaseConfig.publishableKey);
   return {
     // One backend, so sign-in and sync are configured together or not at all -
@@ -58,6 +87,11 @@ export function configuredFeatures(): { signIn: boolean; sync: boolean; telemetr
     // that can disagree.
     signIn: supabaseReady,
     sync: supabaseReady,
-    telemetry: Boolean(keys.ga4MeasurementId ?? keys.amplitudeApiKey ?? keys.clarityProjectId ?? keys.sentryDsn),
+    telemetry: {
+      ga4: Boolean(keys.ga4MeasurementId),
+      amplitude: Boolean(keys.amplitudeApiKey),
+      clarity: Boolean(keys.clarityProjectId),
+      sentry: Boolean(keys.sentryDsn),
+    },
   };
 }

@@ -35,6 +35,23 @@ serde_json = "1"
 tiny_http = "0.12"
 url = "2"
 
+# Drive enumeration for the disk picker. Scoped to the one target it means
+# anything on: this app spawns `powershell.exe` and links WebView2, so it is
+# Windows-only already, and a `cfg(not(windows))` arm here would be dead code no
+# gate ever runs.
+#
+# 🔴 `windows-sys` 0.61.2 was ALREADY resolved in Cargo.lock before this entry
+# existed - pulled in transitively by tauri and its dependencies - so naming it
+# directly adds no crate and no new version to the lock. It only makes the
+# dependency honest: relying on another crate's feature selection to keep
+# `Win32_Storage_FileSystem` switched on is the kind of thing that compiles today
+# and stops compiling when an unrelated dependency trims its own features.
+#
+# This is unrelated to the `tauri` feature allowlist noted above - tauri-build
+# checks `tauri`'s features against tauri.conf.json, not another crate's.
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Storage_FileSystem"] }
+
 [profile.release]
 codegen-units = 1
 lto = true

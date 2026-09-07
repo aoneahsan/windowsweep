@@ -18,11 +18,22 @@
      other removed" check passed in both directions while proving nothing. A filter that cannot match is
      indistinguishable from a filter that works. */
   var ROSTER_SOURCE = [
+    { id: 'video-controls-plus', name: 'Video Controls Plus', blurb: 'Take complete control of any HTML5 video.' },
+    { id: 'ztools', name: 'ZTools', blurb: 'A toolbox of developer and creator utilities, one click away.' },
+    { id: 'clearhire', name: 'ClearHire', blurb: 'Build a sharper resume and get discovered.' },
+    { id: 'lifewell', name: 'LifeWell', blurb: 'Track your health, your way.' },
+    { id: 'labflow', name: 'LabFlow', blurb: 'Run your diagnostic lab end to end.' },
+    { id: 'pregnancy-pal', name: 'PregnancyPal', blurb: 'A calm companion through every week.' },
+    { id: 'sms-mobile-app', name: 'SMS App', blurb: 'Send SMS at scale from your own Android device.' },
+    { id: 'native-update', name: 'Native Update', blurb: 'Ship Capacitor app updates without the store wait.' },
+    { id: 'aoneahsan-portfolio', name: 'Meet the Developer', blurb: 'The developer behind these tools.' },
+    { id: 'files-hub', name: 'FilesHub', blurb: 'File storage and 70+ developer utilities behind one API key.' },
+    { id: 'habitforge', name: 'HabitForge', blurb: 'Turns consistency into a rope you can see.' },
+    { id: 'trizlink', name: 'TrizLink', blurb: 'Short links, link-in-bio and click analytics.' },
     { id: 'windowsweep', name: 'windowsweep', blurb: 'This app. It must never appear in its own promotion list.' },
-    { id: 'linux-cleanup', name: 'linux-cleanup', blurb: 'The same idea, one chokepoint and a real dry-run, for Linux.' },
-    { id: 'macleanup', name: 'macleanup', blurb: 'And for macOS, with the same section catalogue.' },
-    { id: 'native-update', name: 'native-update', blurb: 'Signed over-the-air updates for Capacitor apps.' },
-    { id: 'strata-storage', name: 'strata-storage', blurb: 'One storage API over localStorage, IndexedDB, cookies and URL state.' }
+    { id: 'linux-cleanup', name: 'linux-cleanup', blurb: 'Safe, developer-aware Linux disk and cache cleanup.' },
+    { id: 'macleanup', name: 'macleanup', blurb: 'Safe-by-default macOS cleanup and maintenance.' },
+    { id: 'strata-storage', name: 'Strata Storage', blurb: 'One storage API over localStorage, IndexedDB, cookies and native.' }
   ];
 
   /* LAYER 1 - the vendoring drop: this project's own id leaves the roster as it is taken in. */
@@ -102,8 +113,9 @@
       'Maps to --temp-days ' + db.facts.tempDays + '.'));
 
     g.appendChild(row('Large file threshold',
-      'What section 18 counts as large enough to offer you.',
-      num(500, 'MB', function () {}), 'Maps to --large-mb 500.'));
+      'What section 19 counts as large enough to offer you.',
+      num(db.facts.largeFileMb, 'MB', function (v) { db.set('largeFileMb', v); }),
+      'Maps to --large-file-mb ' + db.facts.largeFileMb + '.'));
 
     g.appendChild(row('Weekly schedule',
       'A Windows Scheduled Task that runs the safe batch, notifies you, and never touches an ' +
@@ -221,7 +233,7 @@
     g.appendChild(note);
 
     [['Product analytics', 'Which screens and which buttons.'],
-     ['Behaviour analytics', 'The same events, kept longer.'],
+     ['Behaviour analytics', 'The same events, in a second analytics tool.'],
      ['Session replay', 'This window, with all text masked.'],
      ['Crash reports', 'Stack traces with paths stripped.']].forEach(function (p) {
       g.appendChild(row(p[0], p[1], el('span', 'badge badge-outline', 'on'), ''));

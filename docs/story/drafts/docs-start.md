@@ -120,8 +120,8 @@ two different explanations. **Change** verified: `$Script:WS.ExitCode = $Script:
 ```
 npm install -g windowsweep
 windowsweep --help
-windowsweep --install-task      # weekly Scheduled Task, Sundays 03:00, the safe batch
-windowsweep --install-alias     # adds a 'cleanup' function to your PowerShell profile
+windowsweep --install-task       # weekly Scheduled Task, Sundays 03:00, the safe batch
+windowsweep --install-alias      # adds a 'cleanup' function to your PowerShell profile
 ```
 **Was:** the fence held the first two lines only.
 
@@ -139,6 +139,8 @@ Sunday -At 3am` and its action from `--all --yes --quiet --no-color --notify`, w
 `Install-ProfileAlias` appends the literal `function cleanup { ... }` to `$PROFILE.CurrentUserAllHosts`.
 Both descriptions also match the engine's own `--help` at `windowsweep.ps1:65-66`, so the page and the
 console will not tell two stories.
+
+<!-- copy pass 2026-09-08: one space before each comment, to S-009's column; see "Copy pass, 2026-09-08" below. -->
 
 ### S-005 · installation.md:33 · Without Node · the lead-in
 ```
@@ -246,8 +248,9 @@ Last Updated: 2026-09-05
 ```
 **Was:** Last Updated: 2026-09-03
 
-**Change:** the date moves because this change moves it. Every page in this draft carries the same slot for
-the same reason, and none of them is a date bumped on its own.
+**Change:** the date moves because this change moves it. `docs/README.md` carries the same slot (S-024) for
+the same reason, and neither is a date bumped on its own. `quick-start.md` has no footer slot, so its date
+stays 2026-09-03.
 
 ---
 
@@ -301,7 +304,7 @@ kept because it is a property of the release rather than of a machine. **Verifie
 
 ### S-017 · quick-start.md:22-24 · step 2 · what `--scan` does
 ```
-It deletes nothing. It writes this run's log and one JSON report under `%USERPROFILE%\.windowsweep` and touches nothing else; add `--no-report` to skip the report. What it prints: a health report (drives, hibernation file, disk images, running apps that block cache steps), every target with its size on disk, and the personal-file scanners' findings.
+It deletes nothing. It writes this run's log and one JSON report under `%USERPROFILE%\.windowsweep`, and touches nothing else; add `--no-report` to skip the report. What it prints: a health report (drives, hibernation file, disk images, running apps that block cache steps), every target with its size on disk, and the personal-file scanners' findings.
 ```
 **Was:** Deletes nothing. Prints a health report (drives, hibernation file, disk images, running apps that
 block cache steps), every target with its size on disk, and the personal-file scanners' findings. It does
@@ -329,6 +332,8 @@ And the order is wrong for the audience. A solution-sceptical reader needs the d
 printing last; the live sentence buries *deletes nothing* behind a list and then adds the writing as an
 afterthought beginning *"It does write"*. The replacement leads on the refusal, names the two files it
 writes, names the flag that removes one of them, and puts the inventory last.
+
+<!-- copy pass 2026-09-08: a comma before the second "and" of the second sentence; see "Copy pass, 2026-09-08" below. -->
 
 ### S-018 · quick-start.md:25 · step 3 · heading
 ```
@@ -385,7 +390,7 @@ Sections 12, 13, 14, 15, 16 and 20 change things only an administrator may chang
 
 npx windowsweep --profile system --yes --elevate
 
-The other three are deep sections and the profile leaves them out: 15 is the hibernation file, 16 is the event logs and is permanent, 20 stops Docker and WSL. A batch run refuses a deep section without `--i-understand-deep`. Name the ones you want with `--only`. Details and the hibernation decision: [Admin sections and elevation](./admin-and-elevation.md).
+The other three are deep sections, and the profile leaves them out: 15 is the hibernation file, 16 is the event logs and permanent, 20 stops Docker and WSL. A batch run refuses a deep section without `--i-understand-deep`. Name the ones you want with `--only`. Details and the hibernation decision: [Admin sections and elevation](./admin-and-elevation.md).
 ```
 **Was:**
 ```
@@ -435,6 +440,8 @@ therefore leads somewhere that does not contradict it.
 
 Note for the transcription: the fence in the file stays a `powershell` fence with the command alone; it is
 reproduced inline above only so the slot reads as one unit.
+
+<!-- copy pass 2026-09-08: the doubled "is", and a comma before "and the profile"; see "Copy pass, 2026-09-08" below. -->
 
 ---
 
@@ -608,11 +615,57 @@ a kept slot, so neither is a line edit.
 
 ---
 
+## Copy pass, 2026-09-08 — three fences
+
+Mechanics only. Every fact, number, path, flag and command is where the line pass left it; no heading, no slot
+order and no `Was:` line moved. Three fences changed, each for a grammar, punctuation or formatting reason,
+and each slot carries a pointer comment to this section. The quick-start figures in the SELF-CHECK were
+re-measured afterwards with the rules it states; the pre-edit build reproduced the line pass's figures to the
+digit first.
+
+**S-022.** *"16 is the event logs and is permanent"* now reads *"16 is the event logs and permanent"*. The
+second *is* goes and the permanence mark stays; the sentence is one word shorter, 30 to 29, and
+`docs/admin-and-elevation.md:15` marks section 16 the same way, *(permanent)*. In the same fence a comma now
+precedes *and the profile leaves them out*, which joins two independent clauses; S-002 and S-010 on the
+sibling page already punctuate that join with a comma.
+
+**S-017.** A comma before the second *and* of its second sentence: *"…under `%USERPROFILE%\.windowsweep`,
+and touches nothing else"*. The first *and* joins the two things the run writes; the second joins two
+predicates, and without the comma *"…report under X and touches…"* parses once as a third place written.
+
+**S-026.** One space before each of its two comments. The change note says they sit on S-009's column; they
+sat one short of it, 33 against 34. Whitespace inside a comment, and neither command changed.
+
+**Commentary.** S-012's change note said every page in this draft carries the same footer slot; two of the
+three do (S-012 and S-024), `quick-start.md` has no footer slot, and the note now says so. In the SELF-CHECK,
+quick-start's longest sentence is 29 rather than 30, its burstiness 0.58 rather than 0.59 (pstdev over mean,
+which is the ratio that reproduces the recorded 0.59 from the line-pass build), and its length 368 by the
+self-check's tokenizer and 404 by `wc -w`, each one word down.
+
+**Found and not made.** Four things that are not a copy edit, each with its owner.
+
+- `quick-start.md:63` reads `Last Updated: 2026-09-03` and no slot moves it, so ten changed slots would ship
+  under a footer two days older than the sibling pages'. A footer slot is a structural addition.
+- S-023's anchor is gone. `docs/README.md` no longer carries the *What the project consists of* Meta row;
+  commit `e1ab607` removed it when the planning files left git on 2026-09-07, and the row it removed already
+  read *2026-09-05*, so the slot had been applied before its line was deleted. Its link,
+  `../what-this-project-consists-of.md`, resolves to nothing inside the repository; the file lives one level
+  above it, outside version control.
+- S-024 is already applied: `docs/README.md:59` reads *Last Updated: 2026-09-05 - tool version 1.1.0*, which
+  is the fence text, so the `Was:` no longer matches. Both §C `Was:` lines are therefore drifted. The
+  SELF-CHECK's *"All 26 slots are appliable"* was measured by building the two pages in §A and §B and does
+  not cover §C. A drifted `Was:` is a stop rather than a guess, and the stop is the main session's.
+- S-015's fence writes *the protected lists* where the live sentence and its `Was:` write *the protected
+  paths*, and the change note records one clause changing and not this noun. Both are the engine's terms
+  (`lib/scan.ps1:92`, `modules/release_helpers.ps1:101`), so it is the fact-checker's call.
+
+---
+
 ## SELF-CHECK
 
-Rewritten on 2026-09-07. The rhythm and length figures were re-measured on 2026-09-08, after the line pass.
-Every figure below was re-measured rather than carried forward, and each carries the tokenizer and the
-inclusion rule that produced it.
+Rewritten on 2026-09-07. The rhythm and length figures were re-measured on 2026-09-08, after the line pass,
+and again after the copy pass the same day. Every figure below was re-measured rather than carried
+forward, and each carries the tokenizer and the inclusion rule that produced it.
 
 **Palette.** P dominant and carried by S-015, S-017, S-019, S-021, S-022 and S-026, each stating a mechanism
 with its file, its schedule or its exact value. S-026 names the day and the hour the weekly task runs rather
@@ -628,12 +681,13 @@ split per paragraph on `(?<=[.!?])\s+`, fenced blocks and table rows and heading
 on 2026-09-08 after the line pass with the same rules, where the pre-pass build reproduced every figure of
 the previous revision to the digit. `installation.md`: 23 sentences, 3 to 23 words, median 12, burstiness
 **0.44**, from 0.41; shortest is *"Nothing else is installed."* (four words, S-002) and longest is S-006's
-execution-policy sentence at 23, tied with S-001's second. `quick-start.md`: 24 sentences, 3 to 30 words,
-median 12.5, burstiness **0.59**, from 0.70; shortest is *"It deletes nothing."* (three words, S-017) and
-longest is S-022's sentence naming the three deep sections at 30. The fall is the 44 leaving.
+execution-policy sentence at 23, tied with S-001's second. `quick-start.md`: 24 sentences, 3 to 29 words,
+median 12.5, burstiness **0.58**, from 0.70; shortest is *"It deletes nothing."* (three words, S-017) and
+longest is 29, where S-022's sentence naming the three deep sections ties S-017's inventory sentence and
+S-021's first-run sentence. The fall is the 44 leaving.
 An outlier lifts a variance figure while breaking the range rule, and the range rule is the one the
 fingerprint states. The re-base is what moved the page before that: S-017 restores the three-word refusal
-and S-022 adds a 30, a 9 and a 7 where there had been one flat line.
+and S-022 adds a 29 (a 30 before the copy pass), a 9 and a 7 where there had been one flat line.
 
 🔴 **Two rhythm facts were reported rather than fixed in the writer's round; the line pass closed one.**
 S-015's 44-word sentence exceeded the fingerprint's 34-word ceiling, and the first self-check attributed that
@@ -648,11 +702,12 @@ left it, for the reason its own section gives.
 **Length.** Tokenizer `\b[\w'-]+\b`. **Inclusion rule: prose, headings and table cells; fenced code blocks
 excluded**, since a command is a copy target rather than something read. Scope: the two whole files as they
 would stand after **every** slot lands, the re-based S-017 and S-022 included. `installation.md`
-**258 → 371**; `quick-start.md` **305 → 369**. The cap is ~400 per page. Both are inside it, installation
-clearing by 29 words and quick-start by 31 — rather than by the 75 the review packet estimated. Under the
-stricter rule that also drops table rows the same two pages read 184 → 297 and 305 → 369; under a plain
-`wc -w` over the whole file, 347 → 479 and 341 → 405. The line pass moved these by one word down and two
-up: S-010's split is one word shorter and S-015's is two words longer. 🔴 **The re-base cost quick-start 54
+**258 → 371**; `quick-start.md` **305 → 368**. The cap is ~400 per page. Both are inside it, installation
+clearing by 29 words and quick-start by 32 — rather than by the 75 the review packet estimated. Under the
+stricter rule that also drops table rows the same two pages read 184 → 297 and 305 → 368; under a plain
+`wc -w` over the whole file, 347 → 479 and 341 → 404. The line pass moved these by one word down and two
+up: S-010's split is one word shorter and S-015's is two words longer; the copy pass moved quick-start one
+word down, S-022's doubled *is*. 🔴 **The re-base cost quick-start 54
 words**, which is the price of a correction that names three sections, their gate and three nouns. The page
 still clears.
 

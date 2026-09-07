@@ -35,7 +35,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
-import { useStore } from '../state/store';
+import { useRunPreferences, useStore } from '../state/store';
 import {
   reclaimableBytes,
   reclaimableSectionCount,
@@ -50,6 +50,7 @@ import { DESTINATIONS, type Destination } from '../lib/consent';
 import { ReclaimMapBand } from '../components/ReclaimMapBand';
 import { SafeRunLadder, type LadderRow } from '../components/SafeRunLadder';
 import { NeedsAPerson } from '../components/NeedsAPerson';
+import { PrimaryButton } from '../components/PrimaryButton';
 import { HomeSafety } from '../components/HomeSafety';
 import { LastRuns } from '../components/LastRuns';
 import { AdminNotice } from '../components/AdminNotice';
@@ -109,6 +110,7 @@ export function Home() {
   const setDeveloper = useStore((s) => s.setDeveloper);
   const idleDays = useStore((s) => s.idleDays);
   const setIdleDays = useStore((s) => s.setIdleDays);
+  const prefs = useRunPreferences();
   const startRun = useStore((s) => s.startRun);
   const appendLog = useStore((s) => s.appendLog);
   const applyProgress = useStore((s) => s.applyProgress);
@@ -201,13 +203,13 @@ export function Home() {
 
   const onDryRun = useCallback(() => {
     setBusy('dryRun');
-    void drive(safeBatchArgs({ dryRun: true, developer, idleDays }), true).finally(() => { setBusy(null); });
-  }, [drive, developer, idleDays]);
+    void drive(safeBatchArgs({ dryRun: true, ...prefs }), true).finally(() => { setBusy(null); });
+  }, [drive, prefs]);
 
   const onReclaim = useCallback(() => {
     setBusy('reclaim');
-    void drive(safeBatchArgs({ dryRun: false, developer, idleDays }), true).finally(() => { setBusy(null); });
-  }, [drive, developer, idleDays]);
+    void drive(safeBatchArgs({ dryRun: false, ...prefs }), true).finally(() => { setBusy(null); });
+  }, [drive, prefs]);
 
   /* The map's tiles: one per scanned target, coloured by its section's tier and
      grouped by its section. Every field is the engine's. */
@@ -335,19 +337,18 @@ export function Home() {
             >
               <span className="btn-label">{t('home.dryRunFirst')}</span>
             </button>
-            <button
-              className="btn btn-primary btn-lg"
-              type="button"
-              onClick={onReclaim}
+            <PrimaryButton
+              control="home.reclaim"
+              size="lg"
+              onPress={onReclaim}
               disabled={running || reclaimable === null}
-              {...controlState(stateOf(busy === 'reclaim'))}
-            >
-              <span className="btn-label">
-                {reclaimable === null
+              state={stateOf(busy === 'reclaim')}
+              label={
+                reclaimable === null
                   ? t('home.reclaimUnmeasured')
-                  : t('home.reclaim', { amount: formatBytes(reclaimable) })}
-              </span>
-            </button>
+                  : t('home.reclaim', { amount: formatBytes(reclaimable) })
+              }
+            />
           </div>
         </div>
       </section>

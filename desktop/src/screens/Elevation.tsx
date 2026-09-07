@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { useStore } from '../state/store';
 import { elevatedArgs, newRunId, run } from '../lib/engine';
 import { controlState, stateOf } from '../lib/control-state';
+import { PrimaryButton } from '../components/PrimaryButton';
 
 export function Elevation() {
   const { t } = useTranslation();
@@ -89,7 +90,7 @@ export function Elevation() {
                     style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', flexWrap: 'wrap' }}
                   >
                     <span className="num t-sm ink-3">{s.id}</span>
-                    <span className="t-base" style={{ fontWeight: 600 }}>
+                    <span style={{ fontWeight: 600 }}>
                       {s.key}
                     </span>
                     <span className="badge badge-danger">{t('sections.admin')}</span>
@@ -125,15 +126,13 @@ export function Elevation() {
           <div
             style={{ marginTop: 'var(--sp-5)', display: 'flex', gap: 'var(--sp-2)', flexWrap: 'wrap' }}
           >
-            <button
-              className="btn btn-primary"
-              type="button"
+            <PrimaryButton
+              control="elevation.askAndRun"
+              onPress={() => { go(false); }}
               disabled={busy !== null}
-              onClick={() => { go(false); }}
-              {...controlState(stateOf(busy === 'run'))}
-            >
-              <span className="btn-label">{t('elevation.askAndRun')}</span>
-            </button>
+              state={stateOf(busy === 'run')}
+              label={t('elevation.askAndRun')}
+            />
             <button
               className="btn"
               type="button"

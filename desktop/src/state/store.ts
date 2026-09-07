@@ -15,11 +15,19 @@
 import { create } from 'zustand';
 
 import type { Catalogue } from '../lib/catalogue';
+import type { RunPreferences } from '../lib/engine';
 import type { Candidate, RunSummary, ProgressEvent, ScanTarget } from '../lib/cli';
 import type { AuthUser } from '../lib/auth';
 import { readPrefs, writePrefs, applyAllAxes, type AxisPrefs } from '../lib/theme';
 
 export type RunPhase = 'idle' | 'running' | 'done' | 'failed';
+
+/**
+ * What the updater reported at boot. 'none' is the ONLY value that licenses an
+ * "up to date" claim: 'available' and 'later' mean a newer build exists, and
+ * 'skipped' means the question was never answered.
+ */
+export type UpdateOutcome = 'unknown' | 'none' | 'available' | 'later' | 'skipped';
 
 export interface RunLogLine {
   line: string;
@@ -109,6 +117,34 @@ interface StoreState {
    */
   idleDays: number;
   setIdleDays: (days: number) => void;
+  /**
+   * The temp-folder idle window - the engine's `--temp-days N`, default 3
+   * (`lib/config.ps1` -> Get-DefaultConfig). %TEMP% and the Windows temp folders
+   * turn over far faster than a package cache, which is why they get their own
+   * threshold rather than sharing the one above.
+   */
+  tempDays: number;
+  setTempDays: (days: number) => void;
+  /**
+   * What section 19 counts as a large file - the engine's `--large-file-mb N`,
+   * default 100.
+   *
+   * 🔴 The flag is `--large-file-mb`. The click dummy's consequence line says
+   * `--large-mb`, which is not a flag the engine answers to at all
+   * (`windowsweep.ps1:171`), so the app states the real one - reported for the
+   * dummy to be corrected.
+   */
+  largeFileMb: number;
+  setLargeFileMb: (mb: number) => void;
+
+  /* --- what the boot update check found ---------------------------------
+     🔴 Recorded so the About tab can say "up to date" only when the check
+     actually said so. 'unknown' is the honest starting value and the one a
+     skipped check leaves behind: this window cannot ask the update server twice
+     just to label a badge, and a badge printed from a guess is worse than an
+     absent one. */
+  updateOutcome: UpdateOutcome;
+  setUpdateOutcome: (outcome: UpdateOutcome) => void;
 
   /* --- account ---------------------------------------------------------- */
   user: AuthUser | null;
@@ -118,6 +154,8 @@ interface StoreState {
 const HISTORY_KEY = 'windowsweep:history';
 const DEVELOPER_KEY = 'windowsweep:developer';
 const IDLE_DAYS_KEY = 'windowsweep:idleDays';
+const TEMP_DAYS_KEY = 'windowsweep:tempDays';
+const LARGE_FILE_MB_KEY = 'windowsweep:largeFileMb';
 
 /** The engine's own default idle threshold - `lib/config.ps1`, `days = 100`. Not
     exported: nothing outside this module has a reason to know the seed value. */
@@ -125,6 +163,19 @@ const DEFAULT_IDLE_DAYS = 100;
 /** The range the click dummy's own control offers (`index.html:138`). */
 export const MIN_IDLE_DAYS = 7;
 export const MAX_IDLE_DAYS = 365;
+
+/** The engine's own temp threshold - `lib/config.ps1`, `tempDays = 3`. */
+const DEFAULT_TEMP_DAYS = 3;
+export const MIN_TEMP_DAYS = 1;
+export const MAX_TEMP_DAYS = 90;
+
+/** The engine's own large-file threshold - `lib/config.ps1`, `largeFileMb = 100`.
+    🔴 NOT the dummy's 500: that row is a prototype stub whose input has an empty
+    handler (`page-settings.js:106`), while every other default in this store is
+    taken from the engine so the number on screen is the number that runs. */
+const DEFAULT_LARGE_FILE_MB = 100;
+export const MIN_LARGE_FILE_MB = 1;
+export const MAX_LARGE_FILE_MB = 100_000;
 
 /** When the run in flight began, so `finishRun` can record how long it took. */
 let startedAt = Date.now();
@@ -149,6 +200,13 @@ function readLocal<T>(key: string, fallback: T): T {
 function clampIdleDays(days: number): number {
   if (!Number.isFinite(days)) return DEFAULT_IDLE_DAYS;
   return Math.min(MAX_IDLE_DAYS, Math.max(MIN_IDLE_DAYS, Math.round(days)));
+}
+
+/** Same contract as `clampIdleDays`: the engine refuses anything but a whole
+    number, and the Rust side refuses a value that looks like a flag. */
+function clampWhole(value: number, min: number, max: number, fallback: number): number {
+  if (!Number.isFinite(value)) return fallback;
+  return Math.min(max, Math.max(min, Math.round(value)));
 }
 
 function writeLocal(key: string, value: unknown): void {
@@ -265,7 +323,54 @@ export const useStore = create<StoreState>()((set, get) => ({
     writeLocal(IDLE_DAYS_KEY, value);
     set({ idleDays: value });
   },
+  tempDays: clampWhole(
+    readLocal<number>(TEMP_DAYS_KEY, DEFAULT_TEMP_DAYS),
+    MIN_TEMP_DAYS,
+    MAX_TEMP_DAYS,
+    DEFAULT_TEMP_DAYS,
+  ),
+  setTempDays: (days) => {
+    const value = clampWhole(days, MIN_TEMP_DAYS, MAX_TEMP_DAYS, DEFAULT_TEMP_DAYS);
+    writeLocal(TEMP_DAYS_KEY, value);
+    set({ tempDays: value });
+  },
+  largeFileMb: clampWhole(
+    readLocal<number>(LARGE_FILE_MB_KEY, DEFAULT_LARGE_FILE_MB),
+    MIN_LARGE_FILE_MB,
+    MAX_LARGE_FILE_MB,
+    DEFAULT_LARGE_FILE_MB,
+  ),
+  setLargeFileMb: (mb) => {
+    const value = clampWhole(mb, MIN_LARGE_FILE_MB, MAX_LARGE_FILE_MB, DEFAULT_LARGE_FILE_MB);
+    writeLocal(LARGE_FILE_MB_KEY, value);
+    set({ largeFileMb: value });
+  },
+
+  updateOutcome: 'unknown',
+  setUpdateOutcome: (outcome) => { set({ updateOutcome: outcome }); },
 
   user: null,
   setUser: (user) => { set({ user }); },
 }));
+
+/**
+ * Every preference a run carries, read in one line.
+ *
+ * 🔴 Four atomic subscriptions rather than one selector returning an object: a
+ * selector that builds a new object every call re-renders on every unrelated store
+ * change, and the log pane appends thousands of lines during a purge. Each field
+ * here is compared by value, so a screen re-renders when a preference moves and
+ * not when the log does.
+ *
+ * 🔴 The idle window is ONE field with two readers - Home's control and Settings'
+ * control set the same `idleDays`, never a copy each. Two copies of a number a
+ * person can edit in two places is how a window ends up showing 100 beside a run
+ * that used 30.
+ */
+export function useRunPreferences(): RunPreferences {
+  const developer = useStore((s) => s.developer);
+  const idleDays = useStore((s) => s.idleDays);
+  const tempDays = useStore((s) => s.tempDays);
+  const largeFileMb = useStore((s) => s.largeFileMb);
+  return { developer, idleDays, tempDays, largeFileMb };
+}

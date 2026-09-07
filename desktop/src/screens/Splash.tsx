@@ -29,6 +29,8 @@ import { Shell } from '../components/Shell';
 import { useStore } from '../state/store';
 import { readNotice } from '../lib/consent';
 import { checkForUpdate, restartApp, type UpdateHandle } from '../lib/updater';
+import { stateOf } from '../lib/control-state';
+import { PrimaryButton } from '../components/PrimaryButton';
 
 const STEPS: [string, number][] = [
   ['splash.step.engine', 18],
@@ -75,6 +77,11 @@ export function Splash() {
   const navigate = useNavigate();
   const catalogue = useStore((s) => s.catalogue);
   const engineError = useStore((s) => s.engineError);
+  /* 🔴 Recorded, not merely rendered. The About tab may only say "up to date"
+     when this check actually said so, and this screen is the one place that ever
+     asks - a second question at the moment a badge is drawn would be an update
+     check nobody asked for. */
+  const setUpdateOutcome = useStore((s) => s.setUpdateOutcome);
 
   const [gate, setGate] = useState<Gate>({ kind: 'checking' });
   const [attempt, setAttempt] = useState(0);
@@ -106,17 +113,20 @@ export function Splash() {
       if (cancelled) return;
       if (outcome.kind === 'available') {
         handleRef.current = outcome.handle;
+        setUpdateOutcome('available');
         setGate({ kind: 'available', version: outcome.handle.version });
         return;
       }
       if (outcome.kind === 'none') {
+        setUpdateOutcome('none');
         setGate({ kind: 'none' });
         return;
       }
+      setUpdateOutcome('skipped');
       setGate({ kind: 'skipped', retried: attempt > 0, settled: false });
     })();
     return () => { cancelled = true; };
-  }, [engineError, catalogue, gate.kind, attempt]);
+  }, [engineError, catalogue, gate.kind, attempt, setUpdateOutcome]);
 
   /* The one effect that leaves for another route, and the one that lets the "no
      answer" sentence be read first. An update waiting to be answered holds the
@@ -144,8 +154,9 @@ export function Splash() {
   }, [gate, navigate]);
 
   const onLater = useCallback(() => {
+    setUpdateOutcome('later');
     setGate({ kind: 'later' });
-  }, []);
+  }, [setUpdateOutcome]);
 
   const onRetry = useCallback(() => {
     setGate({ kind: 'checking' });
@@ -273,17 +284,16 @@ export function Splash() {
                         <span className="btn-label">{t('splash.update.later')}</span>
                       </button>
                       {/* Pending, then done, ON the control that was pressed - the
-                          dummy's own vocabulary (`wire.js` busy(), widgets.js pending()). */}
-                      <button
-                        className="btn btn-primary"
-                        type="button"
-                        onClick={onInstall}
+                          dummy's own vocabulary (`wire.js` busy(), widgets.js pending()).
+                          Through the shared primitive, so the press is reported from
+                          one place rather than from this screen. */}
+                      <PrimaryButton
+                        control="splash.updateNow"
+                        onPress={onInstall}
                         disabled={busy}
-                        {...(gate.kind === 'downloading' ? { 'data-state': 'pending', 'aria-busy': true } : {})}
-                        {...(gate.kind === 'installed' ? { 'data-state': 'done' } : {})}
-                      >
-                        <span className="btn-label">{t('splash.update.now')}</span>
-                      </button>
+                        state={stateOf(gate.kind === 'downloading', gate.kind === 'installed')}
+                        label={t('splash.update.now')}
+                      />
                     </div>
                   </div>
                 </div>

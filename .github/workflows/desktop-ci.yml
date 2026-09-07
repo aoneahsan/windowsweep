@@ -31,6 +31,33 @@ jobs:
   desktop:
     name: desktop
     runs-on: windows-latest
+
+    # The web layer's build-time configuration, at JOB level because two steps
+    # build it: `yarn build` below, and `yarn tauri build --no-bundle` at the end,
+    # which re-runs it through `beforeBuildCommand`. Setting it on one step only
+    # would compile a binary whose keys are blank while the standalone build's
+    # were not.
+    #
+    # These are repository VARIABLES, not secrets, and that is correct rather than
+    # a shortcut: every one is a public client identifier that ships inside the
+    # bundle by design - a GA4 measurement id, an Amplitude key, a Clarity project
+    # id, a Sentry DSN. A value a user can read out of the installer is not a
+    # secret, and storing it as one would only hide it from the people reading this
+    # file. 🔴 No SERVER secret is ever added here; the updater's signing key stays
+    # in `secrets` in the release workflow, which is the real one.
+    #
+    # 🔴 A FRESH CLONE WITH NONE OF THESE CONFIGURED IS A SUPPORTED CASE, and this
+    # job must stay green there. An undefined `vars.X` interpolates to the empty
+    # string, and `desktop/src/lib/config.ts` reads every one through a truthiness
+    # check, so empty behaves exactly like absent: the feature stays off and the
+    # build succeeds. That is the same state this job was in before these lines
+    # existed, which is what makes the claim checkable rather than hopeful.
+    env:
+      VITE_GA4_MEASUREMENT_ID: ${{ vars.VITE_GA4_MEASUREMENT_ID }}
+      VITE_AMPLITUDE_API_KEY: ${{ vars.VITE_AMPLITUDE_API_KEY }}
+      VITE_CLARITY_PROJECT_ID: ${{ vars.VITE_CLARITY_PROJECT_ID }}
+      VITE_SENTRY_DSN: ${{ vars.VITE_SENTRY_DSN }}
+
     defaults:
       run:
         working-directory: desktop
@@ -46,6 +73,32 @@ jobs:
 
       - name: Install
         run: yarn install --immutable
+
+      # 🔴 Supabase is behind a switch because it is not wired yet. The shared
+      # project has no Google OAuth client today, so `SUPABASE_ENABLED` is absent -
+      # and an absent variable is not `'true'`, so this step is skipped and the two
+      # names never enter the environment at all.
+      #
+      # The guard is on THIS step and not on the build, deliberately. Putting
+      # `if:` on a build step does not build it without Supabase; it does not build
+      # it at all. So the switch controls a step that only exports two values, and
+      # the build below runs unconditionally either way.
+      #
+      # `$GITHUB_ENV` is what carries them, because a step's own `env:` block is
+      # visible only to that step. The values are read through this step's `env:`
+      # rather than interpolated into the shell body - a repository variable is
+      # owner-set and not hostile, but a `${{ }}` expansion inside `run:` is a
+      # script-injection shape and there is no reason to write one.
+      - name: Supabase build variables (only once the shared project is wired)
+        if: vars.SUPABASE_ENABLED == 'true'
+        shell: bash
+        env:
+          SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          echo "VITE_SUPABASE_URL=$SUPABASE_URL" >> "$GITHUB_ENV"
+          echo "VITE_SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY" >> "$GITHUB_ENV"
+          echo "Supabase build variables exported for the rest of this job"
 
       # The pre-paint script is GENERATED from src/lib/axes.json. If the two have
       # drifted, the window would apply a different set of axes before first paint

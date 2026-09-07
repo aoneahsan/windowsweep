@@ -28,6 +28,8 @@
  * gtag.js never took over.
  */
 
+import type { EventName } from './events';
+
 export interface AnalyticsKeys {
   ga4MeasurementId?: string | undefined;
   amplitudeApiKey?: string | undefined;
@@ -68,10 +70,24 @@ declare global {
  * No folder or user name escaped - but a DRIVE LABEL did, and the consent notice
  * lists a drive label among the things never sent. One character, invisible to
  * typecheck, lint and review because both forms are valid regexes.
+ *
+ * 🔴 AND THE FIXED RULE ONLY EVER SAW ONE OF THE TWO SLASHES. Re-measured
+ * 2026-09-08 by running the real function over real strings rather than reading
+ * it: `C:\Users\PC\AppData` scrubbed correctly, and `C:/Users/PC/AppData` came
+ * back as `C:<home>/AppData/Local/Temp` - drive label AND two folder names intact.
+ * `D:/work/windows-cleanup-root` came back untouched in full. That is the shape
+ * this app leaks most, not the backslash one: a Vite stack frame, an
+ * `import.meta.url` and every `file:///C:/...` in a Sentry payload use forward
+ * slashes. The class matches EITHER separator now.
+ *
+ * 🔴 The lookbehind is load-bearing, not tidiness. Without it `[A-Za-z]:[\\/]`
+ * matches the `s://` in `https://www.googletagmanager.com/...`, so every URL in a
+ * message would scrub to `http<path>` - over-scrubbing that destroys the one thing
+ * a crash report is for. A drive letter is never preceded by another letter.
  */
 export function scrub(value: string): string {
   return value
-    .replace(/[A-Za-z]:\\[^\s"']*/g, '<path>')
+    .replace(/(?<![A-Za-z])[A-Za-z]:[\\/][^\s"']*/g, '<path>')
     .replace(/\\[^\s"']+/g, '<unc>')
     .replace(/\/(?:home|Users)\/[^/\s"']+/g, '<home>');
 }
@@ -184,8 +200,15 @@ export async function startAnalytics(keys: AnalyticsKeys, version: string): Prom
   await Promise.allSettled(jobs);
 }
 
-/** The one call site vocabulary. Nothing outside this module names a provider. */
-export function track(event: string, props: EventProps = {}): void {
+/**
+ * The one call site vocabulary. Nothing outside this module names a provider.
+ *
+ * 🔴 `EventName`, not `string`: the registry in `events.ts` is the whole list, so
+ * a misspelling does not compile rather than quietly creating a second name for
+ * the same thing. The fan-out is here and never at a call site - a call site that
+ * named a provider would one day name three of the four.
+ */
+export function track(event: EventName, props: EventProps = {}): void {
   const safe = scrubProps(props);
   for (const p of providers) {
     if (!p.ready) continue;

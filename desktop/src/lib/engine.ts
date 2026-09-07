@@ -136,6 +136,22 @@ export function scanArgs(developer: boolean): string[] {
 }
 
 /**
+ * Every preference the Settings screen can set, in one object.
+ *
+ * 🔴 All three are REQUIRED, deliberately. Optional fields would let a call site
+ * forget one, and a forgotten flag means the engine silently falls back to its own
+ * `config.json` - so the window would show one number beside a run that used
+ * another. TypeScript refusing the call is the only reliable guard, because
+ * nothing at runtime can tell a deliberate omission from a missed one.
+ */
+export interface RunPreferences {
+  developer: boolean;
+  idleDays: number;
+  tempDays: number;
+  largeFileMb: number;
+}
+
+/**
  * The safe batch, as the engine defines it. `--dry-run` makes it a rehearsal.
  *
  * 🔴 `--days` is passed on EVERY run, never only when it differs from the
@@ -143,13 +159,18 @@ export function scanArgs(developer: boolean): string[] {
  * the flag is absent, and a person who has run `windowsweep --days 30` once has
  * changed that file - so the window would be showing 100 beside a run that used
  * 30. Passing it always makes the number on the screen the number that runs.
+ *
+ * 🔴 `--temp-days` and `--large-file-mb` join it for exactly the same reason, now
+ * that the Settings screen can set both. A control that sets a value the run does
+ * not receive is a control that lies, and this is the one place that can be true
+ * or false for all three at once. `--large-file-mb` governs section 19, which
+ * `--yes` never auto-answers - so on a safe batch it is inert rather than wrong,
+ * and it is still passed so the command line on screen is the whole invocation.
  */
 export function safeBatchArgs(options: {
   dryRun: boolean;
-  developer: boolean;
-  idleDays: number;
   sections?: number[];
-}): string[] {
+} & RunPreferences): string[] {
   const args: string[] = [];
   if (options.sections && options.sections.length > 0) args.push('--only', options.sections.join(','));
   else args.push('--all');
@@ -157,6 +178,8 @@ export function safeBatchArgs(options: {
   if (options.dryRun) args.push('--dry-run');
   args.push(options.developer ? '--developer' : '--not-developer');
   args.push('--days', String(options.idleDays));
+  args.push('--temp-days', String(options.tempDays));
+  args.push('--large-file-mb', String(options.largeFileMb));
   return args;
 }
 

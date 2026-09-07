@@ -151,7 +151,7 @@ itself is unchanged and correct against the catalogue.
 
 ### S-008 · README.md:30-32 · the opening paragraph, sentence 3
 ```
-It names every path before it touches one, keeps the caches you used in the last 100 days, never follows a junction, and makes no network calls at all.
+It names every path before it touches one, keeps the caches you used in the last 100 days, never follows a junction and makes no network calls at all.
 ```
 **Was:** It is a PowerShell tool with a thin Node launcher, so `npx windowsweep` runs it with nothing to
 install. What sets it apart is restraint: it asks whether you are a developer and keeps the caches you used

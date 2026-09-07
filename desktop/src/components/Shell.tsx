@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Icon, type IconName } from './Icon';
 import { ThemePanel } from './ThemePanel';
-import { useStore } from '../state/store';
+import { useRunPreferences, useStore } from '../state/store';
 import { reclaimableBytes, reclaimableSectionCount } from '../lib/reclaim';
 import { formatBytes } from '../lib/format';
 import { logDirectory } from '../lib/cli';
@@ -212,8 +212,7 @@ function useRouteStatusNote(): StatusNote | null {
   const search: { filter?: SectionFilter; q?: string } = useSearch({ strict: false });
   const summary = useStore((s) => s.summary);
   const catalogue = useStore((s) => s.catalogue);
-  const developer = useStore((s) => s.developer);
-  const idleDays = useStore((s) => s.idleDays);
+  const prefs = useRunPreferences();
 
   if (path === '/') {
     /* 🔴 The engine's own `log_file`, not the command-line tool's fixed folder.
@@ -240,7 +239,7 @@ function useRouteStatusNote(): StatusNote | null {
 
   if (path === '/run') {
     return {
-      text: commandLine(safeBatchArgs({ dryRun: false, developer, idleDays })),
+      text: commandLine(safeBatchArgs({ dryRun: false, ...prefs })),
       machine: true,
     };
   }

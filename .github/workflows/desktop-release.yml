@@ -37,6 +37,25 @@ jobs:
   release:
     name: installers
     runs-on: windows-latest
+
+    # The web layer's build-time configuration, at JOB level so `tauri-action`
+    # inherits it - that step runs `beforeBuildCommand`, so it IS the web build
+    # here, and a value missing from it is a value missing from the installer that
+    # ships. Unlike the CI job, this one produces the artefact people install, so a
+    # blank key here is a telemetry destination that silently receives nothing for
+    # the whole life of the release.
+    #
+    # Repository VARIABLES, not secrets, and deliberately so: each is a public
+    # client identifier that a user can read out of the bundle anyway. 🔴 The
+    # distinction is load-bearing right below - `TAURI_SIGNING_PRIVATE_KEY` is a
+    # real secret and stays in `secrets`, because anyone holding it can sign an
+    # "update" that every install will accept.
+    env:
+      VITE_GA4_MEASUREMENT_ID: ${{ vars.VITE_GA4_MEASUREMENT_ID }}
+      VITE_AMPLITUDE_API_KEY: ${{ vars.VITE_AMPLITUDE_API_KEY }}
+      VITE_CLARITY_PROJECT_ID: ${{ vars.VITE_CLARITY_PROJECT_ID }}
+      VITE_SENTRY_DSN: ${{ vars.VITE_SENTRY_DSN }}
+
     steps:
       - uses: actions/checkout@v5
         with:
@@ -90,6 +109,26 @@ jobs:
             exit 1
           fi
           echo "updater public key present"
+
+      # 🔴 Supabase is behind a switch because it is not wired yet. The shared
+      # project has no Google OAuth client today, so `SUPABASE_ENABLED` is absent,
+      # and an absent variable is not `'true'` - this step is skipped and the two
+      # names never enter the environment.
+      #
+      # The guard sits on this small export step rather than on the build, because
+      # `if:` on the build step would not produce a Supabase-less release; it would
+      # produce no release at all. `$GITHUB_ENV` is what carries the values to
+      # `tauri-action`, since a step's own `env:` block reaches only that step.
+      - name: Supabase build variables (only once the shared project is wired)
+        if: vars.SUPABASE_ENABLED == 'true'
+        shell: bash
+        env:
+          SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          echo "VITE_SUPABASE_URL=$SUPABASE_URL" >> "$GITHUB_ENV"
+          echo "VITE_SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY" >> "$GITHUB_ENV"
+          echo "Supabase build variables exported for the rest of this job"
 
       - uses: dtolnay/rust-toolchain@stable
       - uses: swatinem/rust-cache@v2

@@ -36,6 +36,7 @@ import { Account } from './screens/Account';
 import { Elevation } from './screens/Elevation';
 import { useStore } from './state/store';
 import { loadCatalogue } from './lib/engine';
+import { track } from './lib/analytics';
 
 /**
  * 🔴 THE APP BOOTS THROUGH SPLASH, and until now it did not.
@@ -127,6 +128,31 @@ declare module '@tanstack/react-router' {
     router: typeof router;
   }
 }
+
+/**
+ * 🔴 ONE place emits a screen view, and it is the router rather than a component.
+ *
+ * The first-run notice promises "which screens you opened", and nothing in the
+ * tree emitted it (PENDING-TASKS TASK-005). A `useEffect` in a layout would work
+ * too, and would fire twice per route under StrictMode; a router subscription sits
+ * outside React entirely, so it reports one navigation as one event in development
+ * and in production alike.
+ *
+ * 🔴 GA4's own `send_page_view` stays FALSE and this replaces it. The window is one
+ * document with a hash router: gtag's page_view fires once at boot and never again,
+ * so every session would read as a single screen.
+ *
+ * `pathChanged` is the gate, plus the first resolution - which has no
+ * `fromLocation` at all - so the screen a launch lands on is counted. A search
+ * parameter moving (a Settings tab, a Sections filter) is deliberately NOT a
+ * screen view: it is the same screen with different state.
+ *
+ * The route pattern is the app's own hash path, never a filesystem location.
+ */
+router.subscribe('onResolved', (event) => {
+  if (!event.pathChanged && event.fromLocation !== undefined) return;
+  track('screen.view', { route: event.toLocation.pathname });
+});
 
 export function App() {
   return <RouterProvider router={router} />;

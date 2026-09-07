@@ -413,7 +413,13 @@
     if (!mount) return;
     mount.textContent = '';
     [['Product analytics', 'Google Analytics 4', 'Which screens you opened and which buttons you pressed.'],
-     ['Behaviour analytics', 'Amplitude', 'The same events, kept longer so trends over months are visible.'],
+     /* 🔴 Amended 2026-09-08. This said "kept longer so trends over months are
+        visible", which is a claim about a vendor's retention policy and has no
+        source in this repository - `desktop-safety` raised it as a NEEDS
+        DECISION on 2026-09-05 and the decision log recorded no answer. A
+        privacy notice may only say what can be checked, so it now says the
+        thing that can: the same events go to a second tool. */
+     ['Behaviour analytics', 'Amplitude', 'The same events, in a second analytics tool.'],
      ['Session replay', 'Microsoft Clarity', 'A recording of this window with every piece of text masked.'],
      ['Crash reports', 'Sentry', 'A stack trace when something breaks, with file paths stripped out.']]
       .forEach(function (p) {

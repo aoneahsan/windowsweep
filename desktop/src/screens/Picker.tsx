@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { useStore } from '../state/store';
 import { formatBytes } from '../lib/format';
 import { candidatesBySection } from '../lib/cli';
+import { PrimaryButton } from '../components/PrimaryButton';
 
 export function Picker() {
   const { t } = useTranslation();
@@ -170,13 +171,20 @@ export function Picker() {
                   and doing nothing at all, which is the worst reading of the two:
                   a person could tick rows, press it, and believe a deletion had
                   been queued. */}
-              <button className="btn btn-sm btn-primary" type="button" disabled>
-                <span className="btn-label">{t('picker.remove')}</span>
-              </button>
+              <PrimaryButton control="picker.remove" size="sm" disabled label={t('picker.remove')} />
             </div>
           </div>
           {/* 🔴 Beside the control, not after the deletion. */}
-          <p className="t-sm ink-3 selbar-note">{t('picker.consequence')}</p>
+          {/* 🔴 `selbar-note` was removed here, not styled. The class exists in
+              NEITHER stylesheet - not the app's and not the dummy's - so it
+              resolved to nothing in both, and the note has always rendered from
+              `.t-sm.ink-3` alone. Adding a rule for it in the app only would have
+              made this line render DIFFERENTLY from the page that specifies it,
+              which is the opposite of the fix. The dummy carries the same dead
+              class at `picker.html:120`; giving it a real treatment is a dummy
+              amendment and is reported rather than taken unilaterally.
+              (PENDING-TASKS TASK-007.) */}
+          <p className="t-sm ink-3">{t('picker.consequence')}</p>
           {/* The stated gap that goes with the disabled button above. Named here
               rather than hidden, per §10a's `pending-wave` exemption. */}
           <p className="t-xs ink-3">{t('pending.body')}</p>

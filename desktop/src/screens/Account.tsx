@@ -18,6 +18,7 @@ import { useStore } from '../state/store';
 import { signIn, signOut } from '../lib/auth';
 import { configuredFeatures } from '../lib/config';
 import { controlState, stateOf } from '../lib/control-state';
+import { PrimaryButton } from '../components/PrimaryButton';
 
 export function Account() {
   const { t } = useTranslation();
@@ -67,7 +68,7 @@ export function Account() {
                 <div className="lst">
                   <div className="lst-i">
                     <div style={{ flex: 1 }}>
-                      <div className="t-base">{user.displayName ?? user.email}</div>
+                      <div>{user.displayName ?? user.email}</div>
                       <div className="t-sm ink-3">{user.email}</div>
                     </div>
                     <div className="lst-x">
@@ -92,17 +93,13 @@ export function Account() {
                 <p className="t-sm">{t('account.whatSyncs')}</p>
                 <p className="t-sm ink-3">{t('account.whatNeverSyncs')}</p>
                 <div style={{ marginTop: 'var(--sp-4)' }}>
-                  <button
-                    className="btn btn-primary"
-                    type="button"
+                  <PrimaryButton
+                    control="account.signIn"
+                    onPress={onSignIn}
                     disabled={busy || !features.signIn}
-                    onClick={onSignIn}
-                    {...controlState(stateOf(busy))}
-                  >
-                    <span className="btn-label">
-                      {features.signIn ? t('account.signIn') : t('account.notConfigured')}
-                    </span>
-                  </button>
+                    state={stateOf(busy)}
+                    label={features.signIn ? t('account.signIn') : t('account.notConfigured')}
+                  />
                 </div>
                 {!features.signIn ? (
                   <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-2)' }}>

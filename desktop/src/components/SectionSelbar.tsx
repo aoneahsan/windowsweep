@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { formatBytes } from '../lib/format';
 import type { Section } from '../lib/catalogue';
 import { controlState, stateOf } from '../lib/control-state';
+import { PrimaryButton } from './PrimaryButton';
 
 export function SectionSelbar({
   selection,
@@ -82,15 +83,14 @@ export function SectionSelbar({
         >
           <span className="btn-label">{t('sections.selDry')}</span>
         </button>
-        <button
-          className="btn btn-sm btn-primary"
-          type="button"
-          onClick={onRun}
+        <PrimaryButton
+          control="sections.runSelected"
+          size="sm"
+          onPress={onRun}
           disabled={busy !== null}
-          {...controlState(stateOf(busy === 'run'))}
-        >
-          <span className="btn-label">{t('sections.selRun')}</span>
-        </button>
+          state={stateOf(busy === 'run')}
+          label={t('sections.selRun')}
+        />
       </div>
     </div>
   );

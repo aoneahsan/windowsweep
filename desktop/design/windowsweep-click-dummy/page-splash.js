@@ -66,8 +66,17 @@
           }, reduced ? 120 : 180);
         }
         if (a === 'bootRetry') {
-          if (fail) fail.hidden = true;
-          ws.toast('Checked again - still offline. Carrying on without it.');
+          /* 🔴 Amended 2026-09-08: this was a toast, and the result of pressing a
+             control belongs AT that control, not in the opposite corner of the
+             window. The note the person is already reading is where the answer
+             goes; the band stays on screen and its body is rewritten in place,
+             and the button removes itself because there is nothing left to
+             retry in a prototype that always answers the same way. The words are
+             unchanged - only where they are delivered. The app does exactly
+             this, so the dummy now specifies what the app does. */
+          window.wsWire.setText('bootFailBody',
+            'Checked again - still offline. Carrying on without it.');
+          t.remove();
         }
       });
 

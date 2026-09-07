@@ -211,7 +211,9 @@
       window.wsWire.setText('runCmd',
         'windowsweep --json --all --yes'
         + (db.facts.developer ? ' --developer' : ' --not-developer')
-        + ' --days ' + db.facts.idleDays);
+        + ' --days ' + db.facts.idleDays
+        + ' --temp-days ' + db.facts.tempDays
+        + ' --large-file-mb ' + (db.facts.largeFileMb || 100));
       log('idle - press "Start the safe run"', 'l-dim');
 
       document.addEventListener('click', function (e) {

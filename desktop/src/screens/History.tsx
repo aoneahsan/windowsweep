@@ -58,7 +58,7 @@ export function History() {
         <div className="wrap">
           {rows.length === 0 ? (
             <div className="panel pad">
-              <p className="t-base">{t('history.emptyTitle')}</p>
+              <p>{t('history.emptyTitle')}</p>
               <p className="t-sm ink-3">{t('history.emptyBody')}</p>
             </div>
           ) : (

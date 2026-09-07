@@ -28,7 +28,8 @@ import { Trans, useTranslation } from 'react-i18next';
 
 import { Shell } from '../components/Shell';
 import { COLLECTED_KEYS, markNoticeSeen } from '../lib/consent';
-import { controlState, stateOf } from '../lib/control-state';
+import { stateOf } from '../lib/control-state';
+import { PrimaryButton } from '../components/PrimaryButton';
 
 export function Consent() {
   const { t } = useTranslation();
@@ -89,15 +90,13 @@ export function Consent() {
         >
           <p className="t-sm">{t('consent.summary')}</p>
           <div style={{ marginInlineStart: 'auto', display: 'flex', gap: 'var(--sp-2)' }}>
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={onContinue}
+            <PrimaryButton
+              control="consent.continue"
+              onPress={onContinue}
               disabled={submitting}
-              {...controlState(stateOf(submitting))}
-            >
-              <span className="btn-label">{t('consent.continue')}</span>
-            </button>
+              state={stateOf(submitting)}
+              label={t('consent.continue')}
+            />
           </div>
         </div>
       </section>

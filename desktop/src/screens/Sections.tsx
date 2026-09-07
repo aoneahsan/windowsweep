@@ -25,7 +25,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Trans, useTranslation } from 'react-i18next';
 
-import { useStore } from '../state/store';
+import { useRunPreferences, useStore } from '../state/store';
 import { filterSections, SECTION_FILTERS, type SectionFilter } from '../lib/catalogue';
 import { newRunId, run, safeBatchArgs } from '../lib/engine';
 import { formatBytes } from '../lib/format';
@@ -37,8 +37,7 @@ export function Sections() {
   const navigate = useNavigate();
 
   const catalogue = useStore((s) => s.catalogue);
-  const developer = useStore((s) => s.developer);
-  const idleDays = useStore((s) => s.idleDays);
+  const prefs = useRunPreferences();
   const scanTargets = useStore((s) => s.scanTargets);
   const selection = useStore((s) => s.sectionSelection);
   const toggleSectionSelection = useStore((s) => s.toggleSectionSelection);
@@ -93,7 +92,7 @@ export function Sections() {
       const id = newRunId();
       startRun(id);
       void navigate({ to: '/run' });
-      void run(safeBatchArgs({ dryRun, developer, idleDays, sections: selection }), id, {
+      void run(safeBatchArgs({ dryRun, ...prefs, sections: selection }), id, {
         onLog: appendLog,
         onProgress: (section, event, status, freedBytes) => {
           applyProgress({
@@ -114,7 +113,7 @@ export function Sections() {
     /* The two setState functions are stable, so listing them costs nothing and
        is what the React Compiler infers - a mismatch there disables optimisation
        for the whole component. */
-    [all, selection, t, startRun, navigate, developer, idleDays, appendLog, applyProgress,
+    [all, selection, t, startRun, navigate, prefs, appendLog, applyProgress,
       finishRun, setBusy, setBlocked],
   );
 

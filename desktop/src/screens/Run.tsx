@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
 import { formatBytes } from '../lib/format';
+import { isCleanupRun } from '../lib/cli';
 import { newRunId, run, safeBatchArgs } from '../lib/engine';
 import { safeRunSections } from '../lib/catalogue';
 import { controlState, stateOf } from '../lib/control-state';
@@ -54,7 +55,12 @@ export function RunScreen() {
 
   /* Nothing has been started in this session: `idle` with no summary and no log.
      Distinct from a run that finished without a readable summary. */
-  const neverRun = phase === 'idle' && summary === null && log.length === 0;
+  /* 🔴 A `--scan` summary is NOT a run. It arrives with mode "scan", one step at
+     section -1 and freed_bytes 0, and it writes log lines - so the old test
+     (`summary === null && log.length === 0`) went false after a scan and this
+     screen announced `FINISHED / Reclaimed 0 B.` to someone who had pressed a
+     button that deletes nothing. isCleanupRun() is the one place that decides. */
+  const notRunYet = phase === 'idle' && !isCleanupRun(summary);
 
   const done = Object.values(progress).filter((p) => p.event === 'end').length;
   const running = Object.values(progress).find((p) => p.event === 'start' && progress[p.section]?.event !== 'end');
@@ -135,21 +141,25 @@ export function RunScreen() {
                 ? t('run.eyebrowRunning')
                 : phase === 'failed'
                   ? t('run.eyebrowFailed')
-                  : neverRun
+                  : notRunYet
                     ? t('run.eyebrowReady')
                     : t('run.eyebrowDone')}
             </p>
             <h1 className="t-xl wide">
+              {/* 🔴 Order matters here and got it wrong once: `summary` was tested
+                  BEFORE the idle case, so a scan's summary - which is truthy -
+                  reached `titleDone` and announced `Reclaimed 0 B.` The idle test
+                  has to come first, because a scan leaves a summary behind. */}
               {phase === 'running'
                 ? t('run.titleRunning', { done })
                 : phase === 'failed'
                   ? t('run.titleFailed')
-                  : summary
-                    ? summary.dry_run
-                      ? t('run.titleDryRun', { amount: formatBytes(summary.estimated_bytes) })
-                      : t('run.titleDone', { amount: formatBytes(summary.freed_bytes) })
-                    : neverRun
-                      ? t('run.logEmpty')
+                  : notRunYet
+                    ? t('run.idleHint')
+                    : summary
+                      ? summary.dry_run
+                        ? t('run.titleDryRun', { amount: formatBytes(summary.estimated_bytes) })
+                        : t('run.titleDone', { amount: formatBytes(summary.freed_bytes) })
                       : t('run.titleUnknown')}
             </h1>
             {/* 🔴 A failed run used to fall through to `run.titleUnknown` - "The run

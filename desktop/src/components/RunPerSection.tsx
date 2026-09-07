@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { formatBytes } from '../lib/format';
 import type { Catalogue } from '../lib/catalogue';
 import type { ProgressEvent, RunSectionResult, ScanTarget } from '../lib/cli';
+import { SCAN_PSEUDO_SECTION } from '../lib/cli';
 
 export interface PerSectionRow {
   id: number;
@@ -56,9 +57,14 @@ export function perSectionRows({
      safe batch. A run started from Sections carries `--only 1,2`, so listing the
      whole safe batch would have this band describing a queue that never existed.
      The safe batch is only the preview shown before the first run. */
+  /* 🔴 `--scan` reports one step with `section: -1` - the scan is not one of the
+     numbered sections. Without this filter the band rendered a row reading
+     `-1 · -1 · ran · 0 B` after a read-only scan. */
   const reported = [
     ...new Set([...results.map((r) => r.section), ...Object.keys(progress).map(Number)]),
-  ].sort((a, b) => a - b);
+  ]
+    .filter((id) => id !== SCAN_PSEUDO_SECTION)
+    .sort((a, b) => a - b);
   const ids = reported.length > 0 ? reported : queue;
   return ids.map((id) => {
     const event = progress[id];

@@ -56,6 +56,32 @@ export interface RunSummary {
   report_file: string | null;
 }
 
+/**
+ * The scan pseudo-section. `--scan` reports one step with `section: -1`, because
+ * the scan is not one of the numbered sections - it is the act of measuring them.
+ */
+export const SCAN_PSEUDO_SECTION = -1;
+
+/**
+ * Whether this summary describes a CLEANUP RUN, as opposed to a `--scan` that only
+ * measured.
+ *
+ * 🔴 Read this before showing anything about "the run". A scan produces a perfectly
+ * ordinary summary - `mode: "scan"`, one step with `section: -1`, `freed_bytes: 0` -
+ * and a consumer that treats it as a finished cleanup tells the reader a run
+ * finished and reclaimed nothing, after they pressed a button that deletes nothing.
+ * That shipped: the Run screen showed `FINISHED / Reclaimed 0 B.` and a per-section
+ * row reading `-1 · -1 · ran · 0 B` after a read-only scan.
+ *
+ * It is the same defect as the hero's `Reclaim 0 B`, in a third consumer. The first
+ * two were centralised into lib/reclaim.ts and this one survived LOOKING fixed,
+ * which is the part worth remembering: a figure with three consumers is not fixed
+ * when two of them are.
+ */
+export function isCleanupRun(summary: RunSummary | null): boolean {
+  return summary !== null && summary.mode !== 'scan';
+}
+
 /** A parsed `##windowsweep` progress line. `end` carries status and freed bytes. */
 export interface ProgressEvent {
   section: number;

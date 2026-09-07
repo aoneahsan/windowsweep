@@ -3,14 +3,14 @@
   "slug": "windowsweep",
   "bibleApproved": true,
   "contentMapApproved": true,
-  "phase": "recorded",
-  "surface": "cli-strings is now DRAFTED (195 slots, 21 changed, 174 kept), so all fourteen surfaces have a draft and none is unwritten. desktop-readme has had its developmental round. Three are recorded; eleven await their lean review, finalizer and apply under the 2026-09-07 pre-authorisation.",
+  "phase": "approved",
+  "surface": "desktop-readme is GATE-4 APPROVED (2026-09-07) under the pre-authorisation - finalizer fact-consistency PASS, zero unanswered NEEDS DECISION - and is awaiting APPLY to README.md and a new docs/desktop.md. Four surfaces are now through gate 4; ten await their lean review. The keeper's Bible-and-registry pass is owed and batched.",
   "round": 1,
   "gate": 4,
   "openDecisions": [
     "Open, not blocking: the voice fingerprint is still calibrated:false. It was built from repository evidence rather than from writing samples the owner supplied; /voice-calibrate would settle it.",
     "🔴 REOPENED 2026-09-07 - desktop-safety (Consent, Elevation) passed GATE 4 on 2026-09-05 and its Consent half no longer describes the product. The owner removed the analytics opt-out, so the screen is a notice rather than a choice. The new words came from amending the click dummy, which is where section 10a puts them; what is owed is the KEEPER pass, not a writer.",
-    "🔴 FINGERPRINT SENTENCE 9 IS NOW FALSE. voice-fingerprint.md line 25 reads \"Nothing leaves this machine unless you turn it on.\" That was the app's thesis and it is no longer true of the desktop window - though it remains exactly true of the command-line engine, which is the whole subtlety. Recorded rather than edited, because the fingerprint is a GATE 1 artefact and narrowing a reference sentence re-runs that gate. Two shapes worth considering when it is taken up: narrow it to the engine (\"Nothing leaves this machine when you run the command-line tool\"), or replace it with the refusal that survived the change (\"Never a file path, never your user name, never the contents of anything\").",
+    "🔴 FINGERPRINT SENTENCE 9 IS NOW FALSE. voice-fingerprint.md line 25 reads \"Nothing leaves this machine unless you turn it on.\" That was the app's thesis and it is no longer true of the desktop window - though it remains exactly true of the command-line engine, which is the whole subtlety. Recorded rather than edited, because the fingerprint is a GATE 1 artefact and narrowing a reference sentence re-runs that gate. Two shapes worth considering when it is taken up: narrow it to the engine (\"Nothing leaves this machine when you run the command-line tool\"), or replace it with the refusal that survived the change (\"Never a file path, never your user name, never the contents of anything\"). 🔴 AND BIBLE §3'S THIRD COMMITMENT HAS THE SAME PROBLEM - \"not telemetry, not an update check\" - found by the desktop-readme finalizer on 2026-09-07. It needs SCOPING TO THE ENGINE, not deleting: the engine still earns every word of it and its own self-test asserts so; the window no longer does. Both are GATE 1 artefacts, so both are reported and neither was edited.",
     "NEEDS DECISION from the cli-strings draft, deferred rather than dropped: do the exported Markdown and HTML report BODIES get a content-map row? reports.ps1 emits about thirty user-visible strings with no row and no recorded exclusion. The session decided YES and recorded it in the tracker; the map row itself is still to be written."
   ],
   "escalatedAt": null,

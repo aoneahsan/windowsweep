@@ -10,7 +10,15 @@ and one line-editor note is fixed. An owner decision landed between the two roun
 surface's central beat, so the round-1 thesis is not patched here. It is replaced.
 
 **Line edit, 2026-09-07.** Five slots touched at sentence level - S-010, S-011, S-012, S-013 and S-016 - and
-the self-check's numbers brought into line with them. No fact, heading or slot moved. Word-neutral at 913.
+the self-check's numbers brought into line with them. No fact, heading or slot moved.
+
+**Finalize pass, 2026-09-07.** The humanize rubric was re-run against the fingerprint and everything the
+self-check asserts was re-measured with the method now written down beside it. Two marks moved and no word
+did: a full stop became a semicolon in S-011, which is what takes `desktop.md` over the burstiness floor on
+its own, and "so" became "and" in S-013's dormancy sentence, which drops a causal claim the chain did not
+support. **The surface is 911 words, not the 913 the header used to carry** - the two-word difference is the
+emoji in a table-of-contents entry, not text. Row 2 of the rubric is allowed with a reason rather than
+forced; the reason is in the self-check.
 
 Slot-shaped, for two reasons. The README section has to be inserted into a file whose heading set is
 otherwise fixed, and `desktop.md` has to land in two trees at once.
@@ -95,9 +103,16 @@ the protected lists and the refusals are the same ones the command line uses."*
 
 **Change:** rewritten for two reasons. The line editor's note - that sentence ran **41 words against the
 fingerprint's 34-word ceiling** - and the single-home rule, since S-010 is the full version of the same fact
-and this is the pointer to it. Now 28 words and 12. Verified in `desktop/src-tauri/src/engine.rs:221-222`, where
-`--json` and `--no-color` are prepended to every invocation, and in `desktop/src/lib/catalogue.ts`, which
-refuses to hard-code a section list.
+and this is the pointer to it. Now 27 words and 12. Verified in `run_clean`, in
+`desktop/src-tauri/src/engine.rs` - `--json` and `--no-color` are prepended to every invocation, at lines
+233-234 as the file stands today, with a guard below them that refuses either flag twice - and in
+`desktop/src/lib/catalogue.ts`, which refuses to hard-code a section list.
+
+🔴 **The line number moved between the fact-check and this pass, and the citation is written to survive the
+next move.** Round 2 recorded `engine.rs:221-222`; `engine.rs` was then edited at 17:39 on 2026-09-07, four
+minutes before this draft was last written, and 221-222 now points at `script_path`. The claim was re-checked
+rather than re-asserted: `grep -n '^\s*"--json"' desktop/src-tauri/src/engine.rs` answers it in one command,
+which is why the function name now carries the citation and the number only qualifies it.
 
 ### S-004 · `README.md` · what it adds
 ```
@@ -207,7 +222,7 @@ carried was a promise the page could not keep, so it is replaced by one it can -
 S-013 with exactly three answers.
 
 **Why the new thesis cannot be falsified by a later release.** It asserts a *split*, not a state. The engine
-half is guarded by self-test check [9], which fails the build on a network call. The window half is the
+half is guarded by self-test check [9], which fails the build on a network call. That half cannot drift. The window half is the
 owner's standing decision, and a later release that added a switch would only make the page cautious rather
 than wrong. The third half - two calls that run regardless - is structural: the updater is a boot step and
 the WebView2 fetch belongs to the installer. Neither is a setting. Nothing in it depends on which keys
@@ -222,7 +237,7 @@ sentence: "Where the two differ is" became "The two differ in", which says the s
 
 Nothing to the deletion behaviour. Everything to what you can see while it happens.
 
-The catalogue becomes a table you can filter. A run shows the engine's own log as it arrives, beside a table of what each section reclaimed. The four sections that ask a person to choose get a picker. Most controls in Settings map to a flag the engine already has, so anything you set there you can also type.
+The catalogue becomes a table you can filter. A run shows the engine's own log as it arrives, beside a table of what each section reclaimed; the four sections that ask a person to choose get a picker. Most controls in Settings map to a flag the engine already has, so anything you set there you can also type.
 ```
 **Was (round 1):** the same block at 112 words, with a clause on ticking rows one at a time and a sentence
 on History, reports and the report JSON.
@@ -233,6 +248,13 @@ in the surface. The heading is the question a
 reader arrives with. Putting "nothing to the deletion behaviour" first is the order this product uses
 everywhere. **Line edit:** "a per-section table of what was reclaimed" is now "a table of what each section
 reclaimed". Active voice, same eight words.
+
+**Humanize pass.** One punctuation mark moved: the full stop after "each section reclaimed" is now a
+semicolon, so the run-time display facts and the picker share one 30-word sentence. No word was added or
+removed and the paragraph still ends on a shorter sentence than its longest. It is the fingerprint's own
+device - *"Semicolons are allowed and used - this voice is comfortable with a semicolon joining two related
+facts"* - and it is the reason `desktop.md` now clears the burstiness floor on its own rather than only when
+averaged with the README section. Numbers and the method: the self-check.
 
 ### S-012 · `desktop.md` · what it does not do
 ```
@@ -277,7 +299,7 @@ Optional, Google, and it opens your normal browser rather than a window inside t
 | your email address and display name | the section numbers it ran |
 | a last-seen timestamp | bytes reclaimed, bytes estimated, and an id |
 
-In 1.1.0 this is dormant: Google is not enabled on the backend project, so the Account screen reports sign-in as unconfigured.
+In 1.1.0 this is dormant: Google is not enabled on the backend project, and the Account screen reports sign-in as unconfigured.
 ```
 **Was (round 1):** *"Two things can. Both are off until you switch them on."* Then analytics as four
 separate revocable switches, sign-in as the second switch, and a four-row table with no id and no timestamp
@@ -306,11 +328,19 @@ as the "Nothing else" that once covered nine fields. The left column is what `pu
 timestamp; **`display_name` was missing as well**. The dummy names it outright - *"Display name - Shown in
 this window"* - so that omission was mine rather than the dummy's.
 
-The dormancy sentence is written from `.env.example`'s recorded reason and `configuredFeatures()` in
+That sentence was read, not assumed. It comes from `.env.example`'s recorded reason and `configuredFeatures()` in
 `config.ts`. Both Supabase variables are deliberately empty because `GET /auth/v1/settings` reports
 `external.google: false`, and a screen that reports a feature as unconfigured is better than a button that
 fails on press. 🔴 It is **not** taken from `account.notConfiguredNote`, which still blames an absent OAuth
 client id and is stale against the Supabase switch.
+
+**Finalize: the "so" is now an "and", and that is the whole fix.** The fact-check's last open note on this
+slot was that the sentence compressed a three-link chain into a two-link one - the Account screen reads the
+two empty Supabase variables, and the provider being off is why they were left empty. Every link is true and
+the order was right, but "so" asserted a causation that skipped the middle one. The two facts now sit either
+side of "and", under a colon that still makes both of them what "dormant" means. Nothing was added to close
+the gap, because naming the variables in a page about what leaves the machine would trade a small
+imprecision for a larger distraction. Same length, one weaker claim.
 
 **Line edit.** Three touches. None of them a fact. "There is no switch" now stands as its own four-word
 sentence. "nothing has left it yet" reads "nothing has left the machine yet", because "it" sat nearest to
@@ -384,8 +414,10 @@ Each run gets its own folder under `%LOCALAPPDATA%\com.aoneahsan.windowsweep\run
 **Was (round 1):** *"Runs, logs and reports land under `%LOCALAPPDATA%\windowsweep-desktop\runs\`, one JSON
 per run."*
 
-**Change:** 🔴 **the folder was named wrongly and is corrected.** `run_dir` in `engine.rs:183` joins
-`app_local_data_dir()` with `runs` and the run id. On Windows that base is `%LOCALAPPDATA%` plus the bundle
+**Change:** 🔴 **the folder was named wrongly and is corrected.** `run_dir` in `engine.rs` joins
+`app_local_data_dir()` with `runs` and the run id - the function opens at line 195 today and the join is at
+205-207, re-read for this pass rather than carried over from round 2's `183`, which the same 17:39 edit
+turned into a line inside `run_clean`. On Windows that base is `%LOCALAPPDATA%` plus the bundle
 identifier, `com.aoneahsan.windowsweep`, out of `tauri.conf.json`. There is no `windowsweep-desktop` folder
 anywhere. The nesting is also one level deeper than round 1 said - a folder per run, not a file per run,
 which is what lets an elevated second window write beside the first with both `--reports-dir` and
@@ -455,7 +487,7 @@ the decision log recorded on 2026-09-05, arriving again. One phrase would close 
 
 **The splash disclosure and its own visible note disagree about the offline case.** `splash.html`'s details
 block and `splash.detailsNothing` in `en.json` both say the check "is skipped silently", while the screen
-right below shows a warning note and a `Try again` button. This page describes the button, so nothing here
+right below shows a warning note and a `Try again` button. The screen wins. This page describes the button, so nothing here
 is wrong. The two stale sentences belong to `desktop-moment`.
 
 **The consent notice's details call windowsweep free.** Its closing line reads:
@@ -473,6 +505,32 @@ four switches, an all-on button, an all-off button and revocation in Settings; `
 still blames an absent OAuth client id rather than a provider that is not enabled. Both are known and both
 belong to the `desktop-safety` pass. They are named here only so this draft is never read as their source.
 
+**🔴 Two GATE 1 artefacts predate the opt-out removal and now overstate the guarantee. For the keeper, not
+for this draft.** `voice-fingerprint.md`'s ninth sentence is *"Nothing leaves this machine unless you turn it
+on"*, and the Bible's third core commitment reads *"No network calls at all - not telemetry, not an update
+check"*. Both were written on 2026-09-05, before the owner removed the analytics opt-out and before the
+startup update check was counted. The engine still earns every word of them; the window does not, and §3
+needs scoping to the engine to stay true. This surface is where the drift became visible, because S-010 had
+to retire that exact sentence as its thesis. The Bible has not caught up. **They are approved artefacts and nothing here edits them** -
+the correction is a Bible amendment with a decision-log entry, which is the keeper's step and the owner's
+approval, not a finalizer's.
+
+**Two claims that belong to neighbouring surfaces, checked and confirmed absent from these fences.** First,
+the only `track()` callers in the tree are three updater events: there is no screen-view or button event
+anywhere, `send_page_view` is `false` and `autocapture` is `false`, so *"which screens you opened and which
+buttons you pressed"* describes something unimplemented. It appears on Home and in `desktop-safety`, never
+here - these fences say only "product analytics, behaviour analytics". Second, Amplitude's *"kept longer"*
+is an unverifiable vendor-retention claim, raised as a `NEEDS DECISION` by `desktop-safety` on 2026-09-05
+with no answer recorded since. Neither phrase is in any fence on this surface, and both were grepped for
+rather than remembered.
+
+**The settings table names six of the seven columns `pushSettings` writes.** `user_id` is the seventh, and
+it is unnamed under a heading that says "in full". It is reported, not fixed. This is the completeness question the draft raises against
+itself two paragraphs earlier, so it is recorded rather than argued: nothing stated is false, `email` and
+`display_name` are already disclosed and are far more identifying than an opaque account id, and the id is
+arguably the account rather than data about the account. **No wording is changed here** - adding a row is
+adding a fact to approved-shaped copy, and the call is the owner's.
+
 ---
 
 ## Self-check
@@ -481,46 +539,73 @@ belong to the `desktop-safety` pass. They are named here only so this draft is n
 and every destination, S-014 names the two install scopes, S-016 names the two buttons, S-017 names the
 folder. Band **R** carries the refusals, and there are six of them - "carries no cleanup logic of its own"
 (S-003), the never-sent list (S-005 and S-013), "The engine sends nothing, ever" (S-013), "neither carries
-anything about you" (S-013), "It never raises its own privileges" (S-012), and "It does not remove the
+anything this app knows about you" (S-013), "It never raises its own privileges" (S-012), and "It does not remove the
 deep-section gate" (S-012). One band is deliberately absent. Band **W**'s one clause was S-016's "without a
 word", and that sentence was factually wrong; on a **P, R** row losing it is the correct outcome rather than
 a gap. The SmartScreen slot is a safety surface and carries no humour at all, which is the rule that
 governed the approved original.
 
-**Rhythm.** Shortest shipping sentence: "Settings that are flags." at four words, S-004, tied with "The
-source is public." from the approved SmartScreen copy and, since the line edit, "There is no switch." (S-013).
-Then three at five - "Nothing to the deletion
-behaviour." (S-011), "The engine sends nothing, ever." (S-013), "Sign-in is separate and optional." (S-005).
-Longest authored: 28 words, S-003's first sentence, inside the fingerprint's 34-word ceiling. S-012's
-elevation sentence stood at 36 after the writer's pass and was kept whole on purpose; the line edit split it
-at its own semicolon into 9 and 27, so nothing this surface writes is now over 28. Both 40-word sentences
-are gone. S-003 is 28 and 12. One longer sentence sits in the count and is **not** this surface's: S-008's 48-word
-"Not the right tool when…" paragraph is already in `README.md`, and this edit removes a word from it rather
-than writing it.
+**Rhythm.** 🔴 **Re-measured this pass, and three of the figures below replace stale ones.** Shortest
+shipping sentence: **four words**, and it is now a tie between "There is no switch." (S-013) and "The source
+is public." (S-015). The old entry - "Settings that are flags." at four words - is gone twice over: the
+fact-check made that label "Settings, most of them flags.", which is five, and the sentence it named no
+longer exists. Then six at five: "A run you can watch.", "Settings, most of them flags." and "Screen by
+screen: Desktop app." (all S-004), "Sign-in is separate and optional." (S-005), "Nothing to the deletion
+behaviour." (S-011) and "The engine sends nothing, ever." (S-013).
 
-**Length. 913 words**, against row 14's **~900** - measured, not estimated, and 13 over. The two halves:
-**§A `README.md` 192** (S-001 to S-007), **§B `desktop.md` 721** (S-009 to S-018). The line edit is
-word-neutral: S-010 gave one word and S-013 took one, so both halves stand.
+Longest authored: **30 words**, S-011's merged sentence, which this pass created and which is the one
+sentence anywhere in the surface above 27. S-003's first sentence is **27 and 12**, not the 28 and 12 five
+places used to claim - the discrepancy is the unit, not the text, and each number is right in its own:
+27 reader words, 28 under the hook's `\b[\w'-]+\b`, which splits `windowsweep.ps1` into two.
+Everything stays inside the 34-word ceiling. S-012's elevation sentence stood at 36 after the
+writer's pass and was kept whole on purpose; the line edit split it at its own semicolon, and dropping "and
+tails the log" then took the second half from 27 to **22**, so that pair is 9 and 22. Both 40-word sentences
+are gone. One longer sentence sits in the count and is **not** this surface's: S-008's 48-word "Not the right
+tool when…" paragraph is already in `README.md`, and this edit removes a word from it rather than writing it.
 
-The method, because a word count with no method behind it is not comparable to anything. Extract the fenced
-slot bodies, drop the YAML front matter, resolve `[text](url)` to its text, remove emphasis marks, backticks
-and table pipes, keep table cell text, then `wc -w` - so `--no-color` and `windowsweep.ps1` each count as
-one word. Four slots are outside the count. **S-019** is withdrawn, **S-020** and **S-021** are structural
-plumbing in other files, and **S-008** is a paragraph already in `README.md` that this surface edits by
-removing one word.
+**Length. 911 words**, against row 14's **~900** - re-measured this pass, and 11 over. The two halves:
+**§A `README.md` 190** (S-001 to S-007), **§B `desktop.md` 721** (S-010 to S-018). 🔴 **The header's old
+"913" and "word-neutral at 913" are corrected to 911, and the two-word difference is method rather than
+text.** Nothing was cut. §B reproduces at 721 exactly; §A was 192 because the two 🖥️ emoji were each counted
+as a word, and they are not words a reader reads. This pass is word-neutral in its own right: the S-011
+merge moved a full stop to a semicolon and the S-013 tightening swapped "so" for "and", so neither changed a
+count.
 
-Run against round 1 out of git, the same method returns **918** - not the 887 its self-check reported, which
-was an estimate with no command beside it. So this round is **five words shorter while carrying more
-facts**, and the two rounds miss the cap by 18 and 13 respectively. One caveat on that comparison: round-1
-§A included both of S-007's mutually exclusive candidate sentences at 67 words, only one of which could ever
-have shipped, so 918 slightly flatters this round.
+**The method, written out, because a word count with no method beside it is not comparable to anything.**
+Extract the fenced slot bodies; drop the YAML front-matter fence; resolve `[text](url)` to its text; drop
+HTML tags, `&nbsp;` and emoji; drop a table's separator row but keep every cell's text, pipes removed; strip
+emphasis marks, backticks, heading markers and bullet markers. **A word is then a whitespace-separated run
+carrying at least one letter or digit** - so `--no-color`, `windowsweep.ps1` and
+`%LOCALAPPDATA%\com.aoneahsan.windowsweep\runs\` are one word each, a bare `-` bullet and a lone `#` are
+none, and a link counts once, as its text. A table row counts as cells.
 
-Where the words went, slot by slot, and the deltas close to exactly -5. Up: **S-013 +134** for the three
-answers, the build-fact pair and the two missing table fields; **S-016 +15** for the offline note the app
-actually shows; **S-014 +6** for the corrected install scopes. Down: **S-007 -45** as the decision resolved
-into one sentence and a pointer, **S-011 -32** and **S-004 -28** and **S-003 -13** to the single-home rule,
-**S-019 -24** withdrawn, **S-005 -14** with the switches, **S-012 -12** with the picker refusal. Nothing was
-cut to fit. Every cut was a duplication of something the page says better.
+**What is in, and what is out.** In: **S-001 to S-007** and **S-010 to S-018** - the words a reader meets in
+`README.md` and on the page. Out, five slots, each for a stated reason. **S-009** is the front-matter fence:
+it ships, but it is machine metadata rather than prose, and it is reported separately at **30 words** so
+anyone who wants it in can add it. **S-008** is a paragraph already standing in `README.md`, which this
+surface edits by removing one word. **S-019** is withdrawn. **S-020** and **S-021** are structural plumbing
+in other files. 🔴 **The old scope line said "§B (S-009 to S-018)" while its own method said to drop the
+front matter** - the range label and the rule disagreed, and 721 proves the rule is what actually ran.
+
+🔴 **The comparison with round 1 had its sign the wrong way round, and the correction is the whole argument
+for writing a method down.** Run against round 1 out of git at `c37bd59`, this method returns **884**
+(§A 286, §B 598). So this round is **27 words longer** than round 1, not the "five words shorter" the last
+self-check claimed - that figure came from measuring the two rounds two different ways, which is the one
+thing a comparison may never do. Both numbers stand or fall together now: 884 and 911, one method, one
+command. The cap is missed by 11.
+
+Where the words went, slot by slot, against round 1. Up: **S-013 +143** for the three answers, the
+build-fact pair and the two missing table fields; **S-016 +15** for the offline note the app actually shows;
+**S-014 +6** for the corrected install scopes; **S-015 +3**, which is only the heading lengthening to match
+`elevation.html` word for word - its three paragraphs are untouched; **S-017 +3** and **S-010 +1**. Down:
+**S-007 -44** as the decision resolved into one sentence and a pointer, **S-011 -31**, **S-004 -26**,
+**S-012 -17**, **S-005 -14** with the switches and **S-003 -12** to the single-home rule. Outside the count,
+**S-019 -20** withdrawn and **S-021 +19** for the second index row. Nothing was cut to fit. Every cut was a
+duplication of something the page says better, and the growth is all in the one beat an owner decision
+rewrote.
+
+**And the two edits this pass made are word-neutral, proved rather than asserted.** The committed round-2
+file at `d8cb8d0` measures 911 by the same method, and so does the file as it now stands.
 
 **Unsure.** No `NEEDS DECISION`. The round-1 question at S-007 is answered. Its ordering condition - that
 this section lands in the same change as the `desktop-v1.1.0` tag - is recorded above rather than re-asked,
@@ -539,14 +624,64 @@ read "None" while the hook held one.
 **Lint caveat.** The story lint hook strips every fenced block before it counts anything
 (`posttooluse-story-lint.sh:61`), so on a slot-shaped surface like this one **none of the shipping copy is
 checked**. It measures this commentary. A green verdict here says nothing about the
-913 words a reader will see. Those were checked by hand against the banned list, the punctuation budget and
-the fingerprint's diction lists. The facts in them were read out of the code and the dummy rather than out
+911 words a reader will see. Those were checked against the banned list, the punctuation budget and
+the fingerprint's diction lists by running the hook's own computation over the fence bodies instead of over
+the commentary. The facts in them were read out of the code and the dummy rather than out
 of a screen's summary.
 
-**Line-edit measurement.** The hook was run directly against this file after the edit, with the JSON a real
-Write would hand it, and it exited 0; that verdict covers the commentary only. The fenced copy was scored by
-the rubric's own method, headings and table rows zeroed: the README section runs burstiness 0.56 with
-sentences from 4 to 28 words, and the page runs 0.47 with sentences from 4 to 27. Two of the page's 150-word
-windows, the disclosure and the install stretch, hold no sentence of 25 words or more; their longest are 24
-and 23. The only ways to reach 25 there were to extend the dummy's verbatim never-sent list or to join the
-download line to its explanation. Neither was done. It is recorded here instead.
+**Humanize score, re-measured this pass** against `docs/story/voice-fingerprint.md` (`calibrated: false`).
+Scored by running the hook's own algorithm - its `\b[\w'-]+\b` tokenizer, population standard deviation, and
+its rule of closing a window once it reaches 150 words and leaving a tail under 60 unscored - over the
+**fence bodies** rather than over the commentary, with headings, table rows, the front-matter fence and
+HTML-only lines zeroed. 🔴 **The scope is named beside every number, because this surface is one draft and
+two artefacts, and the rubric's "whole text" does not say which.** Reported all three ways:
+
+| Row | §A `README.md` | §B `desktop.md` | Both together |
+|---|---|---|---|
+| 1 burstiness (≥ 0.45) | **0.68** PASS | **0.46** PASS | **0.54** PASS |
+| 2 range, per 150-word window | PASS (2 of 2) | **FAIL** 2 of 4 | **FAIL** 2 of 6 |
+| 3 banned phrases | 0 PASS | 0 PASS | 0 PASS |
+| 4 em dashes /150w | 0 PASS | 0 PASS | 0 PASS |
+| 5 "not X, but Y" /300w | 0 PASS | 0 PASS | 0 PASS |
+| 6 triplets /500w (≤ 2) | 0 PASS | 0 PASS | 0 PASS |
+| 7 opener repetition | PASS | PASS | PASS |
+| 8 throat-clearing | PASS | PASS | PASS |
+| 9 summary tell | PASS | PASS | PASS |
+| 10 specificity | PASS | PASS | PASS |
+| 11 point of view | PASS | PASS | PASS |
+| 12 hedging /300w | 2.1 PASS | 3.2 PASS | 2.9 PASS |
+| 13 voice match | PASS | PASS | PASS |
+| 14 palette (P, R) | PASS | PASS | PASS |
+
+Sentence lengths run 3 to 48 in §A and 4 to 30 on the page. Both ends are real. One caveat on row 6: the
+hook counts a triplet only when the whole sentence holds exactly two commas, so it scores zero here, while a
+stricter reading of the rubric's prose finds one - "Optional, Google, and it opens your normal browser…" in
+the sign-in beat. The budget is two. It passes either way, and the looser number is the one
+worth knowing. 🔴 **Three of the figures the last pass recorded
+were measured on a broken splitter and are corrected here.** It reported the page at 0.47 and the README at
+0.56; both moved, because `**Bold.** Next sentence` never splits on `(?<=[.!?])\s+` - the emphasis marks sit
+between the full stop and the space - so three of S-013's short refusals were being glued to the sentence
+after them and one phantom 38-word sentence was propping the page's variance up. Strip the marks first and
+the page reads 0.441, below the floor. It also reported two failing windows; there were three.
+
+**Row 2 is the one row that does not pass, and it is allowed rather than forced.** Two of the page's four
+scored windows carry no sentence of 25 words or more: the disclosure stretch runs 4 to 24 and the install
+stretch 5 to 23. Both sit inside the fingerprint's own stated band of 4 to 34, so the rhythm is varied; it
+simply does not cross an arbitrary threshold, and the nearest miss is one token. The gap is arithmetic. Every way to cross it was
+enumerated and each was refused for a reason that outranks the row. Joining the two start-up requests would
+make a 38-word sentence, past the 34-word ceiling, and would undo a split the line edit made on purpose.
+Saying that the first-run notice *names* the four destinations would reach 34 - but that is a new claim about
+what a screen displays, and a specific is never invented to pass a rubric row. In the install stretch the
+only candidates are the dummy's verbatim never-sent list, the opening of the SmartScreen copy approved at
+GATE 4 on 2026-09-05, and joining the download line to its explanation, which finding 3 deliberately
+separated. 🔴 **The flatness is largely the cost of those approvals**: S-015 contributes 117 words and eight
+sentences with exactly one over 24, and it is quoted rather than written. Trading approved words for a
+variance figure is the wrong trade. Row 2 stays allowed.
+
+**What the pass did change: one punctuation mark.** S-011's full stop after "each section reclaimed" became
+a semicolon, joining the run-time display facts to the picker in one 30-word sentence. That took the page
+from 0.441 to 0.46 and gave its first window the long sentence it lacked. No word was added or removed, no
+fact moved, and the surface is still 911 words.
+
+**Line-edit measurement.** The hook was run directly against this file, with the JSON a real Write would
+hand it; its verdict covers the commentary only and it is silent. The fences are not in it.

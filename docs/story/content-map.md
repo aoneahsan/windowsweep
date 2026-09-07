@@ -29,7 +29,7 @@ The tone bands are the Bible's: **P** precision-before-an-irreversible-act (60),
 | 11 | `desktop-moment` (Home, Run, Splash, Account) | first-run or mid-run | the number, then what it will touch, then the action | P, R | a screen | Start the safe run | none | **recorded** (GATE 4, 2026-09-05) |
 | 12 | `desktop-safety` (Consent, Elevation) | being asked for permission | what is being asked → exactly what happens → how to revoke | **P and R only. 🔴 No humor at all** | a screen | accept or decline, equally weighted | none | **recorded** (GATE 4, 2026-09-05) |
 | 13 | `desktop-cockpit` (Sections, Picker, History, Settings, Report) | working | dense tables with a plain line above each | P, W in the empty states | a screen | varies per screen | none | **recorded** (GATE 4, 2026-09-05) |
-| 14 | `desktop-readme` (+ the docs-site desktop page) | evaluating the app | what it adds over the CLI, what it sends, the SmartScreen note | P, R | **~900 words** (raised from ~600, 2026-09-07) | download | none | drafted, awaiting apply |
+| 14 | `desktop-readme` (+ the docs-site desktop page) | evaluating the app | what it adds over the CLI, what it sends, the SmartScreen note | P, R | **~900 words** (raised from ~600, 2026-09-07) | download | none | **GATE 4 approved 2026-09-07, awaiting apply** |
 | 15 | `report-bodies` (the exported Markdown and HTML a run writes) | reading a record after the fact | headings and labels only; every number keeps the console's own vocabulary | P only | about thirty strings | none | none | **added 2026-09-07**, unwritten |
 
 **Order of writing** (owner decision 2026-09-05, "story first, then the app"): rows **11, 12, 13** first,

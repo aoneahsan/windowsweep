@@ -399,3 +399,50 @@ broken the Bible.
 off, or changed in Settings. That is swept as a class rather than as the instances anyone happened to notice -
 the same discipline that found five omissions of section 23 on 2026-09-05, where sweeping for the class caught
 two nobody had listed.
+
+## 2026-09-07 - GATE 4, surface `desktop-readme`
+
+**GATE 4 - approved under the 2026-09-07 pre-authorisation; finalizer fact-consistency PASS; NEEDS DECISION
+open: 0.**
+
+The lean panel ran in full: developmental round, writer revision, line editor, copy editor, fact-checker,
+finalizer. The copy editor returned PASS with zero corrections. **The fact-checker returned FAIL**, and that
+is the part worth keeping: its five findings were in the CODE, not in the words - a hang on every elevated
+run, a Sentry scrub whose drive-letter rule could never match, Clarity masking promised in the copy and
+configured nowhere, ten theme axes duplicated in Settings against the dummy's explicit instruction, and a
+sync table missing a column it writes. The copy was corrected where it overclaimed and the code was corrected
+where the copy was right. GATE 4 was re-established only after all five landed.
+
+**Two decisions inside the pass:**
+
+- **"paid code-signing certificate" stays** (S-006 and S-015). It is the only cost-adjacent phrase on the
+  surface and it describes the *certificate*, never the product's price, so it does not touch the standing
+  no-pricing-claim rule. Removing "paid" would make "not signed with a code-signing certificate" read as a
+  claim about the file rather than about what was bought - which is the confusion S-015's second paragraph
+  exists to prevent.
+- **The settings table names six of the seven columns `pushSettings` writes**; `user_id` is unnamed under a
+  heading that says "in full". Recorded rather than changed: `user_id` IS the account the reader just signed
+  into, and `email` and `display_name` are already disclosed and far more identifying. The dummy's own table
+  omits it too, so naming it in the README alone would create the divergence it was meant to fix. **The call
+  is the owner's**, and it is a one-row edit in the dummy first if he wants it.
+
+🔴 **Three of the previous pass's rubric figures had been measured on a broken splitter**, and the finalizer
+fixed the instrument before acting on any number: `**Bold.** Next` never splits on `(?<=[.!?])\s+`, because
+the emphasis marks sit between the full stop and the space. Three short refusals were glued to the sentence
+after them and one phantom 38-word sentence propped the variance up. Two further instrument bugs - an
+HTML-only anchor line counted as a paragraph opener, a triplet regex matching inside a four-item list - were
+false positives and not findings at all.
+
+🔴 **And one recorded figure had its SIGN backwards.** The round-1 comparison claimed "918; five words
+shorter". Measured with one consistent method, round 1 is 884 and the surface is now 911 - **27 words
+LONGER**. The old claim came from measuring the two rounds two different ways, which is exactly why a word
+count is now recorded with its tokenizer and its inclusion rule beside it.
+
+**Row 2 of the humanize rubric is ALLOWED, not forced.** Two of the page's four scored windows hold no
+sentence of 25+ words; every route across was enumerated and refused, because each one either passed the
+fingerprint's 34-word ceiling, undid a deliberate line-edit split, or invented a claim about screen content.
+S-015 alone contributes 117 GATE-4-approved quoted words, so the flatness there is largely the cost of those
+approvals - and trading approved words for a variance figure is the wrong trade.
+
+**Still owed on this surface:** the keeper's Bible-and-registry pass, batched with the other surfaces rather
+than run per-surface. Nothing in the apply depends on it.

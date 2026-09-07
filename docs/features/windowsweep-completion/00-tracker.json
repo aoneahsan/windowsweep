@@ -66,7 +66,8 @@
     "`summary.targets` is populated ONLY by `--scan`, so anything reading the Reclaim Map off the live summary is blanked by the next dry-run. The map's data and a run's result are different lifetimes: scan results are now held in `scanTargets`, added-only, and cleared by a REAL run because those paths are then gone. Worth remembering before any other surface reads `targets`.",
     "🔴 D-17 IS THE SESSION'S BEST ARGUMENT FOR READING THE NUMBERS AND NOT ONLY THE WORDS. After a --scan the app's map drew 20 GB tiles and its safe-run ladder totalled 39.3 GB, while the hero read `0 B`, the sub-line read `across 665 targets in 1 sections`, and the PRIMARY BUTTON offered `Reclaim 0 B` - directly above the ladder. Every layout check, every word check and every contrast measurement passed it: the text was correct, the layout was correct, and the figure was zero. The `1 sections` was the only tell. Cause: the hero and the rail read a RUN's result off a SCAN's summary, because `--scan` populates targets[] and leaves estimated_bytes at 0 while sections[] holds only the steps that ran. Fixed and PROVED on the running app 2026-09-07: hero 59.3 GB, `across 665 targets in 10 sections`, button `Reclaim 59.3 GB`, rail `59.3 GB across 10 sections`, ladder still 39.3 GB. 🔴 The 59.3-beside-39.3 difference is BY DESIGN (wire.js:436-442 - hero and button show the total, the ladder shows the safe-batch subset) and must not be 'fixed' by a later reader; it is written into lib/reclaim.ts's header for exactly that reason.",
     "🔴 THE SAME FIGURE WAS COMPUTED IN TWO FILES AND WAS WRONG THE SAME WAY IN BOTH - Home.tsx and Shell.tsx each derived the reclaimable bytes independently. Duplication did not merely risk drift; it doubled one defect and made the screen contradict itself in two places at once. It now lives once in lib/reclaim.ts, along with the map-target mapping that Home and Run both need. The generalisable form of the single-home rule: a DERIVED figure shown on more than one surface gets one home, or the surfaces will eventually disagree - and when they do, the reader believes the one that looks most official.",
-    "MACHINE TRAP, hit twice more on 2026-09-07 with two different shapes. (1) A regex written into a probe through a heredoc collapsed its escape, so `.replace(/\\s+/g,' ')` became `.replace(/s+/g,' ')` and STRIPPED EVERY LETTER S from the output - it read 'not mea ured' and 'Dry-run fir t'. Build every regex from String.fromCharCode(92). (2) 🔴 A structure check compared innerText CASE-SENSITIVELY and reported two present structures as missing: `.caps` applies text-transform: uppercase and innerText reflects the RENDERED text, so 'What is going' reads back as 'WHAT IS GOING'. Compare case-insensitively, or against the rendered form. Both produced confident wrong answers about a working build, which is the expensive direction."
+    "MACHINE TRAP, hit twice more on 2026-09-07 with two different shapes. (1) A regex written into a probe through a heredoc collapsed its escape, so `.replace(/\\s+/g,' ')` became `.replace(/s+/g,' ')` and STRIPPED EVERY LETTER S from the output - it read 'not mea ured' and 'Dry-run fir t'. Build every regex from String.fromCharCode(92). (2) 🔴 A structure check compared innerText CASE-SENSITIVELY and reported two present structures as missing: `.caps` applies text-transform: uppercase and innerText reflects the RENDERED text, so 'What is going' reads back as 'WHAT IS GOING'. Compare case-insensitively, or against the rendered form. Both produced confident wrong answers about a working build, which is the expensive direction.",
+    "BASELINE FOR THE RELEASE, measured 2026-09-07 before any desktop release exists: the updater endpoint https://github.com/aoneahsan/windowsweep/releases/latest/download/latest.json returns 404. That is expected and is the concrete case IRON rule 13 exists to prevent permanently - `v1.1.0` is a CLI release, it is marked Latest, and it carries no latest.json, so every installed app asking for an update gets nothing. Publishing desktop-v1.1.0 with --latest is what makes the endpoint resolve; re-probe it immediately after publishing and expect 200 with version 1.1.0. 🔴 The three existing CLI releases predate the rule and were NOT created with --latest=false; that resolves itself the moment a desktop release takes Latest, but the next CLI release must pass the flag or it will silently take Latest back and kill the updater again."
   ],
   "phases": [
     {
@@ -750,6 +751,21 @@
         "669da63",
         "674c8dd",
         "a7a42df"
+      ]
+    },
+    {
+      "date": "2026-09-07",
+      "phase": "GATE 4 closure and the release copy",
+      "summary": "GATE 4 went from nine screens open to one. Home's four-of-twelve bands were built (eight) and declared (four, all pending-wave with the dummy left specifying the finished product), Sections regained its filter row and tier vocabulary, and Run gained the draining map and per-section band. Three defects were found by reading NUMBERS rather than words: D-17, where the primary button offered `Reclaim 0 B` above a ladder promising 39.3 GB because the hero read a run's result off a scan's summary - computed identically wrong in two files; and D-20, the same defect in a THIRD consumer, where Run announced `FINISHED / Reclaimed 0 B.` after a read-only scan. The first attempt at D-20 did not work and looked as though it had: it tested `phase === 'idle'`, but a scan is an ordinary invocation that ends at 'done'. All three are fixed, centralised into lib/reclaim.ts and lib/cli.ts, and verified by driving the installed app rather than from the diff. The GATE-4-approved desktop-readme copy was applied: a README Desktop app section with its anchor contract verified (25 H2s, 25 ids, every TOC row resolving) and a new 750-word docs/desktop.md. The engine remains untouched since 1.1.0 - the diff against 3c4d54e is still empty - the tarball is still the 44-file allowlist, and the self-test is 151/151. Owner rows unchanged: docs HTTPS still unrequested, GA4 and Google OAuth still absent from the vault.",
+      "commits": [
+        "a75ac9b",
+        "97304b5",
+        "4002a22",
+        "97902e0",
+        "38900a1",
+        "59bd0db",
+        "87491d5",
+        "a602b89"
       ]
     }
   ],

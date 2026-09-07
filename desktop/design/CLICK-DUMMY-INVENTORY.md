@@ -555,3 +555,140 @@ are verified.
 **GATE 4 can close on eight of the eleven screens. It cannot close on Home, Sections or Run** - the three
 catalogue-driven ones, each carrying unimplemented dummy content that is not declared. The blocker is no
 longer infrastructural; it is content parity against this dummy.
+
+---
+
+## 13. GATE 4 round four — 2026-09-07, the 18:45 build: nine of eleven close
+
+D-14, D-15 and D-16 are implemented. Home now carries all twelve bands - **eight built and four declared** -
+Sections has its filter row, eight-column table and run-policy disclosure, and Run has its `Per section` band.
+Full detail: `desktop/design/gate4/GATE4-REPORT.md` §R4. Round-three captures at `gate4-evidence\round3\`.
+
+### A declared gap is a PASS, and this build declares four of them properly
+
+Checked as **words, not absence** - each expected sentence **parsed from the app's own `en.json`** rather than
+restated in the probe, then located in the rendered DOM with a real box. All four render: the drive rails and
+capacity ring, the weekly schedule, idle shading and the Idle column, and clicking a tile to keep it. **And
+the map legend is trimmed to exactly what they cover** - `Click one to keep it.`, `faded = used recently,
+solid = long idle`, `nothing excluded`, `OF ALL DISKS`, `in use` and `Idle (days)` are each gone with a
+declaration on screen explaining it. That is the pattern to repeat: an undeclared gap and a declared one look
+identical in a screenshot until you read the sentence.
+
+### 🔴 The number that decides the round: one scan, five surfaces, two answers
+
+The engine's own `--scan --developer` through the app's IPC reported **665 targets, 63,720,437,751 bytes,
+10 sections**. Home's **map** (`avd · 20.0 GB`, `pkg · 14.7 GB`, `build · 11.7 GB`) and its **ladder**
+(`Total a safe run would free 39.3 GB`) agree with that. Its **hero**, its **rail footer** and its **primary
+button** read **`0 B`** and `across 1 sections`, so the screen offers **`Reclaim 0 B`** directly above a
+ladder promising 39.3 GB. The `1 sections` is the tell: two aggregations of one scan, and the summary's
+`sections[]` is almost certainly being summed where `targets[]` was meant. **A parity check on layout and
+words would have passed this**; only reading the numbers against the engine caught it.
+
+### The svg-text count, and why a raw count was the wrong question
+
+Measured **23** on the app against a derived expectation of 44. It is not a defect, and the honest reason is
+that the data is not comparable - the one authorised real run freed 3.92 GB from the safe batch, so the map
+draws many near-zero tiles instead of eight fat groups:
+
+| | dummy | app |
+|---|---|---|
+| map box | 1159x**1421** | 1159x**394** |
+| tiles | 73 | **190** |
+| tiles clearing the label guard (`w>54 && h>42`) | 31 | 14 |
+| labels drawn | 54 | 23 |
+| **labels / tiles clearing the guard** | **1.74** | **1.64** |
+
+🔴 **The ratio is the data-independent check.** ~1.7 text nodes per labelled tile on both sides means the same
+size guard and the same two-line label. **When a count depends on data you do not control, measure the RULE
+instead** - and say plainly that the exact figure could not be confirmed rather than reporting the near-miss
+as either a pass or a defect.
+
+### The mistake this round repeated, from a different direction
+
+Round three recorded that a reload discards the store and the scan, and fixed the capture path. **The word
+comparison then made the same error through a different script**: `parity-words.mjs` also sets the mode by
+reloading, so its first run compared an **unmeasured app against a measured dummy** - visible only because
+`not measured` and `Scan first` turned up in the app-only list. **A lesson recorded against one script does
+not protect the others**; the fix belongs in every path that changes state, or in a refusal to compare when
+the two sides disagree about being measured. The rerun refuses outright if the app is not measured.
+
+Two smaller corrections worth keeping: on **Sections** both sides show **4 of 6** admin labels, so that is
+parity and not an app shortfall - measuring only the app would have produced a false defect. And
+`Six sections` versus `6 sections` is §10's countable-quantity carve-out working correctly, the dummy's
+sentence with the product's number in it.
+
+### Where the gate stands
+
+**Nine of eleven screens close.** Sections joins the closed set (7 absences, six of them the dummy's own
+prototype chrome). **Home and Run remain open** - Home on a single defect, the zero-value hero, rail and
+button; Run on the live-tiles band and the provenance disclosure, or a declaration for each.
+
+---
+
+## 14. GATE 4 round five — 2026-09-07, the 19:09 build: ten of eleven close
+
+D-17 and D-19 are fixed. **Home closes.** **Run does not**, on one new defect. Detail:
+`desktop/design/gate4/GATE4-REPORT.md` §R5. Round-four captures at `gate4-evidence\round4\`.
+
+### The 4 GB that was not a discrepancy
+
+Home's hero reads **59.3 GB** where the engine's own `--scan` reports **63,721,958,621 bytes**, and the ladder
+reads **39.3 GB** where the safe-batch subset computes to **42,185,474,589**. Neither is wrong:
+
+| | bytes | / 10^9 | **/ 2^30** | shown |
+|---|---|---|---|---|
+| total | 63,721,958,621 | 63.7 | **59.3** | 59.3 GB |
+| safe batch | 42,185,474,589 | 42.2 | **39.3** | 39.3 GB |
+
+Both are exact at 2^30, and 🔴 **it is the ENGINE's own convention** - it rendered 3,935,340,633 bytes as
+`"3.7 GB"`. Engine, dummy and app agree; the label reads GB where the divisor is binary. **Before reporting a
+number as wrong, divide it both ways.** Confirmed as asked: the ladder is the only surface that differs from
+the other five, and it differs by exactly the safe-batch subset - computed from `targets[]`, not trusted.
+
+### 🔴 A fix that reached two of its three call sites
+
+D-17 was one bug computed twice, in `Home.tsx` and `Shell.tsx`, and it was correctly moved into one place.
+**The Run screen was the third consumer and was not changed.** The engine reports `section: -1` for the
+`--scan` pseudo-step and `sections[]` therefore carries one entry:
+
+```
+mode: scan   sections[]: [{"section":-1,"status":"ran","freed_bytes":0}]
+```
+
+Run consumes that as a finished cleanup, so after nothing but a **read-only scan** it says **`FINISHED` /
+`Reclaimed 0 B.`** and its Per section band renders a row reading **`-1 · -1 · ran · 0 B`** - the sentinel
+leaking as both a badge and a section name. The dummy's idle Run says `Ready to run` / `not started` /
+`idle - press "Start the safe run"`, and **neither of the app's two idle states uses those words**.
+**When a duplicated computation is centralised, enumerate every consumer** - the third one is where the bug
+survives, and it survives looking fixed.
+
+### The measurement that replaced a belief
+
+Whether showing the draining band at idle matches the dummy was a judgement nobody had measured. Both sides
+were read in their idle state:
+
+| | tiles | labels |
+|---|---|---|
+| dummy default `run.html` | **73** | 54 |
+| app, idle | **189** | 23 |
+
+**Both render the map unconditionally, so the app matches.** The draining semantics are simply invisible at
+idle because no section has started.
+
+### Two instrument guards worth keeping
+
+🔴 **A whitespace regex can collapse to a literal `s`** when shell and heredoc layers eat backslashes, and the
+symptom is output reading `not mea ured`. Every pattern now lives inside `String.raw` in a written file, and a
+**self-check runs first** - `'not   measured'` must normalise to `'not measured'` with its `s` intact, or the
+script refuses to run.
+
+🔴 **Compare rendered text case-insensitively.** `.caps` applies `text-transform: uppercase` and `innerText`
+reflects what is painted, so `What is going` reads back as `WHAT IS GOING` and a case-sensitive check reports
+a present structure as missing.
+
+### Where the gate stands
+
+**Ten of eleven close.** Home joins the closed set - twelve bands, eight built and four declared, the
+declarations visible and correctly worded, and the numbers now coherent across five surfaces. Its remaining
+D-18 items are undeclared minors, the same standing on which Sections closed. **Run is the last screen**, on
+D-20 - one discrimination, in one place, of a class already solved once.

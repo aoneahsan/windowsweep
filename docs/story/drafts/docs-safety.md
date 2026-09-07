@@ -61,7 +61,7 @@ engine-scoped network claim false in the same section that makes it.
 
 ### S-002 · safety-model.md:3-4 · the opening blockquote
 ```
-Every deletion this tool performs passes through one function, and that function refuses 66 protected subtrees, 50 path patterns and 13 file names before it looks at what the calling section asked for. This page walks those guards in the order they run, shows a sample of the refused lists, and ends on what has no undo. `windowsweep --list-targets` prints the 66 subtrees one per line. The complete lists live in `lib/safety.ps1`.
+> Every deletion this tool performs passes through one function, and that function refuses 66 protected subtrees, 50 path patterns and 13 file names before it looks at what the calling section asked for. This page walks those guards in the order they run, shows a sample of the refused lists, and ends on what has no undo. `windowsweep --list-targets` prints the 66 subtrees one per line. The complete lists live in `lib/safety.ps1`.
 ```
 **Was:** > A cleanup tool should never be the reason you lose data. This page spells out every guard
 windowsweep applies, what it refuses to touch, and what it will delete. Read it once; refer back when
@@ -82,6 +82,8 @@ it buys. The replacement promises the four things the page actually delivers, in
 the guards in sequence, a sample, the command that prints the subtrees, and the one file holding the
 remainder. Naming `lib/safety.ps1` in the opener also means a reader who wants the full list never has to
 finish the page to find out where it is.
+
+**Copy pass (2026-09-08):** the fence now opens with the `>` marker. This slot has called the region the opening blockquote in every round, the live lines 3-4 are a blockquote, and the S-028 fence on the other page carries its own `>`, so the blockquote survives and the fence says so itself instead of leaving the applier to infer it. The live copy wraps it over two lines, each starting with `>`; how it wraps is the applier's choice, provided every wrapped line keeps the marker. No word changed.
 
 ### S-003 · safety-model.md:6 · The chokepoint · heading
 ```
@@ -108,7 +110,7 @@ reach the tool's own folder.
 ### S-005 · safety-model.md:11-20 · the five guards · 🔴 REPLACES that whole region
 ```
 1. paths with `..` segments, UNC paths and drive roots;
-2. fifteen declared roots: Windows, System32, SysWOW64, both Program Files folders, ProgramData, `C:\Users` with its Default and Public profiles, your profile root, its `AppData` folder and the Roaming, Local and LocalLow folders inside it;
+2. fifteen declared roots: Windows, System32, SysWOW64, both Program Files folders, ProgramData, `C:\Users` with its Default and Public profiles, your profile root, its AppData folder and the Roaming, Local and LocalLow folders inside it;
 3. 66 protected subtrees, 50 path patterns and 13 file names - the lists below;
 4. any path that does not lie strictly inside the target root the calling section declared;
 5. the tool's own data folder.
@@ -141,6 +143,8 @@ the guard list first.
 
 **Guard 4 stands.** The function refuses a path equal to its own root and a path outside it, so what
 remains is strictly inside. It was right the first time.
+
+**Copy pass (2026-09-08):** `AppData` loses its backticks in item 2. Every other plain folder name in that item is bare (Windows, System32, ProgramData, Roaming, Local, LocalLow), S-032 writes AppData bare, and the live documentation never codes it; only `C:\Users`, a path with a separator, keeps its code formatting. No path changed.
 
 ### S-006 · safety-model.md:22-28 · the bypass claim · 🔴 REPLACES that whole region
 ```
@@ -638,6 +642,8 @@ of this section is checking, and it is the same distinction §3.2 now draws for 
 yours changes, two files of the tool's own appear. The heading stays as it is, because it is the best four
 words on the page.
 
+**Copy pass (2026-09-08):** nothing in the fence changed. For the applier: on the live page the four command lines sit inside a fenced `powershell` code block under the heading, and this fence cannot carry a nested fence, so the one comment is changed inside the existing block and the block stays.
+
 ### S-027 · safety-model.md:131 · the footer
 ```
 Last Updated: 2026-09-07
@@ -779,7 +785,7 @@ one *and* fewer.
 
 ### S-045 · developer-mode.md:21 · NEW · developer mode on · section 20 · inserted before the toolchains bullet
 ```
-- Section 20 compacts the Docker Desktop and WSL disk images. An unattended run refuses it without `--i-understand-deep`. Its disk picker is the one prompt `--yes` does answer, and it answers it for every disk. Compaction rewrites an image without dropping anything from it, so what yes enables here is a size change rather than a deletion.
+- Section 20 compacts the Docker Desktop and WSL disk images. An unattended run refuses it without `--i-understand-deep`. Its disk picker is the one prompt `--yes` does answer, and it answers it for every disk. Compaction rewrites an image without dropping anything from it, so what "yes" enables here is a size change rather than a deletion.
 ```
 **Was:** (new — the list has no bullet for section 20.)
 
@@ -806,6 +812,8 @@ verifiable, and neither is among the facts this round was asked to land. The fir
 `admin-and-elevation.md`, the second to `docs/sections.md`, and a bullet in a consent list is the wrong home
 for either. They are on the line pass's list instead.
 
+**Copy pass (2026-09-08):** *yes* is now quoted, as *"yes"*. In the fences the answer goes unquoted only as a predicate, *when the answer is yes* (S-018) and *when the developer answer is no* (S-040); used as a noun it is quoted everywhere else in this draft (*what "yes" means*, S-032 and S-044). Straight double quotes, as in S-016 and S-037. No fact changed.
+
 ### S-033 · developer-mode.md:21-22 · developer mode on · toolchains
 ```
 - Toolchains stay protected in every mode: nvm, Volta, corepack, global npm/pnpm/bun/deno packages, cargo and go binaries, the Android SDK.
@@ -816,7 +824,7 @@ for either. They are on the line pass's list instead.
 
 ### S-034 · developer-mode.md:26-28 · developer mode off
 ```
-- Sections 1, 2, 3 **clear** their caches completely - with no development work on the machine, the idle gate has nothing to keep.
+- Sections 1, 2 and 3 **clear** their caches completely - with no development work on the machine, the idle gate has nothing to keep.
 - Section 5 runs `docker system prune -a -f` (volumes still untouched).
 - Sections 4, 17 and 20 are skipped with a note, because each of them touches something a developer chose to keep: an emulator image, a project's build output, a virtual disk.
 ```
@@ -826,6 +834,8 @@ for either. They are on the line pass's list instead.
 missing has been told what happened and not why, and the why is the reassuring half: the tool declines to
 touch three kinds of thing rather than deciding it may. The three examples are what each section actually
 holds.
+
+**Copy pass (2026-09-08):** the first bullet reads *Sections 1, 2 and 3*, with the conjunction every other numbered list in these fences already carries (S-018, S-028, S-040 and this slot's own third bullet). One word. The bullet already differs from the live line 26, whose closing idiom M-2 replaced, so the applier applies the whole fence.
 
 ### S-035 · developer-mode.md:36 · flags · the `--purge-all` row
 ```
@@ -1193,3 +1203,11 @@ loss reassures nobody) while omitting sixteen R-bearing fences, including S-016,
 last clause "the band-R sentence of the whole page". R is present and well distributed; it is the count that
 was wrong. **The keeper records 30/35 with the reviewer's scope written beside it**, per the standing rule
 that a keeper re-measures and names the scope beside the number rather than inheriting one.
+
+## Copy pass, 2026-09-08
+
+Four fences changed and no slot moved: S-002 (the `>` marker), S-005 (`AppData` un-coded), S-034 (*1, 2 and 3*) and S-045 (*"yes"* quoted). Each carries a *Copy pass* line beside its slot; S-026 carries one with no change, telling the applier that the live `powershell` block stays. No fact, number, path, flag, section id or `Was:` line moved. No fence gained an adjective. S-042 still precedes S-043, and S-025 still opens on its two permanent sections.
+
+**Shipping word count: 2,411 words** (§A 1,695 · §B 716), by the self-check's method: `wc -w` over the fenced blocks only, attributed by the heading above each fence. Before this pass the same method returned 2,409, not the 2,402 the line pass recorded; the seven are S-034's first bullet, which M-2 rewrote after that measurement. The two added here are S-002's marker and S-034's conjunction.
+
+**Not fixed here, because each is a number or a `Was:` line**. The live `safety-model.md` gained `## Your own exclusions, and the machine-readable list` at lines 35-49 after the line pass, so every §A line reference from S-008 onward is sixteen lines low: S-008 is at live :51 and S-027 at :147. S-042's `:34` still holds and lands before that section. S-027's `Was:` line reads 2026-09-03 while the live footer already reads 2026-09-08, so the fence as written would move the date back a day. S-034's `Was:` line records only the third bullet; the first now differs too. S-015's `Was:` line does not say that the live table orders its rows Rebuilds, Slow to rebuild, Recycle Bin, Report only, Permanent, Configuration and labels that row *Report only*; the fence replaces the table wholesale, so nothing is lost, but the applier's check should not expect a match on order or label. The story lint hook strips every fence before it counts, so its verdict on this file is about the commentary alone.

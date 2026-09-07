@@ -357,7 +357,7 @@ exact point this slot exists to make. Disk is kept whole. The file no longer con
 
 ### S-024 · README.md:110-113 · Features · the chokepoint
 ```
-**One deletion chokepoint** - refuses drive roots, Windows, Program Files, your profile root, personal folders, credentials, toolchains and browser or editor state; asserts every deletion sits inside its declared target; never follows a junction or symlink; handles paths beyond 260 characters; skips files another program has open. Self-test check [6] walks all 105 declared targets and fails if one resolves inside a protected path.
+**One deletion chokepoint** - refuses drive roots, Windows, Program Files, your profile root, personal folders, credentials, toolchains and browser or editor state; asserts every deletion sits inside its declared target; never follows a junction or symlink; handles paths beyond 260 characters; skips files another program has open. Self-test check [6] walks every directory and file target and fails if one resolves inside a protected path.
 ```
 **Was:** **One deletion chokepoint** - refuses drive roots, Windows, Program Files, your profile root, personal
 folders, credentials, toolchains and browser or editor state; asserts every deletion sits inside its declared
@@ -370,7 +370,7 @@ protected path`. It makes the product's central motif, one door and one guard, v
 
 ### S-025 · README.md:114-115 · Features · the dry-run
 ```
-**A dry-run that writes nothing** - `--dry-run` short-circuits every deletion and every destructive command and reports an exact estimate. `--scan` and `--list-targets` are read-only.
+**A dry-run that deletes nothing** - `--dry-run` short-circuits every deletion and every destructive command and reports an exact estimate. `--scan` and `--list-targets` are read-only.
 ```
 **Was:** identical.
 
@@ -388,7 +388,7 @@ lives, which is not in this tool.
 
 ### S-027 · README.md:118-119 · Features · batch policy
 ```
-**Batch policy** - `--all` runs the safe batch only; deep sections need `--i-understand-deep`; personal sections never run unattended.
+**Batch policy** - `--all` runs the safe batch only; deep sections need `--i-understand-deep`; personal sections run unattended only with a selection you made in advance (`--select`, `--select-file`).
 ```
 **Was:** identical.
 
@@ -422,7 +422,7 @@ see rather than as a capability.
 
 ### S-031 · README.md:125-127 · Features · self-test and offline
 ```
-**Self-test** - 151 checks prove the guards on your machine with a real junction, a 445-character path and a dry-run fixture before you trust it.
+**Self-test** - the checks prove the guards on your machine with a real junction, a path past 400 characters and a dry-run fixture before you trust it.
 **Offline by design** - the command-line tool makes zero network calls: no telemetry, no update check. Self-test check [9] fails the build on an HTTP or socket call in the source. Crash bundles stay on disk.
 ```
 **Was:** **Self-test** - 151 checks prove the guards on your machine with a real junction, a 445-character
@@ -673,7 +673,7 @@ bans `clean` and `sweep` as **verbs**, which this is not.
 
 ### S-056 · README.md:254 · Usage · the `--yes` sentence
 ```
-`--yes` applies to regenerable caches only. No flag combination batch-deletes personal files.
+`--yes` applies to regenerable caches only: it never selects a personal file. The one way sections 17, 18, 19 and 23 run unattended is a selection you made in advance with `--select` or `--select-file`.
 ```
 **Was:** identical.
 
@@ -943,7 +943,7 @@ the handlers present on that machine, with a count, before it names them.
 
 ### S-083 · README.md:398-399 · Limitations · no test suite
 ```
-**No automated test suite beyond `--self-test`.** Correctness rests on the self-test's fixtures, dry-runs and real runs on Windows 10 and 11.
+**No automated test suite beyond `--self-test`.** Correctness rests on the self-test's fixtures, dry-runs and real runs on Windows 10. Windows 11 is on the verification list and has not been run for real yet.
 ```
 **Was:** identical.
 
@@ -1227,3 +1227,50 @@ any linked reference is found later.
 
 One phrase is allowed on purpose. "Elevate" is on the shared banned list as an inflation verb and is, in this
 product, the literal name of the `--elevate` flag and the Windows term for what it does.
+
+## Fact-check, 2026-09-08 - the network scoping holds, six fences did not
+
+**66 verified, 4 unverifiable, 11 contradictions** - six inside the fences, five in README reference rows the
+draft had declared out of scope. All six fence corrections are applied; the five rows were fixed in
+`README.md` itself, because they mislead a reader today rather than at apply time.
+
+**The round's purpose passed.** The three re-scoped network sentences are true of the subjects they now name:
+check [9] is real (`modules/release_helpers.ps1:222-230`, run in CI on both hosts), no update check exists in
+the engine, and the window genuinely does check on every boot (`Splash.tsx:112`) and send without a gate
+(`analytics.ts:9-17`) - which is exactly why the scoping was needed. One limit worth knowing and not claiming
+past: **check [9] is a fixed list of seven needles**, not a semantic scan, so `System.Net.WebRequest`,
+`UdpClient` or `Start-BitsTransfer` would pass it. It catches what the fence names.
+
+🔴 **The most serious fence was a safety absolute that the same file contradicts 360 lines away.** S-056 said
+*"No flag combination batch-deletes personal files"* and S-027 said personal sections *"never run
+unattended"* - while `--select` and `--select-file` exist precisely so sections 17, 18, 19 and 23 CAN run
+unattended, and with `--permanent` that is a permanent delete. `README.md:315` already said so, and this
+draft's own S-049 already carried the accurate form. Both now say what the engine does. The commentary's
+claim that self-test check [12] holds the absolute was also wrong: [12] and [16c] hold only that `--yes`
+selects nothing.
+
+**The other five.** S-025's *"A dry-run that writes nothing"* is the exact phrasing the Bible corrected on
+2026-09-07 - a dry-run writes a log and a report of its own - so it is now *"deletes nothing"*. S-083 claimed
+real runs on Windows 10 **and 11**; `docs/PROJECT-CONTEXT.md:652` lists Windows 11 under *not yet run for
+real*, and this same draft says so two slots earlier. S-024's *"walks all 105 declared targets"* overstated
+check [6], which filters to `dir`/`file` kinds and therefore skips 71 layout, glob and cmd declarations - and
+105 is the build machine's number, since section 10 declares one target per existing temp root. S-031's
+*"445-character path"* is `Home + 421`, so it is 445 only for this machine's home folder; it is now *"past
+400 characters"*, which is true everywhere. And S-031's *"151 checks"* is now unnumbered, because the count
+moves with the engine and the surface ships with the 1.2.0 cascade.
+
+**Five README rows were misleading readers today**, so they were fixed in the file rather than slotted:
+`--permanent` said *"Sections 18/19"* when it reaches **18, 19 and 23** - the third place that sentence was
+wrong, after `--help` and the docs; `--exclude-path` was still described as section 17's; sections 4, 17 and
+20 were not marked developer-gated although `docs/sections.md` already marked them; and **two example
+commands exit 3 every time they are run**, which was confirmed by running one
+(`windowsweep --only 17 --days 180 --scan-roots "D:\work" --yes` -> *"refused in batch mode: section 17
+(interactive-only)"*, exit 3). Both now carry `--dry-run`.
+
+**Unverifiable, recorded rather than approved:** the ~109 kB packed size (three records agree, none is a
+fresh run - `npm pack --dry-run` settles it at the cascade); *"uses nothing newer than 1809"*; and *"two
+hundred profiles' worth of Chrome cache"*, which is rhetorical and cannot be sourced.
+
+**One owner question is open and pauses this surface under the GATE 4 pre-authorisation** - see
+`run-state.json`. It is recorded there in full: the engine makes no network call of its own, and that is
+proved, but it spawns tools that do under their own settings.

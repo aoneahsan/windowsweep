@@ -96,7 +96,7 @@ immediately above the thing it describes, which is the whole point of moving it.
 
 ### S-003 · installation.md:21-22 · the npx caveat
 ```
-The weekly task and the profile alias need the global install. Under `npx` both installers refuse with exit 3, because a task registered there would point at a cache npm evicts.
+The weekly task and the profile alias need the global install. Under `npx` both installers refuse with exit 3, because a task or alias registered there would point at a cache npm evicts.
 ```
 **Was:** The weekly task and the profile alias need the global install: under `npx` the installers refuse
 (exit 3) because the npx cache is evicted.
@@ -244,7 +244,7 @@ here and `desktop` at S-001.
 
 ### S-012 · installation.md:74 · the footer
 ```
-Last Updated: 2026-09-05
+Last Updated: 2026-09-08
 ```
 **Was:** Last Updated: 2026-09-03
 
@@ -280,7 +280,7 @@ the point of a self-test is that it runs where the reader is rather than where t
 
 ### S-015 · quick-start.md:11-14 · step 1 · what the self-test does
 ```
-The self-test parses every script and checks that every path any section declares lies outside the protected lists. It runs fixtures with a real junction. They prove that links are never followed, that `--dry-run` writes nothing, and that `--yes` never selects a personal or project item. It ends with a pass count (151 at 1.1.0) and exits non-zero on any failure.
+The self-test parses every script and checks that every path any section declares lies outside the protected paths. It runs fixtures with a real junction. They prove that links are never followed, that `--dry-run` changes nothing in the tree it rehearses, and that `--yes` never selects a personal or project item. It ends with a pass count (154 on the current source) and exits non-zero on any failure.
 ```
 **Was:** ... checks that every declared target lies outside the protected paths, and runs fixtures ...
 
@@ -765,7 +765,7 @@ silent bump at apply time. Adding it as a slot is also what keeps the applier's 
 
 ### S-027 - quick-start.md:63 - the footer date
 ```
-Last Updated: 2026-09-05
+Last Updated: 2026-09-08
 ```
 **Was:**
 ```
@@ -781,3 +781,56 @@ nouns (`lib/scan.ps1:92` "the protected lists"; `modules/release_helpers.ps1:101
 fence says *lists* where the live page and its `Was:` say *paths*, and the change note does not record the
 noun changing. That is a fact-checker call and it is left for one, with the copy editor's proposed glossary
 row carried forward.
+
+## Fact-check, 2026-09-08 - six contradictions, five applied
+
+The round returned **51 verified, 6 unverifiable, 6 contradictions** and ruled it *not safe to apply as
+written*. Five corrections were applied here and one in the live page; the sixth is an owner question that
+does not block a slot.
+
+**S-015 carried two false claims in one fence.** It said the self-test runs **151** checks; the tree runs
+**154** - measured by running `node bin\windowsweep.js --self-test --no-color`, not by counting call sites.
+It now reads "154 on the current source" rather than tying a number to a version, because the version string
+is still 1.1.0 while the source is ahead of it, so "151 at 1.1.0" was true of the npm tarball and false of the
+tree this page ships in. And it said `--dry-run` **writes nothing**, which contradicts the Bible's §3 as
+corrected on 2026-09-07 (*"writes nothing of yours - two files of its own"*), contradicts **S-019 four slots
+later on the same page** (*"writes a JSON report you can export"*), and contradicts the code: a dry-run is not
+a quiet mode, so `Initialize-Log` and `Initialize-Report` both run. What self-test check 7c actually proves is
+that the fixture **tree** is unchanged, which is what the clause now says.
+
+**S-015's noun goes back to "protected paths".** The line pass had changed it to *lists* without arguing it,
+and the fact-checker ruled from evidence rather than preference: the console line the reader sees one command
+later prints *"none inside a protected path"* (`modules/release_helpers.ps1:101`), the verb is spatial - a
+path lies inside or outside another path, nothing lies outside a list - and the two nouns already have
+distinct jobs across the tree. *The protected lists* is used when the tables are the subject (they only grow,
+they are printed, they are machine-readable); *a protected path* when a location is the subject. S-015 is on
+the path side. An unargued change does not ship, by this draft's own discipline.
+
+**S-003 named one of two refusals.** Both share a single mechanism: under npx `Get-LaunchCommand` returns a
+path inside the npx cache, and `Install-WeeklyTask` and `Install-ProfileAlias` both embed it - so the alias
+would point at the evicted cache exactly as the task would. Now "a task **or alias** registered there".
+
+**S-012 and S-027 stamp the apply date.** Both footer fences said `2026-09-05`, three days before the change
+they date. The draft's own principle - *"a footer two days behind the page it sits under is the smallest kind
+of untrue"* - argues for the apply date, so both read `2026-09-08`.
+
+🔴 **One correction went into the LIVE page rather than a slot, because the defect was there.**
+`docs/installation.md:9` justified the Windows 10 **1809** floor with three cmdlets that "ship with these" -
+and `Delete-DeliveryOptimizationCache` arrives in **1903**, not 1809. The floor itself is fine: section 12
+guards the call with `Get-Command` (`modules/system_admin.ps1:56`, verified), so 1809 runs and skips that one
+step. The reason was wrong, not the number, and the row now says so. The draft had vouched for that row as
+"checked anyway and correct", which is the more useful finding: a check that says it looked is not a check.
+
+**Left open, and correctly not a slot's business:** S-007's sentence is true of the Node launcher only -
+`windowsweep.cmd:5` hardcodes `powershell.exe`, never reads `WINDOWSWEEP_SHELL`, and forwards `--pwsh` to the
+engine as a silent no-op - so a reader who arrived by the *Without Node* path gets 5.1 with no message. That
+is a pre-existing page defect shared with `docs/cli-reference.md:67,143`, and it belongs to `docs-reference`
+(row 5). Also unresolved, and genuinely the owner's: whether the supported floor is 1809 or 1903 at all.
+Nothing in the tree sources 1809, and none of the three cited cmdlets requires it.
+
+**Commentary-only staleness, recorded not fixed:** several `lib/constants.ps1` line references run ten short
+after the 1.2.0 window grew that file, and a few `quick-start.md` references run one short. The applier
+anchors on strings rather than line numbers, so nothing breaks; the numbers are simply no longer navigation
+aids.
+
+**Verdict after these corrections: safe to apply**, 25 slots (S-023 and S-024 spent, S-027 added).

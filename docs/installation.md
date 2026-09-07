@@ -1,6 +1,6 @@
 # Installation
 
-windowsweep is a PowerShell engine with a thin Node launcher. Pick whichever path fits the machine.
+windowsweep is a PowerShell engine with a thin Node launcher. Installing it adds no service and no startup entry: the weekly Scheduled Task and the `cleanup` alias are separate commands you run yourself. Pick whichever path fits the machine. The [desktop app](./desktop.md) is a window over the same engine.
 
 ## Requirements
 
@@ -10,7 +10,7 @@ windowsweep is a PowerShell engine with a thin Node launcher. Pick whichever pat
 | Windows PowerShell | 5.1 (built in) | The engine targets 5.1; PowerShell 7 also works (`--pwsh`) |
 | Node.js | 14+ | Only for the `npx` / `npm install -g` paths |
 
-Nothing else is installed. The tool has no npm dependencies and makes no network calls.
+Nothing else is installed. The package has no dependencies, and the command-line tool makes no network calls of its own.
 
 ## Zero install with npx
 
@@ -18,8 +18,8 @@ Nothing else is installed. The tool has no npm dependencies and makes no network
 npx windowsweep --scan
 ```
 
-The weekly task and the profile alias need the global install: under `npx` the installers refuse (exit 3)
-because the npx cache is evicted.
+The weekly task and the profile alias need the global install. Under `npx` both installers refuse with exit 3, because a
+task or alias registered there would point at a cache npm evicts.
 
 ## Global install
 
@@ -45,8 +45,7 @@ machine's script policy never blocks a run. If you call `windowsweep.ps1` yourse
 
 ## PowerShell 7
 
-The launchers default to Windows PowerShell 5.1 because every Windows machine has it. To run the engine on
-PowerShell 7 instead, pass `--pwsh` or set `WINDOWSWEEP_SHELL=pwsh`.
+The launchers default to Windows PowerShell 5.1 because every Windows machine has it; to run the engine on PowerShell 7 instead, pass `--pwsh` or set `WINDOWSWEEP_SHELL=pwsh`.
 
 ## Where output lands
 
@@ -71,4 +70,4 @@ windowsweep --uninstall-data     # removes ~\.windowsweep after confirming
 npm uninstall -g windowsweep
 ```
 
-Last Updated: 2026-09-03
+Last Updated: 2026-09-08

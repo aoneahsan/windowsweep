@@ -207,7 +207,7 @@ comes back but costs minutes, *Recycle Bin* is recoverable until you empty it (`
 | 1 | Package-manager caches (npm, yarn, pnpm, bun, deno, pip, uv, Composer, NuGet, Cargo, Go, pub) | rebuilds | - | safe · developer-gated |
 | 2 | Build-tool caches (Gradle, Maven, Android, Unity, JetBrains) | rebuilds | - | safe · developer-gated |
 | 3 | Test-runner browsers (Cypress, Playwright, Puppeteer) - newest kept | rebuilds | - | safe · developer-gated |
-| 4 | Android emulators idle N+ days | slow | - | opt-in |
+| 4 | Android emulators idle N+ days | slow | - | opt-in, developer-gated |
 | 5 | Docker: dangling layers, build cache, unused images older than N days | rebuilds | - | safe · developer-gated |
 | 6 | Editor caches, dead workspace storage, uninstalled extension folders | rebuilds | - | safe |
 | 7 | Browser caches, every profile (Chrome, Edge, Brave, Vivaldi, Opera, Firefox, ...) | rebuilds | - | safe |
@@ -220,10 +220,10 @@ comes back but costs minutes, *Recycle Bin* is recoverable until you empty it (`
 | 14 | Component store cleanup (DISM) | rebuilds | yes | opt-in |
 | 15 | Hibernation file off or reduced | config | yes | deep |
 | 16 | Clear Windows Event Logs | **permanent** | yes | deep |
-| 17 | Stale project build artefacts (`node_modules`, `dist`, `.next`, `target`, ...) | rebuilds | - | interactive |
+| 17 | Stale project build artefacts (`node_modules`, `dist`, `.next`, `target`, ...) | rebuilds | - | interactive, developer-gated |
 | 18 | Partial / orphan downloads | Recycle Bin | - | interactive |
 | 19 | Large stale personal files in Downloads | Recycle Bin | - | interactive |
-| 20 | Docker Desktop / WSL disk-image compaction | config | yes | deep |
+| 20 | Docker Desktop / WSL disk-image compaction | config | yes | deep, developer-gated |
 | 21 | Disk usage report | report | - | safe |
 | 22 | Global packages audit (npm, pnpm, yarn, bun, deno) - never uninstalls | report | - | safe · audit only |
 | 23 | Orphaned application data under AppData | Recycle Bin | - | interactive |
@@ -309,9 +309,10 @@ windowsweep [mode] [options]
 | `--temp-days N` | `3` | Idle window for temp folders |
 | `--purge-all` | off | 🔥 Clear cache targets completely instead of pruning idle files |
 | `--developer`, `--not-developer`, `--forget-developer` | saved answer | Override or re-ask the developer question |
-| `--scan-roots "P1;P2"`, `--exclude-path P` | auto | Section 17 roots and exclusions |
+| `--scan-roots "P1;P2"` | auto | Section 17 project roots |
+| `--exclude-path P` | - | A tree to leave alone, in **every** section (repeatable) |
 | `--hiberfil off\|reduced\|keep` | ask | What section 15 does |
-| `--permanent` | off | Sections 18/19 delete instead of using the Recycle Bin |
+| `--permanent` | off | Sections 18, 19 and 23 delete instead of using the Recycle Bin |
 | `--select L`, `--select-file P` | off | Answer an interactive section's selection in advance, by index or by path - the one way sections 17/18/19/23 run unattended |
 | `--notify` | off | A Windows notification when the run ends |
 | `--json`, `--quiet`, `--no-color`, `--ascii`, `--no-report`, `--cleanup-logs` | off | Output and record controls |
@@ -326,9 +327,9 @@ Every flag, exit code and environment variable:
 |---|---|
 | See what is reclaimable, risk-free | `windowsweep --scan` |
 | Rehearse tonight's cleanup | `windowsweep --dry-run --all --yes` |
-| Reclaim the most space as a developer | `windowsweep --profile dev --yes` |
+| Reclaim the most space as a developer | `windowsweep --profile dev --yes --dry-run` first; the `dev` profile includes interactive section 17, so a real `--yes` run exits 3 unless you add `--select-file` |
 | Reclaim everything a non-developer can | `windowsweep --all --yes --not-developer` |
-| Find `node_modules` in projects idle 6 months | `windowsweep --only 17 --days 180 --scan-roots "D:\work"` |
+| Find `node_modules` in projects idle 6 months | `windowsweep --only 17 --days 180 --scan-roots "D:\work" --dry-run` |
 | Free the browser caches after closing the browsers | `windowsweep --only 7 --yes` |
 | Run the admin sections | `windowsweep --profile system --yes --elevate` |
 | Weekly unattended run | `windowsweep --install-task` |

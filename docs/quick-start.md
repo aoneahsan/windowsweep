@@ -1,8 +1,8 @@
 # Quick start
 
-Four commands, from "prove it is safe" to "reclaim the space". Nothing is deleted until the fourth.
+Four commands: prove the guards, look, rehearse, then reclaim. Nothing is deleted until the fourth.
 
-## 1. Verify the safety guards on your machine
+## 1. Prove the guards on this machine
 
 ```powershell
 npx windowsweep --self-test
@@ -19,11 +19,12 @@ on any failure.
 npx windowsweep --scan
 ```
 
-Deletes nothing. Prints a health report (drives, hibernation file, disk images, running apps that block cache
-steps), every target with its size on disk, and the personal-file scanners' findings. It does write its own
-log and a report under `~\.windowsweep`; pass `--no-report` if you would rather it wrote nothing at all.
+It deletes nothing. It writes this run's log and one JSON report under `%USERPROFILE%\.windowsweep`, and
+touches nothing else; add `--no-report` to skip the report. What it prints: a health report (drives,
+hibernation file, disk images, running apps that block cache steps), every target with its size on disk, and
+the personal-file scanners' findings.
 
-## 3. Rehearse the cleanup
+## 3. Rehearse the run
 
 ```powershell
 npx windowsweep --dry-run --all --yes
@@ -33,7 +34,7 @@ Runs the safe batch exactly as a real run would, printing `[dry-run] would ...` 
 section, and writes a JSON report you can export. A non-interactive run defaults to developer mode on; pass
 `--not-developer` if that is wrong for the machine.
 
-## 4. Clean
+## 4. Reclaim
 
 ```powershell
 npx windowsweep

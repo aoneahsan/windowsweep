@@ -219,7 +219,7 @@ MODES  (default = the guided walkthrough)
 ```
 **Was:** `MODES  (default = guided walkthrough through every category)`
 
-**Change:** two corrections in one short line. "category" is not a word this product owns - the glossary makes `section` the numbered unit of work and bans the alternatives, and the walkthrough itself is built from `WS_WALKTHROUGH`, a list of section ids. And "every" was false: `WS_WALKTHROUGH` is 15 of the 26 sections, plus three more when the console is elevated. Dropping the claim is shorter than qualifying it. 41 characters, against 59 shipped.
+**Change:** two corrections in one short line. "category" is not a word this product owns - the glossary makes `section` the numbered unit of work and bans the alternatives, and the walkthrough itself is built from `WS_WALKTHROUGH`, a list of section ids. And "every" was false: `WS_WALKTHROUGH` is 15 of the 26 sections, plus three more when the console is elevated. Dropping the claim is shorter than qualifying it. 41 characters, against 60 shipped.
 
 ### C-020 · `windowsweep.ps1:51` · the `--scan` mode line
 ```
@@ -689,7 +689,7 @@ section 18 is interactive-only: it needs a person at the keyboard, or a selectio
 ```
 **Was:** the same.
 
-**Change:** none. This is the product's whole position on personal files in one sentence; it names both ways out; and at 118 characters it stays exactly as long as it needs to be, because every clause in it is load-bearing.
+**Change:** none. This is the product's whole position on personal files in one sentence; it names both ways out; and at 119 characters it stays exactly as long as it needs to be, because every clause in it is load-bearing.
 
 ### C-069 · `modules/runner.ps1:87` · an interactive section running unattended
 ```
@@ -1047,7 +1047,7 @@ non-interactive: use --export md|html|both N|latest|all
 ```
 **Was:** the same.
 
-**Change:** none. 131 characters on one line, which is dense rather than long-winded: nine actions, each two tokens.
+**Change:** none. 130 characters on one line, which is dense rather than long-winded: nine actions, each two tokens.
 
 ### C-109 · `modules/reports.ps1:171-189` · a missing or out-of-range index
 ```
@@ -1325,7 +1325,7 @@ All offline - nothing leaves your machine unless you send it
 ```
 **Was:** the same.
 
-**Change:** none. 59 characters, inside the 75 budget, and the subtitle is a refusal with its one exception attached.
+**Change:** none. 60 characters, inside the 75 budget, and the subtitle is a refusal with its one exception attached.
 
 ### C-138 · `modules/release_helpers.ps1:265-267` · the contact lines
 ```
@@ -1566,7 +1566,7 @@ Adds a 'cleanup' function to your PowerShell profile
 ```
 **Was:** the same.
 
-**Change:** none. 51 characters.
+**Change:** none. 52 characters.
 
 ### C-165 · `modules/release_helpers.ps1:377` · the alias already present
 ```
@@ -1800,7 +1800,7 @@ developer question not asked (non-interactive run) - defaulting to developer mod
 ```
 **Was:** the same.
 
-**Change:** none. It says the question was skipped, which way the default fell, why that direction, and the flag that reverses it. 142 characters, all of it doing work.
+**Change:** none. It says the question was skipped, which way the default fell, why that direction, and the flag that reverses it. 143 characters, all of it doing work.
 
 ### C-187 · `lib/config.ps1:105` · the purge confirmation
 ```
@@ -1880,7 +1880,7 @@ These are sizes on disk, not what a run would delete: the idle gate keeps recent
 ```
 **Was:** the same.
 
-**Change:** none, and this is the line the whole scan surface is built to reach. It refuses to let its own biggest number be read as a promise, then gives the two reasons - the idle gate and the running-apps skip. 123 characters, every one of them earning its place. It is the Bible's "what is kept" motif and its no-promised-number rule in the same sentence.
+**Change:** none, and this is the line the whole scan surface is built to reach. It refuses to let its own biggest number be read as a promise, then gives the two reasons - the idle gate and the running-apps skip. 124 characters, every one of them earning its place. It is the Bible's "what is kept" motif and its no-promised-number rule in the same sentence.
 
 ---
 

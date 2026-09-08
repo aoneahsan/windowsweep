@@ -285,8 +285,8 @@ duration unit to this spelling rather than the reverse.
 ```text
 <strong>$($r.totals.steps_run)</strong> sections run</div><div><strong>$($r.totals.steps_skipped)</strong> skipped
 ```
-**Change:** none. Already the console's vocabulary, and S-013 moves the Markdown to it. The lower case is
-grammar rather than a different word: the number precedes the label here and follows it there.
+**Change:** none. Already the console's vocabulary, and S-013 moves the Markdown to it; the lower case is
+grammar rather than a different word because the number precedes the label here and follows it there.
 
 ### S-025 · `reports.ps1:117` · the run-facts heading
 **Was:** identical.
@@ -400,9 +400,9 @@ blank rather than `True`, `False`, `yes` or `no`. A blank cell in a report is th
 interpret at all. 🔴 That null is now much rarer than it was: `--scan` used to leave developer mode
 unresolved on every run, and since the `-ReadOnly` fix it resolves from the flag or the saved answer. It is
 still reachable when neither exists, which is correct - "not decided yet" is the truth there - so the export
-needs a word for it rather than an empty cell. The direction is not in doubt - a report a person reads should answer `yes` or
-`no` - but it needs the `$dry` pattern extended to two more Markdown fields and introduced into three HTML
-value cells. Recommended, not ordered.
+needs a word for it rather than an empty cell. The direction is not in doubt. A report a person reads should
+answer `yes` or `no`. Getting there needs the `$dry` pattern extended to two more Markdown fields and
+introduced into three HTML value cells. Recommended, not ordered.
 
 **F-3 - `User` is Markdown-only, `Log file` is HTML-only, and both should stay that way**. Adding `Log file`
 to the Markdown puts a full local path into the export most often pasted into an issue; adding `User` to the
@@ -419,21 +419,26 @@ means calling `Format-Duration` in both, which is a code change.
 
 **F-6 - `steps_skipped` counts skipped, refused and failed**. `runner.ps1:189` counts every step whose
 status is not `ran` or `dry-run` - but that is the **console's** counter. The JSON field the exports actually
-read is written at `lib/log.ps1:101-102` and emitted at `:128`, by the same rule. So the console's `Sections run / skipped:` and the Markdown's
+read is written at `lib/log.ps1:101-102` and emitted at `:128`. Same rule, both places. So the console's
+`Sections run / skipped:` and the Markdown's
 `skipped/refused` are each incomplete in their own way. S-013 aligns to the console because row 15 says the
 number keeps the console's vocabulary; whether that label should name all three outcomes is row 10's
 decision, recorded here so it is not lost.
 
-**F-7 - two line numbers in `cli-strings.md` do not match the file, and half of it is already fixed**.
-C-117 has since been corrected in place (`cli-strings.md:1080` now reads `:51` Markdown, `:74` HTML, "two,
-not a fourth"). The stale citations survive at exactly two lines, both in that file's back matter:
-**`:1806`** and **`:1834`**, which still cite `reports.ps1:104` and `:75`. Measured on disk today the strings
-are at **`:51`** (Markdown) and **`:74`** (HTML); line 104 is a stylesheet rule and line 75 initialises the
-rows variable, so an applier following those references would patch neither string. Two more for that file's
-owner while we are here: `:1830-1840` still presents NEEDS DECISION 2 as open with options (a) to (c) and
-says "C-117 and C-085 are held on this", contradicting `:1078` where it is answered; and `:1068`/`:1832` cite
-`modules/reports.ps1:44-134` when the HTML function ends at `:133`. Reported, not edited - that draft is
-another agent's file.
+**F-7 - two stale `reports.ps1` citations survive in `cli-strings.md`, and half of that finding is already
+fixed**. The C-117 slot has since been corrected in place; it now reads `:51` Markdown, `:74` HTML, "two, not
+a fourth". The stale pair survives in exactly two places in that file's back matter: the third item of the
+list it reports as outside row 10, and the paragraph under **NEEDS DECISION 2** explaining why the decision
+mattered. Both cite `:104` and `:75`. Measured on disk today the strings are at
+**`:51`** (Markdown) and **`:74`** (HTML); line 104 is a stylesheet rule and line 75 initialises the rows
+variable, so an applier following either reference would patch neither string. One more for that file's
+owner, found in the same pass. **NEEDS DECISION 2** is still presented as open, with options (a) to (c) and
+the line "C-117 and C-085 are held on this", while the C-117 slot above it records the same question as
+answered. Its `modules/reports.ps1:44-134` range is now right in the C-117 heading, which reads `:44-133`;
+it is wrong only in the NEEDS DECISION 2 body. 🔴 **This finding deliberately carries no line numbers into
+that file**: it is under active edit, and every line reference in the first version of F-7 had already moved
+by the time it was re-checked here. That is the ordinal-cross-reference defect the panel corrected three
+times inside this draft, one file further out. Reported, not edited; it is another agent's file.
 
 ---
 
@@ -481,12 +486,17 @@ outputs (S-017 and S-030), which widens the brief's *two places* to four.
 
 ### Verification run on this file
 
-**ASCII** - **PASS, and here is the result rather than a promise of one.** A scan for `[^ -~]` (every byte outside printable ASCII)
-across the whole file returns 44 hits, every one on a heading or a commentary line carrying `·`, `§` or the
-red-circle glyph. The 34 fence-content lines intersect that set nowhere, so no byte above 127 reaches an
-engine file. The same scan shows zero U+2014, and the only `!` in the file sits inside the split regex
-quoted above. The instrument was watched firing on the commentary's own marks, which is what makes the
-fences' zero mean something. The gate that matters at build time is `modules/release_helpers.ps1:67-73`,
+**ASCII** - **PASS, and here is the result rather than a promise of one.** Re-measured at finalize over the
+finished file with a character-class scan for `[^ -~]`, every character outside printable ASCII: 93 of them,
+spread across 51 lines, and every one of those lines is a heading or commentary. Three codepoints, no
+others. They are the middle dot, the section sign and the red-circle glyph - the house marks this commentary
+uses, which reach no engine file. The 34 fence-content lines intersect that set nowhere, so no byte above
+127 reaches an engine file. The same scan finds no em dash, no en dash, no curly quote, no ellipsis
+character and no non-breaking space, and U+2014 in particular is absent. The file carries no exclamation
+mark at all, which is the fingerprint's budget met rather than an accident: the character is named in words
+here instead of quoted, because a quoted one would have been counted by the very scan reporting on it. The
+instrument was watched firing on the commentary's own marks, which is what makes the fences' zero mean
+something. The gate that matters at build time is `modules/release_helpers.ps1:67-73`,
 self-test check [4], which breaks on the first byte over 127 per engine file and fails with
 `PowerShell 5.1 would misread this file`. 🔴 That gate cannot run here - it runs against the engine
 file after this draft is applied, not against the draft.

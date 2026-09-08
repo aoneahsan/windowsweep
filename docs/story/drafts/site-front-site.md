@@ -73,7 +73,7 @@ near-misses named rather than quietly passed.
 **One separator, and it is the middot**. The thirteen titles today use three different schemes: an em dash
 on nine pages, a middot inside the three admin titles and both at once on `Admin · Inbox — windowsweep`.
 Standardising on `·` is not a preference. An em dash in every title would spend the fingerprint's whole
-punctuation budget - one per 150 words - thirteen times over across 381 words of route strings. The
+punctuation budget - one per 150 words - thirteen times over across 374 words of route strings. The
 middot is already the product's own separator: the home eyebrow reads `Windows 10 and 11 · PowerShell 5.1 ·
 nothing to install`, and the footer reads `MIT licence · windowsweep 1.1.0`.
 
@@ -134,8 +134,8 @@ different jobs.
 > windowsweep is a Windows disk-cleanup command line that names every path before it touches one. It
 > removes regenerable caches: package managers, build tools, browsers, editors, Windows temp and update
 > leftovers, stale project build artefacts. Every deletion passes through one function that refuses
-> documents, credentials, cloud-sync folders and browser profiles, and no flag lifts that. It runs on
-> Windows 10 (1809 and later) and Windows 11.
+> documents, credentials, cloud-sync folders and browser profiles, and no flag lifts the refusal. It runs
+> on Windows 10 (1809 and later) and Windows 11.
 ```
 
 **Change:** new. Answer-first: the first eleven words say what it is and what makes it different, so a model
@@ -152,7 +152,7 @@ rhythm rule on the first line of the surface.
 
 ```text
 This site is windowsweep.aoneahsan.com: where the tool is downloaded, and where an account holds what the
-desktop app has synced. The documentation lives on a separate site and is not duplicated here. Three things
+desktop app has synced. The documentation lives on a separate site and is not duplicated here. Three programs
 carry the name and they do not behave the same way on the network - the command-line engine, the desktop
 window, and this site. The privacy page says which is which.
 ```
@@ -305,10 +305,10 @@ the word someone types when they are deciding whether to trust an unsigned binar
 and the zero-install command line beside them.`
 
 ```text
-Both desktop installers with sizes, the SHA-256 checksum and minisign signature that verify them, why SmartScreen warns, and the npx command beside them.
+Both desktop installers with their sizes, the SHA-256 checksum and minisign signature that verify them, why SmartScreen warns, and the npx command.
 ```
 
-**153 characters.** **Change:** SmartScreen is named. It is the first thing that happens to a person who
+**147 characters.** **Change:** SmartScreen is named. It is the first thing that happens to a person who
 downloads this file, the page spends a whole section on it, and a description that omits it lets the warning
 arrive as a surprise. `actually` goes; the algorithm name replaces it, which is more useful to a machine and
 shorter besides.
@@ -357,12 +357,12 @@ half is band R doing its job, so it is kept.
 four destinations, with no opt-out. Both facts, at the same size.`
 
 ```text
-The command line makes no network calls. The desktop window and this site send usage events and crash reports to four destinations, with no opt-out.
+The command line makes no network calls. The desktop window and this site send usage events and errors to four destinations, with no opt-out.
 ```
 
-**148 characters.** **Change:** neither half is softened, and neither is allowed to bleed into the other -
+**141 characters.** **Change:** neither half is softened, and neither is allowed to bleed into the other -
 the offline claim is scoped to the command line in its own sentence, and *no opt-out* is the last thing in
-the sentence that carries it, which is the emphatic position. `and crash reports` is added because Sentry is
+the sentence that carries it, which is the emphatic position. `and errors` is added because Sentry is
 one of the four destinations and *usage events* alone would have undercounted what is sent. The closing
 *Both facts, at the same size* is a sentence about the page's layout rather than about the product; it is
 right on the page and does nothing in a search result, so the space went to the fourth destination.
@@ -374,10 +374,10 @@ right on the page and does nothing in a search result, so the space went to the 
 **Was:** `Sitemap — windowsweep`
 
 ```text
-Sitemap · every page on windowsweep.aoneahsan.com
+Sitemap · every public page on windowsweep.aoneahsan.com
 ```
 
-**49 characters.** **Change:** the host is in the title because a sitemap page is what a person lands on
+**56 characters.** **Change:** the host is in the title because a sitemap page is what a person lands on
 when they are trying to establish what a site contains, and the host answers that before they click.
 
 ### S-016 · `/sitemap` · `<meta name="description">`
@@ -385,10 +385,10 @@ when they are trying to establish what a site contains, and the host answers tha
 **Was:** `Every public page on windowsweep.aoneahsan.com, with a filter.`
 
 ```text
-The readable half of a pair: every public page on the site, with a filter. The other half is sitemap.xml, regenerated on every build from the same routes.
+Every public page on this site, with a filter. The machine-readable counterpart, sitemap.xml, is regenerated on every build from the same routes.
 ```
 
-**154 characters.** **Change:** the old line was true and half-empty at 61 characters. What is added is the
+**145 characters.** **Change:** the old line was true and half-empty at 61 characters. What is added is the
 page's own explanation of why it exists beside an XML file, which is the question a machine reading two
 sitemap URLs on one origin would otherwise have to guess at.
 
@@ -738,13 +738,13 @@ something the page does not show, which is the one rule this group is built arou
 | S-007 | `/` | title | 57 | 60 | no |
 | S-008 | `/` | description | 150 | 155 | no |
 | S-009 | `/download` | title | 49 | 60 | no |
-| S-010 | `/download` | description | 153 | 155 | no |
+| S-010 | `/download` | description | 147 | 155 | no |
 | S-011 | `/changelog` | title | 49 | 60 | no |
 | S-012 | `/changelog` | description | 138 | 155 | no |
 | S-013 | `/privacy` | title | 57 | 60 | no |
-| S-014 | `/privacy` | description | 148 | 155 | no |
-| S-015 | `/sitemap` | title | 49 | 60 | no |
-| S-016 | `/sitemap` | description | 154 | 155 | no |
+| S-014 | `/privacy` | description | 141 | 155 | no |
+| S-015 | `/sitemap` | title | 56 | 60 | no |
+| S-016 | `/sitemap` | description | 145 | 155 | no |
 | S-017 | `/feed` | title | 46 | 60 | no |
 | S-018 | `/feed` | description | 149 | 155 | no |
 | S-019 | `/contact` | title | 42 | 60 | no |
@@ -762,8 +762,8 @@ something the page does not show, which is the one rule this group is built arou
 | S-031 | `/404` | title | 23 | 60 | no |
 | S-032 | `/404` | description | 113 | 155 | no |
 
-**Nothing exceeds its cap.** Three descriptions sit within two characters of it - S-016 at 154, S-010 and
-S-030 at 153 - and each is named here so a later edit knows it has no room. Six titles are short on purpose
+**Nothing exceeds its cap.** One description sits within two characters of it - S-030 at 153 - and it is named here so a later
+edit knows it has no room. Six titles are short on purpose
 (S-021, S-023, S-025, S-027, S-029, S-031): they are browser-tab labels on gated or error routes, and
 padding them would invent content the page does not have.
 
@@ -841,27 +841,27 @@ aside, and S-032 leaves it on the page.
 
 **Rhythm.** Shortest shipping sentence: *Append-only*, one word, opening S-030; *It deletes* at two, opening
 a bullet of S-006. Longest: the network sentence in that same bullet, at **28 words**, inside the
-fingerprint's stated 4-to-34 range. Nothing shipped runs past it. The descriptions run 113 to 154 characters
+fingerprint's stated 4-to-34 range. Nothing shipped runs past it. The descriptions run 113 to 153 characters
 and alternate on purpose between one long sentence and two short ones - S-030 opens on one word and closes
 on twenty-four; S-008 opens on seven and closes on seventeen.
 
-**Length.** Every title is inside 60 characters and every description inside 155. Nothing is over. The three
-tightest are named in the counts table, and those twenty-six strings total **381 words**.
+**Length.** Every title is inside 60 characters and every description inside 155. Nothing is over. The
+tightest is named in the counts table, and those twenty-six strings total **374 words**.
 
-🔴 **`llms.txt` is 614 words, and the comparable artefact is 494.** Measured on the fence contents of S-001,
+🔴 **`llms.txt` is 615 words, and the comparable artefact is 494.** Measured on the fence contents of S-001,
 S-002, S-003, S-005 and S-006 with the tokenizer `\b[\w'-]+\b`, URLs included, which is the same measurement
 applied to the docs site's shipped `llms.txt` for the comparison. **This is reported rather than claimed as
 a pass**: row 19 says *short*, that word has no number behind it, and the only precedent this project has is
 the 494-word file row 9 produced. Mine is 24 per cent longer. The reason is that it carries two things the
 docs site's does not - the three-programs network split, and the unsigned-installer fact - and its facts
-block is 271 of the 614. **If a reviewer rules it long, S-003's page list is what to cut**: eight bullets
+block is 271 of the 615. **If a reviewer rules it long, S-003's page list is what to cut**: eight bullets
 whose content is also each route's own description, and the only slot here that repeats something a crawler
 can already read elsewhere.
 
 🔴 **A correction rides with this figure, because it was wrong in the first draft of this file.** The
 self-check claimed 520 words *and* that the file was shorter than the docs site's 620. Both numbers were
 guesses and the comparison had its **sign backwards**. Re-measuring produced 614 against 494 - longer, not
-shorter. The same pass caught twelve declared character counts each one low, because the first measuring
+shorter. The line pass then added one word at S-001. That is the 615 above. The same pass caught twelve declared character counts each one low, because the first measuring
 run had been made against candidate strings rather than against the fences that shipped. Every number in
 this file is now taken from the file itself, and the tokenizer and the inclusion rule are written beside it
 so the next reader can reproduce it rather than trust it.

@@ -121,7 +121,7 @@ build if it finds one* is the whole guarantee, and being one of N never made it 
 always the evidence - a real junction, a 445-character path, and a fixture tree hashed before and after.
 
 **The audit count** is the same decision reached from the opposite direction: the sources disagree
-(`README.md:105` says three read-only audits, the tier table at `docs/safety-model.md:74` puts five
+(`README.md:109` says three read-only audits, the tier table at `docs/safety-model.md:80` puts five
 sections in the report-only tier), and no slot here asserted one. None now will. Both counts are recorded
 under **Counts, and why neither is asserted** at the end of this file, with the evidence, so the next
 writer does not rediscover the question.
@@ -129,7 +129,7 @@ writer does not rediscover the question.
 ## Two facts this draft corrects
 
 1. 🔴 **"The first two write nothing at all" is false** (S-005). A dry-run is not one of the quiet modes -
-   `windowsweep.ps1:285` lists only `help`, `version` and `list` - so it initialises a log and
+   `windowsweep.ps1:287` lists only `help`, `version` and `list` - so it initialises a log and
    `Initialize-Report` runs unconditionally. It writes **two files, both its own, and none of yours**. This
    is Bible §3 commitment 2 as corrected on 2026-09-07, reaching this surface for the first time.
 2. 🔴 **`--i-understand-deep` reaches four sections, not two** (S-012). The placeholder implied the flag
@@ -138,9 +138,9 @@ writer does not rediscover the question.
 
 ---
 
-# Band 1 - Hero
+## Band 1 - Hero
 
-## S-001 · band 1 · `.hero-grid > div[data-wsw-copy]` - eyebrow, headline, two ledes, the fact chips
+### S-001 · band 1 · `.hero-grid > div[data-wsw-copy]` - eyebrow, headline, two ledes, the fact chips
 
 **Was:** `Windows 10 and 11 · PowerShell 5.1 · nothing to install` / `It names every&nbsp;path before it
 touches&nbsp;one.` / `windowsweep reclaims the disk space that quietly disappears on a Windows machine —
@@ -193,7 +193,7 @@ the dummy needs touching for it. Nothing to design around.
 
 ---
 
-## S-002 · band 1 · `p.t-xs.ink-3` under the download button - the installer caption
+### S-002 · band 1 · `p.t-xs.ink-3` under the download button - the installer caption
 
 **Was:** `windowsweep_1.1.0_x64-setup.exe · 2.37 MB · released 2026-09-07. There is no code-signing
 certificate, so SmartScreen will warn on first run. Two things are verifiable instead: a SHA-256 checksum
@@ -208,7 +208,7 @@ app's own updater checks; neither is a code-signing certificate.
 
 **Why.** Two sentences of GATE-4-approved copy, reused **verbatim** rather than paraphrased a third time.
 They are slot **S-006** of `desktop-readme.md`, which is the same fact at caption length and is already
-shipping in `README.md:367`. Slot **S-015** of that draft is the fuller treatment and it cannot go in a
+shipping in `README.md:373`. Slot **S-015** of that draft is the fuller treatment and it cannot go in a
 `t-xs` caption under a button - it is three paragraphs, 117 words, with its own `###` heading and the
 *"More info -> Run anyway"* instruction. **S-015 is what `/download` should carry when that page exists**,
 and this caption is the same claim in the register this element has room for; no third phrasing was
@@ -222,9 +222,9 @@ to.
 
 ---
 
-# Band 2 - The receipt
+## Band 2 - The receipt
 
-## S-003 · band 2 · `.rc-head` - eyebrow, the total, the lede
+### S-003 · band 2 · `.rc-head` - eyebrow, the total, the lede
 
 **Was:** `One machine, one run · 7 September 2026` / `3,924,712,402` `bytes removed` / `This is not a
 promise and not an average. It is what one authorised run did on one Windows machine, on one day, with
@@ -265,7 +265,7 @@ run record rather than about this sentence - and a lede is the wrong place to gu
 
 ---
 
-## S-004 · band 2 · `p.rc-caveat` - the two numbers that disagree
+### S-004 · band 2 · `p.rc-caveat` - the two numbers that disagree
 
 **Was:** `The two numbers on this page do not agree, and that is expected. windowsweep counted
 3,924,712,402 bytes removed. Windows reported free space on C: rising from 5.84 GB to 9.85 GB — a gain of
@@ -292,9 +292,9 @@ holds alone.
 
 ---
 
-# Band 3 - The honesty sequence
+## Band 3 - The honesty sequence
 
-## S-005 · band 3 · `.band-head`
+### S-005 · band 3 · `.band-head`
 
 **Was:** `How a run goes` / `Nothing goes until you have seen its path.` / `Three commands, in order. The
 first two write nothing at all.`
@@ -315,7 +315,7 @@ whose heading is about honesty.
 
 ---
 
-## S-006 · band 3 · `ol.rail` - three numbered steps
+### S-006 · band 3 · `ol.rail` - three numbered steps
 
 **Was:** `Scan. Read-only.` / `Every declared target is measured and nothing is touched. You get sizes, per
 section, before you have agreed to anything.` / `Dry-run. Still writes nothing.` / `Every deletion helper
@@ -359,9 +359,9 @@ rebuild everywhere else. One synonym begins a drift.
 
 ---
 
-# Band 4 - The refusal list
+## Band 4 - The refusal list
 
-## S-007 · band 4 · `.band-head`
+### S-007 · band 4 · `.band-head`
 
 **Was:** `The safety model` / `A list of things it will not do.` / `Not adjectives. The refusals are
 enumerated, counted, and printed on demand by --list-targets. No flag bypasses any of them.`
@@ -369,7 +369,7 @@ enumerated, counted, and printed on demand by --list-targets. No flag bypasses a
 ```html
 <p class="eyebrow">The safety model</p>
 <h2 class="h-band">A list of things it will not do.</h2>
-<p class="lede">Not adjectives. Every refusal below is counted, enumerated, and printed on demand
+<p class="lede">Not adjectives. Every refusal below is counted, enumerated and printed on demand
   by <span class="mono">--list-targets</span>. No flag lifts one of them.</p>
 ```
 
@@ -381,7 +381,7 @@ One idea, one word, three bands.
 
 ---
 
-## S-008 · band 4 · `ul.refuse` - eight refusals
+### S-008 · band 4 · `ul.refuse` - eight refusals
 
 **Was:** eight `<li>` blocks headed `Your files` / `Your credentials and agent state` / `Toolchains and
 installed software` / `Browser profiles` / `Editor state` / `Windows itself` / `Anything reached through a
@@ -445,16 +445,16 @@ each a **specific refusal** rather than an adjective, which is the Bible's defin
 flag, no profile and no configuration file reaches any of them"* answers the question a
 sceptical reader is actually holding - *what if I turn something on* - at the top of the list rather than
 in the chokepoint band two screens later. *"The caches these tools keep are fair game. The tools are not."*
-is the whole product in nine words. It belongs beside the toolchain list, which otherwise reads as
+is the whole product in twelve words. It belongs beside the toolchain list, which otherwise reads as
 inventory. That is band R. The junction item now ends on **"on your machine, before you trust it"**, moving the proof from
 something the project did to something the reader can do. The Prefetch parenthesis becomes its own clause,
 because a reason in brackets reads as an afterthought and that reason is the interesting half.
 
 ---
 
-# Band 5 - The chokepoint
+## Band 5 - The chokepoint
 
-## S-009 · band 5 · `.band-head`
+### S-009 · band 5 · `.band-head`
 
 **Was:** `One function` / `Every deletion goes through the same gate.` / `There is no second path to a
 delete. Five ordered refusals, and a flag can change how much of a cache goes — never where the tool may
@@ -474,7 +474,7 @@ glossary term on this page meaning a filesystem path, and the sentence is about 
 
 ---
 
-## S-010 · band 5 · `ol.choke-list` - the five ordered refusals
+### S-010 · band 5 · `ol.choke-list` - the five ordered refusals
 
 **Was:** `Traversal. Paths with .. segments, UNC paths and drive roots are refused outright.` / `Roots.
 Fifteen declared entries — every drive root, Windows, System32, SysWOW64, both Program Files, ProgramData,
@@ -501,7 +501,7 @@ The list already ran at one em dash per item, against a budget of one per 150 wo
 
 ---
 
-## S-011 · band 5 · `p.t-sm.ink-3` centred - the override note
+### S-011 · band 5 · `p.t-sm.ink-3` centred - the override note
 
 **Was:** `Steps 1 to 4 have no override. --purge-all changes how much of a cache goes, never where the tool
 may reach.`
@@ -519,9 +519,9 @@ the Bible's chokepoint motif, one door and no side entrances.
 
 ---
 
-# Band 6 - What it deletes, by tier
+## Band 6 - What it deletes, by tier
 
-## S-012 · band 6 · `.band-head`
+### S-012 · band 6 · `.band-head`
 
 **Was:** `What comes back` / `Six tiers, and two of them are permanent.` / `Most of what windowsweep
 removes rebuilds itself the next time you need it. Two sections do not, and they are the two behind
@@ -531,7 +531,7 @@ removes rebuilds itself the next time you need it. Two sections do not, and they
 <p class="eyebrow">What comes back</p>
 <h2 class="h-band">Six tiers, and two of them are permanent.</h2>
 <p class="lede">Most of what windowsweep removes rebuilds itself the next time you need it. Two
-  sections do not: emptying the Recycle Bin, and clearing the event logs. Both sit behind
+  sections do not: emptying the Recycle Bin and clearing the event logs. Both sit behind
   <span class="mono">--i-understand-deep</span>, along with the hibernation file and disk-image
   compaction.</p>
 ```
@@ -544,9 +544,9 @@ learn what "permanent" means - and it is the sentence the fingerprint already mo
 
 ---
 
-# Band 7 - The 26 sections
+## Band 7 - The 26 sections
 
-## S-013 · band 7 · `.band-head`
+### S-013 · band 7 · `.band-head`
 
 **Was:** identical - kept verbatim.
 
@@ -564,9 +564,9 @@ consequence for a reader who automates. Nothing here reads as placeholder.
 
 ---
 
-# Band 8 - Developer mode
+## Band 8 - Developer mode
 
-## S-014 · band 8 · `.devsplit > div[data-wsw-copy]` - eyebrow, heading, lede
+### S-014 · band 8 · `.devsplit > div[data-wsw-copy]` - eyebrow, heading, lede
 
 **Was:** `Developer mode` / `One question, on the first run.` / `A cleaner that clears every cache it finds
 trades one problem for another: the next yarn install downloads the lot again and your afternoon is gone.
@@ -578,7 +578,7 @@ So windowsweep asks once, remembers the answer, and changes what sections 1 to 5
 <p class="lede" style="margin-top: var(--sp-4)">
   A cleaner that clears every cache it finds trades one problem for another: the next
   <span class="mono">yarn install</span> downloads all of it again. So windowsweep asks once,
-  remembers the answer, and changes what sections 1 to 5 do with it.
+  remembers the answer and changes what sections 1 to 5 do with it.
 </p>
 ```
 
@@ -590,7 +590,7 @@ What survives is the gamble, stated flat. That is the band's job.
 
 ---
 
-## S-015 · band 8 · `.devout div[data-value="yes"] .panel` - the developer-mode answer
+### S-015 · band 8 · `.devout div[data-value="yes"] .panel` - the developer-mode answer
 
 **Was:** `Caches you used recently are kept.` / `The idle gate applies: a cache file goes only when its
 newest timestamp is at least 100 days old, and the newest version of every versioned tool — Cypress,
@@ -604,7 +604,7 @@ The consequence is that it keeps more, never less.`
   at least 100 days old, and the newest version of every versioned tool is never removed:
   Cypress, Playwright, Gradle distributions, Squirrel builds.</p>
 <p class="t-sm ink-2">Windows disables last-access updates on most volumes, so the tool reads the
-  newest of three timestamps and errs toward "recently used". It keeps more than it strictly
+  newest of three timestamps and errs towards "recently used". It keeps more than it strictly
   needs to. Never less.</p>
 ```
 
@@ -618,7 +618,7 @@ the fingerprint's list of tells.
 
 ---
 
-## S-016 · band 8 · `.devout div[data-value="no"] .panel` - the non-developer answer
+### S-016 · band 8 · `.devout div[data-value="no"] .panel` - the non-developer answer
 
 **Was:** `Those caches are cleared completely.` / `If you do not build software on this machine, a
 four-gigabyte Gradle cache is not worth keeping and the idle gate has nothing to protect.` / `Nothing about
@@ -641,9 +641,9 @@ reader picking "no" needs to know they have not just widened the blast radius. "
 
 ---
 
-# Band 9 - The desktop app
+## Band 9 - The desktop app
 
-## S-017 · band 9 · `.band-head`
+### S-017 · band 9 · `.band-head`
 
 **Was:** identical - kept verbatim.
 
@@ -662,13 +662,13 @@ The eyebrow is the second install path's entire pitch in six words.
 
 ---
 
-# Band 10 - What leaves your machine
+## Band 10 - What leaves your machine
 
 🔴 **This band is a safety surface.** Humour is off in all three slots. Row 17 `site-privacy` is marked so
 explicitly and this band is the same disclosure at home-page length: the reader is being **told**, not
 asked, and no sentence may soften the absence of an opt-out into a promise it is not.
 
-## S-018 · band 10 · `.band-head`
+### S-018 · band 10 · `.band-head`
 
 **Was:** `What leaves your machine` / `Two answers, because there are two programs.` / `They are different,
 so they are printed next to each other at the same size.`
@@ -706,7 +706,7 @@ three and then stops talking.
 
 ---
 
-## S-019 · band 10 · left `.panel.pad` - the command line
+### S-019 · band 10 · left `.panel.pad` - the command line
 
 **Was:** `The command line sends nothing.` / `No telemetry.` / `No update check.` / `No network calls of
 any kind. A self-test check greps the source for HTTP and socket calls, and it is one of the 151.` /
@@ -742,7 +742,7 @@ occurrences.
 
 ---
 
-## S-020 · band 10 · right `.panel.pad` - the window and the website
+### S-020 · band 10 · right `.panel.pad` - the window and the website
 
 **Was:** `The desktop window and this website do send analytics.` / `Usage events go to Google Analytics
 4, Amplitude and Microsoft Clarity. Errors go to Sentry.` / `Clarity records session replays — your
@@ -780,9 +780,9 @@ the sentence that replaced the false one on 2026-09-07, and the string the produ
 
 ---
 
-# Band 11 - The family
+## Band 11 - The family
 
-## S-021 · band 11 · `.band-head`
+### S-021 · band 11 · `.band-head`
 
 **Was:** identical - kept verbatim.
 
@@ -797,9 +797,9 @@ the dummy and does not need one; the strip below it says the rest.
 
 ---
 
-# Band 12 - Also by the same developer
+## Band 12 - Also by the same developer
 
-## S-022 · band 12 · `.band-head` — 🔴 **the surface's single W line**
+### S-022 · band 12 · `.band-head` — 🔴 **the surface's single W line**
 
 **Was:** `Also by the same developer` / `Other things built here.` / `Not advertising. These are the
 developer's own projects, and there is no ad network on this site — the privacy notice above promises none,
@@ -824,9 +824,9 @@ copy binds. The em dash splits into a full stop, and the sentence fragment begin
 
 ---
 
-# Band 13 - Docs and FAQ
+## Band 13 - Docs and FAQ
 
-## S-023 · band 13 · `.band-head`
+### S-023 · band 13 · `.band-head`
 
 **Was:** identical - kept verbatim.
 
@@ -841,7 +841,7 @@ honesty note that no search-volume data exists for this project yet.
 
 ---
 
-## S-024 · band 13 · `.faq` - six disclosure entries
+### S-024 · band 13 · `.faq` - six disclosure entries
 
 **Was:** six `<details>` headed `Will it delete my files?` / `What can I never get back?` / `Do I need
 Administrator rights?` / `How do I check it before trusting it?` / `Can I run it on a schedule?` / `What
@@ -858,7 +858,7 @@ prove nothing changed.`
       of the deletion gate.</p>
     <p>Three sections do touch personal files, and all three are interactive: partial downloads,
       large stale files and orphaned application data. Each shows you a list, defaults to nothing
-      selected, and asks a final question that <span class="mono">--yes</span> does not answer.
+      selected and asks a final question that <span class="mono">--yes</span> does not answer.
       What you pick goes to the Recycle Bin.</p>
   </div>
 </details>
@@ -927,9 +927,9 @@ reader what to do with their scepticism. Two more em dashes go.
 
 ---
 
-# Band 14 - Contact
+## Band 14 - Contact
 
-## S-025 · band 14 · `.band-head`
+### S-025 · band 14 · `.band-head`
 
 **Was:** identical - kept verbatim.
 
@@ -946,7 +946,7 @@ is the register the rest of the page is in.
 
 ---
 
-## S-026 · band 14 · `.blocked > span` - why the form cannot be submitted
+### S-026 · band 14 · `.blocked > span` - why the form cannot be submitted
 
 **Was:** identical - kept verbatim.
 
@@ -962,7 +962,7 @@ that becomes obsolete the day sign-in is enabled, which is the honest state to s
 
 ---
 
-# Band 15 - Closing
+## Band 15 - Closing
 
 🔴 **A departure, recorded rather than corrected here.** Row 16's spine ends on *"the two install paths"*
 and `design/README.md` §6 names band 15 *"Closing - the two paths again"*. **The built band carries one.**
@@ -979,7 +979,7 @@ control that does not exist would be worse than the silence. 🔴 **Growing that
 and a dummy change is not this draft's to make** - it is reported to the main session and to design, with
 the copy already written so nothing is blocked on a writer once the decision lands.
 
-## S-027 · band 15 · `h2.display`
+### S-027 · band 15 · `h2.display`
 
 **Was:** identical - kept verbatim.
 
@@ -993,7 +993,7 @@ headline available that a reader can verify in the next thirty seconds.
 
 ---
 
-## S-028 · band 15 · `p.lede`
+### S-028 · band 15 · `p.lede`
 
 **Was:** identical - kept verbatim.
 
@@ -1008,9 +1008,9 @@ control, S-031 is the line that goes under it** - it is an addition to this bloc
 
 ---
 
-# The footer - `shell.js`
+## The footer - `shell.js`
 
-## S-029 · `shell.js:142` · the brand-column tagline
+### S-029 · `shell.js:142` · the brand-column tagline
 
 🔴 **This block currently carries no `data-wsw-copy` attribute** - it lost the marker when the footer moved
 out of `index.html`. It is block 30 of the hand-back's thirty and is slotted here so the grep-driven
@@ -1037,7 +1037,7 @@ names the five; this is an addition to the set, not a contradiction of it.
 
 ---
 
-## S-030 · `shell.js:58-61` · `ANALYTICS_NOTICE`, rendered into `.foot-note`
+### S-030 · `shell.js:58-61` · `ANALYTICS_NOTICE`, rendered into `.foot-note`
 
 **Was:** `This site and the desktop window send usage events to Google Analytics 4, Amplitude and Microsoft
 Clarity, and errors to Sentry. Clarity records session replays. There is no opt-out. The command line sends
@@ -1059,7 +1059,7 @@ appearing twice on one page.
 
 ---
 
-# S-031 · band 15 · CONDITIONAL - do not apply today
+## S-031 · band 15 · CONDITIONAL - do not apply today
 
 🔴 **This slot has no element to target**. Do not apply it. It must not reach the current dummy.
 It exists only so that the copy is settled before the decision is, and it is deliberately numbered after
@@ -1105,7 +1105,7 @@ today. If it is ever applied, band 15 goes from 20 words to 46 and the surface t
 
 ---
 
-# 🔴 Counts, and why neither is asserted
+## 🔴 Counts, and why neither is asserted
 
 Round 1 raised two `NEEDS DECISION` here, both about a count. **Both were answered in round 2 and both are
 closed. This draft carries zero open `NEEDS DECISION`.** The questions are kept below with their answers,
@@ -1128,11 +1128,11 @@ cascade, or cut the count entirely; the first was recommended.
 > number has taken during a single content run, and it settles the question by itself: the count is not a
 > stable claim, it is a moving one. Applied at S-001, S-019 and S-024.
 
-**Question 2, closed - the audit count.** Three sources disagree. `README.md:105` reads *"plus three
+**Question 2, closed - the audit count.** Three sources disagree. `README.md:109` reads *"plus three
 read-only audits (global packages, idle programs, startup items)"* and goes on to say orphaned application
 data *"is a fourth 1.1.0 section and is **not** an audit"*, which is the likeliest origin of the four the
-round-1 brief carried. `docs/safety-model.md:98` also says three (22, 24, 25 - read-only, safe, outside
-`--all`), while its tier table at line 74 puts **five** sections in the Report-only tier (0, 21, 22, 24,
+round-1 brief carried. `docs/safety-model.md:104` also says three (22, 24, 25 - read-only, safe, outside
+`--all`), while its tier table at line 80 puts **five** sections in the Report-only tier (0, 21, 22, 24,
 25), because 0 and 21 report as well but do run in the safe batch. Three numbers, three questions.
 
 > **Answered: assert no audit count either.** No slot asserted one before and none does now, so this
@@ -1148,7 +1148,7 @@ running the tool, and it changes on a schedule the copy has no way to follow. A 
 was actually asking about. The page keeps its numbers where they are contractual (26 sections), measured
 once and labelled as one machine's result (the receipt), or structural (0 network calls, 0 dependencies).
 
-# Reported, not fixed - four findings outside this draft's scope
+## Reported, not fixed - four findings outside this draft's scope
 
 1. 🔴 **After this round, the page's only self-test count is one nobody can slot.** The receipt band's
    evidence ledger reads `<dt>Guards proved on this machine first</dt><dd>151</dd>` (`index.html:168`, and
@@ -1179,7 +1179,7 @@ once and labelled as one machine's result (the receipt), or structural (0 networ
 
 ---
 
-# SELF-CHECK
+## SELF-CHECK
 
 **Method, stated because a figure without one cannot be reconciled.** Every number below is measured over
 **the shipping strings only** - the text inside the 30 fenced blocks, with HTML tags, `<!-- -->` comments
@@ -1214,9 +1214,11 @@ because a self-check that quietly improves its own history is worth less than on
 is fenced**. So its report on this draft is evidence about my commentary and nothing about the copy that
 ships. Proved with a plant in round 1, not inferred. The figures above are the real ones; the fact-checker
 and a human reader are the only gate on this surface. **The round-2 rewrites were swept by hand**, phrase
-by phrase, against all 102 lines of `assets/banned-phrases.txt` - result below. The sibling trap is
-handled too: every bolded sentence-end in my prose is written `**like this**.` with the period outside the
-emphasis, because the hook's splitter does not break on a full stop followed by `**`.
+by phrase, against all 102 lines of `assets/banned-phrases.txt` - result below. The sibling trap is only
+part-handled, and the copy edit corrected this sentence rather than the file: the round-2 additions put the
+full stop outside the emphasis, `**like this**.`, but 84 earlier bolded sentence-ends in this commentary -
+every `**Why.**` label among them - keep it inside, so the hook's splitter under-counts the commentary's
+sentences. Measured, not asserted, in item 7. It changes nothing about the copy, which the hook never sees.
 
 **1. Palette - P dominant, R strong, W exactly once.**
 
@@ -1287,9 +1289,13 @@ reproduced here - quoting a gate's own vocabulary inside the corpus that gate re
 failing the check it was written to document. The whole surface re-swept returns the same single `elevate`
 allowed above and nothing else. Two near-misses are worth naming, so the next reader knows they were
 weighed rather than missed. S-018's *"the site gives the window's answer, not the engine's"* is an
-**X, not Y** construction, which the fingerprint budgets at one per 300 words and which appears exactly
-once in 1,971. And S-031 was deliberately narrowed off *"every refusal on this page holds there too"* -
-not a banned phrase, but a false one.
+**X, not Y** construction, which the fingerprint budgets at one per 300 words. It is not the only one, and
+round 2's *"appears exactly once"* was wrong: S-020 carries two (*"your interactions with the interface,
+not the contents of your disk"* and *"This is a notice, not a consent request"*) and S-024 one (*"That
+costs time, not information"*), so the page has four in 1,950 words against a budget of six, with S-011's
+*"never where the tool may reach"* a cousin that makes five. Corrected by the copy edit, item 7. And S-031
+was deliberately narrowed off *"every refusal on this page holds there too"* - not a banned phrase, but a
+false one.
 
 **3. Length against the row's cap.** Row 16's cap is structural - *"a landing page, 12-15 bands"* - not a
 word count. **15 bands**, unchanged; no band added, none removed, none merged. Words per band, shipping
@@ -1390,3 +1396,35 @@ bare hyphen. The four edited strings were swept by hand against the same 87 bann
 fingerprint's 22-entry never-list, which is read from `voice-fingerprint.md` and not reproduced here. Zero
 hits. The hook saw none of them, for the reason stated above, and its verdict on this write concerns the
 commentary alone.
+
+**7. The copy edit - mechanical, and measured with item 6's instrument**. Five fences changed, none by a
+word. S-007, S-014 and S-024 lose a serial comma (*"counted, enumerated and printed"*, *"remembers the
+answer and changes"*, *"defaults to nothing selected and asks"*), S-012 loses the comma from a two-item list
+(*"emptying the Recycle Bin and clearing the event logs"*), and S-015's *toward* becomes *towards*, the
+en-GB form. **The serial-comma convention is the en-GB default and the page's own majority practice**: no
+comma before the final *and* in a list of words or phrases sharing one grammatical slot; a comma stays only
+where it separates independent clauses or prevents a misreading. So S-028's three imperatives (*"Run it,
+read what it found, and decide afterwards"*), S-008's *"the registry hives, and the page and swap files"*,
+S-024's *"12 to 16, and 20"* and S-030's compound object keep theirs, and S-028 is flagged for the line
+editor's veto rather than changed under a kept-verbatim label. **S-015's straight quotes stay**: every
+apostrophe in the thirty fences is straight and so is every one in the dummy (`grep -c '’' index.html`
+returns 0), so a lone typographic pair would be the inconsistency; the ASCII rule that binds `cli-strings`
+does not apply here and was not the reason. **Fence tokens are 2,215 before and 2,215 after**
+(`awk '/^```/{open=!open; next} open' | wc -w`), and no terminal punctuation moved, so every figure in item
+6 stands as written; the four removed commas and the one dialect form are the whole difference. In the
+commentary, four corrections and one normalisation: S-008's *"nine words"* is twelve; the **X, not Y**
+count above is corrected from one to four; the bold-full-stop claim above is corrected to what the file
+does (84 by `grep -o '[.!?]\*\*\( \|$\)' | wc -l`, labels included, none of them changed, because the
+sibling drafts carry no shared label convention to conform to); seven citation occurrences are re-based to
+where their quoted text sits after the 2026-09-08 applies (`README.md` :105 -> :109 twice and :367 -> :373,
+`docs/safety-model.md` :74 -> :80 twice and :98 -> :104, `windowsweep.ps1` :285 -> :287 - the Bible's §3
+cites :285 too, and that one is the keeper's); and the headings are brought to the sibling drafts' scheme -
+one H1, bands and sections at `##`, the thirty applied slots at `###`, S-031 alone at `##` so that
+`grep -c '^### S-'` returns exactly the applied set. **Dummy citations are left at the snapshot the
+Conventions section pins, and the dummy has moved since**: `shell.js` now carries the tagline at :147
+**with** its `data-wsw-copy` marker restored at :148, the notice marker at :170, and `design/README.md` §11
+(:489-490) now gives both greps, 28 + 2 = 30. Finding 2 under *Reported, not fixed*, S-029's marker note and
+the *1* and *29* in the "Where the slots live" table therefore describe the snapshot rather than today; the
+main session owns that register and is told, not overwritten. Every `Was:` string sampled (nine, across
+S-005, S-007, S-012, S-014, S-018, S-003, S-002, S-015, S-028) still resolves against the live dummy, so the
+applier's targets hold. The hook's verdict on this write is about this commentary alone.

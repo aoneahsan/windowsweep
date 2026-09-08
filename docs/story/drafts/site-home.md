@@ -1,10 +1,23 @@
 # site-home - the marketing site's home bands
 
 Content-map row **16** · surface `windowsweep-web/design/windowsweep-web-click-dummy/` · awareness
-**unaware to problem-aware, arriving cold** · structure **hero promise -> the gamble they already lost ->
-the guarantees as refusals -> proof -> the two install paths** · tone band **P dominant, R strong, W once** ·
-length **a landing page, 12-15 bands** · CTA **`npx windowsweep --scan` and the desktop download** · schema
+**unaware to problem-aware, arriving cold** · tone band **P dominant, R strong, W once** · length **a
+landing page, 12-15 bands** · CTA **`npx windowsweep --scan` and the desktop download** · schema
 **SoftwareApplication, no `offers`, no `isAccessibleForFree`**.
+
+**The beat order this draft actually follows**. It is stated here as the built page runs it, band by band,
+because a structure line copied from the row would describe a page that was never built. Read it downward:
+
+> the promise, the gamble and **both** install paths (band 1) -> the proof (2) -> the rehearsal (3) -> the
+> guarantees as refusals (4) and the gate underneath them (5) -> what comes back, and the catalogue (6, 7)
+> -> the one question (8) -> the second path, shown (9) -> what leaves your machine (10) -> the neighbours
+> (11, 12) -> the questions (13) -> contact (14) -> **one** path again (15).
+
+Row 16's structure line reads *"hero promise -> the gamble they already lost -> the guarantees as refusals
+-> proof -> the two install paths"*. Three departures, all the design's and all approved: the proof comes
+**before** the guarantees rather than after, both install paths are handed over in the **hero** rather than
+held to the end, and the close carries **one**. The row is the keeper's to amend; this draft only records
+what it is writing against, so the two are not silently different.
 
 This is the front door. Most people who read it have never heard of the product, so the page has to do the
 whole job in one scroll: say what it is, name the bargain every cleanup tool asks for, refuse the parts of
@@ -64,13 +77,19 @@ verbatim at S-002 below.
 - **en-GB** throughout. `Favorites`, `Saved Games`, `Local Storage` and `Preferences` keep their US spelling
   because they are Windows and Chromium folder names, not prose.
 
-## Where the thirty slots live
+## Where the slots live
 
 | File | Slots | Marked `pending` today |
 |---|---|---|
 | `index.html` | S-001 - S-028 | 28 |
 | `shell.js` (the shared footer, extracted mid-draft) | S-029 - S-030 | 1 |
-| **Total** | **30** | **29** |
+| **Applied total** | **30** | **29** |
+| `index.html` band 15, **conditional, not applied** | S-031 | n/a - the element does not exist |
+
+**Thirty slots apply; S-031 is a thirty-first that does not.** It is written and held against a dummy
+change this draft may not make, it is numbered after the footer rather than inside band 15 so the applied
+sequence stays gapless, and its words are excluded from every figure in the self-check. The hand-back's
+block count is unchanged at 30.
 
 🔴 **One block lost its marker in the refactor, and a grep-driven applier would miss it.** `design/README.md`
 §11 states **30 blocks** and gives `grep -c` as the way to list them. That grep now returns 28, because two
@@ -86,16 +105,34 @@ outside this draft's scope.
 because the placeholder already says the true thing in this voice, and rewriting a good sentence to prove a
 pass happened is how an approved line gets quietly worse.
 
-## Three facts this draft corrects
+## The two counts this draft declines to assert
 
-1. 🔴 **151 -> 154 self-test checks**, in S-001, S-019 and S-024. See the `NEEDS DECISION` at the end: the
-   number is coupled to a release that has not shipped, and there is a **fourth** occurrence outside every
-   pending block that this inventory cannot reach.
-2. 🔴 **"The first two write nothing at all" is false** (S-005). A dry-run is not one of the quiet modes -
+**Decided in round 2, and the decision is the finding rather than a number.** No self-test count and no
+audit count appears anywhere on this surface.
+
+**The self-test count** was in three slots - S-001's hero chip, S-019's zero-network fact, S-024's
+"how do I check it" answer. It is now in none. The reason is not that any of the candidates was wrong; it
+is that **every one of them is release-coupled by construction**. The site brands **1.1.0** in three places
+outside every pending block, the shipped 1.1.0 binary prints **151**, and the source at `HEAD` runs
+**155** on the way to an unreleased 1.2.0. A tally on the front door is therefore a number that goes stale
+on a schedule nobody is watching, on the page whose entire design argument is that its numbers can be
+checked. S-019 loses nothing by it: *check [9] greps the source for HTTP and socket calls and fails the
+build if it finds one* is the whole guarantee, and being one of N never made it truer. S-024 keeps what was
+always the evidence - a real junction, a 445-character path, and a fixture tree hashed before and after.
+
+**The audit count** is the same decision reached from the opposite direction: the sources disagree
+(`README.md:105` says three read-only audits, the tier table at `docs/safety-model.md:74` puts five
+sections in the report-only tier), and no slot here asserted one. None now will. Both counts are recorded
+under **Counts, and why neither is asserted** at the end of this file, with the evidence, so the next
+writer does not rediscover the question.
+
+## Two facts this draft corrects
+
+1. 🔴 **"The first two write nothing at all" is false** (S-005). A dry-run is not one of the quiet modes -
    `windowsweep.ps1:285` lists only `help`, `version` and `list` - so it initialises a log and
    `Initialize-Report` runs unconditionally. It writes **two files, both its own, and none of yours**. This
    is Bible §3 commitment 2 as corrected on 2026-09-07, reaching this surface for the first time.
-3. 🔴 **`--i-understand-deep` reaches four sections, not two** (S-012). The placeholder implied the flag
+2. 🔴 **`--i-understand-deep` reaches four sections, not two** (S-012). The placeholder implied the flag
    gates only 11 and 16. It gates four. `README.md`'s own IMPORTANT block names the hibernation file and
    disk-image compaction alongside them.
 
@@ -129,7 +166,6 @@ checks` `0 network calls from the CLI` `0 dependencies`
 
 <div class="hero-facts">
   <span><b>26</b> numbered sections</span>
-  <span><b>154</b> self-test checks</span>
   <span><b>0</b> network calls from the CLI</span>
   <span><b>0</b> dependencies</span>
 </div>
@@ -143,6 +179,17 @@ bans shame about the mess and this reader may never have been burned at all. `--
 the second lede so the paragraph closes on its shortest sentence, which is the fingerprint's rhythm rule.
 The em dash becomes a colon. The fingerprint allows one per 150 words and this band is 92, so spending it
 here would leave none for the places that earn it.
+
+**The chip row drops to three, and a fourth was not invented to fill the gap.** `154 self-test checks`
+comes out under the round-2 decision above. The obvious replacements were each read and each refused.
+**66 protected subtrees**, or any of band 5's display counts, carries the identical defect - a tally that
+moves with a release nobody re-reads, which is the whole reason the self-test count is leaving. **The
+receipt's 3,924,712,402** is one machine's result and the Bible forbids a gigabyte figure stated as a
+promise; in a hero chip it would read as exactly that. And **a third `0`** would turn a row of facts into a
+device. So the row is three. What is left cannot go stale: 26 is frozen by the section contract, and both
+zeros are properties the engine's own self-test enforces rather than counts of anything.
+`.hero-facts` is `display: flex; flex-wrap: wrap`, so three reflow with no layout change and nothing in
+the dummy needs touching for it. Nothing to design around.
 
 ---
 
@@ -190,18 +237,31 @@ nothing refused. Your machine will be a different number, and --scan is how you 
   <span class="rc-unit">bytes removed</span>
 </div>
 <p class="lede">
-  One authorised run, on one Windows machine, on one day, with nothing refused. That is the whole
-  claim. It is not an average and it is not a promise, because your disk decides the number and
+  One authorised run, on one Windows machine, on one day. That is the whole claim. It is not an
+  average and it is not a promise, because your disk decides the number and
   <span class="mono">--scan</span> is how you read it.
 </p>
 ```
 
-**Why.** Same three facts, reordered so the paragraph opens on what the number **is** and only then says
-what it is not. The placeholder opened on two denials, which makes a reader look for the thing being
-denied before they have been told what they are looking at. "That is the whole claim" is the four-word
-sentence this band needs for rhythm, sitting between a 15-word and a 27-word neighbour. The Bible's §10
-rule is never to promise a number, and here it is delivered as a refusal rather than as a disclaimer.
-Band R doing an asterisk's job.
+**Why.** Reordered so the paragraph opens on what the number **is** and only then says what it is not. The
+placeholder opened on two denials, which makes a reader look for the thing being denied before they have
+been told what they are looking at. "That is the whole claim" is the five-word sentence this band needs for
+rhythm, sitting between a ten-word and a twenty-four-word neighbour. The Bible's §10 rule is never to
+promise a number, and here it is delivered as a refusal rather than as a disclaimer. Band R doing an
+asterisk's job.
+
+🔴 **And the clause "with nothing refused" is gone, because on this page the word already had a different
+job.** One screen above, the hero says windowsweep *"refuses your documents, credentials and browser
+profiles outright. No flag lifts that."* Band 3's transcript then prints a `refused` line. That is twice
+before the receipt. Arriving at it, a cold reader meets *"with nothing refused"* as **no holds
+barred** - a run with the restraints switched off - which is the opposite of what the page has spent its
+first two bands establishing, and it is the reading a person gets before band 4 ever defines the term.
+Three jobs, one word, none of them taught yet. The datum itself is not lost and is not this slot's to
+carry: the evidence ledger beside the chart keeps
+it under its own label, where a term of art is read as a term of art. 🔴 **What that ledger figure counts
+is deliberately not stated here.** The fact-checker owns it. Whether `refused: 0` means no protected path
+was encountered during the run, or none was reached, or something narrower again, is a question about the
+run record rather than about this sentence - and a lede is the wrong place to guess at it.
 
 ---
 
@@ -224,11 +284,11 @@ are also writing to. Printing one round number would hide that gap rather than c
 **Why.** This is the strongest sentence on the page and it very nearly did not work, because the reader
 could not see the gap. 3,924,712,402 against "5.84 to 9.85" is two units and a subtraction away from
 being legible, so **3.92 GB** is stated - a division, not a new measurement, and the same figure
-`design/README.md` §2 already carries. The long semicolon clause splits into two short sentences, which is
+`design/README.md` §2 already carries. No new number. The long semicolon clause splits into two, which is
 where the contrast actually lands: *"The tool counts what it deleted. Windows counts what is free."* The
-closing sentence loses "Anyone printing". That was a claim about competitors, which this project cannot
-verify and the map's §4 already refuses to make. What stands instead is a claim about arithmetic. It holds
-alone.
+closing sentence loses "Anyone printing". That was a claim about competitors. This project cannot verify
+one and the map's §4 already refuses to make one, so what stands instead is a claim about arithmetic. It
+holds alone.
 
 ---
 
@@ -615,14 +675,34 @@ so they are printed next to each other at the same size.`
 
 ```html
 <p class="eyebrow">What leaves your machine</p>
-<h2 class="h-band">Two answers, because there are two programs.</h2>
-<p class="lede">They are different, so they are printed side by side at the same size.</p>
+<h2 class="h-band">Two answers, for three programs.</h2>
+<p class="lede">The window runs the same engine, and it is still a different program; this website
+  is a third. What leaves your machine depends on which of the three you are using. The site
+  gives the window's answer, not the engine's.</p>
 ```
 
-**Why.** "Next to each other" becomes "side by side". Shorter, and literal. The
-heading is kept because it is the honest frame. The alternative - one headline claiming the product is
-offline, with the analytics in a footnote - is the presentation this band was designed to refuse, and
-`design/README.md` says so in the band's own source comment.
+**Why.** One sentence stands between *"The same engine, in a window"* and the two panels, and the
+placeholder spent it on the furniture: *"they are printed side by side at the same size"*. Which the
+layout already demonstrates. Narrating it left the reader to work out the one thing they actually need at
+that point in the scroll - **that "the same engine" does not mean "the same answer"**. A reader who has just been told the window reimplements no cleanup logic will carry that
+identity straight into a band about network traffic unless something stops them. The new lede stops them in
+three sentences: the window runs the engine and is still a separate program, this website is a third, and
+the site answers with the window.
+
+🔴 **And the heading's arithmetic was wrong.** *"Two answers, because there are two programs"* counts two.
+The right-hand panel names two things by itself, and the content map's row 17 note names **three different
+programs**. The honest binary here is of **answers**, so the heading now counts answers and states the real
+program total: *"Two answers, for three programs."* It takes the shape of "One question, on the first run."
+two bands up, which is already this page's H2 rhythm.
+
+🔴 **Ordering, not softening.** Neither half moved. Neither acquired a qualifier. The left panel still says
+the command line sends nothing and check [9] fails the build over it; the right panel still says there is
+no opt-out switch and that this is a notice rather than a consent request. What changed is that the reader
+now knows **which panel this website belongs to before they read either**, instead of reconciling it at the
+bottom of the right-hand panel in the smallest text on the page. Putting the site on the window's side of
+the line is the disclosure doing its job earlier, not doing less of it - and the engine's clean record is
+not used to colour the window, nor the window's telemetry to colour the engine, because the lede sorts the
+three and then stops talking.
 
 ---
 
@@ -639,7 +719,7 @@ when you ask it to report an issue.`
   <li class="f-no">…<span>No telemetry.</span></li>
   <li class="f-no">…<span>No update check.</span></li>
   <li class="f-no">…<span>No network calls of any kind. Self-test check [9] greps the source for
-    HTTP and socket calls and fails the build if it finds one, and it is one of the 154.</span></li>
+    HTTP and socket calls and fails the build if it finds one.</span></li>
 </ul>
 <p class="t-sm ink-3">Crash bundles stay on disk. Session logs and reports stay on disk. The only
   time it opens a browser is when you ask it to report an issue.</p>
@@ -647,11 +727,18 @@ when you ask it to report an issue.`
 
 *(The three `<svg>` icons inside the `<li>` elements are unchanged; `…` marks where each one stays.)*
 
-**Why.** The third fact gains the half that makes it a guarantee rather than a habit. A check that greps
-is a description. A check that **fails the build** is an enforcement, and it is the reason the Bible's §3
+**Why.** The third fact gains the half that makes it a guarantee rather than a habit. A grep is a
+description. A check that **fails the build** is an enforcement, and it is the reason the Bible's §3
 commitment 3 still holds for the engine after the desktop window stopped qualifying. Naming it **check
 [9]** matches how the safety model and the decision log refer to it, so a reader who goes looking finds
-the same label. The count moves 151 to 154. See the decision below.
+the same label. One label, three documents.
+
+🔴 **And the tail "and it is one of the 151" is gone rather than updated.** Its job was to make the check
+sound corroborated by a large number, which is the one thing a build gate does not need: the enforcement is
+the guarantee, and check [9] would fail the build if it were the only check in the file. The tally never
+made it true. What the tail did do was pin the sentence to a release, so a page branded 1.1.0 would have
+printed the count of a version that has not shipped. Round 2's decision above covers all three
+occurrences.
 
 ---
 
@@ -796,7 +883,7 @@ prove nothing changed.`
 <details>
   <summary>How do I check it before trusting it?</summary>
   <div class="ans">
-    <p><span class="mono">windowsweep --self-test</span> runs 154 checks on your machine, with a
+    <p><span class="mono">windowsweep --self-test</span> runs its checks on your machine, with a
       real junction, a 445-character path and a dry-run fixture whose tree is hashed before and
       after to prove the tree did not change.</p>
     <p><span class="mono">windowsweep --list-targets</span> prints every path the tool can reach,
@@ -828,8 +915,12 @@ prove nothing changed.`
 snippet, so the edits are small and specific. The admin entry now opens on **"Six sections need Windows to
 ask your permission first"** - the fingerprint's specimen 5, verbatim - instead of "Only for sections 12 to
 16 and 20", which makes a reader count. "Skip with the exact command" becomes "skip, and print the exact
-command", because *skip with* reads as though the command is a condition of skipping. The self-test count
-moves 151 -> 154 and its proof clause changes to "the tree did not change", matching S-006. The
+command", because *skip with* reads as though the command is a condition of skipping. The self-test answer
+loses its tally under the round-2 decision above and keeps every piece of the evidence: *"runs 154 checks"*
+becomes *"runs its checks"*, and the junction, the 445-character path and the hashed fixture tree stay
+exactly where they were. That was always the offer. A reader asking **how do I check
+it before trusting it** wants to know what to type and what it will prove; a total was never either of
+those. Its proof clause changes to "the tree did not change", matching S-006. The
 `--list-targets` answer gains **"Read it before you run anything. That is what it is for."** - two short
 sentences closing the surface's longest block, and the only place on the page that tells a sceptical
 reader what to do with their scepticism. Two more em dashes go.
@@ -873,6 +964,21 @@ that becomes obsolete the day sign-in is enabled, which is the honest state to s
 
 # Band 15 - Closing
 
+🔴 **A departure, recorded rather than corrected here.** Row 16's spine ends on *"the two install paths"*
+and `design/README.md` §6 names band 15 *"Closing - the two paths again"*. **The built band carries one.**
+It holds a `npx windowsweep --scan` terminal and an install-size caption, and there is no download control
+in it; both paths are handed over in the hero instead, which is the beat order recorded in this file's
+header. Nothing in S-027 or S-028 is wrong because of it - *"The first command deletes nothing"* and
+*"Run it, read what it found, and decide afterwards"* are true of the window as well, since the window
+runs the same engine and shows its picture before it starts. So both slots stay verbatim.
+
+What the band does **not** do is give the *"if you would rather not type"* reader from band 9 anywhere to
+go at the end. That reader was invited six bands earlier and is then closed on a command line. The one
+line they need is written below as **S-031**, held conditional, because a line pointing at a download
+control that does not exist would be worse than the silence. 🔴 **Growing that control is a dummy change
+and a dummy change is not this draft's to make** - it is reported to the main session and to design, with
+the copy already written so nothing is blocked on a writer once the decision lands.
+
 ## S-027 · band 15 · `h2.display`
 
 **Was:** identical - kept verbatim.
@@ -897,7 +1003,8 @@ Run it, read what it found, and decide afterwards. That order is the whole desig
 
 **Why.** Kept. Long sentence, short sentence, and the short one names the thing the page has been
 demonstrating for fifteen bands rather than restating what it said. The install-size line below it
-(`Windows 10 (1809 and later)…`) is outside this block and is untouched.
+(`Windows 10 (1809 and later)…`) is outside this block and is untouched. **If band 15 grows a download
+control, S-031 is the line that goes under it** - it is an addition to this block, never a rewrite of it.
 
 ---
 
@@ -952,47 +1059,108 @@ appearing twice on one page.
 
 ---
 
-# 🔴 NEEDS DECISION
+# S-031 · band 15 · CONDITIONAL - do not apply today
 
-Two. Both verbatim, and both about one number.
+🔴 **This slot has no element to target**. Do not apply it. It must not reach the current dummy.
+It exists only so that the copy is settled before the decision is, and it is deliberately numbered after
+the footer rather than inside band 15, so the sequential inventory of applied slots stays S-001 to S-030
+with no gaps and the hand-back's block arithmetic is untouched.
 
-> **NEEDS DECISION: the self-test count is coupled to a release that has not shipped, and this page states
-> a version.** This draft writes **154** at S-001, S-019 and S-024, per the brief's measured figure and the
-> engine at `HEAD`. But 154 arrives with **1.2.0, which is unreleased**, and the page brands itself
-> `1.1.0` in three places outside every pending block - the header chip, the `SoftwareApplication` JSON-LD
-> `softwareVersion`, and the footer's `MIT licence · windowsweep 1.1.0`. Today it prints **151**.
-> If the site goes live before 1.2.0 does, the front door states a number a
-> reader disproves in one command, on the page whose entire design argument is that its numbers are
-> checkable. Options: **(a)** hold the site's launch behind the 1.2.0 publish, so every number on the page
-> and every number the tool prints agree; recommended, since 1.2.0 is already owed the `cli-strings`,
-> `report-bodies` and tagline cascade and the site is not finished either. **(b)** Ship 151 now and treat
-> the bump as part of the 1.2.0 cascade, adding the site to the list of places a version touches. **(c)**
-> Cut the count from the page and let `--self-test` be the only place it appears - honest, but it removes
-> one of the four hero facts and weakens S-019 from an enforcement to a description. I have not chosen.
-> The draft carries 154, because that is the figure the brief supplied as measured. My recommendation is
-> (a).
+**Condition, stated exactly.** Apply **only if** band 15 grows a download control - a button, a link or a
+second terminal offering the desktop installer - in `index.html`'s `#close` section. Otherwise skip it.
+If band 15 still ends on the `npx windowsweep --scan` terminal and its install-size caption, this slot is
+a no-op and the band is finished at S-028.
 
-> **NEEDS DECISION: the brief says four read-only audits; the product's own documents say three, and its
-> tier table says five.** `README.md:105` reads *"plus three read-only audits (global packages, idle
-> programs, startup items)"* and goes on to say orphaned application data *"is a fourth 1.1.0 section and is
-> **not** an audit"*, which is the likeliest origin of the four. `docs/safety-model.md:98` also says three
-> (22, 24, 25 - read-only, safe, outside `--all`), while its tier table at line 74 puts **five** sections in
-> the Report-only tier (0, 21, 22, 24, 25), because 0 and 21 report as well but do run in the safe batch.
-> Three numbers, three questions. **No slot in this draft asserts an audit count**,
-> so nothing ships on a guess and no correction is owed if the answer is one of the other two. What is
-> needed is which question the page should answer if it ever does: audit-only sections outside `--all`
-> (**3**), or sections that delete nothing (**5**). Recommendation: **neither, on this surface.** The tier
-> table in band 6 already shows the reader all five report-only sections in the row they belong to, which
-> is more useful than a count, and the sections grid in band 7 marks every one of them. A number here would
-> just be a fourth place to disagree. Three is already too many.
+**Was:** nothing. The element does not exist.
 
-# Reported, not fixed - three findings outside this draft's scope
+```html
+<p class="t-sm ink-3" style="margin-top: var(--sp-5)">
+  If you would rather not type, the desktop app is the same engine in a window, and the deletion
+  gate refuses exactly the same paths.
+</p>
+```
 
-1. 🔴 **A fourth `151` sits outside every pending block.** The receipt band's evidence ledger reads
-   `<dt>Guards proved on this machine first</dt><dd>151</dd>` (`index.html:165` at the snapshot). It is not
-   marked `pending`, so this inventory cannot slot it - but applying S-001, S-019 and S-024 without it
-   leaves **one page saying 154 three times and 151 once**, which is worse than either number alone.
-   Whatever the decision above resolves to, that `<dd>` moves with the other three.
+**Why.** One sentence, and it belongs to a reader the page has already spoken to: band 9's eyebrow is
+*"If you would rather not type"*, and the close is where that invitation currently runs out. It opens on
+those same six words on purpose, so the reader recognises themselves rather than being addressed twice by
+two different pages.
+
+**Why it says what it says, and not more.** Every claim in it is already carried by copy on this page.
+*"The same engine in a window"* is S-017's heading, kept verbatim. That the gate refuses the same paths
+follows from S-017's *"reimplements no cleanup logic at all"* and band 5, and needs no new fact about how
+the window behaves - which matters, because the app's own screens are row 11's and this draft has no
+business asserting a flow it has not read. 🔴 **The scope is deliberately deletion and nothing wider.** An
+earlier phrasing read *"so every refusal on this page holds there too"*. That sentence is false. The
+zero-network refusal in S-019 is the engine's, and band 10 exists precisely to say the window does not
+inherit it, so a closing line that quietly re-inherited it would undo the disclosure eleven bands after
+making it.
+
+**What it does not duplicate.** No SmartScreen caption, no checksum sentence, no file size. Those are
+settled at **S-002** and belong under whichever download control ships; if band 15 gains one, S-002's
+caption is the companion text and is reused verbatim rather than authored a third time.
+
+**Not counted anywhere in this file's arithmetic.** Its 26 words are outside every band total, outside the
+rhythm measurement and outside the palette percentages in the self-check, because none of them ships
+today. If it is ever applied, band 15 goes from 20 words to 46 and the surface total rises by 26.
+
+---
+
+# 🔴 Counts, and why neither is asserted
+
+Round 1 raised two `NEEDS DECISION` here, both about a count. **Both were answered in round 2 and both are
+closed. This draft carries zero open `NEEDS DECISION`.** The questions are kept below with their answers,
+because the next writer will meet the same three sources and should not have to re-derive why the page
+stays silent.
+
+**Question 1, closed - the self-test count.** Round 1 asked whether the page should print **151** (what the
+shipped 1.1.0 binary prints) or **154** (the figure the round-1 brief supplied as measured), given that the
+site brands `1.1.0` in three places outside every pending block: the header chip, the
+`SoftwareApplication` JSON-LD `softwareVersion`, and the footer's `MIT licence · windowsweep 1.1.0`. Three
+options were offered. Hold the launch behind the 1.2.0 publish, ship 151 and add the site to the version
+cascade, or cut the count entirely; the first was recommended.
+
+> **Answered: assert no self-test count on this surface.** The third option, and it is better than the
+> round-1 write-up allowed for. That write-up scored cutting the count as a loss on two fronts - *"it
+> removes one of the four hero facts and weakens S-019 from an enforcement to a description"* - and both
+> halves were wrong. S-019 is an enforcement because check [9] **fails the build**, which is a property of
+> the check and not of the total beside it; and a hero chip that decays on a release schedule is not a fact
+> worth defending a slot for. The engine at `HEAD` now runs **155**, which is the third value this one
+> number has taken during a single content run, and it settles the question by itself: the count is not a
+> stable claim, it is a moving one. Applied at S-001, S-019 and S-024.
+
+**Question 2, closed - the audit count.** Three sources disagree. `README.md:105` reads *"plus three
+read-only audits (global packages, idle programs, startup items)"* and goes on to say orphaned application
+data *"is a fourth 1.1.0 section and is **not** an audit"*, which is the likeliest origin of the four the
+round-1 brief carried. `docs/safety-model.md:98` also says three (22, 24, 25 - read-only, safe, outside
+`--all`), while its tier table at line 74 puts **five** sections in the Report-only tier (0, 21, 22, 24,
+25), because 0 and 21 report as well but do run in the safe batch. Three numbers, three questions.
+
+> **Answered: assert no audit count either.** No slot asserted one before and none does now, so this
+> closes without an edit. The reason stands on its own merits rather than on the ruling: band 6's tier
+> table already shows the reader all five report-only sections in the rows they belong to, and band 7's
+> grid marks every one of them, which answers *what does this not delete* better than any single figure
+> could. A number here would only have been a fourth place to disagree. Three was already too many.
+
+**The general shape of both answers**, worth stating once because it will come up on rows 17, 18 and 19
+too: a count of internal things - checks, audits, guards - is a claim the reader cannot verify without
+running the tool, and it changes on a schedule the copy has no way to follow. A **named mechanism** - check
+[9], the deletion gate, `--list-targets` - is verifiable, stable across releases, and is what the reader
+was actually asking about. The page keeps its numbers where they are contractual (26 sections), measured
+once and labelled as one machine's result (the receipt), or structural (0 network calls, 0 dependencies).
+
+# Reported, not fixed - four findings outside this draft's scope
+
+1. 🔴 **After this round, the page's only self-test count is one nobody can slot.** The receipt band's
+   evidence ledger reads `<dt>Guards proved on this machine first</dt><dd>151</dd>` (`index.html:168`, and
+   verified still there at the snapshot). It is not marked `pending`, so this inventory cannot reach it.
+   Round 1 filed this as an inconsistency risk - *one page saying 154 three times and 151 once*. **The
+   decision above changes what it is.** With all three slotted occurrences removed, that `<dd>` becomes the
+   single surviving tally on a page that has just decided not to make one, sitting in the evidence ledger
+   of the band whose entire argument is that its numbers can be checked. It is release-coupled too: 151
+   shipped, 155 is at `HEAD`. 🔴 **It should go with them**. The edit is design's, not this draft's.
+   The ledger's other three facts - the byte count, the eleven sections, the refusals figure - are
+   recorded measurements of one run and are unaffected. This row differs. It counts a property of the
+   build rather than anything the run did.
 2. 🔴 **The hand-back grep under-reports by one.** `design/README.md` §11 says 30 blocks and gives
    `grep -c 'data-ws-copy="pending"'`. The attribute is now `data-wsw-copy` and the count is 28, because
    the two footer blocks moved to `shell.js` and only one of them kept its marker. See S-029.
@@ -1000,6 +1168,14 @@ Two. Both verbatim, and both about one number.
    here, but they are product-voice prose on an indexed page and belong to a row - most likely **19**
    `site-front`, which the map assigns the site's per-route `<title>` and description text. Flagged so the
    boundary is decided rather than discovered.
+4. 🔴 **Band 15 has one install path where two were specified, and closing the gap is a dummy change.**
+   `design/README.md` §6 names the band *"Closing - the two paths again"* and row 16's spine ends on *"the
+   two install paths"*; the built `#close` section holds a `npx windowsweep --scan` terminal and an
+   install-size caption, and nothing that offers the installer. **This is reported, not fixed.** The dummy
+   is read-only to this draft and another agent is in it. Whoever owns the decision has three routes: add
+   a download control to band 15 and apply **S-031**; amend `design/README.md` §6 to describe the close
+   the page actually has; or leave both and accept that the *"if you would rather not type"* reader is
+   returned to a command line. The copy for the first is already written. Holding it costs nothing.
 
 ---
 
@@ -1011,22 +1187,36 @@ and JavaScript scaffolding stripped and entities resolved. Block-level closes (`
 </summary>`) end a sentence; inline `<span> <b> <em>` do not. Three non-prose runs are excluded: the two
 `<p class="mono">` path inventories, the four `.hero-facts` chips and the `.rc-total` numeral. So is the
 verification `bash` fence, and so are `S-006`'s three terminal transcripts, because row 10 owns them.
-Commentary and `Was:` lines are **not** counted. Nor is this self-check. Sentence split is `(?<=[.!?])\s+`
-with `1.1.0`, `2,483,662`, `5.84`, `9.85`, `3.92`, `SHA-256` and `Windows 10 1809` protected first.
+The `…` markers standing in for the unchanged `<svg>` icons in S-019 and S-020 are not words and are
+dropped. **S-031 is excluded from every figure in this section**, because it does not ship. Commentary and
+`Was:` lines are **not** counted. Nor is this self-check. Sentence split is `(?<=[.!?])\s+` with `1.1.0`,
+`2,483,662`, `5.84`, `9.85`, `3.92`, `SHA-256` and `Windows 10 1809` protected first.
 
-🔴 **The figures below replaced a first-pass estimate, and the estimate was wrong in both directions.**
+🔴 **Round 1's figures replaced a first-pass estimate, and that estimate was wrong in both directions.**
 Before the method above was fixed, this section carried *1,148 words · 96 sentences · burstiness 0.60 · one
-em dash*. Measured, it is **1,967 words · 187 sentences · burstiness 0.70 · zero em dashes**. Three
-different tokenizers gave three different answers on the way there, which is why the rule is to write the
-method next to the number. Corrected in place rather than restated as though it had always read this way.
+em dash*. Three different tokenizers gave three different answers on the way there, which is why the rule
+is to write the method next to the number.
+
+🔴 **Round 2 re-measured rather than adjusted round 1's numbers by hand, and the two instruments were
+reconciled before either was believed.** Run against the **pre-edit** file, this round's tokenizer returns
+**1,963 words · 186 sentences · σ 7.40 · burstiness 0.70** where round 1 recorded **1,967 · 187 · 7.4 ·
+0.70**: four words and one sentence apart, from where each pass split a `<span class="mono">..</span>`
+fragment. On the inclusive count used by the length table in section 3 the two agree exactly, at **2,006**
+pre-edit. That is close enough to attribute this round's movement to the edits rather than to the
+instrument, and it is stated here because a scope difference and a drift are indistinguishable otherwise.
+**Two figures round 1 got wrong are corrected in place**, not quietly: its shortest sentence was recorded
+as 3 words when the rail's one-word step labels (*"Scan."*, *"Roots."*) are shorter, and it named one
+longest sentence where there were two of the same length. Neither changes a verdict. Both are written down
+because a self-check that quietly improves its own history is worth less than one that does not.
 
 🔴 **The project's lint hook is structurally blind to this file.** `posttooluse-story-lint.sh:61` runs
 `re.sub(r"```.*?```", " ", body, flags=re.S)` before it counts anything, and **every shipping string here
-is fenced**. So a green hook on this draft is evidence about my commentary and nothing about the copy that
-ships. Proved with a plant, not inferred. The figures above are the real ones; the fact-checker and a human
-reader are the only gate on this surface. The sibling trap is handled too: every
-bolded sentence-end in my prose is written `**like this**.` with the period outside the emphasis, because
-the hook's splitter does not break on a full stop followed by `**`.
+is fenced**. So its report on this draft is evidence about my commentary and nothing about the copy that
+ships. Proved with a plant in round 1, not inferred. The figures above are the real ones; the fact-checker
+and a human reader are the only gate on this surface. **The round-2 rewrites were swept by hand**, phrase
+by phrase, against all 102 lines of `assets/banned-phrases.txt` - result below. The sibling trap is
+handled too: every bolded sentence-end in my prose is written `**like this**.` with the period outside the
+emphasis, because the hook's splitter does not break on a full stop followed by `**`.
 
 **1. Palette - P dominant, R strong, W exactly once.**
 
@@ -1035,6 +1225,14 @@ the hook's splitter does not break on a full stop followed by `**`.
 | **P** precision before an irreversible act | S-001 (hero lede), S-002, S-003, S-004, S-005, S-006, S-009, S-010, S-012, S-013, S-014, S-015, S-016, S-018, S-020, S-024, S-025, S-026, S-027, S-028, S-029, S-030 | **~62%** of shipping words |
 | **R** refusal as reassurance | S-001 (*"No flag lifts that"*), S-007, S-008, S-011, S-017, S-019, S-021, S-023 - the whole refusal band plus the override note, each one a **named refusal** rather than an adjective | **~35%** of shipping words |
 | **W** workshop dryness | **S-022, one line:** *"Which is the only kind of promise worth writing down."* | **~3%** |
+
+**What round 2 moved inside this table, and what it did not.** S-018 stays **P**: its new lede sorts three
+programs into two answers, which is precision about scope rather than reassurance, and the reassurance in
+that band is the panels' own. S-019 stays **R** after losing its tally, and is arguably more R for it - a
+build gate that fails is a refusal with teeth, where *"one of the 154"* was a statistic. Removing the hero
+chip takes three words off the P column and shifts no percentage past its rounding. The W line is
+untouched. Still exactly one, still at S-022. 🔴 **S-031, if it is ever applied, is R** and would be the
+closing band's only such line; it is not counted above.
 
 **Where the W was spent, and why there.** S-022, band 12, the house-promotions heading - the furthest block
 on the page from any destructive command, in the only band that is about neither deletion nor disclosure.
@@ -1050,21 +1248,21 @@ is *trust is the content* would be the tail wagging the dog.
 
 | Measure | Figure | Target |
 |---|---|---|
-| Words · sentences | 1,967 · 187 | - |
-| Mean length | 10.5 words | median 12-16 (under, and deliberately - see below) |
-| Standard deviation | 7.4 | - |
+| Words · sentences | 1,971 · 188 | - |
+| Mean length | 10.48 words | median 12-16 (under, and deliberately - see below) |
+| Standard deviation | 7.33 | - |
 | **Burstiness** (σ ÷ mean) | **0.70** | ≥ 0.45 ✅ |
-| **Shortest** | **3 words** - *"Never less."* (S-015), *"It deletes nothing."* (S-001), *"The tools are not."* (S-008) | ≤ 6 ✅ |
-| **Longest** | **33 words** - S-024: *"windowsweep --self-test runs 154 checks on your machine, with a real junction, a 445-character path and a dry-run fixture whose tree is hashed before and after to prove the tree did not change."* | ≤ 34 ✅ |
-| Sentences ≤ 6 words · ≥ 25 words | 75 · 10 | both present ✅ |
+| **Shortest** | **1 word** - the rail's step labels, *"Scan."* and *"Run."* (S-006), *"Traversal."* and *"Roots."* (S-010). Next up: *"Not adjectives."* (S-007), *"Never less."* (S-015) | ≤ 6 ✅ |
+| **Longest** | **33 words**, and there are **two** of them. S-024: *"windowsweep --self-test runs its checks on your machine, with a real junction, a 445-character path and a dry-run fixture whose tree is hashed before and after to prove the tree did not change."* S-015: *"A cache file goes only when its newest timestamp is at least 100 days old, and the newest version of every versioned tool is never removed - Cypress, Playwright, Gradle distributions, Squirrel builds."* | ≤ 34 ✅ |
+| Sentences ≤ 6 words · ≥ 25 words | 76 · 9 | both present ✅ |
 | Sentences over the 34-word ceiling | **0** | 0 ✅ |
 | **Em dashes** | **0** | ≤ 1 per 150 words ✅ - the placeholders carried **11**; all 11 became full stops, colons or commas |
 | "not X, but Y" | **0** | ≤ 1 per 300 ✅ |
-| Rule-of-three lists | 5 in 1,967 words | ≤ 2 per 500 ✅ |
+| Rule-of-three lists | 5 in 1,971 words | ≤ 2 per 500 ✅ |
 | Consecutive same-word openers | max 2 | < 3 ✅ |
 | Semicolons | 5 | allowed by the fingerprint, used to join related facts |
 | Exclamation marks | **0** | 0 ✅ |
-| Banned phrases | **1**, allowed with a marker - see below. Swept against `assets/banned-phrases.txt`, all 152 entries, case-insensitive on word boundaries | 0 or allowed ✅ |
+| Banned phrases | **1**, allowed with a marker - see below. Swept against `assets/banned-phrases.txt`: **87 phrase entries** across its 102 lines, case-insensitive, on word boundaries, whitespace-flexible for the multi-word entries. Round 1 recorded "152 entries" and that figure was wrong; the file has never held 152 | 0 or allowed ✅ |
 | Banned diction (fingerprint) | **0** - no *blast, nuke, wipe out, seamless, robust, powerful, simply, just, easily, one-click, smart, optimise, sweep away* | 0 ✅ |
 
 **Mean length is 10.5 against the fingerprint's 12-16 median, and that is a property of the surface rather
@@ -1080,29 +1278,55 @@ that tells a reader how to relaunch through a UAC prompt. Renaming a shipped fla
 is not available, and paraphrasing around it would leave the reader without the string they have to type.
 The banned sense does not appear anywhere on the surface.
 
+🔴 **The round-2 by-hand sweep, and its result.** The lint hook cannot see any of this file's shipping
+copy, so the seven strings this round changed or added were swept separately and by hand - the three-chip
+row, S-003's lede, S-018's heading and lede, S-019's zero-network line, S-024's self-test answer, and
+S-031's conditional close. **Zero hits**. All 87 banned entries, and zero against the fingerprint's own
+never-list, all 22 of its entries, which is read from `voice-fingerprint.md` and deliberately not
+reproduced here - quoting a gate's own vocabulary inside the corpus that gate reads is how a record starts
+failing the check it was written to document. The whole surface re-swept returns the same single `elevate`
+allowed above and nothing else. Two near-misses are worth naming, so the next reader knows they were
+weighed rather than missed. S-018's *"the site gives the window's answer, not the engine's"* is an
+**X, not Y** construction, which the fingerprint budgets at one per 300 words and which appears exactly
+once in 1,971. And S-031 was deliberately narrowed off *"every refusal on this page holds there too"* -
+not a banned phrase, but a false one.
+
 **3. Length against the row's cap.** Row 16's cap is structural - *"a landing page, 12-15 bands"* - not a
 word count. **15 bands**, unchanged; no band added, none removed, none merged. Words per band, shipping
 copy only:
 
 | Band | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | foot | **all** |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| **Ships** | 152 | 128 | 152 | 310 | 164 | 50 | 41 | 183 | 42 | 181 | 10 | 52 | 387 | 84 | 20 | 50 | **2,006** |
-| **Was** | 124 | 129 | 129 | 264 | 154 | 36 | 41 | 199 | 42 | 177 | 10 | 41 | 364 | 84 | 20 | 49 | **1,863** |
+| **Ships**, round 2 | 148 | 125 | 152 | 307 | 162 | 50 | 41 | 183 | 42 | 198 | 10 | 51 | 386 | 84 | 20 | 52 | **2,011** |
+| **Shipped**, round 1 | 152 | 128 | 152 | 310 | 164 | 50 | 41 | 183 | 42 | 181 | 10 | 52 | 387 | 84 | 20 | 50 | **2,006** |
+| **Was**, the placeholders | 124 | 129 | 129 | 264 | 154 | 36 | 41 | 199 | 42 | 177 | 10 | 41 | 364 | 84 | 20 | 49 | **1,863** |
 
-Counted per slot, so this total is **2,006** where the rhythm table above says 1,967. The 39-word gap is
+Counted per slot, so this total is **2,011** where the rhythm table above says 1,971. The 40-word gap is
 the three non-prose runs the rhythm measurement excludes and this one does not: the two `<p class="mono">`
-path inventories, the four `.hero-facts` chips and the `.rc-total` numeral. Two rules, both written down.
+path inventories, the three `.hero-facts` chips and the `.rc-total` numeral. Two rules, both written down.
 
-Net **+143 words, +7.7%** over the placeholders. Four places take almost all of it: band 4's three added R
-sentences (+46), band 5's chokepoint and override rewrites (+10), band 13's `--list-targets` closer and the
-admin answer (+23), and band 3 naming the two files a dry-run writes (+23). **One band shrank** - band 8,
-199 to 183, where the unbudgeted W line came out. No band is out of scale with its neighbours, and at 2,006
-words the page clears the ~1,000-word floor an indexed home page needs by a wide margin.
+🔴 **Read the two Ships rows as one measurement each, not as a band-by-band diff.** Round 2 changed four
+bands and touched no other: band 1 loses the 3-word chip, band 2 loses *"with nothing refused"*, band 10
+gains 26 words of lede and loses 9 across the heading and S-019's tally. That is **+11**. The remaining
+differences - band 4 at 307 against 310, band 5 at 162 against 164, bands 12, 13 and the footer by a word
+each - are **the instrument, not the copy**: those five bands were not edited this round. Run against the
+pre-edit file this tokenizer totals **2,000** where round 1 totalled 2,006, a 0.3 per cent spread over
+thirty slots from where each pass counted `<span class="mono">` fragments and the footer's JavaScript
+concatenation. The **Was** row is round 1's measurement, carried forward and not re-measured, so the
+comparison below is approximate by exactly that margin.
 
-**4. The pricing sweep - CLEAN.** Row 16 and `design/README.md` §7 both forbid a pricing claim in either
-direction, so the shipping strings were swept for `free`, `paid`, `price`, `pricing`, `tier`,
-`subscription`, `offers`, `trial` and `$`, case-insensitive on word boundaries. **Three hits, none of them
-a pricing claim**, each read in context rather than counted:
+Net **+148 words over the placeholders, about +8%**. Five places take almost all of it: band 4's three
+added R sentences, band 10's new bridge, band 13's `--list-targets` closer and admin answer, band 5's
+chokepoint and override rewrites, and band 3 naming the two files a dry-run writes. **One band shrank** -
+band 8, 199 to 183, where the unbudgeted W line came out. No band is out of scale with its neighbours, and
+at 2,011 words the page clears the ~1,000-word floor an indexed home page needs by a wide margin.
+S-031's 26 conditional words are in none of these numbers.
+
+**4. The pricing sweep - CLEAN, re-run after the round-2 edits.** Row 16 and `design/README.md` §7 both
+forbid a pricing claim in either direction, so the shipping strings were swept for `free`, `paid`, `price`,
+`pricing`, `tier`, `subscription`, `offers`, `trial` and `$`, case-insensitive on word boundaries. Same
+**three hits as round 1, none of them a pricing claim** - the seven strings this round changed introduced
+no new hit, and S-031 introduces none either. Each read in context rather than counted:
 
 | Hit | Where | What it actually says |
 |---|---|---|
@@ -1115,8 +1339,17 @@ no `isAccessibleForFree`; this draft adds neither and touches neither. One thing
 word *paid* survives here only because the certificate sentence is approved copy, and removing *paid* would
 turn it into a claim about the file rather than about what was purchased.
 
-**5. Unsure spots.** Two `NEEDS DECISION` above, both verbatim, both on the self-test count and the audit
-count. Three findings reported outside scope. Three things I am less than certain of and did not guess:
+**5. Unsure spots.** 🔴 **Zero open `NEEDS DECISION`.** Round 1 raised two, on the self-test count and the
+audit count; round 2 answered both, and the questions are preserved with their answers rather than deleted.
+Four findings are reported outside scope. Four things I am less than certain of and did not guess:
+
+- 🔴 **What `refused: 0` actually counts is not stated on this surface**. That is deliberate. S-003's
+  lede no longer carries the clause, and the evidence ledger beside the chart is not a pending block and
+  was not touched. **The fact-checker owns this one.** Whether that ledger row means no protected path was
+  encountered during the run, or none was reached, or something narrower, changes what a label beside it
+  may honestly say - and none of the three readings is available to me from the tracker's run history
+  alone. Nothing ships on it either way; the question is only live if someone later wants to explain the
+  figure in prose.
 
 - **`released 2026-09-07` at S-002 is carried from the placeholder**, not verified. The installer's name
   and its 2,483,662 bytes are sourced to the tracker; the release *date* I could not confirm from the
@@ -1126,4 +1359,4 @@ count. Three findings reported outside scope. Three things I am less than certai
 - **The voice fingerprint is still `calibrated: false`.** Every rhythm figure here is measured against
   twelve specimens derived from the repository rather than from samples the owner chose. That is the
   Bible's own open item, not a new one - but it is what "reads as this voice" means on this surface, and
-  it should be said rather than assumed.
+  it should be said rather than assumed. Unchanged since round 1. Still not a blocker.

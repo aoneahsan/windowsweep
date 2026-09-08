@@ -39,8 +39,9 @@ were read rather than missed.
 - The fenced block below it holds the **shipping fragment** in the same form. Substitute the fragment; leave
   the line around it alone.
 - Where a slot changes nothing, `Was:` reads `identical` and the single fence is the verbatim current text.
-- 🔴 **Every byte inside every fence is ASCII**. `release_helpers.ps1:67-73` is self-test check [4], which
-  counts non-ASCII bytes per engine file and fails the build with `PowerShell 5.1 would misread this file`.
+- 🔴 **Every byte inside every fence is ASCII**. `modules/release_helpers.ps1:67-73` is self-test check [4], which
+  breaks on the FIRST byte over 127 in an engine file and fails the build with
+  `PowerShell 5.1 would misread this file`. It detects; it does not count.
   No en dash, no curly quote, no ellipsis character - straight quotes, `-` and `...` only. The 🔴 and `·`
   marks in this commentary are house signals and reach no engine file.
 - These strings ship with the **1.2.0** cascade, alongside `cli-strings`, because they edit the same engine.
@@ -167,8 +168,8 @@ and matching it exactly is worth more here than re-deriving a longer word that w
 "Sections run: $($r.totals.steps_run) - skipped: $($r.totals.steps_skipped)"
 ```
 **Change:** `skipped/refused` becomes `skipped`, which is the console's word at `runner.ps1:190` and the
-HTML's at `:116`. Dropping `refused` loses nothing the reader cannot see: the Status column six lines below
-names every section's real outcome, one row each. Nor does it trade an accurate label for a vague one.
+HTML's at `:116`. Dropping `refused` loses nothing the reader cannot see: the Status column of the
+Sections table below names every section's real outcome, one row each. Nor does it trade an accurate label for a vague one.
 `steps_skipped` counts **skipped, refused and failed** alike, so `skipped/refused` was already incomplete.
 Whether the underlying label should name all three is row 10's question, not this surface's - finding
 **F-6**.
@@ -186,7 +187,7 @@ Whether the underlying label should name all three is row 10's question, not thi
 '| Drive | Free before | Free after | Size |'
 ```
 **Change:** two labels, to the HTML's wording at `:125`. `Free before` keeps the console's own noun in the
-head position - `Show-DriveTable` prints `DRIVE SIZE USED FREE USE%` at `log.ps1:68` - and it reads as
+head position - `Show-DriveTable` prints `DRIVE SIZE USED FREE USE%` at `lib/log.ps1:68` - and it reads as
 English, which `Before free` does not. **Column order is left alone on purpose**. The HTML shows `Size`
 second and the Markdown shows it fourth. Moving it here would also require reordering the data row at
 `:58`, so a half-applied slot would print headers over the wrong cells. That is finding **F-1**, with the
@@ -209,9 +210,13 @@ says `Section`. `steps` stays the JSON key, which no reader sees.
 **Change:** the last label. This goes beyond the two places row 15 named, and it is the same rule: `Freed`
 is the past tense of the verb the glossary bans for space, and C-075 already moved `runner.ps1:130` from
 `this section freed` to `this section reclaimed`. The console's own column header for this quantity is
-`RECLAIMED`, one function above in this file at `:17`. On a dry-run report the column holds estimates
+`RECLAIMED`, two functions above in this file at `:17` (`ConvertTo-HtmlText` sits between at `:34`), and it
+heads the per-report total rather than the per-section figure. On a dry-run report the column holds estimates
 under a header reading `Reclaimed` - exactly as true as `Freed` is today, no worse, with the `Status` cell
-immediately to its left reading `dry-run` on every row. The product already answered this at `:25`, where
+immediately to its left reading `dry-run` on every row **that ran**. That qualifier matters and the first
+draft of this sentence lacked it: an admin section without elevation, or a developer section with developer
+mode off, is written `skipped` on a dry-run too (`runner.ps1:97-110`, which carry no `DryRun` guard), and a
+section that throws is `failed` (`:118`). The product already answered this at `:25`, where
 the console keeps the `RECLAIMED` header and marks the cell as a dry figure; mirroring that into the export
 cells is a code change and is not ordered here. **Flagged for the owner's veto**, since it widens the brief
 by one label in each output.
@@ -245,8 +250,9 @@ $headline = 'Would reclaim (est.)'
 **Change:** the whole label, to the string S-011 and the console both ship. `dry-run` is dropped from it,
 and that was the argument worth having: this is the biggest number in the document, and naming the mode
 beside it is a real safeguard. Three things already carry that safeguard in the same document - `Would` and
-`(est.)` in the label itself, `Dry-run` in the Run block eight lines below, and a `dry-run` badge on every
-row of the Sections table. Nothing is lost, and one number now reads the same in the console, the Markdown
+`(est.)` in the label itself, `Dry-run` in the Run block directly below the totals card, and a `dry-run`
+badge on every row of the Sections table **that ran** (the same qualifier as S-017: a skipped or failed
+section keeps its own status word even on a dry-run). Nothing is lost, and one number now reads the same in the console, the Markdown
 and the HTML. The alternative - `Would reclaim (dry-run estimate)`, keeping the verb and the parenthetical -
 is **flagged for the owner's veto**; it is one edit either way.
 
@@ -388,7 +394,13 @@ together in one commit; applying either alone prints headers over the wrong cell
 **F-2 - one kind of fact answers three ways**. In the Markdown, `Dry-run` reads `yes` or `no` (from `$dry`
 at `:41-42`) while `Elevated` and `Developer mode` read `True` or `False` straight from the JSON. In the
 HTML, all three read `True` or `False`. So the same question is answered two ways inside one document and a
-third way across the pair. The direction is not in doubt - a report a person reads should answer `yes` or
+third way across the pair. **And there is a fourth rendering, missed when this finding was written:**
+`developer_mode` can be `$null` (`lib/log.ps1:103-104`) - on a run that never resolved it, the cell renders
+blank rather than `True`, `False`, `yes` or `no`. A blank cell in a report is the one value a reader cannot
+interpret at all. 🔴 That null is now much rarer than it was: `--scan` used to leave developer mode
+unresolved on every run, and since the `-ReadOnly` fix it resolves from the flag or the saved answer. It is
+still reachable when neither exists, which is correct - "not decided yet" is the truth there - so the export
+needs a word for it rather than an empty cell. The direction is not in doubt - a report a person reads should answer `yes` or
 `no` - but it needs the `$dry` pattern extended to two more Markdown fields and introduced into three HTML
 value cells. Recommended, not ordered.
 
@@ -406,16 +418,22 @@ than the words, and the words are what row 15 governs.
 means calling `Format-Duration` in both, which is a code change.
 
 **F-6 - `steps_skipped` counts skipped, refused and failed**. `runner.ps1:189` counts every step whose
-status is not `ran` or `dry-run`. So the console's `Sections run / skipped:` and the Markdown's
+status is not `ran` or `dry-run` - but that is the **console's** counter. The JSON field the exports actually
+read is written at `lib/log.ps1:101-102` and emitted at `:128`, by the same rule. So the console's `Sections run / skipped:` and the Markdown's
 `skipped/refused` are each incomplete in their own way. S-013 aligns to the console because row 15 says the
 number keeps the console's vocabulary; whether that label should name all three outcomes is row 10's
 decision, recorded here so it is not lost.
 
-**F-7 - two line numbers in `cli-strings.md` do not match the file**. Its NEEDS DECISION 2 and C-117 cite
-`reports.ps1:104` and `:75` for the two `Would free` strings. Measured on disk today they are at **`:51`**
-(Markdown) and **`:74`** (HTML); line 104 is a stylesheet rule and line 75 initialises the rows variable. An
-applier following those references would patch neither string. Reported, not edited. That draft is another
-agent's file.
+**F-7 - two line numbers in `cli-strings.md` do not match the file, and half of it is already fixed**.
+C-117 has since been corrected in place (`cli-strings.md:1080` now reads `:51` Markdown, `:74` HTML, "two,
+not a fourth"). The stale citations survive at exactly two lines, both in that file's back matter:
+**`:1806`** and **`:1834`**, which still cite `reports.ps1:104` and `:75`. Measured on disk today the strings
+are at **`:51`** (Markdown) and **`:74`** (HTML); line 104 is a stylesheet rule and line 75 initialises the
+rows variable, so an applier following those references would patch neither string. Two more for that file's
+owner while we are here: `:1830-1840` still presents NEEDS DECISION 2 as open with options (a) to (c) and
+says "C-117 and C-085 are held on this", contradicting `:1078` where it is answered; and `:1068`/`:1832` cite
+`modules/reports.ps1:44-134` when the HTML function ends at `:133`. Reported, not edited - that draft is
+another agent's file.
 
 ---
 
@@ -433,16 +451,25 @@ table rows and headings removed, split on `(?<=[.!?])\s+`, a word counted as `[A
 On that basis - 230 sentences, mean 14.0 words, standard deviation 10.5, **burstiness 0.75** against the
 fingerprint's floor of 0.45. Shortest sentence: **2 words**. Longest: **42 words**, twice, and neither is a
 sentence. One is the header's field list; the other is S-030's `Was:` fragment, which the split rule glues
-to the `Change:` line after it because a code-quoted `Was:` has no full stop. The longest real sentence is
+to the `Change:` line after it because a code-quoted `Was:` has no full stop. 🔴 These burstiness figures are the line editor's re-measurement, not the fact-checker's - it had no execution tool in its dispatch and said so rather than approving them. The keeper re-runs the regex quoted above before finalize; that is a rule about re-measuring, not a doubt about the number. The longest real sentence is
 **41 words**, S-017's glossary reasoning. Both ends of the fingerprint's range appear many times over, and
 14 sentences sit above its 34-word ceiling, every one of them commentary rather than shipping prose. Zero
 em dashes and zero exclamation marks in the prose; the only exclamation mark in this file sits inside the
 split regex quoted above. Zero `not X but Y`. Shipping strings themselves run from one word (`Drives`,
-`Sections`) to six, the section-counts line.
+`Sections`) to nine - **S-033, the HTML footer**, rendering
+`Generated from report-....json by windowsweep v1.2.0 - Ahsan Mahmood` with `WS_AUTHOR` resolved
+(`lib/constants.ps1:11`). Counted instead by this file's own word regex, which drops a bare `-`, it is eight.
+Either way it is the maximum and the section-counts line is not: that reads `Sections run: 3 - skipped: 1`,
+six tokens by whitespace and five by the regex. 🔴 The two methods disagree by one on almost every string,
+which is exactly why the number is written here with its method beside it.
 
 **Length** - **33 slots** against the row's cap of *about thirty strings*. Inside it. **211 words ship in
-total** across the 33 fences. Counted with `str.split()` over the fence contents, each `$(...)`
-interpolation counting as one word. The visible text a reader sees in either export is far less, because
+total** across the 33 fences, counted with `str.split()` over the fence contents, S-009 counted as its two
+lines. 🔴 The method clause here used to add "each `$(...)` interpolation counting as one word", which
+contradicted its own figure: that rule yields **204**, because seven interpolations carry spaces (S-021 once,
+S-023 three times, S-033 three times). `str.split()` is kept and the clause removed, because it is an
+instrument anyone can re-run, where the manual rule invites a third figure - does `$Script:WS_NAME` count as
+one, and what about `v$(...)`? The visible text a reader sees in either export is far less, because
 most fences are a single label wrapped in PowerShell quoting. Ten slots change; twenty-three are kept
 unchanged and numbered so the applier can see they were considered.
 
@@ -454,13 +481,23 @@ outputs (S-017 and S-030), which widens the brief's *two places* to four.
 
 ### Verification run on this file
 
-**ASCII** - all 33 fences were extracted and scanned for bytes outside printable ASCII with
-`LC_ALL=C grep '[^ -~]'`; result reported with this draft. The gate that matters at build time is
-`release_helpers.ps1:67-73`, self-test check [4], which runs the same test per engine file and fails with
-`PowerShell 5.1 would misread this file`.
+**ASCII** - **PASS, and here is the result rather than a promise of one.** A scan for `[^ -]`
+across the whole file returns 44 hits, every one on a heading or a commentary line carrying `·`, `§` or the
+red-circle glyph. The 34 fence-content lines intersect that set nowhere, so no byte above 127 reaches an
+engine file. The same scan shows zero U+2014, and the only `!` in the file sits inside the split regex
+quoted above. The instrument was watched firing on the commentary's own marks, which is what makes the
+fences' zero mean something. The gate that matters at build time is `modules/release_helpers.ps1:67-73`,
+self-test check [4], which breaks on the first byte over 127 per engine file and fails with
+`PowerShell 5.1 would misread this file`. 🔴 That gate cannot run here - it runs against the engine
+file after this draft is applied, not against the draft.
 
 **`Was:` lines** - each was checked against `modules/reports.ps1` with a fixed-string search rather than by
-eye, per the brief's stop rule.
+eye, per the brief's stop rule. **Re-verified independently: 33 matched, 0 unmatched, and 0 of the 10 new
+strings already present** - so every change is real and none is a silent no-op. 🔴 One qualification the
+first pass overstated: `S-026` and `S-027` are elided with ` ... ` and can only be matched **piecewise**
+(three sub-fragments each, all on `:118` and `:119`). "Every one can be checked with a fixed-string search"
+is true of 31 and piecewise for 2. Both are kept slots, so no applier substitutes them. The ten changed
+`Was:` fragments each occur on exactly one line, so a fixed-string replace cannot hit twice.
 
 **Banned phrases** - the list at `aoneahsan-cccs-story-craft/assets/banned-phrases.txt` was matched against
 the commentary and against the fence contents separately. Zero hits in either. The fingerprint's own Never

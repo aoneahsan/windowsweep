@@ -168,6 +168,33 @@ async function startSentry(dsn: string): Promise<void> {
           delete frame.abs_path;
         }
       }
+      /* 🔴 BREADCRUMBS TOO, and leaving them out was a real leak rather than an
+         oversight worth one line. Sentry's default DOM integration serialises a
+         clicked element and appends selected attributes to the description -
+         `aria-label` is first in that list (`@sentry/core` `utils/browser.js`).
+         `Picker.tsx` labels every row `Choose {{path}}` with the real path,
+         because a screen reader needs to know which row it is on. So: click a
+         row, hit any error later in the same session, and the path left the
+         machine in a breadcrumb while `message`, `exception` and `frames` were
+         all scrubbed clean.
+
+         That falsifies the one promise this product repeats everywhere -
+         `consent.neverSent`, "Never a file path" - which ships on Home today and
+         is about to ship again on the marketing site's privacy page.
+
+         Scrubbing here rather than disabling DOM breadcrumbs keeps the click
+         trail, which is most of a crash report's value, and closes every
+         attribute route at once instead of the one element we happened to find.
+         Found by a fact-check reading the app against the installed SDK; nothing
+         had leaked yet only because no DSN is configured in this build. */
+      for (const crumb of event.breadcrumbs ?? []) {
+        if (crumb.message) crumb.message = scrub(crumb.message);
+        if (crumb.data) {
+          for (const [k, v] of Object.entries(crumb.data)) {
+            if (typeof v === 'string') crumb.data[k] = scrub(v);
+          }
+        }
+      }
       return event;
     },
   });

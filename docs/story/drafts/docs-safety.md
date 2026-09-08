@@ -47,6 +47,21 @@ engine's network refusal appeared nowhere on the surface the map routes it to. O
 rewritten **before** S-043 is added, because a page that calls the window "this engine" makes an
 engine-scoped network claim false in the same section that makes it.
 
+🔴 **Round 4 closes the last five findings of the fact-check, and it adds no slot.** The owner answered four
+of that report's nineteen and those were applied on 2026-09-08; five were left. All five are the same defect
+wearing five costumes: **a claim that was true when it was written and that the engine has since moved out
+from under**, or that was written from memory of the source rather than from the source. S-005 listed the
+refusals in an order the code does not run and was missing the one the 1.2.0 window added. S-018 explained
+an eighth developer section that no longer carries the flag. S-040 sent a reader to `--scan` for an answer
+`--scan` never resolves. S-025 promised a per-path log for the operation that logs per folder. S-012 named
+two protected categories the constant does not contain. Each is corrected against a `file:line` re-read this
+round, and the five slots are S-005, S-012, S-018, S-025 and S-040.
+
+**Two slots move because S-005 moves, and neither is a sixth finding.** Renumbering the refusal list breaks
+every ordinal pointing at it: S-006 said *steps 1-4* and *step 5*, S-042 said *the five guards above*. Both
+are corrected to match, changing numbers and no facts. Nothing else in either fence is touched, **S-042 still
+precedes S-043**, and no slot is renumbered, reordered or withdrawn.
+
 ---
 
 ## §A `docs/safety-model.md`
@@ -107,13 +122,16 @@ and the registry flags section 13 sets and clears around `cleanmgr`. Those are t
 sentence now claims what is true and complete about **your** data, and S-006 names the two commands that
 reach the tool's own folder.
 
-### S-005 · safety-model.md:11-20 · the five guards · 🔴 REPLACES that whole region
+### S-005 · safety-model.md:11-20 · the refusals, in the order they run · 🔴 REPLACES that whole region
 ```
 1. paths with `..` segments, UNC paths and drive roots;
 2. fifteen declared roots: Windows, System32, SysWOW64, both Program Files folders, ProgramData, `C:\Users` with its Default and Public profiles, your profile root, its AppData folder and the Roaming, Local and LocalLow folders inside it;
 3. 66 protected subtrees, 50 path patterns and 13 file names - the lists below;
-4. any path that does not lie strictly inside the target root the calling section declared;
-5. the tool's own data folder.
+4. the tool's own data folder;
+5. any path you excluded yourself;
+6. any path that does not lie strictly inside the target root the calling section declared.
+
+Refusal 5 is the one you set. `--exclude-path P` names a tree, every section refuses it, and each refusal is logged as `excluded: <path>` and listed in the `--json` summary's `excluded[]`.
 ```
 **Was (live, `:11-20`):** 1. paths with `..` segments, UNC paths, drive roots; 2. every drive root, plus
 Windows, `System32`, `SysWOW64`, Program Files, Program Files (x86), ProgramData, `C:\Users`,
@@ -146,11 +164,34 @@ remains is strictly inside. It was right the first time.
 
 **Copy pass (2026-09-08):** `AppData` loses its backticks in item 2. Every other plain folder name in that item is bare (Windows, System32, ProgramData, Roaming, Local, LocalLow), S-032 writes AppData bare, and the live documentation never codes it; only `C:\Users`, a path with a separator, keeps its code formatting. No path changed.
 
+🔴 **Round 4 — the list was not in the order it claims, and it was one refusal short.** S-004's lead-in says
+*"It refuses, in order"*, and every version of this slot through round 3 then listed the tool's own data
+folder last. It is not last. It is checked inside `Get-ProtectionReason` at `lib/safety.ps1:137-139`, and the
+declared-root check the list called guard 4 runs afterwards, back in `Remove-PathSafe` at `:228-229`. So the
+old numbering had the fourth and fifth refusals the wrong way round against the code it describes. The list
+is now in run order and reads 1, 2, 3, own-data, exclusion, declared root.
+
+**And the sixth refusal was on no page at all.** `--exclude-path` opened in the 1.2.0 engine window and is
+enforced at `lib/safety.ps1:141-150`, the last check in the same function, so a path you name is refused in
+every section rather than in one. Read it in the order the code runs it: an excluded path that is also
+protected reports the protected reason, because the protection is tested first and is the claim no flag can
+lift. The live page carries a whole section on the flag at `:35-49`; what the guard list owed the reader was
+the count. Five was wrong. Six is what the function performs.
+
+**The one sentence after the list is deliberate and is not a duplicate of that section.** A reader counting
+refusals needs to know what the fifth one *is* without leaving the list, and the two facts they will look for
+afterwards are where it shows up: `excluded: <path>` in the log (`lib/safety.ps1:214`) and `excluded[]` in the
+JSON summary (`modules/runner.ps1:222`). Both are named. The rest stays where it already lives.
+
+⚠️ **Two cross-references move with this, and neither is a new finding.** S-006 counted the liftable refusal
+as *step 5* and S-042 called the list *the five guards*; both are stale the moment the list is six. Each is
+corrected in its own slot below, changing an ordinal and a number and no fact.
+
 ### S-006 · safety-model.md:22-28 · the bypass claim · 🔴 REPLACES that whole region
 ```
-No flag bypasses steps 1-4. `--purge-all` changes how much of a cache goes, never where the tool may reach. Nor do `--select`, `--select-file`, `--permanent` or `--i-understand-deep`.
+No flag bypasses refusals 1, 2, 3, 5 or 6. `--purge-all` changes how much of a cache goes, never where the tool may reach. Nor do `--select`, `--select-file`, `--permanent` or `--i-understand-deep`.
 
-Step 5 has two doors and both are windowsweep's own housekeeping. `--prune-history N` deletes logs, reports and crash bundles older than N days, and `--uninstall-data` removes the whole folder after a confirmation `--yes` does not answer. Neither reaches anything outside `%USERPROFILE%\.windowsweep`.
+Refusal 4 has two doors and both are windowsweep's own housekeeping. `--prune-history N` deletes logs, reports and crash bundles older than N days, and `--uninstall-data` removes the whole folder after a confirmation `--yes` does not answer. Neither reaches anything outside `%USERPROFILE%\.windowsweep`.
 ```
 **Was (live, `:22-28`):** **No flag bypasses steps 1 to 4.** `--purge-all` changes how much of a cache goes,
 never where the tool may reach.
@@ -183,6 +224,25 @@ touching any path rule.
 **Line pass (2026-09-08):** the first paragraph's second sentence is split at *and neither does*, which hung
 off a two-clause sentence and could attach to either clause. It now reads *never where the tool may reach.
 Nor do ...*. Same four flags.
+
+**Round 4 — the two ordinals track S-005's corrected list, and nothing else in this slot moves.** *Steps 1-4*
+becomes *refusals 1, 2, 3, 5 or 6* and *Step 5* becomes *Refusal 4*, because the reordered list puts the
+tool's own data folder fourth and the declared-root check sixth. The claim underneath is the one this slot
+has made since round 1 and it is unchanged: `$Script:WS.AllowOwnData` gates exactly one check, the home
+directory at `lib/safety.ps1:137`, and `Remove-OldHistory` — which is `--prune-history` — sets it at
+`modules/release_helpers.ps1:425` and clears it again at `:436`. Nothing sets it for the other five. The new
+exclusion refusal has no bypass of any kind, which is why it sits inside the sentence naming what no flag
+reaches rather than beside the two doors. Four flags, two doors, one changed pair of numbers.
+
+⚠️ **Checking that claim turned up a wrinkle in the fence's second door, and it is reported rather than
+rewritten.** `--uninstall-data` is `Remove-ToolData`, and it never calls `Remove-PathSafe`: it deletes the
+home folder directly with `[IO.Directory]::Delete` at `modules/release_helpers.ps1:417`, after the
+confirmation the fence describes. So it does not pass *through* refusal 4 the way `--prune-history` does. It
+goes around the chokepoint entirely. The owner's first decision on 2026-09-08 already recorded that same
+call site when it scoped S-004, so the surface is consistent and no reader is misled about what the flag
+removes. Whether *doors* is the right word for one flag lifting a guard and another skipping the function is
+a line-level call on wording, not a fact, and it is not one of this round's five. **Filed for the line
+pass.**
 
 ### S-007 · safety-model.md:29 · the declared exceptions · lifted out of guard 3 by S-005
 ```
@@ -241,7 +301,7 @@ profile data.
 
 ### S-042 · safety-model.md:34 · NEW · the desktop window's **deletions** run the same guards
 ```
-The desktop window runs the bundled `windowsweep.ps1` with `--json --no-color` and reimplements no deletion of its own, so every path it removes passes through `Remove-PathSafe` and the five guards above. What the window itself sends and stores is a separate question, answered on [Desktop app](./desktop.md).
+The desktop window runs the bundled `windowsweep.ps1` with `--json --no-color` and reimplements no deletion of its own, so every path it removes passes through `Remove-PathSafe` and the six refusals above. What the window itself sends and stores is a separate question, answered on [Desktop app](./desktop.md).
 ```
 **Was:** (new — the page reads as though the command line is the only caller.)
 
@@ -278,6 +338,11 @@ same reason and in this same product. The strong claim is kept where it is earne
 🔴 **This slot is applied before S-043.** S-043 states that the engine makes no network call. In a section
 that calls the window "this engine", that sentence is false about the window in the same breath, so the
 order is not a preference.
+
+**Round 4 — one number, carried from S-005.** *The five guards above* becomes *the six refusals above*,
+because the list this sentence points back at gained the `--exclude-path` refusal and now runs to six. The
+noun changes with it, to the word S-005 and S-006 both now use. No claim about the window moved, and this
+slot still precedes S-043.
 
 ### S-008 · safety-model.md:35 · Never touched · heading
 ```
@@ -328,7 +393,7 @@ find.
 
 ### S-012 · safety-model.md:47-49 · the `--list-targets` sentence
 ```
-`windowsweep --list-targets` prints every path each section can reach on your machine, then the 66 protected subtrees one per line. Four summary lines close it: the declared roots, the browser and editor patterns, the store-app patterns and the protected file names.
+`windowsweep --list-targets` prints every path each section can reach on your machine, then the 66 protected subtrees one per line. Four summary lines close it: the declared roots; browser profile data; editor user data, UWP LocalState and toolchains; and the protected file names alongside Prefetch, `Windows\Installer` and WinSxS.
 ```
 **Was (live, `:47-49`):** `windowsweep --list-targets` prints every path the tool can reach, grouped by
 section, then four summary lines for the protected list as the running script sees it. The 66 subtrees are
@@ -346,6 +411,25 @@ The replacement puts the three outputs in the order the command produces them an
 summary lines covers, so a reader can tell at a glance which parts they can audit line by line and which they
 must read the source for. The interim wording's own point — counted rather than listed — survives as the
 distinction between "one per line" and "four summary lines covering".
+
+🔴 **Round 4 — the four summary lines were named from memory, and two of the four names were of things the
+constant does not contain.** They are one array, `WS_PROTECT_CATEGORIES` at `lib/constants.ps1:33-38`, read
+by `Show-TargetList` at `lib/scan.ps1:108` and published unchanged in `--list --json` at
+`modules/runner.ps1:234`. Round 3 called them *the declared roots, the browser and editor patterns, the
+store-app patterns and the protected file names*. Read against the array, only the first is right.
+
+Line 2 is **browser profile data** and nothing else — Local Storage, IndexedDB, cookies, history, bookmarks,
+extensions, PWA CacheStorage. Editors are not on it. Line 3 is where the editors are, and it carries two more
+things the old summary dropped: **UWP LocalState and the toolchains**. Toolchains matter most, because
+"toolchains stay protected in every mode" is the promise S-033 makes on the other page and this is where the
+command prints it. Calling line 3 *the store-app patterns* named one of its three parts and hid the other
+two. And line 4 is not only file names: `NTUSER.DAT`, `UsrClass.dat` and the hibernation, page and swap files
+sit beside **Prefetch, `Windows\Installer` and WinSxS**, which are folders. The same three close S-011's
+Windows row, so the two now agree.
+
+**The replacement is punctuated with semicolons rather than commas** because two of the four entries carry
+commas of their own, and a comma list of four items where two contain commas is a list a reader cannot
+count. Four things, four semicolons, in the array's order.
 
 ### S-014 · safety-model.md:51 · What it deletes, by tier · heading
 ```
@@ -441,7 +525,7 @@ the developer-mode page, which is S-030.
 ```
 ## Developer mode
 
-The saved developer answer changes seven sections, in two ways. Sections 1, 2, 3 and 5 prune by the idle gate when the answer is yes and clear their caches completely when it is no. Sections 4, 17 and 20 are skipped when the answer is no. An eighth, section 22, carries the flag in the catalogue and exports it in `--list --json`, but behaves the same either way. Nothing in either mode changes what the tool may reach; it changes whether a cache is pruned or cleared, and whether a section runs at all. See [Developer mode](./developer-mode.md).
+The saved developer answer changes seven sections, in two ways. Sections 1, 2, 3 and 5 prune by the idle gate when the answer is yes and clear their caches completely when it is no. Sections 4, 17 and 20 are skipped when the answer is no. Nothing in either mode changes what the tool may reach; it changes whether a cache is pruned or cleared, and whether a section runs at all. See [Developer mode](./developer-mode.md).
 ```
 **Was:** Sections 1-5 behave differently depending on the saved developer answer - see
 [Developer mode](./developer-mode.md). Nothing in that mode changes what the tool may reach; it changes
@@ -465,6 +549,19 @@ machine-readable catalogue would otherwise find an unexplained mismatch in the o
 
 **Line pass (2026-09-08):** *skipped entirely* becomes *skipped*, which is the verb S-034 and S-040 already
 use for the same three sections. One word.
+
+🔴 **Round 4 — the eighth section is gone from the catalogue, so its sentence goes from the page.** Round 2
+measured `Dev = $true` on eight sections and reconciled the mismatch by keeping 22 in a sentence of its own,
+because `--list --json` was then exporting `dev: true` for a section whose behaviour never branched. The
+1.2.0 engine window closed that gap at the source instead. `lib/constants.ps1:68` now declares section 22
+with `Dev = $false`, and `Get-CatalogueJson` at `modules/runner.ps1:230` builds each row's `dev` field
+straight from that field, so the catalogue exports `dev: false` for it. There is no mismatch left to explain.
+
+**Seven and seven.** `grep -c` over the catalogue returns seven sections carrying `Dev = $true` — 1, 2, 3, 4,
+5, 17 and 20, at `lib/constants.ps1:47-51`, `:63` and `:66` — and `modules/runner.ps1:105` skips three of
+them. Those are the same seven the opening sentence counts and the same seven the two lists under it name,
+so the count, the catalogue and the two pages finally agree on one number. The four-plus-three sentences are
+untouched; only the sentence that existed to reconcile a number that no longer exists comes out.
 
 ### S-019 · safety-model.md:82-85 · the batch policy table
 ```
@@ -591,7 +688,7 @@ decision somebody makes rather than one nobody saw.
 ```
 ## No undo
 
-Two sections have no undo of any kind. Section 11 empties the Recycle Bin and section 16 clears the Windows event logs. What they remove does not come back, and nothing is copied first, so an unattended run refuses both without `--i-understand-deep`. `--permanent` puts the Recycle Bin tier in the same position: sections 18, 19 and 23 then delete outright instead of recycling. The rebuild tiers are one-way as well. There is no copy, no staging folder and no restore command: a cache is gone the moment it is removed, and it comes back only because the tool that made it makes it again. Personal files go to the Recycle Bin by default precisely because they have no regenerating source. The session log records every path removed with its size, and the JSON report records every section's outcome. Both are a record of what happened, not a way to reverse it.
+Two sections have no undo of any kind. Section 11 empties the Recycle Bin and section 16 clears the Windows event logs. What they remove does not come back, and nothing is copied first, so an unattended run refuses both without `--i-understand-deep`. `--permanent` puts the Recycle Bin tier in the same position: sections 18, 19 and 23 then delete outright instead of recycling. The rebuild tiers are one-way as well. There is no copy, no staging folder and no restore command: a cache is gone the moment it is removed, and it comes back only because the tool that made it makes it again. Personal files go to the Recycle Bin by default precisely because they have no regenerating source. The session log records three shapes rather than one. `Remove-PathSafe` and `Send-ToRecycleBin` write a line per path with its size. A prune writes one line per folder instead: how many files went, how many bytes, and from where. An external command writes the command and the code it exited with. The JSON report records every section's outcome. All of it is a record of what happened, not a way to reverse it.
 ```
 **Was:** Deletion is one-way for the rebuild tiers. The session log records every path removed with its size,
 and the JSON report records every section's outcome. Personal files go to the Recycle Bin by default
@@ -630,6 +727,30 @@ becomes *what they remove does not come back*, because the nearest antecedent of
 sections, and a section is not what fails to come back. The order holds, most loss first. Nothing was added
 in front of the opening sentence, and the 34-word sentence later in the paragraph is left whole because it
 is the paragraph's long beat against the short ones.
+
+🔴 **Round 4 — the log sentence was false for the commonest operation on the page.** *"The session log
+records every path removed with its size"* is true of the chokepoint and untrue of a prune, and a prune is
+the commonest thing the tool does: 47 declared targets across sections 1, 2, 8, 10 and 12 carry
+`-Mode prune`, and `lib/actions.ps1:142` routes every one of them to `Remove-StaleFiles`. Counted from the
+`New-Target` rows, not estimated. `Remove-StaleFiles` deletes each file at
+`lib/safety.ps1:307` inside a loop that writes nothing at all, then writes **one line for the whole folder**
+at `:323`: how many files went, how many bytes, the idle window, the folder, and how many were skipped. A
+reader who prunes 4,000 files and opens the log looking for 4,000 lines finds one. That is a promise about
+evidence, made on the page whose argument is that its evidence can be checked.
+
+**Three shapes, because the code has three.** Per-path lines are real and they are the chokepoint's:
+`removed file:` with its bytes at `lib/safety.ps1:258`, `removed dir:` with the folder's total at `:253`, and
+`recycled:` with its bytes at `:456` in `Send-ToRecycleBin`. A prune is the second shape, `:323`. An external
+command is the third — `Invoke-External` logs the command as run at `:475` and its exit code at `:490` —
+which is how the seven sections that hand their work to `docker`, `cleanmgr`, `Dism`, `powercfg`, `wevtutil`,
+`diskpart` or `Clear-RecycleBin` appear at all. Naming the two functions ties the first shape back to S-004,
+which names the same two as the chokepoint. Same two names, same claim, twice.
+
+**The paragraph's order is untouched.** All of this sits in the closing beat about the record, where the old
+sentence already sat; nothing was moved in front of the two permanent sections, and *"most loss first"*
+still describes the paragraph. *Both* became *All of it* only because the log now takes four sentences
+rather than sharing one with the report, so a two-item pronoun no longer had two visible items in front of
+it.
 
 ### S-026 · safety-model.md:122-129 · inspect before you trust
 ```
@@ -693,6 +814,12 @@ passes it to this same engine" is true of every path and false of none. The narr
 The seven-section count is S-018's, reconciled in the same round: eight sections carry `Dev = $true`,
 section 22 behaves identically either way, and seven change behaviour. This page's list of four plus three
 is that seven, so the two pages no longer disagree.
+
+**Round 4 — that reconciliation is now history, and the fence never depended on it.** Section 22 was
+redeclared `Dev = $false` at `lib/constants.ps1:68` during the 1.2.0 engine window, so the eight in the
+paragraph above is the old catalogue's count and seven is now both numbers at once: seven carry the flag and
+seven change behaviour. This slot's shipping sentence has said four plus three since round 2 and is
+unchanged. S-018 carries the correction on the other page.
 
 ### S-029 · developer-mode.md:12-13 · developer mode on · the idle gate
 ```
@@ -857,7 +984,7 @@ destructive flag needs to know that the safe path out of it still does something
 
 ### S-040 · developer-mode.md:38 · MOVED · what `--not-developer` costs you
 ```
-Sections 4, 17 and 20 are skipped when the developer answer is no. A run that suddenly reclaims less than the last one is worth checking against `windowsweep --scan`, which reports the answer currently in force.
+Sections 4, 17 and 20 are skipped when the developer answer is no. A run that suddenly reclaims less than the last one is worth checking against `windowsweep --only 0 --yes`. It runs the health report, deletes nothing, and prints the answer beside where it came from. `--scan` will not tell you: it never resolves the answer, so section 0 prints `Developer mode: not decided yet` whatever is saved.
 ```
 **Was:** (new — this sentence is not on the page.)
 
@@ -874,6 +1001,28 @@ and `--scan` runs section 0, so the sentence hands the reader the command that a
 **One correction with the move:** the first draft read "Section 17 and the AVD section", naming two of the
 three. `runner.ps1:105` skips 4, 17 and 20, which is what S-034 says four bullets earlier, so the list is now
 the same list in both places.
+
+🔴 **Round 4 — the command this sentence handed the reader does not answer the question it was handed for.**
+The reasoning above is sound and its conclusion was wrong: `--scan` does run section 0, at
+`modules/runner.ps1:169`, and section 0 does print `Developer mode:` at `modules/health.ps1:53`. What it
+prints there is `not decided yet`. `Resolve-DeveloperMode` runs only for the walkthrough, the menu, `--all`
+and `--only` — `windowsweep.ps1:300` names those four modes and no others — so in scan mode `$ws.Developer`
+is still the `$null` it was initialised to at `windowsweep.ps1:19`, and `modules/health.ps1:51-52` prints the
+answer only when that field is set. Saved answer, `--developer`, `--not-developer`: none of them reaches the
+line, because none of them is read. The reader is sent to a command that always shows the same thing.
+
+**`--only 0 --yes` is the command that works**, and it is the smallest one that does. `only` is in the list
+at `:300`, so the answer resolves; section 0 is `Tier = 'report'` and `Batch = 'safe'` at
+`lib/constants.ps1:46`, so it runs unattended and removes nothing; and `modules/health.ps1:52` then prints
+`on (config)`, `off (config)`, `on (flag)` or `on (default)` — the answer and its source in one line, which
+is the second half of what a reader chasing a shrunken run needs. `--yes` is there to keep the run from
+stopping to ask the developer question on a machine that has never answered it.
+
+**The second sentence is a disclosure and it earns its place.** `--scan` is this page's read-only command; it
+is in S-026's fence and in S-039's, so it is the first thing a reader reaches for. Sending them to a
+different command without saying why leaves them free to check with `--scan` anyway and read
+`not decided yet` as *the answer is unset*, which is a wrong conclusion the page would have caused. Naming
+what `--scan` declines to resolve costs one sentence and closes that path.
 
 ### S-036 · developer-mode.md:39-40 · the non-interactive default
 ```
@@ -1274,3 +1423,142 @@ section 22, carries the flag" is stale since section 22 became `Dev = $false`; S
 S-025's "the session log records every path removed" is false for prune-mode targets, which log one line per
 root; and S-012's four-line summary of the protected categories does not match what `WS_PROTECT_CATEGORIES`
 actually contains.
+
+## Round 4, 2026-09-08 - the fact-check's last five
+
+All five are applied. Each was re-read against the tree this round rather than taken from the report, and
+every `file:line` below is one this round opened. Five slots changed and two more moved with them. No slot
+was renumbered, reordered or withdrawn, and **S-042 still precedes S-043**.
+
+**1 · S-005 — the refusals are now in the order the code runs them, and there are six.** Verified in
+`Get-ProtectionReason` (`lib/safety.ps1:111-151`): the tool's own data folder is tested at `:137-139` and
+the `--exclude-path` list at `:141-150`, both inside that function, while the declared-root check the list
+called guard 4 runs afterwards in `Remove-PathSafe` at `:228-229`. So the old fourth and fifth were the
+wrong way round. The list reads 1, 2, 3, own-data, exclusion, declared root, and one sentence after it says
+what the exclusion is: a tree you named, refused in every section, logged `excluded: <path>`
+(`lib/safety.ps1:214`) and carried in the `--json` summary's `excluded[]` (`modules/runner.ps1:222`).
+
+**2 · S-018 — the eighth section is gone.** `lib/constants.ps1:68` declares section 22 with `Dev = $false`,
+and `Get-CatalogueJson` at `modules/runner.ps1:230` builds each row's `dev` field from that field, so
+`--list --json` exports `dev: false`. `grep -c` returns **seven** sections with `Dev = $true` — 1, 2, 3, 4,
+5, 17, 20 — and `modules/runner.ps1:105` skips three of them. The sentence explaining an eighth is removed
+and the paragraph's own count now matches the catalogue. Seven, twice.
+
+**3 · S-040 — the command changed, because the old one cannot answer.** `Resolve-DeveloperMode` runs for
+four modes only (`windowsweep.ps1:300`: walkthrough, menu, all, only), so under `--scan` the field stays the
+`$null` it was set to at `windowsweep.ps1:19` and `modules/health.ps1:51-53` prints
+`Developer mode: not decided yet`. `--scan` does run section 0 (`modules/runner.ps1:169`); it just never
+resolves the answer. The fence now sends the reader to `windowsweep --only 0 --yes`, which resolves it, runs
+a `Tier = 'report'` section that removes nothing (`lib/constants.ps1:46`), and prints the answer with its
+source. A second sentence says what `--scan` shows instead, because `--scan` is the command this page has
+already put in two fences and a reader will try it first.
+
+**4 · S-025 — the log claim is now true of the operation it was falsest about.** `Remove-StaleFiles` deletes
+each file at `lib/safety.ps1:307` in a loop that logs nothing, then writes one line per root at `:323`.
+Forty-seven declared targets across sections 1, 2, 8, 10 and 12 carry `-Mode prune` and reach it through
+`lib/actions.ps1:142`. The sentence now names three shapes: per-path lines from the chokepoint (`:253`,
+`:258`, `:456`), one line per folder from a prune (`:323`), and the command with its exit code from
+`Invoke-External` (`:475`, `:490`). The paragraph's order did not move, and the two permanent sections still
+open it.
+
+**5 · S-012 — the four summary lines are described from the constant.** `WS_PROTECT_CATEGORIES` at
+`lib/constants.ps1:33-38` is read by `Show-TargetList` at `lib/scan.ps1:108` and published at
+`modules/runner.ps1:234`. Its second entry is browser profile data alone, its third is editor user data with
+UWP LocalState **and toolchains**, and its fourth carries Prefetch, `Windows\Installer` and WinSxS beside the
+file names. Round 3 called entries 2 and 3 *"the browser and editor patterns"* and *"the store-app
+patterns"*, which describes neither. Four semicolons now, because two entries contain commas.
+
+**The two that moved with S-005, both ordinals and neither a finding.** S-006's *steps 1-4* became
+*refusals 1, 2, 3, 5 or 6* and its *Step 5* became *Refusal 4*; S-042's *the five guards above* became *the
+six refusals above*. No fact in either fence changed. Checking S-006's claim did surface one wrinkle, filed
+rather than fixed: `--uninstall-data` is `Remove-ToolData` and it never calls the chokepoint at all, deleting
+the home folder directly at `modules/release_helpers.ps1:417`, so *doors* describes two different mechanisms.
+That is a wording call for the line pass. The owner's first decision on 2026-09-08 already named that same
+call site, so the surface stays consistent either way.
+
+**Shipping word count: 2,682 words** — §A 1,900 · §B 782, across 45 fences. Method, unchanged from the
+self-check: `wc -w` over the fenced blocks only, attributed to §A or §B by the heading above each fence, with
+all commentary, `Was:` lines, the preamble, the slot table and every ledger excluded. Verified as 45 fences
+in 45 distinct slots, none outside one.
+
+**Round 4's delta is +101 and reproduces per slot:** S-005 81 → 118, S-006 67 → 72, S-012 41 → 48, S-018 101
+→ 79, S-025 154 → 195, S-040 36 → 69, S-042 45 → 45. Every other fence is byte-identical. S-018 is the only
+one that shrinks, which is the finding.
+
+⚠️ **One inherited total does not reconcile, and it is reported rather than rationalised.** The same method
+over the last committed version of this file returns **2,581**, where the copy pass recorded 2,411 for that
+same file — a gap of 170 across 45 fences. It is not the delta that is in doubt: subtracting round 4's seven
+fence changes from 2,682 returns 2,581 exactly. Three exclusion rules were tested against the gap and none
+produces 2,411 — dropping the two command fences gives 2,513, dropping heading lines inside fences gives
+2,535, dropping both gives 2,467. No scope rule was ever written down that would produce 2,411, so it is
+recorded as unexplained. This is the second such figure on this file; round 3 recorded 2,088 the same way.
+**The delta is the number to trust here**, because it reproduces fence by fence.
+
+🔴 **The line-reference drift has grown and the copy pass's figure is stale.** That pass recorded §A
+references from S-008 onward as sixteen lines low. The live `docs/safety-model.md` has since gained
+`## What the tools it runs do on their own` at `:51-65`, from the owner's fifth decision, so the offset is
+now **thirty-two**: S-008 is at live `:67`, S-012 at `:79-81`, S-018 at `:104-108`, S-025 at `:148-152` and
+S-027 at `:163`. Two anchors are unaffected and were re-checked: **S-005's `:11-20` is still exact**, and
+S-042's `:34` still lands before the exclusions section. §B has no drift at all — every
+`developer-mode.md` reference matches the live file. **Slot headers were left at their original numbers on
+purpose**, because renumbering them is churn the applier does not need; anchor on the `Was:` text.
+
+**Every `Was:` line touched this round was re-read against the live files, character for character.** S-005
+against `safety-model.md:11-20`, S-012 against `:79-81`, S-018 against `:104-108`, S-025 against `:148-152`,
+S-040 against `developer-mode.md:38` and the rows above it. All five match. The copy pass's two known `Was:`
+hazards are unchanged and still open: S-027's footer would move the date backward, and S-034's `Was:` records
+only its third bullet.
+
+🔴 **The lint hook has read none of this surface's shipping copy, and its verdict concerns the commentary
+alone.** `posttooluse-story-lint.sh:61` strips every fenced block before it counts anything, and on this
+slot-shaped surface every shipping string is inside a fence. So the 2,682 words a reader will see were not
+scored, in either direction. **This round did not read a hook result as evidence about the copy.** For the
+record, the file arrived at round 4 with the hook already failing its range check on six windows, all of them
+commentary; round 4's additions and short-sentence pass are measured below. On this surface the fact-checker
+and a human reader remain the only real gate.
+
+### SELF-CHECK — round 4
+
+**Palette.** P and R only, as row 4 requires, and no W. All five changes are P: each replaces a remembered
+claim with a counted or ordered one — six refusals in run order, seven sections, one command that resolves,
+three log shapes, four categories read off the constant. R gains three specific refusals and loses none:
+S-005's *any path you excluded yourself*, S-006's *no flag bypasses refusals 1, 2, 3, 5 or 6*, and S-040's
+*`--scan` will not tell you*. That last one is the round's only new disclosure, and it is a refusal rather
+than a hedge. Nothing was softened to carry it.
+
+**Rhythm.** Measured over the seven changed fences with the hook's own splitter, not estimated. Shortest
+units this round are S-005's two new list items at five words each, *"the tool's own data folder;"* and
+*"any path you excluded yourself;"*; the shortest new full sentence is *"Refusal 5 is the one you set."* at
+seven. **The longest sentence this round adds is 22 words**, in S-040, after its middle sentence was split
+at the command; before the split it ran 34, which is the fingerprint's ceiling rather than over it, and a
+sentence sitting on a limit in a fence about a command that does not work is the wrong place to spend one.
+Per changed fence: **S-005** 8 · 34 · 13 · 5 · 5 · 15 · 7 · 24, where the 34 is item 2 and is round 3's
+wording untouched. **S-006** 10 · 14 · 7 · 11 · 25 · 6. **S-012** 20 · 29. **S-018** 10 · 25 · 12 · 26 · 5.
+**S-040** 13 · 22 · 16 · 22. **S-042** 31 · 17, unchanged. S-025's six new sentences run 9 · 11 · 18 · 12 ·
+7 · 15 against the paragraph's existing 8 · 14 · 20 · 21 · 7 · 34, so the short beats sit after the loss is
+already stated rather than in front of it. The two sentences over the 34-word ceiling are still S-021 at 39
+and S-022 at 35, both inherited and both on the keep list. This round added none.
+
+**Length.** Row 4's cap is "as long as the subject needs", so nothing is over cap. Net **+101** shipping
+words for five corrections, one of which removes 22.
+
+**Unsure spots — three, each handed to whoever owns it, none guessed.** They are listed below and none is a
+`NEEDS DECISION`.
+
+1. **For the fact-checker, on S-025's first log shape.** *"`Remove-PathSafe` and `Send-ToRecycleBin` write a
+   line per path with its size"* is exact for a removed file (`lib/safety.ps1:258`), a removed folder with
+   its total (`:253`) and a recycled item (`:456`). A removed **link** is the one sub-case with no size: its
+   line reads `removed link (not followed): <path>` at `:248`, because a link's bytes are counted as zero.
+   The claim is not false about links, since the line does name the path; it simply carries no number there.
+   Naming that in the fence would cost a clause on a sentence whose job is the prune correction. **Flagged
+   rather than hedged**, which is what S-043 did with the same kind of nuance.
+2. **For the line pass, on S-006.** *Doors* now covers `--prune-history`, which lifts refusal 4 through
+   `AllowOwnData`, and `--uninstall-data`, which skips the chokepoint entirely at
+   `modules/release_helpers.ps1:417`. Two mechanisms, one word. The fence's claim about what each command
+   removes is true of both, so this is wording rather than fact.
+3. **Carried, unchanged: the five the earlier ledgers left open.** The long-path fixture's 445 characters,
+   S-043's `Start-Process <url>` nuance, the AVD download wording, the `--help` text short by one section,
+   and the two facts about section 20 left out of S-045. Round 4 touched none of them and closes none.
+
+**NEEDS DECISION: none.** Every one of the five was answerable from the source, and each was answered there.
+Nothing on this surface is waiting on the owner.

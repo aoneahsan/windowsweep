@@ -118,3 +118,44 @@ working tree and a fresh `git clone` on the second machine now agree byte for by
 hash, `cmp` or extracted-tarball diff disagrees only for reasons that have to do with the change being
 examined. `git status --short` is empty afterwards - the repository content never moved, only the working
 tree - and the engine still passes `node bin\windowsweep.js --self-test --no-color` at **151/151, exit 0**.
+
+---
+
+### DONE-008 - a docs page can end below its own footer, and nothing notices
+
+🔴 **This happened twice in one session, to two different pages, both times by me.** Every page under
+`docs/` ends with a `Last Updated:` line. Appending a new section with `content + new_section` puts the new
+text **after** that footer, so the page's last words become the new section and the footer sits in the
+middle of it. Neither time did any gate see it: the markdown is valid, the build is green, the mirror is
+byte-identical to a source that is itself wrong.
+
+It was caught both times by a person reading the page - the humor-emotion reviewer on `safety-model.md`, and
+the line editor on `reports-and-logs.md`. That is the whole problem: the only instrument that catches it is
+someone reading to the bottom.
+
+It matters more than a layout nit on a surface whose closing image is load-bearing. `safety-model.md` is
+designed to end on *"Inspect before you trust"*, and its own opening sentence promises the page *"ends on
+what has no undo"* - a promise the appended section silently broke.
+
+**What to do:** add a gate. For every file under `docs/`, assert that the LAST non-blank line matches
+`^Last Updated: \d{4}-\d{2}-\d{2}$`. Watch it fail on a plant - append a heading below a footer, see it go
+red, remove it. Wire it into the same place the other doc gates run.
+
+**Do not** fix it by removing the footers, and do not rely on remembering: the failure mode is that the
+person appending is concentrating on the new text, which is exactly when a convention at the other end of
+the file is invisible.
+
+A number is never reused: the next task is TASK-009.
+
+**Closed 2026-09-08, in the same session that filed it.** The gate is an inline PowerShell step in
+`.github/workflows/ci.yml` rather than a script file, because the house rule bans standalone scripts. It
+walks `docs/*.md`, skips the five records that legitimately have no footer, and fails if any page's last
+non-blank line does not match `^Last Updated: \d{4}-\d{2}-\d{2}`.
+
+**Watched failing on a plant, and the plant was the real defect**: a section appended below `faq.md`'s
+footer. Red - *"faq.md ends on: This is the exact defect the gate exists to catch"* - then green once
+removed.
+
+Running it against the tree first found a third case the reviewers had not: `docs/desktop.md` had **no**
+footer at all. It arrived from the story pipeline with its own front matter and never gained one, so it was
+not the append defect but the same inconsistency from the other end. It has one now.

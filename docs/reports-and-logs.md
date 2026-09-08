@@ -61,15 +61,13 @@ tool is needed for any conversion.
 Logs and reports contain paths from your machine and a snapshot of cache sizes. Nothing is transmitted:
 windowsweep makes no network calls. Review a bundle before attaching it to an issue.
 
-Last Updated: 2026-09-03
-
 ## `targets[]` in a `--json` scan
 
 `--scan --json` fills `targets[]` with one entry per resolved path:
 
 ```json
 {"section":1,"label":"npm cache (_cacache)",
- "path":"C:\\\\Users\\\\you\\\\AppData\\\\Local\\\\npm-cache\\\\_cacache",
+ "path":"C:\\Users\\you\\AppData\\Local\\npm-cache\\_cacache",
  "bytes":1580019157,"newest_write_utc":"2026-09-07T18:52:39Z"}
 ```
 
@@ -80,3 +78,5 @@ a zero date that would sort as though it were real.
 
 It costs no extra work: under `--json` the size pass already enumerates every file, so the timestamp comes
 out of that same enumeration. A human `--scan` keeps the faster path and does not compute it.
+
+Last Updated: 2026-09-08

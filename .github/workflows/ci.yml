@@ -49,6 +49,27 @@ jobs:
           Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
           Invoke-ScriptAnalyzer -Path . -Recurse -Settings PSScriptAnalyzerSettings.psd1 -EnableExit
 
+      - name: Every docs page ends on its own footer
+        shell: pwsh
+        run: |
+          # A page that gains a section by appending ends BELOW its Last Updated line, and
+          # nothing else notices: the markdown is valid, the build is green, and the mirror is
+          # byte-identical to a source that is itself wrong. It happened twice on 2026-09-08,
+          # to safety-model.md and reports-and-logs.md, and both times a person reading to the
+          # bottom was the only instrument that caught it. PENDING-TASKS DONE-008.
+          $skip = @('MANUAL-TASKS.md','DONE-TASKS.md','PACKAGES.md','PROJECT-CONTEXT.md','README.md')
+          $bad = @()
+          foreach ($f in Get-ChildItem docs/*.md) {
+            if ($skip -contains $f.Name) { continue }
+            $lines = @(Get-Content $f.FullName | Where-Object { $_.Trim() -ne '' })
+            if ($lines.Count -eq 0) { continue }
+            if ($lines[-1] -notmatch '^Last Updated: \d{4}-\d{2}-\d{2}') {
+              $bad += "$($f.Name) ends on: $($lines[-1])"
+            }
+          }
+          if ($bad.Count -gt 0) { $bad | ForEach-Object { Write-Host $_ }; throw "$($bad.Count) docs page(s) do not end on their footer" }
+          Write-Host 'every docs page ends on its Last Updated footer'
+
       - name: Tarball contents are the allowlist only
         shell: pwsh
         run: |

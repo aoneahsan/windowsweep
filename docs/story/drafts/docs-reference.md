@@ -83,7 +83,7 @@ field without relying on it.
 
 ### S-004 · sections.md:36-38 · the note under the table
 ```
-"Developer-gated" means the idle gate applies when the developer answer is yes and the cache is cleared completely otherwise. "Developer-only" means the section does not run at all when the answer is no ([Developer mode](./developer-mode.md)). Every section honours `--dry-run`. Tier `recycle` means the item goes to the Recycle Bin (`--list` shows `recycle`).
+"Developer-gated" means the idle gate applies when the developer answer is yes; otherwise the cache is cleared completely. "Developer-only" means the section does not run at all when the answer is no ([Developer mode](./developer-mode.md)). Every section honours `--dry-run`. Tier `recycle` means the item goes to the Recycle Bin (`--list` shows `recycle`).
 ```
 **Was:** "Developer-gated" means the idle gate applies in developer mode and the cache is cleared completely
 otherwise ([Developer mode](./developer-mode.md)). Every section honours `--dry-run`. Tier `recycle` means
@@ -122,7 +122,7 @@ sentence is the reason the note is a guarantee rather than a promise about this 
 ```
 Gradle caches (idle files), wrapper distributions (keep newest), daemon logs older than 7 days and `.tmp`; Maven's local repository (idle files); Android SDK manager cache, build cache and download leftovers; Unity's cache; JetBrains IDE caches per IDE version, removed only when that whole version has been idle for the window; .NET telemetry storage. Idle Gradle daemons are stopped first so their files are not locked.
 
-Not touched: the Android SDK itself, the JetBrains Toolbox, and your Gradle and Maven configuration. Only two paths inside the SDK are reachable at all - `.temp` and `.downloadIntermediates`, the SDK manager's download scratch.
+Not touched: the Android SDK itself, the JetBrains Toolbox, and your Gradle and Maven configuration. Only two paths inside the SDK are reachable at all: `.temp` and `.downloadIntermediates`, the SDK manager's download scratch.
 ```
 **Was:** the same first sentence, with "(the Toolbox itself is protected)" inline after the JetBrains clause,
 and no closing note.
@@ -136,7 +136,7 @@ two paths on the safety page; a reader who meets them here can find out why ther
 ```
 Cypress versions, Playwright browsers (per browser family), Playwright-Go and Puppeteer downloads. The newest build of each family is always kept while the idle gate is running; a missing build is re-downloaded by the next `npx cypress install` or `npx playwright install`.
 
-Not touched: anything under a Chrome-for-Testing folder, which the pattern list refuses by name so a real browser install is never mistaken for a test runner's copy.
+Not touched: anything under a Chrome-for-Testing folder. The pattern list refuses it by name, so a real browser install is never mistaken for a test runner's copy.
 ```
 **Was:** Cypress versions, Playwright browsers (per browser family), Playwright-Go and Puppeteer downloads.
 The newest build of each family is always kept; older builds go once idle for the window. A missing build is
@@ -151,7 +151,7 @@ it. And the row-5 line names a refusal a reader of this entry would not guess: `
 ```
 Each `.avd` folder plus its `.ini` is one unit, removed only when nothing inside it changed for the window (booting an emulator updates its files). Skipped while an emulator is running, and skipped entirely when the developer answer is no. Not part of `--all`; run it with `--only 4 --yes` or from the walkthrough.
 
-Not touched: the Android SDK, the emulator binaries, and any AVD that changed inside the window. An image removed here is recreated in Android Studio, which takes minutes rather than seconds - that is why this section is its own tier.
+Not touched: the Android SDK, the emulator binaries, and any AVD that changed inside the window. An image removed here is recreated in Android Studio, which takes minutes rather than seconds. That is why this section is its own tier.
 ```
 **Was:** ... Skipped while an emulator is running. Not part of `--all`; run it with `--only 4 --yes` or from
 the walkthrough.
@@ -164,7 +164,7 @@ consults before naming section 4 in `--only`.
 ```
 Needs the Docker CLI and a running daemon. Developer mode: `docker image prune -f` (dangling layers), `docker builder prune --filter until=<N days>`, `docker image prune -a --filter until=<N days>` (images no container uses, older than the window). Developer mode off or `--purge-all`: `docker system prune -a -f`.
 
-Not touched: volumes, in any mode. Containers are not removed either, and the disk image itself only shrinks through section 20.
+Not touched: volumes, in any mode. Containers are not removed either, and the disk image itself shrinks only through section 20.
 ```
 **Was:** ... Developer mode off or `--purge-all`: `docker system prune -a -f`. Volumes are never touched. The
 disk image itself only shrinks through section 20.
@@ -178,7 +178,7 @@ first thing a Docker user checks, so it goes first and gets its own sentence.
 ```
 VS Code, VS Code Insiders, VSCodium, Cursor and Windsurf: `Cache`, `CachedData`, `CachedProfilesData`, `CachedExtensionVSIXs`, `Code Cache`, `GPUCache`, Dawn caches, service-worker caches, crash reports, logs older than 7 days, `workspaceStorage` entries whose folder no longer exists, and extension folders the editor's own `extensions.json` does not reference (uninstalled or superseded versions). Visual Studio's ComponentModelCache, designer shadow cache, AppInsights and SQM logs. A running editor is left alone except for its VSIX cache and old logs.
 
-Not touched: `settings.json`, `keybindings.json`, snippets, `globalStorage`, local `History`, and any extension folder `extensions.json` still references. Each of those is in the pattern list, and every folder this section resolves must also pass the known-cache-leaf allowlist in `lib/actions.ps1` before it can be removed.
+Not touched: `settings.json`, `keybindings.json`, snippets, `globalStorage`, local `History`, and any extension folder `extensions.json` still references. Each of those is in the pattern list. Every folder this section resolves must also pass the known-cache-leaf allowlist in `lib/actions.ps1` before it can be removed.
 ```
 **Was:** the same first three sentences, with no closing note.
 
@@ -191,7 +191,7 @@ alongside Chromium, Firefox and Electron.
 ```
 Chrome (stable, Beta, Dev, Canary), Edge, Brave, Vivaldi, Opera and Opera GX, Chromium, Arc, Firefox, LibreWolf and Waterfox. For every profile: `Cache`, `Code Cache`, `GPUCache`, shader and Dawn caches, the service-worker script cache; at the root: shader caches, Crashpad reports, SwReporter. A browser that is open is skipped entirely.
 
-Not touched: profile folders as a whole, Local Storage, Session Storage, IndexedDB, cookies, `Login Data`, `Web Data`, bookmarks, history, sessions, extensions, extension state, Sync Data, preferences, and the PWA CacheStorage. On Firefox: `places.sqlite`, `key4.db`, `logins.json`, `cookies.sqlite`, `prefs.js` and the profile `storage` folder. Signing out of nothing is the test this section is written to pass.
+Not touched: profile folders as a whole, Local Storage, Session Storage, IndexedDB, cookies, `Login Data`, `Web Data`, bookmarks, history, sessions, extensions, extension state, Sync Data, preferences, and the PWA CacheStorage. On Firefox: `places.sqlite`, `key4.db`, `logins.json`, `cookies.sqlite`, `prefs.js` and the profile `storage` folder. Nothing here signs you out. That is the test this section is written to pass.
 ```
 **Was:** the same first three sentences, plus "Profile data is never touched." after the second one.
 
@@ -217,7 +217,7 @@ most regret, and because the honest answer is about folder layout rather than a 
 ```
 INetCache, the user Windows Error Reporting queue, crash dumps older than 7 days, DirectX / NVIDIA / AMD / Intel shader caches, the Remote Desktop bitmap cache, OneDrive logs, Store-app `TempState`, `AC\Temp` and `AC\INetCache`, themes' cached files, PowerShell startup profile data, CLR usage logs, Explorer's thumbcache/iconcache leftovers and startup logs, the schema cache, per-user Delivery Optimization cache, the certificate URL cache, diagnostics results older than 30 days, and `ipconfig /flushdns`.
 
-Not touched: your OneDrive folder, which is a protected pattern - only OneDrive's log files are in scope. Nor Prefetch, which Windows uses to start programs faster; clearing it makes the machine slower for a while and frees little.
+Not touched: your OneDrive folder, which is a protected pattern; only OneDrive's log files are in scope. Nor Prefetch, which Windows uses to start programs faster; clearing it makes the machine slower for a while and frees little.
 ```
 **Was:** the same list, with no closing note.
 
@@ -230,7 +230,7 @@ might expect this section to clear, and the reason it does not is a fact about W
 ```
 `%TEMP%`, `%TMP%`, `AppData\Local\Temp` and `AppData\LocalLow\Temp`: files idle `--temp-days`+ days (default 3), then empty folders. Files a running program holds open are skipped.
 
-Not touched: anything written in the last three days, which is the default window and is deliberately short here rather than 100 - a temp file is temporary by contract.
+Not touched: anything written in the last three days, which is the default window. Three days rather than 100 is deliberate: a temp file is temporary by contract.
 ```
 **Was:** the same first two sentences, with no closing note.
 
@@ -270,7 +270,7 @@ evaluating reader than the reassurance above it.
 ```
 Runs `cleanmgr /sagerun:77` with a curated handler list of 25: Temporary Files, Temporary Setup Files, Internet Cache Files, Setup Log Files, Windows Upgrade Log Files, Update Cleanup, Delivery Optimization Files, Thumbnail Cache, D3D Shader Cache, System error memory dump files, System error minidump files, Windows Error Reporting Files, Previous Installations, Old ChkDsk Files, Content Indexer Cleaner, Device Driver Packages, Downloaded Program Files, Offline Pages Files, Diagnostic Data Viewer database files, BranchCache, RetailDemo Offline Content, Windows Defender, Active Setup Temp Folders, Temporary Sync Files, Upgrade Discarded Files. The registry flags are removed afterwards. Cleanmgr cannot report a size in advance, so the dry-run lists the handlers only.
 
-Not touched, and never enabled in the list: DownloadsFolder, Recycle Bin, User file versions, Windows ESD installation files, Language Pack. Those five are the handlers a Disk Cleanup run is most often blamed for, and windowsweep does not switch them on.
+Not touched, and never enabled in the list: DownloadsFolder, Recycle Bin, User file versions, Windows ESD installation files, Language Pack. Those five are the handlers a Disk Cleanup run is most often blamed for. windowsweep does not switch them on.
 ```
 **Was:** the same paragraph with a 22-phrase list that omitted `Internet Cache Files`, wrote "Setup and
 Upgrade logs" for two handlers and "System error memory dumps and minidumps" for two more, put the "never
@@ -318,7 +318,7 @@ about this section wants it.
 ```
 `wevtutil cl` for every log. Permanent loss of troubleshooting history. Deep-gated.
 
-Not touched: the log configuration, the channels themselves and their sizes. What goes is the recorded events, and nothing puts them back - which is why this and section 11 are the only two sections in the permanent tier.
+Not touched: the log configuration, the channels themselves and their sizes. Only the recorded events go, and nothing puts them back. That is why this and section 11 are the only two sections in the permanent tier.
 ```
 **Was:** `wevtutil cl` for every log. Permanent loss of troubleshooting history. Deep-gated.
 
@@ -345,11 +345,11 @@ words rather than in `--yes` terms. The developer-answer sentence matches S-002'
 ```
 `.crdownload`, `.part`, `.partial`, `.fdmdownload`, `.opdownload`, `.!ut`, `.aria2`, `.download`, `.bc!` and `.tmp` files in Downloads (4 levels deep). You select; selected files go to the Recycle Bin. Interactive only; `--yes` never selects and never answers the final question.
 
-Not touched: finished downloads, anything outside your Downloads folder, and anything more than four levels below it. A `.tmp` file that is part of a download in progress will be listed - close the download manager first, or leave it unticked.
+Not touched: finished downloads, and anything outside your Downloads folder or more than four levels below it. A `.tmp` file from a download still in progress will be listed. Close the download manager first, or leave it unticked.
 ```
 **Was:** the same first paragraph with no closing note.
 
-**Change:** the row-5 line, and its last sentence is the entry's honest limitation. This section matches by
+**Change:** the row-5 line, and its last two sentences are the entry's honest limitation. This section matches by
 extension rather than by asking a download manager what is live, so a resumable download's scratch file can
 appear in the list. Saying so is the difference between a reader losing a partial download and a reader
 leaving a box unticked.
@@ -358,7 +358,7 @@ leaving a box unticked.
 ```
 Files of `--large-file-mb`+ MB (default 100) in Downloads that nothing touched for the window, largest first. You select; selected files go to the Recycle Bin (`--permanent` deletes instead). Interactive only; `--yes` never selects and never answers the final question.
 
-Not touched: anything outside Downloads, anything under the size threshold, and anything touched inside the window. It never looks at Documents, Desktop or Pictures, which are protected subtrees the chokepoint refuses whatever this section declares.
+Not touched: anything outside Downloads, under the size threshold, or touched inside the window. It never looks at Documents, Desktop or Pictures: those are protected subtrees, and the chokepoint refuses them whatever this section declares.
 ```
 **Was:** the same first paragraph with no closing note.
 
@@ -370,7 +370,7 @@ protected-subtree refusal rather than a scoping decision this section makes.
 ```
 Lists Docker Desktop and WSL `.vhdx` files, stops Docker Desktop and runs `wsl --shutdown`, then `diskpart` `compact vdisk` on the ones you select. A virtual disk grows with writes but never shrinks on its own; compaction returns the free space to Windows. Restart Docker Desktop afterwards. Deep-gated, and skipped entirely when the developer answer is no.
 
-Not touched: the contents of the disk image. Compaction reclaims blocks the filesystem inside the image has already released, so no container, image, volume or WSL file is removed. What it does cost is every running container and distro, because both are stopped first.
+Not touched: the contents of the disk image. Compaction reclaims blocks the filesystem inside the image has already released, so no container, image, volume or WSL file is removed. The cost is that every running container and distro is stopped first.
 ```
 **Was:** ... Restart Docker Desktop afterwards. Deep-gated.
 
@@ -470,7 +470,7 @@ Last Updated: 2026-09-05
 
 ### S-034 · cli-reference.md:7-9 · the lead-in
 ```
-The flags are identical through `npx windowsweep`, the global `windowsweep` command, `windowsweep.cmd` and `powershell -File windowsweep.ps1`. With no mode, the guided walkthrough starts. Modes marked with a fire mark delete files, subject to every guard in the [safety model](./safety-model.md). Everything unmarked reads and reports; two of them, `--scan` and `--list-targets`, are the ones to run first.
+The flags are identical through `npx windowsweep`, the global `windowsweep` command, `windowsweep.cmd` and `powershell -File windowsweep.ps1`. With no mode, the guided walkthrough starts. Modes marked with a fire mark delete files, subject to every guard in the [safety model](./safety-model.md). Everything unmarked reads and reports; `--scan` and `--list-targets` are the two to run first.
 ```
 **Was:** ... Modes marked with a fire mark delete files (subject to every guard in the
 [safety model](./safety-model.md)).
@@ -490,7 +490,7 @@ Options may also be written `--days=30`.
 
 ### S-036 · cli-reference.md:70 · NEW · what the option table does not cover
 ```
-No flag on this page changes which paths windowsweep may reach. `--purge-all` changes how much of a cache goes, `--select` and `--select-file` name items inside what a section already offers, `--permanent` swaps the Recycle Bin for a delete, and `--i-understand-deep` unlocks four sections. The protected lists are unaffected by all of them.
+No flag on this page changes which paths windowsweep may reach. `--purge-all` changes how much of a cache goes, `--select` and `--select-file` name items inside what a section already offers, `--permanent` swaps the Recycle Bin for a delete, and `--i-understand-deep` unlocks four sections. None of them touches the protected lists.
 ```
 **Was:** (new — the table is followed directly by the scripting section.)
 
@@ -559,7 +559,7 @@ carries one line.
 ```
 `--list --json` prints the section catalogue instead of the human table - `sections[]` (`id`, `key`, `title`, `tier`, `admin`, `batch`, `dev`), `safe_batch`, `safe_batch_admin`, `profiles`, `walkthrough` and `walkthrough_admin` - so a front end reads the catalogue rather than hard-coding it.
 
-`dev` is the catalogue's developer flag, set on sections 1, 2, 3, 4, 5, 17, 20 and 22. It describes the catalogue rather than promising one behaviour: sections 1, 2, 3 and 5 prune by the idle gate instead of clearing when the answer is yes, and sections 4, 17 and 20 do not run at all when it is no.
+`dev` is the catalogue's developer flag, set on sections 1, 2, 3, 4, 5, 17, 20 and 22. It describes the catalogue rather than promising one behaviour. Sections 1, 2, 3 and 5 prune by the idle gate instead of clearing when the answer is yes; sections 4, 17 and 20 do not run at all when it is no.
 ```
 **Was:** the first paragraph only.
 
@@ -573,7 +573,7 @@ what its flag does is a catalogue defect reported separately rather than describ
 ```
 ## Exit codes
 
-Every mode returns one of these five. Nothing else is ever returned, and a non-zero code never means a partial deletion was left in an unknown state: a failed section is recorded in the report with `status: failed` and the rest of the run continues.
+Every mode returns one of these five. Nothing else is ever returned. A non-zero code never means a deletion was left half-finished: a failed section is recorded in the report with `status: failed`, and the rest of the run continues.
 ```
 **Was:** ## Exit codes (heading only, table follows).
 
@@ -584,7 +584,7 @@ Verified against `modules/runner.ps1`, which adds a report step per section and 
 
 ### S-045 · cli-reference.md:150 · Config file · the lead-in
 ```
-`%USERPROFILE%\.windowsweep\config.json` stores defaults; flags always win. Nothing else is stored there: no history, no path list and no record of what a run removed. Those live in the logs and reports.
+`%USERPROFILE%\.windowsweep\config.json` stores defaults; flags always win. Nothing else is kept there: no history, no path list and no record of what a run removed. Those live in the logs and reports.
 ```
 **Was:** `~\.windowsweep\config.json` stores defaults; flags always win.
 
@@ -655,7 +655,7 @@ Notes:
 - `dev` includes section 4 (AVDs), which needs `--yes` in batch mode and honours the per-AVD idle gate. Both 4 and 17 are skipped entirely when the developer answer is no.
 - `system` needs an elevated console; without `--elevate` every section in it is skipped with the command to run.
 - No profile includes 11, 15, 16 or 20. Those are deep sections and need `--i-understand-deep` explicitly, named in `--only`.
-- No profile reaches sections 18, 19 or 23. Personal files are never selected by a profile.
+- No profile reaches sections 18, 19 or 23. A profile never selects personal files.
 ```
 **Was:** the same four notes; the second ended at "per-AVD idle gate", and the fifth did not exist.
 
@@ -711,7 +711,7 @@ elevation was the only thing missing.
 
 ### S-056 · admin-and-elevation.md:20 · NEW · what elevation does not change
 ```
-Elevation changes which sections can run. It changes nothing about what any of them may reach: the protected lists, the declared roots and the chokepoint are identical in an elevated run, which is why an elevated run still refuses `C:\Windows\System32`.
+Elevation changes which sections can run. It changes nothing about what any of them may reach. The protected lists, the declared roots and the chokepoint are the same either way, which is why an elevated run still refuses `C:\Windows\System32`.
 ```
 **Was:** (new — the `--elevate` heading follows the batch note directly.)
 
@@ -792,7 +792,7 @@ Last Updated: 2026-09-05
 
 ### S-064 · reports-and-logs.md:3-4 · the opener
 ```
-Every run writes under `%USERPROFILE%\.windowsweep`, never inside the npm cache or the repository, so history survives every `npx` invocation. Every run means every run: `--scan` and `--dry-run` write here too, and `--no-report` and `--cleanup-logs` are the two flags that stop them.
+Every run writes under `%USERPROFILE%\.windowsweep`, never inside the npm cache or the repository, so history survives every `npx` invocation. Every run means every run: `--scan` and `--dry-run` write here too. `--no-report` skips the report, and `--cleanup-logs` deletes the log at exit.
 ```
 **Was:** Every run writes under `%USERPROFILE%\.windowsweep`, never inside the npm cache or the repository,
 so history survives every `npx` invocation.
@@ -833,7 +833,7 @@ to treat it as a safety net, and the honest answer is that it is evidence rather
 
 ### S-068 · reports-and-logs.md:45 · NEW · what the report does not contain
 ```
-The report contains paths, sizes, section outcomes and the machine's own name, version and user. It contains no file contents, no registry values and no list of what a section decided to keep. A skipped path appears in the log with its reason; a kept cache entry does not appear anywhere.
+The report contains paths, sizes, section outcomes and the machine's own name, version and user. No file contents, no registry values, no list of what a section decided to keep. A skipped path appears in the log with its reason; a kept cache entry appears nowhere.
 ```
 **Was:** (new — the exports section follows the status note.)
 
@@ -853,19 +853,19 @@ same eight actions in the same order.
 
 ### S-070 · reports-and-logs.md:56-57 · the HTML export
 ```
-The HTML export is a single self-contained file that follows the system light/dark preference. No external tool is needed for any conversion, and the file references nothing on the network.
+The HTML export is a single self-contained file that follows the system light/dark preference. No external tool is needed for any conversion. The file references nothing on the network.
 ```
 **Was:** The HTML export is a single self-contained file that follows the system light/dark preference. No
 external tool is needed for any conversion.
 
-**Change:** a clause added. "Self-contained" is a word people use loosely about an HTML file that still pulls
+**Change:** a sentence added. "Self-contained" is a word people use loosely about an HTML file that still pulls
 a font or a stylesheet, and this one does not: `modules/reports.ps1` inlines its CSS, including the
 `prefers-color-scheme` block at line 96. On a product whose claim is that it makes no network calls, an
 export that would make one when opened is worth ruling out explicitly.
 
 ### S-071 · reports-and-logs.md:61-62 · Privacy
 ```
-Logs and reports contain paths from your machine and a snapshot of cache sizes. Nothing is transmitted: the command-line tool makes no network calls of its own. Review a bundle before attaching it to an issue - the paths in it include your user name and your project folders.
+Logs and reports contain paths from your machine and a snapshot of cache sizes. Nothing is transmitted: the command-line tool makes no network calls of its own. Review a bundle before attaching it to an issue: the paths in it include your user name and your project folders.
 ```
 **Was:** Logs and reports contain paths from your machine and a snapshot of cache sizes. Nothing is
 transmitted: windowsweep makes no network calls. Review a bundle before attaching it to an issue.

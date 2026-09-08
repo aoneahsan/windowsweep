@@ -156,6 +156,6 @@ In `--json` mode each section also brackets itself on **stderr** so a caller can
 | `tempDays` | 3 | Temp idle window |
 | `largeFileMb` | 100 | Section 19 minimum size |
 | `scanRoots` | `[]` | Section 17 roots |
-| `excludePaths` | `[]` | Section 17 exclusions |
+| `excludePaths` | `[]` | Trees to leave alone, in **every** section - the same reach as `--exclude-path` |
 
 Last Updated: 2026-09-03

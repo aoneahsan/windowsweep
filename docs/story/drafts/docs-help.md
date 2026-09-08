@@ -52,7 +52,7 @@ remembered.
 
 ### S-001 · troubleshooting.md:3 · NEW · the line above the table
 ```
-The left column is what you are looking at: a line windowsweep printed, a line PowerShell, npm or the shell printed, or an outcome with no message at all. Every row here belongs to the command-line tool. A problem that appears only in the desktop window is on [Desktop app](./desktop.md).
+The left column is what you are looking at: a line windowsweep printed, a line from PowerShell, npm or the shell, or an outcome with no message at all. Every row here belongs to the command-line tool. A problem that appears only in the desktop window is on [Desktop app](./desktop.md).
 ```
 **Was:** (new — the table follows the H1 directly.)
 
@@ -77,7 +77,7 @@ not first.
 
 ### S-002 · troubleshooting.md:6 · the refusal row
 ```
-| `REFUSE (inside protected: ...)` | The path resolves inside a protected folder, sometimes through a junction into your profile | Working as designed, and there is no flag for it. `--list-targets` prints the protected subtrees as the running script sees them |
+| `REFUSE (inside protected: ...)` | The path resolves inside a protected folder, sometimes through a junction into your profile | Working as designed. No flag overrides this refusal. `--list-targets` prints the protected subtrees as the running script sees them |
 ```
 **Was:** Fix: Working as designed. `--list-targets` shows the protected list; nothing bypasses it
 
@@ -100,7 +100,7 @@ next-steps fact, which is how a reader with three closed apps finds all three co
 
 ### S-004 · troubleshooting.md:8 · the elevation row
 ```
-| `section 12 needs Administrator rights - skipped.` | The console is not elevated | `windowsweep --only 12 --yes --elevate`, or the `system` profile with `--elevate`. That covers 12, 13 and 14; sections 15, 16 and 20 also need `--i-understand-deep` |
+| `section 12 needs Administrator rights - skipped.` | The console is not elevated | `windowsweep --only 12 --yes --elevate`, or the `system` profile with `--elevate`. The profile covers 12, 13 and 14; sections 15, 16 and 20 also need `--i-understand-deep` |
 ```
 **Was:** Symptom: `needs Administrator rights - skipped`; Fix: `windowsweep --only 12 --yes --elevate`, or
 run the profile `system` with `--elevate`
@@ -113,7 +113,7 @@ profile covers turns one command into a complete answer. The other three get the
 
 ### S-005 · troubleshooting.md:10 · the deep-section row
 ```
-| `section 11 is deep (irreversible or system-changing): refused in batch mode without --i-understand-deep.` | A deep section (11, 15, 16, 20) was named in `--only` or a profile. The gate is there because 11 empties the Recycle Bin and 16 clears the event logs, and neither can be undone | Read what the section does, then run it from the menu or add `--i-understand-deep` with `--yes` |
+| `section 11 is deep (irreversible or system-changing): refused in batch mode without --i-understand-deep.` | A deep section (11, 15, 16, 20) was named in `--only` or a profile. The gate is there because 11 empties the Recycle Bin and 16 clears the event logs. Neither can be undone | Read what the section does, then run it from the menu or add `--i-understand-deep` with `--yes` |
 ```
 **Was:** Symptom: `refused in batch mode without --i-understand-deep`; Fix: Add `--i-understand-deep` with
 `--yes`, or run it from the menu
@@ -129,7 +129,7 @@ cause, the exact command. The runnable thing goes last.
 
 ### S-006 · troubleshooting.md:11 · the interactive-section row
 ```
-| `section 17 is interactive-only: it needs a person at the keyboard, or a selection passed with --select / --select-file.` | Personal and project sections never run unattended | Run `windowsweep --only 17` from a console, or supply the choice in advance: `--dry-run --json` lists the candidates, then `--select-file picks.txt` acts on them |
+| `section 17 is interactive-only: it needs a person at the keyboard, or a selection passed with --select / --select-file.` | Personal and project sections never run unattended | Run `windowsweep --only 17` from a console, or pass a selection in advance: `--dry-run --json` lists the candidates, then `--select-file picks.txt` acts on them |
 ```
 **Was:** Symptom: `section 17 is interactive-only`; Fix: Run `windowsweep --only 17` from a console;
 `--dry-run` lists candidates
@@ -141,7 +141,7 @@ a cell.
 
 ### S-007 · troubleshooting.md:12 · the estimate row
 ```
-| Reclaimed less than the dry-run estimated | Files were created or locked between the two runs, or an app started in between | Re-run, and compare the log's `skip (locked)` lines. An estimate is what was there when the rehearsal ran, never a promise about the next run |
+| Reclaimed less than the dry-run estimated | Files were created or locked between the two runs, or an app started in between | Re-run, then compare the log's `skip (locked)` lines. An estimate is what was there when the rehearsal ran, never a promise about the next run |
 ```
 **Was:** Fix: Re-run; compare the log's `skip (locked)` lines
 
@@ -162,7 +162,7 @@ not know that will read the gap as a failure rather than as the product working.
 
 ### S-009 · troubleshooting.md:17 · the extension row
 ```
-| An editor extension folder was removed | The editor's `extensions.json` no longer referenced it (uninstalled or superseded) | Reinstall the extension from the editor. The tool never removes a folder that file still references, so a live extension is not what went |
+| An editor extension folder was removed | The editor's `extensions.json` no longer referenced it (uninstalled or superseded) | Reinstall the extension from the editor. The tool never removes a folder that file still references, so what went was not a live extension |
 ```
 **Was:** Fix: Reinstall the extension from the editor; the tool never removes a referenced folder
 
@@ -172,7 +172,7 @@ was live, and the answer is that it was not.
 
 ### S-010 · troubleshooting.md:18 · the kept-version row
 ```
-| Cypress or Playwright kept a version I expected to go | One file inside it was touched within the window, or it is the newest of its kind | Lower `--days`, or remove the version by hand. The newest build of each family is kept whenever the idle gate is running - `--purge-all` is what removes it |
+| Cypress or Playwright kept a version I expected to go | One file inside it was touched within the window, or it is the newest of its kind | Lower `--days`, or remove the version by hand. The idle gate keeps the newest build of each family; `--purge-all` is what removes it |
 ```
 **Was:** Fix: Lower `--days`, or remove the version by hand
 
@@ -193,7 +193,7 @@ clause settles it in the row where the question arises.
 
 ### S-012 · troubleshooting.md:23 · the closing line
 ```
-Every skipped or refused path is in the session log at `%USERPROFILE%\.windowsweep\logs\` with its reason. The log is a record of what happened, not a way to undo it. If your symptom is not in the table, that log is the place to look; `windowsweep --report-issue` opens a pre-filled GitHub issue after you confirm.
+Every skipped or refused path is in the session log at `%USERPROFILE%\.windowsweep\logs\` with its reason. The log records what happened; it undoes nothing. If your symptom is not in the table, start with that log. `windowsweep --report-issue` opens a pre-filled GitHub issue after you confirm.
 ```
 **Was:** Every skipped or refused path is in the session log at `~\.windowsweep\logs\` with its reason.
 
@@ -234,7 +234,7 @@ with what the live file actually says: S-017, S-022 and S-024.
 ### S-014 · faq.md:3-6 · will it delete my files
 ```
 **Will it delete my code, documents or photos?**
-No. Documents, Pictures, Desktop, Music, Videos and cloud-sync folders are protected subtrees the chokepoint refuses outright, and no flag changes that. The only project-adjacent target is section 17, which lists build artefacts (`node_modules`, `dist`, ...) in idle projects and removes nothing you did not select.
+No. Documents, Pictures, Desktop, Music, Videos and cloud-sync folders are protected subtrees the chokepoint refuses outright. No flag changes that. The only project-adjacent target is section 17, which lists build artefacts (`node_modules`, `dist`, ...) in idle projects and removes nothing you did not select.
 ```
 **Was:** ... are protected roots the chokepoint refuses outright. The only project-adjacent target is section
 17 ...
@@ -247,7 +247,7 @@ the answer is one clause long.
 ### S-015 · faq.md:8-10 · does it phone home
 ```
 **Does it phone home?**
-No. The command-line tool makes no network calls at all. Self-test check [9] greps every source file for seven call shapes - `Invoke-WebRequest`, `Invoke-RestMethod`, `Net.WebClient`, `HttpClient`, `Sockets.TcpClient`, `curl.exe` and `wget` - and fails the run if it finds one. `--report-issue` opens your browser at a pre-filled GitHub page after you confirm, and you submit it yourself. The desktop window is a different answer: it sends usage and crash reports to improve the product, and there is no switch. What it sends is listed on the [Desktop app](./desktop.md) page.
+No. The command-line tool makes no network calls at all. Self-test check [9] greps every source file for seven call shapes (`Invoke-WebRequest`, `Invoke-RestMethod`, `Net.WebClient`, `HttpClient`, `Sockets.TcpClient`, `curl.exe` and `wget`) and fails the run if it finds one. `--report-issue` opens your browser at a pre-filled GitHub page after you confirm, and you submit it yourself. The desktop window is a different answer: it sends usage and crash reports to improve the product, and there is no switch. What it sends is listed on the [Desktop app](./desktop.md) page.
 ```
 **Was:** No. The source contains no HTTP or socket call; the self-test greps for them. `--report-issue`
 opens your browser at a pre-filled GitHub page after you confirm, and you submit it yourself.
@@ -300,7 +300,7 @@ more.
 ### S-018 · faq.md:17-20 · why keep 100 days
 ```
 **Why does it keep files used in the last 100 days?**
-Because a developer's caches are what make the next install or build fast. The idle gate keeps recent work; `--days`, `--purge-all` and answering the developer question with no are the knobs when you want more. See [Developer mode](./developer-mode.md).
+Because a developer's caches make the next install or build fast. The idle gate keeps recent work. To reclaim more, lower `--days`, use `--purge-all`, or answer no to the developer question. See [Developer mode](./developer-mode.md).
 ```
 **Was:** ... `--days`, `--purge-all` and developer mode off are the knobs when you want more.
 
@@ -310,7 +310,7 @@ does rather than a state they must find. The glossary calls it the developer ans
 ### S-016 · after faq.md:20 · NEW · deleting node_modules · **moved: it now follows S-018**
 ```
 **How do I delete `node_modules` from old projects?**
-Section 17. It lists build artefacts in projects you have not touched for 100 days and removes only the ones you select. It never scans a whole drive - it looks in your project roots, which it auto-detects or which you name with `--scan-roots "P1;P2"`. Run `windowsweep --only 17` from a console, or `--only 17 --dry-run --json` to see the list without a prompt.
+Section 17. It lists build artefacts in projects you have not touched for 100 days and removes only the ones you select. It never scans a whole drive: it looks in your project roots, which it auto-detects or which you name with `--scan-roots "P1;P2"`. Run `windowsweep --only 17` from a console, or `--only 17 --dry-run --json` to see the list without a prompt.
 ```
 **Was:** (new.)
 
@@ -338,7 +338,7 @@ An open browser keeps its cache files locked and half-written. Close it and run 
 ### S-020 · faq.md:25-27 · why never Prefetch
 ```
 **Why never Prefetch?**
-Windows uses Prefetch to start programs faster and repopulates it if cleared, so clearing it makes the machine slower for a while and frees little. It is a protected subtree, so no flag reaches it.
+Windows uses Prefetch to start programs faster and rebuilds it if cleared, so clearing it makes the machine slower for a while and frees little. It is a protected subtree; no flag reaches it.
 ```
 **Was:** Windows uses Prefetch to start programs faster and repopulates it if cleared, so clearing it makes
 the machine slower for a while and frees almost nothing.
@@ -367,7 +367,7 @@ rhetorical.
 ### S-022 · faq.md:33-37 · is a weekly task safe
 ```
 **What does the weekly Scheduled Task actually run?**
-`--install-task` registers `--all --yes --quiet --no-color --notify`, weekly on Sundays at 03:00, as your user: the safe batch only, no admin sections, no personal files, no deep sections. It catches up if the PC was off, and it stops itself after three hours. Review the first run's report before scheduling. Install globally first (`npm install -g windowsweep`); from `npx` the installer refuses, because the task would point at a cache npm evicts.
+`--install-task` registers `--all --yes --quiet --no-color --notify`, weekly on Sundays at 03:00, as your user: the safe batch only, no admin sections, no personal files, no deep sections. It catches up if the PC was off and stops itself after three hours. Review the first run's report before scheduling. Install globally first (`npm install -g windowsweep`); from `npx` the installer refuses, because the task would point at a cache npm evicts.
 ```
 **Was (corrected 2026-09-07 - the live file had moved):** **Is a weekly Scheduled Task safe?** /
 `--install-task` schedules `--all --yes --quiet --no-color --notify`: the safe batch only, under your account,
@@ -471,7 +471,7 @@ without a trace of tone, which is correct: a reader reading it has been stuck fo
       "name": "Will it delete my code, documents or photos?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. Documents, Pictures, Desktop, Music, Videos and cloud-sync folders are protected subtrees the chokepoint refuses outright, and no flag changes that. The only project-adjacent target is section 17, which lists build artefacts (node_modules, dist, ...) in idle projects and removes nothing you did not select."
+        "text": "No. Documents, Pictures, Desktop, Music, Videos and cloud-sync folders are protected subtrees the chokepoint refuses outright. No flag changes that. The only project-adjacent target is section 17, which lists build artefacts (node_modules, dist, ...) in idle projects and removes nothing you did not select."
       }
     },
     {
@@ -479,7 +479,7 @@ without a trace of tone, which is correct: a reader reading it has been stuck fo
       "name": "Does it phone home?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. The command-line tool makes no network calls at all. Self-test check [9] greps every source file for seven call shapes - Invoke-WebRequest, Invoke-RestMethod, Net.WebClient, HttpClient, Sockets.TcpClient, curl.exe and wget - and fails the run if it finds one. --report-issue opens your browser at a pre-filled GitHub page after you confirm, and you submit it yourself. The desktop window is a different answer: it sends usage and crash reports to improve the product, and there is no switch. What it sends is listed on the Desktop app page."
+        "text": "No. The command-line tool makes no network calls at all. Self-test check [9] greps every source file for seven call shapes (Invoke-WebRequest, Invoke-RestMethod, Net.WebClient, HttpClient, Sockets.TcpClient, curl.exe and wget) and fails the run if it finds one. --report-issue opens your browser at a pre-filled GitHub page after you confirm, and you submit it yourself. The desktop window is a different answer: it sends usage and crash reports to improve the product, and there is no switch. What it sends is listed on the Desktop app page."
       }
     },
     {
@@ -495,7 +495,7 @@ without a trace of tone, which is correct: a reader reading it has been stuck fo
       "name": "How do I delete node_modules from old projects?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Section 17. It lists build artefacts in projects you have not touched for 100 days and removes only the ones you select. It never scans a whole drive - it looks in your project roots, which it auto-detects or which you name with --scan-roots \"P1;P2\". Run windowsweep --only 17 from a console, or --only 17 --dry-run --json to see the list without a prompt."
+        "text": "Section 17. It lists build artefacts in projects you have not touched for 100 days and removes only the ones you select. It never scans a whole drive: it looks in your project roots, which it auto-detects or which you name with --scan-roots \"P1;P2\". Run windowsweep --only 17 from a console, or --only 17 --dry-run --json to see the list without a prompt."
       }
     },
     {
@@ -503,7 +503,7 @@ without a trace of tone, which is correct: a reader reading it has been stuck fo
       "name": "What does the weekly Scheduled Task actually run?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "--install-task registers --all --yes --quiet --no-color --notify, weekly on Sundays at 03:00, as your user: the safe batch only, no admin sections, no personal files, no deep sections. It catches up if the PC was off, and it stops itself after three hours. Review the first run's report before scheduling. Install globally first (npm install -g windowsweep); from npx the installer refuses, because the task would point at a cache npm evicts."
+        "text": "--install-task registers --all --yes --quiet --no-color --notify, weekly on Sundays at 03:00, as your user: the safe batch only, no admin sections, no personal files, no deep sections. It catches up if the PC was off and stops itself after three hours. Review the first run's report before scheduling. Install globally first (npm install -g windowsweep); from npx the installer refuses, because the task would point at a cache npm evicts."
       }
     }
   ]
@@ -614,3 +614,43 @@ Straight quotes throughout.
 blocks before it counts anything, and here the fences *are* the shipping copy - so it has read this
 commentary and none of the words a reader will ever see. Its silence proves nothing. The sweep above was run
 by hand over the fences for that reason. The fact-checker and a human reader are the real gate.
+
+---
+
+## LINE PASS - 2026-09-08
+
+**Fences touched, fifteen plus the mirror:** S-001, S-002, S-004, S-005, S-006, S-007, S-009, S-010, S-012,
+S-014, S-015, S-016, S-018, S-020, S-022 - and S-029's `text` for S-014, S-015, S-016 and S-022, because the
+payload is derived from those fences and moves with them (re-derived after the edit, 5 of 5 matching; the
+S-017 entry is untouched). No command, flag, path, exit code, number, slot heading, slot order or `Was:` line
+moved: every backtick span (60), numeric token (61), `--flag` (58) and `%USERPROFILE%` path (3) inside the
+fences is identical before and after, compared as multisets. Every fence is still ASCII.
+
+**Rhythm, re-measured.** Scope: every shipping fence except S-013, S-027 and S-029; table rows split cell by
+cell with the symptom cell dropped; the bold question lines dropped; sentences split on `.`, `?` or `!`
+followed by whitespace; words by `\b[\w'-]+\b`; population standard deviation over the mean, which is the
+hook's own arithmetic. **Before: 75 sentences, mean 14.5, burstiness 0.504. After: 80 sentences, mean 13.3,
+burstiness 0.545.** Sentences of six words or fewer went from 10 to 15; the eight sentences of 25 or more are
+untouched (longest still S-021 at 32). Median 14 both times.
+
+**Budgets over the same 1,067 words.** Hyphens used as dashes: 6 to **2**, both S-017's pair around
+*sections 18, 19 and 23*, which is live text this draft did not argue with (S-010 became a semicolon,
+S-016 a colon, S-015's pair a parenthesis). "Not X but Y": 0. Three-item lists: five, each an enumeration of
+exactly three things rather than a rhythm. Em dashes and exclamation marks: 0.
+
+🔴 **Two facts left exactly as found, for the fact-checker** - a line editor changes rhythm, not facts:
+
+1. **S-023 says `--self-test` runs 151 checks.** It no longer does - the dispatch says 155 and the project
+   `CLAUDE.md` for session 11 says 154, so it has moved at least twice with the release cascade and must be
+   re-counted at apply time from the self-test's own last line. The 5,393 line count in the same sentence
+   moves with the same cascade. The sentence was left untouched so the correction lands on a clean diff. Both numbers are the fact-checker's.
+2. **S-017 and its S-029 mirror say *"Every deletion is recorded in the session log."*** For prune-mode
+   targets that is an overclaim: `Remove-StaleFiles` writes one line per root, not one per file. Left as found. The same
+   claim on the safety page is being corrected there. S-012's *"Every skipped or refused path is in the
+   session log"* is the adjacent claim on the other page and should be read with it.
+
+**For the copy editor.** "Disk cleanup" (S-021) and "Real cleanups" (S-024) are nouns, so the glossary's ban
+on *clean* as a verb does not catch them; both are live text and were left. "Rebuilds" replaced
+"repopulates" in S-020 because *rebuild* is on the fingerprint's use list; revert it if the copy pass prefers
+the Windows term. The lint hook strips every fence before it counts, so on this file its verdict is about
+this commentary and nothing a reader will see.

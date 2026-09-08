@@ -63,7 +63,7 @@ and the sentence needed no other edit to accommodate it. So this surface now car
 
 ### S-010 · author.md:new paragraph, inserted after :4 · the desktop pointer
 ```
-windowsweep also has a window: the [desktop app](./desktop.md) drives the same engine and reimplements none of it.
+windowsweep also has a window. The [desktop app](./desktop.md) drives the same engine and reimplements none of it.
 ```
 **Was:** nothing. This paragraph does not exist in the live file; it goes in between the biography and the
 contact list, with a blank line either side, which pushes every line below it down by two.
@@ -79,13 +79,20 @@ that makes it checkable: IRON rule 12 and `docs/desktop.md`'s own opening both s
 because the install question belongs to `docs/desktop.md` and this draft has not verified a released
 installer.
 
-🔴 **Why it sits here and not in the family section.** S-006 says all three tools "make no network calls" -
+🔴 **Why it sits here and not in the family section.** S-006 closes on "None of the three makes a network call" -
 an absolute the desktop window does not meet, since it checks for updates on every start and sends usage
 data. A pointer in the table's Windows row, or in a paragraph either side of S-006, would be swept into that
 sentence and would overclaim on the single property this page's reader is most likely to be checking.
 Placing it above the family heading keeps "all three" bound to the three rows beneath it and to nothing else.
 The clause "reimplements none of it" does the second half of that work: it says what "the same engine" means
 - the deletion behaviour - so no reader can stretch the sameness to cover the network.
+
+**Line pass:** the colon became a full stop, so the pointer reads as two sentences of 5 and 12 words where it
+was one of 17. Nothing else moved. The same relative link, the same "drives the same engine", the same
+"reimplements none of it". Rhythm - a short statement and then its elaboration as its own sentence is the shape
+of specimens 1, 6 and 11 in the fingerprint, which reaches for a full stop far more often than a colon (one
+colon in twelve specimens), and it breaks the 25-17-34-28 run the page had between the biography and the
+support paragraph.
 
 ### S-003 · author.md:6-10 · the contact list
 ```
@@ -133,7 +140,7 @@ out. The window is counted at S-010 instead, five lines earlier.
 
 ### S-006 · author.md:20-21 · the shared stance
 ```
-All three share the same stance: name every path before touching it, prune files idle for 100 days by default, refuse to enter personal folders, ship a real dry-run, and make no network calls.
+All three share the same stance: name every path before touching it, prune files idle for 100 days by default, refuse to enter personal folders, and ship a real dry-run. None of the three makes a network call.
 ```
 **Was:** All three share the same stance: name every path before touching it, prune idle files instead of
 wiping caches, refuse to enter personal folders, ship a real dry-run, and make no network calls.
@@ -161,6 +168,15 @@ default to a 100-day idle window, both ship `--dry-run`, both state zero network
 same three-list shape as `lib/safety.ps1`. A five-item claim about three products is exactly the sentence a
 curious reader will spot-check.
 
+**Line pass:** the network clause left the list and became the paragraph's closing sentence: "...refuse to
+enter personal folders, and ship a real dry-run. None of the three makes a network call." That is 30 words and
+then 8 where there was one sentence of 34. Same claims, same three tools. The serial comma now sits before
+"and ship". Rhythm - the fingerprint wants the longest sentence in a paragraph to explain and
+the shortest to state a refusal, with the paragraph ending on it. The refusal here is the one property a reader
+of this page is most likely to be checking, and it now stands on its own rather than as the last of five list
+items. "None of the three" rather than "none of them", so the pronoun cannot attach to "personal folders", the
+nearest plural.
+
 ### S-007 · author.md:23 · the support heading
 ```
 ## Supporting the work
@@ -171,7 +187,7 @@ curious reader will spot-check.
 
 ### S-008 · author.md:25-27 · the support paragraph
 ```
-If windowsweep reclaimed space for you, a star on GitHub and a note to a colleague who has the same problem are the two things that help most. You can also support the maintenance directly at [aoneahsan.com/payment](https://aoneahsan.com/payment?project-id=windowsweep&project-identifier=windowsweep).
+If windowsweep reclaimed space for you, the two things that help most are a star on GitHub and a note to a colleague who has the same problem. You can also support the maintenance at [aoneahsan.com/payment](https://aoneahsan.com/payment?project-id=windowsweep&project-identifier=windowsweep).
 ```
 **Was:** If windowsweep reclaimed space for you, a star on GitHub and a share with a colleague are the
 kindest thanks. You can also support the maintenance at
@@ -183,6 +199,14 @@ colleague" becomes "a note to a colleague who has the same problem", which is th
 missing: this tool is discovered by a person telling another person with a full disk. The URL is unchanged
 and is the only permitted payment destination. **Nothing here states a price, a tier or the absence of one**,
 which is the 2026-09-05 decision applied to the one page most likely to invite such a sentence.
+
+**Line pass:** the first sentence is reordered and the second loses one word. The subject ran fifteen words
+with a relative clause inside it, so the verb "are" arrived at word 22 and "the same problem are" read as a
+garden path for a beat. With the clauses flipped the verb comes at word 13 and the sentence closes on the
+colleague with the full disk, which is the specific the developmental round added and the image worth leaving
+the reader with. Same 28 words, same facts. "Directly" is cut from the payment sentence: it is absent from the
+live text, the Change note above does not claim it, and the link says where the money goes without it.
+Clarity, then flab.
 
 ### S-009 · author.md:29 · the footer
 ```
@@ -196,8 +220,8 @@ Last Updated: 2026-09-05
 actually lands, and this draft cannot know that day: it was revised on 2026-09-07 and the apply has not
 happened. Guessing a landing date is inventing a fact, and a wrong date in a fence is a wrong string shipped,
 because the fence **is** the shipping string. **Whoever applies this sets it** - the finalizer or the main
-session - and it is the one line in this file that must not be pasted unread. It is not a `NEEDS DECISION`:
-nothing here is the owner's to decide, only the applier's to observe.
+session - and it is the one line in this file that must not be pasted unread. It is not a `NEEDS DECISION`.
+Nothing here is the owner's to decide, only the applier's to observe.
 
 ---
 
@@ -225,15 +249,20 @@ copy this section exists to prevent.
 the whole six-surface batch and is on the only page row 7 permits it. P is underneath everywhere else: five verified links, three verified
 sibling claims, one exact number in the stance sentence, and now S-010's flat statement of what the desktop
 app runs. **R moved from twice to three times**, and the third is new: "reimplements none of it" joins
-"refuse to enter personal folders" and "make no network calls" as a thing the tool declines rather than an
-adjective claiming a virtue. That is a change to a balance the review called working, so it is recorded
-rather than slipped in. It moves toward the Bible's 60/25/15 and not away from it, and the refusal is
-load-bearing besides: it is what stops "the same engine" being read as "the same network stance".
+"refuse to enter personal folders" and "None of the three makes a network call" as a thing the tool
+declines rather than an adjective claiming a virtue. That is a change to a balance the review called
+working, so it is recorded rather than slipped in. It moves toward the Bible's 60/25/15 and not away from
+it, and the refusal is load-bearing besides: it is what stops "the same engine" being read as "the same
+network stance".
 
-**Rhythm.** Measured with `\b[\w'-]+\b` over the fenced strings, headings excluded as labels. Shortest:
-S-002's opening at 5 words, with the footer's 3-word label below it and not counted. Longest: the stance
-sentence at **34**, down from 38, which is exactly the fingerprint's stated ceiling rather than four words
-over it. S-010 lands at 19 and fills the gap between the biography's 25 and the support paragraph's 28.
+**Rhythm.** Re-measured after the line pass. Method: the rubric's word regex `\b[\w'-]+\b` over the four
+prose fences, rendered (link targets and bold markers dropped) and split on a terminal full stop followed by
+a space; headings, the link list, the table and the footer excluded as labels. Eight sentences: 5, 25, 5, 12,
+30, 8, 28, 10. Burstiness (population standard deviation over the mean) **0.64**, from **0.50** before the
+pass, when there were six: 5, 25, 17, 34, 28, 11. Shortest 5, twice - the name line and "windowsweep also has
+a window." - and longest 30, the stance sentence, down from 34. The text is under 150 words, so the range rule
+applies to the whole: one sentence of at most 6 and one of at least 25, both present. The long sentences sit
+second, fifth and seventh, which is the fingerprint's "one longer sentence every third or fourth".
 
 **Length.** Row 7 asks for short. Short is what it stays. **170 words** - tokenizer: whitespace split;
 scope: every fenced shipping string in this file and nothing outside a fence; exclusion: the `#`/`##` heading
@@ -242,7 +271,9 @@ same way, the live page is **130** and the previous draft of this file was **158
 Raw, with nothing excluded, the three numbers are 139, 166 and 179. The +12 is almost entirely the desktop
 pointer: S-010 adds 17, S-006 gives back 4 by dropping the false contrast, S-002 gives back 1 with
 "command-line", and the separator row's single token is excluded by the rule above. The review asked for a
-pointer to a page that now exists; 17 words is what it cost.
+pointer to a page that now exists; 17 words is what it cost. Re-measured after the line pass with the same
+tokenizer and exclusions: **173**, +3 on this pass - S-006 +4 for the closing sentence, S-008 -1 for
+"directly", S-010 unchanged. Raw, nothing excluded: 182.
 
 **Unsure spots.** None. This surface carries **zero** `NEEDS DECISION`, answered or otherwise - the one it
 had is struck at S-002 with the owner's answer recorded in its place. One item still needs a human hand and
@@ -253,7 +284,9 @@ here.
 against all 87 entries of the shared list, the fingerprint's own "Never" column, and a pricing vocabulary.
 Zero hits in all three. Zero exclamation marks, zero em-dashes. Three phrases were removed across the two
 rounds rather than kept: the superlative "kindest" at S-008, "wiping caches" at S-006, and now S-006's
-"rather than clearing a cache whole", which was not a banned phrase but a false one.
+"rather than clearing a cache whole", which was not a banned phrase but a false one. Re-run after the line
+pass over the edited fences, same three columns: zero, zero and zero, and still no exclamation mark and no
+em-dash.
 
 🔴 **The lint hook did not check any of this, and it was proved rather than assumed.**
 `posttooluse-story-lint.sh:61` strips every fenced block before it counts a word, and on this surface the
@@ -263,3 +296,8 @@ identical sentence appended inside a **fence** left it exit 0 and silent. The wo
 a gate that reads this file would find them in the record of its own test. So its green is real about the
 commentary and says nothing at all about the page. Its verdict is not evidence here, in either direction; the
 sweep above, the fact-checker and a human reader are the gate on this surface.
+
+**Line pass, hook**. Baseline exit 0, measured on the untouched snapshot of this file through the same script
+and the same JSON shape Claude Code sends it. After this pass it flagged range windows in the commentary and
+nothing else, each fixed in place with a split or a short sentence, and the fences were never in its count,
+so the paragraph above stands.

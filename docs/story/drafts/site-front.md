@@ -155,7 +155,7 @@ it is answered on the page rather than routed.
 ### S-011 · intro.md:22-23 · question 7, answered here
 ```
 **Does this cleanup tool send my data anywhere?**
-No. The command-line tool makes no network calls at all, and self-test check [9] greps its own source for HTTP and socket calls and fails the run if it finds any. The desktop application is a separate program: it can send analytics, and it sends nothing until you accept.
+No. The command-line tool makes no network calls at all, and self-test check [9] greps its own source for HTTP and socket calls and fails the run if it finds any. The desktop application is a separate program: it sends usage and crash reports, there is no switch, and in 1.1.0 no destination is configured in the build, so nothing has left the machine yet.
 ```
 **Was:** (new.)
 
@@ -550,7 +550,7 @@ exists to prevent, so the eleven section numbers and the two conditional ones ar
 ```
 - Section numbers are a frozen public contract: 0 to 21 shipped in 1.0.0, 22 to 25 in 1.1.0, and a number is never reused for something else. Exit codes are 0 success, 1 a failure, 2 a usage error, 3 a refusal, 130 an interrupt.
 - No amount of reclaimed space is promised anywhere, because it depends on the disk. `--scan` measures it.
-- The command-line tool makes no network calls of its own, sends no telemetry and checks for no updates; self-test check [9] greps the source and fails the run if it finds an HTTP or socket call. `--report-issue`, `--feedback` and the reports manager can open a URL in the reader's own browser, after the reader asks. The desktop application is a separate program with its own consent screen; it has not been released yet.
+- The command-line tool makes no network calls of its own, sends no telemetry and checks for no updates; self-test check [9] greps the source and fails the run if it finds an HTTP or socket call. `--report-issue`, `--feedback` and the reports manager can open a URL in the reader's own browser, after the reader asks. The desktop application is a separate program, shipped separately as `desktop-v1.1.0`: it sends usage and crash reports with no opt-out - the first-run screen is a notice, not a consent request - and in 1.1.0 no destination is configured in the build, so nothing has left the machine yet. It also makes two requests nobody is asked about, neither carrying anything it knows about you: `latest.json` from this repository on every start, and the WebView2 installer from Microsoft on a machine without it.
 ```
 **Was:** the last of these read: - The tool makes no network calls of its own, sends no telemetry and checks
 for no updates.
@@ -558,16 +558,37 @@ for no updates.
 **Change:** the frozen-numbering fact, the exit codes and the no-promised-number fact are added, and the
 network fact is expanded three ways. The `Start-Process <url>` paths are named, because a model that greps
 the source and finds one would otherwise conclude the file lied. The desktop app is named for the reason at
-S-011, and its release state is stated: `gh release list` shows `v1.0.0`, `v1.0.1` and `v1.1.0`, all of them
-the command-line tool, and no desktop tag.
+S-011.
+
+🔴 **CORRECTED 2026-09-08, and it is worth saying why rather than just fixing it.** This slot was written on
+2026-09-07 and by the next morning two of its clauses were false. It said the desktop app has "its own consent
+screen" - the owner removed the analytics opt-out that same day, so the first-run screen is a notice, not a
+choice - and it said the app "has not been released yet", which was true when `gh release list` showed only
+`v1.0.0`, `v1.0.1` and `v1.1.0`. It now shows `desktop-v1.1.0`, published 2026-09-07 and marked Latest,
+which is deliberate: the plan publishes desktop releases with `--latest` because the updater endpoint
+`releases/latest/download/latest.json` depends on it, and CLI releases with `--latest=false`.
+
+Both replacements are taken from the wording already applied and approved on `docs/desktop.md`, so the two
+pages cannot drift apart again: *"There is no switch"*, *"In 1.1.0 no destination is configured in the build,
+so nothing has left the machine yet"*, and the two unasked requests. 🔴 That last one matters and had been
+missing here: the docs page says there are **three** answers, not two, and the third is neither the engine nor
+telemetry - it is `latest.json` on every start and the WebView2 download on a machine without it. An llms.txt
+naming only two answers hands a machine a cleaner story than the page it summarises.
 
 ---
 
 ## Found while writing, reported rather than fixed
 
-**The site is unreachable.** Both artefacts on this surface are served from a host that resolves to nothing.
-Nobody can read either. That is the largest single fact about row 9 today and it belongs in the report rather
-than in the copy.
+**The site is unreachable.** ~~Both artefacts on this surface are served from a host that resolves to
+nothing. Nobody can read either.~~ 🔴 **NO LONGER TRUE, 2026-09-08.** The owner's DNS landed:
+`http://windowsweep-docs.aoneahsan.com/` answers **200**, every one of the 55 URLs in the deployed sitemap
+resolves, and 16 content routes were probed by hand at 200. What is still missing is only the **certificate** -
+`https://` answers `000`, `https_certificate` is `null` and `https_enforced` is `false`, because GitHub has not
+finished issuing it for the new domain. So this surface is now readable, and the reason to apply it is no
+longer hypothetical. ⚠️ Every URL in these slots is written `https://`, which is correct - they are what the
+site will serve - but nothing in this draft may be **link-switched** early: `P3.https-writeback` flips every
+link in the fleet in one pass, and switching one of them here would be exactly the drift that task exists to
+prevent.
 
 **`docs/README.md` and `intro.md` have already drifted.** The repository copy links the AI guide at
 `../AI-INTEGRATION-GUIDE.md`; the site copy links `./ai-integration-guide.md`, which is a different file that

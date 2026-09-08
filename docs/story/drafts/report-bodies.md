@@ -73,11 +73,11 @@ the document differs, and neither export says it twice.
 ```
 **Change:** the word, to the one the HTML already ships at `:117`. `Overview` promises a summary of the
 whole document and delivers eleven fields of run metadata; `Run` names exactly what is under it, and it is
-the product's own noun - `--stats` prints the box `Run history` at `:197`. Two alternatives were considered and rejected. Moving
-the HTML to `Overview` instead spends the same edit on the weaker word. And `## This run` dodges a
-possible imperative reading, but it breaks the one-word parallel with `Result`, `Drives` and `Sections`
-and introduces a word neither export ships today. That imperative reading is a real risk and a small one:
-the heading sits between an H1 and `## Result`, above a two-column table.
+the product's own noun - `--stats` prints the box `Run history` at `:197`. Two alternatives were considered
+and rejected. Moving the HTML to `Overview` instead spends the same edit on the weaker word. And
+`## This run` dodges a possible imperative reading, but it breaks the one-word parallel with `Result`,
+`Drives` and `Sections` and introduces a word neither export ships today. That imperative reading is a real
+risk and a small one: the heading sits between an H1 and `## Result`, above a two-column table.
 
 ### S-004 · `reports.ps1:46` · the run-facts column labels
 **Was:** identical. Shares line 46 with S-003.
@@ -110,9 +110,9 @@ code change rather than a label change.
 ```text
 "| Host | $($r.meta.host) |"; $l += "| User | $($r.meta.user) |"; $l += "| Windows | $($r.meta.os) |"; $l += "| Mode | $($r.meta.mode) |"
 ```
-**Change:** none. `Windows` and `Mode` are identical to the HTML terms at `:118-119`. `Host` and `User` have
-no HTML counterpart - see finding **F-3**, where leaving that alone is the recommendation rather than an
-oversight.
+**Change:** none. `Windows` and `Mode` are identical to the HTML terms at `:118-119`. `Host` has no HTML
+label; its value sits unlabelled in the subtitle, S-023. `User` has no HTML counterpart at all, and
+finding **F-3** recommends keeping it that way.
 
 ### S-008 · `reports.ps1:49` · the run settings
 **Was:** identical.
@@ -146,12 +146,11 @@ rather than slotted.
 "**Would reclaim (est.): $($r.totals.total_estimated_human)**  "
 ```
 **Change:** the verb and the abbreviation, to the exact string the console ships. `reclaim` is the
-glossary's verb for what this tool does to space, and `free up` sits in its Never column.
-`cli-strings` C-088 moved
-`runner.ps1:182` to `Would reclaim (est.):` and C-074 moved the per-section line with it, so leaving this
-one behind is the divergence row 15 exists to end. `(est.)` rather than `(estimate)` because the console's
-abbreviation was forced by a measured constraint - `Write-Kv` pads its key to 24 characters - and matching
-it exactly is worth more here than re-deriving a longer word that would then differ again.
+glossary's verb for what this tool does to space, and `free up` sits in its Never column. `cli-strings`
+C-088 moved `runner.ps1:182` to `Would reclaim (est.):` and C-074 moved the per-section line with it, so
+leaving this one behind is the divergence row 15 exists to end. `(est.)` rather than `(estimate)` because
+the console's abbreviation was forced by a measured constraint - `Write-Kv` pads its key to 24 characters -
+and matching it exactly is worth more here than re-deriving a longer word that would then differ again.
 🔴 **The two spaces before the closing quote are a Markdown hard line break** - they must survive the edit.
 
 ### S-012 · `reports.ps1:51` · the real headline
@@ -168,11 +167,11 @@ it exactly is worth more here than re-deriving a longer word that would then dif
 "Sections run: $($r.totals.steps_run) - skipped: $($r.totals.steps_skipped)"
 ```
 **Change:** `skipped/refused` becomes `skipped`, which is the console's word at `runner.ps1:190` and the
-HTML's at `:116`. Dropping `refused` loses no information a reader lacks: the Status column six lines below
-names every section's real outcome, one row each. Nor does it trade an accurate label for a vague one,
-because `steps_skipped` counts **skipped, refused and failed** alike, so `skipped/refused` was incomplete in
-a second way. Whether the underlying label should name all three is row 10's question, not this surface's -
-finding **F-6**.
+HTML's at `:116`. Dropping `refused` loses nothing the reader cannot see: the Status column six lines below
+names every section's real outcome, one row each. Nor does it trade an accurate label for a vague one.
+`steps_skipped` counts **skipped, refused and failed** alike, so `skipped/refused` was already incomplete.
+Whether the underlying label should name all three is row 10's question, not this surface's - finding
+**F-6**.
 
 ### S-014 · `reports.ps1:53` · the drives heading
 **Was:** identical.
@@ -210,7 +209,7 @@ says `Section`. `steps` stays the JSON key, which no reader sees.
 **Change:** the last label. This goes beyond the two places row 15 named, and it is the same rule: `Freed`
 is the past tense of the verb the glossary bans for space, and C-075 already moved `runner.ps1:130` from
 `this section freed` to `this section reclaimed`. The console's own column header for this quantity is
-`RECLAIMED`, one function above in this very file at `:17`. On a dry-run report the column holds estimates
+`RECLAIMED`, one function above in this file at `:17`. On a dry-run report the column holds estimates
 under a header reading `Reclaimed` - exactly as true as `Freed` is today, no worse, with the `Status` cell
 immediately to its left reading `dry-run` on every row. The product already answered this at `:25`, where
 the console keeps the `RECLAIMED` header and marks the cell as a dry figure; mirroring that into the export
@@ -323,7 +322,7 @@ grammar rather than a different word: the number precedes the label here and fol
 ```text
 <th>#</th><th>Section</th><th>Title</th><th>Status</th><th class="num">Reclaimed</th>
 ```
-**Change:** the last label, paired with S-017 and carrying the same reasoning and the same veto flag. The
+**Change:** the last label, paired with S-017 and carrying the same reasoning and the same veto flag; the
 first four already match the Markdown exactly.
 
 ### S-031 · `reports.ps1:124` · the drives heading
@@ -353,8 +352,8 @@ match S-018. See S-018 for the one word that does different work in each.
 
 ## The both-outputs audit
 
-Row 15's hard constraint is that a reader comparing two exports of one run must not see two products. These
-are the strings that reach **both** documents, with the single wording each now carries.
+Row 15's hard constraint is that a reader comparing two exports of one run must not see two products, so
+these are the strings that reach **both** documents, with the single wording each now carries.
 
 | The thing named | Markdown | HTML | One string |
 |---|---|---|---|
@@ -374,7 +373,7 @@ are the strings that reach **both** documents, with the single wording each now 
 **Markdown only:** `Field`, `Value`, `Started`, `Finished`, `Host`, `User`, `yes`, `no`, `Result`.
 **HTML only:** `Log file`.
 
-Every one of those is accounted for below rather than left as a silent difference.
+Every one of those is accounted for in a slot above or a finding below; none is a silent difference.
 
 ## Findings - real, and outside this surface's mandate
 
@@ -382,9 +381,9 @@ Row 15 says headings and labels only. Each of these needs code changed, so each 
 slotted.
 
 **F-1 - the drive columns are in two orders**. The Markdown prints `Drive, Free before, Free after, Size`;
-the HTML prints `Drive, Size, Free before, Free after`. S-015 aligns the wording and stops there, because
-the Markdown's header order is set by its data row at `reports.ps1:58`. To align the order, both `:53` and
-`:58` move together in one commit; applying either alone prints headers over the wrong cells.
+the HTML prints `Drive, Size, Free before, Free after`. S-015 aligns the wording, then stops. The Markdown's
+header order is set by its data row at `reports.ps1:58`, so to align the order both `:53` and `:58` move
+together in one commit; applying either alone prints headers over the wrong cells.
 
 **F-2 - one kind of fact answers three ways**. In the Markdown, `Dry-run` reads `yes` or `no` (from `$dry`
 at `:41-42`) while `Elevated` and `Developer mode` read `True` or `False` straight from the JSON. In the
@@ -415,7 +414,7 @@ decision, recorded here so it is not lost.
 **F-7 - two line numbers in `cli-strings.md` do not match the file**. Its NEEDS DECISION 2 and C-117 cite
 `reports.ps1:104` and `:75` for the two `Would free` strings. Measured on disk today they are at **`:51`**
 (Markdown) and **`:74`** (HTML); line 104 is a stylesheet rule and line 75 initialises the rows variable. An
-applier following those references would patch neither string. Reported, not edited - that draft is another
+applier following those references would patch neither string. Reported, not edited. That draft is another
 agent's file.
 
 ---
@@ -423,21 +422,23 @@ agent's file.
 ## Self-check
 
 **Palette** - band **P only**, as row 15 requires. Every shipping string is a bare noun or a labelled
-figure: `Run`, `Result`, `Drives`, `Sections`, `Reclaimed`, `Free before`. No band W anywhere, no aside, no
-joke, no adjective doing a number's work, and nothing that reads as reassurance rather than as a label -
-band R would be as wrong here as W, because a label makes no promise. Nothing in the set sits near a
-destructive action: these thirty-three strings are written **after** the run, into a file.
+figure: `Run`, `Result`, `Drives`, `Sections`, `Reclaimed`, `Free before`. No band W anywhere. No aside, no
+joke, no adjective doing a number's work, and nothing that reads as reassurance rather than as a label; band
+R would be as wrong here as W, because a label makes no promise. Nothing in the set sits near a destructive
+action: these thirty-three strings are written **after** the run, into a file.
 
 **Rhythm** - the shipping strings are labels, so burstiness is measurable only on this commentary, where it is
 deliberate. **Scope and method, written down so a re-measure can match**: the whole finished file with fences,
 table rows and headings removed, split on `(?<=[.!?])\s+`, a word counted as `[A-Za-z0-9][A-Za-z0-9'._:/-]*`.
-On that basis - 227 sentences, mean 14.1 words, standard deviation 10.3, **burstiness 0.73** against the
-fingerprint's floor of 0.45. Shortest sentence: **2 words**. Longest: **42 words**, which is the header's
-field list rather than a sentence; the longest real sentence is **41 words**, S-017's glossary reasoning. Both
-ends of the fingerprint's range appear many times over, and 11 sentences sit above its 34-word ceiling, every
-one of them a slot's reasoning rather than shipping prose. Zero em dashes and zero exclamation marks in the
-prose; the one `!` in this file sits inside the split regex quoted above. Zero `not X but Y`. Shipping strings
-themselves run from one word (`Drives`, `Sections`) to six, the section-counts line.
+On that basis - 230 sentences, mean 14.0 words, standard deviation 10.5, **burstiness 0.75** against the
+fingerprint's floor of 0.45. Shortest sentence: **2 words**. Longest: **42 words**, twice, and neither is a
+sentence. One is the header's field list; the other is S-030's `Was:` fragment, which the split rule glues
+to the `Change:` line after it because a code-quoted `Was:` has no full stop. The longest real sentence is
+**41 words**, S-017's glossary reasoning. Both ends of the fingerprint's range appear many times over, and
+14 sentences sit above its 34-word ceiling, every one of them commentary rather than shipping prose. Zero
+em dashes and zero exclamation marks in the prose; the only exclamation mark in this file sits inside the
+split regex quoted above. Zero `not X but Y`. Shipping strings themselves run from one word (`Drives`,
+`Sections`) to six, the section-counts line.
 
 **Length** - **33 slots** against the row's cap of *about thirty strings*. Inside it. **211 words ship in
 total** across the 33 fences. Counted with `str.split()` over the fence contents, each `$(...)`
@@ -447,9 +448,9 @@ unchanged and numbered so the applier can see they were considered.
 
 **Unsure spots - zero `NEEDS DECISION`**. Nothing here needed a fact, number, name or quote I did not have;
 the one substantive verb came from the approved `cli-strings` C-088 rather than being re-derived. Two calls
-are **flagged for the owner's veto** rather than hidden, each reversible in one edit. The first drops
-`dry-run` from the HTML's dry-run headline (S-020). The second extends the same glossary rule to the
-`Freed` column in both outputs (S-017 and S-030), which widens the brief's *two places* to four.
+are **flagged for the owner's veto**, each reversible in one edit. The first drops `dry-run` from the
+HTML's dry-run headline (S-020). The second extends the same glossary rule to the `Freed` column in both
+outputs (S-017 and S-030), which widens the brief's *two places* to four.
 
 ### Verification run on this file
 
@@ -468,9 +469,9 @@ list was matched against the fences: zero hits. No allow marker is used, so none
 🔴 **This draft is slot-shaped, so the project's lint hook cannot see the copy that ships**.
 `posttooluse-story-lint.sh:61` strips every fenced block before it counts anything, and on this file every
 shipping string sits inside a fence. The hook therefore measures this commentary and none of the
-thirty-three strings a reader will actually read. A green hook here is not evidence about the surface. The
-real gates are the both-outputs audit above, the `Was:` verification, and a person opening one run's two
-exports side by side.
+thirty-three strings a reader will actually read, so a green hook here is not evidence about the surface.
+The real gates are the both-outputs audit above, the `Was:` verification, and a person opening one run's
+two exports side by side.
 
 **Confidence** - high on the slot inventory, the two reclaim-verb corrections and the both-outputs audit - all
 three were read off the file rather than recalled. Medium on two judgement calls, which is why both carry a

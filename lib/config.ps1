@@ -62,11 +62,20 @@ function Get-ToolchainHints {
 }
 
 function Resolve-DeveloperMode {
-  <# .SYNOPSIS Decide developer mode: flag > saved answer > interactive question > conservative default (yes). #>
+  <# .SYNOPSIS Decide developer mode: flag > saved answer > interactive question > conservative default (yes).
+     -ReadOnly resolves from the flag or the saved answer ONLY. A read-only mode may not ask the question,
+     may not write config.json, and may not invent a decision the person never made - so when neither a flag
+     nor a saved answer exists it leaves Developer $null and the health report keeps saying "not decided yet",
+     which is the truth. Without this, --scan ignored --developer and --not-developer outright: the flag was
+     parsed, stored in DeveloperFlag, and never read, so section 0 printed "not decided yet" whatever you
+     passed and --json returned developer: null. The desktop window passes those flags to --scan
+     (desktop/src/lib/engine.ts) and could not read back the setting it had just sent. #>
+  param([switch] $ReadOnly)
   $ws = $Script:WS
   if ($null -ne $ws.DeveloperFlag) { $ws.Developer = [bool]$ws.DeveloperFlag; $ws.DeveloperSource = 'flag'; return }
   if ($ws.ForgetDeveloper) { $ws.Config.developer = $null; $ws.Config.developerAskedAt = $null }
   if ($null -ne $ws.Config.developer) { $ws.Developer = [bool]$ws.Config.developer; $ws.DeveloperSource = 'config'; return }
+  if ($ReadOnly) { return }
   if ($ws.Interactive -and -not $ws.Yes) {
     $hints = @(Get-ToolchainHints)
     Write-Box 'One question before anything else' 'It decides how package and build caches are treated'

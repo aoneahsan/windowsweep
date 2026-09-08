@@ -462,6 +462,69 @@ function Invoke-SelfTestExtra {
       $ws.TotalEstimated = $savedEst
     }
 
+
+    # 18e - a read-only scan REPORTS the developer answer it was given, and invents one when it was not.
+    # --scan parsed --developer / --not-developer into DeveloperFlag and then never read it, because
+    # Resolve-DeveloperMode ran only for walkthrough, menu, all and only. So section 0 printed
+    # "Developer mode: not decided yet" whatever you passed, and --json returned developer: null. The
+    # desktop window sends those flags to --scan and could not read back the setting it had just sent.
+    # Three orientations, because two of them would pass on the broken code by accident:
+    #   A the flag is honoured,  B a saved answer is honoured,  C neither exists -> still undecided.
+    $checks++
+    $savedFlag = $ws.DeveloperFlag
+    $savedDev = $ws.Developer
+    $savedSrc = $ws.DeveloperSource
+    $savedCfg = $ws.Config
+    $savedInter = $ws.Interactive
+    $savedForget = $ws.ForgetDeveloper
+    try {
+      $ws.Interactive = $true          # -ReadOnly must not ask even here; a prompt would hang the suite
+      $ws.ForgetDeveloper = $false
+
+      # A - the flag wins, and --not-developer is the case that was silently dropped
+      $ws.Config = @{}
+      $ws.DeveloperFlag = $false
+      $ws.Developer = $null
+      $ws.DeveloperSource = $null
+      & $mute
+      Resolve-DeveloperMode -ReadOnly
+      & $unmute
+      $aOk = ($ws.Developer -eq $false) -and ($ws.DeveloperSource -eq 'flag')
+
+      # B - no flag, but a saved answer exists
+      $ws.Config = @{ developer = $true }
+      $ws.DeveloperFlag = $null
+      $ws.Developer = $null
+      $ws.DeveloperSource = $null
+      & $mute
+      Resolve-DeveloperMode -ReadOnly
+      & $unmute
+      $bOk = ($ws.Developer -eq $true) -and ($ws.DeveloperSource -eq 'config')
+
+      # C - neither: a read-only mode must NOT invent a decision, and must not write config.json
+      $ws.Config = @{}
+      $ws.DeveloperFlag = $null
+      $ws.Developer = $null
+      $ws.DeveloperSource = $null
+      & $mute
+      Resolve-DeveloperMode -ReadOnly
+      & $unmute
+      $cOk = ($null -eq $ws.Developer) -and ($null -eq $ws.Config.developer)
+
+      if ($aOk -and $bOk -and $cOk) {
+        Write-Ok "a read-only scan honours --not-developer (flag) and a saved answer (config), and stays undecided when it has neither"
+      } else {
+        Write-Err "read-only developer resolution wrong (flagHonoured=$aOk savedHonoured=$bOk stillUndecided=$cOk)"; $fails++
+      }
+    } finally {
+      $ws.DeveloperFlag = $savedFlag
+      $ws.Developer = $savedDev
+      $ws.DeveloperSource = $savedSrc
+      $ws.Config = $savedCfg
+      $ws.Interactive = $savedInter
+      $ws.ForgetDeveloper = $savedForget
+    }
+
   } catch {
     & $unmute
     Write-Err "extra self-test crashed: $($_.Exception.Message)"; $fails++

@@ -298,6 +298,9 @@ if ($Script:WS.Elevate -and -not $Script:WS.IsAdmin) {
 if ($Script:WS.Elevate -and $Script:WS.IsAdmin) { Write-Note 'already elevated; --elevate is a no-op' }
 
 if ($Script:WS.Mode -in @('walkthrough', 'menu', 'all', 'only')) { Resolve-DeveloperMode; Confirm-PurgeAllOnce }
+# A scan deletes nothing, so it neither asks the developer question nor confirms a purge - but it must still
+# REPORT the answer it was given. -ReadOnly takes the flag or the saved answer and stops there.
+elseif ($Script:WS.Mode -eq 'scan') { Resolve-DeveloperMode -ReadOnly }
 
 try {
   Invoke-Main

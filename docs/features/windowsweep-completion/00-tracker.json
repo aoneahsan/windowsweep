@@ -255,15 +255,15 @@
           "id": "P3.RW-040",
           "title": "aoneahsan/windowsweep-docs: Docusaurus site, Pages workflow, CNAME, content mirror, governance; write-back after the 200 probe",
           "status": "in_progress",
-          "note": "aoneahsan/windowsweep-docs created and deployed (Pages run 33785107915, 201 built files); ruleset 22211229 active, wiki off, CNAME pinned. Awaiting the owner DNS row 11 and Pages HTTPS row 12; the README, package.json homepage and constants WS_DOCS switch only after the domain probes 200 | 2026-09-05 audit: the site labels were corrected (RW-042) and its topics set (RW-044); the link write-back still waits on the 200 probe",
+          "note": "THE DOCS SITE IS LIVE, probed 2026-09-08: http://windowsweep-docs.aoneahsan.com/ answers 200, and so does every one of the 16 content routes probed by hand. The deployed sitemap declares 55 URLs. RED My first probe reported every page 404 and that was MY error, not the site's: I assumed a /docs/ prefix. routeBasePath is \"/\", so the pages are at /installation, /faq, /safety-model and so on. Reading the deployed sitemap rather than guessing the prefix is what corrected it. Canonicals verified on the DEPLOYED pages, which is the instrument that matters: 16 of 16 correct, 0 mismatched - the 6748300 fix (50 of 51 pages had declared the front page as their canonical) is live. The seven applied story surfaces are mirrored (windowsweep-docs 7737bba). What is left in this row is only the link write-back, which stays blocked on the certificate. | PRIOR NOTE: aoneahsan/windowsweep-docs created and deployed (Pages run 33785107915, 201 built files); ruleset 22211229 active, wiki off, CNAME pinned. Awaiting the owner DNS row 11 and Pages HTTPS row 12; the README, package.json homepage and constants WS_DOCS switch only after the domain probes 200 | 2026-09-05 audit: the site labels were corrected (RW-042) and its topics set (RW-044); the link write-back still waits on the 200 probe",
           "awaitingUser": false
         },
         {
           "id": "P3.RW-040-dns",
           "title": "Owner: Hostinger CNAME windowsweep-docs -> aoneahsan.github.io; GitHub Pages custom domain + Enforce HTTPS",
-          "status": "blocked",
-          "note": "MANUAL-TASKS rows 11-12",
-          "awaitingUser": true
+          "status": "complete",
+          "note": "THE DOCS SITE IS LIVE, probed 2026-09-08: http://windowsweep-docs.aoneahsan.com/ answers 200, and so does every one of the 16 content routes probed by hand. The deployed sitemap declares 55 URLs. RED My first probe reported every page 404 and that was MY error, not the site's: I assumed a /docs/ prefix. routeBasePath is \"/\", so the pages are at /installation, /faq, /safety-model and so on. Reading the deployed sitemap rather than guessing the prefix is what corrected it. The owner's half is DONE: the Hostinger CNAME resolves and the Pages custom domain is set (gh api .../pages reports cname windowsweep-docs.aoneahsan.com). MANUAL-TASKS rows 11 and 12 moved to Completed on this probe rather than by asking him. What remains is NOT his: https_certificate is null and https_enforced false because GitHub has not finished issuing the certificate, so https:// answers 000. That is GitHub's automatic step; the PUT and the link switch afterwards are the agent's, tracked in P3.https-writeback. | PRIOR NOTE: MANUAL-TASKS rows 11-12",
+          "awaitingUser": false
         },
         {
           "id": "P3.RW-041",
@@ -289,8 +289,8 @@
         {
           "id": "P3.RW-044",
           "title": "Docs-repo hygiene: topics (done) and the homepage field after the 200 probe",
-          "status": "in_progress",
-          "note": "six topics added 2026-09-05; the homepage on both repos follows RW-040",
+          "status": "complete",
+          "note": "Complete 2026-09-08. The 200 probe the homepage field was waiting on has passed, so gh api -X PATCH repos/aoneahsan/windowsweep-docs set homepage to http://windowsweep-docs.aoneahsan.com and gh repo view confirms it. Six topics were already set (cleanup, documentation, docusaurus, powershell, windows, windowsweep), Issues on, description set. RED The homepage is deliberately http, not https: the certificate does not exist yet, so an https homepage would be a link that does not resolve. P3.https-writeback owns the flip, together with every other link, in ONE pass - never one link early. | PRIOR NOTE: six topics added 2026-09-05; the homepage on both repos follows RW-040",
           "awaitingUser": false
         },
         {
@@ -303,15 +303,15 @@
         {
           "id": "P3.faqpage",
           "title": "A page-scoped FAQPage JSON-LD on the docs site's faq page only, gated so it appears on that page and nowhere else",
-          "status": "pending",
-          "note": "Owner decision 2026-09-07 (needsDecisionAnswers). docs/faq.md becomes faq.mdx with a Head block; the payload is drafted in docs/story/drafts/docs-help.md, marked BLOCKED there. Gate: FAQPage present once in build/faq/index.html and zero times in build/cli-reference/index.html, watched failing.",
+          "status": "complete",
+          "note": "Complete, and VERIFIED IN THE DEPLOYED HTML rather than in the build output. http://windowsweep-docs.aoneahsan.com/faq carries exactly one FAQPage block; /, /about, /cli-reference, /sections, /installation, /troubleshooting and /desktop carry zero - so the page-scoping holds where it matters, on the live site. All 4 mainEntity questions AND the opening 60 characters of all 4 answers appear in the page's own visible text, so the schema describes what the reader sees. RED The check carries a control: the first question with one word mutated is correctly reported ABSENT, so a pass means something. RED And my first parser found nothing at all - its regex assumed <script type=\"application/ld+json\"> while the tag is <script data-rh=\"true\" type=\"...\"> - an instrument too narrow, not a missing block; the literal grep that found it was right. | PRIOR NOTE: Owner decision 2026-09-07 (needsDecisionAnswers). docs/faq.md becomes faq.mdx with a Head block; the payload is drafted in docs/story/drafts/docs-help.md, marked BLOCKED there. Gate: FAQPage present once in build/faq/index.html and zero times in build/cli-reference/index.html, watched failing.",
           "awaitingUser": false
         },
         {
           "id": "P3.https-writeback",
           "title": "RW-102: enforce HTTPS once GitHub issues the certificate, then the one-commit-per-repo link switch",
           "status": "pending",
-          "note": "Blocked on GitHub, not on the owner: https:// probes 000 and the Pages API reports https_enforced false (re-polled 2026-09-08). When https:// answers 200: PUT the Pages API https_enforced=true, then switch README links, package.json homepage, WS_DOCS (inside the 1.2.0 cascade), gh repo edit --homepage on both repos, the master links JSON, the portfolio Docs row, and MANUAL-TASKS rows 11/12 plus the docs repo rows 1/2. Never switch one link early.",
+          "note": "Re-polled 2026-09-08 (second poll of the day, after DNS landed): the site now answers 200 over HTTP, but https:// still returns 000 and the Pages API still reports https_certificate null / https_enforced false. Nothing about this row changed except that it is now the ONLY thing between the docs site and a finished P3. It needs nothing from the owner. | PRIOR NOTE: Blocked on GitHub, not on the owner: https:// probes 000 and the Pages API reports https_enforced false (re-polled 2026-09-08). When https:// answers 200: PUT the Pages API https_enforced=true, then switch README links, package.json homepage, WS_DOCS (inside the 1.2.0 cascade), gh repo edit --homepage on both repos, the master links JSON, the portfolio Docs row, and MANUAL-TASKS rows 11/12 plus the docs repo rows 1/2. Never switch one link early.",
           "awaitingUser": false
         }
       ]
@@ -1010,6 +1010,12 @@
         "site-home writer, revision round (opus)"
       ],
       "verification": "pg_policies, information_schema.column_privileges, has_table_privilege and pg_proc read over the Supabase Management API, plus five live anon probes over PostgREST with the publishable key."
+    },
+    {
+      "date": "2026-09-08",
+      "model": "claude-opus-5[1m]",
+      "summary": "The docs site went live between sessions. The standing poll of rows 11/12 found http://windowsweep-docs.aoneahsan.com/ answering 200 with the CNAME set, which unblocked three rows at once: RW-040-dns (the owner's half done), RW-044 (the homepage field, set to http on purpose) and faqpage (verified page-scoped on the live HTML, with a control). Row 15 re-polled: external.google is still false, so site sign-in stays dormant and honest.",
+      "verification": "curl over 16 content routes and 3 machine files, the deployed sitemap parsed for its own 55 URLs, canonical read from each deployed page (16/16 correct), FAQPage parsed from the live HTML and matched against the page's visible text with a mutated-question control, gh api for the Pages record and the repo fields, and auth/v1/settings for external.google."
     }
   ],
   "resumeInstructions": "RED Read ../completion-plan-v2-2026-09-07.md - it is the METHOD (the morning plan ../completion-plan-2026-09-07.md keeps its sections 1, 4 and 9 in force; its waves W0/W1/W2/W-S are done). This file is the STATUS and ../remaining-work.md is the SPECIFICATION. Never re-plan, and never re-derive the backend, the layout, the tagline, the release sequence, the analytics decision or the site's scope - twelve owner decisions are in userDecisions above (D1-D8 from the morning, D9-D12 from the v2 planning session) and the planner's flagged calls are in plannerDeviations, plannerDeviations2 and plannerDeviations3. POLL AT THE START OF EVERY SESSION and run whatever each one unblocks: rows 11/12 (does https://windowsweep-docs.aoneahsan.com/ probe 200, and does the Pages API report https_enforced true), row 15 (does auth/v1/settings on nlmetjyytgwaxcliusuo report external.google true), and the site dummy's GATE 1 answer. Polled 2026-09-08 00:0x local: docs http 200 / https 000 / https_enforced false; external.google FALSE; https://windowsweep.aoneahsan.com/ 404 from Firebase Hosting with a valid certificate (connected, nothing deployed); ci green on e9dd863. Row 16 is CLOSED by the agent's own evidence: the Firebase web config is in the vault and the four VITE_* ids are GitHub repository variables. Then take the first pending sub-task below.",

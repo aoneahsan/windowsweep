@@ -450,17 +450,25 @@ joke, no adjective doing a number's work, and nothing that reads as reassurance 
 R would be as wrong here as W, because a label makes no promise. Nothing in the set sits near a destructive
 action: these thirty-three strings are written **after** the run, into a file.
 
-**Rhythm** - the shipping strings are labels, so burstiness is measurable only on this commentary, where it is
-deliberate. **Scope and method, written down so a re-measure can match**: the whole finished file with fences,
-table rows and headings removed, split on `(?<=[.!?])\s+`, a word counted as `[A-Za-z0-9][A-Za-z0-9'._:/-]*`.
-On that basis - 230 sentences, mean 14.0 words, standard deviation 10.5, **burstiness 0.75** against the
-fingerprint's floor of 0.45. Shortest sentence: **2 words**. Longest: **42 words**, twice, and neither is a
-sentence. One is the header's field list; the other is S-030's `Was:` fragment, which the split rule glues
-to the `Change:` line after it because a code-quoted `Was:` has no full stop. 🔴 These burstiness figures are the line editor's re-measurement, not the fact-checker's - it had no execution tool in its dispatch and said so rather than approving them. The keeper re-runs the regex quoted above before finalize; that is a rule about re-measuring, not a doubt about the number. The longest real sentence is
-**41 words**, S-017's glossary reasoning. Both ends of the fingerprint's range appear many times over, and
-14 sentences sit above its 34-word ceiling, every one of them commentary rather than shipping prose. Zero
-em dashes and zero exclamation marks in the prose; the only exclamation mark in this file sits inside the
-split regex quoted above. Zero `not X but Y`. Shipping strings themselves run from one word (`Drives`,
+**Rhythm** - the shipping strings are labels, so burstiness is measurable only on this commentary, where it
+is deliberate. **Scope and instrument, written down so a re-measure can match**: the figures below come from
+running the project's own story lint hook over the finished file at finalize,
+`global-config/hooks/posttooluse-story-lint.sh`, rather than from a regex written to imitate it. It strips
+HTML comments and fenced blocks, blanks every heading and table line, splits each paragraph on
+sentence-ending punctuation followed by whitespace, and counts a word as the rubric's `\b[\w'-]+\b`. On that
+basis: 4383 prose words in 282 sentences, mean 15.5 words, population standard deviation 11.9,
+**burstiness 0.77** against the fingerprint's floor of 0.45. Shortest sentence: **2 words**. Longest:
+**59 words**, S-020's inventory of the safeguards that already name the mode, which is the one place the
+argument genuinely needs the length. 🔴 The figures the panel carried here were the line editor's, measured
+with a hand-written regex before the fact-checker's eleven corrections landed; they no longer described the
+file. They are replaced rather than annotated, because a stale measurement is the one kind a later reader
+cannot tell from drift. That same hand-written regex, re-run now, gives 272 sentences and
+**burstiness 0.75** - the two instruments agree to within 0.02, so the gap from the panel's figure was
+growth and not method. Both ends of the fingerprint's range appear many times over. 26 sentences sit above
+its 34-word ceiling, every one of them commentary rather than shipping prose. Zero em dashes. One contrast
+of the not-X-but-Y shape survives, in F-6's sentence about the console's counter, against a budget of one
+per 300 words; the claim that used to stand here said zero, and was itself one of the matches. Shipping
+strings themselves run from one word (`Drives`,
 `Sections`) to nine - **S-033, the HTML footer**, rendering
 `Generated from report-....json by windowsweep v1.2.0 - Ahsan Mahmood` with `WS_AUTHOR` resolved
 (`lib/constants.ps1:11`). Counted instead by this file's own word regex, which drops a bare `-`, it is eight.
@@ -488,13 +496,13 @@ outputs (S-017 and S-030), which widens the brief's *two places* to four.
 
 **ASCII** - **PASS, and here is the result rather than a promise of one.** Re-measured at finalize over the
 finished file with a character-class scan for `[^ -~]`, every character outside printable ASCII: 93 of them,
-spread across 51 lines, and every one of those lines is a heading or commentary. Three codepoints, no
+spread across 52 lines, and every one of those lines is a heading or commentary. Three codepoints, no
 others. They are the middle dot, the section sign and the red-circle glyph - the house marks this commentary
 uses, which reach no engine file. The 34 fence-content lines intersect that set nowhere, so no byte above
 127 reaches an engine file. The same scan finds no em dash, no en dash, no curly quote, no ellipsis
-character and no non-breaking space, and U+2014 in particular is absent. The file carries no exclamation
-mark at all, which is the fingerprint's budget met rather than an accident: the character is named in words
-here instead of quoted, because a quoted one would have been counted by the very scan reporting on it. The
+character and no non-breaking space, and U+2014 in particular is absent. Nor is there an exclamation mark.
+That is the fingerprint's budget met rather than an accident: the character is named in words here instead
+of quoted, because a quoted one would have been counted by the very scan reporting on it. The
 instrument was watched firing on the commentary's own marks, which is what makes the fences' zero mean
 something. The gate that matters at build time is `modules/release_helpers.ps1:67-73`,
 self-test check [4], which breaks on the first byte over 127 per engine file and fails with
@@ -503,15 +511,22 @@ file after this draft is applied, not against the draft.
 
 **`Was:` lines** - each was checked against `modules/reports.ps1` with a fixed-string search rather than by
 eye, per the brief's stop rule. **Re-verified independently: 33 matched, 0 unmatched, and 0 of the 10 new
-strings already present** - so every change is real and none is a silent no-op. 🔴 One qualification the
+strings already present** - so every change is real and none is a silent no-op. Run again at finalize, same
+result. The unit counted there is the slot; S-009 carries two lines of its own, so the same sweep counted by
+fragment returns 34 rather than 33. 🔴 One qualification the
 first pass overstated: `S-026` and `S-027` are elided with ` ... ` and can only be matched **piecewise**
 (three sub-fragments each, all on `:118` and `:119`). "Every one can be checked with a fixed-string search"
 is true of 31 and piecewise for 2. Both are kept slots, so no applier substitutes them. The ten changed
 `Was:` fragments each occur on exactly one line, so a fixed-string replace cannot hit twice.
 
-**Banned phrases** - the list at `aoneahsan-cccs-story-craft/assets/banned-phrases.txt` was matched against
-the commentary and against the fence contents separately. Zero hits in either. The fingerprint's own Never
-list was matched against the fences: zero hits. No allow marker is used, so none needs a reason.
+**Banned phrases** - the shared list at `aoneahsan-cccs-story-craft/assets/banned-phrases.txt` was matched
+against the commentary and against the fence contents separately, and re-run at finalize. Zero hits in
+either. The fingerprint's own Never list was matched against the fences as well: zero. No allow marker is
+used. So none needs a reason. 🔴 Those phrases are described here and never quoted, because a report that
+reproduces what it swept for puts the words into the prose the hook reads, which is how a clean sweep turns
+itself into a failure. One near-miss is worth naming. The fences carry `Free before` and `Free after`, where
+*free* is the adjective for free space that the console itself prints as `FREE`; the glossary's ban is on
+the two-word verb for reclaiming space, which appears in no fence.
 
 🔴 **This draft is slot-shaped, so the project's lint hook cannot see the copy that ships**.
 `posttooluse-story-lint.sh:61` strips every fenced block before it counts anything, and on this file every
@@ -521,8 +536,8 @@ The real gates are the both-outputs audit above, the `Was:` verification, and a 
 two exports side by side.
 
 **Confidence** - high on the slot inventory, the two reclaim-verb corrections and the both-outputs audit - all
-three were read off the file rather than recalled. Medium on two judgement calls, which is why both carry a
-veto flag. One is whether the HTML's hero label may lose the word `dry-run` (S-020). The other is whether
+three were read off the file rather than recalled. Medium on two judgement calls. Both carry a veto flag.
+One is whether the HTML's hero label may lose the word `dry-run` (S-020). The other is whether
 `Freed` should follow the glossary to `Reclaimed`, when a dry-run report's column then holds estimates under a
 past-tense header (S-017, S-030). Low-risk but worth naming: `## Run` as a Markdown heading can be read as an
 imperative for a second, which is the cost of taking the HTML's existing word instead of inventing a third.

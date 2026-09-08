@@ -367,6 +367,13 @@ one of the four destinations and *usage events* alone would have undercounted wh
 *Both facts, at the same size* is a sentence about the page's layout rather than about the product; it is
 right on the page and does nothing in a search result, so the space went to the fourth destination.
 
+🔴 **The page's program count is in its headings, not in these two strings**. `privacy.html` says *two
+programs* in its `<h1>` (line 35) and in one `<h2>` (line 41); there are three, with two answers. Those
+headings are row 17's and are being rewritten there. The `<title>` and description never carried the count:
+the `Was:` lines above are the dummy's head strings verbatim, and the description already named all three.
+What ships here keeps that shape. It names the command line, the desktop window and this site; it gives the
+two answers; it counts nothing. So it stays true when the heading changes.
+
 ## `/sitemap`
 
 ### S-015 · `/sitemap` · `<title>`

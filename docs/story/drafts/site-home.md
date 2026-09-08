@@ -339,7 +339,7 @@ owned by one row rather than two surfaces agreeing by luck. Only the prose chang
 <h3>Dry-run. Still writes nothing of yours.</h3>
 <p class="ink-2">Every deletion helper short-circuits and every destructive external command is
   intercepted. You see the exact paths a real run would remove, and the estimate it would
-  reclaim. It writes two files of its own, a log and a report, and none of yours. The self-test
+  reclaim. It writes two files of its own, a log and a report. None of yours. The self-test
   hashes a fixture tree before and after a dry-run to prove the tree did not change.</p>
 
 <!-- step 3 -->
@@ -394,8 +394,8 @@ Drive and iCloud Drive with them.`
   <h3>Your files</h3>
   <p>Documents, Pictures, Music, Videos, Desktop, Contacts, Favorites, Links, Saved Games,
     Searches and 3D Objects, with OneDrive, Dropbox, Google Drive and iCloud Drive beside
-    them. Refused unconditionally. There is no flag, no profile and no configuration file that
-    reaches any of them.</p>
+    them. Refused unconditionally. No flag, no profile and no configuration file reaches any of
+    them.</p>
 </li>
 <li>
   <h3>Your credentials and agent state</h3>
@@ -441,8 +441,8 @@ Drive and iCloud Drive with them.`
 ```
 
 **Why.** The list was already right; what it lacked was band R landing anywhere. Three additions do that,
-each a **specific refusal** rather than an adjective, which is the Bible's definition of the band. *"There
-is no flag, no profile and no configuration file that reaches any of them"* answers the question a
+each a **specific refusal** rather than an adjective, which is the Bible's definition of the band. *"No
+flag, no profile and no configuration file reaches any of them"* answers the question a
 sceptical reader is actually holding - *what if I turn something on* - at the top of the list rather than
 in the chokepoint band two screens later. *"The caches these tools keep are fair game. The tools are not."*
 is the whole product in nine words. It belongs beside the toolchain list, which otherwise reads as
@@ -601,7 +601,7 @@ The consequence is that it keeps more, never less.`
 ```html
 <h3 class="h-sub">Caches you used recently are kept.</h3>
 <p class="t-sm ink-2">The idle gate applies. A cache file goes only when its newest timestamp is
-  at least 100 days old, and the newest version of every versioned tool is never removed -
+  at least 100 days old, and the newest version of every versioned tool is never removed:
   Cypress, Playwright, Gradle distributions, Squirrel builds.</p>
 <p class="t-sm ink-2">Windows disables last-access updates on most volumes, so the tool reads the
   newest of three timestamps and errs toward "recently used". It keeps more than it strictly
@@ -630,7 +630,7 @@ whether a cache is pruned by the idle gate or emptied.`
 <p class="t-sm ink-2">If you do not build software on this machine, a four-gigabyte Gradle cache
   is not worth keeping and the idle gate has nothing to protect.</p>
 <p class="t-sm ink-2">Nothing about this answer changes what the tool may <em>reach</em>. The
-  refusal lists are identical either way. It decides only whether a cache is pruned on the idle
+  refusal lists are identical either way. It decides only whether a cache is pruned by the idle
   gate or emptied.</p>
 ```
 
@@ -1185,7 +1185,7 @@ once and labelled as one machine's result (the receipt), or structural (0 networ
 **the shipping strings only** - the text inside the 30 fenced blocks, with HTML tags, `<!-- -->` comments
 and JavaScript scaffolding stripped and entities resolved. Block-level closes (`</p> </h2> </h3> </li>
 </summary>`) end a sentence; inline `<span> <b> <em>` do not. Three non-prose runs are excluded: the two
-`<p class="mono">` path inventories, the four `.hero-facts` chips and the `.rc-total` numeral. So is the
+`<p class="mono">` path inventories, the three `.hero-facts` chips and the `.rc-total` numeral. So is the
 verification `bash` fence, and so are `S-006`'s three terminal transcripts, because row 10 owns them.
 The `…` markers standing in for the unchanged `<svg>` icons in S-019 and S-020 are not words and are
 dropped. **S-031 is excluded from every figure in this section**, because it does not ship. Commentary and
@@ -1248,13 +1248,13 @@ is *trust is the content* would be the tail wagging the dog.
 
 | Measure | Figure | Target |
 |---|---|---|
-| Words · sentences | 1,971 · 188 | - |
-| Mean length | 10.48 words | median 12-16 (under, and deliberately - see below) |
-| Standard deviation | 7.33 | - |
+| Words · sentences | 1,950 · 189 after the line edit; round 2 read 1,971 · 188 - reconciled below | - |
+| Mean length | 10.32 words | median 12-16 (under, and deliberately - see below) |
+| Standard deviation | 7.21 | - |
 | **Burstiness** (σ ÷ mean) | **0.70** | ≥ 0.45 ✅ |
 | **Shortest** | **1 word** - the rail's step labels, *"Scan."* and *"Run."* (S-006), *"Traversal."* and *"Roots."* (S-010). Next up: *"Not adjectives."* (S-007), *"Never less."* (S-015) | ≤ 6 ✅ |
-| **Longest** | **33 words**, and there are **two** of them. S-024: *"windowsweep --self-test runs its checks on your machine, with a real junction, a 445-character path and a dry-run fixture whose tree is hashed before and after to prove the tree did not change."* S-015: *"A cache file goes only when its newest timestamp is at least 100 days old, and the newest version of every versioned tool is never removed - Cypress, Playwright, Gradle distributions, Squirrel builds."* | ≤ 34 ✅ |
-| Sentences ≤ 6 words · ≥ 25 words | 76 · 9 | both present ✅ |
+| **Longest** | **33 words**, one. S-024: *"windowsweep --self-test runs its checks on your machine, with a real junction, a 445-character path and a dry-run fixture whose tree is hashed before and after to prove the tree did not change."* Next, at **32**, S-015: *"A cache file goes only when its newest timestamp is at least 100 days old, and the newest version of every versioned tool is never removed: Cypress, Playwright, Gradle distributions, Squirrel builds."* It measured 33 in round 2, when the spaced hyphen before its list counted as a token; the line edit made that hyphen a colon | ≤ 34 ✅ |
+| Sentences ≤ 6 words · ≥ 25 words | 77 · 8 | both present ✅ |
 | Sentences over the 34-word ceiling | **0** | 0 ✅ |
 | **Em dashes** | **0** | ≤ 1 per 150 words ✅ - the placeholders carried **11**; all 11 became full stops, colons or commas |
 | "not X, but Y" | **0** | ≤ 1 per 300 ✅ |
@@ -1265,10 +1265,10 @@ is *trust is the content* would be the tail wagging the dog.
 | Banned phrases | **1**, allowed with a marker - see below. Swept against `assets/banned-phrases.txt`: **87 phrase entries** across its 102 lines, case-insensitive, on word boundaries, whitespace-flexible for the multi-word entries. Round 1 recorded "152 entries" and that figure was wrong; the file has never held 152 | 0 or allowed ✅ |
 | Banned diction (fingerprint) | **0** - no *blast, nuke, wipe out, seamless, robust, powerful, simply, just, easily, one-click, smart, optimise, sweep away* | 0 ✅ |
 
-**Mean length is 10.5 against the fingerprint's 12-16 median, and that is a property of the surface rather
-than a miss.** A landing page is 34 headings, 4 fact chips and 8 list items short enough to scan, so its
+**Mean length is 10.3 against the fingerprint's 12-16 median, and that is a property of the surface rather
+than a miss.** A landing page is 34 headings, 3 fact chips and 8 list items short enough to scan, so its
 prose mean sits below a document's. The measures that matter for rhythm both clear: burstiness 0.70 and
-zero sentences over the ceiling.
+zero sentences over the ceiling. The line edit's re-measurement is item 6 at the end of this self-check.
 
 <!-- story-lint: allow "elevate" -->
 
@@ -1360,3 +1360,33 @@ Four findings are reported outside scope. Four things I am less than certain of 
   twelve specimens derived from the repository rather than from samples the owner chose. That is the
   Bible's own open item, not a new one - but it is what "reads as this voice" means on this surface, and
   it should be said rather than assumed. Unchanged since round 1. Still not a blocker.
+
+**6. The line edit - re-measured, not inherited.** Four fences changed at sentence level. Nothing else
+moved. No fact, slot, band, heading or decision is different, and every one of the five settled decisions
+above is where round 2 left it. S-006: *"a log and a report, and none of yours"* becomes *"a log and a
+report. None of yours."*, the one short sentence a paragraph of four mid-length ones lacked. S-008: *"There
+is no flag, no profile and no configuration file that reaches any of them"* loses its *there is ... that*
+frame and reads *"No flag, no profile and no configuration file reaches any of them"*, three words shorter
+and ending on its object. S-015: the spaced hyphen before the four-tool list becomes a colon, because a
+hyphen doing a dash's job on a web page is the one mark the fingerprint's budget does not cover, and a full
+stop or a colon is what it asks for. S-016: *"pruned on the idle gate"* returns to the placeholder's
+*"pruned by the idle gate"*. The *on* arrived without a reason. It read as a drift.
+
+**Instrument.** The method at the top of this section, run as written: the 30 shipping fences, tags and
+comments stripped, entities resolved, block closes ending a sentence, the same three non-prose exclusions,
+whitespace-split tokens, the stated split regex. It was run first on the **pre-edit** file, and it returned
+**188 sentences · 1,955 words · mean 10.40 · σ 7.24 · burstiness 0.70 · shortest 1 · longest 33 (S-015 and
+S-024) · 76 at or under six words**, against round 2's 188 · 1,971 · 10.48 · 7.33 · 0.70 · 1 · 33 · 76.
+Identical on every sentence figure. Sixteen words apart on the total, 0.8 per cent, from where each pass
+counted the `·` separators and a bare hyphen, and one apart on the at-or-over-25 count (8 against 9). Close
+enough that the movement below is the edits and not the instrument.
+
+**After the edits: 189 sentences · 1,950 words · mean 10.32 · σ 7.21 · burstiness 0.70 · shortest 1 ·
+longest 33, S-024 alone · 77 at or under six · 8 at or over 25 · 0 over the ceiling · 0 em dashes · 0
+exclamation marks.** One sentence gained. Five tokens lost. No verdict changed. Section 3's band table is
+round 2's measurement and is not re-run here; on its own inclusion rule the line edit moves band 3 by one
+word, band 4 by three, and band 8 by nothing or by one, depending on whether that instrument counted the
+bare hyphen. The four edited strings were swept by hand against the same 87 banned entries and against the
+fingerprint's 22-entry never-list, which is read from `voice-fingerprint.md` and not reproduced here. Zero
+hits. The hook saw none of them, for the reason stated above, and its verdict on this write concerns the
+commentary alone.

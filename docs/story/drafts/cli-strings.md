@@ -61,6 +61,18 @@ Left alone on purpose, each with its reason:
 
 🔴 **This slot is blocked on a NEEDS DECISION** - see NEEDS DECISION 1. The product currently prints two different straplines from six places, and which line belongs here is the same question row 2 was raised to settle.
 
+<!-- Applier note added 2026-09-08, before C-002 -->
+
+🔴 **C-002, C-048 and C-051 render the progress counter as `/18`, and no run prints 18.**
+`$total = $steps.Count + 2` (`modules/walkthrough.ps1:35`) gives **17** unelevated - the admin block is
+16/17 and the disk report 17/17 - and **20** elevated. Whichever is right, `/18` is neither, so a slot that
+ships it documents a string the product never produces.
+
+🔴 **And the same arithmetic hides a real engine defect, filed here rather than fixed inside a copy pass:**
+run elevated and the admin block is *skipped but still counted*, so the last step prints `19/20` and step 20
+never appears. A counter that never reaches its own total is the kind of thing a person notices and quietly
+distrusts the whole run over.
+
 ### C-002 · `lib/ui.ps1:115` · `Write-Step` header
 ```
   [ STEP 4/18 ]  Browser caches
@@ -217,7 +229,7 @@ MODES  (default = the guided walkthrough)
 
 **Change:** "Read-only" is not true of `--scan`. It writes a log, and a report unless `--no-report`. This is the same defect the 2026-09-06 docs pass corrected on `quick-start`, and correcting the page while the program kept saying it is the drift this project fights. The clause that was already true does the whole job; the log and the report are named in C-023 and in the OUTPUT block. 70 characters, against 78 shipped.
 
-### C-021 · `windowsweep.ps1:49` · the `--all` mode line
+### C-021 · `windowsweep.ps1:50` · the `--all` mode line
 ```
   -a, --all             Safe batch: sections $($Script:WS_SAFE_BATCH -join ',') (+$($Script:WS_SAFE_BATCH_ADMIN -join ',') when elevated)
 ```
@@ -225,7 +237,7 @@ MODES  (default = the guided walkthrough)
 
 **Change:** the admin ids were a literal beside an interpolation of the very list they belong to. `WS_SAFE_BATCH_ADMIN` is the source, `--list` already interpolates it (C-134), and IRON rule 4's principle - derive a section list, never write one down - applies to copy as much as to code. Renders identically today (91 characters, unchanged); the point is that it cannot drift tomorrow.
 
-### C-022 · `windowsweep.ps1:48-92` · the remaining MODES and OPTIONS reference lines (about 60)
+### C-022 · `windowsweep.ps1:48-93` · the remaining MODES and OPTIONS reference lines (about 60)
 ```
       --only L          Run exactly these sections, e.g. --only 1,3,5-7
       --dry-run         Delete nothing; show what would go and how much it frees
@@ -236,7 +248,17 @@ MODES  (default = the guided walkthrough)
 
 **Change:** none, as one deliberate decision rather than sixty unexamined ones. These are reference lines in a fixed two-column block: each names its flag, its argument and its effect in the imperative, and several already carry the voice outright - `--dry-run`'s "Delete nothing", `--select-file`'s "Either flag lets sections 17/18/19/23 run unattended - a person did choose", `--i-understand-deep` naming all four deep sections by number. Reference prose of this shape belongs to content-map row 5, not row 10, and rewriting it here would put two owners on one block.
 
-### C-023 · `windowsweep.ps1:94-97` · the SAFETY block
+<!-- Applier note added 2026-09-08, on C-022 -->
+
+🔴 **C-022 keeps two strings that this very draft corrects elsewhere, with no reason given for either.**
+(1) `how much it frees` (`windowsweep.ps1:71`, the `--dry-run` help line) uses the verb the glossary bans for
+space - the verb C-074 and C-088 exist to replace. (2) `(read-only)` on `--list-targets`
+(`windowsweep.ps1:56`) is the same overclaim C-020, C-044 and C-083 correct on the scan strings, sitting
+inside row 10's own `--help` block. Both are inside a 46-line block kept wholesale, which is how they
+survived: a slot that keeps a *block* keeps every claim in it, and nothing re-reads a block for the words a
+sibling slot decided to change.
+
+### C-023 · `windowsweep.ps1:96-99` · the SAFETY block
 ```
   Every deletion passes one chokepoint that refuses drive roots, Windows, Program Files, your
   profile root, Documents/Pictures/Desktop, credentials, toolchains and browser/editor state, and
@@ -261,7 +283,7 @@ Widest line drops from 99 to 97 characters; the block gains one line and two fac
 
 **Note for the implementer:** the section ids here are literals in an expandable here-string. A drift-proof form is available - filter `$Script:WS_SECTIONS` on `Batch -eq 'interactive'` and on `Tier -eq 'recycle'` - and would be the better build if section 26 ever lands interactive. It is not required for the copy to be correct today.
 
-### C-024 · `windowsweep.ps1:99-101` · the OUTPUT block
+### C-024 · `windowsweep.ps1:101-103` · the OUTPUT block
 ```
 OUTPUT
   Logs:    C:\Users\you\.windowsweep\logs
@@ -271,7 +293,7 @@ OUTPUT
 
 **Change:** none. Two resolved paths, no prose. This is where C-020 and C-023 point.
 
-### C-025 · `windowsweep.ps1:103-104` · the help footer
+### C-025 · `windowsweep.ps1:105-106` · the help footer
 ```
 windowsweep v1.2.0  by Ahsan Mahmood <aoneahsan@gmail.com>  https://aoneahsan.com
 https://github.com/aoneahsan/windowsweep  -  MIT License
@@ -296,7 +318,7 @@ option --days needs a value
 
 **Change:** none.
 
-### C-028 · `windowsweep.ps1:169,171,178` · a numeric flag given a non-number
+### C-028 · `windowsweep.ps1:163,164,171` · a numeric flag given a non-number
 ```
 --days needs a whole number, got 'lots'
 ```
@@ -329,7 +351,7 @@ unknown profile 'developer' (known: audit, cache-only, deep, dev, minimal, syste
 
 **Change:** none. Two different failures, two different sentences, each naming the file.
 
-### C-032 · `windowsweep.ps1:274-275` · the bootstrap error pair
+### C-032 · `windowsweep.ps1:280-281` · the bootstrap error pair
 ```
 windowsweep: unknown argument: --dry-runn
 try: windowsweep --help
@@ -338,7 +360,7 @@ try: windowsweep --help
 
 **Change:** none. Row 10's CTA is the next command, and this is it - two words and a flag.
 
-### C-033 · `windowsweep.ps1:296` · `--elevate` when already elevated
+### C-033 · `windowsweep.ps1:298` · `--elevate` when already elevated
 ```
 already elevated; --elevate is a no-op
 ```
@@ -346,7 +368,7 @@ already elevated; --elevate is a no-op
 
 **Change:** none. It says the flag did nothing rather than pretending it did something.
 
-### C-034 · `windowsweep.ps1:268` · an unreachable mode
+### C-034 · `windowsweep.ps1:270` · an unreachable mode
 ```
 unknown mode: walkthroughx
 ```
@@ -354,7 +376,7 @@ unknown mode: walkthroughx
 
 **Change:** none. Defensive; `Read-Arguments` refuses first.
 
-### C-035 · `windowsweep.ps1:311` · the interrupt record (log only)
+### C-035 · `windowsweep.ps1:317` · the interrupt record (log only)
 ```
 run interrupted before it finished (Ctrl-C or host stop) - exit 130
 ```
@@ -476,7 +498,7 @@ skipped
 
 **Change:** none. "cleanup" survives as the product's own category noun; "Administrator" is Windows' word for the thing being asked.
 
-### C-049 · `modules/walkthrough.ps1:51-56` · the admin step body
+### C-049 · `modules/walkthrough.ps1:51-55` · the admin step body
 ```
   This walkthrough runs 12 (Windows Update cache), 13 (Disk Cleanup engine) and 14 (component
   store) when the console is elevated. Six sections need an elevated console in all - 15, 16 and
@@ -499,7 +521,7 @@ The replacement says which three *this walkthrough* runs, then states the full c
 
 Widest line drops from 104 characters to 96.
 
-### C-050 · `modules/walkthrough.ps1:57` · the hint carried to the summary
+### C-050 · `modules/walkthrough.ps1:56` · the hint carried to the summary
 ```
 Admin sections:  windowsweep --profile system --yes --elevate
 ```
@@ -559,6 +581,13 @@ next steps:
 
 **Change:** none. Four facts, one of them measured, above a list of destructive options. This is the P band doing its job.
 
+<!-- Applier note added 2026-09-08, before C-057 -->
+
+🔴 **C-057 renders section 7 as `(Chrome, Edge, Brave, Firefox, Vivaldi, Opera)`; `lib/constants.ps1:53`
+says `(Chrome, Edge, Brave, Vivaldi, Opera, Chromium, Firefox)`.** Two differences, not one: **Chromium is
+missing** from the slot, and Firefox sits in a different position. A reader checking whether their browser is
+covered gets the wrong answer for Chromium - and this is a *kept* slot, so nothing was going to re-derive it.
+
 ### C-057 · `modules/menu.ps1:17-25` · the section rows
 ```
   + [ 7] Browser caches (Chrome, Edge, Brave, Firefox, Vivaldi, Opera)
@@ -578,7 +607,7 @@ next steps:
 
 **Change:** none.
 
-### C-059 · `modules/menu.ps1:41` · the menu prompt
+### C-059 · `modules/menu.ps1:42` · the menu prompt
 ```
   Select [0-25 / A / D / Y / S / Q]: 
 ```
@@ -753,7 +782,7 @@ mode: all   strategy: prune files idle 100+ days (temp: 3+ days)   developer: on
 
 **Change:** none. Everything that will decide what goes, on one line, before anything goes - and the strategy string carries the resolved numbers rather than the defaults.
 
-### C-080 · `modules/runner.ps1:157` · the purge strategy label
+### C-080 · `modules/runner.ps1:154` · the purge strategy label
 ```
 FULL PURGE of cache targets
 ```
@@ -800,7 +829,24 @@ Read-only scan
 ```
 **Was:** `Read-only scan`
 
-**Change:** none, deliberately, and this is the boundary of the C-020 correction rather than an exception to it. This string is not printed to the console: it is a `title` field in the saved JSON report, and it reappears in the exported Markdown and HTML. Changing it edits a stored artefact's schema-adjacent content for a word nobody reads on screen. The console strings are corrected; the report label stays until whoever owns the report surface decides otherwise. See NEEDS DECISION 2.
+**Change:** `Read-only scan` becomes `Scan`.
+
+🔴 **RESOLVED 2026-09-08. This slot had been deferred to a decision that then declined it, so it belonged to
+nobody while still carrying the overclaim three sibling slots exist to correct.** The reasoning that deferred
+it was sound at the time: the string is a `title` field in the saved JSON report rather than console output,
+and it reappears in the exported Markdown and HTML, so it looked like the report surface's business. But
+`report-bodies` - the surface that owns those exports, content-map row 15 - explicitly declines it: status
+and title words are **data written by `runner.ps1`**, which is this surface's own file. So the deferral had
+left it unowned.
+
+**Why change it rather than keep it with a note.** `--scan` is not read-only: it writes a log and, unless
+`--no-report`, a report - which is exactly the overclaim C-020, C-044 and C-083 correct on the console
+strings. A stored artefact that labels the run `Read-only scan` is a *durable* copy of a claim the product
+has decided is wrong, and it is read by the desktop app and by anyone parsing a report. Old reports keep
+their old title, because nothing rewrites a saved file; only new ones carry the corrected label.
+
+🔴 **Replace this one CASE-SENSITIVELY.** A case-insensitive replace of `read-only scan` also hits C-083's
+console string at `modules/runner.ps1:168`, which is a different slot with a different replacement.
 
 ### C-086 · `modules/runner.ps1:179` · the summary box
 ```
@@ -1065,7 +1111,7 @@ no runs recorded yet
 
 **Change:** none. Rehearsals counted separately from runs, and the total drawn only from the real ones - which is the arithmetic the voice would demand if the code had not already done it.
 
-### C-117 · `modules/reports.ps1:44-134` · the exported Markdown and HTML bodies (about 30 strings)
+### C-117 · `modules/reports.ps1:44-133` · the exported Markdown and HTML bodies (about 30 strings)
 ```
 # windowsweep session report
 _Generated from `report-2026-09-07_101533-12044.json`_
@@ -1239,7 +1285,7 @@ running now, their caches will be skipped until closed: Chrome, VS Code, Slack
 
 **Change:** none.
 
-### C-134 · `modules/release_helpers.ps1:34` · the safe-batch line
+### C-134 · `modules/release_helpers.ps1:32` · the safe-batch line
 ```
   safe batch (--all): 0,1,2,3,5,6,7,8,9,10,21  (+12,13 when elevated)
 ```
@@ -1247,7 +1293,7 @@ running now, their caches will be skipped until closed: Chrome, VS Code, Slack
 
 **Change:** none - both lists are already interpolated from `WS_SAFE_BATCH` and `WS_SAFE_BATCH_ADMIN`, which is what C-021 brings the help text into line with.
 
-### C-135 · `modules/release_helpers.ps1:35` · the profile lines
+### C-135 · `modules/release_helpers.ps1:33` · the profile lines
 ```
   profile audit       0,21,22,24,25
   profile system      12,13,14
@@ -1256,7 +1302,7 @@ running now, their caches will be skipped until closed: Chrome, VS Code, Slack
 
 **Change:** none.
 
-### C-136 · `modules/release_helpers.ps1:36` · the batch-policy legend
+### C-136 · `modules/release_helpers.ps1:34` · the batch-policy legend
 ```
   batch policy: safe = runs in --all | optin = --only/--profile with --yes | deep = also needs --i-understand-deep | interactive = never batch
 ```
@@ -1318,7 +1364,7 @@ Privacy: windowsweep makes no network calls. Logs and reports are written only u
 
 **Change:** none.
 
-### C-143 · `modules/release_helpers.ps1:283-292` · the issue body template
+### C-143 · `modules/release_helpers.ps1:283-291` · the issue body template
 ```
 **What happened**
 **What you expected**
@@ -1417,7 +1463,7 @@ Attach it to an issue at https://github.com/aoneahsan/windowsweep/issues
 
 **Change:** none.
 
-### C-154 · `modules/release_helpers.ps1:333-337` · the npx installer refusal
+### C-154 · `modules/release_helpers.ps1:333-336` · the npx installer refusal
 ```
 --install-task is refused under npx: it would point at the npx cache, which npm evicts.
   Install once, then register from the global command:
@@ -1445,7 +1491,7 @@ task already exists
 
 **Change:** none.
 
-### C-157 · `modules/release_helpers.ps1:349` · the task's command
+### C-157 · `modules/release_helpers.ps1:348` · the task's command
 ```
 action: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NoLogo -ExecutionPolicy Bypass -File "C:\...\windowsweep.ps1" --all --yes --quiet --no-color --notify
 ```
@@ -1453,7 +1499,7 @@ action: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -No
 
 **Change:** none. The exact command line, printed before it is registered, including all five flags. Naming what a scheduled task will run every Sunday is this Bible's premise applied to the one thing in this program that acts while nobody is watching.
 
-### C-158 · `modules/release_helpers.ps1:350` · under `--dry-run`
+### C-158 · `modules/release_helpers.ps1:349` · under `--dry-run`
 ```
 would register the task
 ```
@@ -1461,7 +1507,7 @@ would register the task
 
 **Change:** none.
 
-### C-159 · `modules/release_helpers.ps1:351` · the registration prompt
+### C-159 · `modules/release_helpers.ps1:350` · the registration prompt
 ```
 Register this task for your user account?
 ```
@@ -1469,7 +1515,7 @@ Register this task for your user account?
 
 **Change:** none - "for your user account" is the scope, and it is in the question rather than in a note under it.
 
-### C-160 · `modules/release_helpers.ps1:351,357,367` · declining
+### C-160 · `modules/release_helpers.ps1:350,381,397,415` · declining
 ```
 skipped
 ```
@@ -1477,7 +1523,7 @@ skipped
 
 **Change:** none.
 
-### C-161 · `modules/release_helpers.ps1:357` · the task registered
+### C-161 · `modules/release_helpers.ps1:356` · the task registered
 ```
 registered 'windowsweep weekly safe cleanup' (runs as your user, Sundays 03:00; catches up if the PC was off)
 ```
@@ -1485,7 +1531,7 @@ registered 'windowsweep weekly safe cleanup' (runs as your user, Sundays 03:00; 
 
 **Change:** none. The catch-up clause is a real behaviour of `-StartWhenAvailable` and would surprise someone who found a Tuesday run in the log.
 
-### C-162 · `modules/release_helpers.ps1:358` · registration failed
+### C-162 · `modules/release_helpers.ps1:357` · registration failed
 ```
 could not register the task: <the PowerShell exception message>
 ```
@@ -1493,7 +1539,7 @@ could not register the task: <the PowerShell exception message>
 
 **Change:** none. Out of scope: the tail is an exception verbatim.
 
-### C-163 · `modules/release_helpers.ps1:362-370` · removing the task
+### C-163 · `modules/release_helpers.ps1:361-365` · removing the task
 ```
 Remove weekly Scheduled Task
 no task found
@@ -1505,7 +1551,7 @@ task removed
 
 **Change:** none. Five strings, each doing one thing; the confirmation names the task.
 
-### C-164 · `modules/release_helpers.ps1:375` · the install-alias box
+### C-164 · `modules/release_helpers.ps1:372` · the install-alias box
 ```
 Install profile alias
 Adds a 'cleanup' function to your PowerShell profile
@@ -1514,7 +1560,7 @@ Adds a 'cleanup' function to your PowerShell profile
 
 **Change:** none. 51 characters.
 
-### C-165 · `modules/release_helpers.ps1:379` · the alias already present
+### C-165 · `modules/release_helpers.ps1:377` · the alias already present
 ```
 alias already present in C:\Users\you\Documents\WindowsPowerShell\profile.ps1
 ```
@@ -1522,7 +1568,7 @@ alias already present in C:\Users\you\Documents\WindowsPowerShell\profile.ps1
 
 **Change:** none - it names the file it checked.
 
-### C-166 · `modules/release_helpers.ps1:380-381` · what will be written
+### C-166 · `modules/release_helpers.ps1:378-379` · what will be written
 ```
 will append to C:\Users\you\Documents\WindowsPowerShell\profile.ps1
 function cleanup { & "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile ... @args }
@@ -1531,7 +1577,7 @@ function cleanup { & "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
 
 **Change:** none. The file, then the exact line, before the question. The premise again: it shows what it will write to a file the reader owns.
 
-### C-167 · `modules/release_helpers.ps1:383` · the alias prompt
+### C-167 · `modules/release_helpers.ps1:381` · the alias prompt
 ```
 Add it?
 ```
@@ -1539,7 +1585,7 @@ Add it?
 
 **Change:** none. Two words, because C-166 already said everything.
 
-### C-168 · `modules/release_helpers.ps1:389` · the alias added
+### C-168 · `modules/release_helpers.ps1:386` · the alias added
 ```
 added. Open a new PowerShell window (or run '. $PROFILE.CurrentUserAllHosts'), then type: cleanup
 ```
@@ -1547,7 +1593,7 @@ added. Open a new PowerShell window (or run '. $PROFILE.CurrentUserAllHosts'), t
 
 **Change:** none. The next action, its shortcut, and the word to type.
 
-### C-169 · `modules/release_helpers.ps1:394-404` · removing the alias
+### C-169 · `modules/release_helpers.ps1:391-405` · removing the alias
 ```
 Remove profile alias
 no profile file
@@ -1560,7 +1606,7 @@ alias removed
 
 **Change:** none. Two different absences get two different sentences, which is more use than one generic line.
 
-### C-170 · `modules/release_helpers.ps1:413` · the data-removal box
+### C-170 · `modules/release_helpers.ps1:410` · the data-removal box
 ```
 Remove windowsweep data
 C:\Users\you\.windowsweep
@@ -1569,7 +1615,7 @@ C:\Users\you\.windowsweep
 
 **Change:** none.
 
-### C-171 · `modules/release_helpers.ps1:414` · nothing there
+### C-171 · `modules/release_helpers.ps1:411` · nothing there
 ```
 nothing to remove
 ```
@@ -1577,7 +1623,7 @@ nothing to remove
 
 **Change:** none.
 
-### C-172 · `modules/release_helpers.ps1:416` · what is there
+### C-172 · `modules/release_helpers.ps1:413` · what is there
 ```
 C:\Users\you\.windowsweep holds 2.4 MB of logs, reports, bundles and config
 ```
@@ -1585,7 +1631,7 @@ C:\Users\you\.windowsweep holds 2.4 MB of logs, reports, bundles and config
 
 **Change:** none. A path, a measured size, and the four things inside it, before the question.
 
-### C-173 · `modules/release_helpers.ps1:417` · under `--dry-run`
+### C-173 · `modules/release_helpers.ps1:414` · under `--dry-run`
 ```
 would remove C:\Users\you\.windowsweep
 ```
@@ -1593,7 +1639,7 @@ would remove C:\Users\you\.windowsweep
 
 **Change:** none.
 
-### C-174 · `modules/release_helpers.ps1:418` · the confirmation
+### C-174 · `modules/release_helpers.ps1:415` · the confirmation
 ```
 Delete it all (logs, reports, your developer answer)?
 ```
@@ -1601,7 +1647,7 @@ Delete it all (logs, reports, your developer answer)?
 
 **Change:** none, and this is the most carefully built prompt in the file: it defaults to no, it passes `-NoAutoYes` so `--yes` cannot answer it, and it names the developer answer specifically, because that is the item a reader would not have thought of and would miss next run.
 
-### C-175 · `modules/release_helpers.ps1:420` · removed
+### C-175 · `modules/release_helpers.ps1:417` · removed
 ```
 removed
 ```
@@ -1609,7 +1655,7 @@ removed
 
 **Change:** none.
 
-### C-176 · `modules/release_helpers.ps1:428` · the prune box
+### C-176 · `modules/release_helpers.ps1:424` · the prune box
 ```
 Prune run history older than 90 days
 C:\Users\you\.windowsweep
@@ -1632,9 +1678,25 @@ removed 12 file(s), 640 KB
 Self-test
 Verify syntax, safety guards, dry-run guarantee, junction handling
 refuses  C:\Users\you\Documents  (inside protected: %USERPROFILE%\Documents)
+all 156 checks passed - windowsweep is ready
+```
+**Was:**
+```
 all 151 checks passed - windowsweep is ready
 ```
-**Was:** the same.
+
+🔴 **ANSWERED 2026-09-08 BY MEASURING, not by choosing between two numbers written down.** The fact-check
+raised this as a `NEEDS DECISION` - 155 in `CLAUDE.md`, 156 in the dispatch - and correctly refused to pick
+one, having no execution tool. The suite was run: **156**, twice, on this machine, once before and once after
+the two plants that proved check 18e. The count moved from 151 because group [18] was added inside the 1.2.0
+window (`newest_write_utc`, the protected lists, `--exclude-path` reaching every section, dry-run/run
+agreement) and then gained 18e today (a read-only scan honouring `--not-developer`).
+
+⚠️ **This is a number that decays by construction**, which is the whole argument against asserting counts of
+internal things in shipping copy. It is unavoidable here - the string IS the count, printed by the suite
+itself - but that makes it a **cascade-gated** slot: it is only correct in the same release that ships the
+checks it counts. Whoever runs the cascade re-runs `--self-test` and takes the printed figure rather than
+trusting this line.
 
 **Change:** none. Out of scope: `--self-test` is a developer gate, not a product voice surface. Noted because it is the largest block of strings in the file and its absence from the inventory should be a decision rather than an oversight.
 
@@ -1644,7 +1706,7 @@ all 151 checks passed - windowsweep is ready
 
 Beyond the eight files the brief named. Covered because the Bible's glossary defines `developer mode` as "the answer to the first-run question", which makes this prompt row 10's whichever file holds it.
 
-### C-179 · `lib/config.ps1:72` · the first-run box
+### C-179 · `lib/config.ps1:81` · the first-run box
 ```
 One question before anything else
 It decides how package and build caches are treated
@@ -1653,7 +1715,7 @@ It decides how package and build caches are treated
 
 **Change:** none. 51 characters, and the title is the best line in the program's first ten seconds: it bounds the interrogation to one question before the reader has to wonder how many are coming.
 
-### C-180 · `lib/config.ps1:73` · the question
+### C-180 · `lib/config.ps1:82` · the question
 ```
   Are you a developer on this machine?
 ```
@@ -1661,17 +1723,36 @@ It decides how package and build caches are treated
 
 **Change:** none. "on this machine" is the part that makes it answerable.
 
-### C-181 · `lib/config.ps1:74-75` · what yes means
+### C-181 · `lib/config.ps1:83` · what yes means
+```
+yes = package/build/test-runner caches are only pruned when idle $($ws.Days)+ days (recent work stays fast);
+```
+**Was:**
 ```
 yes = package/build/test-runner caches are only pruned when idle 100+ days (recent work stays fast);
 ```
-**Was:** the same text with `100` written as a literal.
 
-**Change:** the number becomes `$($ws.Days)`. `Initialize-Settings` runs before `Resolve-DeveloperMode` in the bootstrap, so `$ws.Days` is already resolved from `--days` or the config when this prints - which means someone running `windowsweep --days 30` is currently told the gate is 100 days while the run uses 30. A wrong number in the answer to the product's only question, and it renders identically on a default run, which is why nothing has caught it.
+🔴 **THIS SLOT WAS A SILENT NO-OP UNTIL 2026-09-08, and it is the most dangerous shape a slot can take.**
+Its fence was **byte-identical to the live line**, while the paragraph below described a change the fence did
+not contain. An applier pasting the fence would have changed nothing and reported success - and the whole
+point of a `Was:`/fence pair is that the two differ. Found by a fact-check that compared the fence against
+`lib/config.ps1` rather than reading the paragraph.
+
+🔴 **AND THE FENCE ALONE IS NOT THE WHOLE EDIT.** Line 83 is **single-quoted** - `Write-Note '...'` - so
+PowerShell will not interpolate `$($ws.Days)` there. **The quotes must be switched to double in the same
+edit**, or the prompt prints the sub-expression as literal text, which is worse than the wrong number it
+replaces. `$ws` is in scope: `Resolve-DeveloperMode` assigns it at `lib/config.ps1:74`.
+
+**Change:** the number becomes `$($ws.Days)`, and `Write-Note`'s quotes go from single to double.
+`Initialize-Settings` (`windowsweep.ps1:289`) runs before `Resolve-DeveloperMode` (`:300`) and resolves
+`$ws.Days` from `--days` (`:163`) or the config file (`:236`), so the value is already correct when this
+prints - which means someone running `windowsweep --days 30` is currently told the gate is 100 days while
+the run uses 30. A wrong number in the answer to the product's only question, and it renders identically on
+a default run, which is why nothing caught it.
 
 100 characters at the default, unchanged from shipped.
 
-### C-182 · `lib/config.ps1:75` · what yes keeps
+### C-182 · `lib/config.ps1:84` · what yes keeps
 ```
       the newest version of every versioned tool cache is kept, unless --purge-all.
 ```
@@ -1681,7 +1762,7 @@ yes = package/build/test-runner caches are only pruned when idle 100+ days (rece
 
 83 characters against 70, and 17 inside the block's own longest line (C-181, 100). An unqualified "always" in a promise about what is kept is the most expensive word on this surface to get wrong.
 
-### C-183 · `lib/config.ps1:76` · what no means
+### C-183 · `lib/config.ps1:85` · what no means
 ```
 no  = those caches are cleared completely; project scans are skipped.
 ```
@@ -1689,7 +1770,7 @@ no  = those caches are cleared completely; project scans are skipped.
 
 **Change:** none. Both consequences, including the one the reader did not ask about.
 
-### C-184 · `lib/config.ps1:77` · the evidence
+### C-184 · `lib/config.ps1:86` · the evidence
 ```
 detected developer tooling: node, yarn, docker, cargo, go
 ```
@@ -1697,7 +1778,7 @@ detected developer tooling: node, yarn, docker, cargo, go
 
 **Change:** none. It shows what it found without answering for the reader.
 
-### C-185 · `lib/config.ps1:84` · the answer saved
+### C-185 · `lib/config.ps1:93` · the answer saved
 ```
 developer mode ON - saved to config.json (change with --forget-developer)
 ```
@@ -1705,7 +1786,7 @@ developer mode ON - saved to config.json (change with --forget-developer)
 
 **Change:** none. What was recorded, where, and how to undo it - in one line, at the moment it happens rather than in documentation.
 
-### C-186 · `lib/config.ps1:89` · not asked
+### C-186 · `lib/config.ps1:98` · not asked
 ```
 developer question not asked (non-interactive run) - defaulting to developer mode ON, the conservative choice; pass --not-developer to override
 ```
@@ -1713,7 +1794,7 @@ developer question not asked (non-interactive run) - defaulting to developer mod
 
 **Change:** none. It says the question was skipped, which way the default fell, why that direction, and the flag that reverses it. 142 characters, all of it doing work.
 
-### C-187 · `lib/config.ps1:96` · the purge confirmation
+### C-187 · `lib/config.ps1:105` · the purge confirmation
 ```
 FULL PURGE: --purge-all empties every cache target completely, including files you used yesterday.
 ```
@@ -1721,7 +1802,7 @@ FULL PURGE: --purge-all empties every cache target completely, including files y
 
 **Change:** none. "including files you used yesterday" is the clause that makes the flag's cost concrete, and it is followed by a typed-word prompt (C-009) that `--yes` cannot answer. Nothing to add.
 
-### C-188 · `lib/config.ps1:96` · purge confirmed
+### C-188 · `lib/config.ps1:105` · purge confirmed
 ```
 purge-all confirmed for this run
 ```
@@ -1729,7 +1810,7 @@ purge-all confirmed for this run
 
 **Change:** none - "for this run" bounds it.
 
-### C-189 · `lib/config.ps1:98` · purge declined
+### C-189 · `lib/config.ps1:107` · purge declined
 ```
 purge-all declined - this run prunes by the idle window instead
 ```
@@ -1769,7 +1850,7 @@ Beyond the eight files the brief named. `Show-ScanTable` is printed by the walkt
 
 **Change:** none. "absent" rather than "0 B" - a target that is not there and a target that is empty are different facts, and this voice does not merge them.
 
-### C-193 · `lib/scan.ps1:72` · the per-section total
+### C-193 · `lib/scan.ps1:82` · the per-section total
 ```
   section total on disk                        1.4 GB
 ```
@@ -1777,7 +1858,7 @@ Beyond the eight files the brief named. `Show-ScanTable` is printed by the walkt
 
 **Change:** none. "on disk" is the qualifier C-195 then explains.
 
-### C-194 · `lib/scan.ps1:76` · the scan total
+### C-194 · `lib/scan.ps1:86` · the scan total
 ```
 Currently on disk across all listed targets: 22.08 GB
 ```
@@ -1785,7 +1866,7 @@ Currently on disk across all listed targets: 22.08 GB
 
 **Change:** none. "Currently" and "listed" are both doing work: it is a measurement of now, over the declared targets, not a forecast.
 
-### C-195 · `lib/scan.ps1:77` · the caveat under the total
+### C-195 · `lib/scan.ps1:87` · the caveat under the total
 ```
 These are sizes on disk, not what a run would delete: the idle gate keeps recently used files, and running apps are skipped.
 ```
@@ -1807,7 +1888,9 @@ Row 10 does not cover these, so they are reported and left alone.
 
 4. **`modules/system_admin.ps1:155` vs `:162` still disagree about Fast Startup** - `reduced` is described as keeping the hibernation file at "roughly 40% of RAM" on one line and the whole file as ~40% on the other. Recorded in the decision log on 2026-09-06 as reported-not-edited. Still true. Outside row 10 as well, since it is section-module intro prose. It would cost nothing to fix inside the 1.2.0 cascade this surface already needs.
 
-5. **Section 22 carries `Dev = $true` with no behavioural branch.** `runner.ps1:106` gates on `$Id -in @(4, 17, 20)`, so 22's flag changes nothing, while `--list --json` reports `dev: true` to the desktop app. Also already recorded on 2026-09-06; repeated because this surface's brief asked for fact defects and this one is still live.
+5. **Section 22 carried `Dev = $true` with no behavioural branch.** `runner.ps1:105` gates on `$Id -in @(4, 17, 20)`, so 22's flag changed nothing, while `--list --json` reported `dev: true` to the desktop app. Also already recorded on 2026-09-06.
+
+   🔴 **FIXED 2026-09-08 - this item is no longer live, and the sentence saying it was is exactly the kind of claim this draft keeps catching in other files.** `lib/constants.ps1:68` now reads `Dev = $false`, corrected inside the 1.2.0 window, and it was proved from the live `--list --json` rather than from the constants file the fix edited: section 22 reports `dev=False`, and the developer sections are exactly seven - 1, 2, 3, 4, 5, 17, 20. The gate is `:105`, not `:106`; the line moved and the citation did not.
 
 6. **Source comments carry the adjective C-001 removes.** `windowsweep.ps1:1`, `modules/walkthrough.ps1:1` and `modules/runner.ps1:1` all read "safe" or "read-only" in the senses corrected above. Not user-visible, so not slots - but a session applying this draft is already in those files.
 
@@ -1840,6 +1923,29 @@ It matters now because C-088 changes the console's row to `Would reclaim (est.)`
 C-117 and C-085 are held on this. No other slot depends on it.
 
 ---
+
+## Applier notes - the searches that are NOT safe as written (added 2026-09-08)
+
+🔴 **Six changed slots quote a RENDERED `Was:`** - example values already substituted into `{0}` or
+`$(...)` - so a fixed-string search for the line as printed finds nothing. Search the source fragment
+instead: **C-001** `- safe, developer-aware Windows cleanup   "` · **C-018** `v$v - safe, developer-aware
+Windows cleanup` (🔴 the shorter form without `v$v - ` matches **twice** in that file, the comment on line 1
+as well) · **C-074** `this section would free about` · **C-075** `this section freed` (never bare `freed`,
+which also hits `freed_bytes` at `:49`, `:218`, `:219`) · **C-088** `'Would free (estimate):'` (unique in
+`runner.ps1`; the same words in `reports.ps1:51` belong to row 15) · **C-123** `Windows slows down badly
+below ~10%; this run should help`.
+
+🔴 **C-083 must be replaced CASE-SENSITIVELY.** A case-insensitive replace of `read-only scan` also hits
+C-085's JSON step title `Read-only scan` at `modules/runner.ps1:173`, which this draft deliberately keeps.
+
+🔴 **C-181's `100` is not unique** in `lib/config.ps1` - it also appears at `:8` and `:10`. Only
+`idle 100+ days` identifies the line.
+
+**Nine kept slots can only be matched piecewise**, because their fences carry ` ... ` or a placeholder:
+C-008, C-057, C-073, C-117, C-149, C-157, C-162, C-166, C-190. **Four more state their `Was:` as a
+description rather than a quotation:** C-017, C-028, C-036, C-132. So the claim that every `Was:` is a
+fixed-string search is true of **13 of the 20 changed slots** - and that qualification is the difference
+between an applier that stops and one that reports success having done nothing.
 
 ## Self-check
 

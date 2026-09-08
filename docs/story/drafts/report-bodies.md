@@ -481,7 +481,7 @@ outputs (S-017 and S-030), which widens the brief's *two places* to four.
 
 ### Verification run on this file
 
-**ASCII** - **PASS, and here is the result rather than a promise of one.** A scan for `[^ -]`
+**ASCII** - **PASS, and here is the result rather than a promise of one.** A scan for `[^ -~]` (every byte outside printable ASCII)
 across the whole file returns 44 hits, every one on a heading or a commentary line carrying `·`, `§` or the
 red-circle glyph. The 34 fence-content lines intersect that set nowhere, so no byte above 127 reaches an
 engine file. The same scan shows zero U+2014, and the only `!` in the file sits inside the split regex

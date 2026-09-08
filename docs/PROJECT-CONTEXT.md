@@ -605,7 +605,7 @@ all seven existing ones were at the two-project free-tier limit):
 - `lib/constants.ps1` - section catalogue, profiles, safe batch, version fallback (must equal `package.json` and `VERSION`).
 - `lib/actions.ps1` - `New-Target` rows + `Invoke-TargetList`; the cache-folder name allowlist for layout kinds.
 - `modules/release_helpers.ps1` - the self-test groups [1]-[12]; `modules/self_test_extra.ps1` carries groups
-  [13]-[17]. 151 checks in total (junction, dry-run, keep-newest, extension, catalogue and contract fixtures).
+  [13]-[18]. 155 checks in total (junction, dry-run, keep-newest, extension, catalogue and contract fixtures).
 - `docs/sections.md`, `docs/cli-reference.md`, README section table - must agree with the catalogue.
 
 ## Verification

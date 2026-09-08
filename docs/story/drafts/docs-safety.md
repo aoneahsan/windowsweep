@@ -606,7 +606,7 @@ that one character, and the 39-word sentence stays on the keep list.
 
 ### S-022 · safety-model.md:100-102 · running programs
 ```
-A browser, editor or app that is open keeps its cache files locked and half-written. Its targets are skipped with a line naming the process, in the form `Chrome caches - skipped: chrome is running (close it and run this section again)`, and the run's next-steps list repeats the exact command. Files any program holds open are skipped one at a time and counted, never treated as errors.
+A browser, editor or app that is open keeps its cache files locked and half-written. Its targets are skipped with a line naming the process, in the form `Google Chrome - skipped: chrome is running (close it and run this section again)`, and the run's next-steps list repeats the exact command. Files any program holds open are skipped one at a time and counted, never treated as errors.
 ```
 **Was:** ... Its targets are skipped with a `skipped: X is running` line and a hint to re-run the section
 after closing it. Files any program has open are skipped individually and counted, never treated as errors.

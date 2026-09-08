@@ -20,6 +20,6 @@
 | `npm ERR! notsup Unsupported platform` | Installing on Linux or macOS | This package is Windows-only: use `npx linux-cleanup` or `npx macleanup` |
 | `'windowsweep' is not recognized as an internal or external command` from `npx windowsweep` | You ran it inside a clone of this repository, whose own `package.json` is named `windowsweep`; npx picks that local package and finds no installed bin | Run `npx windowsweep` from any other directory, or `node bin\windowsweep.js` inside the clone |
 
-Every skipped or refused path is in the session log at `~\.windowsweep\logs\` with its reason.
+Every skipped or refused path is in the session log at `%USERPROFILE%\.windowsweep\logs\` with its reason. The log records what happened; it undoes nothing. If your symptom is not in the table, start with that log. `windowsweep --report-issue` opens a pre-filled GitHub issue after you confirm.
 
-Last Updated: 2026-09-03
+Last Updated: 2026-09-05

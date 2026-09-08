@@ -89,7 +89,7 @@ protected subtrees", because that is the part the command prints item by item.
 
 ### S-003 · troubleshooting.md:7 · the running-browser row
 ```
-| `Chrome caches - skipped: chrome is running` | The browser or app is open and holds its cache files | Close it and run `windowsweep --only 7 --yes`. The section number is in the message, and the run's next-steps list repeats the whole command |
+| `Google Chrome - skipped: chrome is running` | The browser or app is open and holds its cache files | Close it and run `windowsweep --only 7 --yes`. The section number is in the message, and the run's next-steps list repeats the whole command |
 ```
 **Was:** Symptom: `skipped: chrome is running`; Fix: Close it and run `windowsweep --only 7 --yes` (the
 section number is in the message)
@@ -391,7 +391,7 @@ the npx clause, which gains its mechanism to match `docs-start` S-003. The rest 
 ### S-023 · faq.md:39-41 · why PowerShell
 ```
 **Why PowerShell rather than an .exe?**
-Every Windows machine has PowerShell 5.1, so there is no runtime to install and no binary to trust. The engine is 5,393 lines of readable script across `windowsweep.ps1`, `lib/` and `modules/`, and `--self-test` runs 151 checks of it on your machine.
+Every Windows machine has PowerShell 5.1, so there is no runtime to install and no binary to trust. The engine is 5,588 lines of readable script across `windowsweep.ps1`, `lib/` and `modules/`, and `--self-test` runs 155 checks of it on your machine.
 ```
 **Was:** Every Windows machine has PowerShell 5.1, so there is no runtime to install and no binary to trust.
 The source is readable in an afternoon and the self-test runs on your machine.

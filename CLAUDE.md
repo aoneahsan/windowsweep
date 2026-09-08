@@ -46,7 +46,7 @@ changes, two string fixes, and nothing else.
   and the engine now agree on all seven, verified by parsing both.
 - `--help` said `--permanent` covers "Sections 18/19"; it reaches **18, 19 and 23**.
 
-**Self-test 151 -> 154, exit 0**, each new check watched failing on its own plant. PSScriptAnalyzer 1.25.0
+**Self-test 151 -> 155, exit 0**, each new check watched failing on its own plant. PSScriptAnalyzer 1.25.0
 clean. 🔴 **Still owed before 1.2.0 ships:** the `cli-strings` and `report-bodies` slots, the tagline in all
 five places, the version cascade, the publish gate, the tag, and a Release with `--latest=false`.
 

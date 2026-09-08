@@ -1,7 +1,6 @@
 # Author
 
-**Ahsan Mahmood** - independent software engineer who builds small, sharp developer tools and ships them as
-open source.
+**Ahsan Mahmood** - independent software engineer. He writes small tools that do one thing, ships them under MIT, and then uses them on his own machine until they stop annoying him.
 
 - Web: [aoneahsan.com](https://aoneahsan.com)
 - GitHub: [github.com/aoneahsan](https://github.com/aoneahsan)
@@ -17,13 +16,10 @@ open source.
 | macOS | [macleanup](https://github.com/aoneahsan/macleanup) | `npx macleanup` |
 | Windows | [windowsweep](https://github.com/aoneahsan/windowsweep) | `npx windowsweep` |
 
-All three share the same stance: name every path before touching it, prune idle files instead of wiping
-caches, refuse to enter personal folders, ship a real dry-run, and make no network calls.
+All three share the same stance: name every path before touching it, prune files idle for 100 days by default, refuse to enter personal folders, and ship a real dry-run. None of the three makes a network call.
 
 ## Supporting the work
 
-If windowsweep reclaimed space for you, a star on GitHub and a share with a colleague are the kindest thanks.
-You can also support the maintenance at
-[aoneahsan.com/payment](https://aoneahsan.com/payment?project-id=windowsweep&project-identifier=windowsweep).
+If windowsweep reclaimed space for you, the two things that help most are a star on GitHub and a note to a colleague who has the same problem. You can also support the maintenance at [aoneahsan.com/payment](https://aoneahsan.com/payment?project-id=windowsweep&project-identifier=windowsweep).
 
-Last Updated: 2026-09-03
+Last Updated: 2026-09-05

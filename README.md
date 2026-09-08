@@ -4,7 +4,7 @@
 
 <h1>windowsweep</h1>
 
-<p><strong>Safe-by-default Windows cleanup CLI - developer-aware, dry-run first, zero install via npx.</strong></p>
+<p><strong>Developer-aware Windows cleanup CLI: dry-run first, personal folders refused, zero install via npx.</strong></p>
 
 [![npm version](https://img.shields.io/npm/v/windowsweep.svg)](https://www.npmjs.com/package/windowsweep)
 [![downloads](https://img.shields.io/npm/dm/windowsweep.svg)](https://www.npmjs.com/package/windowsweep)
@@ -25,11 +25,12 @@
 > `npx windowsweep --dry-run --all --yes`, which shows exactly what a real run would remove.
 > **Windows only** - npm refuses to install it elsewhere.
 
-`windowsweep` reclaims the disk space that quietly disappears on a Windows machine: package-manager and build
-caches, browser and app caches, Windows temp and update leftovers, stale `node_modules`, half-finished downloads.
-It is a PowerShell tool with a thin Node launcher, so `npx windowsweep` runs it with nothing to install. What
-sets it apart is restraint: it asks whether you are a developer and keeps the caches you used in the last
-100 days, it names every path before touching it, it never follows a junction, and it makes no network calls.
+What it reclaims is the disk space that quietly disappears on a Windows machine: package-manager and build caches,
+browser and app caches, Windows temp and update leftovers, stale `node_modules`, half-finished downloads.
+It names every path before it touches one, keeps the caches you used in the last 100 days, never follows a
+junction and makes no network calls at all. One question on the first run decides whether your developer caches
+are pruned on the idle gate or cleared completely. A PowerShell engine sits behind a thin Node launcher, so `npx
+windowsweep` runs it with nothing to install.
 It is the Windows member of a family with [linux-cleanup](https://github.com/aoneahsan/linux-cleanup) and
 [macleanup](https://github.com/aoneahsan/macleanup).
 
@@ -42,7 +43,7 @@ It is the Windows member of a family with [linux-cleanup](https://github.com/aon
 | **Platforms** | Windows 10 (1809+) and Windows 11 |
 | **Install size** | ~109 kB packed · ~366 kB unpacked · 44 files · no dependencies |
 | **Undo** | Recycle Bin for personal files; none for caches (they regenerate) |
-| **Status** | Stable · actively maintained |
+| **Status** | Stable · 1.1.0, released 2026-09-04 |
 
 <a id="table-of-contents"></a>
 ## 🧭 Table of Contents&nbsp;[#](#table-of-contents)
@@ -95,7 +96,10 @@ the lot again, and your afternoon is gone. `windowsweep` takes the narrower path
 
 Nothing here can promise a number. How much comes back depends on your disk; `--scan` measures it.
 
-**Not the right tool when** you want a set-and-forget cleaner that runs itself; when you are on Linux or macOS (use the siblings); when you want an undo for caches (there is none - they regenerate); or when you are looking for a security scanner or a registry cleaner. It reclaims disk space, nothing else.
+**Not the right tool when** you want a set-and-forget cleaner that runs itself; when you are on Linux or macOS (use
+the siblings); when you want an undo for caches (there is none - they regenerate); or when you are looking for a
+security scanner or a registry cleaner. The rest of what it cannot do is under [Limitations](#limitations). It
+reclaims disk space, nothing else.
 
 <a id="features"></a>
 ## ✨ Features&nbsp;[#](#features)
@@ -107,10 +111,10 @@ Nothing here can promise a number. How much comes back depends on your disk; `--
   data is a fourth 1.1.0 section and is **not** an audit: it asks you to pick, row by row, and what you pick
   goes to the Recycle Bin. Every section names its paths before it acts, and the numbers are a public
   contract.
-- **One deletion chokepoint** - refuses drive roots, Windows, Program Files, your profile root, personal
-  folders, credentials, toolchains and browser or editor state; asserts every deletion sits inside its declared
-  target; never follows a junction or symlink; handles paths beyond 260 characters; skips files another program
-  has open.
+- **One deletion chokepoint** - refuses drive roots, Windows, Program Files, your profile root, personal folders,
+- credentials, toolchains and browser or editor state; asserts every deletion sits inside its declared target; never
+- follows a junction or symlink; handles paths beyond 260 characters; skips files another program has open. Self-test
+- check [6] walks every directory and file target and fails if one resolves inside a protected path.
 - **A dry-run that writes nothing** - `--dry-run` short-circuits every deletion and every destructive command
   and reports an exact estimate. `--scan` and `--list-targets` are read-only.
 - **Personal files go to the Recycle Bin** - partial downloads and large stale files are listed, you pick, and
@@ -124,7 +128,8 @@ Nothing here can promise a number. How much comes back depends on your disk; `--
   `--json` for scripts.
 - **Self-test** - 151 checks prove the guards on your machine with a real junction, a 445-character path and
   a dry-run fixture before you trust it.
-- **Offline by design** - zero network calls, no telemetry, no update check. Crash bundles stay on disk.
+- **Offline by design** - the command-line tool makes zero network calls: no telemetry, no update check.
+  Self-test check [9] fails the build on an HTTP or socket call in the source. Crash bundles stay on disk.
 
 <a id="platform-support"></a>
 ## 📱 Platform Support&nbsp;[#](#platform-support)
@@ -180,7 +185,7 @@ survives `npx` evictions. Full detail:
 <a id="quick-start"></a>
 ## 🚀 Quick Start&nbsp;[#](#quick-start)
 
-Prove the guards, look, rehearse, then clean:
+Prove the guards, look, rehearse, then reclaim:
 
 ```powershell
 npx windowsweep --self-test
@@ -236,14 +241,14 @@ comes back but costs minutes, *Recycle Bin* is recoverable until you empty it (`
 `--profile audit` is where they live. Every section is documented in
 [Sections 0-25](https://github.com/aoneahsan/windowsweep/blob/main/docs/sections.md).
 
-### Clean interactively
+### Reclaim interactively
 
 ```powershell
 windowsweep            # guided walkthrough, one confirmation per step
 windowsweep --menu     # jump to one section; toggle dry-run and auto-yes
 ```
 
-### Clean unattended
+### Reclaim unattended
 
 ```powershell
 windowsweep --all --yes
@@ -325,12 +330,12 @@ Every flag, exit code and environment variable:
 
 | Goal | Command |
 |---|---|
-| See what is reclaimable, risk-free | `windowsweep --scan` |
+| See what is reclaimable, without deleting anything | `windowsweep --scan` |
 | Rehearse tonight's cleanup | `windowsweep --dry-run --all --yes` |
 | Reclaim the most space as a developer | `windowsweep --profile dev --yes --dry-run` first; the `dev` profile includes interactive section 17, so a real `--yes` run exits 3 unless you add `--select-file` |
 | Reclaim everything a non-developer can | `windowsweep --all --yes --not-developer` |
 | Find `node_modules` in projects idle 6 months | `windowsweep --only 17 --days 180 --scan-roots "D:\work" --dry-run` |
-| Free the browser caches after closing the browsers | `windowsweep --only 7 --yes` |
+| Reclaim the browser caches after closing the browsers | `windowsweep --only 7 --yes` |
 | Run the admin sections | `windowsweep --profile system --yes --elevate` |
 | Weekly unattended run | `windowsweep --install-task` |
 | Machine-readable output for a script | `windowsweep --all --yes --json` |
@@ -350,7 +355,7 @@ Every flag, exit code and environment variable:
   [Docs](https://github.com/aoneahsan/windowsweep/blob/main/docs/admin-and-elevation.md)
 - **Report export** - schema-versioned JSON to Markdown or a self-contained HTML page, no extra tools.
   [Docs](https://github.com/aoneahsan/windowsweep/blob/main/docs/reports-and-logs.md)
-- **Crash bundles** - captured locally on an unexpected exit, never transmitted.
+- **Crash bundles** - the command line writes one locally on an unexpected exit, never transmitted.
 
 <a id="desktop-app"></a>
 ## 🖥️ Desktop app&nbsp;[#](#desktop-app)
@@ -395,7 +400,7 @@ More: [Troubleshooting](https://github.com/aoneahsan/windowsweep/blob/main/docs/
   newest of write, access and creation time - a file can only look fresher than it is, never older. Some old
   caches survive the default window; `--days` and `--purge-all` exist for that.
 - **Admin sections need an elevated console** and a UAC click; a Scheduled Task runs the safe batch only.
-- **Disk Cleanup (section 13) cannot preview** how much it will free; its dry-run lists the handlers only.
+- **Disk Cleanup (section 13) cannot preview sizes.** Its dry-run names the handlers it would run and nothing more.
 - **No automated test suite beyond `--self-test`.** Correctness rests on the self-test's fixtures, dry-runs and
   real runs on Windows 10 and 11.
 
@@ -407,8 +412,10 @@ Not from a protected folder, and not without asking. Documents, Desktop, Picture
 hard refusals. Section 17 lists build artefacts in idle projects and removes only what you select.
 
 **Does it phone home?**
-No. Zero network calls, no telemetry, no update check. The self-test greps the source for HTTP and socket
-calls; `--report-issue` opens your browser at a pre-filled page you submit yourself.
+Not the command-line tool. Zero network calls, no telemetry, no update check. The self-test greps the source for
+HTTP and socket calls; `--report-issue` opens your browser at a pre-filled page you submit yourself. The desktop
+window is a separate program and does send usage and crash reports. What it never sends is listed under [Desktop
+app](#desktop-app).
 
 **Why keep files used in the last 100 days?**
 Because a developer's caches are what make the next install fast. `--days 30` or `--purge-all` when you want

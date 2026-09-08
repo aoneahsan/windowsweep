@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 
 import { formatBytes } from '../lib/format';
 import type { Section, SectionTier } from '../lib/catalogue';
-import type { ScanTarget } from '../lib/cli';
+import { idleDaysOf, type ScanTarget } from '../lib/cli';
 
 /** Report-only rows have nothing to select. `page-sections.js:60`. */
 const REPORT_ONLY: ReadonlySet<SectionTier> = new Set<SectionTier>(['report', 'config']);
@@ -52,19 +52,32 @@ function DetailRow({
         ) : (
           <div
             style={{
+              /* 🔴 THREE columns, which is the dummy's own shape here
+                 (`page-sections.js:159-169`): path, size, and how long it has sat
+                 unused. The third was missing while `--scan` reported no age; the
+                 1.2.0 engine reports `newest_write_utc` per target, so it is the
+                 same measurement the map shades tiles with, printed as a number. */
               display: 'grid',
-              gridTemplateColumns: 'minmax(0,1fr) auto',
+              gridTemplateColumns: 'minmax(0,1fr) auto auto',
               gap: 'var(--sp-1) var(--sp-4)',
             }}
           >
-            {targets.map((target) => (
-              <span key={`${String(section.id)}-${target.path}`} style={{ display: 'contents' }}>
-                <span className="mono t-xs" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {target.path}
+            {targets.map((target) => {
+              const idle = idleDaysOf(target.newest_write_utc);
+              return (
+                <span key={`${String(section.id)}-${target.path}`} style={{ display: 'contents' }}>
+                  <span className="mono t-xs" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {target.path}
+                  </span>
+                  <span className="num t-xs ink-3">{formatBytes(target.bytes)}</span>
+                  {/* A target with no stamp says so rather than printing `idle 0d`,
+                      which would read as "used today". */}
+                  <span className="t-xs ink-3">
+                    {idle === null ? t('sections.detailIdleUnknown') : t('sections.detailIdle', { days: idle })}
+                  </span>
                 </span>
-                <span className="num t-xs ink-3">{formatBytes(target.bytes)}</span>
-              </span>
-            ))}
+              );
+            })}
           </div>
         )}
       </td>

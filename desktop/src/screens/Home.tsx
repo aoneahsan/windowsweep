@@ -29,13 +29,20 @@
  * `modules/runner.ps1` emits none), so there is no measured figure to draw. The
  * dummy's own numbers are seeded (`seed.js:142-146`). Getting real ones needs a
  * new engine field or a new Rust command, and both are frozen for this release.
+ *
+ * 🔴 EVERY FIGURE ON THIS PAGE READS THE INCLUDED TARGETS, and there is exactly
+ * one exception: the map, which draws the whole scan so an excluded tile stays
+ * visible, dimmed. The hero, the Reclaim button, the sub-line and the ladder all
+ * read `useIncludedScanTargets()` - one derivation, because a figure with several
+ * consumers is not fixed when only some of them are, and here the consequence of
+ * missing one is a button offering to reclaim bytes the run will refuse.
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
-import { useRunPreferences, useStore } from '../state/store';
+import { useIncludedScanTargets, useRunPreferences, useStore } from '../state/store';
 import {
   reclaimableBytes,
   reclaimableSectionCount,
@@ -46,24 +53,16 @@ import { formatBytes } from '../lib/format';
 import { newRunId, run, scanArgs, safeBatchArgs } from '../lib/engine';
 import { safeRunSections } from '../lib/catalogue';
 import { controlState, stateOf } from '../lib/control-state';
-import { DESTINATIONS, type Destination } from '../lib/consent';
 import { ReclaimMapBand } from '../components/ReclaimMapBand';
 import { SafeRunLadder, type LadderRow } from '../components/SafeRunLadder';
 import { NeedsAPerson } from '../components/NeedsAPerson';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { HomeSafety } from '../components/HomeSafety';
+import { HomeDestinations } from '../components/HomeDestinations';
 import { LastRuns } from '../components/LastRuns';
 import { AdminNotice } from '../components/AdminNotice';
 import { DeveloperMode } from '../components/DeveloperMode';
 import type { MapTarget } from '../components/ReclaimMap';
-
-/** Brand names, not copy: they are the same in every language. */
-const VENDOR: Record<Destination, string> = {
-  ga4: 'Google Analytics 4',
-  amplitude: 'Amplitude',
-  clarity: 'Microsoft Clarity',
-  sentry: 'Sentry',
-};
 
 /** The product's one visual metaphor, at the hero only - decoration belongs here,
     not on every card. Copied from the dummy's markup. */
@@ -101,7 +100,13 @@ export function Home() {
   const catalogue = useStore((s) => s.catalogue);
   const engineError = useStore((s) => s.engineError);
   const summary = useStore((s) => s.summary);
+  /* The whole scan - the map's data, and only the map's. */
   const scanTargets = useStore((s) => s.scanTargets);
+  /* What a run would actually touch. Every figure below reads this one. */
+  const includedTargets = useIncludedScanTargets();
+  const excludedPaths = useStore((s) => s.excludedPaths);
+  const toggleExcluded = useStore((s) => s.toggleExcluded);
+  const clearExclusions = useStore((s) => s.clearExclusions);
   const candidates = useStore((s) => s.candidates);
   const history = useStore((s) => s.history);
   const phase = useStore((s) => s.phase);
@@ -123,10 +128,17 @@ export function Home() {
      press while it runs - one engine, one run at a time. */
   const [busy, setBusy] = useState<'scan' | 'dryRun' | 'reclaim' | null>(null);
   const [scanDone, setScanDone] = useState(false);
+  const [cleared, setCleared] = useState(false);
+
+  /* 🔴 `measured` is `scannedAt`, not `length > 0`. Once a tile can be clicked
+     out, an empty INCLUDED list is a perfectly ordinary state after a real
+     measurement - "you excluded everything" - and reading it as "nothing has been
+     measured" would print the last run's estimate instead of the 0 that is true. */
+  const measured = scannedAt !== null;
 
   /* One home for this figure, in lib/reclaim.ts - it was computed here AND in
      Shell.tsx, and both copies read a run's result off a scan's summary. */
-  const reclaimable = reclaimableBytes(summary, scanTargets);
+  const reclaimable = reclaimableBytes(summary, includedTargets, measured);
 
   /* 🔴 `measured N minutes ago` is a RELATIVE time, so it has to be re-rendered or
      it starts lying the moment it is painted. The dummy can print a fixed 4 because
@@ -186,11 +198,11 @@ export function Home() {
 
   const onScan = useCallback(() => {
     setBusy('scan');
-    void drive(scanArgs(developer), false).finally(() => {
+    void drive(scanArgs(developer, excludedPaths), false).finally(() => {
       setBusy(null);
       setScanDone(true);
     });
-  }, [drive, developer]);
+  }, [drive, developer, excludedPaths]);
 
   /* The tick is an acknowledgement, not a state: it says "that finished" and then
      gets out of the way, which is what the dummy's own busy() helper does. The
@@ -201,21 +213,51 @@ export function Home() {
     return () => { window.clearTimeout(to); };
   }, [scanDone]);
 
+  /* Putting every target back is one press with no confirmation, because it can
+     only ever WIDEN what a run touches back to the default - and the tick is the
+     acknowledgement at the control, in the 700 ms shape `scanDone` already uses.
+     The count beside it flips to `nothing excluded` in the same frame, which is
+     the answer a screen reader gets from its live region. */
+  const onClearExclusions = useCallback(() => {
+    clearExclusions();
+    setCleared(true);
+  }, [clearExclusions]);
+
+  useEffect(() => {
+    if (!cleared) return;
+    const to = window.setTimeout(() => { setCleared(false); }, 700);
+    return () => { window.clearTimeout(to); };
+  }, [cleared]);
+
   const onDryRun = useCallback(() => {
     setBusy('dryRun');
-    void drive(safeBatchArgs({ dryRun: true, ...prefs }), true).finally(() => { setBusy(null); });
-  }, [drive, prefs]);
+    void drive(safeBatchArgs({ dryRun: true, ...prefs, excludedPaths }), true).finally(() => { setBusy(null); });
+  }, [drive, prefs, excludedPaths]);
 
   const onReclaim = useCallback(() => {
     setBusy('reclaim');
-    void drive(safeBatchArgs({ dryRun: false, ...prefs }), true).finally(() => { setBusy(null); });
-  }, [drive, prefs]);
+    void drive(safeBatchArgs({ dryRun: false, ...prefs, excludedPaths }), true).finally(() => { setBusy(null); });
+  }, [drive, prefs, excludedPaths]);
 
   /* The map's tiles: one per scanned target, coloured by its section's tier and
      grouped by its section. Every field is the engine's. */
   const mapTargets = useMemo<MapTarget[]>(
-    () => toMapTargets(catalogue, scanTargets),
-    [catalogue, scanTargets],
+    /* 🔴 The WHOLE scan, not the included subset - the one place on this page that
+       reads `scanTargets` directly. An excluded tile stays drawn and dims, so what
+       a person turned off remains visible rather than silently disappearing
+       (`reclaim-map.js` -> `mapDataAll`). Every figure around it reads
+       `includedTargets`. */
+    () => toMapTargets(catalogue, scanTargets, excludedPaths),
+    [catalogue, scanTargets, excludedPaths],
+  );
+
+  /* How many of the drawn tiles are kept out, counted from the tiles themselves so
+     the number beside the map and the dimming on the map cannot disagree - an
+     exclusion root covers everything beneath it, so counting the stored roots
+     instead would undercount whenever one root covers several targets. */
+  const excludedCount = useMemo(
+    () => mapTargets.filter((target) => target.excluded && target.bytes > 0).length,
+    [mapTargets],
   );
 
   /* The ladder's rungs: the engine's own safe batch, with a figure only where a
@@ -223,7 +265,7 @@ export function Home() {
   const ladderRows = useMemo<LadderRow[]>(() => {
     if (!catalogue) return [];
     const bySection = new Map<number, { bytes: number; count: number }>();
-    for (const target of scanTargets) {
+    for (const target of includedTargets) {
       if (target.bytes <= 0) continue;
       const acc = bySection.get(target.section) ?? { bytes: 0, count: 0 };
       acc.bytes += target.bytes;
@@ -241,9 +283,8 @@ export function Home() {
     });
     if (bySection.size > 0) rows.sort((a, b) => (b.bytes ?? -1) - (a.bytes ?? -1));
     return rows;
-  }, [catalogue, developer, scanTargets]);
+  }, [catalogue, developer, includedTargets]);
 
-  const measured = scanTargets.length > 0;
   const interactive = (catalogue?.sections ?? []).filter((s) => s.batch === 'interactive');
   const adminSections = (catalogue?.sections ?? []).filter((s) => s.admin);
 
@@ -297,13 +338,13 @@ export function Home() {
                 <>
                   {minutesAgo === null
                     ? t('home.heroSub', {
-                        targets: reclaimableTargetCount(summary, scanTargets),
-                        sections: reclaimableSectionCount(summary, scanTargets),
+                        targets: reclaimableTargetCount(summary, includedTargets, measured),
+                        sections: reclaimableSectionCount(summary, includedTargets, measured),
                       })
                     : t('home.heroSubMeasured', {
                         count: minutesAgo,
-                        targets: reclaimableTargetCount(summary, scanTargets),
-                        sections: reclaimableSectionCount(summary, scanTargets),
+                        targets: reclaimableTargetCount(summary, includedTargets, measured),
+                        sections: reclaimableSectionCount(summary, includedTargets, measured),
                       })}
                   {' · '}
                   {/* The dummy's own acknowledgement for this control is on the
@@ -353,8 +394,16 @@ export function Home() {
         </div>
       </section>
 
-      {/* ZONE 3 - the signature element */}
-      <ReclaimMapBand targets={mapTargets} measured={measured} />
+      {/* ZONE 3 - the signature element, and the only control on this page that
+          changes what a run SKIPS rather than what it does. */}
+      <ReclaimMapBand
+        targets={mapTargets}
+        measured={measured}
+        excludedCount={excludedCount}
+        onToggleExcluded={toggleExcluded}
+        onClearExclusions={onClearExclusions}
+        clearedRecently={cleared}
+      />
 
       {/* ZONES 4 + 5 - drives | the safe-run ladder */}
       <section className="band band-app">
@@ -413,42 +462,7 @@ export function Home() {
         <div className="wrap rise">
           <AdminNotice sections={adminSections} />
 
-          {/* 🔴 The destination ledger - the dummy's zone 13, on request rather
-              than in the way. These were four SWITCHES until 2026-09-07; the owner
-              removed the opt-out, so each destination is now a stated fact
-              carrying an `on` badge. A switch that changes nothing is worse than
-              no switch, and this is the surface a person meets in ordinary use
-              rather than once at first run. */}
-          <details className="disclose">
-            <summary>
-              <span className="disclose-line">{t('home.privacySummary')}</span>
-              <span className="disclose-more">{t('consent.detailsMore')}</span>
-            </summary>
-            <div className="disclose-body">
-              <p>{t('home.privacyIntro')}</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
-                {DESTINATIONS.map((d) => (
-                  <div
-                    key={d}
-                    style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--sp-3)' }}
-                  >
-                    <span className="badge badge-outline">{t('consent.badgeOn')}</span>
-                    <div>
-                      <div>
-                        <span className="t-sm">{t(`consent.provider.${d}.name`)}</span>{' '}
-                        <span className="t-xs ink-3">{VENDOR[d]}</span>
-                      </div>
-                      <div className="t-xs ink-3">{t(`consent.provider.${d}.what`)}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <p>
-                <strong>{t('consent.neverSentLabel')}</strong> {t('consent.neverSent')}
-              </p>
-              <p>{t('home.privacySignIn')}</p>
-            </div>
-          </details>
+          <HomeDestinations />
         </div>
       </section>
 

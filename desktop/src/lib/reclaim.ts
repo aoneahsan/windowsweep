@@ -19,8 +19,9 @@
  * disagreement.
  */
 
-import type { ProgressEvent, RunSummary, ScanTarget } from './cli';
+import { idleDaysOf, type ProgressEvent, type RunSummary, type ScanTarget } from './cli';
 import { type Catalogue, sectionById } from './catalogue';
+import { isExcluded } from './exclusions';
 import type { MapTarget } from '../components/ReclaimMap';
 
 /**
@@ -30,8 +31,23 @@ import type { MapTarget } from '../components/ReclaimMap';
  * disk now; a dry-run does not change that, and a real run clears the targets it
  * has just deleted.
  */
-export function reclaimableBytes(summary: RunSummary | null, scanTargets: ScanTarget[]): number | null {
-  if (scanTargets.length > 0) {
+export function reclaimableBytes(
+  summary: RunSummary | null,
+  scanTargets: ScanTarget[],
+  /**
+   * Whether a scan has measured this machine at all - `scannedAt !== null`.
+   *
+   * 🔴 A SEPARATE FACT from "the list is non-empty", and conflating them was a
+   * live defect the moment exclusions existed: the rows handed in here are the
+   * INCLUDED ones, so a person who excludes everything hands in an empty array
+   * after a real measurement. Reading emptiness as "nothing measured" would have
+   * fallen through to the last run's `estimated_bytes` and printed a figure from
+   * a different question - a window promising bytes a run would refuse, which is
+   * the exact failure `--exclude-path` exists to prevent.
+   */
+  measured: boolean,
+): number | null {
+  if (measured) {
     return scanTargets.reduce((total, target) => total + target.bytes, 0);
   }
   if (!summary) return null;
@@ -46,16 +62,24 @@ export function reclaimableBytes(summary: RunSummary | null, scanTargets: ScanTa
  * correct only in the run case, where those are the sections that produced the
  * bytes being shown.
  */
-export function reclaimableSectionCount(summary: RunSummary | null, scanTargets: ScanTarget[]): number {
-  if (scanTargets.length > 0) {
+export function reclaimableSectionCount(
+  summary: RunSummary | null,
+  scanTargets: ScanTarget[],
+  measured: boolean,
+): number {
+  if (measured) {
     return new Set(scanTargets.map((target) => target.section)).size;
   }
   return summary?.sections.length ?? 0;
 }
 
 /** How many targets that figure spans. */
-export function reclaimableTargetCount(summary: RunSummary | null, scanTargets: ScanTarget[]): number {
-  if (scanTargets.length > 0) return scanTargets.length;
+export function reclaimableTargetCount(
+  summary: RunSummary | null,
+  scanTargets: ScanTarget[],
+  measured: boolean,
+): number {
+  if (measured) return scanTargets.length;
   return summary?.targets.length ?? 0;
 }
 
@@ -68,7 +92,22 @@ export function reclaimableTargetCount(summary: RunSummary | null, scanTargets: 
  * (`run.html:64-65`). Two mappings would drift apart exactly the way the two
  * copies of `reclaimableBytes` did.
  */
-export function toMapTargets(catalogue: Catalogue | null, scanTargets: ScanTarget[]): MapTarget[] {
+export function toMapTargets(
+  catalogue: Catalogue | null,
+  scanTargets: ScanTarget[],
+  /**
+   * The exclusion roots, so each tile knows whether it has been clicked out.
+   *
+   * 🔴 Home passes the WHOLE scan and lets the flag dim the excluded tiles: the
+   * dummy's `mapDataAll` keeps them drawn so "what I turned off" stays visible
+   * rather than silently vanishing. The Run screen passes the included targets
+   * only, because that map is the "What is going" band and an excluded target is
+   * not going - so an empty list here is correct there.
+   */
+  excludedPaths: readonly string[] = [],
+  /** Fixed once per call, so 665 tiles cannot straddle a midnight and disagree. */
+  now: number = Date.now(),
+): MapTarget[] {
   if (!catalogue) return [];
   return scanTargets.map((target) => {
     const section = sectionById(catalogue, target.section);
@@ -79,6 +118,8 @@ export function toMapTargets(catalogue: Catalogue | null, scanTargets: ScanTarge
       label: target.label,
       path: target.path,
       bytes: target.bytes,
+      idleDays: idleDaysOf(target.newest_write_utc, now),
+      excluded: isExcluded(target.path, excludedPaths),
     };
   });
 }

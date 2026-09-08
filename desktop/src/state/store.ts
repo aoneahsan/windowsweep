@@ -12,8 +12,10 @@
  * wrapping the app in it.
  */
 
+import { useMemo } from 'react';
 import { create } from 'zustand';
 
+import { includedOnly, toggleExclusion, usableExclusions } from '../lib/exclusions';
 import type { Catalogue } from '../lib/catalogue';
 import type { RunPreferences } from '../lib/engine';
 import type { Candidate, RunSummary, ProgressEvent, ScanTarget } from '../lib/cli';
@@ -90,6 +92,26 @@ interface StoreState {
   toggleCandidate: (path: string) => void;
   setSelection: (paths: string[]) => void;
 
+  /* --- targets kept out of every run -------------------------------------
+     🔴 Absolute paths, each one a `targets[].path` the engine printed, and every
+     run passes them as `--exclude-path` (`lib/engine.ts`). The engine protects
+     each one AND everything beneath it, so this is a small set even when it
+     covers a lot of disk.
+
+     🔴 Persisted rather than URL state, on the same reasoning `sectionSelection`
+     records: this is a standing decision that must survive a restart, and 665
+     paths in a query string is not a link anybody would share. It goes through
+     the same `readLocal`/`writeLocal` pair as every other persisted value in this
+     store - the project's one storage seam - rather than a second mechanism
+     nothing else here uses.
+
+     🔴 What it is NOT: a claim about what happened. The engine decides what is
+     actually refused and reports it back in `summary.excluded`, which is what the
+     Run screen shows. This set is the request; that array is the outcome. */
+  excludedPaths: string[];
+  toggleExcluded: (path: string) => void;
+  clearExclusions: () => void;
+
   /* --- which sections the Sections screen has ticked --------------------- */
   sectionSelection: number[];
   toggleSectionSelection: (id: number) => void;
@@ -152,6 +174,7 @@ interface StoreState {
 }
 
 const HISTORY_KEY = 'windowsweep:history';
+const EXCLUDED_KEY = 'windowsweep:excludedPaths';
 const DEVELOPER_KEY = 'windowsweep:developer';
 const IDLE_DAYS_KEY = 'windowsweep:idleDays';
 const TEMP_DAYS_KEY = 'windowsweep:tempDays';
@@ -280,6 +303,22 @@ export const useStore = create<StoreState>()((set, get) => ({
   },
   setSelection: (paths) => { set({ selectedPaths: new Set(paths) }); },
 
+  /* 🔴 Read back through `usableExclusions`, which is where a stored value is made
+     safe to pass - the same contract `clampIdleDays` has. A path that no longer
+     looks like an absolute Windows path is dropped rather than handed to a run,
+     because the Rust validator refuses a value beginning `--` and a corrupted
+     store must not be able to change what a run does. */
+  excludedPaths: usableExclusions(readLocal<string[]>(EXCLUDED_KEY, [])),
+  toggleExcluded: (path) => {
+    const next = usableExclusions(toggleExclusion(get().excludedPaths, path));
+    writeLocal(EXCLUDED_KEY, next);
+    set({ excludedPaths: next });
+  },
+  clearExclusions: () => {
+    writeLocal(EXCLUDED_KEY, []);
+    set({ excludedPaths: [] });
+  },
+
   /* Section ids, not paths: the Sections screen ticks whole sections and hands
      them to `--only`. Kept in the store rather than the URL because 26 ids in a
      query string is not a link anybody would share. */
@@ -373,4 +412,26 @@ export function useRunPreferences(): RunPreferences {
   const tempDays = useStore((s) => s.tempDays);
   const largeFileMb = useStore((s) => s.largeFileMb);
   return { developer, idleDays, tempDays, largeFileMb };
+}
+
+/**
+ * The measured targets a run would ACTUALLY touch: everything the last `--scan`
+ * found, minus what the person has clicked out of it.
+ *
+ * 🔴 ONE derivation, and it is the one every figure reads - the hero number, the
+ * Reclaim button, the safe-run ladder, the Sections table and total, the per-
+ * section rows and the status bar. The recorded failure it exists to prevent is
+ * `reclaimableBytes`, which lived in two files and was wrong the same way in both;
+ * a second copy of this filter would be that defect again, in a place where being
+ * wrong means the window promising more than the run delivers.
+ *
+ * 🔴 THE ONE DELIBERATE EXCEPTION IS HOME'S MAP, which draws the excluded tiles
+ * too, dimmed, so "what I turned off" stays visible instead of silently vanishing
+ * (`reclaim-map.js` -> `mapDataAll`). It reads `scanTargets` directly and carries
+ * the flag per tile; nothing else may.
+ */
+export function useIncludedScanTargets(): ScanTarget[] {
+  const scanTargets = useStore((s) => s.scanTargets);
+  const excludedPaths = useStore((s) => s.excludedPaths);
+  return useMemo(() => includedOnly(scanTargets, excludedPaths), [scanTargets, excludedPaths]);
 }

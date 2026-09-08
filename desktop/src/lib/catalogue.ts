@@ -25,12 +25,32 @@ export interface Section {
   dev: boolean;
 }
 
+/**
+ * What the engine refuses to touch, in its own words. Added to `--list --json`
+ * for 1.2.0 so a front end shows the engine's promise rather than a copy of it.
+ *
+ * 🔴 NEVER hard-code, extend or abridge either list: it is a safety guarantee, and
+ * a shorter list printed here would read as the whole of it. `subtrees` is built
+ * by `Initialize-Safety` from the folders that exist on THIS machine, so it is
+ * different on every machine and there is no fixture for it. `categories` is the
+ * fixed constant `WS_PROTECT_CATEGORIES` (`lib/constants.ps1:33`), and self-test
+ * check [18b] asserts that what `--list --json` publishes is character-for-
+ * character what `--list-targets` prints.
+ */
+export interface ProtectedPaths {
+  /** Absolute paths on this machine, refused regardless of any flag. */
+  subtrees: string[];
+  /** The categories, in the wording the command-line tool shows a person. */
+  categories: string[];
+}
+
 export interface Catalogue {
   tool: string;
   version: string;
   sections: Section[];
   safe_batch: number[];
   safe_batch_admin: number[];
+  protected: ProtectedPaths;
   profiles: Record<string, number[]>;
   walkthrough: number[];
   walkthrough_admin: number[];
@@ -61,6 +81,15 @@ export function parseCatalogue(stdout: string): Catalogue {
     sections: doc.sections,
     safe_batch: doc.safe_batch ?? [],
     safe_batch_admin: doc.safe_batch_admin ?? [],
+    /* Absent rather than empty is the honest fallback for an engine older than
+       1.2.0: the two lists then read as "not published", and the screen that shows
+       them says so rather than printing an empty promise. */
+    protected: {
+      subtrees: Array.isArray(doc.protected?.subtrees) ? doc.protected.subtrees.map(String) : [],
+      categories: Array.isArray(doc.protected?.categories)
+        ? doc.protected.categories.map(String)
+        : [],
+    },
     profiles: doc.profiles ?? {},
     walkthrough: doc.walkthrough ?? [],
     walkthrough_admin: doc.walkthrough_admin ?? [],

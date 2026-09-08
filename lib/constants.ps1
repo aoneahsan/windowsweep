@@ -7,7 +7,7 @@
 $Script:WS_VERSION_FALLBACK = '1.1.0'
 
 $Script:WS_NAME = 'windowsweep'
-$Script:WS_TAGLINE = 'Safe-by-default Windows cleanup CLI - developer-aware, dry-run first, zero install via npx.'
+$Script:WS_TAGLINE = 'Developer-aware Windows cleanup CLI: dry-run first, personal folders refused, zero install via npx.'
 $Script:WS_AUTHOR = 'Ahsan Mahmood'
 $Script:WS_EMAIL = 'aoneahsan@gmail.com'
 $Script:WS_WEB = 'https://aoneahsan.com'

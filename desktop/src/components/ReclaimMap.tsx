@@ -15,13 +15,21 @@
  * 🔴 THE ZERO STATE IS DESIGNED, not left blank - a signature element that renders
  * as an empty rectangle destroys the product's argument on first paint.
  *
- * 🔴 One channel, not two. The dummy shades each tile by how long the cache has
- * been idle, interpolating between the tier's own two ends. `--scan` reports a
- * size per target and no age, so that channel has no data: every tile therefore
- * takes the tier's `hi` end, which is exactly what the dummy's own `idleScale`
- * degenerates to when the idle range carries no information (`reclaim-map.js:165`
- * - `hi > lo` false, so `mixFor` returns 100). The gap is declared in the UI, in
- * `ReclaimMapBand`, rather than papered over with an invented age.
+ * 🔴 TWO CHANNELS, TWO VARIABLES, each canonical - the dummy's own rule
+ * (`reclaim-map.js:36-49`): HUE is the tier, how risky removing it is; LIGHTNESS
+ * is how long the cache has sat unused. The second channel had no data source
+ * until the 1.2.0 engine started reporting `targets[].newest_write_utc`, and every
+ * tile took the tier's `hi` end - which is what the dummy's own `idleScale`
+ * degenerates to when the idle range carries no information. It now carries the
+ * engine's own measurement, converted to days once in `cli.ts` -> `idleDaysOf`.
+ * The domain is re-solved from THIS data on every render, so a machine whose
+ * oldest cache is 60 days still gets the full ramp instead of eight
+ * indistinguishable pale tiles.
+ *
+ * 🔴 A tile is a CONTROL on Home and inert on Run. Clicking it adds the target to
+ * the exclusion set every run passes as `--exclude-path`; the Run screen's map is
+ * draining what is already going, so it takes no `onToggle` and renders no
+ * affordance. That is the dummy's `opts.interactive !== false`, kept.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -30,91 +38,22 @@ import { useTranslation } from 'react-i18next';
 
 import { formatBytes } from '../lib/format';
 import type { SectionTier } from '../lib/catalogue';
+import {
+  buildRoot,
+  fitText,
+  frameFor,
+  idleScaleFor,
+  PAD_TOP,
+  tierColour,
+  type Leaf,
+  type MapNode,
+  type MapTarget,
+} from './reclaim-map-model';
 
-/** One target, as the map needs it. Every field comes from the engine. */
-export interface MapTarget {
-  section: number;
-  /** The section's own key from the catalogue - the engine's vocabulary. */
-  sectionKey: string;
-  tier: SectionTier;
-  label: string;
-  path: string;
-  bytes: number;
-}
-
-interface Leaf {
-  name: string;
-  path: string;
-  value: number;
-  section: number;
-  tier: SectionTier;
-  children?: undefined;
-}
-interface Group {
-  name: string;
-  section: number;
-  tier: SectionTier;
-  path?: undefined;
-  value?: undefined;
-  children: Leaf[];
-}
-interface Root {
-  name: string;
-  path?: undefined;
-  value?: undefined;
-  section?: undefined;
-  tier?: undefined;
-  children: Group[];
-}
-type MapNode = Root | Group | Leaf;
-
-/** Room for the section label strip. `reclaim-map.js:34`. */
-const PAD_TOP = 19;
-
-/** Portrait below 700px, landscape above. `reclaim-map.js:31-33`. */
-function frameFor(px: number): { w: number; h: number } {
-  return px > 0 && px < 700 ? { w: 620, h: 760 } : { w: 1000, h: 340 };
-}
-
-/**
- * Interpolate between the tier's OWN two ends, never toward the page surface -
- * mixing toward the background is what produced mud. `reclaim-map.js:56-59`.
- */
-function tierColour(tier: SectionTier, pct: number): string {
-  return `color-mix(in oklab, var(--c-tier-${tier}-hi) ${String(pct)}%, var(--c-tier-${tier}-lo))`;
-}
-
-/** `reclaim-map.js:66-70`. */
-function fitText(text: string, widthPx: number, fontPx: number): string {
-  const max = Math.floor((widthPx - 12) / (fontPx * 0.56));
-  if (max < 3) return '';
-  return text.length <= max ? text : `${text.slice(0, max - 1)}…`;
-}
-
-function buildRoot(targets: MapTarget[]): Root {
-  const groups = new Map<number, MapTarget[]>();
-  for (const target of targets) {
-    if (target.bytes <= 0) continue;
-    const list = groups.get(target.section);
-    if (list) list.push(target);
-    else groups.set(target.section, [target]);
-  }
-  return {
-    name: 'reclaimable',
-    children: [...groups.entries()].map(([section, list]) => ({
-      name: list[0]?.sectionKey ?? String(section),
-      section,
-      tier: list[0]?.tier ?? 'rebuilds',
-      children: list.map((t) => ({
-        name: t.label,
-        path: t.path,
-        value: t.bytes,
-        section: t.section,
-        tier: t.tier,
-      })),
-    })),
-  };
-}
+/* Re-exported so every existing importer keeps one obvious place to reach for the
+   map's public shape; the definition lives beside the geometry that uses it. */
+export type { MapTarget } from './reclaim-map-model';
+export { ReclaimMapTable } from './ReclaimMapTable';
 
 /**
  * The defs the tiles reference: a hatch for the one tier that cannot be undone,
@@ -143,10 +82,26 @@ interface Tip {
   bytes: number;
   section: number;
   tier: SectionTier;
+  idleDays: number | null;
+  excluded: boolean;
 }
 
-export function ReclaimMap({ targets, measured }: { targets: MapTarget[]; measured: boolean }) {
+export function ReclaimMap({
+  targets,
+  measured,
+  onToggle,
+}: {
+  targets: MapTarget[];
+  measured: boolean;
+  /**
+   * Called with a target's path when its tile is activated. Omitted on the Run
+   * screen, where the tiles are a drain animation rather than a control -
+   * `opts.interactive !== false` in the dummy.
+   */
+  onToggle?: (path: string) => void;
+}) {
   const { t } = useTranslation();
+  const interactive = onToggle !== undefined;
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [width, setWidth] = useState(0);
   const [tip, setTip] = useState<Tip | null>(null);
@@ -194,11 +149,32 @@ export function ReclaimMap({ targets, measured }: { targets: MapTarget[]; measur
       bytes: leaf.value,
       section: leaf.section,
       tier: leaf.tier,
+      idleDays: leaf.idleDays,
+      excluded: leaf.excluded,
     });
   }, []);
 
   const groups = laid?.children ?? [];
   const leaves = laid?.leaves() ?? [];
+  /* Derived from `laid`, not from `leaves`: `leaves()` builds a fresh array on
+     every render, so a memo keyed on it would recompute every render. `laid` only
+     changes when the data or the frame does, which is exactly when the ramp's
+     domain can change. */
+  const idleScale = useMemo(
+    () => idleScaleFor((laid?.leaves() ?? []).map((node) => node.data as Leaf)),
+    [laid],
+  );
+
+  /* What the drawn tiles hold that a run will NOT take, so the label can subtract
+     it rather than quoting a total the hero disagrees with. Zero on the Run
+     screen, whose targets are already the included ones. */
+  const excludedBytes = useMemo(
+    () =>
+      (laid?.leaves() ?? [])
+        .map((node) => node.data as Leaf)
+        .reduce((total, leaf) => (leaf.excluded ? total + leaf.value : total), 0),
+    [laid],
+  );
 
   /* 🔴 ONE `tm-frame` node for every state, not one per branch. Two sibling
      branches each carrying `ref={rootRef}` looked equivalent and were not: React
@@ -224,11 +200,27 @@ export function ReclaimMap({ targets, measured }: { targets: MapTarget[]; measur
         viewBox={`0 0 ${String(frame.w)} ${String(frame.h)}`}
         preserveAspectRatio="xMidYMid slice"
         role="img"
-        aria-label={t('home.mapAria', {
-          targets: leaves.length,
-          sections: groups.length,
-          amount: formatBytes(laid.value ?? 0),
-        })}
+        /* 🔴 The dummy's sentence, verbatim, whenever nothing is excluded - which
+           is every state the dummy specifies. The second form is app-side copy for
+           a state it has no equivalent for, and it exists because the map draws
+           the excluded tiles too: `laid.value` therefore includes bytes the run
+           will refuse, and a reader who only gets this label would be told a total
+           the hero above contradicts. Sighted readers see the dimming; this is the
+           same fact, said. */
+        aria-label={
+          excludedBytes > 0
+            ? t('home.mapAriaExcluded', {
+                targets: leaves.length,
+                sections: groups.length,
+                amount: formatBytes((laid.value ?? 0) - excludedBytes),
+                excludedAmount: formatBytes(excludedBytes),
+              })
+            : t('home.mapAria', {
+                targets: leaves.length,
+                sections: groups.length,
+                amount: formatBytes(laid.value ?? 0),
+              })
+        }
       >
         <Defs />
 
@@ -289,18 +281,52 @@ export function ReclaimMap({ targets, measured }: { targets: MapTarget[]; measur
           if (w < 2 || h < 2) return null;
 
           const name = w > 54 && h > 26 ? fitText(leaf.name, w, 11) : '';
-          const sub = w > 54 && h > 42 ? fitText(formatBytes(leaf.value), w, 10) : '';
+          /* `reclaim-map.js:262-266` - size and age when both fit, size alone
+             when they do not. A target with no stamp keeps the size-only form
+             rather than printing an invented age. */
+          const full =
+            leaf.idleDays === null
+              ? formatBytes(leaf.value)
+              : t('home.mapTileMeta', { amount: formatBytes(leaf.value), days: leaf.idleDays });
+          const short = formatBytes(leaf.value);
+          const sub =
+            w > 54 && h > 42 ? (fitText(full, w, 10) === full ? full : fitText(short, w, 10)) : '';
+
+          const toggle = onToggle ? () => { onToggle(leaf.path); } : undefined;
 
           return (
             <g
               className="tm-tile"
               key={leaf.path}
+              data-excluded={leaf.excluded ? 'true' : 'false'}
+              {...(interactive
+                ? {
+                    tabIndex: 0,
+                    role: 'button',
+                    'aria-label': t(
+                      leaf.excluded ? 'home.mapTileAriaExcluded' : 'home.mapTileAriaIncluded',
+                      { name: leaf.name, amount: formatBytes(leaf.value) },
+                    ),
+                  }
+                : {})}
               onMouseMove={(e) => { onMove(e, leaf); }}
               onMouseLeave={() => { setTip(null); }}
+              onClick={toggle}
+              /* Enter and Space, because a `role="button"` owes both. `preventDefault`
+                 on Space or the page scrolls under the pointer at the same time. */
+              onKeyDown={
+                toggle
+                  ? (e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggle();
+                      }
+                    }
+                  : undefined
+              }
             >
-              {/* 🔴 pct 100: the tier's `hi` end. See the file header - the idle
-                  channel has no data source, so this is the dummy's own
-                  degenerate branch rather than a different design. */}
+              {/* The second channel: the tier's own two ends, interpolated by how
+                  long this target has sat unused. `reclaim-map.js:224-225`. */}
               <rect
                 className="fill"
                 x={node.x0}
@@ -308,7 +334,7 @@ export function ReclaimMap({ targets, measured }: { targets: MapTarget[]; measur
                 width={w}
                 height={h}
                 rx={2}
-                fill={tierColour(leaf.tier, 100)}
+                fill={tierColour(leaf.tier, idleScale(leaf.idleDays))}
               />
               {h > 14 ? (
                 <rect
@@ -366,49 +392,26 @@ export function ReclaimMap({ targets, measured }: { targets: MapTarget[]; measur
         <div className="tm-tip" style={{ left: `${String(tip.x)}px`, top: `${String(tip.y)}px` }}>
           <div className="mono" style={{ wordBreak: 'break-all' }}>{tip.path}</div>
           <div className="t-xs ink-3" style={{ marginTop: '2px' }}>
-            {/* `reclaim-map.js:115-117`, minus the idle clause the engine cannot fill. */}
-            {t('home.mapTipMeta', {
-              amount: formatBytes(tip.bytes),
-              section: tip.section,
-              tier: tip.tier,
-            })}
+            {/* `reclaim-map.js:115-117`, whole: size, idle, section, tier, and the
+                EXCLUDED clause when this tile has been clicked out of the run. The
+                idle clause is dropped rather than guessed for a target the engine
+                gave no timestamp for. */}
+            {tip.idleDays === null
+              ? t('home.mapTipMeta', {
+                  amount: formatBytes(tip.bytes),
+                  section: tip.section,
+                  tier: tip.tier,
+                })
+              : t('home.mapTipMetaIdle', {
+                  amount: formatBytes(tip.bytes),
+                  days: tip.idleDays,
+                  section: tip.section,
+                  tier: tip.tier,
+                })}
+            {tip.excluded ? t('home.mapTipExcluded') : ''}
           </div>
         </div>
       ) : null}
     </div>
-  );
-}
-
-/**
- * The accessible table carrying the same data - the primary accessible
- * representation, not a consolation prize. `reclaim-map.js:402-429`.
- *
- * The dummy's fifth column is Idle (days); the engine reports no age per target,
- * so it is absent here and declared beside the map.
- */
-export function ReclaimMapTable({ targets }: { targets: MapTarget[] }) {
-  const { t } = useTranslation();
-  const rows = targets.filter((x) => x.bytes > 0);
-  return (
-    <table className="tbl">
-      <thead>
-        <tr>
-          <th>{t('home.mapColSection')}</th>
-          <th>{t('home.mapColTarget')}</th>
-          <th>{t('home.mapColPath')}</th>
-          <th className="num-cell">{t('home.mapColSize')}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((row) => (
-          <tr key={row.path}>
-            <td>{row.sectionKey}</td>
-            <td>{row.label}</td>
-            <td className="mono t-2xs">{row.path}</td>
-            <td className="num-cell">{formatBytes(row.bytes)}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
   );
 }

@@ -25,7 +25,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Trans, useTranslation } from 'react-i18next';
 
-import { useRunPreferences, useStore } from '../state/store';
+import { useIncludedScanTargets, useRunPreferences, useStore } from '../state/store';
 import { filterSections, SECTION_FILTERS, type SectionFilter } from '../lib/catalogue';
 import { newRunId, run, safeBatchArgs } from '../lib/engine';
 import { formatBytes } from '../lib/format';
@@ -38,7 +38,13 @@ export function Sections() {
 
   const catalogue = useStore((s) => s.catalogue);
   const prefs = useRunPreferences();
-  const scanTargets = useStore((s) => s.scanTargets);
+  /* 🔴 The INCLUDED targets, everywhere on this screen: the per-section
+     `Reclaimable` figure, the header total and the expander rows are all promises
+     about what a run would take, and this screen's two buttons start that run. A
+     row still counting a target the run will refuse is the estimate contradicting
+     the run. The map on Home is the only surface that reads the whole scan. */
+  const scanTargets = useIncludedScanTargets();
+  const excludedPaths = useStore((s) => s.excludedPaths);
   const selection = useStore((s) => s.sectionSelection);
   const toggleSectionSelection = useStore((s) => s.toggleSectionSelection);
   const setSectionSelection = useStore((s) => s.setSectionSelection);
@@ -92,7 +98,7 @@ export function Sections() {
       const id = newRunId();
       startRun(id);
       void navigate({ to: '/run' });
-      void run(safeBatchArgs({ dryRun, ...prefs, sections: selection }), id, {
+      void run(safeBatchArgs({ dryRun, ...prefs, sections: selection, excludedPaths }), id, {
         onLog: appendLog,
         onProgress: (section, event, status, freedBytes) => {
           applyProgress({
@@ -113,7 +119,7 @@ export function Sections() {
     /* The two setState functions are stable, so listing them costs nothing and
        is what the React Compiler infers - a mismatch there disables optimisation
        for the whole component. */
-    [all, selection, t, startRun, navigate, prefs, appendLog, applyProgress,
+    [all, selection, t, startRun, navigate, prefs, excludedPaths, appendLog, applyProgress,
       finishRun, setBusy, setBlocked],
   );
 

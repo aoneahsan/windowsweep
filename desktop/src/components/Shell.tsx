@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Icon, type IconName } from './Icon';
 import { ThemePanel } from './ThemePanel';
-import { useRunPreferences, useStore } from '../state/store';
+import { useIncludedScanTargets, useRunPreferences, useStore } from '../state/store';
 import { reclaimableBytes, reclaimableSectionCount } from '../lib/reclaim';
 import { formatBytes } from '../lib/format';
 import { logDirectory } from '../lib/cli';
@@ -145,10 +145,11 @@ function Rail() {
 
   /* Read from lib/reclaim.ts, not recomputed. This copy and Home's disagreed with
      the map and the ladder on the same screen: after a scan both showed 0 B. */
-  const scanTargets = useStore((s) => s.scanTargets);
-  const bytes = reclaimableBytes(summary, scanTargets);
+  const scanTargets = useIncludedScanTargets();
+  const scannedAt = useStore((s) => s.scannedAt);
+  const bytes = reclaimableBytes(summary, scanTargets, scannedAt !== null);
   const reclaimable = bytes === null ? '-' : formatBytes(bytes);
-  const sectionCount = reclaimableSectionCount(summary, scanTargets);
+  const sectionCount = reclaimableSectionCount(summary, scanTargets, scannedAt !== null);
 
   return (
     <nav className="rail" aria-label={t('nav.label')}>
@@ -213,6 +214,11 @@ function useRouteStatusNote(): StatusNote | null {
   const summary = useStore((s) => s.summary);
   const catalogue = useStore((s) => s.catalogue);
   const prefs = useRunPreferences();
+  /* 🔴 The command line in the status bar claims to be the whole invocation, so it
+     carries the exclusions the run carries. Built from `safeBatchArgs`, the same
+     function the Start button calls - a status bar that assembled its own flags
+     would be free to disagree with the run happening above it. */
+  const excludedPaths = useStore((s) => s.excludedPaths);
 
   if (path === '/') {
     /* 🔴 The engine's own `log_file`, not the command-line tool's fixed folder.
@@ -239,7 +245,7 @@ function useRouteStatusNote(): StatusNote | null {
 
   if (path === '/run') {
     return {
-      text: commandLine(safeBatchArgs({ dryRun: false, ...prefs })),
+      text: commandLine(safeBatchArgs({ dryRun: false, ...prefs, excludedPaths })),
       machine: true,
     };
   }

@@ -34,6 +34,22 @@ export interface ScanTarget {
   label: string;
   path: string;
   bytes: number;
+  /**
+   * The newest write anywhere under this target, ISO 8601 in UTC
+   * (`2026-09-08T07:22:52Z`), or `null` when the tree holds nothing datable.
+   *
+   * Added to the engine for 1.2.0 and it costs no extra walk: under `--json` the
+   * size pass is `Get-DirectoryStats`, which returns the newest stamp out of the
+   * SAME enumeration that produces the byte count (`lib/scan.ps1:63-75`). A human
+   * `--scan` keeps the faster robocopy path and reports no stamp, which is why
+   * this is only ever read from a `--json` run.
+   *
+   * 🔴 It is the DEEPEST newest file, not the folder's own timestamp - self-test
+   * check [18a] asserts exactly that, with a fixture whose newer file is nested,
+   * because a walk that stopped at the top level would still look like a working
+   * timestamp.
+   */
+  newest_write_utc: string | null;
 }
 
 /** The whole `--json` document. The engine writes exactly one stdout line. */
@@ -52,6 +68,21 @@ export interface RunSummary {
   /** Always present, empty when nothing was scanned. */
   targets: ScanTarget[];
   refusals: unknown[];
+  /**
+   * The paths a `--exclude-path` actually kept out of this run, each named once.
+   *
+   * 🔴 A REFUSAL, not an intention. The engine records one here only when a
+   * deletion reached `Get-ProtectionReason` and was turned away on the user's
+   * account (`Add-ExcludedRefusal` is deliberately narrow - a protected-path
+   * refusal, which is the tool's own account rather than the user's, never lands
+   * in this list). So a `--scan` leaves it empty however many exclusions were
+   * passed: measured on this machine, two full scans, one with
+   * `--exclude-path C:\...\npm-cache` and one without, produced the same 665
+   * targets and an empty `excluded` both times.
+   *
+   * Always present, empty when nothing was refused.
+   */
+  excluded: string[];
   log_file: string | null;
   report_file: string | null;
 }
@@ -161,11 +192,47 @@ export function parseRunSummary(stdout: string): RunSummary {
     estimated_bytes: Number(doc.estimated_bytes ?? 0),
     sections: Array.isArray(doc.sections) ? doc.sections : [],
     candidates: Array.isArray(doc.candidates) ? doc.candidates : [],
-    targets: Array.isArray(doc.targets) ? doc.targets : [],
+    /* 🔴 Mapped rather than passed through, so `newest_write_utc` is `string` or
+       `null` and never `undefined`. The bundled engine always emits it, but an
+       absent field would otherwise reach the idle derivation as `undefined` and
+       be read as a date rather than as "no stamp". */
+    targets: Array.isArray(doc.targets) ? doc.targets.map(readTarget) : [],
     refusals: Array.isArray(doc.refusals) ? doc.refusals : [],
+    excluded: Array.isArray(doc.excluded) ? doc.excluded.map((p) => String(p)) : [],
     log_file: doc.log_file ?? null,
     report_file: doc.report_file ?? null,
   };
+}
+
+/** One `targets[]` row, with the 1.2.0 timestamp normalised to `string | null`. */
+function readTarget(raw: ScanTarget): ScanTarget {
+  return {
+    section: Number(raw.section),
+    label: String(raw.label),
+    path: String(raw.path),
+    bytes: Number(raw.bytes),
+    newest_write_utc: typeof raw.newest_write_utc === 'string' ? raw.newest_write_utc : null,
+  };
+}
+
+/** A day in milliseconds - the unit the engine's own idle gate reasons in. */
+const DAY_MS = 86_400_000;
+
+/**
+ * How long a target has sat unused, in whole days, or `null` when it has no
+ * timestamp to measure from.
+ *
+ * 🔴 A DERIVATION, not a field. The engine reports an instant
+ * (`newest_write_utc`); the click dummy and the engine's own `--days` gate both
+ * speak in days, so the conversion happens once, here, beside the field it reads.
+ * Clamped at zero because a stamp can be newer than this clock by a second or two
+ * and `-0 days idle` is not a thing a reader should ever be shown.
+ */
+export function idleDaysOf(newestWriteUtc: string | null, now: number = Date.now()): number | null {
+  if (!newestWriteUtc) return null;
+  const at = Date.parse(newestWriteUtc);
+  if (Number.isNaN(at)) return null;
+  return Math.max(0, Math.floor((now - at) / DAY_MS));
 }
 
 /** Exit codes the engine documents. Anything else is unexpected and shown as such. */

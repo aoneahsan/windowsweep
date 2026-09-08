@@ -29,6 +29,10 @@ export function Elevation() {
   const startRun = useStore((s) => s.startRun);
   const appendLog = useStore((s) => s.appendLog);
   const developer = useStore((s) => s.developer);
+  /* 🔴 The elevated run is the largest blast radius of the four run paths - it
+     runs as administrator over Windows Update, the component store and the event
+     logs - so it carries the exclusions like every other one. */
+  const excludedPaths = useStore((s) => s.excludedPaths);
   const applyProgress = useStore((s) => s.applyProgress);
   const finishRun = useStore((s) => s.finishRun);
   /* 🔴 WHICH one is running, not just that something is. Pressing "Ask for
@@ -44,7 +48,7 @@ export function Elevation() {
     const id = newRunId();
     startRun(id);
     if (!dryRun) void navigate({ to: '/run' });
-    void run(elevatedArgs(admin.map((s) => s.id), dryRun, developer), id, {
+    void run(elevatedArgs(admin.map((s) => s.id), dryRun, developer, excludedPaths), id, {
       onLog: appendLog,
       onProgress: (section, event, status, freedBytes) => {
         applyProgress({

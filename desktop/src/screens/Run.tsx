@@ -21,7 +21,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useRunPreferences, useStore } from '../state/store';
+import { useIncludedScanTargets, useRunPreferences, useStore } from '../state/store';
 import { formatBytes } from '../lib/format';
 import { isCleanupRun } from '../lib/cli';
 import { newRunId, run, safeBatchArgs } from '../lib/engine';
@@ -39,9 +39,15 @@ export function RunScreen() {
   const progress = useStore((s) => s.progress);
   const summary = useStore((s) => s.summary);
   const catalogue = useStore((s) => s.catalogue);
-  const scanTargets = useStore((s) => s.scanTargets);
+  /* 🔴 The INCLUDED targets. This screen's map is the dummy's "What is going"
+     band, and a target kept out of the run is not going - so it belongs neither in
+     the drain nor in the per-section figures beside it. Home's map is the one
+     place excluded tiles are still drawn, dimmed. */
+  const scanTargets = useIncludedScanTargets();
+  const scannedAt = useStore((s) => s.scannedAt);
   const developer = useStore((s) => s.developer);
   const prefs = useRunPreferences();
+  const excludedPaths = useStore((s) => s.excludedPaths);
   const startRun = useStore((s) => s.startRun);
   const appendLog = useStore((s) => s.appendLog);
   const applyProgress = useStore((s) => s.applyProgress);
@@ -90,7 +96,7 @@ export function RunScreen() {
     (total, p) => total + (p.event === 'end' ? (p.freedBytes ?? 0) : 0),
     0,
   );
-  const measured = reclaimableBytes(summary, scanTargets);
+  const measured = reclaimableBytes(summary, scanTargets, scannedAt !== null);
   const heroBytes = isCleanupRun(summary) && summary
     ? (summary.dry_run ? summary.estimated_bytes : summary.freed_bytes)
     : phase === 'running'
@@ -147,7 +153,7 @@ export function RunScreen() {
     setStarting(true);
     const id = newRunId();
     startRun(id);
-    void run(safeBatchArgs({ dryRun: false, ...prefs }), id, {
+    void run(safeBatchArgs({ dryRun: false, ...prefs, excludedPaths }), id, {
       onLog: appendLog,
       onProgress: (section, event, status, freedBytes) => {
         applyProgress({
@@ -168,7 +174,7 @@ export function RunScreen() {
         finishRun(null, true);
       })
       .finally(() => { setStarting(false); });
-  }, [queue.length, startRun, prefs, appendLog, applyProgress, finishRun, setScanTargets]);
+  }, [queue.length, startRun, prefs, excludedPaths, appendLog, applyProgress, finishRun, setScanTargets]);
 
   const inFlight = starting || phase === 'running';
 
@@ -299,6 +305,44 @@ export function RunScreen() {
               <span className="t-sm ink-3" style={{ flex: 'none' }}>{t('run.drainHint')}</span>
             </div>
             <ReclaimMap targets={drainTargets} measured />
+          </div>
+        </section>
+      ) : null}
+
+      {/* 🔴 WHAT THE RUN ACTUALLY KEPT, from the engine's own `excluded[]`.
+          This is the outcome, not the intention: the map band on Home counts what
+          was ASKED for, and this counts what the engine turned away when a
+          deletion reached the chokepoint. They can legitimately differ - an
+          excluded folder nothing tried to delete never appears here - and showing
+          the request as though it were the result is exactly the shape of lie this
+          feature exists to prevent. Empty after a `--scan`, always, because a scan
+          never reaches the chokepoint. */}
+      {summary && summary.excluded.length > 0 ? (
+        <section className="band band-app band-tight">
+          <div className="wrap rise">
+            <div className="zone-label">
+              <span className="caps">{t('run.excludedTitle')}</span>
+              <span className="t-sm ink-3" style={{ flex: 'none' }}>
+                {t('run.excludedHint', { count: summary.excluded.length })}
+              </span>
+            </div>
+            <div className="panel pad">
+              <ul
+                style={{
+                  margin: 0,
+                  paddingInlineStart: 'var(--sp-5)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 'var(--sp-1)',
+                }}
+              >
+                {summary.excluded.map((path) => (
+                  <li className="mono t-xs" key={path} style={{ wordBreak: 'break-all' }}>
+                    {path}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </section>
       ) : null}

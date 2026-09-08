@@ -130,9 +130,34 @@ export async function run(
   }
 }
 
+/**
+ * The user's exclusions, as flags.
+ *
+ * 🔴 ONE place builds these and every argument builder below calls it, because
+ * `--exclude-path` is the flag whose failure mode is a person believing a folder
+ * is protected when it is not. It is repeatable, which the engine supports
+ * (`windowsweep.ps1:170`) and the Rust validator walks rather than deduplicates
+ * (`src-tauri/src/args.rs`), so one flag per path is correct.
+ *
+ * 🔴 It is passed on the read-only `--scan` too. Measured on this machine rather
+ * than assumed: two full scans, one with `--exclude-path` and one without, both
+ * reported the same 665 targets and an empty `excluded[]`, because a scan never
+ * reaches the deletion chokepoint. So it is inert there - and passing it anyway
+ * keeps the rule "every invocation carries the exclusions" with no exception for a
+ * future call site to get wrong, and keeps the command line in the status bar the
+ * whole invocation.
+ */
+function excludeArgs(excludedPaths: readonly string[]): string[] {
+  return excludedPaths.flatMap((path) => ['--exclude-path', path]);
+}
+
 /** Read-only. Measures every declared target and deletes nothing. */
-export function scanArgs(developer: boolean): string[] {
-  return ['--scan', ...(developer ? ['--developer'] : ['--not-developer'])];
+export function scanArgs(developer: boolean, excludedPaths: readonly string[]): string[] {
+  return [
+    '--scan',
+    ...(developer ? ['--developer'] : ['--not-developer']),
+    ...excludeArgs(excludedPaths),
+  ];
 }
 
 /**
@@ -170,6 +195,14 @@ export interface RunPreferences {
 export function safeBatchArgs(options: {
   dryRun: boolean;
   sections?: number[];
+  /**
+   * 🔴 REQUIRED, for the same reason the three preferences above are: a call site
+   * that could omit the exclusions is a call site that will, and the result is a
+   * person watching a folder they marked kept get deleted. TypeScript refusing the
+   * call is the only reliable guard - nothing at runtime can tell an empty set
+   * from a forgotten one.
+   */
+  excludedPaths: readonly string[];
 } & RunPreferences): string[] {
   const args: string[] = [];
   if (options.sections && options.sections.length > 0) args.push('--only', options.sections.join(','));
@@ -180,6 +213,7 @@ export function safeBatchArgs(options: {
   args.push('--days', String(options.idleDays));
   args.push('--temp-days', String(options.tempDays));
   args.push('--large-file-mb', String(options.largeFileMb));
+  args.push(...excludeArgs(options.excludedPaths));
   return args;
 }
 
@@ -205,13 +239,19 @@ export function commandLine(args: string[]): string {
  * The selection travels as a file of paths rather than as indexes - see
  * `buildSelectFile` for why.
  */
-export function selectionArgs(selectFilePath: string, sections: number[], developer: boolean): string[] {
+export function selectionArgs(
+  selectFilePath: string,
+  sections: number[],
+  developer: boolean,
+  excludedPaths: readonly string[],
+): string[] {
   return [
     '--only',
     sections.join(','),
     '--select-file',
     selectFilePath,
     developer ? '--developer' : '--not-developer',
+    ...excludeArgs(excludedPaths),
   ];
 }
 
@@ -223,7 +263,12 @@ export function selectionArgs(selectFilePath: string, sections: number[], develo
  * is what the Elevation screen tells the reader, and this is the line that makes
  * it true.
  */
-export function elevatedArgs(sections: number[], dryRun: boolean, developer: boolean): string[] {
+export function elevatedArgs(
+  sections: number[],
+  dryRun: boolean,
+  developer: boolean,
+  excludedPaths: readonly string[],
+): string[] {
   const args = ['--only', sections.join(','), '--elevate'];
   if (dryRun) args.push('--dry-run');
   else args.push('--yes');
@@ -235,6 +280,12 @@ export function elevatedArgs(sections: number[], dryRun: boolean, developer: boo
      screen. Found by a docs writer checking a sentence I had asserted, not by a
      gate; scanArgs, safeBatchArgs and selectionArgs always passed it. */
   args.push(developer ? '--developer' : '--not-developer');
+  /* 🔴 The elevated run is the one that matters most for this flag: it runs as
+     administrator over Windows Update, the component store and the event logs, so
+     a forgotten exclusion here is the largest blast radius of the four paths. It is
+     also the path the `--developer` defect above lived on, for exactly the same
+     reason - a builder nobody looks at twice. */
+  args.push(...excludeArgs(excludedPaths));
   return args;
 }
 

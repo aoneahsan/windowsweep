@@ -6,12 +6,12 @@ per-route JSON-LD) · awareness **a machine, or a search result** · structure *
 
 Every string below is read by something that is not a person: a crawler deciding what a page is, an answer
 engine deciding whether to quote it, a search result deciding what forty words to show. There is no reader
-to charm. So the whole surface is band **P** - exact nouns, exact numbers, present tense, and no adjective
+to charm. So the whole surface is band **P** - exact nouns, exact numbers, present tense and no adjective
 doing work a number could do. Workshop dryness is at zero, deliberately. The 404 page carries a dry line of
 its own; its description does not, because a description is read in a list of ten results by someone who has
 never seen the page.
 
-**Answer-first, on every one of them.** A description that opens by naming the category is the failure mode
+**Answer-first, on every one of them**. A description that opens by naming the category is the failure mode
 of this surface. The first clause answers the question the reader typed.
 
 ## The three files these strings land in
@@ -20,7 +20,7 @@ of this surface. The first clause answers the question the reader typed.
 |---|---|---|
 | `windowsweep-web/public/llms.txt` | S-001 - S-006 | the site's own summary for AI crawlers |
 | the per-route content record (`src/content/`, read by the page **and** by the prerendered head) | S-007 - S-033 | thirteen `<title>` + `<meta name="description">` pairs, and one `og` rule |
-| the per-route JSON-LD blocks | S-034 - S-036 | `WebSite`, `SoftwareApplication`, and the author node |
+| the per-route JSON-LD blocks | S-034 - S-036 | `WebSite`, `SoftwareApplication` and the author node |
 
 Thirty-six slots. The dummy already carries a `<title>` and a description on all thirteen pages and a
 `SoftwareApplication` block on `/`, so most slots have a real `Was:` line rather than `(new)`.
@@ -38,7 +38,7 @@ The route list is not invented here. It is `pages-registry.js` in the approved d
 
 | Skipped | Why |
 |---|---|
-| `/admin/inbox` | plan v2 §7.5 names it; **the dummy does not have it.** `admin-inbox.html` carries `route: '/admin'`, so the inbox *is* `/admin` and there are three admin routes, not four. The dummy is the specification (`frontend-ui-standards` §10a) and its registry is the frozen list, so `/admin` is written and `/admin/inbox` is not. Reported rather than reconciled - amending the plan is not this draft's to do |
+| `/admin/inbox` | plan v2 §7.5 names it; **the dummy does not have it**. `admin-inbox.html` carries `route: '/admin'`, so the inbox *is* `/admin` and there are three admin routes, not four. The dummy is the specification (`frontend-ui-standards` §10a) and its registry is the frozen list, so `/admin` is written and `/admin/inbox` is not. Reported rather than reconciled - amending the plan is not this draft's to do |
 | `/sitemap.xml`, `/feed.xml`, `/robots.txt` | not HTML. They have no `<title>` and no description. Their generation belongs to §7.7 |
 | the seven `gallery-*` pages and `pages.html` | `route: null` in the registry - review harness, not product pages |
 | an OG image, a canonical tag, a `meta robots` value | not copy. §7.7 owns them. Where a route wants `noindex`, this draft says so in the slot's `Change:` line and stops there |
@@ -48,7 +48,7 @@ The route list is not invented here. It is `pages-registry.js` in the approved d
 - One numbered slot per shipping string, `S-001` upward, no gaps.
 - **`Was:` reproduces the string that is in the dummy today**, verbatim, or reads `(new)` where no string
   exists yet.
-- 🔴 **The fence content is the exact string that ships.** For a `<title>` or a description the fence holds
+- 🔴 **The fence content is the exact string that ships**. For a `<title>` or a description the fence holds
   the attribute *value*, not the tag. For a JSON-LD node it holds the whole node, because that is what ships.
 - Every title and description carries its **rendered character count** beside the fence. Titles want 60 or
   fewer, descriptions 155 or fewer. Counts were taken with `[...s].length` in Node, which counts code points
@@ -90,7 +90,7 @@ second one has already had to be removed from two other artefacts in this projec
 before it was written. The dummy states this in a comment above its own block. This draft does not weaken
 it.
 
-🔴 **One cost-adjacent word is kept and it is `licence`.** `Licence: MIT` appears in S-005. MIT is a licence
+🔴 **One cost-adjacent word is kept and it is `licence`**. `Licence: MIT` appears in S-005. MIT is a licence
 rather than a price, and it is already visible in the footer (`MIT licence · windowsweep 1.1.0`), in the
 `README`, in `package.json` and in the dummy's own JSON-LD as
 `"license": "https://opensource.org/licenses/MIT"`. Removing it from the machine-facing file alone would
@@ -102,16 +102,16 @@ It is flagged rather than assumed. One line deletes it if it reads as a price cl
 Both were ruled out on `site-home` earlier today, and the same ruling holds here for the same reason rather
 than by inheritance.
 
-**No self-test count.** Three numbers are live at once. The site brands **1.1.0** in three places; the
+**No self-test count**. Three numbers are live at once. The site brands **1.1.0** in three places; the
 shipped 1.1.0 binary prints **151**; the source at `HEAD` runs **155** on the way to an unreleased 1.2.0. A
 tally in `llms.txt` is therefore a number that goes stale on a schedule nobody watches, in the one file
 whose whole purpose is to be believed without being checked. S-006 names **the check itself** instead - a
 self-test check greps every source file for HTTP and socket calls and fails the build on a hit - which is
 what the sentence is about, and which is true at every count. (`index.html` band 2 does print `151`, as a
 recorded property of one measured run rather than a live count. That block belongs to `site-home` and is not
-touched here.)
+touched here).
 
-**No audit count.** The sources disagree. `README.md:105` says three read-only audits; the tier table at
+**No audit count**. The sources disagree. `README.md:105` says three read-only audits; the tier table at
 `docs/safety-model.md:74` puts five sections in the report-only tier. No slot asserts one.
 
 ---
@@ -140,11 +140,10 @@ different jobs.
 
 **Change:** new. Answer-first: the first eleven words say what it is and what makes it different, so a model
 quoting a single sentence of this file carries the whole claim rather than half of it. The refusal list is
-named rather than summarised as "safe",
-because band R delivers reassurance as a specific refusal. 🔴 It is **four** sentences of 15, 19, 21 and 11
-words rather than the two a summary paragraph invites, because the docs site's own `llms.txt` opens with a
-50-word sentence and the fingerprint's stated ceiling is 34; matching that precedent would have broken the
-rhythm rule on the first line of the surface.
+named rather than summarised as "safe", because band R delivers reassurance as a specific refusal. 🔴 It is
+**four** sentences of 15, 19, 21 and 11 words rather than the two a summary paragraph invites, because the
+docs site's own `llms.txt` opens with a 50-word sentence and the fingerprint's stated ceiling is 34;
+matching that precedent would have broken the rhythm rule on the first line of the surface.
 
 ## S-002 · `llms.txt` · what this site is
 
@@ -152,9 +151,9 @@ rhythm rule on the first line of the surface.
 
 ```text
 This site is windowsweep.aoneahsan.com: where the tool is downloaded, and where an account holds what the
-desktop app has synced. The documentation lives on a separate site and is not duplicated here. Three programs
-carry the name and they do not behave the same way on the network - the command-line engine, the desktop
-window, and this site. The privacy page says which is which.
+desktop app has synced. The documentation lives on a separate site and is not duplicated here. Three
+programs carry the name and they do not behave the same way on the network - the command-line engine,
+the desktop window and this site. The privacy page says which is which.
 ```
 
 **Change:** new. It exists so a crawler does not merge this site and the docs site into one blurred
@@ -169,7 +168,7 @@ over to the window.
 ```text
 ## Pages on this site
 
-- [Home](https://windowsweep.aoneahsan.com/): what it removes, what it refuses, one recorded run, and both install paths
+- [Home](https://windowsweep.aoneahsan.com/): what it removes, what it refuses, one recorded run and both install paths
 - [Download](https://windowsweep.aoneahsan.com/download): both desktop installers with their sizes, what verifies them, and the npx command
 - [Changelog](https://windowsweep.aoneahsan.com/changelog): every released version, rendered from the product repository
 - [Privacy](https://windowsweep.aoneahsan.com/privacy): what each of the three programs sends, and the list of what is never sent
@@ -190,7 +189,7 @@ decision rather than an omission. The site's own domain resolves over HTTPS toda
 
 **Was:** `(new)`
 
-**NEEDS DECISION - left unwritten.** The scheme is not mine to choose; the decision is recorded verbatim at
+**NEEDS DECISION - left unwritten**. The scheme is not mine to choose; the decision is recorded verbatim at
 the end of this file. Everything around this block is written, and the block drops in as one substitution.
 
 ## S-005 · `llms.txt` · download and source
@@ -264,7 +263,7 @@ page**, and no two are alike; the uniqueness check is at the end of this file.
 windowsweep · Windows cleanup that names every path first
 ```
 
-**57 characters.** **Change:** `safe` comes out. It is an adjective standing where a refusal belongs, which
+**57 characters**. **Change:** `safe` comes out. It is an adjective standing where a refusal belongs, which
 is the exact swap the approved `tagline` surface made when it replaced *safe-by-default*: a reader who has
 watched a cleaner delete something they needed has already been told a tool was safe. The clause that
 survives is the page's own H1.
@@ -282,9 +281,9 @@ windowsweep removes regenerable caches on Windows. It names every path before it
 **150 characters** - the old one was 231, so roughly a third of it never rendered. **Change:** the first
 sentence is now a complete answer on its own, which is what an engine extracts. One clause had to go.
 *"without touching your files"* is dropped as false-adjacent: three interactive sections do touch personal
-files, with a list and a final question, and the FAQ on this very page says so. The four-clause pile-up loses the two claims that
-belong on other pages - the junction check is a mechanism `/privacy` explains, and the zero-network fact is
-`/privacy`'s opening line.
+files, with a list and a final question, and the FAQ on this very page says so. The four-clause pile-up
+loses the two claims that belong on other pages - the junction check is a mechanism `/privacy` explains, and
+the zero-network fact is `/privacy`'s opening line.
 
 ## `/download`
 
@@ -296,7 +295,7 @@ belong on other pages - the junction check is a mechanism `/privacy` explains, a
 Download windowsweep · installers, checksums, npx
 ```
 
-**49 characters.** **Change:** separator, and `checksums` earns the space that *and the* was using. It is
+**49 characters**. **Change:** separator, and `checksums` earns the space that *and the* was using. It is
 the word someone types when they are deciding whether to trust an unsigned binary.
 
 ### S-010 · `/download` · `<meta name="description">`
@@ -308,7 +307,7 @@ and the zero-install command line beside them.`
 Both desktop installers with their sizes, the SHA-256 checksum and minisign signature that verify them, why SmartScreen warns, and the npx command.
 ```
 
-**147 characters.** **Change:** SmartScreen is named. It is the first thing that happens to a person who
+**147 characters**. **Change:** SmartScreen is named. It is the first thing that happens to a person who
 downloads this file, the page spends a whole section on it, and a description that omits it lets the warning
 arrive as a surprise. `actually` goes; the algorithm name replaces it, which is more useful to a machine and
 shorter besides.
@@ -323,7 +322,7 @@ shorter besides.
 Changelog · every released version of windowsweep
 ```
 
-**49 characters.** **Change:** the bare form was a label. Twenty-six characters of unused budget bought the
+**49 characters**. **Change:** the bare form was a label. Twenty-six characters of unused budget bought the
 answer to *what is on this page*.
 
 ### S-012 · `/changelog` · `<meta name="description">`
@@ -334,7 +333,7 @@ answer to *what is on this page*.
 Every released version of windowsweep with its added, changed and fixed entries, rendered from the CHANGELOG.md in the product repository.
 ```
 
-**138 characters.** **Change:** the three Keep a Changelog headings are named, because they are the page's
+**138 characters**. **Change:** the three Keep a Changelog headings are named, because they are the page's
 actual structure and they tell a machine what shape the content has. The possessive is rewritten as a
 prepositional phrase: an apostrophe in a description is one of the characters search engines strip.
 
@@ -348,7 +347,7 @@ prepositional phrase: an apostrophe in a description is one of the characters se
 Privacy · what windowsweep sends, and what it never sends
 ```
 
-**57 characters.** **Change:** separator only. The title is already the page in six words, and its second
+**57 characters**. **Change:** separator only. The title is already the page in six words, and its second
 half is band R doing its job, so it is kept.
 
 ### S-014 · `/privacy` · `<meta name="description">`
@@ -360,7 +359,7 @@ four destinations, with no opt-out. Both facts, at the same size.`
 The command line makes no network calls. The desktop window and this site send usage events and errors to four destinations, with no opt-out.
 ```
 
-**141 characters.** **Change:** neither half is softened, and neither is allowed to bleed into the other -
+**141 characters**. **Change:** neither half is softened, and neither is allowed to bleed into the other -
 the offline claim is scoped to the command line in its own sentence, and *no opt-out* is the last thing in
 the sentence that carries it, which is the emphatic position. `and errors` is added because Sentry is
 one of the four destinations and *usage events* alone would have undercounted what is sent. The closing
@@ -384,7 +383,7 @@ two answers; it counts nothing. So it stays true when the heading changes.
 Sitemap · every public page on windowsweep.aoneahsan.com
 ```
 
-**56 characters.** **Change:** the host is in the title because a sitemap page is what a person lands on
+**56 characters**. **Change:** the host is in the title because a sitemap page is what a person lands on
 when they are trying to establish what a site contains, and the host answers that before they click.
 
 ### S-016 · `/sitemap` · `<meta name="description">`
@@ -395,7 +394,7 @@ when they are trying to establish what a site contains, and the host answers tha
 Every public page on this site, with a filter. The machine-readable counterpart, sitemap.xml, is regenerated on every build from the same routes.
 ```
 
-**145 characters.** **Change:** the old line was true and half-empty at 61 characters. What is added is the
+**145 characters**. **Change:** the old line was true and half-empty at 61 characters. What is added is the
 page's own explanation of why it exists beside an XML file, which is the question a machine reading two
 sitemap URLs on one origin would otherwise have to guess at.
 
@@ -409,7 +408,7 @@ sitemap URLs on one origin would otherwise have to guess at.
 Feed · every windowsweep release, newest first
 ```
 
-**46 characters.** **Change:** the ordering is stated, because it is the one thing a reader wants to know
+**46 characters**. **Change:** the ordering is stated, because it is the one thing a reader wants to know
 before clicking a feed link.
 
 ### S-018 · `/feed` · `<meta name="description">`
@@ -420,7 +419,7 @@ before clicking a feed link.
 Release entries, newest first, with the date and what changed. The changelog is the only dated surface on this site, and it is what feed.xml carries.
 ```
 
-**149 characters.** **Change:** the honest point survives - this feed carries releases because releases are
+**149 characters**. **Change:** the honest point survives - this feed carries releases because releases are
 the only dated thing here - and it now leads with what an entry contains rather than with a category name.
 The possessive apostrophe goes for the same reason as S-012.
 
@@ -434,7 +433,7 @@ The possessive apostrophe goes for the same reason as S-012.
 Contact · send a message about windowsweep
 ```
 
-**42 characters.** **Change:** a verb, so the title says what the page is for rather than what it is called.
+**42 characters**. **Change:** a verb, so the title says what the page is for rather than what it is called.
 
 ### S-020 · `/contact` · `<meta name="description">`
 
@@ -445,7 +444,7 @@ Signing in is required so a reply has somewhere to go.`
 Send a message about a missed cache path or a section that behaved unexpectedly. Signing in is required so a reply has somewhere to go.
 ```
 
-**135 characters.** **Change:** `or anything else` is cut. Two named examples are more useful to a person
+**135 characters**. **Change:** `or anything else` is cut. Two named examples are more useful to a person
 deciding whether this is the right page than a third clause that names nothing. The sign-in sentence is kept
 verbatim: it is the page's own reason, and rewriting a good sentence to prove a pass happened is how an
 approved line gets quietly worse.
@@ -460,7 +459,7 @@ approved line gets quietly worse.
 Your account · windowsweep
 ```
 
-**26 characters.** **Change:** separator only.
+**26 characters**. **Change:** separator only.
 
 ### S-022 · `/account` · `<meta name="description">`
 
@@ -471,7 +470,7 @@ sign-out and account deletion.`
 Your email and display name, the desktop settings this account has synced, your last runs, sign-out and account deletion.
 ```
 
-**121 characters. Kept verbatim.** **Change:** none. It is answer-first, it lists the page's contents in the
+**121 characters. Kept verbatim**. **Change:** none. It is answer-first, it lists the page's contents in the
 page's own order, and it is the shortest honest form of them.
 
 ## `/signin`
@@ -484,7 +483,7 @@ page's own order, and it is the shortest honest form of them.
 Sign in · windowsweep
 ```
 
-**21 characters.** **Change:** separator only. This route is a `noindex` candidate - it has nothing to rank
+**21 characters**. **Change:** separator only. This route is a `noindex` candidate - it has nothing to rank
 for and it is the door to one person's own data - but the robots value belongs to §7.7, so the title is
 written for the browser tab and the recommendation is left here rather than acted on.
 
@@ -497,7 +496,7 @@ says so rather than failing when you press it.`
 Google sign-in on the shared account used by the desktop app. It is not enabled yet, and this page says so rather than failing when you press it.
 ```
 
-**145 characters. Kept verbatim.** **Change:** none. It states today's truth, including the part most copy
+**145 characters. Kept verbatim**. **Change:** none. It states today's truth, including the part most copy
 would hide, and that is the register this whole surface is written in. 🔴 It carries a date-bound fact: when
 Google is enabled on the shared Supabase project the second sentence becomes false, so this slot is the one
 string on the surface that has to be re-read at that moment rather than at the next release.
@@ -512,7 +511,7 @@ string on the surface that has to be re-read at that moment rather than at the n
 Admin inbox · windowsweep
 ```
 
-**25 characters.** **Change:** two separators become one. A `noindex` candidate, same as S-023, same
+**25 characters**. **Change:** two separators become one. A `noindex` candidate, same as S-023, same
 reasoning, same hand-off.
 
 ### S-026 · `/admin` · `<meta name="description">`
@@ -523,7 +522,7 @@ reasoning, same hand-off.
 Contact requests with a status field. Every status change writes a row to the audit log through the same path that performs the change.
 ```
 
-**135 characters.** **Change:** the page's own sentence about *one path* is folded in, because it is the
+**135 characters**. **Change:** the page's own sentence about *one path* is folded in, because it is the
 mechanism that makes the audit claim credible rather than decorative.
 
 ## `/admin/users`
@@ -536,7 +535,7 @@ mechanism that makes the audit claim credible rather than decorative.
 Admin users · windowsweep
 ```
 
-**25 characters.** **Change:** separator.
+**25 characters**. **Change:** separator.
 
 ### S-028 · `/admin/users` · `<meta name="description">`
 
@@ -546,7 +545,7 @@ Admin users · windowsweep
 Everyone with an account, read-mostly. The platform role is seeded out of band for two fixed addresses, so no button here can grant it.
 ```
 
-**135 characters.** **Change:** *two fixed addresses* is the specific fact the old line gestured at, and the
+**135 characters**. **Change:** *two fixed addresses* is the specific fact the old line gestured at, and the
 page's own heading says it. `no button here can grant it` is the refusal that makes the sentence band R in
 substance rather than a policy note, and it is also the half a machine needs in order to describe what this
 interface can and cannot do to an account.
@@ -561,7 +560,7 @@ interface can and cannot do to an account.
 Admin audit log · windowsweep
 ```
 
-**29 characters.** **Change:** separator.
+**29 characters**. **Change:** separator.
 
 ### S-030 · `/admin/audit` · `<meta name="description">`
 
@@ -571,7 +570,7 @@ Admin audit log · windowsweep
 Append-only. Every admin write in order, with its actor and target. There is no edit control and no delete control here, and that absence is the feature.
 ```
 
-**153 characters.** **Change:** the page makes two claims and the old line carried one. What is added is
+**153 characters**. **Change:** the page makes two claims and the old line carried one. What is added is
 what a row actually contains, which is the half a machine needs in order to know what this page holds.
 
 ## `/404`
@@ -584,7 +583,7 @@ what a row actually contains, which is the half a machine needs in order to know
 Not found · windowsweep
 ```
 
-**23 characters.** **Change:** separator.
+**23 characters**. **Change:** separator.
 
 ### S-032 · `/404` · `<meta name="description">`
 
@@ -594,11 +593,11 @@ Not found · windowsweep
 That path does not exist on this site. Nothing was deleted. The home page and the sitemap are both one link away.
 ```
 
-**113 characters.** **Change:** `page` becomes `path`, matching the page's own H1 and the product's own
+**113 characters**. **Change:** `page` becomes `path`, matching the page's own H1 and the product's own
 vocabulary. `Nothing was deleted` is on the page and belongs here: this is a product that deletes things,
-and a 404 in that context is a sentence worth being explicit about. The dry aside the page carries after it
-- *which is at least consistent* - is deliberately **not** brought across. The row is band P only, and a
-joke read cold in a list of search results by someone who has not seen the page is a joke with no setup.
+and a 404 in that context is a sentence worth being explicit about. The dry aside the page carries after
+it - *which is at least consistent* - is deliberately **not** brought across. The row is band P only, and
+a joke read cold in a list of search results by someone who has not seen the page is a joke with no setup.
 
 ## S-033 · every route · the `og:title` and `og:description` rule
 
@@ -621,7 +620,7 @@ per-route record rather than twenty-six more strings, which is also why it is on
 
 # Group C - the JSON-LD, and the text inside it
 
-🔴 **Schema that says more than the page shows is a penalty and a lie in the same act.** Every string in
+🔴 **Schema that says more than the page shows is a penalty and a lie in the same act**. Every string in
 these three nodes is either the route's own title or description from Group B, or a fact printed on the page
 it sits on. Nothing here describes a capability the site does not render.
 
@@ -699,7 +698,7 @@ and the meta description are one sentence rather than two that can drift. `Windo
 becomes a reference to S-036, so the person is described once on the site. **`offers` and
 `isAccessibleForFree` stay absent**, as they already are.
 
-🔴 **`softwareVersion` is `1.1.0` today and must not stay a literal.** It is true right now - the footer, the
+🔴 **`softwareVersion` is `1.1.0` today and must not stay a literal**. It is true right now - the footer, the
 download page and the release tag all say 1.1.0 - and it stops being true the moment CLI 1.2.0 ships, which
 plan v2 puts in W4, before this site deploys in W7. `/download` already reads the release at build time
 (§7.5); this field reads the same value from the same place. A build-time value cannot go stale. A literal
@@ -730,9 +729,9 @@ profiles that are **read from the repository** - `README.md:501` names both, and
 registers `linkedin.com/in/aoneahsan` as the owner's own profile path. No third profile is added. None was
 read.
 
-🔴 **It is `Person`, and row 19 says `Organization`.** That is a `NEEDS DECISION`, recorded verbatim below.
+🔴 **It is `Person`, and row 19 says `Organization`**. That is a `NEEDS DECISION`, recorded verbatim below.
 `Person` is written here because it is the only type the visible page supports: the footer shows
-`Ahsan Mahmood` linking to a personal site, no organization name appears on any of the thirteen pages, and
+`Ahsan Mahmood` linking to a personal site, no organisation name appears on any of the thirteen pages, and
 the dummy's own JSON-LD already declares `Person`. Declaring an `Organization` would be schema describing
 something the page does not show, which is the one rule this group is built around.
 
@@ -769,10 +768,10 @@ something the page does not show, which is the one rule this group is built arou
 | S-031 | `/404` | title | 23 | 60 | no |
 | S-032 | `/404` | description | 113 | 155 | no |
 
-**Nothing exceeds its cap.** One description sits within two characters of it - S-030 at 153 - and it is named here so a later
-edit knows it has no room. Six titles are short on purpose
-(S-021, S-023, S-025, S-027, S-029, S-031): they are browser-tab labels on gated or error routes, and
-padding them would invent content the page does not have.
+**Nothing exceeds its cap**. One description sits within two characters of it - S-030 at 153 - and it is
+named here so a later edit knows it has no room. Six titles are short on purpose (S-021, S-023, S-025,
+S-027, S-029, S-031): they are browser-tab labels on gated or error routes, and padding them would invent
+content the page does not have.
 
 ---
 
@@ -790,20 +789,20 @@ an AI crawler follows is dead until RW-102 completes; (b) ship `http://`, which 
 wrong scheme the moment the certificate is issued, with nothing in the build that would notice; (c) omit the
 Documentation block from the first deploy and add it in RW-102's write-back pass, so the file never carries
 a dead link or a downgraded one. Recommendation: (c). `llms.txt` exists to be followed rather than read, a
-dead link in it is worse than a missing section, and RW-102 already owns a write-back over that domain.**
+dead link in it is worse than a missing section, and RW-102 already owns a write-back over that domain**.
 
 The second one is a conflict between two approved artefacts rather than a gap. Both sides are set out. A
 type declared in a schema block is the sort of field that is set once and then believed by everything
 downstream of it, so guessing it here would be the expensive kind of quiet.
 
 **NEEDS DECISION: is the site's author node a `Person` or an `Organization`? Content-map row 19 and plan v2
-§7.7 both say `Organization`, and no organization is named on any of the thirteen pages - the footer shows
+§7.7 both say `Organization`, and no organisation is named on any of the thirteen pages - the footer shows
 "Ahsan Mahmood" linking to `aoneahsan.com`, `package.json` declares an author object with a person's name
 and email, and the dummy's existing JSON-LD already declares `"@type": "Person"`. Options: (a) `Person`, as
 written at S-036, with row 19's schema field corrected by the keeper in an amendment note - recommended,
-because schema must match visible content and nothing visible supports an organization; (b) `Organization`,
+because schema must match visible content and nothing visible supports an organisation; (b) `Organization`,
 which needs a legal or trading name, a logo URL and whatever `sameAs` profiles belong to it, none of which
-is in either repository, so it cannot be written without inventing three facts. Recommendation: (a).**
+is in either repository, so it cannot be written without inventing three facts. Recommendation: (a)**.
 
 **NEEDS DECISION: does `Licence: MIT` stay in the site's `llms.txt` (S-005)? It is a licence rather than a
 price, it is already visible in the site footer as "MIT licence · windowsweep 1.1.0", and it already ships
@@ -812,7 +811,7 @@ machine-facing file alone would make that file less accurate than the page it de
 answer engine reading MIT may state a price the standing exemption says this project never states. Options:
 (a) keep it, as written, because a licence is a redistribution fact and the surrounding surfaces already
 carry it - recommended; (b) remove it from `llms.txt` and leave it only where it already ships.
-Recommendation: (a).**
+Recommendation: (a)**.
 
 ---
 
@@ -820,17 +819,17 @@ Recommendation: (a).**
 
 Three things are reported rather than raised as questions, because the evidence answers them.
 
-**`/admin/inbox` does not exist.** Plan v2 §7.5 names it; `pages-registry.js` puts the inbox at `/admin` and
+**`/admin/inbox` does not exist**. Plan v2 §7.5 names it; `pages-registry.js` puts the inbox at `/admin` and
 declares public paths frozen. The dummy is the specification, so this draft writes `/admin` and skips
 `/admin/inbox`. If the app is later built at `/admin/inbox`, S-025 and S-026 move with it unchanged - only
 the route key changes.
 
-**Row 19's schema field is one node short.** It reads `WebSite + Organization`. Plan v2 §7.7 requires
+**Row 19's schema field is one node short**. It reads `WebSite + Organization`. Plan v2 §7.7 requires
 `WebSite` + `SoftwareApplication` (no offers) + `Organization`, and the `SoftwareApplication` block already
 ships in the dummy. Group C writes all three. This is a map-accuracy note for the keeper rather than a
 conflict, since nothing in the row forbids the node it omits.
 
-**Row 19's `CTA: none` holds.** Nothing in these thirty-six slots asks the reader to do anything. S-006's
+**Row 19's `CTA: none` holds**. Nothing in these thirty-six slots asks the reader to do anything. S-006's
 `windowsweep --scan` sentence is a fact about how a machine is measured, inside a list of facts, and it is
 there because the alternative was leaving `3,924,712,402` in the file with no way for a reader to find their
 own number.
@@ -839,23 +838,23 @@ own number.
 
 ## Self-check
 
-**Palette.** Band **P only**, as row 19 requires, and it is delivered by construction rather than by
+**Palette**. Band **P only**, as row 19 requires, and it is delivered by construction rather than by
 restraint: every string is a fact with a noun or a number in it. Band R is present in substance and never in
 style - S-008 *refuses documents, credentials and browser profiles*, S-028 *no button here can grant it*,
 S-006's *no flag lifts the refusal* - which is the Bible's definition of R, a specific refusal rather than an
 adjective. Band **W is at zero**, and one place proves that was a decision: the `/404` page carries a dry
 aside, and S-032 leaves it on the page.
 
-**Rhythm.** Shortest shipping sentence: *Append-only*, one word, opening S-030; *It deletes* at two, opening
+**Rhythm**. Shortest shipping sentence: *Append-only*, one word, opening S-030; *It deletes* at two, opening
 a bullet of S-006. Longest: the network sentence in that same bullet, at **28 words**, inside the
 fingerprint's stated 4-to-34 range. Nothing shipped runs past it. The descriptions run 113 to 153 characters
 and alternate on purpose between one long sentence and two short ones - S-030 opens on one word and closes
-on twenty-four; S-008 opens on seven and closes on seventeen.
+on sixteen; S-008 opens on six and closes on fifteen.
 
-**Length.** Every title is inside 60 characters and every description inside 155. Nothing is over. The
+**Length**. Every title is inside 60 characters and every description inside 155. Nothing is over. The
 tightest is named in the counts table, and those twenty-six strings total **374 words**.
 
-🔴 **`llms.txt` is 615 words, and the comparable artefact is 494.** Measured on the fence contents of S-001,
+🔴 **`llms.txt` is 615 words, and the comparable artefact is 494**. Measured on the fence contents of S-001,
 S-002, S-003, S-005 and S-006 with the tokenizer `\b[\w'-]+\b`, URLs included, which is the same measurement
 applied to the docs site's shipped `llms.txt` for the comparison. **This is reported rather than claimed as
 a pass**: row 19 says *short*, that word has no number behind it, and the only precedent this project has is
@@ -865,7 +864,7 @@ block is 271 of the 615. **If a reviewer rules it long, S-003's page list is wha
 whose content is also each route's own description, and the only slot here that repeats something a crawler
 can already read elsewhere.
 
-🔴 **A correction rides with this figure, because it was wrong in the first draft of this file.** The
+🔴 **A correction rides with this figure, because it was wrong in the first draft of this file**. The
 self-check claimed 520 words *and* that the file was shorter than the docs site's 620. Both numbers were
 guesses and the comparison had its **sign backwards**. Re-measuring produced 614 against 494 - longer, not
 shorter. The line pass then added one word at S-001. That is the 615 above. The same pass caught twelve declared character counts each one low, because the first measuring
@@ -873,7 +872,7 @@ run had been made against candidate strings rather than against the fences that 
 this file is now taken from the file itself, and the tokenizer and the inclusion rule are written beside it
 so the next reader can reproduce it rather than trust it.
 
-**Unsure spots.** Three, all recorded verbatim above as `NEEDS DECISION`: the documentation link scheme, the
+**Unsure spots**. Three, all recorded verbatim above as `NEEDS DECISION`: the documentation link scheme, the
 `Person`-versus-`Organization` type, and whether `Licence: MIT` may stay. Nothing else is held. One slot is
 date-bound rather than uncertain - S-024 becomes false the day Google sign-in is enabled
 on the shared Supabase project, and it is marked in place so the person who enables it finds the sentence.
@@ -888,13 +887,13 @@ so that a by-hand pass and an automated one cannot disagree about what counts as
 
 **Result**: zero hits. No entry on that list appears in any shipping string.
 
-🔴 **The list's own words are not reproduced in this file, and that is the second finding.** Naming them
+🔴 **The list's own words are not reproduced in this file, and that is the second finding**. Naming them
 here is what makes a clean record fail its own gate: they would sit in the commentary the hook *can* read,
 so a report saying *nothing was found* is itself reported as eleven violations. It happened on the first
-write of this file. That is the archive trap in miniature - evidence quoted inside the corpus the gate reads
-- so the method is written down instead of the words, and the method is repeatable in one command.
+write of this file. That is the archive trap in miniature - evidence quoted inside the corpus the gate
+reads - so the method is written down instead of the words, and the method is repeatable in one command.
 
-**One near-miss, described rather than quoted.** The dummy's `/signin` page uses a listed verb in its
+**One near-miss, described rather than quoted**. The dummy's `/signin` page uses a listed verb in its
 sentence about what signing in does *not* do for the tool itself. That copy belongs to row 18. It is not
 carried into S-024, whose fence is the description only.
 

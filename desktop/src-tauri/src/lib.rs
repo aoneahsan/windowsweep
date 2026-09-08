@@ -10,6 +10,7 @@ mod drives;
 mod engine;
 mod oauth;
 mod runs;
+mod schedule;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -37,6 +38,7 @@ pub fn run() {
             drives::list_drives,
             runs::write_select_file,
             runs::list_run_files,
+            schedule::schedule_status,
             oauth::oauth_listen_start,
             oauth::oauth_listen_await,
         ])

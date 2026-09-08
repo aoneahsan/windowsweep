@@ -44,7 +44,7 @@ Left alone on purpose, each with its reason:
 
 - **`Write-Box`** draws a 78-glyph rule and indents its subtitle by three: **75 characters** for a subtitle. One shipped subtitle breaks it (C-144, 92 characters); it is fixed here.
 - **`Write-Kv`** formats `"  {0,-24} {1}"`, so a key over **24 characters** pushes its whole column right. The longest shipped key is 23. C-088's replacement is 21.
-- **`Write-Banner`** sizes its box to `$inner.Length + 2`, so the banner is not capped at 78 - it just has to stay inside a terminal. Shipped: 66 glyphs. C-001: 67.
+- **`Write-Banner`** sizes its box to `$inner.Length + 2`, so the banner is not capped at 78 - it has to stay inside a terminal. Shipped: 66 glyphs. C-001: 67.
 - **Free-flowing help, `Write-Plain` and `Write-Note` lines** are not under a rule. The shipped baseline in those blocks already runs to 93-104 characters, and the owner ruled that class of overflow cosmetic and acceptable on 2026-09-07. So the test applied here is *no worse than what ships*, and every changed line meets it except two, both named in the self-check.
 
 ---
@@ -59,7 +59,7 @@ Left alone on purpose, each with its reason:
 
 **Change:** the adjective goes. The Bible is explicit - reassurance is delivered as a specific refusal, "never an adjective like 'safe'" - and this line is the most-printed sentence in the product: `Write-Banner` runs at the top of the walkthrough, the menu, every batch run and every scan. It now states the guarantee instead of claiming a property. Third person, present tense, no adjective doing work a verb could do. 65 glyphs of inner text, 67 with the borders, against 66 shipped.
 
-🔴 **This slot is blocked on a NEEDS DECISION** - see NEEDS DECISION 1. The product currently prints two different straplines from six places, and which line belongs here is the same question row 2 was raised to settle.
+🔴 **This slot is blocked on a NEEDS DECISION**. See NEEDS DECISION 1. The product currently prints two different straplines from six places, and which line belongs here is the same question row 2 was raised to settle.
 
 <!-- Applier note added 2026-09-08, before C-002 -->
 
@@ -111,7 +111,7 @@ non-interactive session: 'Proceed?' answered no (pass --yes to confirm in batch)
 ```
 **Was:** the same, with `[Y/n]` when the default is yes.
 
-**Change:** none. The capital letter carries the default; nothing else needs to.
+**Change:** none. The capital letter carries the default in both forms - `[y/N]` and `[Y/n]` - so nothing else on the line has to explain what pressing Enter will do.
 
 ### C-007 · `lib/ui.ps1:166` · `Confirm-Ui` default prompt text
 ```
@@ -275,7 +275,7 @@ sibling slot decided to change.
 ```
 **Change:** the first two lines are untouched - they are the core promise, delivered as a list of refusals, and they are already the best paragraph in the product. Two facts in the second half were wrong.
 
-**One:** "Personal-file sections are interactive only and use the Recycle Bin" folds four sections into one claim that fits three of them. The interactive sections are 17, 18, 19 and 23. Sections 18, 19 and 23 are tier `recycle` and send what you pick to the Recycle Bin; **section 17 is tier `rebuilds`** - stale build artefacts, removed through the chokepoint outright, with no undo. Telling a reader their selection goes to the Recycle Bin when one of the four does not is the worst direction for this error to run. The replacement separates the two facts: which sections ask, and which of those use the bin.
+**One:** "Personal-file sections are interactive only and use the Recycle Bin" folds four sections into one claim. It fits three of them. The interactive sections are 17, 18, 19 and 23. Sections 18, 19 and 23 are tier `recycle` and send what you pick to the Recycle Bin; **section 17 is tier `rebuilds`** - stale build artefacts, removed through the chokepoint outright, with no undo. Telling a reader their selection goes to the Recycle Bin when one of the four does not is the worst direction for this error to run. The replacement separates the two facts: which sections ask, and which of those use the bin.
 
 **Two:** "change nothing" repeats C-020's overclaim in the paragraph a sceptical reader will actually stop on. `--scan` and `--dry-run` change nothing *of yours*, and both write a log and a report - so the sentence now says which, in the same breath, rather than being technically defensible and quietly wrong.
 
@@ -836,8 +836,8 @@ nobody while still carrying the overclaim three sibling slots exist to correct.*
 it was sound at the time: the string is a `title` field in the saved JSON report rather than console output,
 and it reappears in the exported Markdown and HTML, so it looked like the report surface's business. But
 `report-bodies` - the surface that owns those exports, content-map row 15 - explicitly declines it: status
-and title words are **data written by `runner.ps1`**, which is this surface's own file. So the deferral had
-left it unowned.
+and title words are **data written by `runner.ps1`**, which is this surface's own file. So the deferral left it
+unowned.
 
 **Why change it rather than keep it with a note.** `--scan` is not read-only: it writes a log and, unless
 `--no-report`, a report - which is exactly the overclaim C-020, C-044 and C-083 correct on the console
@@ -1064,7 +1064,7 @@ could not open C:\Users\you\.windowsweep\reports\report-2026-09-07_101533-12044.
 ```
 **Was:** the same.
 
-**Change:** none. Both outcomes name the file, so the failure is still actionable.
+**Change:** none. Both outcomes name the file, so a reader whose report did not open is left holding the path rather than a bare failure, and can open it by hand.
 
 ### C-111 · `modules/reports.ps1:185` · deleting a report
 ```
@@ -1362,7 +1362,7 @@ Privacy: windowsweep makes no network calls. Logs and reports are written only u
 ```
 **Was:** the same.
 
-**Change:** none. This is supporting commitment 3 of the core promise, stated where a reader who has just been asked for a log will read it. Third person, no company, no "we".
+**Change:** none. This is supporting commitment 3 of the core promise, stated where a reader who has been asked for a log will read it. Third person, no company, no "we".
 
 ### C-142 · `modules/release_helpers.ps1:282` · the issue title prefix
 ```
@@ -1959,7 +1959,7 @@ between an applier that stops and one that reports success having done nothing.
 
 **Palette - 60 precision-before-an-irreversible-act · 25 refusal-as-reassurance · 15 workshop dryness, against row 10's P-dominant brief.**
 
-P carries the surface, as the row demands, and it carries it through counts and paths rather than through register: C-056's four facts above a list of destructive options, C-057's `[deep]` / `[interactive]` / `[admin]` flags before a choice, C-075's three measured numbers, C-079's whole strategy on one line before anything runs, C-157's exact Sunday command, C-166's exact line before it is written to the reader's own profile, C-172's measured size before the deletion question, C-194's "Currently ... across all listed targets".
+P carries the surface. As the row demands, it does that through counts and paths rather than through register: C-056's four facts above a list of destructive options, C-057's `[deep]` / `[interactive]` / `[admin]` flags before a choice, C-075's three measured numbers, C-079's whole strategy on one line before anything runs, C-157's exact Sunday command, C-166's exact line before it is written to the reader's own profile, C-172's measured size before the deletion question, C-194's "Currently ... across all listed targets".
 
 R lands where the row's structure puts it - at every refusal, and it is the band the changed slots protect most. Kept intact: C-012 "a person has to pick these", C-068's interactive-only refusal, C-128's "this tool never does", C-136 ending on "never batch", C-141's no-network-calls note, C-145's "No paths, no logs", C-154's npx refusal, C-195's whole sentence. Strengthened by change: C-001 and C-018 replace an adjective with a commitment; C-023 separates which sections ask from which use the Recycle Bin; C-130 replaces "the safe reading" with the consequence, "(keeps more)"; C-182 replaces "always kept" with "kept, unless --purge-all".
 

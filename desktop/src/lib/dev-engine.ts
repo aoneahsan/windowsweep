@@ -118,7 +118,9 @@ export async function devRun(
   emit: (channel: 'clean:log' | 'clean:progress', line: string) => void,
 ): Promise<RunFinished> {
   if (args.includes('--list')) {
-    return { run_id: runId, exit_code: 0, stdout: CATALOGUE_JSON };
+    /* The browser stand-in has no child process, so nothing can kill one:
+       `cancelled` is false here by construction rather than by default. */
+    return { run_id: runId, exit_code: 0, stdout: CATALOGUE_JSON, cancelled: false };
   }
 
   const scan = args.includes('--scan');
@@ -210,5 +212,5 @@ export async function devRun(
   };
 
   if (dryRun || scan) emit('clean:log', 'this was a rehearsal - nothing was written');
-  return { run_id: runId, exit_code: 0, stdout: JSON.stringify(summary) };
+  return { run_id: runId, exit_code: 0, stdout: JSON.stringify(summary), cancelled: false };
 }

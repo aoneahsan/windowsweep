@@ -56,6 +56,14 @@ const ALLOWED_FLAGS: &[&str] = &[
     // leaves the person with something they cannot undo from the app that made it.
     "--install-task",
     "--uninstall-task",
+    // The weekly Scheduled Task, verified present in the engine at
+    // windowsweep.ps1:151-152 where each sets `$ws.Mode`. Both are bare mode
+    // flags taking no value, so they belong here rather than below.
+    //
+    // These two WRITE - they register and remove a Scheduled Task - which is why
+    // they are named individually rather than admitted by any looser rule. The
+    // pair is deliberate: a window that can create the task and not remove it
+    // leaves the person with something they cannot undo from the app that made it.
 ];
 
 /// Flags that take exactly one value.
@@ -111,16 +119,40 @@ pub fn validate(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
+/// Invocations that print their own shape instead of the `--json` summary.
+///
+/// 🔴 EVERY ENTRY IS A MODE THAT NEVER REACHES `Write-JsonSummary`, verified in the
+/// engine rather than assumed. `Invoke-Main` (`windowsweep.ps1:245-269`) dispatches
+/// each mode to its own function, and only the batch and scan runners end by calling
+/// `Write-JsonSummary` (`modules/runner.ps1:209`). A mode that ends anywhere else
+/// produces no summary BY DESIGN, and the guard in `run_clean` must not read that
+/// as a failure.
+const NO_SUMMARY_FLAGS: &[&str] = &[
+    "--version",
+    "--self-test",
+    // The parent hands off to an elevated window and exits before the runner that
+    // prints the summary is reached (windowsweep.ps1:291-295).
+    "--elevate",
+    // 🔴 The scheduling pair, and leaving them out is a failure that reads as the
+    // OPPOSITE of what happened. `install_task` dispatches to `Install-WeeklyTask`
+    // (`modules/release_helpers.ps1:341`), which registers the Scheduled Task and
+    // returns - it never reaches a summary. Without this exemption the task really
+    // is created and `run_clean` then returns "the engine ... produced no JSON
+    // summary. It did not complete a run", so the window would report a failure
+    // over a task that now exists, and a person pressing the switch again would be
+    // told the task already exists by an engine the window still called broken.
+    "--install-task",
+    "--uninstall-task",
+];
+
 /// Whether this invocation should produce a JSON summary on stdout.
 ///
 /// Read off what the CALLER asked for, never off the built argument vector, because
-/// `--json` is appended to every invocation. Three flags legitimately produce no
-/// summary and are exempt by name; the exemption list is the whole of the logic, so
-/// it is here where a test can reach it rather than inline in `run_clean`.
+/// `--json` is appended to every invocation. The exemption list above is the whole
+/// of the logic, so it is here where a test can reach it rather than inline in
+/// `run_clean`.
 pub fn wants_summary(args: &[String]) -> bool {
-    !args
-        .iter()
-        .any(|a| a == "--version" || a == "--self-test" || a == "--elevate")
+    !args.iter().any(|a| NO_SUMMARY_FLAGS.contains(&a.as_str()))
 }
 
 #[cfg(test)]
@@ -164,7 +196,7 @@ mod tests {
             );
         }
 
-        // These three print their own shape instead, and demanding a summary from them
+        // These print their own shape instead, and demanding a summary from them
         // turns a working path into a hard error. `--elevate` is the one that cost a
         // hang: the parent hands off to an elevated window and exits before the runner
         // that prints the summary is reached.
@@ -183,6 +215,36 @@ mod tests {
                 "{args:?} produces no summary by design, so the guard must not fire"
             );
         }
+    }
+
+    /// 🔴 The scheduling pair, whose omission failed in the direction that reads
+    /// backwards: the task IS registered and the window reports a broken engine.
+    ///
+    /// `install_task` and `uninstall_task` are their own arms of `Invoke-Main` and
+    /// end in `Install-WeeklyTask` / `Uninstall-WeeklyTask`, neither of which
+    /// reaches `Write-JsonSummary` - so stdout is empty on a complete success. The
+    /// guard in `run_clean` turns an empty stdout into a hard error whenever a
+    /// summary was owed, which is why the exemption is the difference between a
+    /// working switch and one that always says it failed.
+    #[test]
+    fn exempts_the_scheduling_modes_that_end_before_the_summary_is_written() {
+        for args in [
+            vec!["--install-task".to_string(), "--yes".to_string()],
+            vec!["--uninstall-task".to_string(), "--yes".to_string()],
+        ] {
+            assert!(
+                !wants_summary(&args),
+                "{args:?} registers or removes the task and exits; demanding a summary \
+                 would report a completed action as an engine fault"
+            );
+        }
+
+        // 🔴 The control, and it is the assertion that stops the exemption becoming a
+        // blanket. A flag that merely LOOKS like the pair - and a real run that
+        // happens to sit beside one - must still owe a summary, or a genuinely silent
+        // total failure would stop being caught.
+        assert!(wants_summary(&["--install-alias".to_string()]));
+        assert!(wants_summary(&["--all".to_string(), "--yes".to_string()]));
     }
 
     #[test]

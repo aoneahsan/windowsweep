@@ -477,3 +477,54 @@ statement into a hedge.
 
 Each correction carries its evidence beside it in the artefact itself, so the next reader does not have to
 take this log's word for it.
+
+
+## 2026-09-08 - the console banner keeps its own strapline, and the product has two by design
+
+**The entry that was missing.** `cli-strings` NEEDS DECISION 1 has been open since the surface was drafted,
+and two fact-checks in a row confirmed the same thing: **no decision-log entry named it.** That is why it
+stayed open - not because the answer was hard, but because nobody had written one down. C-001 and C-018 were
+blocked on it.
+
+**The finding.** Content-map row 2 settled the tagline on 2026-09-07 and recorded that it lives in five
+places. It lives in more, and one of them does not print `WS_TAGLINE` at all: `Write-Banner`
+(`lib/ui.ps1:126`) and `Show-Usage` (`windowsweep.ps1:42`) each carry their own hardcoded strapline,
+*"safe, developer-aware Windows cleanup"*. The banner is the most-printed line in the product - the top of
+the walkthrough, the menu, every batch run and every scan - and it opens with the one adjective the Bible
+forbids, in a product whose whole voice rule is that reassurance is a specific refusal rather than a claim
+about itself.
+
+🔴 **Reusing the approved tagline there is not available, and the reason is measured rather than
+aesthetic.** `Write-Banner` sizes its box to the text. Measured on this machine, with the version string
+that ships next:
+
+```
+current    inner  64  box  66   fits 80 columns
+proposed   inner  65  box  67   fits 80 columns
+tagline    inner 126  box 128   does NOT fit
+```
+
+A 128-glyph box wraps its top bar, its text and its bottom bar in an 80-column console. That is three broken
+lines, not a cosmetic overflow. (The draft estimated 107 for this; it assumed the banner would drop its
+`windowsweep vX.Y.Z - ` prefix, which it does not.)
+
+**The decision: option (a).** The banner and `--help` header take a short strapline of their own -
+**`names every path before it touches one`** - and the 99-character tagline keeps every other place. The box
+goes from 66 glyphs to **67**: one more than ships.
+
+**Why this line.** It drops the forbidden adjective. It states the premise the product is built on instead of
+claiming a property, which is band R as the Bible defines it - and it is checkable in one command, because
+`--list-targets` prints exactly that. It is also the text C-001 and C-018 are already drafted against.
+
+**The cost, stated so it is a decision and not an accident:** the product now has **two** straplines by
+design. A 99-character one for listings, where a reader meets it cold with no context and needs to know what
+the thing is and who it is for; and a short one for the console, where the reader has already run the command
+and needs a guarantee rather than an introduction. Two surfaces, two jobs. What is not acceptable is what
+existed before this entry - two straplines by *accident*, one of them carrying a banned word, with no record
+saying which was which.
+
+**Taken under the agent's design authority** (`frontend-ui-standards.md` §8: he judges, you decide), not
+escalated. It is reversible in one line, and the alternatives are recorded above rather than discarded:
+shortening the approved tagline to fit would reopen a GATE-4-approved line and damage the one that has to
+survive being read in a list of search results; keeping the shipped strapline leaves the Bible's clearest
+prohibition in the product's most-printed sentence.

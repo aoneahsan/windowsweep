@@ -1892,7 +1892,12 @@ Row 10 does not cover these, so they are reported and left alone.
 
 2. **`lib/scan.ps1:83` - the same `--list-targets` box carries `(read-only)`**, which C-020, C-044 and C-083 correct elsewhere. `--list-targets` is not in `$quietModes` at `windowsweep.ps1:290`, so `Initialize-Log` runs and the mode writes a log. Same word. Same defect, outside row 10.
 
-3. **`modules/reports.ps1:104` - a fourth `Would free (estimate)`** in the exported Markdown, and `Would free (dry-run estimate)` at `reports.ps1:75` in the HTML. C-088 changes the console row to `Would reclaim (est.)`; these two would then disagree with it. Blocked behind NEEDS DECISION 2, not forgotten.
+3. **The exported report bodies keep the old verb** - `Would free (estimate)` at **`modules/reports.ps1:51`**
+   (Markdown) and `Would free (dry-run estimate)` at **`:74`** (HTML). C-088 changes the console row to
+   `Would reclaim (est.)`, so these two would have disagreed with it. 🔴 **This item cited `:104`
+   and `:75` and called it "a fourth"; both numbers were wrong and there are two, not four.** CLOSED: content-map
+   row 15 `report-bodies` owns both strings, its S-011 and S-020 ship the corrected wording, and it is
+   finalized and lands in the same cascade.
 
 4. **`modules/system_admin.ps1:155` vs `:162` still disagree about Fast Startup** - `reduced` is described as keeping the hibernation file at "roughly 40% of RAM" on one line and the whole file as ~40% on the other. Recorded in the decision log on 2026-09-06 as reported-not-edited. Still true. Outside row 10 as well, since it is section-module intro prose. It would cost nothing to fix inside the 1.2.0 cascade this surface already needs.
 
@@ -1906,7 +1911,16 @@ Row 10 does not cover these, so they are reported and left alone.
 
 ## NEEDS DECISION
 
-**NEEDS DECISION 1: the product prints two different straplines, from six places. Which line belongs in the banner and the `--help` header?**
+**NEEDS DECISION 1 - ANSWERED 2026-09-08, option (a). Kept with its answer rather than deleted.**
+🔴 **It stayed open because no `decision-log.md` entry named it** - two fact-checks in a row said
+so - and it is now written there under *the console banner keeps its own strapline*. C-001 and
+C-018 are released. The box measures **67** glyphs against the 66 that ship; the approved
+tagline would draw **128** and wrap three lines in an 80-column console, which is the measured
+reason it cannot simply be reused. (The estimate below said 107 - it assumed the banner drops
+its `windowsweep vX.Y.Z - ` prefix, which it does not.)
+
+**The original question: the product prints two different straplines, from six places. Which line
+belongs in the banner and the `--help` header?**
 
 Content-map row 2 settled the tagline on 2026-09-07 and recorded that it lives in five places, not the three the brief named: `package.json`, `WS_TAGLINE`, the README header, `docusaurus.config.ts` and the bundled engine copy. There is a **sixth**. It does not print `WS_TAGLINE` at all. `Write-Banner` (`lib/ui.ps1:126`) and `Show-Usage` (`windowsweep.ps1:42`) each carry their own hardcoded strapline - `safe, developer-aware Windows cleanup` - and the banner is the most-printed line in the product, at the top of the walkthrough, the menu, every batch run and every scan.
 
@@ -1918,17 +1932,31 @@ Reusing the approved tagline here is not available as a silent default: it is 99
 
 C-001 and C-018 are drafted for (a) and are the only two slots this blocks.
 
-**NEEDS DECISION 2: do the exported Markdown and HTML report bodies get a content-map row?**
+**NEEDS DECISION 2 - ANSWERED 2026-09-07, applied 2026-09-08. Kept here with its answer rather than
+deleted, because the reasoning is what a later reader needs.** 🔴 **This block read as OPEN until
+2026-09-08 while C-117, C-085 and content-map row 15 all recorded it answered** - so a gate reader grepping
+for unanswered decisions found two where there is one. Option **(a)** was taken: the exports got their own
+content-map row, **row 15 `report-bodies`**, which has since been written, panelled, fact-checked and
+**finalized** (GATE 4 recorded 2026-09-08); it ships in the same 1.2.0 cascade as this surface. C-085 was
+resolved separately, and nothing here is held on it any more.
+
+**The original question: do the exported Markdown and HTML report bodies get a content-map row?**
 
 `Convert-ReportToMarkdown` and `Convert-ReportToHtml` (`modules/reports.ps1:44-134`) emit roughly 30 user-visible strings - headings, table columns, `Would free (estimate)`, `Would free (dry-run estimate)`, footers. Nobody owns them. No content-map row names them, and they are the artefact a reader is most likely to keep and reread weeks later. The map's out-of-scope table does not mention them either way, so this is a gap rather than a recorded exclusion.
 
-It matters now because C-088 changes the console's row to `Would reclaim (est.)` while `reports.ps1:104` and `:75` keep the old verb, so approving this surface without an answer ships an inconsistency the next reader will find.
+It mattered because C-088 changes the console's row to `Would reclaim (est.)` while the exports kept the old
+verb. 🔴 **This sentence cited `reports.ps1:104` and `:75`. Both are wrong** - `:104` is a CSS rule
+inside the HTML template and `:75` is `$rows = ''`. The two real occurrences are **`:51`** (the Markdown body)
+and **`:74`** (the HTML headline), exactly as C-117's own applier note already said, and row 15's S-011 and
+S-020 now carry `Would reclaim (est.)` at both. An applier following the old numbers would have patched
+nothing and reported success.
 
 - **(a) Recommended - add a row and write it in the same 1.2.0 cascade.** Small surface, one file, and it inherits every decision this draft already made. It is the honest option because the exports are read by people, not machines.
 - **(b) Declare them out of scope in the map, with a reason,** and change only the two `Would free` labels here so the verb is consistent. Cheapest, and it leaves 28 strings unowned.
 - **(c) Leave as is and revert C-088.** Consistent, and it keeps a verb the glossary bans.
 
-C-117 and C-085 are held on this. No other slot depends on it.
+**Outcome:** (a). C-117 and C-085 were held on this and are now both released - C-117 records the answer,
+C-085 was resolved on its own reasoning. No slot depends on it.
 
 ---
 
@@ -1952,7 +1980,10 @@ C-085's JSON step title `Read-only scan` at `modules/runner.ps1:173`, which this
 **Nine kept slots can only be matched piecewise**, because their fences carry ` ... ` or a placeholder:
 C-008, C-057, C-073, C-117, C-149, C-157, C-162, C-166, C-190. **Four more state their `Was:` as a
 description rather than a quotation:** C-017, C-028, C-036, C-132. So the claim that every `Was:` is a
-fixed-string search is true of **13 of the 20 changed slots** - and that qualification is the difference
+fixed-string search is true of **14 of the 21 changed slots** (🔴 this read *13 of 20* until
+2026-09-08 - the 20 was the count before C-085 became a change, and the 13 collided with the thirteen *kept*
+slots named in the paragraph above, which are a different set: 21 changed, minus the six whose `Was:` is
+rendered, minus C-181 whose search string is not unique, leaves 14) - and that qualification is the difference
 between an applier that stops and one that reports success having done nothing.
 
 ## Self-check
@@ -1979,7 +2010,13 @@ This surface has no crisis line. None is invented. No slot gives advice, promise
 - **Free-flowing help, `Write-Plain` and `Write-Note`:** not under a rule, and the shipped baseline in those blocks already runs to 93-104 characters. The test applied was *no worse than what ships*, and every changed line meets it except two, both named rather than hidden: **C-075** at 87 against 83, four characters bought by using the glossary's verb across the whole product; and **C-182** at 83 against 70, thirteen characters bought by removing an "always" that is not true. Both sit inside their own block's widest shipped line. Everything else got shorter. C-019 41 from 59, C-020 70 from 78, C-023's widest 97 from 99, C-049's widest 96 from 104, C-123 88 from 100, C-130 85 from 91, C-144 68 from 92.
 - **Row 10's "one line each"** holds for every slot except five deliberate blocks that are one line in the source and print as several: C-023, C-049, C-132, C-139, C-181/182.
 
-**ASCII, verified by character code rather than by eye - and the first version of this paragraph overclaimed, which running the check is what caught.** The claim that matters is about the fences, since fenced text is what becomes engine source: all **197 fenced blocks, 303 lines**, measured with `max(ord(c))`, top out at codepoint **126**. Zero bytes above 127. A scan of the whole file then reports exactly three non-ASCII characters, and not one of them sits inside a fence: `U+00B7` the middle dot (408 times) and `U+00A7` the section sign (22) in slot headers, plus `U+1F534` the red-circle marker (3) - the same house format the three approved desktop drafts already carry, in commentary nobody copies into PowerShell. What self-test check [4] would refuse is absent everywhere, fences and prose alike: typographic quotes, en and em dashes, the ellipsis character and the non-breaking space all count zero across the file. The hyphen, the straight quote and `...` do that work instead. **No new glyph is introduced**: every changed string uses only characters already in `lib/ui.ps1`'s ASCII glyph set or plain letters, so nothing needs a new `[char]` code.
+**ASCII, verified by character code rather than by eye - and the first version of this paragraph overclaimed, which running the check is what caught.** The claim that matters is about the fences, since fenced text is what becomes engine source: all **199 fenced blocks, 303 lines**, measured with `max(ord(c))`, top out at codepoint **126**. Zero bytes
+above 127. A scan of the whole file then reports **five** non-ASCII characters, and not one of them sits inside
+a fence: `U+00B7` the middle dot (413) and `U+00A7` the section sign (22) in slot headers, `U+1F534` the
+red-circle marker (19), and one each of `U+26A0` and `U+FE0F`. (🔴 **This census said 197 blocks and
+three characters, at 408/22/3, and it was stale for exactly the reason the paragraph beside it warns about:
+applier notes kept being added after it was written.** The claim that matters - the fences are clean - was
+right throughout. Regenerate by character-code census over the file, never by eye) - the same house format the three approved desktop drafts already carry, in commentary nobody copies into PowerShell. What self-test check [4] would refuse is absent everywhere, fences and prose alike: typographic quotes, en and em dashes, the ellipsis character and the non-breaking space all count zero across the file. The hyphen, the straight quote and `...` do that work instead. **No new glyph is introduced**: every changed string uses only characters already in `lib/ui.ps1`'s ASCII glyph set or plain letters, so nothing needs a new `[char]` code.
 
 The correction is worth keeping visible. The earlier wording said the whole-file scan came back clean, which it does not, and nothing but running the command would have found that - the same shape as the finding in C-020, where a claim was defensible enough that three surfaces repeated it.
 
@@ -1989,4 +2026,9 @@ The correction is worth keeping visible. The earlier wording said the whole-file
 
 **Slot count.** **195 total · 21 changed · 174 kept** (89% kept). Most of it was already right. By file: `ui.ps1` 17/1 changed · `windowsweep.ps1` 18/5 · `walkthrough.ps1` 20/3 · `menu.ps1` 7/0 · `runner.ps1` 34/6 · `reports.ps1` 21/1 · `health.ps1` 14/2 · `release_helpers.ps1` 47/1 · `config.ps1` 12/2 · `scan.ps1` 5/0. Of the 21 changes, **9 correct a fact** (C-019, C-020, C-021, C-023, C-037, C-049, C-083, C-181, C-182), **7 correct diction against the Bible or the glossary** (C-001, C-018, C-074, C-075, C-088, C-123, C-130), **2 add a missing next command** (C-077, C-097), **1 is a measured length fix** (C-144), and **2 are the same fix in two places** (C-001/C-018, held on NEEDS DECISION 1). The ratio is close to the three desktop surfaces' 331 of 375, which is the expected shape: the engine's strings were written with this voice in mind before the Bible existed to name it.
 
-**Unsure spots.** Both are NEEDS DECISION items above rather than notes: the sixth strapline location (blocking C-001 and C-018) and the unowned report-export surface (holding C-085 and C-117). Nothing else here is a guess. Every number, path, flag and section id above was read from the tree in this session.
+**Unsure spots. 🔴 Both are now ANSWERED, and this paragraph said they were open until
+2026-09-08.** The sixth strapline location took option (a) - a short banner strapline, distinct from the
+99-character tagline, decided under the agent's design authority and written into `decision-log.md`, which is
+the entry that was actually missing. C-001 and C-018 are released. The unowned report-export surface took
+option (a) too and became content-map row 15, now finalized. Nothing else here is a guess: every number,
+path, flag and section id above was read from the tree in this session.

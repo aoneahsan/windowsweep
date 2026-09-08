@@ -152,7 +152,7 @@ function Invoke-Section14 {
 # ---------------------------------------------------------------------------------------------
 
 function Get-Targets15 {
-  return @((New-Target 15 'hiberfil.sys (powercfg /hibernate off | /type reduced)' (Join-Path $Script:P.SD '\hiberfil.sys') -Kind cmd -Note 'off frees the whole file; reduced keeps Fast Startup at roughly 40% of RAM'))
+  return @((New-Target 15 'hiberfil.sys (powercfg /hibernate off | /type reduced)' (Join-Path $Script:P.SD '\hiberfil.sys') -Kind cmd -Note 'off frees the whole file, about 40% of RAM; reduced keeps Fast Startup at roughly half that'))
 }
 
 function Invoke-Section15 {

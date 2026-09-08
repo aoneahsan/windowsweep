@@ -49,6 +49,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   only the engine's own help text - the one place a person actually reads it from - was wrong.
 - **Section 22 declared `Dev = $true` with no behavioural branch**, so `--list --json` advertised a developer
   flag that changed nothing. It now reads `false`, and the Dev column in `docs/sections.md` agrees.
+- 🔴 **`--scan` parsed `--developer` and `--not-developer` and then never read them.**
+  `Resolve-DeveloperMode` ran only for the walkthrough, the menu, `--all` and `--only`, so in scan mode the
+  flag reached `DeveloperFlag` and nothing looked at it: section 0 printed `Developer mode: not decided yet`
+  whatever you passed, and `--json` returned `developer: null`. The desktop window sends those flags to
+  `--scan` and could not read back the setting it had just sent. A scan now resolves it from the flag or the
+  saved answer and stops there - it may not ask the question, may not write `config.json`, and may not invent
+  a decision you never made, so with neither a flag nor a saved answer it still reports "not decided yet",
+  which is the truth. **No scan result changes:** the scan reports what is on disk, not what a run would
+  remove, and `Show-ScanTable` never read the developer answer in the first place.
+- **The hibernation target's one-line note contradicted the section's own explanation two lines below.** It
+  said `reduced` keeps Fast Startup "at roughly 40% of RAM", which is the size of the **whole** file; the
+  section intro says `reduced` is about half of that. The note now states the figure once, on the thing it
+  belongs to: the full file is about 40% of RAM and `reduced` keeps roughly half that.
 
 ## [1.1.0] - 2026-09-04
 

@@ -41,7 +41,7 @@ here: `docs/README.md` writes `../AI-INTEGRATION-GUIDE.md` and `intro.md` writes
 
 ### S-002 · AI-INTEGRATION-GUIDE.md:8-9 · the warning
 ```
-**windowsweep deletes files.** Every command below that is not marked read-only can remove data. There is no undo for caches. Treat a real run as an irreversible operation and rehearse it with `--dry-run` first.
+**windowsweep deletes files**. Every command below that is not marked read-only can remove data. There is no undo for caches. Treat a real run as an irreversible operation and rehearse it with `--dry-run` first.
 ```
 **Was:** ... Treat a real run as an irreversible operation and preview it first.
 
@@ -66,7 +66,7 @@ removed half of the comment is restored by S-004.
 
 ### S-004 · AI-INTEGRATION-GUIDE.md:19 · NEW · what the sequence writes
 ```
-Every mode writes a session log unless the data directory is redirected. `--no-report` skips the JSON report; `--cleanup-logs` deletes this run's log at exit; `--logs-dir` and `--reports-dir` move both. `--no-report --cleanup-logs` together leave nothing behind, which is the combination for a caller that must not touch the user's data directory.
+Every mode writes a session log. Redirecting the data directory moves it; nothing skips it. `--no-report` skips the JSON report; `--cleanup-logs` deletes this run's log at exit; `--logs-dir` and `--reports-dir` move both. `--no-report --cleanup-logs` together leave nothing behind, which is the combination for a caller that must not touch the user's data directory.
 ```
 **Was:** (new.)
 
@@ -106,7 +106,7 @@ case that proves it - `--yes` will confirm it, and only if something named it.
 | Sections 17, 18, 19, 23 | The selection prompt appears even with `--yes` and defaults to none. With no console attached nothing is selected, and each asks a final question `--yes` does not answer. Only `--select` / `--select-file` supply a choice (see below) |
 | Sections 11, 15, 16, 20 | Deep. Refused in batch mode unless `--i-understand-deep` is also passed |
 | `--uninstall-data` | Always asks; `--yes` does not answer it |
-| `--purge-all` | From a console it asks for a typed `purge` once per run. In a batch run `--yes` is the confirmation. Declining the typed word leaves the run pruning by the idle window rather than aborting |
+| `--purge-all` | From a console it asks for a typed `purge` once per run. In a batch run `--yes` is the confirmation. If the word is not typed, the run continues and prunes by the idle window instead of aborting |
 ```
 **Was:** the same four rows; the `--purge-all` row ended at "In a batch run `--yes` is the confirmation".
 
@@ -137,7 +137,7 @@ carry the truth.
 
 ### S-010 · AI-INTEGRATION-GUIDE.md:39 · NEW · an unknown section id
 ```
-An id that is not in the catalogue is dropped with a warning on **stderr** and the run continues with the rest: `--only 7,99` runs section 7. If every id is unknown the run ends as a usage error, exit 2, with no JSON line on stdout. Read `sections[]` to learn what actually ran; never assume it matches the list you passed.
+An id that is not in the catalogue is dropped with a warning on **stderr** and the run continues with the rest: `--only 7,99` runs section 7. If every id is unknown the run ends as a usage error, exit 2, with no JSON line on stdout. `sections[]` records what actually ran; never assume it matches the list you passed.
 ```
 **Was:** (new.)
 
@@ -198,7 +198,7 @@ A non-interactive run with no saved developer answer defaults to developer mode 
 
 ### S-015 · AI-INTEGRATION-GUIDE.md:70 · NEW · reading the developer answer
 ```
-`developer` in the JSON line is the answer the run used: `true`, `false`, or `null` in a mode that never resolves the question. A caller that needs a specific behaviour passes `--developer` or `--not-developer` rather than relying on the saved answer, which lives in the user's `config.json` and can change between runs.
+`developer` in the JSON line is the answer the run used: `true`, `false`, or `null` in a mode that never resolves the question. A caller that needs a specific behaviour passes `--developer` or `--not-developer`. The saved answer lives in the user's `config.json` and can change between runs.
 ```
 **Was:** (new.)
 
@@ -254,7 +254,7 @@ self-test check [16] asserts it on a run that collects neither.
 
 ### S-020 · AI-INTEGRATION-GUIDE.md:96 · NEW · when the JSON line is not written
 ```
-The JSON line is written at the end of the run summary. A run that does not reach its summary does not write one: an unhandled error writes a crash bundle and exits 1, and Ctrl-C exits 130 from the exit handler. So read the exit code first and parse stdout only when it is not empty. An empty stdout with a non-zero code is a run that ended early, and the session log is the record of how far it got.
+The JSON line is written at the end of the run summary. A run that does not reach its summary does not write one: an unhandled error writes a crash bundle and exits 1, and Ctrl-C exits 130 from the exit handler. So read the exit code first and parse stdout only when it is not empty. An empty stdout with a non-zero code is a run that ended early; the session log records how far it got.
 ```
 **Was:** (new.)
 
@@ -267,7 +267,7 @@ malformed-output bug rather than an interrupted run. The last sentence gives it 
 
 ### S-021 · AI-INTEGRATION-GUIDE.md:97 · NEW · stdout is one line, and stderr is not JSON
 ```
-Nothing but that one line is ever written to stdout in `--json` mode, including the `##windowsweep` progress lines, which go to stderr and are not JSON. A caller reading stdout line by line will read at most one line.
+In `--json` mode nothing but that one line is written to stdout; the `##windowsweep` progress lines go to stderr and are not JSON. A caller reading stdout line by line will read at most one line.
 ```
 **Was:** (new — the fact is stated later, at the progress-line section.)
 
@@ -278,7 +278,7 @@ and closes the gap. `Write-MachineProgress` carries the same warning in its own 
 
 ### S-022 · AI-INTEGRATION-GUIDE.md:98 · NEW · the version key
 ```
-`version` is the running version, which the Node launcher supplies through `WINDOWSWEEP_VERSION`; a direct `.ps1` invocation falls back to the literal in `lib/constants.ps1`. Pin behaviour to `--list --json` rather than to a version string: section numbers are frozen, the set grows, and the catalogue is authoritative.
+`version` is the running version, which the Node launcher supplies through `WINDOWSWEEP_VERSION`; a direct `.ps1` invocation falls back to the literal in `lib/constants.ps1`. Branch on what `--list --json` reports rather than on a version string. Section numbers are frozen, the set grows, and the catalogue is authoritative.
 ```
 **Was:** (new.)
 
@@ -290,7 +290,7 @@ is building the fragile thing this page exists to prevent.
 
 ### S-023 · AI-INTEGRATION-GUIDE.md:99 · NEW · what the JSON line does not contain
 ```
-The line carries no file contents, no user name field, no machine identifier and no path that windowsweep decided to keep. Paths appear only in `log_file`, `report_file` and `candidates[].path`, and those are the user's own paths. The full report on disk carries more: host, user, OS and the drive snapshots.
+The line carries no file contents, no user name field and no machine identifier. Paths appear in `log_file`, `report_file`, `candidates[].path`, `targets[].path`, `excluded[]` and the `excluded: <path>` entries of `refusals[]` - all of them the user's own paths, and all of them paths the tool was asked about rather than ones it chose. The full report on disk carries more: host, user, OS and the drive snapshots.
 ```
 **Was:** (new.)
 
@@ -345,7 +345,7 @@ operator treat the elevated path as ordinary.
 
 ### S-028 · AI-INTEGRATION-GUIDE.md:125-126 · guarantee · no network
 ```
-- **No network calls of its own.** Self-test check [9] greps every source file for `Invoke-WebRequest`, `Invoke-RestMethod`, `Net.WebClient`, `HttpClient`, `Sockets.TcpClient`, `curl.exe` and `wget`, and fails the run if it finds one. There is no telemetry and no update check. `--report-issue` and `--feedback` hand a URL to the user's browser after they confirm, and neither belongs in an unattended run.
+- **No network calls of its own**. Self-test check [9] greps every source file for `Invoke-WebRequest`, `Invoke-RestMethod`, `Net.WebClient`, `HttpClient`, `Sockets.TcpClient`, `curl.exe` and `wget`, and fails the run if it finds one. There is no telemetry and no update check. `--report-issue` and `--feedback` hand a URL to the user's browser after they confirm, and neither belongs in an unattended run.
 ```
 **Was:** **No network calls of its own.** The self-test greps the source for HTTP and socket calls and fails
 the run if it finds one. There is no telemetry and no update check.
@@ -386,8 +386,8 @@ guard steps 1 to 4 rather than the tool's own data folder.
 
 ### S-031 · AI-INTEGRATION-GUIDE.md:130-131 · guarantee · links and dry-run
 ```
-- **Junctions and symlinks are removed as links, never followed.** The walker checks the reparse-point attribute before descending, and the self-test proves it with a real junction whose target holds a sentinel file.
-- **`--dry-run` and `--scan` write nothing** but the log and the report, which `--cleanup-logs` and `--no-report` remove.
+- **Junctions and symlinks are removed as links, never followed**. The walker checks the reparse-point attribute before descending, and the self-test proves it with a real junction whose target holds a sentinel file.
+- **`--dry-run` and `--scan` write nothing** but the log and the report. `--cleanup-logs` deletes the log at exit; `--no-report` skips the report.
 ```
 **Was:** the same two bullets; the first ended at "never followed", and the second at "but the log and the
 report".
@@ -399,8 +399,8 @@ naming the two flags turns it into something a caller can act on.
 
 ### S-032 · AI-INTEGRATION-GUIDE.md:132-135 · guarantee · numbers and dependencies
 ```
-- **Section numbers are a public contract.** 0-25 today; a section may be retired as a no-op, and a number is never reused. Read `--list --json` rather than hard-coding the set.
-- **Zero runtime dependencies.** The package is PowerShell plus a Node launcher that uses only built-in modules.
+- **Section numbers are a public contract**. 0-25 today; a section may be retired as a no-op, and a number is never reused. Read `--list --json` rather than hard-coding the set.
+- **Zero runtime dependencies**. The package is PowerShell plus a Node launcher that uses only built-in modules.
 ```
 **Was:** identical.
 
@@ -423,7 +423,7 @@ is named in the same bullet.
 
 ### S-034 · AI-INTEGRATION-GUIDE.md:148 · NEW · a fifth do-not
 ```
-- Do not parse the human output on stderr. It is not a stable format, it changes with `--quiet`, `--ascii` and `--no-color`, and the only stable machine surfaces are the `--json` line, the `##windowsweep` progress lines and the report file.
+- Do not parse the human output on stderr. It is not a stable format: it changes with `--quiet`, `--ascii` and `--no-color`. The only stable machine surfaces are the `--json` line, the `##windowsweep` progress lines and the report file.
 ```
 **Was:** (new.)
 
@@ -445,7 +445,7 @@ chokepoint would otherwise refuse. Self-test check [16] round-trips all of it.
 ```
 One stdout line: `sections[]` (`id`, `key`, `title`, `tier`, `admin`, `batch`, `dev`), `safe_batch`, `safe_batch_admin`, `profiles`, `walkthrough`, `walkthrough_admin`. Read it instead of hard-coding section numbers - they are frozen, but the set grows.
 
-`tier` is one of `report`, `rebuilds`, `slow`, `recycle`, `permanent`, `config`. `batch` is one of `safe`, `optin`, `deep`, `interactive`. `dev` is the catalogue's developer flag: sections 1, 2, 3 and 5 prune by the idle gate instead of clearing when the answer is yes, and sections 4, 17 and 20 do not run at all when it is no. Treat `dev` as catalogue metadata rather than as a single guaranteed behaviour.
+`tier` is one of `report`, `rebuilds`, `slow`, `recycle`, `permanent`, `config`. `batch` is one of `safe`, `optin`, `deep`, `interactive`. `dev` is the catalogue's developer flag. When the answer is yes, sections 1, 2, 3 and 5 prune by the idle gate instead of clearing; when it is no, sections 4, 17 and 20 do not run at all. Treat `dev` as catalogue metadata rather than as a single guaranteed behaviour.
 ```
 **Was:** the first paragraph only.
 
@@ -475,7 +475,7 @@ fact that only the `end` line carries `status` and `freed_bytes`, and self-test 
 ```
 ## The read-only sections
 
-`--profile audit` runs sections 0, 21, 22, 24 and 25, and none of the five deletes anything in any mode: the health report, disk usage, globally installed packages, installed programs not modified for `--days`+ days, and startup items. Sections 22, 24 and 25 print removal commands and never execute one; section 25 never changes a startup entry. Section 24 reports "not modified", not "not used" - Windows keeps no reliable last-launched record.
+`--profile audit` runs sections 0, 21, 22, 24 and 25: the health report, disk usage, globally installed packages, installed programs not modified for `--days`+ days, and startup items. None of the five deletes anything in any mode. Sections 22, 24 and 25 print removal commands and never execute one; section 25 never changes a startup entry. Section 24 reports "not modified", not "not used" - Windows keeps no reliable last-launched record.
 
 Section 23 is **not** one of these. It is interactive, and what a caller selects goes to the Recycle Bin.
 ```
@@ -541,3 +541,41 @@ against the shared list plus this project's own bans. Four hits, all deliberate 
 by the allow marker at the top of this file. Two were removed rather than kept: `preview` at S-002, and
 `safely` in the mirror's front-matter description at S-040. Nothing matched `clean` or `sweep` as a verb,
 `just`, `simply`, `easily`, a superlative or a first-person plural.
+
+## Line pass, 2026-09-08, and the one thing it caught that was not rhythm
+
+Sixteen sentences changed across fourteen slots; every field name, flag, exit code and JSON key verified
+unmoved by comparing the multiset of backtick spans (163) and numbers (81) inside the fences before and
+after. Burstiness 0.51 -> 0.54 once the bold-trapped periods stopped hiding sentence boundaries; the two
+readings agree now because no sentence ends inside bold. The range row still fails five windows of nine, and
+that was left alone deliberately: this is a contract document, and buying variance with precision is the
+wrong trade here.
+
+🔴 **S-023 was about to ship a false privacy claim, and it is one my own engine change created.** The slot
+said *"Paths appear only in `log_file`, `report_file` and `candidates[].path`"*. That was already wrong -
+`targets[].path` has always carried paths in scan mode - and this week's `excluded[]` array made it wrong a
+second time, along with the `excluded: <path>` entries now in `refusals[]`. A caller reading that sentence
+and forwarding the JSON line would forward paths it had been told were absent, which on a page whose whole
+job is telling a machine what it may pass on is the worst shape a defect can take.
+
+**Measured, not reasoned:** a real `--scan --json` was run and its keys inspected. **Five** keys can carry a
+path, not three. The sentence now names all five and says what they have in common - they are the user's own
+paths, and every one is a path the tool was asked about rather than one it chose - which is the true version
+of what the old sentence was reaching for.
+
+It had not shipped: the claim exists only in this draft and never reached `AI-INTEGRATION-GUIDE.md`.
+
+**Four more contract gaps the line editor found and correctly did not fix**, all created by this week's
+additive changes and all needing a fact-check pass rather than a rhythm one: S-016's example JSON lacks
+`"excluded":[]` while the live file has it; there is no `excluded[]` row in the key tables; `protected` is
+missing from S-036's `--list --json` key list; and `newest_write_utc` is absent from the two places that
+enumerate `targets[]`, along with the paragraph defining it. Every one of those is a slot marked
+`Change: none` against a live file that has since grown, so an apply would be a harmless no-op - but the
+draft would then describe a contract narrower than the one the engine ships, which is the defect this
+surface exists to prevent.
+
+**Also for the fact-checker:** S-029 repeats the chokepoint overclaim the safety page has already had
+corrected, and the fingerprint's own specimen 2 carries it too; S-030 says "fifteen declared roots" and then
+enumerates thirteen; S-013 says the flag table was checked against the parser while its `--exclude-path` row
+still reads "Section 17 roots and exclusions"; and S-039's footer is dated to a version the contract has
+moved past.

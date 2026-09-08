@@ -8,10 +8,10 @@ Four commands: prove the guards, look, rehearse, then reclaim. Nothing is delete
 npx windowsweep --self-test
 ```
 
-The self-test parses every script, checks that every declared target lies outside the protected paths, and runs
-fixtures with a real junction to prove links are never followed, that `--dry-run` writes nothing, and that
-`--yes` never selects a personal or project item. It ends with a pass count (151 at 1.1.0) and exits non-zero
-on any failure.
+The self-test parses every script and checks that every path any section declares lies outside the protected
+paths. It runs fixtures with a real junction. They prove that links are never followed, that `--dry-run` changes
+nothing in the tree it rehearses, and that `--yes` never selects a personal or project item. It ends with a pass
+count and exits non-zero on any failure.
 
 ## 2. See what is there
 
@@ -40,9 +40,10 @@ section, and writes a JSON report you can export. A non-interactive run defaults
 npx windowsweep
 ```
 
-The guided walkthrough. On the first run it asks whether you are a developer (see
-[Developer mode](./developer-mode.md)), shows a pre-scan, then visits each section: `a` runs it, `s` skips it,
-`q` stops. Every section names what it removes before it acts, keeps a running total, and the summary at the
+The guided walkthrough. On the first run it asks whether you are a developer (see [Developer
+mode](./developer-mode.md)), shows a pre-scan, then visits each section: `a` run, `s` skip, `q` quit. **Enter
+runs the section** - `a` is the default at that prompt. Every section names what it removes before it acts and
+keeps a running total. The summary at the
 end lists the log, the report and the follow-up commands (admin sections, browsers that were open).
 
 Unattended alternative, for a Scheduled Task or a script:
@@ -53,12 +54,16 @@ npx windowsweep --all --yes
 
 ## 5. The admin step
 
-Sections 12, 13, 14, 15, 16 and 20 need an elevated console. When you are at the keyboard:
+Sections 12, 13, 14, 15, 16 and 20 change things only an administrator may change. The `system` profile covers
+12, 13 and 14:
 
 ```powershell
 npx windowsweep --profile system --yes --elevate
 ```
 
-Details and the hibernation decision: [Admin sections and elevation](./admin-and-elevation.md).
+The other three are deep sections, and the profile leaves them out: 15 is the hibernation file, 16 is the event
+logs and permanent, 20 stops Docker and WSL. A batch run refuses a deep section without `--i-understand-deep`.
+Name the ones you want with `--only`. Details and the hibernation decision: [Admin sections and
+elevation](./admin-and-elevation.md).
 
 Last Updated: 2026-09-03

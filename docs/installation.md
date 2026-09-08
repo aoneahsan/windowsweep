@@ -14,6 +14,8 @@ Nothing else is installed. The package has no dependencies, and the command-line
 
 ## Zero install with npx
 
+`--scan` measures every target and deletes nothing:
+
 ```powershell
 npx windowsweep --scan
 ```
@@ -26,6 +28,8 @@ task or alias registered there would point at a cache npm evicts.
 ```powershell
 npm install -g windowsweep
 windowsweep --help
+windowsweep --install-task       # weekly Scheduled Task, Sundays 03:00, the safe batch
+windowsweep --install-alias      # adds a 'cleanup' function to your PowerShell profile
 ```
 
 ## Without Node
@@ -66,8 +70,13 @@ Override the root with `WINDOWSWEEP_HOME`, or the two folders with `--logs-dir` 
 ```powershell
 windowsweep --uninstall-task     # if you scheduled the weekly run
 windowsweep --uninstall-alias    # if you added the profile alias
-windowsweep --uninstall-data     # removes ~\.windowsweep after confirming
+windowsweep --uninstall-data     # removes %USERPROFILE%\.windowsweep after confirming
 npm uninstall -g windowsweep
 ```
+
+## Next
+
+[Quick start](./quick-start.md) is four commands in order. The first is `--self-test`, which proves the
+guards on this machine before anything is deleted.
 
 Last Updated: 2026-09-08

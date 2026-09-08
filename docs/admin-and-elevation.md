@@ -15,8 +15,7 @@ those sections with the exact command that runs them.
 | 16 | Event logs | `wevtutil cl` for every log (permanent) |
 | 20 | Disk-image compaction | Stops Docker Desktop and WSL, `diskpart compact vdisk` on selected `.vhdx` files |
 
-12 and 13 join `--all` automatically when the console is already elevated. 14 is opt-in (it is slow). 15, 16
-and 20 are deep-gated.
+12 and 13 join `--all` automatically when the console is already elevated. 14 is opt-in, because it is slow, and stays out of `--all` even when elevated. 15, 16 and 20 are deep-gated.
 
 ## `--elevate`
 
@@ -46,8 +45,7 @@ system drive.
 | `--hiberfil reduced` | about half | Fast Startup, Sleep | Hibernate |
 | `--hiberfil keep` | nothing | everything | - |
 
-Running speed is unaffected either way; the gain is disk space, which matters most on a nearly full system
-drive. Reverse it any time with `powercfg /hibernate on`.
+Running speed is unaffected either way; the gain is disk space, which matters most on a nearly full system drive. Reverse it any time with `powercfg /hibernate on`. Nothing else changes: no power plan, no sleep setting and no BIOS option.
 
 ## Why some caches are admin-only
 
@@ -55,4 +53,4 @@ drive. Reverse it any time with `powercfg /hibernate on`.
 system; the Explorer thumbnail and icon databases are locked by Explorer and are rebuilt cleanly only through
 Disk Cleanup; WinSxS may only be touched by DISM. Everything a non-elevated user owns is handled by sections 1-10.
 
-Last Updated: 2026-09-03
+Last Updated: 2026-09-05

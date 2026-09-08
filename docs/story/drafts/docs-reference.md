@@ -62,7 +62,7 @@ the page reads.
 row 20 read "deep".
 
 **Change:** three cells gain a marker, and it is a different marker on purpose. `Dev = $true` is set on
-sections 1, 2, 3, 4, 5, 17, 20 and 22 in `lib/constants.ps1`, and `modules/runner.ps1` line 105 **skips 4,
+sections 1, 2, 3, 4, 5, 17 and 20 in `lib/constants.ps1`, and `modules/runner.ps1` line 105 **skips 4,
 17 and 20 outright** when the developer answer is no. That is not the pruning-versus-clearing behaviour
 "developer-gated" describes, so a second term is needed rather than a fourth use of the first one.
 `developer-only` says what happens. Row 22 is handled at S-003, because its case is different again.
@@ -559,7 +559,7 @@ carries one line.
 ```
 `--list --json` prints the section catalogue instead of the human table - `sections[]` (`id`, `key`, `title`, `tier`, `admin`, `batch`, `dev`), `safe_batch`, `safe_batch_admin`, `profiles`, `walkthrough` and `walkthrough_admin` - so a front end reads the catalogue rather than hard-coding it.
 
-`dev` is the catalogue's developer flag, set on sections 1, 2, 3, 4, 5, 17, 20 and 22. It describes the catalogue rather than promising one behaviour. Sections 1, 2, 3 and 5 prune by the idle gate instead of clearing when the answer is yes; sections 4, 17 and 20 do not run at all when it is no.
+`dev` is the catalogue's developer flag, set on sections 1, 2, 3, 4, 5, 17 and 20. It describes the catalogue rather than promising one behaviour. Sections 1, 2, 3 and 5 prune by the idle gate instead of clearing when the answer is yes; sections 4, 17 and 20 do not run at all when it is no.
 ```
 **Was:** the first paragraph only.
 

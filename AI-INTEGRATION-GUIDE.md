@@ -128,11 +128,9 @@ answered by a script, so `--elevate` does not belong in an unattended context.
 
 ## Guarantees
 
-- **No network calls of its own.** The self-test greps the source for HTTP and socket calls and fails the run
-  if it finds one. There is no telemetry and no update check.
-- **Every deletion passes one chokepoint** with a declared root, and is refused if it falls outside it.
-- **Protected paths are refused regardless of flags**: drive roots, Windows, Program Files, the profile root,
-  personal folders, credentials, toolchains, browser and editor state. No flag bypasses this.
+- - **No network calls of its own**. Self-test check [9] greps every source file for `Invoke-WebRequest`, `Invoke-RestMethod`, `Net.WebClient`, `HttpClient`, `Sockets.TcpClient`, `curl.exe` and `wget`, and fails the run if it finds one. There is no telemetry and no update check. `--report-issue` and `--feedback` hand a URL to the user's browser after they confirm, and neither belongs in an unattended run.
+- - **Every deletion of anything on the user's machine passes one chokepoint** with a declared root, and is refused if it falls outside it. windowsweep's own logs, reports and fixtures are the exception, reachable only through `--cleanup-logs`, `--prune-history` and `--uninstall-data`.
+- - **Protected paths are refused regardless of flags**: every drive root, fifteen declared roots (Windows, System32, SysWOW64, both Program Files folders, ProgramData, `C:\Users` with Default and Public, the profile root, and the AppData Roaming, Local and LocalLow folders), 66 protected subtrees, 50 path patterns and 13 file names. Two paths are declared exceptions - `%LOCALAPPDATA%\Android\Sdk\.temp` and `.downloadIntermediates` - and there are no others. No flag bypasses any of it.
 - **Junctions and symlinks are removed as links, never followed.**
 - **`--dry-run` and `--scan` write nothing** but the log and the report.
 - **Section numbers are a public contract.** 0-25 today; a section may be retired as a no-op, and a number is

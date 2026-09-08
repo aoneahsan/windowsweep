@@ -1,7 +1,6 @@
 # Reports and logs
 
-Every run writes under `%USERPROFILE%\.windowsweep`, never inside the npm cache or the repository, so history
-survives every `npx` invocation.
+Every run writes under `%USERPROFILE%\.windowsweep`, never inside the npm cache or the repository, so history survives every `npx` invocation. Every run means every run: `--scan` and `--dry-run` write here too. `--no-report` skips the report, and `--cleanup-logs` deletes the log at exit.
 
 ```text
 %USERPROFILE%\.windowsweep\
@@ -53,13 +52,11 @@ windowsweep --stats                  # runs, dry-runs, total reclaimed, latest r
 windowsweep --json --all --yes       # one JSON line on stdout for scripts; human output on stderr
 ```
 
-The HTML export is a single self-contained file that follows the system light/dark preference. No external
-tool is needed for any conversion.
+The HTML export is a single self-contained file that follows the system light/dark preference. No external tool is needed for any conversion. The file references nothing on the network.
 
 ## Privacy
 
-Logs and reports contain paths from your machine and a snapshot of cache sizes. Nothing is transmitted:
-windowsweep makes no network calls. Review a bundle before attaching it to an issue.
+Logs and reports contain paths from your machine and a snapshot of cache sizes. Nothing is transmitted: the command-line tool makes no network calls of its own. Review a bundle before attaching it to an issue: the paths in it include your user name and your project folders.
 
 ## `targets[]` in a `--json` scan
 

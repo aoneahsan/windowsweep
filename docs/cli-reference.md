@@ -147,7 +147,7 @@ In `--json` mode each section also brackets itself on **stderr** so a caller can
 
 ## Config file
 
-`~\.windowsweep\config.json` stores defaults; flags always win.
+`%USERPROFILE%\.windowsweep\config.json` stores defaults; flags always win. Nothing else is kept there: no history, no path list and no record of what a run removed. Those live in the logs and reports.
 
 | Key | Default | Meaning |
 |---|---|---|
@@ -158,4 +158,4 @@ In `--json` mode each section also brackets itself on **stderr** so a caller can
 | `scanRoots` | `[]` | Section 17 roots |
 | `excludePaths` | `[]` | Trees to leave alone, in **every** section - the same reach as `--exclude-path` |
 
-Last Updated: 2026-09-03
+Last Updated: 2026-09-05

@@ -212,11 +212,27 @@ export function RunScreen() {
                 </>
               )}
             </p>
-            {/* `run.html:30-34` - done, of the total, then the elapsed clause. The
-                total is the QUEUE's length, derived from the catalogue's own safe
-                batch; a literal here would be wrong the day a section is added. */}
+            {/* `run.html:30-34` - done, of the total, then the elapsed clause.
+                🔴 The total is the number of rows the per-section band below is
+                showing, NOT the queue's length. It used to be `queue.length` and
+                the hero read `11 of 7 sections` while eleven rows sat underneath
+                it - found by reading the rendered DOM, which is the only place
+                the two numbers appear together.
+
+                Why they disagreed: `done` counts the engine's own `end` events,
+                while `queue` is `safeRunSections(catalogue, developer)`, and
+                `catalogue.ts` drops every `dev` section when developer mode is
+                off. But the ENGINE only skips a dev section for ids 4, 17 and 20
+                (`modules/runner.ps1:105`), and none of those is in the safe batch
+                - so the engine ran all eleven while the app's denominator dropped
+                four. Two rules for one quantity.
+
+                `rows` comes from `perSectionRows`, which already derives the set
+                from the reported sections and falls back to the queue before a
+                run starts. Taking the denominator from there means the hero and
+                the band cannot disagree, because there is now one rule. */}
             <p className="hero-sub">
-              {t('run.progress', { done, total: queue.length })}
+              {t('run.progress', { done, total: rows.length })}
               {' · '}
               {elapsedMs === null || (notRunYet && phase !== 'running')
                 ? t('run.notStarted')

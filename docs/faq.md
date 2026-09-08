@@ -9,6 +9,11 @@ refuses outright. The only project-adjacent target is section 17, which lists bu
 No. The source contains no HTTP or socket call; the self-test greps for them. `--report-issue` opens your
 browser at a pre-filled GitHub page after you confirm, and you submit it yourself.
 
+The tools it runs for you keep their own habits: `winget` and `npm` may check their own sources and
+send their own telemetry; the engine itself never does. Section 24 runs `winget list`, which refreshes
+its own sources and is the one most likely to show in a firewall log; sections 1 and 22 run `npm`
+commands, and npm checks the registry for its own updates unless you set `update-notifier=false`.
+
 **Why is there no undo?**
 Caches regenerate; an undo copy would consume the disk you are trying to free. Personal files - sections 18,
 19 and 23 - go to the Recycle Bin instead, which is Windows' undo. Every deletion is recorded in the session

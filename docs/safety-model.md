@@ -48,6 +48,22 @@ protected folder, resolved for this machine) and `categories` (the same sentence
 Both readers take that list from one place, so a front end cannot show you a narrower promise than the
 console does.
 
+## What the tools it runs do on their own
+
+windowsweep makes no network call. Self-test check [9] greps the whole source for HTTP and socket calls and
+fails the build if one appears, and there is no update check anywhere in it.
+
+The tools it runs for you keep their own habits: `winget` and `npm` may check their own sources and
+send their own telemetry; the engine itself never does.
+
+Concretely: section 24 runs `winget list` to read what is installed, and winget refreshes its own package
+sources when they are more than a few minutes old and reports its own usage to Microsoft by default.
+Sections 1 and 22 run `npm` commands, and npm checks the registry for a newer npm unless you have set
+`update-notifier=false`. Section 1 also runs `pnpm store prune` inside the default batch.
+
+None of that is windowsweep talking. It is the difference between a program that phones home and a program
+that runs one which does, and it is worth knowing before you read a firewall log and blame the wrong tool.
+
 ## Never touched
 
 | Category | Examples |

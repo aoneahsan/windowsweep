@@ -61,7 +61,7 @@ engine-scoped network claim false in the same section that makes it.
 
 ### S-002 · safety-model.md:3-4 · the opening blockquote
 ```
-> Every deletion this tool performs passes through one function, and that function refuses 66 protected subtrees, 50 path patterns and 13 file names before it looks at what the calling section asked for. This page walks those guards in the order they run, shows a sample of the refused lists, and ends on what has no undo. `windowsweep --list-targets` prints the 66 subtrees one per line. The complete lists live in `lib/safety.ps1`.
+> Every deletion this tool performs with its own code passes through one function, and that function refuses 66 protected subtrees, 50 path patterns and 13 file names before it looks at what the calling section asked for. This page walks those guards in the order they run, shows a sample of the refused lists, and ends on what has no undo. `windowsweep --list-targets` prints the 66 subtrees one per line. The complete lists live in `lib/safety.ps1`.
 ```
 **Was:** > A cleanup tool should never be the reason you lose data. This page spells out every guard
 windowsweep applies, what it refuses to touch, and what it will delete. Read it once; refer back when
@@ -95,7 +95,7 @@ finish the page to find out where it is.
 
 ### S-004 · safety-model.md:8-9 · the chokepoint sentence
 ```
-Every deletion of anything on your machine passes through one function, `Remove-PathSafe` (or `Send-ToRecycleBin` for personal files), with a declared target root. It refuses, in order:
+Every file and folder windowsweep removes with its own code passes through one function, `Remove-PathSafe` (or `Send-ToRecycleBin` for personal files), with a declared target root. It refuses, in order:
 ```
 **Was:** Every deletion passes through one function, `Remove-PathSafe` (or `Send-ToRecycleBin` for personal
 files), with a declared target root. It refuses, in order:
@@ -360,12 +360,18 @@ distinction between "one per line" and "four summary lines covering".
 | Tier | Sections | Recoverable? |
 |---|---|---|
 | **Report** - reads and prints, deletes nothing in any mode | 0, 21, 22, 24, 25 | Nothing is removed |
-| **Rebuilds** - caches and temp files the tool or Windows recreates on next use | 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 14, 17 | No undo. Nothing is copied first; a cache comes back because the tool that made it makes it again |
-| **Slow to rebuild** - Android emulator images, recreated in Android Studio | 4 | No undo, and rebuilding one means a download - the per-AVD idle gate exists for that reason |
+| **Rebuilds** - caches and temp files the tool or Windows recreates on next use | 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 14, 17 | No undo. Nothing is copied first; a cache comes back because the tool that made it makes it again. Not everything in 12, 13 and 14 does - see below |
+| **Slow to rebuild** - Android emulator images, recreated in Android Studio | 4 | No undo. Recreating one takes minutes and no download while its system image is still installed - but everything installed or saved inside the emulator, and its snapshots, are gone. The per-AVD idle gate exists for that reason |
 | **Recycle Bin** - personal files you selected | 18, 19, 23 | The Recycle Bin, until you empty it. `--permanent` deletes instead of recycling, and that has no undo |
 | **Permanent** | 11 (empty the Recycle Bin), 16 (event logs) | No undo |
-| **Configuration** - a setting changes, nothing is deleted | 15 (hibernation), 20 (disk-image compaction) | Nothing is removed. `powercfg /hibernate on` puts hibernation back; compaction rewrites a disk image without dropping anything from it |
+| **Configuration** - hibernation off or reduced, disk images compacted; nothing of yours is deleted | 15 (hibernation), 20 (disk-image compaction) | Nothing of yours is removed. Section 15 removes `hiberfil.sys` itself, and `powercfg /hibernate on` puts it back; compaction rewrites a disk image without dropping anything from it |
+
+Sections 13 and 14 hand their work to Windows' own cleanup and component-store tools, and some of what
+those remove does not come back: a previous Windows installation, superseded drivers and components, and
+crash dumps. `--reset-base` additionally removes the ability to uninstall the updates already installed.
+The tier name describes the rule; those are the exceptions to it.
 ```
+
 **Was (live, `:53-60`):** the same six tiers. The Report row exists and reads *"Nothing is removed, so there
 is nothing to recover"*; the Recycle Bin row already reads `18, 19, 23`. The Rebuilds cell reads **"The data
 reappears on demand; a rebuild costs time, not information"**, the Slow-to-rebuild cell **"Recreate in
@@ -530,7 +536,7 @@ followed does not.
 
 ### S-024 · safety-model.md:112-114 · dry-run
 ```
-`--dry-run` short-circuits every deletion helper and every destructive external command (`docker`, `cleanmgr`, `Dism`, `powercfg`, `wevtutil`, `diskpart`, service stop/start, registry writes), printing what would happen and tallying an estimate. The self-test hashes a fixture tree before and after a dry-run to prove nothing changed. It writes nothing of yours - two files of its own, and nothing else: a session log and one JSON report. `--no-report` skips the report and `--cleanup-logs` deletes the log at exit.
+`--dry-run` short-circuits every deletion helper and every destructive external command (`docker`, `cleanmgr`, `Dism`, `powercfg`, `wevtutil`, `diskpart`, service stop/start, registry writes), printing what would happen and tallying an estimate. The self-test hashes a fixture tree before and after a dry-run to prove nothing changed. It writes nothing of yours. Of its own it writes a session log and one JSON report, and a text list beside the report for each of sections 17, 21, 22, 24 and 25 that runs - so `--dry-run --all --yes` writes three files, not two. `--no-report` drops everything but the log, and `--cleanup-logs` deletes that at exit.
 ```
 **Was:** the same first two sentences, with no third or fourth.
 
@@ -722,7 +728,7 @@ disagreeing: say the same thing twice, not the history of having said different 
 
 ### S-044 · developer-mode.md:18 · NEW · developer mode on · section 4 · inserted before the Docker bullet
 ```
-- Section 4 removes Android emulator images (AVDs) left idle for the window. It is opt-in. `--all` never reaches it, and it runs only when you name it in `--only` or in a profile. A removed AVD has no undo: section 4 is in the Slow-to-rebuild tier, and recreating one in Android Studio means downloading its system image again.
+- Section 4 removes Android emulator images (AVDs) left idle for the window, and every one of them under `--purge-all`. It is opt-in: `--all` never reaches it, and an unattended run reaches it only when you name it in `--only` or a profile. A removed AVD has no undo. Recreating one in Android Studio takes minutes and no download while its system image is still installed - the images live under the SDK folder, which is protected - but everything you installed or saved inside that emulator, and its snapshots, are gone.
 ```
 **Was:** (new — the list has no bullet for section 4.)
 
@@ -1211,3 +1217,60 @@ Four fences changed and no slot moved: S-002 (the `>` marker), S-005 (`AppData` 
 **Shipping word count: 2,411 words** (§A 1,695 · §B 716), by the self-check's method: `wc -w` over the fenced blocks only, attributed by the heading above each fence. Before this pass the same method returned 2,409, not the 2,402 the line pass recorded; the seven are S-034's first bullet, which M-2 rewrote after that measurement. The two added here are S-002's marker and S-034's conjunction.
 
 **Not fixed here, because each is a number or a `Was:` line**. The live `safety-model.md` gained `## Your own exclusions, and the machine-readable list` at lines 35-49 after the line pass, so every §A line reference from S-008 onward is sixteen lines low: S-008 is at live :51 and S-027 at :147. S-042's `:34` still holds and lands before that section. S-027's `Was:` line reads 2026-09-03 while the live footer already reads 2026-09-08, so the fence as written would move the date back a day. S-034's `Was:` line records only the third bullet; the first now differs too. S-015's `Was:` line does not say that the live table orders its rows Rebuilds, Slow to rebuild, Recycle Bin, Report only, Permanent, Configuration and labels that row *Report only*; the fence replaces the table wholesale, so nothing is lost, but the applier's check should not expect a match on order or label. The story lint hook strips every fence before it counts, so its verdict on this file is about the commentary alone.
+
+## Owner decisions, 2026-09-08 - the fact-check's five, answered
+
+The fact-check returned **19 contradictions and NOT SAFE TO APPLY**, and five of them touched a GATE 1 or
+GATE 2 artefact or the catalogue's tier names, so they were put to the owner rather than taken. He answered
+**"All four"** on the safety claims and **"Disclose it in the docs only"** on the network question. All are
+applied here.
+
+**1. The chokepoint absolute is scoped to what the tool removes with its own code.** *"Every deletion of
+anything on your machine"* was false: seven sections delete by handing the work to a Windows or Docker
+command that never touches `Remove-PathSafe` - `docker prune` (5), `Clear-RecycleBin` (11), `cleanmgr` (13),
+`Dism` (14), `powercfg` (15), `wevtutil` (16), `diskpart` (20) - and `--uninstall-data` deletes the home
+folder outright at `modules/release_helpers.ps1:417`. Verified by grep before rewording. The strong claim
+now sits where it is earned, and the external-command sections are named with the gates that actually bound
+them: the admin gate, the deep gate and `--dry-run`, not the path guards.
+
+**2. The Configuration row no longer says "Nothing is removed" about a section that removes a file.** Section
+15 runs `powercfg /hibernate off` and then measures `hiberfil.sys` before and after and reports the
+difference as freed - the engine itself treats it as a removal. The cell reads *"Nothing of yours is
+removed"* and names the file, which is the same distinction the project already drew for `--dry-run`
+(*"writes nothing of yours - two files of its own"*).
+
+**3. The dry-run file count was wrong on the page's own recommended command.** `--dry-run --all --yes` runs
+section 21, which writes a disk-usage list with no dry-run guard: three files, not two. Sections 17, 22, 24
+and 25 each add one more. The slot now says so and names `--no-report` as the switch that drops all but the
+log. 🔴 Bible §3.2 carries the same "two files" phrasing and needs the same correction - that is the keeper's,
+recorded here so it is not lost.
+
+**4. The Rebuilds tier no longer promises that everything in it comes back.** Cleanmgr's *Previous
+Installations* (Windows.old - the way back from an upgrade) and *Device Driver Packages* (driver rollback),
+DISM's superseded components, `--reset-base`'s removal of the ability to uninstall installed updates, and
+crash dumps in sections 9 and 12 are one-way. The tier name still describes the rule; the exceptions are now
+stated under the table instead of being contradicted by it.
+
+**5. The network question, answered "disclose it in the docs only".** Every README fence stays exactly as
+written - they describe windowsweep and they are true of it. The disclosure went into `docs/safety-model.md`
+as its own short section and into `docs/faq.md` beside the existing *"Does it phone home?"* answer: the
+engine makes no network call and check [9] proves it, **and** the tools it runs keep their own habits -
+`winget list` refreshes its own sources and reports to Microsoft by default, `npm` checks the registry for a
+newer npm, and `pnpm store prune` runs inside the default batch. It is the difference between a program that
+phones home and a program that runs one which does, and it is worth knowing before someone reads a firewall
+log and blames the wrong tool.
+
+**Also corrected, from the same report and not needing an owner:** the AVD claim was wrong in **both**
+directions. Deleting an AVD forces **no download** while its system image is installed - images live under
+the SDK folder, which is protected - so the page overstated that cost; and what actually has no undo is
+everything installed or saved *inside* the emulator plus its snapshots, which the page never mentioned. The
+section 4 bullet also now says `--purge-all` takes **every** AVD, idle or not, which is what
+`modules/android_avd.ps1:26` does and which nothing on either page said.
+
+**Still open for a round 4**, from the same report and not covered by these five: the five-guard order is
+wrong (guard 5 runs before guard 4, and the exclusion is a sixth refusal nothing lists); S-018's "an eighth,
+section 22, carries the flag" is stale since section 22 became `Dev = $false`; S-040's claim that
+`windowsweep --scan` reports the developer answer in force is false, because scan mode never resolves it;
+S-025's "the session log records every path removed" is false for prune-mode targets, which log one line per
+root; and S-012's four-line summary of the protected categories does not match what `WS_PROTECT_CATEGORIES`
+actually contains.

@@ -298,6 +298,6 @@ commentary and says nothing at all about the page. Its verdict is not evidence h
 sweep above, the fact-checker and a human reader are the gate on this surface.
 
 **Line pass, hook**. Baseline exit 0, measured on the untouched snapshot of this file through the same script
-and the same JSON shape Claude Code sends it. After this pass it flagged range windows in the commentary and
-nothing else, each fixed in place with a split or a short sentence, and the fences were never in its count,
-so the paragraph above stands.
+and the same JSON shape Claude Code sends it. After this pass it flagged range windows in the commentary, and
+once a word from the shared list in the first draft of this paragraph; each was fixed in place with a split, a
+short sentence or a plainer noun, and the fences were never in its count, so the paragraph above stands.

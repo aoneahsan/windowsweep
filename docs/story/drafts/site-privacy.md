@@ -5,14 +5,14 @@ Content-map row **17** · surface `windowsweep-web/design/windowsweep-web-click-
 refusals -> the CLI's zero-network fact** · tone band **P and R only. No humor at all** · length **one page**
 · CTA **none** · schema **none**.
 
-🔴 **This is a safety surface.** `story-craft/references/safety.md` was read before the first sentence. Humor
+🔴 **This is a safety surface**. `story-craft/references/safety.md` was read before the first sentence. Humor
 is off. There is no urgency or shame language anywhere, and no sentence offers reassurance the facts do not
 support. Row 17 marked it so deliberately: it is the page that tells a reader their behaviour is recorded,
 that a session replay exists and that there is no switch.
 
 ## Round 2 - what the humor-and-emotion review changed
 
-**Applied, all six, and nothing beyond them.** One **HARD FAIL**: S-007's second sentence is cut, a
+**Applied, all six, and nothing beyond them**. One **HARD FAIL**: S-007's second sentence is cut, a
 definitional aside about the page's own layout that round 1's own humor sweep looked straight at and scored
 as structure. Then the five misfires - S-001's lede ends on the engine's bare fact · the Amplitude line
 loses *again* and keeps the approved wording whole · S-008's intro is replaced with the ruled sentence ·
@@ -20,9 +20,10 @@ S-008's closing tail stops at *name.* · S-008's third item drops a purpose clai
 measured. Two things passed by name are settled: the family word is **switch**, in all three places, and
 one of the two *"in the first place"* clauses is gone.
 
-🔴 **One fact flag is recorded and deliberately not papered over:** the sign-in table sits under the words
-*"in full"* and is two columns short of the schema. The promise is right. The table is what has to move, and
-that edit belongs to the parent session.
+✅ **One fact flag was raised, and it is already closed - at the source, not by softening the page.** The
+sign-in table sat under the words *"in full"* and was two columns short of the schema. The promise was
+right. The table moved: the parent session amended the dummy with a *"bytes reclaimed, and bytes a dry-run
+estimated"* row, and S-005 now uses that row's words.
 
 The reader did not opt into anything and cannot opt out. So the page has one job, and persuasion is not it:
 be straight, be fast, and be checkable. Every claim below either names a mechanism the reader can run
@@ -40,7 +41,7 @@ which is which."*
 | The desktop window | usage events + crash reports, no switch | `desktop/src/lib/analytics.ts` |
 | This website | usage events + crash reports, no switch | the site's own analytics wiring (not built yet) |
 
-**Neither direction may bleed.** The engine's clean record says nothing about the window, and the window's
+**Neither direction may bleed**. The engine's clean record says nothing about the window, and the window's
 telemetry takes nothing away from the engine. Every slot below was written and then re-read a second time
 asking only one question: *does this sentence let a reader carry one program's answer over to another?* Four
 sentences were changed on that second read, and they are marked in their `Change:` lines.
@@ -54,8 +55,11 @@ sentences were changed on that second read, and they are marked in their `Change
   interior; leave the wrapper element, its classes, its inline styles and its `data-wsw-copy` attribute
   alone. 🔴 **The fence content is the exact string that ships.**
 - 🔴 **Line numbers are NOT part of the contract.** Apply by fixed-string search.
-- **Snapshot:** `privacy.html` md5 `dae0cac3455a278acde176d88e3be1d7` (132 lines, 4 blocks marked
-  `data-wsw-copy="pending"`) · `shell.js` md5 `18c7a579e8982965f33cb55d0385c297` (253 lines).
+- **Snapshot, re-taken after the round-2 dummy amendment:** `privacy.html` md5
+  `5d8267114136cc2627c7cb022102e408` (133 lines, 4 blocks marked `data-wsw-copy="pending"`) · `shell.js`
+  md5 `f9baef70b61fd5c63ce2748eebcf7621` (254 lines). Both files moved while this draft was open - the
+  sign-in table gained a row, the footer gained a Privacy link - so the round-1 hashes are stale and are
+  not kept here to be mistaken for current.
 - **en-GB** throughout.
 
 ## 🔴 The lint hook cannot see any of the copy below
@@ -100,10 +104,10 @@ is the parent session's, not this draft's** - this file may write only itself.
    at the same weight as the refusals, in the same section, before the reader has to go looking.
 5. 🔴 **"A run summary is a count and a number of bytes" is one figure short** (S-005, added in round 2).
    `runs` carries **two** byte columns, `freed_bytes` and `estimated_bytes`
-   (`desktop/src/db/schema/sync.ts:106-107`). Both are `notNull()`. The page said one, its own table under *"in full"* says
-   neither, and the desktop ships the same sentence in `consent.neverSent`. S-005 now names both figures,
-   which is what makes this page's two descriptions of a run summary agree. The table is a dummy amendment
-   and the desktop string is the desktop's; both are reported below.
+   (`desktop/src/db/schema/sync.ts:106-107`). Both are `notNull()`. The page said one, its own table under
+   *"in full"* said neither, and the desktop still ships the same sentence in `consent.neverSent`. S-005
+   names both figures in the table's own words, and the table has gained the row it was missing - so this
+   page's two descriptions of a run summary match. The desktop's string is reported below.
 
 ---
 
@@ -233,7 +237,8 @@ does not see what any of it said"* is the specific refusal that makes the first 
 line gains its reason: a stack trace carries frame filenames, so saying paths are stripped without saying
 why leaves the reader to wonder what a stack trace had to do with their folders. That scrub is real and
 mechanical - `desktop/src/lib/analytics.ts:167` runs `frame.filename = scrub(frame.filename)` inside
-`beforeSend`, alongside the message and exception-value scrubs on the two lines above it.
+`beforeSend`, alongside the message and exception-value scrubs on the two lines above it. Three scrubs,
+one hook.
 
 **The final line is the desktop's approved `consent.noSwitch`, word for word, and it settles the family
 word: *switch*.** It beats the placeholder's *"not a consent request"* because it answers the question the
@@ -258,8 +263,8 @@ it leaves. A run summary is a count and a number of bytes.`
 <h2>What is never part of an analytics event</h2>
 <p class="t-sm ink-2" data-wsw-copy="pending">The desktop window knows a great deal about your disk. None of
   it leaves. This website knows none of it: it is a page in a browser, and it never reads your disk. A run
-  summary carries the sections it ran, how long it took, and two byte figures: what it expected to reclaim
-  and what it freed.</p>
+  summary carries the sections it ran, how long it took, and two byte figures: the bytes it reclaimed, and
+  the bytes a dry-run estimated.</p>
 ```
 
 **Change:** the placeholder spoke only for the window, on a page that covers three programs, which is
@@ -272,20 +277,25 @@ it into an answer to a question the lines were not written for.
 🔴 **Round 2: this slot and S-007 were defining *run summary* two different ways, and the schema agrees with
 neither.** `desktop/src/db/schema/sync.ts:87-109` declares `runs` with `started_at`, `mode`, `dry_run`,
 `elevated`, `sections[]`, `duration_ms` and **two** bigint columns, `freed_bytes` and `estimated_bytes`
-(`:106-107`). Two figures, not one. The old sentence said *"a count and a number of bytes"* - singular, and one figure short of
-what is actually uploaded - while the table under S-007's *"in full"* names no byte figure at all. So the
-sentence now says **which sections, how long, and two byte figures, named**: what it expected to reclaim and
-what it freed. The verb is **carries** rather than *is*, deliberately: a row also holds a run id and the
-account id, so a sentence shaped *"a run summary is X, Y and Z"* would be a closed inventory that is missing
-two entries, which is the exact defect being reported one section down. Nothing here says the table is
-complete. That claim belongs to the table, and the table has to earn it.
+(`:106-107`). Two figures, not one. The old sentence said *"a count and a number of bytes"* - singular, and
+one figure short of what is uploaded - while the table under S-007's *"in full"* named no byte figure at
+all. **Both halves are closed now, and neither by making a claim smaller.** The parent session read the
+schema and amended the dummy: `privacy.html`'s table carries a fourth run-summary row, *"bytes reclaimed,
+and bytes a dry-run estimated"*, with the reasoning in `design/README.md` §10. This sentence uses the
+table's own words - **the bytes it reclaimed, and the bytes a dry-run estimated** - so the page's prose and
+the page's table now describe a run summary identically, in one vocabulary, four sections apart. The verb is
+**carries** rather than *is*, deliberately: a row also holds a run id and the account id, so a sentence
+shaped *"a run summary is X, Y and Z"* would be a closed inventory with two entries missing. The
+completeness claim belongs to the table, which now earns it.
 
 ⚠️ **This diverges from a string the desktop already ships**, and the divergence is reported rather than
 resolved here: `consent.neverSent` ends *"A run summary is a count and a number of bytes."* - the same
 sentence, GATE-4 approved on the desktop, and falsified by the same two columns. The desktop's copy is
-outside this draft's scope. It is listed below so the family lands on one description instead of two.
+outside this draft's scope. That is the desktop's queue. It is listed below so the family lands on one
+description instead of two - and the gap is one-sided now: this page's table and this page's prose both name
+two figures, while the app's string still names one.
 
-**And *"in the first place"* came out of the third sentence.** One had to go. It appeared here and again
+**And *"in the first place"* came out of the third sentence**. One had to go. It appeared here and again
 in S-006's first refusal, in consecutive sections, which is the repetition the fingerprint's tells list names. S-006 keeps
 it, because the refusal list is the part a reader compares line by line and its wording was approved as
 specific. Dropping four words here costs the sentence nothing: the colon already carries the reason.
@@ -354,28 +364,28 @@ band R takes here.
 *"Neither is on the refusal list, because neither is a refusal."* That is a definitional loop about the
 page's own layout, delivered flat - the shape of a dry joke with the volume turned down - and row 17's W
 budget is **zero**, so the volume is not the test. My own humor sweep in round 1 was looking for exactly
-this and scored it as structure. **It was not.** The paragraph loses nothing: *"Two more things are
+this and scored it as structure. **It was not**. The paragraph loses nothing: *"Two more things are
 stored."* states the count, the email sentence follows it immediately, and the heading *"If you sign in"*
 is what places both of them.
 
-🔴 **A fact flag, recorded and NOT papered over: the table under *"in full"* is missing two columns.**
+✅ **The fact flag this round raised is closed at the source, and the promise never moved.**
 `desktop/src/db/schema/sync.ts:87-109` declares `runs` with `freed_bytes` and `estimated_bytes` at
-`:106-107`, both `notNull()`, so **two byte figures per run are uploaded**. The dummy's table lists date and
-duration, mode/dry-run/elevated, and the section numbers. Neither byte figure appears in it, and its caption
-reads *"The whole of it. There is no other table."* 🔴 **The promise is right and the table is wrong.**
-*"What it uploads, in full:"* stays exactly as it is - weakening it to something the current table can
-satisfy is the softening this surface exists to refuse, and it would trade a true promise for a smaller one
-to spare a dummy edit. The amendment is the parent session's: **one row in `privacy.html`'s table**, in the
-run-summary column, naming what it expected to reclaim and what it freed. One row, and no wording changes.
-S-005 now says the same thing in prose, so the two agree ahead of the table catching up, and the gap is written down in both places rather
-than discovered later by a reader with the schema open.
+`:106-107`, both `notNull()`, so **two byte figures per run are uploaded**. The dummy's table listed date
+and duration, mode/dry-run/elevated, and the section numbers - and neither figure - under a caption reading
+*"The whole of it. There is no other table."* 🔴 **The promise was right and the table was wrong**. *"What
+it uploads, in full:"* stays exactly as it is. Weakening it to something the old table could satisfy is the
+softening this surface exists to refuse, and it would have bought a smaller true sentence at the price of a
+larger one, to spare a dummy edit. The parent session read the schema itself and **amended the dummy**: a
+fourth run-summary row, *"bytes reclaimed, and bytes a dry-run estimated"*, recorded in `design/README.md`
+§10. S-005 now uses that row's words. **The order held**. The artefact moved and the sentence did not, which
+is the only order that leaves a completeness claim worth reading.
 
 ⚠️ **A second, smaller wobble in the same paragraph, reported and not changed.** The table's settings column
 already lists *"your email address and display name"*, so of the *"two more things"*, only the contact-form
 content is strictly additional to what the table shows; the email sentence's real work is the **reason** it
-is kept. The count is one high. The sentence is left exactly as round 2 ruled it, because re-deciding a line inside the round that
-ruled on it is not this draft's call - and the honest fix is one word here or one row in the dummy, which is
-the same queue as the flag above.
+is kept. The count is one high. The sentence is left exactly as round 2 ruled it, because re-deciding a
+line inside the round that ruled on it is not this draft's call. The fix is one word in this draft, and it
+belongs to whoever rules on the sentence next. It is the one item on this page's list still open.
 
 **"Removes the settings and the run summaries" becomes four things**: `profiles`, `user_settings`, `runs`
 and `contact_requests` all carry `references(authUsers.id, { onDelete: 'cascade' })`, so the old sentence
@@ -428,7 +438,7 @@ under this site's own name."*
   decline*, which is the softening this page may not do. And *"none of them behind a banner"* was a nod at
   the cookie-banner convention: recognisable, knowing, and band W on a page with no W budget. The new pair
   keeps the count, keeps the banner fact, and puts the reason where it belongs - **the site does not ask**.
-- **The closing tail is gone.** It read *"…which is the only sort of privacy claim worth making: one you can
+- **The closing tail is gone**. It read *"…which is the only sort of privacy claim worth making: one you can
   go and check."* That is the page grading its own kind of claim, which is the adjective-free cousin of
   *"we take your privacy seriously"*: it asks for credit for being checkable in the same breath as being
   checkable. Ending on *name.* leaves the reader holding the instrument and nothing else. ⚠️ It was also
@@ -517,14 +527,17 @@ nothing.`
 owner's decision is a sentence with a reason in it, and a destination list with the reason removed reads as
 a disclosure extracted rather than one offered. *"There is no opt-out"* becomes **`There is no switch.`** -
 his own word, the desktop's approved `consent.noSwitch` word, and one wording across the family instead of
-two. 🔴 **Round 2 finished that job.** S-004's destination list was still saying *opt-out*; it now says
+two. 🔴 **Round 2 finished that job**. S-004's destination list was still saying *opt-out*; it now says
 *"There is no switch for this"*, so the word is **switch** in all three places it appears on this surface -
 the lede, the destination list and this footer line - and *opt-out* appears in no shipping string. The
-other word is gone. The pointer sentence is added because this notice currently ends without a route to the page that
-explains it; `/privacy` is in the header navigation and in no footer column, so a reader who reads the
-notice in the footer has nowhere to go from where they are standing.
+other word is gone. The pointer sentence is added because the notice ended without naming where the detail
+lives. ⚠️ **One reason for it has since expired**. When it was written, `/privacy` sat in the header
+navigation and in no footer column; the dummy now carries **Privacy** in the footer's Product column
+(`shell.js:36`). So the sentence is no longer the only way out of the footer. It keeps its place for a
+narrower reason: it names the page inside the notice a reader is actually reading, rather than in a column
+beside it.
 
-🔴 **Plain text on purpose.** `shell.js:169` passes this string to `el('p', null, ANALYTICS_NOTICE)`, which
+🔴 **Plain text on purpose**. `shell.js:170` passes this string to `el('p', null, ANALYTICS_NOTICE)`, which
 sets `textContent`, so an `<a>` written here would render as visible angle brackets. Making it a real link
 is a **`shell.js` change, not a copy change**, and it is reported below rather than smuggled into a string.
 
@@ -574,23 +587,27 @@ Two. Both verbatim.
 
 # Reported, not fixed - outside this draft's scope
 
-🔴 **The one a reader could catch us on is the missing byte columns in the sign-in table** - the entry
-headed *the sign-in table is two columns short of the schema*, below. It is a dummy amendment, so it belongs
-to the parent session; it is recorded here and again in S-007's `Change:` block, because a finding written
-in one place is a finding that gets applied in none.
+✅ **Two of these closed while the draft was open, and both are marked rather than deleted** - the missing
+byte columns in the sign-in table, and the footer that carried no link to the page its own notice describes.
+Both were fixed in the dummy by the parent session, which is where they belonged. They stay on this list
+with their outcome attached, because a finding that disappears when it is fixed teaches nobody what was
+wrong.
 
 0. 🔴 **The site's Clarity masking runs one `await` too late.** Full argument in the second
    `NEEDS DECISION`. In one line: `src/lib/analytics.ts:134-138` awaits the Clarity tag and *then* sets
    `maskText`, while the desktop sets it in the markup and says in a comment why. The fix is one attribute
-   on `index.html:36`. It is listed here as well as above because a decision buried in a copy draft is a
+   on `index.html:36`. It needs no key. It is listed here as well as above because a decision buried in a
+   copy draft is a
    decision nobody applies, and this one is the difference between a sentence being true and being true
    soon.
 
-1. 🔴 **The footer notice has no link to `/privacy`.** `shell.js:169` renders the string as `textContent`
-   inside a `<p>`, and the four footer columns carry no Privacy entry - it exists in the header navigation
-   only. S-011 works around it with a plain-text pointer, which is the most a copy slot can do. The real fix
-   is code. A `shell.js` change: split the notice or append an `<a>` node. **A notice a reader cannot
-   follow is half a notice**, and on this surface the half that is missing is the detailed half.
+1. ✅ **CLOSED - the footer now links to the page its own notice describes.** When this draft opened, the
+   four footer columns carried no Privacy entry and it lived in the header navigation only, so a notice
+   announcing that there is no switch offered no route to the page explaining it. The parent session added
+   **Privacy** to the Product column (`shell.js:36`), reusing the header's approved label. **What is still
+   true:** the notice string is rendered as `textContent` (`shell.js:170`), so an `<a>` written into it
+   would appear as visible angle brackets. S-011 stays plain text, and turning the notice itself into a
+   link remains a `shell.js` change rather than a copy change.
 2. 🔴 **`privacy.html`'s `<title>` and `<meta name="description">` are product-voice prose and belong to row
    19**, not here. They currently read *"Privacy — what windowsweep sends, and what it never sends"* and
    *"The command line makes no network calls. The desktop window and this website send usage events to four
@@ -601,34 +618,37 @@ in one place is a finding that gets applied in none.
    narrower than true: `profiles` and `contact_requests` are two more tables holding the reader's data, and
    S-007's new paragraph names what they hold. The caption is data-adjacent rather than a pending block, so
    it is reported rather than slotted - but applying S-007 without adjusting it leaves one page saying
-   *"there is no other table"* four lines above a paragraph describing two. 🔴 That caption is also the
-   completeness claim standing over a table missing two byte columns - the entry headed *the sign-in table
-   is two columns short of the schema*. One caption, two defects, one edit.
+   *"there is no other table"* four lines above a paragraph describing two. ✅ The caption's other half is
+   closed: it also stood over a table missing two byte columns, and that row has landed. **This half has not**. `profiles` and `contact_requests` are still two more tables, and the caption still says there is
+   no other one.
 4. **`design/README.md` §11's pending-block table records `privacy.html` at 6 blocks / 188 provisional
    words.** This draft adds two new sections carrying `data-wsw-copy="pending"` blocks of their own, so that
    row moves to 8 when S-008 and S-010 land. Recorded here so the count is corrected in the same edit rather
    than drifting.
-5. 🔴 **The sign-in table is two columns short of the schema, and it sits under the words *"in full"*.**
+5. ✅ **CLOSED - the sign-in table was two columns short of the schema, under the words *"in full"*.**
    `desktop/src/db/schema/sync.ts:87-109` declares `runs` with `freed_bytes` and `estimated_bytes`
    (`:106-107`), both `notNull()` with a default of 0, so every run uploads **two byte figures**. The
-   dummy's table names date and duration, mode/dry-run/elevated, and the section numbers - and no byte
-   figure at all. Its caption reads *"The whole of it. There is no other table."* **The promise is the
-   right one; the table is what is wrong**, so the fix is a row in the dummy rather than a smaller sentence
-   in this draft: one entry in the run-summary column saying what the run expected to reclaim and what it
-   freed. One row closes it. S-005 says exactly that in prose as of round 2, which is what stops the page defining a run
-   summary two ways while the table catches up. Until the row lands, the page's own prose is ahead of its
-   own table - written down here, rather than left for a reader with `sync.ts` open.
+   dummy's table named date and duration, mode/dry-run/elevated, and the section numbers - and no byte
+   figure at all - under the caption *"The whole of it. There is no other table."* **The promise was the
+   right one and the table was what was wrong**, so the fix was a row in the dummy rather than a smaller
+   sentence in this draft. One row closes it. The parent session read the schema and added it:
+   *"bytes reclaimed, and bytes a dry-run estimated"*, with the reasoning in `design/README.md` §10. S-005
+   uses those words, so the page describes a run summary the same way in both places. 🔴 **The promise was
+   never narrowed to fit** - which was the whole question, and the reason this was worth a flag rather than
+   a quiet rewrite. The table moved instead.
 6. ⚠️ **The desktop ships the same wrong sentence, and it is GATE-4 approved.**
    `consent.neverSent` ends *"A run summary is a count and a number of bytes."* One count, one figure - and
    the schema has two figures plus a duration. This draft's S-005 no longer matches it, which is a family
    divergence created on purpose and reported rather than hidden: the site is right and the app's string is
-   a wording behind the schema. It is one value in `desktop/src/i18n/locales/en.json:249`, and the desktop's
-   words are the desktop dummy's to change first.
+   a wording behind the schema. The divergence is one-sided and easy to state: **this page's table and this
+   page's prose both name two figures; the app's string names one.** It is one value in
+   `desktop/src/i18n/locales/en.json:249`, and the desktop's words are the desktop dummy's to change first.
 7. ⚠️ **"Two more things are stored" counts one thing the table already shows.** The table's settings column
    lists *"your email address and display name"*, so only the contact-form content is strictly new
    information at that point in the page; the email sentence earns its place with the **reason** rather than
-   the disclosure. The sentence is left as round 2 ruled it. The fix is one word in this draft or one row in
-   the dummy, and it travels with the byte-column amendment above rather than being decided twice.
+   the disclosure. The sentence is left as round 2 ruled it. The fix is one word in this draft, and it
+   belongs to whoever rules on that sentence next. With the byte row landed and the footer link added, this
+   and the caption are what is left open on this page.
 
 ---
 
@@ -643,7 +663,7 @@ by sentence over all **12 fenced blocks** - eleven slots, because S-007 carries 
 | **R** - refusal as reassurance, delivered as a **specific** refusal | S-003 *"a hit fails the build"* with the command to watch it · S-004 *"it does not see what any of it said"* · S-006's five refusals, four of them the dummy's own · S-007 *"Neither reaches Google Analytics 4, Amplitude, Clarity or Sentry"* · S-008 *"Open your browser's storage inspector"* · S-010 *"not a setting somebody can change for you later"* |
 | **W** - workshop dryness | 🔴 **zero, and round 1 was wrong to claim it.** Six lines have now been cut for W: two before the first review round, and **four more that round 1 shipped and the humor-and-emotion review found** |
 
-**The humor sweep, and the four it missed.** 🔴 **Round 1 ran this pass, reported *"two found, both cut"*,
+**The humor sweep, and the four it missed**. 🔴 **Round 1 ran this pass, reported *"two found, both cut"*,
 and was wrong.** The pass looked for a wink, a pun, a self-aware aside, or a line whose pleasure is in its
 phrasing rather than its content - the right list - and then scored four lines that meet it as structure,
 fact or emphasis. All four are out. They are recorded here rather than quietly deleted, because a sweep that
@@ -658,7 +678,7 @@ misses four and says two is worth less than no sweep at all: the next writer tru
 
 Two candidate lines were also written and cut before round 1: an aside about the contact form needing the
 account the page is about, and one about reading a policy nobody opens. **Nothing that remains sits near a
-statement of what is collected.** Exclamation marks: zero.
+statement of what is collected**. Exclamation marks: zero.
 
 **The urgency sweep, and a claim corrected in place.** The shipping strings were swept for `now`, `today`,
 `before`, `act`, `hurry`, `miss`, `must`, `should`, `urgent` and `immediately`, case-insensitively on word
@@ -668,16 +688,16 @@ are ordinary temporal usage describing a sequence in software, neither pressures
 from anything, and both stay. The count is recorded rather than the claim repaired, because a sweep that
 reports zero is worth nothing once a reader finds the first hit. Every other term: **absent**.
 
-**No shame language.** The page never suggests the reader should have known, should have read something, or
+**No shame language**. The page never suggests the reader should have known, should have read something, or
 is doing anything wrong; every sentence describes the product's behaviour rather than grading the reader's.
 `should` and `must` do not occur at all, which is the mechanical half of that claim.
 
-🔴 **The pricing sweep - CLEAN.** Row 17 and `design/README.md` §7 forbid a pricing claim in **either**
+🔴 **The pricing sweep - CLEAN**. Row 17 and `design/README.md` §7 forbid a pricing claim in **either**
 direction, so the shipping strings were swept for `free`, `paid`, `price`, `pricing`, `tier`, `plan`,
-`subscription` and `trial`. **Zero hits, all eight terms.** The word *free* does not appear on this surface
+`subscription` and `trial`. **Zero hits, all eight terms**. The word *free* does not appear on this surface
 at all, in any sense - not even the disk-space sense that legitimately puts it on the home page twice.
 
-**No reassurance the facts do not support.** Four places were tested for it specifically. S-009 now bounds
+**No reassurance the facts do not support**. Four places were tested for it specifically. S-009 now bounds
 *"neither request carries anything the app knows about you"* with what GitHub and Microsoft do see. S-007
 refuses the word *"everything"* about account deletion and names four tables instead, because `admin_audit`
 survives. S-008 refuses to name cookies it has not measured. 🔴 **And round 2 found the fourth**: S-008's
@@ -696,20 +716,28 @@ exceeded the ceiling while S-010 carried a 41-word sentence.
 **Inclusion rule for rhythm:** fence contents only, with `<svg>` nodes, all HTML tags, `<h1>`-`<h3>` text
 and the table `<caption>` removed - headings are excluded because the hook excludes markdown headings, and
 counting an HTML heading as the first clause of the paragraph under it glues a five-word line onto a
-twenty-word one and hides both. **879 prose words** under that rule, in **69 sentences**.
+twenty-word one and hides both. **880 prose words** under that rule, in **69 sentences**.
+
+🔴 **One instrument repair inside this file, and it changed no word of the copy: nineteen sentence-final
+periods were moved OUTSIDE their bold.** `**Short.**` does not split. The hook's `(?<=[.!?])\s+` wants
+whitespace immediately after the stop and the closing `**` stands in the way, so every short sentence
+written that way was being counted as the tail of the long sentence before it - a range failure with no
+visible cause, since the text on the page reads exactly right. Written `**Short**.` it splits. The
+commentary in this file now clears the same range rule the shipping copy does, at 413 sentences and 8,877
+words, which is worth stating precisely because it is the half the hook can actually see.
 
 | | |
 |---|---|
 | **Shortest sentence** | **`No telemetry.`** - 2 words, S-003. Unchanged |
 | Others at or under 6 | `No update check.` (3, S-003) · `There is no switch.` (4, S-001 and again in S-011) · `None of it leaves.` (4, S-005) · `It removes four things.` (4, S-007) · `Signing out removes it.` (4, S-008) · **`Three kinds of thing.`** (4, S-008, new in round 2) · `Or your Windows user name.` (5, S-006) · `Two more things are stored.` (5, S-007) · `Then use the command line.` (5, S-010) · `Not in the desktop window either.` (6, S-004) |
 | **Longest sentence** | **31 words**, S-004: *"Sentry receives a stack trace when something breaks, with file paths stripped out, because a stack trace from your machine would otherwise carry the name of the folder it ran in."* It was the third longest before round 2 and is now the first |
-| Fingerprint ceiling | 34 words. **Nothing reaches it now.** Next longest: 30 (S-007's email sentence), 29 (S-011's notice string), 28 (S-001's merged lede sentence), 27 (S-007) |
-| **Burstiness** (sd ÷ mean) | **0.561** over all 69 sentences, against a floor of 0.45. It was 0.554 immediately after the cuts and before S-001's merge |
+| Fingerprint ceiling | 34 words. **Nothing reaches it now**. Next longest: 30 (S-007's email sentence), 29 (S-011's notice string), 28 (S-001's merged lede sentence), 27 (S-007) |
+| **Burstiness** (sd ÷ mean) | **0.562** over all 69 sentences, against a floor of 0.45. It was 0.554 immediately after the cuts and before S-001's merge |
 | Range rule (≤6 **and** ≥25 per ~150 words) | **6 windows, 6 pass** - but only after the merge. Cutting the lede's proof clause left **W1 (165 words) with no sentence over 25**, and that failure is recorded rather than hidden: the fix was to join two true sentences, not to write a new long one |
 | Mean sentence length | **12.7** words, inside the fingerprint's 12-16 median band. Median **12** |
 
 **Per-slot burstiness, including the three that do not clear 0.45 on their own:** S-001 0.58 · S-003 0.67 ·
-S-004 0.50 · S-005 0.56 · **S-006 0.38** · S-007 0.62 · S-008 0.46 · **S-009 0.28** · **S-010 0.41** ·
+S-004 0.50 · S-005 0.57 · **S-006 0.38** · S-007 0.62 · S-008 0.46 · **S-009 0.28** · **S-010 0.41** ·
 S-011 0.94. S-002 is one sentence and has no variance to measure. Three slots sit below the floor. The rubric measures burstiness over the
 piece and range per window, and both pass - but the three are named rather than averaged away. **S-006 is a
 refusal list**, where parallel form is the point and Strunk's rule and the humanize rubric pull in opposite
@@ -717,14 +745,14 @@ directions; the list wins, because a reader scanning five refusals is comparing 
 sentences of which three are kept verbatim** from copy already on the page, and buying variance there means
 rewriting a good line to move a number.
 
-**Punctuation budget, over the shipping copy.** Em dashes **0** (the dummy's one `&mdash;`, in S-004's
+**Punctuation budget, over the shipping copy**. Em dashes **0** (the dummy's one `&mdash;`, in S-004's
 replay line, became a full stop). `not X, but Y` **0**. Exclamation marks **0**. Semicolons **1**, which the
 voice permits. No two consecutive blocks open on the same word, and no word opens three in a row.
 
 🔴 **The triplet count in round 1 was wrong, and the corrected figure is over budget.** Round 1 reported
 **2** three-item lists; counted again with the pattern written down - a sentence carrying two or more commas
 before an *and* or an *or*, then read by eye to drop the four-item lists the pattern also catches - the real
-figure is **6** at 990 words, against a budget of 4. It is over, it is reported as over, and it is not being
+figure is **6** at 991 words, against a budget of 4. It is over, it is reported as over, and it is not being
 averaged away. What it is *not* is the reflex the rubric hunts. Four of the six are inventories of things
 that exist in threes in the product, and a reader can count them: three analytics destinations (S-011),
 three ways the command line opens a browser (S-003), three kinds of file written to disk (S-003), three
@@ -761,14 +789,14 @@ them):
 
 | Slot | S-001 | S-002 | S-003 | S-004 | S-005 | S-006 | S-007 | S-008 | S-009 | S-010 | S-011 | **all** |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **Ships (round 2)** | 64 | 5 | 78 | 149 | 66 | 119 | 153 | 125 | 65 | 115 | 51 | **990** |
+| **Ships (round 2)** | 64 | 5 | 78 | 149 | 67 | 119 | 153 | 125 | 65 | 115 | 51 | **991** |
 | Shipped in round 1 | 89 | 5 | 78 | 147 | 56 | 119 | 164 | 155 | 65 | 115 | 51 | **1,044** |
 | **Was** | 56 | 7 | 59 | 72 | 32 | 72 | 65 | 0 | 48 | 0 | 34 | **445** |
 
-**990 shipping words, up from 445 on the page and down 54 from round 1.** The review's five findings and the
+**991 shipping words, up from 445 on the page and down 53 from round 1.** The review's five findings and the
 hard fail take words out of four slots - S-001 loses 25 net (26 cut, one added back by the merge), S-007
-loses 11 to the cut sentence, S-008 loses 30 across its three cuts - and put ten into S-005, where the run
-summary is now described in full rather than in half. Every one of those numbers is the same tokenizer as
+loses 11 to the cut sentence, S-008 loses 30 across its three cuts - and put eleven into S-005, where the
+run summary is now described in the words the amended table uses rather than in half. Every one of those numbers is the same tokenizer as
 round 1 on the same inclusion rule, which is the only way two rounds can be compared at all: this project
 has already recorded one figure whose **sign** was backwards because two rounds were measured two different
 ways.
@@ -778,15 +806,15 @@ The `Was` column reproduces the dummy's current visible text; summed independent
 slotted. Two numbers, two methods. The difference between them has a stated reason, which is the only honest
 way to report a count.
 
-**Where the +545 went**, since growth on a notice needs justifying rather than admiring: the two new
+**Where the +546 went**, since growth on a notice needs justifying rather than admiring: the two new
 sections S-008 and S-010 are **240** of it, and both are beats row 17 names. S-007 gains **88**, almost all
 of it the stored-facts paragraph the page was missing. S-004 gains **77** by writing four destinations as
-four lines instead of two. S-006 gains **47** for the fifth refusal. That is 452 of 545 in four places, each
+four lines instead of two. S-006 gains **47** for the fifth refusal. That is 452 of 546 in four places, each
 traceable to the row or to a correction listed above. No section runs past 153 words and the page holds six
 sections, which is what *"one page"* can mean on a notice nobody chose to read.
 
-**One thing about that total.** It counts S-011, which is the footer line and appears on all 21 pages rather
-than on this one. **The page alone is 939.**
+**One thing about that total**. It counts S-011, which is the footer line and appears on all 21 pages rather
+than on this one. **The page alone is 940**.
 
 **5. Voice match - confidence and the reason.** **Moderate-to-high**, and the qualifier is not modesty. It
 is high on stance and rhythm: third person for what the tool does throughout, no first-person plural
@@ -804,22 +832,23 @@ that used both was offering a reader two names for one absent thing, and the abs
 subject.
 
 It is **not** high in the sense the word usually implies, and the reason is recorded in the artefact itself:
-**the fingerprint is still `calibrated: false`.** Its twelve specimens were derived from copy already in the
+**the fingerprint is still `calibrated: false`**. Its twelve specimens were derived from copy already in the
 repository rather than from samples the owner chose, so every rhythm figure above is measured against a
 target that has not been blessed. That is the Bible's own open item and not a new one - but on a safety
 surface it is worth saying plainly rather than reporting a number as though it settled the question.
 
 **6. Unsure spots.** Two `NEEDS DECISION` above, verbatim, and **no third one was opened by round 2** - the
-byte-column contradiction is a defect in an approved artefact with a known fix, not a question only the
-owner can answer, so it is a reported finding and this surface still carries zero unanswered decisions.
-**Eight findings reported outside scope**, three of them new: the sign-in table's two missing byte columns,
-the desktop string that carries the same error, and the *"two more things"* count. Four things stated rather
-than guessed:
+byte-column contradiction was a defect in an approved artefact with a known fix, not a question only the
+owner can answer, so it went on the findings list and this surface still carries zero unanswered decisions.
+**Eight findings reported outside scope**, three of them raised this round and **two of them already
+closed**: the sign-in table's missing byte columns and the footer's missing Privacy link, both fixed in the
+dummy. Four things stated rather than guessed:
 
-- 🔴 **The page's prose is now ahead of the page's table, on purpose.** S-005 says a run summary carries two
-  byte figures; the table under S-007's *"in full"* does not list them. That is the honest state until the
-  dummy row lands, and the alternative was to write a sentence small enough for the table to satisfy, which
-  would have made the page true and the promise worthless.
+- ✅ **The page's prose and the page's table now say the same thing about a run summary, and the table moved
+  first.** For part of this round the prose was ahead of it: S-005 named two byte figures and the table
+  under S-007's *"in full"* listed none. The alternative was a sentence small enough for the old table to
+  satisfy, which would have made the page true and the promise worthless. The dummy gained the row instead,
+  and S-005 was then written in the row's own words rather than beside them.
 
 - **S-008's sign-in session line was the least confident sentence here, and is no longer.** It was written
   against the dummy, because `windowsweep-web/src/` held only `db/` when this draft opened. Another agent

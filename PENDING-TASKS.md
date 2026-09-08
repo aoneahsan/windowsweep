@@ -32,7 +32,7 @@ per-section confirmation.
 **3. It runs all six at once.** `elevation.lede` implies choosing ("ask for one"); the screen passes every
 admin id. Either the copy or the screen is wrong, and the dummy decides which.
 
-A number is never reused: the next task is TASK-008.
+A number is never reused: the next task is TASK-011.
 
 ### TASK-005 - the consent notice promises analytics events that do not exist
 
@@ -55,7 +55,7 @@ owns the words, so it changes first either way.
 is a vendor-retention statement with no source in this repository. `desktop-safety` raised it as a
 `NEEDS DECISION` on 2026-09-05 and the decision log records no answer. It needs the owner, not a code change.
 
-A number is never reused: the next task is TASK-008.
+A number is never reused: the next task is TASK-011.
 
 ### TASK-006 - the catalogue's punctuation drifts from the dummy's, tree-wide
 
@@ -72,7 +72,7 @@ that does nothing else. 🔴 **Never sed it** - the engine's own console strings
 so a global replace that reaches `lib/` or `modules/` breaks the ASCII self-test check. Scope the sweep to
 `desktop/src/i18n/locales/` and prove it with the self-test still green.
 
-A number is never reused: the next task is TASK-008.
+A number is never reused: the next task is TASK-011.
 
 ### TASK-007 - `selbar-note` is styled nowhere, and `Picker.tsx` uses it
 
@@ -87,4 +87,50 @@ and is invisible to every gate because unknown CSS classes are not an error anyw
 the dummy first, then the app. And sweep for siblings - `grep` every `className` string in `desktop/src`
 against the selectors that actually exist in the app's CSS. That sweep is the valuable half of this task.
 
-A number is never reused: the next task is TASK-008.
+### TASK-009 - the reclaim map has 28 unlabelled tab stops, and `role="img"` is why
+
+**Decided 2026-09-08, under the agent's design authority; not an owner question.**
+
+`reclaim-map.js` sets `role="img"` on the `<svg>` **and** `tabindex="0" role="button"` with an `aria-label`
+on every tile. `role="img"` makes the subtree **presentational**, so all 28 accessible names are computed and
+then discarded while all 28 tab stops remain. Measured on the rendered page: **28 of the 58 focusable stops
+on Home, 48% of the page, are inside the map** and announce roughly nothing. That is the cost of both
+approaches with the benefit of neither.
+
+**The decision:** the map becomes **one** stop - `role="img"` kept, with its summary `aria-label`, and
+`tabindex="-1"` on the tiles - and **exclusion moves to the table rows**. `ReclaimMapTable` already carries
+the same data as a real `<table>` with the `Idle (days)` column, and the app's own source calls it *"the
+primary accessible representation, not a consolation prize"*. This keeps the drawn encoding for sighted users
+and gives everyone else labelled, ordered controls.
+
+🔴 **Dummy first.** `desktop/design/windowsweep-click-dummy/reclaim-map.js:207-215` is amended with the
+reason written into `desktop/design/README.md` beside it, and only then does the app follow - the table needs
+a per-row toggle it does not have yet, so this is real work and not an attribute change.
+
+**Found while:** closing GATE 4 parity for wave 4b by reading the rendered DOM.
+
+A number is never reused: the next task is TASK-011.
+
+### TASK-010 - the 17px section switches are a pointer problem, and `.btn-sm` is not
+
+**Decided 2026-09-08, under the agent's design authority; not an owner question.**
+
+`.btn-sm` computes to **28px** against the fleet's 44px floor. It is **byte-identical to the dummy's own
+rule**, and every other control class was checked and matches too - so the app implements the approved spec
+exactly and this is not a parity defect.
+
+**The decision on `.btn-sm`: leave it.** 44px is a **touch** floor. This window is desktop-only
+(`minWidth: 760`), mouse and keyboard, with no touch input, and changing it in the app alone would *create* a
+divergence from the dummy.
+
+**The decision on the switches: raise them.** `.switch` measures **17px**, and there are 19 on the Sections
+screen. That is small for a **pointer** target regardless of touch, which is a different argument from the
+one that lets `.btn-sm` stand. Raise the **hit area** rather than the visual size, so the control looks as
+approved and is easier to hit - dummy first, then the app.
+
+**Found while:** the same GATE 4 parity pass.
+
+🔴 **This line said TASK-008 in all FOUR places it appears, and `DONE-008` has existed in
+`docs/DONE-TASKS.md` since 2026-09-08.** Every copy would have handed the next session a number already
+spent - which is the exact precedent the rule cites. All four are corrected. A number is never reused: the
+next task is **TASK-011**.

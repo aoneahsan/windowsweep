@@ -10,9 +10,19 @@
  * 🔴 A bar fills in ONE step, and that is not a shortcut: the engine reports when
  * a section starts and when it ends, never how far through it is. The dummy slides
  * its bars through 12 / 38 / 64 / 90 on a `setInterval` over invented phases
- * (`page-run.js:161-163`), which is prototype animation. Declared as
- * `pending.runProgress` rather than faked, because a bar that crept along while
- * the engine said nothing would be inventing progress.
+ * (`page-run.js:161-163`). A bar that crept along while the engine said nothing
+ * would be inventing progress.
+ *
+ * 🔴 `pending.runProgress` IS RE-CLASSED `prototype`, AND IT STAYS DECLARED -
+ * PERMANENTLY. It is the one declaration on this screen that does not describe
+ * unbuilt work, so it is not a `pending-wave` and no later wave closes it. The
+ * dummy's sliding bar is animation over phases that do not exist, which is
+ * `prototype` under §10a's exemption classes; there is no engine change that would
+ * make it real, because "how far through a section is" is not a question the
+ * engine can answer - it walks a tree it has not finished measuring. Deleting this
+ * sentence would leave a one-step bar with no explanation and read as a defect;
+ * leaving it classed `pending-wave` would promise a wave that is never coming.
+ * Both are wrong, in opposite directions.
  */
 
 import { useTranslation } from 'react-i18next';
@@ -134,7 +144,8 @@ export function RunPerSection({ rows }: { rows: PerSectionRow[] }) {
         ) : (
           rows.map((row) => <Row row={row} key={row.id} />)
         )}
-        {/* The stated gap for the bar that does not creep. */}
+        {/* The permanent `prototype` declaration for the bar that does not creep.
+            Not a gap - a difference from the dummy that will not close. */}
         <p className="t-xs ink-3">{t('pending.runProgress')}</p>
       </div>
     </div>

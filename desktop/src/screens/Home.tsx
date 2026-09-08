@@ -12,23 +12,25 @@
  *   1  window chrome ................... `components/Shell.tsx`
  *   2  the reclaim readout ............. here
  *   3  THE RECLAIM MAP ................. `components/ReclaimMapBand.tsx`
- *   4  drives + developer mode ......... here (drives DECLARED, see below)
+ *   4  drives + developer mode ......... here (`components/HomeDrives.tsx`)
  *   5  the safe run ladder ............. `components/SafeRunLadder.tsx`
  *   6  these need a person ............. `components/NeedsAPerson.tsx`
  *   7  the assurance ................... `components/HomeSafety.tsx`
  *   8  how that is enforced ............ `components/HomeSafety.tsx`
  *   10 the last eight runs ............. `components/LastRuns.tsx`
- *   11 the schedule .................... `components/LastRuns.tsx` (DECLARED)
+ *   11 the schedule .................... `components/LastRuns.tsx`
  *   12 sections needing admin .......... `components/AdminNotice.tsx`
  *   13 what leaves this machine ........ here
  *   14 the status bar .................. `components/Shell.tsx`
  *
- * 🔴 THE DRIVES BAND AND THE CAPACITY RING ARE DECLARED, NOT BUILT -
- * `pending.drives` (pending-wave). The engine's `--json` summary carries no drive
- * and no free-space field at all (`RunSummary` in `lib/cli.ts` has none, and
- * `modules/runner.ps1` emits none), so there is no measured figure to draw. The
- * dummy's own numbers are seeded (`seed.js:142-146`). Getting real ones needs a
- * new engine field or a new Rust command, and both are frozen for this release.
+ * 🔴 THE `pending.drives` DECLARATION IS GONE, because the band and the ring are
+ * built. What it said is still half true and worth keeping: the engine's `--json`
+ * summary carries no drive and no free-space field at all (`RunSummary` in
+ * `lib/cli.ts` has none, and `modules/runner.ps1` emits none). It was the
+ * conclusion that was wrong - the figures do not have to come from the engine.
+ * Windows answers the capacities through `list_drives`, and the reclaimable slice
+ * is attributed from the scan's own target paths, one drive at a time
+ * (`lib/drives.ts`). Nothing here is apportioned or seeded.
  *
  * 🔴 EVERY FIGURE ON THIS PAGE READS THE INCLUDED TARGETS, and there is exactly
  * one exception: the map, which draws the whole scan so an excluded tile stays
@@ -62,6 +64,9 @@ import { HomeDestinations } from '../components/HomeDestinations';
 import { LastRuns } from '../components/LastRuns';
 import { AdminNotice } from '../components/AdminNotice';
 import { DeveloperMode } from '../components/DeveloperMode';
+import { HomeDrives } from '../components/HomeDrives';
+import { CapacityRing } from '../components/CapacityRing';
+import { useDriveRows } from '../lib/drives';
 import type { MapTarget } from '../components/ReclaimMap';
 
 /** The product's one visual metaphor, at the hero only - decoration belongs here,
@@ -139,6 +144,14 @@ export function Home() {
   /* One home for this figure, in lib/reclaim.ts - it was computed here AND in
      Shell.tsx, and both copies read a run's result off a scan's summary. */
   const reclaimable = reclaimableBytes(summary, includedTargets, measured);
+
+  /* 🔴 ONE load for the two places this page draws a disk: the rails in zone 4 and
+     the ring in the hero. Two fetches would let them disagree about the same drive
+     for a frame, which is the shape of every one-figure-several-consumers defect
+     this file already records. The measurement comes from `includedTargets`, so an
+     excluded target stops counting towards its drive exactly as it stops counting
+     towards the hero. */
+  const { rows: driveRows, loading: drivesLoading } = useDriveRows(includedTargets, measured);
 
   /* 🔴 `measured N minutes ago` is a RELATIVE time, so it has to be re-rendered or
      it starts lying the moment it is painted. The dummy can print a fixed 4 because
@@ -391,6 +404,13 @@ export function Home() {
               }
             />
           </div>
+
+          {/* `index.html:65` - the page's only circle, and the last child of the
+              readout. It renders itself away until a scan has measured: its centre
+              is a percentage OF the reclaimable total, which does not exist before
+              one, and the dummy's seed always has data so it owns no words for the
+              unmeasured state. The hero above already says "not measured". */}
+          <CapacityRing rows={driveRows} />
         </div>
       </section>
 
@@ -412,10 +432,7 @@ export function Home() {
             <div className="zone-label">
               <span className="caps">{t('home.drivesTitle')}</span>
             </div>
-            {/* The stated gap that stands where the rails and the ring would be. */}
-            <div className="panel pad">
-              <p className="t-sm ink-3">{t('pending.drives')}</p>
-            </div>
+            <HomeDrives rows={driveRows} loading={drivesLoading} />
 
             {/* Developer mode sits here rather than in a band of its own: it is
                 what decides how much of the ladder beside it there is. */}

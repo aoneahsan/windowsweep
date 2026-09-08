@@ -11,11 +11,15 @@
  * and the History screen were both permanently empty. The store records a run
  * when it finishes; see `state/store.ts`.
  *
- * 🔴 The schedule is DECLARED, not drawn: `pending.schedule` (pending-wave). The
- * engine registers the weekly task itself, but `--install-task` is not in the
- * argument allowlist on the window's Rust side, so this window cannot ask for it
- * and cannot read whether the task exists either. A switch showing "Off" would be
- * asserting something this window does not know.
+ * 🔴 The schedule is DRAWN now, and the `pending.schedule` declaration is gone.
+ * What it said was two things, and both have been answered: `--install-task` is in
+ * the argument allowlist (`src-tauri/src/args.rs`), and the window can read whether
+ * the task exists (`schedule_status`). The second half is the one that mattered -
+ * "a switch showing Off would be asserting something this window does not know" -
+ * so the control now reads Windows rather than a stored preference, and it has a
+ * third state for the case where it genuinely cannot tell. The switch itself is
+ * `components/ScheduleSwitch.tsx`, shared with Settings so the two screens cannot
+ * contradict each other about one Scheduled Task.
  */
 
 import { useMemo } from 'react';
@@ -26,6 +30,7 @@ import { useTranslation } from 'react-i18next';
 
 import { formatBytes, formatRelative } from '../lib/format';
 import type { HistoryEntry } from '../state/store';
+import { ScheduleSwitch } from './ScheduleSwitch';
 
 /* `wire.js:334` - the drawn box, fixed. */
 const W = 320;
@@ -145,9 +150,9 @@ export function LastRuns({ history }: { history: HistoryEntry[] }) {
             <span className="caps">{t('home.scheduleTitle')}</span>
           </div>
           <div className="well pad">
-            <p className="t-sm ink-3">{t('home.scheduleNote')}</p>
-            {/* The stated gap that stands where the switch would be. */}
-            <p className="t-xs ink-3" style={{ marginTop: 'var(--sp-3)' }}>{t('pending.schedule')}</p>
+            {/* `index.html:239-244` - the switch, then its state, then the note. */}
+            <ScheduleSwitch />
+            <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-3)' }}>{t('home.scheduleNote')}</p>
           </div>
         </div>
       </div>

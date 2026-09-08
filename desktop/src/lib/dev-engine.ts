@@ -27,6 +27,8 @@
  */
 
 import type { RunFinished } from './engine';
+import type { DriveInfo } from './drives';
+import type { ScheduleStatus } from './schedule';
 
 const DEV_MARKER = 'windowsweep-dev-fallback-not-the-real-engine';
 
@@ -213,4 +215,41 @@ export async function devRun(
 
   if (dryRun || scan) emit('clean:log', 'this was a rehearsal - nothing was written');
   return { run_id: runId, exit_code: 0, stdout: JSON.stringify(summary), cancelled: false };
+}
+
+/**
+ * Three fixed drives, so the Drives band and the capacity ring can be compared
+ * against the click dummy in an ordinary browser.
+ *
+ * 🔴 The FIGURES are the dummy's own seed (`seed.js:142-146`), because this
+ * fixture exists to make a parity capture possible and a capture is only
+ * meaningful against the page it is compared with. The SHAPE is the Rust
+ * command's, field for field, so a rename there breaks this too.
+ *
+ * ⚠️ It reports no reclaimable slice, and cannot: that figure is attributed from
+ * the scan's own target paths (`drives.ts` -> `driveRows`), and this stand-in's
+ * targets live under `C:\example\...`, so the whole of it lands on C: exactly as
+ * the real derivation would put it on a real disk. Nothing here invents a share.
+ */
+export function devDrives(): DriveInfo[] {
+  const gb = 1024 ** 3;
+  return [
+    { letter: 'C', label: 'Windows', total_bytes: Math.round(272.9 * gb), free_bytes: Math.round(21.0 * gb) },
+    { letter: 'D', label: 'Data', total_bytes: Math.round(203.4 * gb), free_bytes: Math.round(55.8 * gb) },
+    { letter: 'E', label: '', total_bytes: Math.round(476.4 * gb), free_bytes: Math.round(188.8 * gb) },
+  ];
+}
+
+/**
+ * The task, absent.
+ *
+ * 🔴 `absent` rather than `installed`, deliberately: a browser has no Task
+ * Scheduler, and a stand-in that reported a registered task would be claiming a
+ * weekly deletion is set up on the developer's machine. `unknown` would be more
+ * literally true, but it renders the state this control shows when something went
+ * wrong - and the parity capture needs the ordinary off state, which is the one
+ * the dummy draws.
+ */
+export function devScheduleStatus(): ScheduleStatus {
+  return { state: 'absent', task_name: 'windowsweep weekly safe cleanup' };
 }

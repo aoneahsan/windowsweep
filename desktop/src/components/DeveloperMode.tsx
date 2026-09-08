@@ -14,18 +14,34 @@
  * thing from the other side: with developer mode on, "only files idle $Days+ days
  * go".
  *
- * 🔴 "HELD BACK RIGHT NOW" IS DECLARED, NOT BUILT - `pending.heldBack`
- * (pending-wave). `lib/scan.ps1:60-65` sizes each target with
- * `Get-DirectoryBytes`, which is its size ON DISK; the scan then prints its own
- * caveat, "These are sizes on disk, not what a run would delete: the idle gate
- * keeps recently used files". Nothing in the `--json` summary reports what the
- * gate kept, so the dummy's `0 B` and its "N caches" count have no measured
- * source here. The dummy's own figures are seeded (`seed.js`).
+ * 🔴 "HELD BACK RIGHT NOW" IS BUILT, and the `pending.heldBack` declaration that
+ * stood here is gone. It said the figure had "no measured source", and the premise
+ * was right while the conclusion was not: `lib/scan.ps1:60-65` does size each
+ * target ON DISK, and the scan prints its own caveat saying so - "These are sizes
+ * on disk, not what a run would delete: the idle gate keeps recently used files".
+ * No single field reports what the gate kept. The DIFFERENCE between two fields
+ * does: the safe-batch scan subset minus a dry-run's `estimated_bytes`, which is
+ * what that run would actually delete with the gate applied. So the figure appears
+ * once a dry-run has run and reads "not measured" until then - see
+ * `lib/reclaim.ts` -> `heldBackBytes`, which also records the four guards that
+ * keep the subtraction like-for-like.
+ *
+ * 🔴 THE DUMMY'S COUNT SUB-LINE IS DECLINED - "N caches used in the last M days".
+ * The bytes above it come from subtracting two totals, which yields a number and
+ * no set, so there is nothing to count. The dummy derives both from one array
+ * (`db.js` -> `heldByDeveloperMode`) and this app cannot: that array filters whole
+ * targets by idle age, while the engine's gate is per FILE inside a target
+ * (`lib/actions.ps1:210`). Printing a count from the target-level rule beside a
+ * byte figure from the subtraction would read as "these N caches account for those
+ * bytes" when the two answer different questions. Reported for the dummy rather
+ * than reworded here.
  */
 
 import { useTranslation } from 'react-i18next';
 
-import { MAX_IDLE_DAYS, MIN_IDLE_DAYS } from '../state/store';
+import { formatBytes } from '../lib/format';
+import { heldBackBytes } from '../lib/reclaim';
+import { MAX_IDLE_DAYS, MIN_IDLE_DAYS, useIncludedScanTargets, useStore } from '../state/store';
 
 export function DeveloperMode({
   developer,
@@ -39,6 +55,15 @@ export function DeveloperMode({
   onIdleDays: (days: number) => void;
 }) {
   const { t } = useTranslation();
+  /* Read here rather than threaded through Home, which is already at the file
+     ceiling - and this is the only consumer of the figure, so there is no second
+     copy to keep in step. */
+  const summary = useStore((s) => s.summary);
+  const catalogue = useStore((s) => s.catalogue);
+  const scannedAt = useStore((s) => s.scannedAt);
+  const includedTargets = useIncludedScanTargets();
+  const heldBack = heldBackBytes(summary, includedTargets, catalogue, developer, scannedAt !== null);
+
   return (
     <div className="panel pad">
       <div style={{ display: 'flex', gap: 'var(--sp-3)', alignItems: 'flex-start' }}>
@@ -70,15 +95,22 @@ export function DeveloperMode({
       >
         <div style={{ flex: '1 1 14rem' }}>
           <p className="caps ink-3">{t('home.heldBackTitle')}</p>
-          {/* The stated gap that stands where the figure and its count would be. */}
-          <p className="t-xs ink-3">{t('pending.heldBack')}</p>
+          {/* `index.html:130` - the dummy's `.num.t-lg.wide` slot. 🔴 `not
+              measured` is this app's own honest state and the word Home's hero and
+              the ladder already use for it: the two measurements this figure needs
+              are a scan and a DRY-RUN, and a person who has only scanned has half
+              of the pair. A zero here would say the gate is holding nothing back,
+              which is a claim nothing has checked. */}
+          <p className="num t-lg wide">
+            {heldBack === null ? t('home.notMeasured') : formatBytes(heldBack)}
+          </p>
         </div>
 
         <div style={{ flex: '1 1 11rem', minWidth: '11rem' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--sp-2)' }}>
             <label className="caps ink-3" htmlFor="idle-window">{t('home.idleWindow')}</label>
             {/* The value the slider is at. The dummy prints this number inside the
-                held-back sentence beside it; that sentence is declared away here,
+                count sentence beside it, which this app declines (see the header),
                 so the control carries its own reading rather than moving in
                 silence. */}
             <span className="num t-sm wide">{t('home.idleWindowDays', { count: idleDays })}</span>

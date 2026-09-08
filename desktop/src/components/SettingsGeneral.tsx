@@ -43,6 +43,7 @@ import {
   MIN_TEMP_DAYS, MAX_TEMP_DAYS,
   MIN_LARGE_FILE_MB, MAX_LARGE_FILE_MB,
 } from '../state/store';
+import { ScheduleSwitch } from './ScheduleSwitch';
 
 /** The dummy's `row()` - text on the left, one control on the right. */
 function SettingRow({
@@ -186,32 +187,24 @@ export function SettingsGeneral() {
         }
       />
 
-      {/* 🔴 DISABLED AND DECLARED, not absent. The engine's own `--install-task`
-          reached the Rust allowlist on 2026-09-08, so the flag can now be passed -
-          but switching this on would register a real Windows Scheduled Task, and
-          three things are still missing before that is honest: nothing can read
-          back whether the task exists, so a switch could sit at "on" over a task a
-          person deleted in Task Scheduler; the dummy carries no sentence for a
-          refusal; and Home's own schedule band still declares the gap, so enabling
-          only this one would leave the two screens contradicting each other. A
-          declared gap is correct; a control that looks live and is not is the
-          worse of the two. */}
+      {/* 🔴 LIVE, and the three things that had to be true before it could be are
+          now all true. The note that stood here named them: nothing could read back
+          whether the task exists (`schedule_status` does, and it can answer "could
+          not tell" rather than guessing "off"); the dummy carried no sentence for a
+          refusal (the engine's own words are shown, verbatim, as data); and Home's
+          schedule band still declared the gap (it now renders THIS component, so
+          one status drives both screens and they cannot contradict each other).
+
+          🔴 The remaining trap is not in this file: `--install-task` makes the
+          engine ASK, and this window spawns PowerShell with a null stdin - so the
+          `--yes` in `scheduleArgs` is what stops it answering its own question
+          "no" and exiting 0 having done nothing. */}
       <SettingRow
         title={t('settings.scheduleTitle')}
         description={t('settings.scheduleDesc')}
         consequence={t('settings.scheduleConseq')}
-        control={
-          <button
-            className="switch"
-            type="button"
-            role="switch"
-            aria-checked={false}
-            aria-label={t('settings.scheduleTitle')}
-            disabled
-          />
-        }
+        control={<ScheduleSwitch />}
       />
-      <p className="t-xs ink-3">{t('pending.schedule')}</p>
     </div>
   );
 }

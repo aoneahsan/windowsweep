@@ -309,22 +309,88 @@ export function commandLine(args: string[]): string {
 /**
  * An interactive section, answered in advance by a person who picked the rows.
  * The selection travels as a file of paths rather than as indexes - see
- * `buildSelectFile` for why.
+ * `writeSelectFile` above for why.
+ *
+ * 🔴 EVERY FIELD IS REQUIRED, and the shape is an object rather than four
+ * positional arguments for the reason `safeBatchArgs` already records: a call site
+ * that CAN omit a flag is a call site that will, and here the omissions are
+ * `--permanent` (the difference between the Recycle Bin and no undo) and the
+ * exclusions (a folder a person marked kept). Four positional parameters, two of
+ * them booleans, also transpose silently. TypeScript refusing the call is the only
+ * guard that holds, because nothing at runtime can tell a deliberate `false` from
+ * a forgotten one.
+ *
+ * 🔴 NO `--yes`. `--yes` never answers an interactive section by design
+ * (`lib/ui.ps1` -> `Read-MultiSelect` passes `-NoAutoYes` from those pickers), and
+ * it is not needed: matching the select file marks the choice as scripted
+ * (`LastSelectionScripted`), and the confirmation that follows is the one prompt
+ * `-ScriptedOk` answers. So the person's own selection is what confirms the
+ * deletion, which is exactly the claim the Picker screen makes.
  */
-export function selectionArgs(
-  selectFilePath: string,
-  sections: number[],
-  developer: boolean,
-  excludedPaths: readonly string[],
-): string[] {
-  return [
+export function selectionArgs(options: {
+  selectFilePath: string;
+  sections: number[];
+  /**
+   * The segmented control on the Picker: `false` sends what it can to the Recycle
+   * Bin, `true` passes `--permanent`.
+   *
+   * ⚠️ It governs the `recycle`-tier sections only - 18, 19 and 23. Section 17 is
+   * tier `rebuilds` and removes build artefacts through the chokepoint outright,
+   * with or without this flag (`modules/projects.ps1:157` calls `Remove-PathSafe`
+   * directly, never `Send-ToRecycleBin`). The engine's own help was corrected to
+   * "18, 19 and 23" for the same reason.
+   */
+  permanent: boolean;
+  excludedPaths: readonly string[];
+} & RunPreferences): string[] {
+  const args = [
     '--only',
-    sections.join(','),
+    options.sections.join(','),
     '--select-file',
-    selectFilePath,
-    developer ? '--developer' : '--not-developer',
-    ...excludeArgs(excludedPaths),
+    options.selectFilePath,
+    options.developer ? '--developer' : '--not-developer',
   ];
+  /* 🔴 THE THREE THRESHOLDS ARE PASSED HERE TOO, and leaving them out is not the
+     harmless omission it looks like. The engine does not act on the file's paths
+     directly: it re-derives each section's candidate list on THIS run and matches
+     the file's lines against it (`lib/ui.ps1` -> `Resolve-SelectedPaths`). So the
+     thresholds decide what is offered, and a run that used different ones would
+     offer a different list - a picked row would match nothing and would silently
+     not be deleted, while the screen had shown it ticked.
+     Section 19 is the concrete case: `--large-file-mb` is what makes a file large
+     enough to be offered, the Settings screen can change it, and section 19 is one
+     of the four this screen exists for. Section 17 is developer-gated, so `--days`
+     decides its list the same way. `--temp-days` reaches no interactive section and
+     is inert here - it is passed for the reason `safeBatchArgs` records, so the
+     command line on screen is the whole invocation and no future call site has to
+     rediscover which of the three matter. */
+  args.push('--days', String(options.idleDays));
+  args.push('--temp-days', String(options.tempDays));
+  args.push('--large-file-mb', String(options.largeFileMb));
+  if (options.permanent) args.push('--permanent');
+  args.push(...excludeArgs(options.excludedPaths));
+  return args;
+}
+
+/**
+ * Register or remove the weekly Scheduled Task.
+ *
+ * 🔴 `--yes` IS REQUIRED HERE, and it is the whole reason this is a builder rather
+ * than a literal at the call site. `Install-WeeklyTask` asks
+ * `Confirm-Ui -Prompt 'Register this task for your user account?'`
+ * (`modules/release_helpers.ps1:350`), and this window spawns PowerShell with a
+ * NULL stdin - so without `--yes` the engine takes the non-interactive branch,
+ * answers its own question **no**, and exits 0 having done nothing. A switch that
+ * reported success over a task that was never created is precisely the failure
+ * that kept this control disabled.
+ *
+ * 🔴 Neither mode produces a `--json` summary: both end in their own function and
+ * never reach `Write-JsonSummary`. That is handled once, by name, in
+ * `src-tauri/src/args.rs` -> `NO_SUMMARY_FLAGS`; without it the task is registered
+ * and the window still reports the engine as broken.
+ */
+export function scheduleArgs(install: boolean): string[] {
+  return [install ? '--install-task' : '--uninstall-task', '--yes'];
 }
 
 /**

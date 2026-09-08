@@ -11,11 +11,21 @@
  * events Rust was already routing to `clean:progress` had nowhere to render, and
  * the screen could only be reached by starting a run somewhere else.
  *
- * 🔴 CANCEL IS DECLARED, NOT WIRED - `pending.runCancel` (pending-wave). Stopping
- * a run in flight means signalling the engine process from the Rust side, and this
- * build carries no command that does it. The control keeps the dummy's position
- * and is disabled, with the reason beside it: a button that looked as though it
- * had cancelled and had not is the worse of the two.
+ * 🔴 CANCEL IS WIRED, and the `pending.runCancel` declaration is gone. `cancel_run`
+ * signals the engine's own child process (`src-tauri/src/cancel.rs`); the control
+ * and its reasoning are in `components/RunCancel.tsx`, which is also where the one
+ * dummy string this change declines is recorded and why.
+ *
+ * 🔴 CANCELLED IS NOT STOPPED, and the dummy is explicit about the difference:
+ * "Cancelled is a different thing because a person chose it." So a cancelled run
+ * does NOT take the failed branch, even though a killed PowerShell reports the same
+ * non-zero exit code as one that fell over - the flag comes back from the Rust
+ * side, which is the only place the two can be told apart.
+ *
+ * 🔴 AND A CANCELLED REAL RUN SPENDS ITS MEASUREMENTS. It deleted some of what the
+ * last scan measured and there is no summary saying which, so the scan is dropped
+ * and the hero reads "not measured" until something measures again. Keeping those
+ * rows would leave the window offering to reclaim bytes that are already gone.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -31,6 +41,7 @@ import { RunPerSection, perSectionRows } from '../components/RunPerSection';
 import { ReclaimMap } from '../components/ReclaimMap';
 import { drainMapTargets, reclaimableBytes, toMapTargets } from '../lib/reclaim';
 import { PrimaryButton } from '../components/PrimaryButton';
+import { RunCancel } from '../components/RunCancel';
 
 export function RunScreen() {
   const { t } = useTranslation();
@@ -48,6 +59,7 @@ export function RunScreen() {
   const developer = useStore((s) => s.developer);
   const prefs = useRunPreferences();
   const excludedPaths = useStore((s) => s.excludedPaths);
+  const runId = useStore((s) => s.runId);
   const startRun = useStore((s) => s.startRun);
   const appendLog = useStore((s) => s.appendLog);
   const applyProgress = useStore((s) => s.applyProgress);
@@ -55,6 +67,10 @@ export function RunScreen() {
   const setScanTargets = useStore((s) => s.setScanTargets);
 
   const [starting, setStarting] = useState(false);
+  /* 🔴 Local, and transient by design. It is the outcome of the run in this
+     window, not a shareable state - a URL carrying `cancelled` would restore a
+     word about a run that is not running. It is cleared by the next Start. */
+  const [cancelled, setCancelled] = useState(false);
 
   const tailRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
@@ -97,11 +113,21 @@ export function RunScreen() {
     0,
   );
   const measured = reclaimableBytes(summary, scanTargets, scannedAt !== null);
-  const heroBytes = isCleanupRun(summary) && summary
-    ? (summary.dry_run ? summary.estimated_bytes : summary.freed_bytes)
-    : phase === 'running'
-      ? freedSoFar
-      : measured;
+  /* 🔴 A CANCELLED RUN'S HERO IS THE SUM OF THE SECTIONS THE ENGINE SAID IT
+     FINISHED, and `not measured` when that sum is zero.
+     Those `##windowsweep ... event=end freed_bytes=N` lines are complete facts:
+     the section ran to its end and reported what it freed. The section that was
+     cut off mid-way reported nothing and may still have deleted files, so the true
+     total is at least this and possibly more. At zero the honest answer is not
+     `0 B` - which asserts nothing was reclaimed, and the engine's own log in the
+     run folder may say otherwise - it is that this window did not measure it. */
+  const heroBytes = cancelled
+    ? (freedSoFar > 0 ? freedSoFar : null)
+    : isCleanupRun(summary) && summary
+      ? (summary.dry_run ? summary.estimated_bytes : summary.freed_bytes)
+      : phase === 'running'
+        ? freedSoFar
+        : measured;
 
   /* Elapsed from the engine's own first and last line rather than a stopwatch
      this screen keeps: the log is what the run actually did, and it stops growing
@@ -151,6 +177,7 @@ export function RunScreen() {
   const onStart = useCallback(() => {
     if (queue.length === 0) return;
     setStarting(true);
+    setCancelled(false);
     const id = newRunId();
     startRun(id);
     void run(safeBatchArgs({ dryRun: false, ...prefs, excludedPaths }), id, {
@@ -165,9 +192,20 @@ export function RunScreen() {
       },
     })
       .then((r) => {
-        finishRun(r.summary, r.exitCode > 1);
-        /* Those targets have just been deleted; redrawing them would be a lie. */
-        if (r.summary && !r.summary.dry_run) setScanTargets([]);
+        setCancelled(r.cancelled);
+        /* 🔴 A CANCELLED RUN IS NOT A FAILED ONE. A killed PowerShell reports the
+           same non-zero exit code as one that fell over, so the code alone cannot
+           tell them apart and the flag from the Rust side is the only thing that
+           can. Without this the screen would say "The run stopped before it
+           finished" over somebody's own deliberate choice. */
+        finishRun(r.summary, r.exitCode > 1 && !r.cancelled);
+        /* Those targets have just been deleted; redrawing them would be a lie.
+           🔴 A cancelled run has no summary at all - it never reached the line that
+           writes one - and it is exactly the case where some of the measured
+           targets are gone and nothing says which. So the measurements are dropped
+           on that path too, and the hero falls back to "not measured" rather than
+           promising bytes that may already have been reclaimed. */
+        if (r.cancelled || (r.summary && !r.summary.dry_run)) setScanTargets([]);
       })
       .catch((e: unknown) => {
         appendLog(e instanceof Error ? e.message : String(e));
@@ -189,14 +227,21 @@ export function RunScreen() {
                 "finished" were the same branch. The dummy's eyebrow for this state
                 is `Ready to run`, and the heading is the sentence the dummy already
                 uses for it. */}
+            {/* 🔴 `cancelled` is tested BEFORE `notRunYet`. A cancelled run leaves
+                no readable summary, so `isCleanupRun` is false and the eyebrow
+                would otherwise read `Ready to run` over a run somebody had just
+                stopped - the same ordering trap a `--scan` summary already sprang
+                on this block once. */}
             <p className="caps ink-3">
               {phase === 'running'
                 ? t('run.eyebrowRunning')
                 : phase === 'failed'
                   ? t('run.eyebrowFailed')
-                  : notRunYet
-                    ? t('run.eyebrowReady')
-                    : t('run.eyebrowDone')}
+                  : cancelled
+                    ? t('run.eyebrowCancelled')
+                    : notRunYet
+                      ? t('run.eyebrowReady')
+                      : t('run.eyebrowDone')}
             </p>
             {/* 🔴 The dummy's hero, which this screen did not have (D-22). The
                 number is `.hero-num` with the unit in its own `.unit` span - the
@@ -269,6 +314,16 @@ export function RunScreen() {
                 was written into run.html first (reachable as run.html?failed=1) and these
                 are its words. */}
             {phase === 'failed' ? <p className="lede">{t('run.failedNote')}</p> : null}
+            {/* 🔴 SHOWN ONLY WHEN A SECTION ACTUALLY FINISHED. The sentence is the
+                dummy's, and it is true of the sections the engine reported: that
+                much HAD already been freed. With nothing reported it would read
+                "0 B had already been freed", which is a claim - the run was killed
+                mid-section and files may well have gone. Then the only thing said
+                is the Rust side's own reason next to the button, which claims no
+                quantity at all. */}
+            {cancelled && freedSoFar > 0 ? (
+              <p className="lede">{t('run.cancelledNote', { amount: formatBytes(freedSoFar) })}</p>
+            ) : null}
             {summary?.dry_run ? <p className="lede">{t('run.dryRunNote')}</p> : null}
             {running && catalogue ? (
               <p className="t-sm ink-3">
@@ -289,9 +344,7 @@ export function RunScreen() {
               alignItems: 'center',
             }}
           >
-            <button className="btn" type="button" disabled>
-              <span className="btn-label">{t('run.cancel')}</span>
-            </button>
+            <RunCancel runId={runId} running={phase === 'running'} />
             <PrimaryButton
               control="run.start"
               size="lg"
@@ -301,10 +354,6 @@ export function RunScreen() {
               label={t('run.start')}
             />
           </div>
-        </div>
-        {/* The stated gap that goes with the disabled control above. */}
-        <div className="wrap">
-          <p className="t-xs ink-3">{t('pending.runCancel')}</p>
         </div>
       </section>
 

@@ -19,8 +19,8 @@
  * disagreement.
  */
 
-import { idleDaysOf, type ProgressEvent, type RunSummary, type ScanTarget } from './cli';
-import { type Catalogue, sectionById } from './catalogue';
+import { idleDaysOf, isCleanupRun, type ProgressEvent, type RunSummary, type ScanTarget } from './cli';
+import { type Catalogue, safeRunSections, sectionById } from './catalogue';
 import { isExcluded } from './exclusions';
 import type { MapTarget } from '../components/ReclaimMap';
 
@@ -132,4 +132,74 @@ export function toMapTargets(
  */
 export function drainMapTargets(all: MapTarget[], progress: Record<number, ProgressEvent>): MapTarget[] {
   return all.filter((target) => progress[target.section]?.event !== 'end');
+}
+
+/**
+ * How much the idle gate is holding back, or `null` when nothing has measured it.
+ *
+ * 🔴 TWO MEASUREMENTS OF DIFFERENT QUESTIONS, AND THE ANSWER IS THE GAP BETWEEN
+ * THEM. A `--scan` reports each target's size ON DISK - `lib/scan.ps1:60-65` sizes
+ * it with `Get-DirectoryBytes`, and the scan prints its own caveat saying so:
+ * "These are sizes on disk, not what a run would delete: the idle gate keeps
+ * recently used files". A `--dry-run` reports `estimated_bytes`, which is what the
+ * run WOULD delete with that gate applied. Neither number alone says what the gate
+ * kept. Subtracting them does, and it is the only honest source for this figure -
+ * which is why it reads "not measured" until a dry-run has actually run.
+ *
+ * 🔴 DO NOT REPLACE THIS WITH A PER-TARGET IDLE FILTER. The click dummy computes
+ * its own held-back figure that way (`db.js` -> `heldByDeveloperMode`: every
+ * dev-gated target whose `idle < idleDays`), and now that the 1.2.0 engine reports
+ * `targets[].newest_write_utc` the app could copy it - which is exactly the trap.
+ * The engine's gate is per FILE inside a target (`lib/actions.ps1:210`, "only
+ * files idle $Days+ days go"), so a folder whose newest file is three days old
+ * still gives up everything older inside it. A target-level filter would count the
+ * whole folder as held and overstate this figure, plausibly, with no way to notice.
+ *
+ * The four guards below are what make the subtraction like-for-like. Each one, if
+ * dropped, yields a number that looks reasonable and is not.
+ */
+export function heldBackBytes(
+  summary: RunSummary | null,
+  scanTargets: ScanTarget[],
+  catalogue: Catalogue | null,
+  developer: boolean,
+  /** `scannedAt !== null` - the same separate fact every other figure here reads. */
+  measured: boolean,
+): number | null {
+  if (!measured || !catalogue || !summary || !isCleanupRun(summary)) return null;
+
+  /* 1. It must be a REHEARSAL. A real run's `estimated_bytes` is 0 and its
+        `freed_bytes` is what went - subtracting either would print the whole
+        subset as "held back" the moment a run finished. */
+  if (!summary.dry_run) return null;
+
+  /* 2. It must have covered the WHOLE safe batch. `safeBatchArgs` passes `--all`
+        with no sections and `--only` with them, and the engine reports which it
+        was in `mode`. A dry-run of two sections from the Sections screen produces
+        a small estimate that, subtracted from the whole subset, reads as an
+        enormous amount held back. */
+  if (summary.mode !== 'all') return null;
+
+  /* 3. Developer mode must not have moved since. The idle gate only applies with
+        developer mode ON (`lib/actions.ps1:210`), so an estimate taken with it off
+        and read with it on reports a gap that is really a change of setting. The
+        engine sends this back as a boolean or its own word, so both are read. */
+  const ranAsDeveloper =
+    typeof summary.developer === 'boolean' ? summary.developer : summary.developer === 'true';
+  if (ranAsDeveloper !== developer) return null;
+
+  /* 4. The subset is the SAFE BATCH, because that is what the rehearsal covered -
+        and the included targets only, because the rehearsal carried the same
+        `--exclude-path` flags. Comparing the whole scan against a safe-batch
+        estimate would count every deep and interactive section as held back. */
+  const safe = new Set(safeRunSections(catalogue, developer).map((section) => section.id));
+  const subset = scanTargets
+    .filter((target) => safe.has(target.section))
+    .reduce((total, target) => total + target.bytes, 0);
+
+  /* Clamped at zero. The two figures come from two separate walks of a live disk,
+     so an estimate can legitimately exceed a slightly older scan - and a negative
+     "held back" is not a smaller number, it is a nonsense one. Zero is the honest
+     floor: the gate is demonstrably holding nothing back that this pair can see. */
+  return Math.max(0, subset - summary.estimated_bytes);
 }

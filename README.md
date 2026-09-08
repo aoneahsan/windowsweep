@@ -126,7 +126,7 @@ reclaims disk space, nothing else.
 - **Running-app guard** - an open browser, editor or app keeps its caches; the tool tells you which to close.
 - **Session reports** - schema-versioned JSON, exportable to Markdown or a self-contained HTML page, plus
   `--json` for scripts.
-- **Self-test** - 151 checks prove the guards on your machine with a real junction, a 445-character path and
+- **Self-test** - 156 checks prove the guards on your machine with a real junction, a 445-character path and
   a dry-run fixture before you trust it.
 - **Offline by design** - the command-line tool makes zero network calls: no telemetry, no update check.
   Self-test check [9] fails the build on an HTTP or socket call in the source. Crash bundles stay on disk.

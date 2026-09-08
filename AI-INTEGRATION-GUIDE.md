@@ -71,7 +71,7 @@ choice, and says so.
 ## The `--json` line
 
 ```json
-{"tool":"windowsweep","version":"1.1.0","mode":"all","dry_run":false,"elevated":false,"developer":true,
+{"tool":"windowsweep","version":"1.2.0","mode":"all","dry_run":false,"elevated":false,"developer":true,
  "freed_bytes":0,"estimated_bytes":0,
  "sections":[{"section":1,"status":"ran","freed_bytes":0}],
  "candidates":[],"targets":[],

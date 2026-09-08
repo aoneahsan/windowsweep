@@ -589,6 +589,41 @@ all seven existing ones were at the two-project free-tier limit):
   `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` are deliberately kept out of release builds and the
   local `.env` until owner row 15 lands - an app advertising sign-in it cannot complete is worse than one
   that says the feature is unconfigured, which is what `configuredFeatures()` makes it do today
+  (re-probed 2026-09-08: still `false`)
+
+### The marketing site's tables, applied 2026-09-08
+
+Five forward-only migrations, authored in Drizzle at `desktop/src/db/schema/site.ts` and applied with
+`supabase db push`. The schema's ONE home stays the **desktop** repo (owner decision P8-D2); the site reads
+generated types at `windowsweep-web/src/db/types.ts`, which is **generated, never authored** -
+`supabase gen types typescript --linked --schema public` from `../windowsweep/desktop`, re-run after every
+migration.
+
+- `profiles`, `contact_requests`, `admin_audit`. RLS on all three, 8 policies, 4 triggers, column-scoped
+  grants. `supabase/rollbacks/` exists beside the migrations and is **never applied automatically**.
+- 🔴 **`platform_role` is in NO grant, for any role.** It changes only out of band, by rule. The two fixed
+  admin emails are stamped `superadmin` by the `auth.users` trigger, not by a migration touching the table.
+- 🔴 **The generated types are wider than the grants**, because they come from the *schema*. `Insert`/`Update`
+  expose `platform_role` and `email` as writable; a write to either typechecks and then fails `403 42501`,
+  and the message names the **table** rather than the column, so it reads like a broken policy when the
+  policy is right. The narrowing lives in the site's data layer (`windowsweep-web/PENDING-TASKS.md`
+  TASK-001), and **`.upsert()` is banned on these tables** - PostgREST builds `ON CONFLICT DO UPDATE SET`
+  from every payload key and Postgres checks the privilege at plan time, so a column-scoped UPDATE grant
+  refuses the write even when nothing conflicts.
+- Live constraints the UI must mirror rather than discover: contact requests are rate-limited to **5 per hour
+  per user**, raised as `429` with SQLSTATE `PT429`; `message` is 10-4000 characters and `subject` <= 120,
+  and `NOT NULL` is what makes those CHECKs bite, because a CHECK evaluating to NULL passes.
+- 🔴 **`ALTER DEFAULT PRIVILEGES ... REVOKE EXECUTE ON FUNCTIONS FROM public, anon, authenticated,
+  service_role` has NO EFFECT on this project.** A `pg_default_acl` row granted by `supabase_admin` covers
+  the same `(schema, objtype)` and outranks ours, so functions created afterwards are born with
+  `proacl = NULL`, which is EXECUTE to PUBLIC. Confirmed three ways. The only control that holds is an
+  explicit **per-function** `revoke`, in the same migration that creates the function, and the only proof is
+  that function's own `proacl`. Recorded fleet-wide in `~/.claude/rules-detail/data-fetch-budget.md`.
+- Verified from the catalogues and by live `anon` probes rather than from migration text: `pg_policies` shows
+  all 8 policies with `USING`/`WITH CHECK` intact and none naming `anon`; `has_table_privilege` shows
+  TRUNCATE and MAINTAIN false for all three roles on all five tables; five `anon` calls over PostgREST return
+  `401 42501`, a refusal rather than an empty result that would have passed vacuously against empty tables.
+  Row counts are 0/0/0/0 - the probe run left nothing behind.
 
 ## Constraints and non-goals
 - Must: honour `--dry-run` in every destructive helper and external command; route every deletion through

@@ -61,6 +61,10 @@ Get-ChildItem -Path "$($P.L)\*\EBWebView" -Directory -ErrorAction SilentlyContin
 if (Get-Command conda -ErrorAction SilentlyContinue) { 'conda present: ' + (Get-Command conda).Source } else { 'conda: not installed' }
 ```
 
+| 26 | Run the desktop app and confirm the weekly Scheduled Task really registers and removes (`--install-task --yes`), then check Task Scheduler for **"windowsweep weekly safe cleanup"** | writes a real Scheduled Task on your machine, which no agent may create | tracker P6.pending-waves | Not started |
+| 27 | GATE 4 parity capture for the four new desktop surfaces - Home drives and ring, Run cancel, Settings schedule, Picker Remove - at 1440 and 760, light and dark. 🔴 Read text with `textContent`, never `innerText`: the separators are a middot with DOUBLE spaces and `innerText` collapses them, so a single-spaced app would score as passing | needs the run-to-verify grant and the automation Chrome | tracker P6.pending-waves | Not started |
+| 28 | Cancel a real safe run, then read that run folder's log and check the figure the window showed against what the engine recorded. 🔴 The window quotes only the sum over sections the engine reported FINISHED, so the true total is greater than or equal to it - the log is the only place the difference is visible | cancels a live deletion on your disk | tracker P6.pending-waves | Not started |
+
 ## Completed
 
 | # | Task | Completed | Evidence |

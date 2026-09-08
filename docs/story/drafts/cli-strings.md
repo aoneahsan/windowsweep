@@ -896,6 +896,14 @@ Session summary
 
 **Change:** none. Two counts, and the skipped one is not hidden.
 
+🔴 **One qualification added 2026-09-08, because the label names one of three outcomes.**
+`modules/runner.ps1:189` counts every step whose status is not `ran` or `dry-run`, so **`skipped` folds in
+`refused` and `failed` as well**. The label is kept anyway, deliberately: the sibling surface's S-013 aligned
+the exported report to this exact wording on purpose, and renaming both to something like
+`run / not run` costs two surfaces and a stored artefact's vocabulary to buy a word. But the fact belongs
+next to the slot rather than in a finding nobody reads at apply time - a reader who sees `9 / 2` after a run
+that refused one section and failed another has been told the truth in a form that hides which.
+
 ### C-092 · `modules/runner.ps1:191` · the log row
 ```
   Log:                     C:\Users\you\.windowsweep\logs\2026-09-07_101533-12044.log

@@ -5,32 +5,24 @@
 
 ## The chokepoint
 
-Every deletion passes through one function, `Remove-PathSafe` (or `Send-ToRecycleBin` for personal files),
-with a declared target root. It refuses, in order:
+Every file and folder windowsweep removes with its own code passes through one function, `Remove-PathSafe` (or `Send-ToRecycleBin` for personal files), with a declared target root. It refuses, in order:
 
-1. paths with `..` segments, UNC paths, drive roots;
-2. every drive root, plus Windows, `System32`, `SysWOW64`, Program Files, Program Files (x86), ProgramData,
-   `C:\Users`, `C:\Users\Default`, `C:\Users\Public`, your profile root and the three AppData roots - fifteen
-   declared entries, fourteen of them distinct;
-3. every protected subtree, pattern and file name listed below - **66 subtrees, 50 patterns and 13 file
-   names**, with **two declared exceptions**: `%LOCALAPPDATA%\Android\Sdk\.temp` and `.downloadIntermediates`,
-   which are regenerable caches that happen to sit inside a protected subtree. They are tested before the
-   subtree list, so they are a carve-out rather than an oversight;
-4. any path that does not lie strictly inside the target root the calling section declared;
-5. the tool's own data folder.
+1. paths with `..` segments, UNC paths and drive roots;
+2. fifteen declared roots: Windows, System32, SysWOW64, both Program Files folders, ProgramData, `C:\Users` with its Default and Public profiles, your profile root, its AppData folder and the Roaming, Local and LocalLow folders inside it;
+3. 66 protected subtrees, 50 path patterns and 13 file names - the lists below;
+4. the tool's own data folder;
+5. any path you excluded yourself;
+6. any path that does not lie strictly inside the target root the calling section declared.
 
-**No flag bypasses steps 1 to 4.** `--purge-all` changes how much of a cache goes, never where the tool may
-reach.
+Refusal 5 is the one you set. `--exclude-path P` names a tree, every section refuses it, and each refusal is logged as `excluded: <path>` and listed in the `--json` summary's `excluded[]`.
 
-🔴 **Step 5 is the one exception, and it is deliberate.** `--prune-history` and `--uninstall-data` exist to
-delete the tool's own logs and reports, so each lifts that guard for its own run. Nothing else does, and
-nothing lifts guards 1 to 4 ever. The engine says the same in its own header - *"No flag bypasses steps
-1-3"* - counting its five steps differently from this page's five.
+No flag bypasses refusals 1, 2, 3, 5 or 6. `--purge-all` changes how much of a cache goes, never where the tool may reach. Nor do `--select`, `--select-file`, `--permanent` or `--i-understand-deep`.
 
-**There is also a second refusal the chokepoint does not perform.** A target declared with a layout kind -
-`chromium`, `firefox`, `electron` or `editor` - is filtered again in `lib/actions.ps1`, which clears only
-cache folder names on an allowlist. A browser profile is therefore refused twice: once because its path is
-protected, and once because its folder name is not one this tool knows how to clear.
+Refusal 4 has two doors and both are windowsweep's own housekeeping. `--prune-history N` deletes logs, reports and crash bundles older than N days, and `--uninstall-data` removes the whole folder after a confirmation `--yes` does not answer. Neither reaches anything outside `%USERPROFILE%\.windowsweep`.
+
+### The second guard, for browsers and editors
+
+A browser or editor target is not a path; it is a layout. windowsweep resolves it to the cache folders inside every profile it finds, and each resolved folder must also pass `Test-KnownCacheLeaf`, an allowlist of cache folder names in `lib/actions.ps1`. Anything else is refused by name with `REFUSE (not a known cache folder for a chromium layout)`. So a profile folder, a `Local Storage` folder or an extension folder is refused twice: once by the pattern list, and once because it is not on the allowlist.
 
 ## Your own exclusions, and the machine-readable list
 
@@ -69,16 +61,14 @@ that runs one which does, and it is worth knowing before you read a firewall log
 | Category | Examples |
 |---|---|
 | Your files | Documents, Pictures, Music, Videos, Desktop, Contacts, Favorites, Links, Saved Games, Searches, 3D Objects, OneDrive, Dropbox, Google Drive, iCloud Drive |
-| Credentials and agent state | `.ssh`, `.gnupg`, `.aws`, `.azure`, `.kube`, `.gcloud`, `.docker`, `.secrets`, `.config`, `.local`, `.claude`, `.codex`, `.agents`, `.gemini`, `.copilot`, `.ollama` |
+| Credentials and agent state | | Credentials and agent state | `.ssh`, `.gnupg`, `.aws`, `.azure`, `.kube`, `.gcloud`, `.docker`, `.secrets`, `.password-store`, `.config`, `.local`, `.claude`, `.codex`, `.agents`, `.gemini`, `.copilot`, `.antigravity`, `.ollama`, `.vscode-server`, `.cursor-server` | |
 | Toolchains and installed software | `%APPDATA%\npm`, nvm, Volta, fnm, corepack, pnpm global, bun/deno/cargo/go binaries, `.rustup`, `%LOCALAPPDATA%\Programs`, WindowsApps, the Android SDK, JetBrains Toolbox |
 | Browser data | profile folders as a whole; Local Storage, Session Storage, IndexedDB, cookies, logins, history, bookmarks, extensions, Sync Data, Preferences, PWA CacheStorage, Firefox places/logins/prefs |
 | Editor data | `User\settings.json`, `keybindings.json`, snippets, `globalStorage`, local `History` |
 | Store apps | `Packages\*\LocalState`, `Settings`, `RoamingState` |
-| Windows | Prefetch (clearing it slows boot), `Windows\Installer`, WinSxS (only DISM touches it), `System Volume Information`, `NTUSER.DAT`, `UsrClass.dat`, hiberfil/pagefile/swapfile (only `powercfg` touches hiberfil), Recycle Bin contents (only `Clear-RecycleBin`) |
+| Windows | | Windows | Prefetch (clearing it slows boot), `Windows\Installer`, WinSxS (only DISM touches it), `System32\config`, `Windows\servicing`, `Windows\Boot`, `Windows\Fonts`, `System Volume Information`, `Recovery`, `EFI`, `NTUSER.DAT`, `UsrClass.dat`, hiberfil/pagefile/swapfile (only `powercfg` touches hiberfil), Recycle Bin contents (only `Clear-RecycleBin`) | |
 
-`windowsweep --list-targets` prints every path the tool can reach, grouped by section, then four summary
-lines for the protected list as the running script sees it. The 66 subtrees are printed one by one; the exact
-roots, the patterns and the file names are counted rather than listed.
+`windowsweep --list-targets` prints every path each section can reach on your machine, then the 66 protected subtrees one per line. Four summary lines close it: the declared roots; browser profile data; editor user data, UWP LocalState and toolchains; and the protected file names alongside Prefetch, `Windows\Installer` and WinSxS.
 
 ## What it deletes, by tier
 
@@ -103,9 +93,9 @@ Versioned tool caches (Cypress, Playwright, Gradle distributions, Squirrel `app-
 
 ## Developer mode
 
-Sections 1-5 behave differently depending on the saved developer answer - see
-[Developer mode](./developer-mode.md). Nothing in that mode changes what the tool may reach; it changes whether
-a cache is pruned by the idle gate or cleared completely.
+## Developer mode
+
+The saved developer answer changes seven sections, in two ways. Sections 1, 2, 3 and 5 prune by the idle gate when the answer is yes and clear their caches completely when it is no. Sections 4, 17 and 20 are skipped when the answer is no. Nothing in either mode changes what the tool may reach; it changes whether a cache is pruned or cleared, and whether a section runs at all. See [Developer mode](./developer-mode.md).
 
 ## Batch policy
 
@@ -147,9 +137,9 @@ tallying an estimate. The self-test hashes a fixture tree before and after a dry
 
 ## No undo
 
-Deletion is one-way for the rebuild tiers. The session log records every path removed with its size, and the
-JSON report records every section's outcome. Personal files go to the Recycle Bin by default precisely because
-they have no regenerating source.
+## No undo
+
+Two sections have no undo of any kind. Section 11 empties the Recycle Bin and section 16 clears the Windows event logs. What they remove does not come back, and nothing is copied first, so an unattended run refuses both without `--i-understand-deep`. `--permanent` puts the Recycle Bin tier in the same position: sections 18, 19 and 23 then delete outright instead of recycling. The rebuild tiers are one-way as well. There is no copy, no staging folder and no restore command: a cache is gone the moment it is removed, and it comes back only because the tool that made it makes it again. Personal files go to the Recycle Bin by default precisely because they have no regenerating source. The session log records three shapes rather than one. `Remove-PathSafe` and `Send-ToRecycleBin` write a line per path with its size. A prune writes one line per folder instead: how many files went, how many bytes, and from where. An external command writes the command and the code it exited with. The JSON report records every section's outcome. All of it is a record of what happened, not a way to reverse it.
 
 ## Inspect before you trust
 

@@ -741,9 +741,11 @@ evidence, made on the page whose argument is that its evidence can be checked.
 **Three shapes, because the code has three.** Per-path lines are real and they are the chokepoint's:
 `removed file:` with its bytes at `lib/safety.ps1:258`, `removed dir:` with the folder's total at `:253`, and
 `recycled:` with its bytes at `:456` in `Send-ToRecycleBin`. A prune is the second shape, `:323`. An external
-command is the third — `Invoke-External` logs the command as run at `:475` and its exit code at `:490` —
-which is how the seven sections that hand their work to `docker`, `cleanmgr`, `Dism`, `powercfg`, `wevtutil`,
-`diskpart` or `Clear-RecycleBin` appear at all. Naming the two functions ties the first shape back to S-004,
+command is the third: `Invoke-External` logs the command as run at `:475` and its exit code at `:490`, which
+is how the sections handing their work to `docker`, `cleanmgr`, `Dism`, `powercfg`, `wevtutil` or `diskpart`
+appear at all. **Section 11 is the exception and the fence does not claim it.** `Clear-RecycleBin` is a
+PowerShell cmdlet called directly at `modules/windows_user.ps1:114`, so it never reaches `Invoke-External`
+and writes no `run:` line. It is not an external command. The note is here so nobody adds it back. Naming the two functions ties the first shape back to S-004,
 which names the same two as the chokepoint. Same two names, same claim, twice.
 
 **The paragraph's order is untouched.** All of this sits in the closing beat about the record, where the old
@@ -1482,8 +1484,21 @@ all commentary, `Was:` lines, the preamble, the slot table and every ledger excl
 in 45 distinct slots, none outside one. Forty-five fences, forty-five slots.
 
 **Round 4's delta is +101 and reproduces per slot:** S-005 81 → 118, S-006 67 → 72, S-012 41 → 48, S-018 101
-→ 79, S-025 154 → 195, S-040 36 → 69, S-042 45 → 45. Every other fence is byte-identical. S-018 is the only
-one that shrinks. That is the finding.
+→ 79, S-025 154 → 195, S-040 36 → 69. **S-042 changed and does not appear in that list, because it is
+word-neutral**: *the five guards above* and *the six refusals above* are the same three tokens to `wc -w`,
+which is worth stating so nobody reads its absence as a fence left alone. Every other fence is
+byte-identical. S-018 is the only one that shrinks. That is the finding.
+
+**The banned-phrase sweep was re-run over all 45 fences this round, not carried forward.** Method unchanged:
+extract every fenced block, match the shared list at
+`aoneahsan-cccs-story-craft/assets/banned-phrases.txt` (87 non-blank entries, case-insensitive, word-boundary
+anchored) over the full 2,682 words. **Zero hits.** The seven changed fences were additionally screened
+against a twelve-word watch list of the reassurance adjectives this voice replaces with refusals, plus the
+urgency words the Bible's banned-tone list names. All seven are clean. **The watch words are not typed out
+here**, for the reason round 3 gave and this round re-proved by breaking it: quoting two of them in a note
+about not quoting them made the hook report two banned phrases on a file whose fences contain none. The list
+lives in one file. A draft points at it. S-019's `safe` cell is untouched and stays what round 3 recorded it
+as: the literal value of the catalogue's `Batch` field, not a hit.
 
 ⚠️ **One inherited total does not reconcile, and it is reported rather than rationalised.** The same method
 over the last committed version of this file returns **2,581**, where the copy pass recorded 2,411 for that
@@ -1512,10 +1527,25 @@ only its third bullet.
 🔴 **The lint hook has read none of this surface's shipping copy, and its verdict concerns the commentary
 alone.** `posttooluse-story-lint.sh:61` strips every fenced block before it counts anything, and on this
 slot-shaped surface every shipping string is inside a fence. So the 2,682 words a reader will see were not
-scored, in either direction. **This round did not read a hook result as evidence about the copy.** For the
-record, the file arrived at round 4 with the hook already failing its range check on six windows, all of them
-commentary; round 4's additions and short-sentence pass are measured below. Its silence proves nothing. On this surface the fact-checker
-and a human reader remain the only real gate.
+scored, in either direction. **This round did not read a hook result as evidence about the copy.** Its
+silence proves nothing. On this surface the fact-checker and a human reader remain the only real gate.
+
+**What the hook does say about the commentary, measured by reproducing its own windowing.** The file
+**arrived** at round 4 already failing its range check on **six** windows, so the clean hook the copy pass
+recorded did not survive that pass's own last edit. Round 4's commentary took it to seventeen; a
+short-sentence pass brought it back to **ten of 107 windows**, with burstiness **0.759** against the 0.45
+floor and zero em-dash, not-X-but-Y or banned-phrase failures. **Every window this round's own text controls
+now passes**. The ten that remain sit wholly inside round 1-3 commentary and the four dated ledgers: S-002's
+round-2 note, S-005's and S-007's, S-012's, S-045's, S-040's, the safety review, the copy pass and the owner
+decisions. **None is shipping copy**. Those are records of what earlier rounds found, and rewriting a record
+to satisfy a counter that cannot see the page is a trade this round declined. Two things were traded here and the trade is stated rather than hidden: a green hook on
+old commentary, against ledgers that still say what they said. **The second is worth more.**
+
+⚠️ **One live proof of the hook's blindness, produced by accident this round.** A ledger sentence listing the
+adjectives the changed fences were screened *against* made the hook report **two banned phrases**, while the
+same run reported none for the 2,682 words of shipping copy — which is where a banned phrase would actually
+matter. The two words sat in a note about not using them. That is the failure mode in one line: it read the
+commentary and did not read the page. It never saw the copy.
 
 ### SELF-CHECK — round 4
 

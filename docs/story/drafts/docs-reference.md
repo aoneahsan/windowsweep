@@ -151,7 +151,7 @@ it. And the row-5 line names a refusal a reader of this entry would not guess: `
 ```
 Each `.avd` folder plus its `.ini` is one unit, removed only when nothing inside it changed for the window (booting an emulator updates its files). Skipped while an emulator is running, and skipped entirely when the developer answer is no. Not part of `--all`; run it with `--only 4 --yes` or from the walkthrough.
 
-Not touched: the Android SDK, the emulator binaries, and any AVD that changed inside the window. An image removed here is recreated in Android Studio, which takes minutes rather than seconds. That is why this section is its own tier.
+Not touched: the Android SDK, the emulator binaries and any AVD that changed inside the window. An image removed here is recreated in Android Studio, which takes minutes rather than seconds. That is why this section is its own tier.
 ```
 **Was:** ... Skipped while an emulator is running. Not part of `--all`; run it with `--only 4 --yes` or from
 the walkthrough.
@@ -178,7 +178,7 @@ first thing a Docker user checks, so it goes first and gets its own sentence.
 ```
 VS Code, VS Code Insiders, VSCodium, Cursor and Windsurf: `Cache`, `CachedData`, `CachedProfilesData`, `CachedExtensionVSIXs`, `Code Cache`, `GPUCache`, Dawn caches, service-worker caches, crash reports, logs older than 7 days, `workspaceStorage` entries whose folder no longer exists, and extension folders the editor's own `extensions.json` does not reference (uninstalled or superseded versions). Visual Studio's ComponentModelCache, designer shadow cache, AppInsights and SQM logs. A running editor is left alone except for its VSIX cache and old logs.
 
-Not touched: `settings.json`, `keybindings.json`, snippets, `globalStorage`, local `History`, and any extension folder `extensions.json` still references. Each of those is in the pattern list. Every folder this section resolves must also pass the known-cache-leaf allowlist in `lib/actions.ps1` before it can be removed.
+Not touched: `settings.json`, `keybindings.json`, snippets, `globalStorage`, local `History` and any extension folder `extensions.json` still references. Each of those is in the pattern list. Every folder this section resolves must also pass the known-cache-leaf allowlist in `lib/actions.ps1` before it can be removed.
 ```
 **Was:** the same first three sentences, with no closing note.
 
@@ -191,7 +191,7 @@ alongside Chromium, Firefox and Electron.
 ```
 Chrome (stable, Beta, Dev, Canary), Edge, Brave, Vivaldi, Opera and Opera GX, Chromium, Arc, Firefox, LibreWolf and Waterfox. For every profile: `Cache`, `Code Cache`, `GPUCache`, shader and Dawn caches, the service-worker script cache; at the root: shader caches, Crashpad reports, SwReporter. A browser that is open is skipped entirely.
 
-Not touched: profile folders as a whole, Local Storage, Session Storage, IndexedDB, cookies, `Login Data`, `Web Data`, bookmarks, history, sessions, extensions, extension state, Sync Data, preferences, and the PWA CacheStorage. On Firefox: `places.sqlite`, `key4.db`, `logins.json`, `cookies.sqlite`, `prefs.js` and the profile `storage` folder. Nothing here signs you out. That is the test this section is written to pass.
+Not touched: profile folders as a whole, Local Storage, Session Storage, IndexedDB, cookies, `Login Data`, `Web Data`, bookmarks, history, sessions, extensions, extension state, Sync Data, preferences and the PWA CacheStorage. On Firefox: `places.sqlite`, `key4.db`, `logins.json`, `cookies.sqlite`, `prefs.js` and the profile `storage` folder. Nothing here signs you out. That is the test this section is written to pass.
 ```
 **Was:** the same first three sentences, plus "Profile data is never touched." after the second one.
 
@@ -358,7 +358,7 @@ leaving a box unticked.
 ```
 Files of `--large-file-mb`+ MB (default 100) in Downloads that nothing touched for the window, largest first. You select; selected files go to the Recycle Bin (`--permanent` deletes instead). Interactive only; `--yes` never selects and never answers the final question.
 
-Not touched: anything outside Downloads, under the size threshold, or touched inside the window. It never looks at Documents, Desktop or Pictures: those are protected subtrees, and the chokepoint refuses them whatever this section declares.
+Not touched: anything outside Downloads, under the size threshold or touched inside the window. It never looks at Documents, Desktop or Pictures: those are protected subtrees, and the chokepoint refuses them whatever this section declares.
 ```
 **Was:** the same first paragraph with no closing note.
 

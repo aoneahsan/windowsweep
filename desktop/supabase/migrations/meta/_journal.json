@@ -15,6 +15,41 @@
       "when": 1788625514337,
       "tag": "20260905162514_magical_franklin_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788850394380,
+      "tag": "20260908065314_platform_admin_function",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788850451551,
+      "tag": "20260908065411_site_tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788850528903,
+      "tag": "20260908065528_site_privileges_and_triggers",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788850633400,
+      "tag": "20260908065713_seed_platform_superadmins",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788850966019,
+      "tag": "20260908070246_close_trigger_function_execute",
+      "breakpoints": true
     }
   ]
 }

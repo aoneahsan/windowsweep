@@ -1,0 +1,11 @@
+-- ROLLBACK for 20260908065314_platform_admin_function.sql — REVIEWED, NEVER AUTO-APPLIED.
+--
+-- 🔴 DESTRUCTIVE. Dropping this function breaks every admin policy on profiles,
+-- contact_requests and admin_audit at once: each one calls it, so the drop is refused
+-- while they exist, and forcing it would leave an unusable schema. Roll back the
+-- policies first (the site_tables companion), then this.
+--
+-- The default-privileges change is NOT reversed here on purpose. Re-granting EXECUTE
+-- on future functions to anon/authenticated/service_role would re-open the hole
+-- 20260908070246 exists to close.
+drop function if exists public.is_platform_admin();

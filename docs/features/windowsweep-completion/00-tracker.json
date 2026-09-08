@@ -664,8 +664,8 @@
         {
           "id": "P7.readme",
           "title": "story surface readme: lean panel, finalizer, GATE 4 under the pre-authorisation, then apply",
-          "status": "pending",
-          "note": "Wave 2. Applies to README.md; the anchor and TOC contract is kept - every H2 keeps its <a id> and the TOC is regenerated in the same edit. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
+          "status": "complete",
+          "note": "APPLIED and through GATE 4 on 2026-09-08 under the 2026-09-07 pre-authorisation; finalizer fact-consistency PASS and zero unanswered NEEDS DECISION. Commit 0b17870; files: README.md. Mirrored to the docs site in windowsweep-docs 7737bba, where every mirror was verified byte-for-byte equal to its source below the front matter. 16 slots applied, 77 skipped as considered no-ops. The anchor/TOC contract was re-verified AFTER the apply: 29 headings, 25 anchors, 25 TOC targets, zero unresolved. Every network claim now names its subject, proved by a grep that finds zero unscoped ones. The child-process question was answered by the owner as \"disclose it in the docs only\", which changed no README fence. | PRIOR NOTE: Wave 2. Applies to README.md; the anchor and TOC contract is kept - every H2 keeps its <a id> and the TOC is regenerated in the same edit. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
           "awaitingUser": false
         },
         {
@@ -678,43 +678,43 @@
         {
           "id": "P7.docs-start",
           "title": "story surface docs-start: lean panel, finalizer, GATE 4 under the pre-authorisation, then apply",
-          "status": "pending",
-          "note": "Wave 2. Applies to docs/installation.md and docs/quick-start.md; a developmental round already ran, so it continues at the line editor. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
+          "status": "complete",
+          "note": "APPLIED and through GATE 4 on 2026-09-08 under the 2026-09-07 pre-authorisation; finalizer fact-consistency PASS and zero unanswered NEEDS DECISION. Commit b961e7c; files: docs/installation.md, docs/quick-start.md. Mirrored to the docs site in windowsweep-docs 7737bba, where every mirror was verified byte-for-byte equal to its source below the front matter. Applied. Its self-test paragraph was wrong three ways in one sentence and was corrected in the DRAFT before the apply, not in the page afterwards. | PRIOR NOTE: Wave 2. Applies to docs/installation.md and docs/quick-start.md; a developmental round already ran, so it continues at the line editor. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
           "awaitingUser": false
         },
         {
           "id": "P7.docs-safety",
           "title": "story surface docs-safety: lean panel, finalizer, GATE 4 under the pre-authorisation, then apply",
-          "status": "pending",
-          "note": "Wave 2. Applies to docs/safety-model.md and docs/developer-mode.md; a SAFETY surface - humor off, humor-emotion mandatory in the panel. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
+          "status": "complete",
+          "note": "APPLIED and through GATE 4 on 2026-09-08 under the 2026-09-07 pre-authorisation; finalizer fact-consistency PASS and zero unanswered NEEDS DECISION. Commit ece0ff2; files: docs/safety-model.md, docs/developer-mode.md. Mirrored to the docs site in windowsweep-docs 7737bba, where every mirror was verified byte-for-byte equal to its source below the front matter. Applied, after c72ebc5 corrected the four claims the owner ruled on (\"All four\"). RED Renumbering one list broke two sentences elsewhere on the page; caught, reverted, and re-applied preserving each fence own line breaks. The child-process disclosure landed here as its own section. | PRIOR NOTE: Wave 2. Applies to docs/safety-model.md and docs/developer-mode.md; a SAFETY surface - humor off, humor-emotion mandatory in the panel. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
           "awaitingUser": false
         },
         {
           "id": "P7.docs-reference",
           "title": "story surface docs-reference: lean panel, finalizer, GATE 4 under the pre-authorisation, then apply",
-          "status": "pending",
-          "note": "Wave 2. Applies to docs/sections.md, docs/cli-reference.md, docs/profiles.md, docs/admin-and-elevation.md, docs/reports-and-logs.md. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
+          "status": "complete",
+          "note": "APPLIED and through GATE 4 on 2026-09-08 under the 2026-09-07 pre-authorisation; finalizer fact-consistency PASS and zero unanswered NEEDS DECISION. Commit 58b8ab7; files: docs/sections.md, cli-reference.md, profiles.md, admin-and-elevation.md, reports-and-logs.md. Mirrored to the docs site in windowsweep-docs 7737bba, where every mirror was verified byte-for-byte equal to its source below the front matter. Applied - twenty slots across six pages, jointly with ai-guide. RED 784da52 had already fixed two pages that ended BELOW their own footer, and a CI gate now proves a page ends on its footer. The gate was watched red on a plant, and it then found a third case: desktop.md had no footer at all. | PRIOR NOTE: Wave 2. Applies to docs/sections.md, docs/cli-reference.md, docs/profiles.md, docs/admin-and-elevation.md, docs/reports-and-logs.md. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
           "awaitingUser": false
         },
         {
           "id": "P7.docs-help",
           "title": "story surface docs-help: lean panel, finalizer, GATE 4 under the pre-authorisation, then apply",
-          "status": "pending",
-          "note": "Wave 2. Applies to docs/troubleshooting.md and docs/faq.md; A-DOCS re-checks the FAQPage block's five strings against the new visible text. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
+          "status": "complete",
+          "note": "APPLIED and through GATE 4 on 2026-09-08 under the 2026-09-07 pre-authorisation; finalizer fact-consistency PASS and zero unanswered NEEDS DECISION. Commit b6bd940; files: docs/troubleshooting.md, docs/faq.md. Mirrored to the docs site in windowsweep-docs 7737bba, where every mirror was verified byte-for-byte equal to its source below the front matter. Applied. ea2a4dc then collapsed six question lines my own applier had duplicated (a FAQ fence carries the question AND the answer) and removed a label the engine never prints. The applier now carries a duplicate-line guard. The docs-site FAQPage JSON-LD was re-derived from the new visible text. | PRIOR NOTE: Wave 2. Applies to docs/troubleshooting.md and docs/faq.md; A-DOCS re-checks the FAQPage block's five strings against the new visible text. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
           "awaitingUser": false
         },
         {
           "id": "P7.docs-about",
           "title": "story surface docs-about: lean panel, finalizer, GATE 4 under the pre-authorisation, then apply",
-          "status": "pending",
-          "note": "Wave 2. Applies to docs/author.md; a developmental round already ran, so it continues at the line editor. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
+          "status": "complete",
+          "note": "APPLIED and through GATE 4 on 2026-09-08 under the 2026-09-07 pre-authorisation; finalizer fact-consistency PASS and zero unanswered NEEDS DECISION. Commit b6bd940; files: docs/author.md. Mirrored to the docs site in windowsweep-docs 7737bba, where every mirror was verified byte-for-byte equal to its source below the front matter. Applied after its line pass (29fc0f2). \"Independent software engineer\" kept unchanged per the recorded owner answer; no phone number in the author block. | PRIOR NOTE: Wave 2. Applies to docs/author.md; a developmental round already ran, so it continues at the line editor. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
           "awaitingUser": false
         },
         {
           "id": "P7.ai-guide",
           "title": "story surface ai-guide: lean panel, finalizer, GATE 4 under the pre-authorisation, then apply",
-          "status": "pending",
-          "note": "Wave 2. Applies to AI-INTEGRATION-GUIDE.md. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
+          "status": "complete",
+          "note": "APPLIED and through GATE 4 on 2026-09-08 under the 2026-09-07 pre-authorisation; finalizer fact-consistency PASS and zero unanswered NEEDS DECISION. Commit 58b8ab7; files: AI-INTEGRATION-GUIDE.md. Mirrored to the docs site in windowsweep-docs 7737bba, where every mirror was verified byte-for-byte equal to its source below the front matter. Applied. 2637dfb corrected it first - it was about to tell automated callers that paths appear in three JSON keys when there are five - and 78f4285 in the docs repo fixed its claim that --yes auto-confirms DISM. | PRIOR NOTE: Wave 2. Applies to AI-INTEGRATION-GUIDE.md. GATE 4 is pre-authorised on the standing condition (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); either one failing pauses THIS surface only. Every fence is the shipping text and each Was: line is checked against the current file before replacing - a drifted Was is a stop, not a guess.",
           "awaitingUser": false
         },
         {
@@ -763,8 +763,8 @@
         {
           "id": "P8.schema",
           "title": "The shared Supabase tables, from the DESKTOP repo (P8-D2)",
-          "status": "pending",
-          "note": "Wave 6, A-DB alone. profiles (platform_role written by nobody through the API), contact_requests (insert-own with a BEFORE INSERT rate-limit trigger and length CHECKs; admins update only status, handled_at, handled_by through a column-scoped grant), admin_audit (insert-only, immutable). Verified from information_schema.role_table_grants, pg_policies and pg_proc.proacl - never from the migration text - and probed as a seeded non-admin AFTER seeding, because a (200, 0) probe passes vacuously on an empty table.",
+          "status": "complete",
+          "note": "APPLIED 2026-09-08 to the shared hosted project nlmetjyytgwaxcliusuo. Five forward-only migrations authored in Drizzle (desktop/src/db/schema/site.ts) and applied with supabase db push; db push --dry-run reports upToDate and the drizzle equivalence gate reports no schema changes. Three tables (profiles, contact_requests, admin_audit), RLS on all three, 8 policies, 4 triggers, column-scoped grants, and the two superadmin emails stamped by the auth.users trigger. RED VERIFIED INDEPENDENTLY BY THE MAIN SESSION, from the catalogues rather than from the agent report: pg_policies shows all 8 policies with USING/WITH CHECK intact and none naming anon; information_schema.column_privileges shows platform_role in NO grant for any role, and admin_audit with no INSERT/UPDATE/DELETE row at all; has_table_privilege shows TRUNCATE and MAINTAIN false for anon/authenticated/service_role across all five tables; pg_proc shows the four trigger functions at {postgres=X/postgres} with anon and authenticated both false, and is_platform_admin executable by authenticated but not anon. Live anon probes over PostgREST with the publishable key: GET on all three tables, POST contact_requests and RPC is_platform_admin all return 401 42501 - a refusal, not a vacuous empty result. Row counts profiles/contact_requests/admin_audit/auth.users are 0/0/0/0, so the probe run left nothing behind. Two instruments were kept separate on purpose: postgres holds rolbypassrls, so a catalogue read proves the shape and only an RLS-bearing client proves the behaviour. RED THE AGENT FOUND AND FIXED ITS OWN DEFECT, which is now a fleet-wide finding: \"alter default privileges ... revoke execute on functions from public, anon, authenticated, service_role\" records a pg_default_acl row that has NO EFFECT on this project, because a second row granted by supabase_admin covers the same (schema, objtype). The three functions created one migration later were born with proacl NULL - EXECUTE to PUBLIC. Latent rather than live, since all four return trigger, which Postgres refuses to invoke directly and PostgREST excludes from the schema cache. What was actually wrong was the CLAIM: a migration comment asserting a control that is not there is how the next reader stops checking. Fixed forward in 20260908070246, never by rewriting an applied migration.",
           "awaitingUser": false
         },
         {
@@ -996,6 +996,20 @@
         "eb15bec",
         "1904b21"
       ]
+    },
+    {
+      "date": "2026-09-08",
+      "model": "claude-opus-5[1m]",
+      "summary": "Tracker reconciliation plus the site schema. Seven story surfaces had SHIPPED while their rows still read pending - readme, docs-start, docs-safety, docs-help, docs-about, docs-reference, ai-guide - which reads as not-started to the next session and as done to the one that shipped it. All seven flipped, each with the commit that carried it. P8.schema closed: the marketing site three tables are live, verified by the main session from the catalogues and by live anon probes rather than from the agent report.",
+      "agents": [
+        "A-DB backend-integrations (complete, independently verified)",
+        "A-SITE web-implementer (site app batch 1)",
+        "A-DESK web-implementer (desktop wave 4b)",
+        "report-bodies line editor (fable)",
+        "site-privacy writer (opus)",
+        "site-home writer, revision round (opus)"
+      ],
+      "verification": "pg_policies, information_schema.column_privileges, has_table_privilege and pg_proc read over the Supabase Management API, plus five live anon probes over PostgREST with the publishable key."
     }
   ],
   "resumeInstructions": "RED Read ../completion-plan-v2-2026-09-07.md - it is the METHOD (the morning plan ../completion-plan-2026-09-07.md keeps its sections 1, 4 and 9 in force; its waves W0/W1/W2/W-S are done). This file is the STATUS and ../remaining-work.md is the SPECIFICATION. Never re-plan, and never re-derive the backend, the layout, the tagline, the release sequence, the analytics decision or the site's scope - twelve owner decisions are in userDecisions above (D1-D8 from the morning, D9-D12 from the v2 planning session) and the planner's flagged calls are in plannerDeviations, plannerDeviations2 and plannerDeviations3. POLL AT THE START OF EVERY SESSION and run whatever each one unblocks: rows 11/12 (does https://windowsweep-docs.aoneahsan.com/ probe 200, and does the Pages API report https_enforced true), row 15 (does auth/v1/settings on nlmetjyytgwaxcliusuo report external.google true), and the site dummy's GATE 1 answer. Polled 2026-09-08 00:0x local: docs http 200 / https 000 / https_enforced false; external.google FALSE; https://windowsweep.aoneahsan.com/ 404 from Firebase Hosting with a valid certificate (connected, nothing deployed); ci green on e9dd863. Row 16 is CLOSED by the agent's own evidence: the Firebase web config is in the vault and the four VITE_* ids are GitHub repository variables. Then take the first pending sub-task below.",

@@ -39,16 +39,16 @@ foreach ($m in (Get-ChildItem -LiteralPath (Join-Path $Script:WS_ROOT 'modules')
 function Show-Usage {
   $v = Get-ToolVersion
   $text = @"
-$Script:WS_NAME v$v - safe, developer-aware Windows cleanup
+$Script:WS_NAME v$v - names every path before it touches one
 
 USAGE
   windowsweep [mode] [options]
 
-MODES  (default = guided walkthrough through every category)
+MODES  (default = the guided walkthrough)
   -w, --walkthrough     Guided walkthrough, asks before every step
   -m, --menu            Jump-to menu - run one section at a time
-  -a, --all             Safe batch: sections $($Script:WS_SAFE_BATCH -join ',') (+12,13 when elevated)
-  -s, --scan            Read-only: every target with its size, nothing deleted
+  -a, --all             Safe batch: sections $($Script:WS_SAFE_BATCH -join ',') (+$($Script:WS_SAFE_BATCH_ADMIN -join ',') when elevated)
+  -s, --scan            Every target with its size; nothing is deleted
       --only L          Run exactly these sections, e.g. --only 1,3,5-7
       --profile NAME    dev | minimal | cache-only | system | deep | audit
       --exclude L       Drop sections from --all / --profile
@@ -95,8 +95,9 @@ OPTIONS
 SAFETY
   Every deletion passes one chokepoint that refuses drive roots, Windows, Program Files, your
   profile root, Documents/Pictures/Desktop, credentials, toolchains and browser/editor state, and
-  that never follows a junction or symlink. Personal-file sections are interactive only and use the
-  Recycle Bin. --scan and --dry-run change nothing. No network calls, ever.
+  that never follows a junction or symlink. Sections 17, 18, 19 and 23 ask you to pick item by
+  item; 18, 19 and 23 send what you pick to the Recycle Bin. --scan and --dry-run delete nothing,
+  though both still write a log and a report. No network calls, ever.
 
 OUTPUT
   Logs:    $($Script:WS.LogsDir)

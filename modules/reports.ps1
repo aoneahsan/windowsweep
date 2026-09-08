@@ -13,7 +13,7 @@ function Read-Report {
 
 function Show-ReportList {
   $files = @(Get-ReportFiles)
-  if ($files.Count -eq 0) { Write-Info 'no reports yet - run a cleanup first'; return @() }
+  if ($files.Count -eq 0) { Write-Info 'no reports yet - windowsweep --scan writes one and deletes nothing'; return @() }
   Write-UiLine ("  {0,3}  {1,-34} {2,8}  {3,-17} {4,-12} {5}" -f '#', 'REPORT', 'SIZE', 'STARTED', 'RECLAIMED', 'MODE') 'White'
   $i = 1
   foreach ($f in $files) {
@@ -43,21 +43,21 @@ function Convert-ReportToMarkdown {
   $l = @()
   $l += "# $Script:WS_NAME session report"; $l += ''
   $l += "_Generated from ``$([IO.Path]::GetFileName($Json))``_"; $l += ''
-  $l += '## Overview'; $l += ''; $l += '| Field | Value |'; $l += '|---|---|'
-  $l += "| Started | $($r.meta.started_at) |"; $l += "| Finished | $($r.meta.finished_at) |"; $l += "| Duration | $($r.meta.duration_seconds) s |"
+  $l += '## Run'; $l += ''; $l += '| Field | Value |'; $l += '|---|---|'
+  $l += "| Started | $($r.meta.started_at) |"; $l += "| Finished | $($r.meta.finished_at) |"; $l += "| Duration | $($r.meta.duration_seconds)s |"
   $l += "| Host | $($r.meta.host) |"; $l += "| User | $($r.meta.user) |"; $l += "| Windows | $($r.meta.os) |"; $l += "| Mode | $($r.meta.mode) |"
   $l += "| Dry-run | $dry |"; $l += "| Elevated | $($r.meta.elevated) |"; $l += "| Developer mode | $($r.meta.developer_mode) |"; $l += "| Idle window | $($r.meta.idle_days) days |"
   $l += ''; $l += '## Result'; $l += ''
-  if ($r.meta.dry_run) { $l += "**Would free (estimate): $($r.totals.total_estimated_human)**  " } else { $l += "**Reclaimed: $($r.totals.total_reclaimed_human)** ($($r.totals.total_reclaimed_bytes) bytes)  " }
-  $l += "Sections run: $($r.totals.steps_run) - skipped/refused: $($r.totals.steps_skipped)"; $l += ''
-  $l += '## Drives'; $l += ''; $l += '| Drive | Before free | After free | Size |'; $l += '|---|---|---|---|'
+  if ($r.meta.dry_run) { $l += "**Would reclaim (est.): $($r.totals.total_estimated_human)**  " } else { $l += "**Reclaimed: $($r.totals.total_reclaimed_human)** ($($r.totals.total_reclaimed_bytes) bytes)  " }
+  $l += "Sections run: $($r.totals.steps_run) - skipped: $($r.totals.steps_skipped)"; $l += ''
+  $l += '## Drives'; $l += ''; $l += '| Drive | Free before | Free after | Size |'; $l += '|---|---|---|---|'
   foreach ($b in $r.disk.before) {
     $a = $r.disk.after | Where-Object { $_.drive -eq $b.drive } | Select-Object -First 1
     $afterFree = '?'
     if ($a) { $afterFree = Format-Bytes $a.free_bytes }
     $l += "| $($b.drive) | $(Format-Bytes $b.free_bytes) | $afterFree | $(Format-Bytes $b.size_bytes) |"
   }
-  $l += ''; $l += '## Steps'; $l += ''; $l += '| # | Section | Title | Status | Freed |'; $l += '|---:|---:|---|---|---:|'
+  $l += ''; $l += '## Sections'; $l += ''; $l += '| # | Section | Title | Status | Reclaimed |'; $l += '|---:|---:|---|---|---:|'
   foreach ($s in $r.steps) { $l += "| $($s.n) | $($s.section) | $($s.title) | $($s.status) | $(Format-Bytes $s.freed_bytes) |" }
   $l += ''; $l += "_${Script:WS_NAME} v$($r.meta.tool_version) by $($r.credits.author.name) - $($r.credits.tool_homepage)_"
   [IO.File]::WriteAllLines($Out, $l)
@@ -71,7 +71,7 @@ function Convert-ReportToHtml {
   if (-not $r) { Write-Err "cannot read $Json"; return $null }
   if (-not $Out) { $Out = [IO.Path]::ChangeExtension($Json, '.html') }
   $headline = "Reclaimed"; $big = $r.totals.total_reclaimed_human
-  if ($r.meta.dry_run) { $headline = 'Would free (dry-run estimate)'; $big = $r.totals.total_estimated_human }
+  if ($r.meta.dry_run) { $headline = 'Would reclaim (est.)'; $big = $r.totals.total_estimated_human }
   $rows = ''
   foreach ($s in $r.steps) {
     $cls = ([string]$s.status) -replace '[^a-z-]', ''
@@ -90,7 +90,7 @@ function Convert-ReportToHtml {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>$Script:WS_NAME report - $(ConvertTo-HtmlText $r.meta.started_at)</title>
+<title>$Script:WS_NAME session report - $(ConvertTo-HtmlText $r.meta.started_at)</title>
 <style>
   :root{--fg:#1c1c1f;--bg:#fafafa;--muted:#7a7a85;--ok:#0a7d54;--warn:#b8860b;--line:#e6e6ea;--card:#fff;--accent:#0b6bcb}
   @media (prefers-color-scheme:dark){:root{--fg:#eaeaea;--bg:#16161a;--muted:#9d9da8;--line:#2a2a30;--card:#1f1f25;--accent:#5aa9ff}}
@@ -119,7 +119,7 @@ function Convert-ReportToHtml {
   <div><dt>Developer mode</dt><dd>$($r.meta.developer_mode)</dd></div><div><dt>Idle window</dt><dd>$($r.meta.idle_days) days</dd></div><div><dt>Windows</dt><dd>$(ConvertTo-HtmlText $r.meta.os)</dd></div>
   <div><dt>Log file</dt><dd><code>$(ConvertTo-HtmlText $r.meta.log_file)</code></dd></div></dl>
   <h2>Sections</h2>
-  <table><thead><tr><th>#</th><th>Section</th><th>Title</th><th>Status</th><th class="num">Freed</th></tr></thead><tbody>
+  <table><thead><tr><th>#</th><th>Section</th><th>Title</th><th>Status</th><th class="num">Reclaimed</th></tr></thead><tbody>
 $rows  </tbody></table>
   <h2>Drives</h2>
   <table><thead><tr><th>Drive</th><th class="num">Size</th><th class="num">Free before</th><th class="num">Free after</th></tr></thead><tbody>

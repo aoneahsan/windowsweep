@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-08
+
 ### Added
 
 - **`targets[].newest_write_utc` in `--scan --json`.** ISO 8601 UTC, the newest of write, access and creation

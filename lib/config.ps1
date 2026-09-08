@@ -80,8 +80,8 @@ function Resolve-DeveloperMode {
     $hints = @(Get-ToolchainHints)
     Write-Box 'One question before anything else' 'It decides how package and build caches are treated'
     Write-Plain '  Are you a developer on this machine?'
-    Write-Note 'yes = package/build/test-runner caches are only pruned when idle 100+ days (recent work stays fast);'
-    Write-Note '      the newest version of every versioned tool cache is always kept.'
+    Write-Note "yes = package/build/test-runner caches are only pruned when idle $($ws.Days)+ days (recent work stays fast);"
+    Write-Note '      the newest version of every versioned tool cache is kept, unless --purge-all.'
     Write-Note 'no  = those caches are cleared completely; project scans are skipped.'
     if ($hints.Count -gt 0) { Write-Note ("detected developer tooling: " + ($hints -join ', ')) }
     $ans = Confirm-Ui -Prompt 'Are you a developer on this machine?' -Default 'y' -NoAutoYes

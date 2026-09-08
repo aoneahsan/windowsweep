@@ -6,7 +6,7 @@ function Show-Welcome {
   Write-Box "$Script:WS_NAME" $Script:WS_TAGLINE
   Show-DriveTable
   Write-UiLine '' 'Gray'
-  Write-Plain '  This walkthrough visits every cleanup category. At each step:'
+  Write-Plain "  This walkthrough visits $($Script:WS_WALKTHROUGH.Count) sections, one at a time. At each step:"
   Write-Plain '    a  run it (default)     s  skip it     q  stop the walkthrough'
   if ($ws.DryRun) { Write-UiLine '  DRY-RUN: every step only reports what it would remove.' 'Magenta' }
   $dev = 'off'
@@ -25,7 +25,7 @@ function Invoke-Walkthrough {
     return
   }
   Show-Welcome
-  Write-Box 'Pre-scan' 'Read-only - what each section can reach right now'
+  Write-Box 'Pre-scan' 'Deletes nothing - what each section can reach right now'
   if (Get-Command Invoke-Section00 -ErrorAction SilentlyContinue) { Invoke-Section00 }
   $null = Show-ScanTable
   Wait-Enter
@@ -48,10 +48,11 @@ function Invoke-Walkthrough {
   if (-not $quit -and -not $ws.IsAdmin) {
     $n++
     Write-Step -N $n -Total $total -Title 'System-level cleanup (needs Administrator)'
-    Write-Plain '  Sections 12 (Windows Update cache), 13 (Disk Cleanup engine) and 14 (component store) need an elevated'
-    Write-Plain '  console. Run them afterwards with:'
+    Write-Plain '  This walkthrough runs 12 (Windows Update cache), 13 (Disk Cleanup engine) and 14 (component'
+    Write-Plain '  store) when the console is elevated. Six sections need an elevated console in all - 15, 16 and'
+    Write-Plain '  20 need --i-understand-deep as well. Run the three afterwards with:'
     Write-Plain '      windowsweep --profile system --yes --elevate'
-    Write-Plain '  and, if you want the hibernation file gone too (section 15):'
+    Write-Plain '  and, to remove the hibernation file too (section 15):'
     Write-Plain '      windowsweep --only 12,13,14,15 --hiberfil off --yes --i-understand-deep --elevate'
     $ws.Hints += 'Admin sections:  windowsweep --profile system --yes --elevate'
     Wait-Enter

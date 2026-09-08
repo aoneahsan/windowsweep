@@ -825,7 +825,7 @@ What each section can reach, and how much it currently holds
 
 ### C-085 · `modules/runner.ps1:173` · the scan's report-step title
 ```
-Read-only scan
+Scan
 ```
 **Was:** `Read-only scan`
 

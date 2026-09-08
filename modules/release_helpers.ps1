@@ -290,7 +290,7 @@ function Invoke-ReportIssue {
     '**Log excerpt** (from `windowsweep --debug-bundle`, paths redacted as you see fit)', '', '```', '', '```'
   ) -join "`n"
   $url = "$Script:WS_ISSUES/new?title=$([Uri]::EscapeDataString($title))&labels=bug&body=$([Uri]::EscapeDataString($body))"
-  Write-Box 'Report an issue' 'A pre-filled GitHub issue opens in your browser; nothing is submitted until you click Submit'
+  Write-Box 'Report an issue' 'Opens a pre-filled GitHub issue; nothing is sent until you submit it'
   Write-Note 'Environment facts included: OS build, PowerShell version, tool version, launcher, elevation. No paths, no logs.'
   if (Confirm-Ui -Prompt 'Open the pre-filled issue in your browser now?' -Default 'y') {
     try { Start-Process $url | Out-Null; Write-Ok 'opened - review, edit, then submit' } catch { Write-Warn "could not open a browser. URL:"; Write-Plain $url }

@@ -58,7 +58,7 @@ function Invoke-Section00 {
   try {
     $sys = New-Object IO.DriveInfo($Script:P.SD)
     $pct = 100.0 * $sys.AvailableFreeSpace / $sys.TotalSize
-    if ($sys.AvailableFreeSpace -lt 10GB -or $pct -lt 10) { Write-Warn ("system drive has only {0} free ({1:N1}%) - Windows slows down badly below ~10%; this run should help" -f (Format-Bytes $sys.AvailableFreeSpace), $pct) }
+    if ($sys.AvailableFreeSpace -lt 10GB -or $pct -lt 10) { Write-Warn ("system drive has only {0} free ({1:N1}%) - the sections below list what can be reclaimed" -f (Format-Bytes $sys.AvailableFreeSpace), $pct) }
   } catch { $null = $_ }
   Write-UiLine '' 'Gray'
   $h = Get-HiberfilInfo
@@ -87,7 +87,7 @@ function Invoke-Section00 {
     $la = (& fsutil.exe behavior query disablelastaccess 2>$null) -join ' '
     if ($la -match '=\s*(\d)') {
       $v = [int]$Matches[1]
-      $laText = 'disabled - idle age uses write/creation times (the safe reading)'
+      $laText = 'disabled - idle age uses write/creation times (keeps more)'
       if ($v -eq 1 -or $v -eq 3) { $laText = 'enabled - last-access times are reliable' }
       Write-Kv 'Last-access tracking:' $laText
     }

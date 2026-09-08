@@ -125,9 +125,9 @@ function Invoke-SectionById {
   if ($delta -lt 0) { $delta = 0 }
   $freed = $ws.SectionFreed
   if ($ws.DryRun) {
-    if ($freed -gt 0) { Write-UiLine ("  [dry-run] this section would free about {0}" -f (Format-Bytes $freed)) 'Magenta' }
+    if ($freed -gt 0) { Write-UiLine ("  [dry-run] this section would reclaim about {0}" -f (Format-Bytes $freed)) 'Magenta' }
   } elseif ($freed -gt 0 -or $delta -gt 0) {
-    Write-UiLine ("  {0} this section freed {1} (system drive gained {2})   running total: {3}" -f $ws.Glyph.ok, (Format-Bytes $freed), (Format-Bytes $delta), (Format-Bytes $ws.TotalFreed)) 'Green'
+    Write-UiLine ("  {0} this section reclaimed {1} (system drive gained {2})   running total: {3}" -f $ws.Glyph.ok, (Format-Bytes $freed), (Format-Bytes $delta), (Format-Bytes $ws.TotalFreed)) 'Green'
   } else {
     Write-Note 'no measurable change in this section'
   }
@@ -139,7 +139,7 @@ function Invoke-BatchMode {
   <# .SYNOPSIS --all / --only / --profile #>
   $ws = $Script:WS
   $ids = @(Get-RequestedSections)
-  if ($ids.Count -eq 0) { Write-Err 'no sections to run'; $ws.ExitCode = $Script:WS_EXIT_USAGE; return }
+  if ($ids.Count -eq 0) { Write-Err 'no sections to run - check --only / --profile against windowsweep --list'; $ws.ExitCode = $Script:WS_EXIT_USAGE; return }
   Write-Banner
   Show-RunHeader
   Write-Info "running sections: $($ids -join ',')"
@@ -165,12 +165,12 @@ function Invoke-ScanMode {
   <# .SYNOPSIS --scan: health report + every target's size + the read-only personal scanners. Deletes nothing. #>
   $ws = $Script:WS
   Write-Banner
-  Write-Info 'read-only scan - nothing is deleted'
+  Write-Info 'scan only - nothing is deleted; a log and a report are still written'
   if (Get-Command Invoke-Section00 -ErrorAction SilentlyContinue) { Invoke-Section00 }
   Write-Box 'Targets on disk' 'What each section can reach, and how much it currently holds'
   $null = Show-ScanTable
   if (Get-Command Show-PersonalScan -ErrorAction SilentlyContinue) { Show-PersonalScan }
-  Add-ReportStep -Section -1 -Title 'Read-only scan' -Status 'ran'
+  Add-ReportStep -Section -1 -Title 'Scan' -Status 'ran'
   Show-SessionSummary
 }
 
@@ -179,7 +179,7 @@ function Show-SessionSummary {
   Write-Box 'Session summary'
   if ($ws.DryRun) {
     Write-Kv 'Mode:' 'DRY-RUN - nothing was deleted'
-    Write-Kv 'Would free (estimate):' (Format-Bytes $ws.TotalEstimated)
+    Write-Kv 'Would reclaim (est.):' (Format-Bytes $ws.TotalEstimated)
   } else {
     Write-Kv 'Reclaimed:' (Format-Bytes $ws.TotalFreed)
   }

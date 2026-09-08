@@ -123,7 +123,7 @@ function Write-Kv {
 
 function Write-Banner {
   $g = $Script:WS.Glyph
-  $inner = "   $Script:WS_NAME v$(Get-ToolVersion) - safe, developer-aware Windows cleanup   "
+  $inner = "   $Script:WS_NAME v$(Get-ToolVersion) - names every path before it touches one   "
   $bar = [string]::new([char]($g.dline), $inner.Length)
   Write-UiLine ("$($g.tl)$bar$($g.tr)") 'Blue'
   Write-UiLine ("$($g.vbar)$inner$($g.vbar)") 'Blue'

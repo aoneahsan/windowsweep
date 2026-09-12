@@ -1,6 +1,6 @@
 {
   "name": "windowsweep-desktop",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "description": "The windowsweep desktop application - a Tauri 2 window over the same PowerShell engine the CLI runs.",
   "type": "module",

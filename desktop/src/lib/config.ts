@@ -38,7 +38,7 @@ export const supabaseConfig = {
 };
 
 /** Used until the Rust side reports the real one. */
-export const appVersionFallback = '1.1.0';
+export const appVersionFallback = '1.2.0';
 
 /**
  * The house support link. `project-id` is the npm package name and

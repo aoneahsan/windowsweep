@@ -1,0 +1,27 @@
+-- `is_platform_admin()` no longer grants EXECUTE to `service_role` (PENDING-TASKS TASK-011).
+--
+-- 🔴 WHY IT HAD THE GRANT. `20260908065314_platform_admin_function.sql` revoked EXECUTE only
+-- `from public, anon`. On Supabase that is not the whole default: the platform's own default
+-- ACL names `anon`, `authenticated` and `service_role` individually, so revoking PUBLIC removes
+-- a grant those three never needed and leaves their named grants standing. Read from
+-- `pg_proc.proacl` on 2026-09-12:
+--   {postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}
+-- The account-deletion migration beside this one (`20260912170206`) names all four roles for
+-- exactly this reason; this file brings the older function into line with it.
+--
+-- 🔴 WHY `authenticated` KEEPS IT, and must. Every admin RLS policy on the site's tables calls
+-- this function, and a policy expression is evaluated AS THE QUERYING USER - so revoking it
+-- from `authenticated` would not harden a single policy, it would break every one of them.
+-- The question for a helper a policy calls is what the RPC plane exposes, and this one takes
+-- no argument and can only answer for `auth.uid()`: it tells a caller one thing about
+-- themselves. `anon` stays refused.
+--
+-- 🔴 WHY NOTHING DEPENDS ON THE `service_role` GRANT. `service_role` holds `rolbypassrls`, so
+-- no RLS policy is ever evaluated for it - the path that calls this function never runs as that
+-- role. And called directly with the secret key there is no `sub` claim, so `auth.uid()` is
+-- null and the function could only ever return false. The grant was reachable and useless;
+-- removing it changes no result anyone can observe.
+--
+-- Verify from `pg_proc.proacl`, never from this file.
+
+revoke execute on function public.is_platform_admin() from service_role;

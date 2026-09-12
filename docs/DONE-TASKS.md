@@ -343,3 +343,34 @@ approved and is easier to hit - dummy first, then the app.
 `docs/DONE-TASKS.md` since 2026-09-08.** Every copy would have handed the next session a number already
 spent - which is the exact precedent the rule cites. All four are corrected. A number is never reused: the
 next task is **TASK-011**.
+
+### DONE-011 - `is_platform_admin()` still grants EXECUTE to `service_role`
+
+**Closed 2026-09-13 in the main session, the same day it was filed.** Migration
+`20260912202759_revoke_is_platform_admin_service_role.sql`, scaffolded by `yarn db:custom` so the prefix and the
+journal entry came from drizzle-kit, with a reviewed rollback beside it. `supabase db push --linked --dry-run`
+listed exactly that one file; the push applied it. Verified FROM `pg_proc`, not from the file or the push output:
+`is_platform_admin  anon=F auth=T svc=F  postgres=X/postgres | authenticated=X/postgres`. The full census of the
+seven `public` functions now shows `service_role` executing nothing of ours; the only role-wide grant left is
+`rls_auto_enable`, Supabase's own event-trigger function, already recorded as a probed false positive.
+⚠️ The CLI's cached login on this machine belongs to a different Supabase account and is refused with 403, so the
+push needs the project account's own PAT and the database password in the environment, read from the vault.
+
+**The entry as it was filed:**
+
+- **What:** `pg_proc.proacl` for `public.is_platform_admin()` reads
+  `{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}`. Its migration
+  (`20260908065314_platform_admin_function.sql`) revoked only `from public, anon`, and Supabase's default ACL
+  names `service_role` explicitly, so revoking PUBLIC never removed it. `authenticated` MUST keep EXECUTE -
+  every admin RLS policy calls this function, and a policy is evaluated as the querying user.
+- **Do:** one forward migration through `yarn db:custom`:
+  `revoke execute on function public.is_platform_admin() from service_role;` then prove it from `proacl`,
+  never from the file. `service_role` holds `rolbypassrls`, so no policy ever evaluates it for that role,
+  which is why nothing depends on the grant.
+- **Found while:** the v3 run's W1 (the `delete_my_account()` migration), 2026-09-12, by the four-role
+  census of every `public` function.
+- **Why not fixed there:** that migration's scope was one new function; migrations are forward-only, and a
+  privilege change to a policy helper deserves its own reviewable file. **Impact today is nil** - with a
+  secret key `auth.uid()` is null, so it returns false. It is a consistency gap with the four-role standard
+  the newer migration follows, not a hole.
+- **Priority:** low.

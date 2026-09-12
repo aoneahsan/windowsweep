@@ -23,6 +23,7 @@ yet, so the switch cost code and no data.
 | `migrations/*_seed_platform_superadmins.sql` | Hand-written: the two fixed owner emails |
 | `migrations/*_close_trigger_function_execute.sql` | Hand-written: the per-function revokes, and the correction behind them |
 | `migrations/*_delete_my_account_function.sql` | Hand-written: **account deletion** — see below |
+| `migrations/*_revoke_is_platform_admin_service_role.sql` | Hand-written: removes `service_role`'s EXECUTE on `is_platform_admin()`, which the older migration's `from public, anon` revoke had left standing. `authenticated` keeps it - every admin policy calls it as the querying user. Verified from `pg_proc` on 2026-09-13: `authenticated=X/postgres` and nothing else beside the owner |
 | `rollbacks/` | One reviewed companion per migration. 🔴 Never applied automatically |
 | `../drizzle.config.ts` | The three load-bearing keys, each destructive if omitted |
 

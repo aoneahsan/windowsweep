@@ -2,7 +2,8 @@
 
 Content-map row **19** · surface `windowsweep-web` (`public/llms.txt`, the per-route content record, the
 per-route JSON-LD) · awareness **a machine, or a search result** · structure **answer-first** · tone band
-**P only** · length **short** · CTA **none** · schema **WebSite + Organization**.
+**P only** · length **short** · CTA **none** · schema **WebSite + Organization**, as the row reads today.
+The author node is a `Person` by decision ND-2, so that cell is owed a keeper amendment.
 
 Every string below is read by something that is not a person: a crawler deciding what a page is, an answer
 engine deciding whether to quote it, a search result deciding what forty words to show. There is no reader
@@ -40,7 +41,7 @@ The route list is not invented here. It is `pages-registry.js` in the approved d
 |---|---|
 | `/admin/inbox` | plan v2 §7.5 names it; **the dummy does not have it**. `admin-inbox.html` carries `route: '/admin'`, so the inbox *is* `/admin` and there are three admin routes, not four. The dummy is the specification (`frontend-ui-standards` §10a) and its registry is the frozen list, so `/admin` is written and `/admin/inbox` is not. Reported rather than reconciled - amending the plan is not this draft's to do |
 | `/sitemap.xml`, `/feed.xml`, `/robots.txt` | not HTML. They have no `<title>` and no description. Their generation belongs to §7.7 |
-| the seven `gallery-*` pages and `pages.html` | `route: null` in the registry - review harness, not product pages |
+| the seven `gallery-*` pages and `pages.html` *(corrected 2026-09-13: **eight** gallery files, `gallery.html` plus the seven `gallery-*`, and `pages.html`; nine in all)* | `route: null` in the registry - review harness, not product pages |
 | an OG image, a canonical tag, a `meta robots` value | not copy. §7.7 owns them. Where a route wants `noindex`, this draft says so in the slot's `Change:` line and stops there |
 
 ## Conventions in this file
@@ -64,6 +65,10 @@ The route list is not invented here. It is `pages-registry.js` in the approved d
 slot-shaped: every shipping string sits inside a fence, so **none of it is measured**. A green hook here
 reports on this commentary and on nothing a reader or a crawler will ever see.
 
+Measured on 2026-09-13 rather than assumed, on scratch copies of this file. A banned word planted inside
+S-001's fence left the hook silent at exit 0. The same sentence planted in S-001's Change paragraph made it
+exit 2 and name the word. The hook runs; it cannot see the copy.
+
 The banned-phrase check was therefore **run by hand**, over the fence contents only, against
 `aoneahsan-cccs-story-craft/assets/banned-phrases.txt`. The result is at the end of this file, with the
 near-misses named rather than quietly passed.
@@ -76,6 +81,10 @@ Standardising on `·` is not a preference. An em dash in every title would spend
 punctuation budget - one per 150 words - thirteen times over across 374 words of route strings. The
 middot is already the product's own separator: the home eyebrow reads `Windows 10 and 11 · PowerShell 5.1 ·
 nothing to install`, and the footer reads `MIT licence · windowsweep 1.1.0`.
+
+🔴 **Corrected 2026-09-13; the count above is left as written**. The dummy's titles use two schemes, not
+three. All thirteen carry an em dash. Ten carry it alone, and all three admin titles carry a middot as well,
+`Admin · Users — windowsweep` among them, not only the inbox. The decision stands on the corrected count.
 
 **The `og` pair mirrors the route pair, and one divergent string is retired**. `index.html` ships an
 `og:description` that is a *third* self-description of the product, different from both its own
@@ -95,7 +104,9 @@ rather than a price, and it is already visible in the footer (`MIT licence · wi
 `README`, in `package.json` and in the dummy's own JSON-LD as
 `"license": "https://opensource.org/licenses/MIT"`. Removing it from the machine-facing file alone would
 make that file less accurate than the page it describes, which is the opposite of what this surface is for.
-It is flagged rather than assumed. One line deletes it if it reads as a price claim.
+It is flagged rather than assumed. One line deletes it if it reads as a price claim. **Decided, ND-3:
+it stays** (answered 2026-09-08, confirmed 2026-09-13). The standing exemption covers pricing claims, and
+a licence is not one.
 
 ## The two counts this draft declines to assert
 
@@ -111,8 +122,16 @@ what the sentence is about, and which is true at every count. (`index.html` band
 recorded property of one measured run rather than a live count. That block belongs to `site-home` and is not
 touched here).
 
+🔴 **Superseded 2026-09-13; the paragraph above is kept as written**. CLI **1.2.0** is released, not
+unreleased: it went to npm on 2026-09-08, is `latest` there and is tagged `v1.2.0`. `HEAD` runs **156**
+checks, not 155. The desktop release is still `desktop-v1.1.0`, whose bundled engine prints 151. So the
+count now differs between two programs on two version lines, which is the ruling's own reason, only
+stronger.
+
 **No audit count**. The sources disagree. `README.md:105` says three read-only audits; the tier table at
-`docs/safety-model.md:74` puts five sections in the report-only tier. No slot asserts one.
+`docs/safety-model.md:74` puts five sections in the report-only tier. No slot asserts one. *(Line numbers
+corrected 2026-09-13: the README sentence is at lines 109-110, and the tier table starts at line 75, with its
+report-only row at 80. The disagreement they record is unchanged.)*
 
 ---
 
@@ -134,8 +153,8 @@ different jobs.
 > windowsweep is a Windows disk-cleanup command line that names every path before it touches one. It
 > removes regenerable caches: package managers, build tools, browsers, editors, Windows temp and update
 > leftovers, stale project build artefacts. Every deletion passes through one function that refuses
-> documents, credentials, cloud-sync folders and browser profiles, and no flag lifts the refusal. It runs
-> on Windows 10 (1809 and later) and Windows 11.
+> documents, credentials, cloud-sync folders and browser profiles, and no flag lifts the refusal.
+> Junctions are never followed. It runs on Windows 10 (1809 and later) and Windows 11.
 ```
 
 **Change:** new. Answer-first: the first eleven words say what it is and what makes it different, so a model
@@ -144,6 +163,14 @@ named rather than summarised as "safe", because band R delivers reassurance as a
 **four** sentences of 15, 19, 21 and 11 words rather than the two a summary paragraph invites, because the
 docs site's own `llms.txt` opens with a 50-word sentence and the fingerprint's stated ceiling is 34;
 matching that precedent would have broken the rhythm rule on the first line of the surface.
+
+🔴 **Two corrections, 2026-09-13**. The note above is left as written. The docs site's `llms.txt` opens with
+a six-word sentence, not a 50-word one. Its longest summary sentence runs 47 words, so the point survives:
+that is thirteen past the fingerprint's ceiling of 34. And this block is now **five** sentences, of 15, 19,
+21, 4 and 11 words. The four-word one, *Junctions are never followed*, was added at finalize for C-11. The
+placeholder's binding spec lists "junctions never followed" in the safety paragraph. S-001 is that
+paragraph. `lib/fs.ps1` refuses to enter any junction or symbolic link, so `llms.txt` carries the fact
+itself instead of leaving it to `/privacy`.
 
 ## S-002 · `llms.txt` · what this site is
 
@@ -185,12 +212,35 @@ row-level policy refuses them to everyone else.
 decision rather than an omission. The site's own domain resolves over HTTPS today with a valid certificate
 (measured 2026-09-08: it answers 404, because nothing is deployed yet), so these URLs are safe to write out.
 
+🔴 **Superseded 2026-09-13**: the site went live on 2026-09-08, the day of that measurement, and `/`,
+`/download`, `/changelog` and `/privacy` all answered 200 when probed on 2026-09-13. The list also carries
+eight pages, not seven. The count was off by one when it was written.
+
 ## S-004 · `llms.txt` · the documentation link block
 
 **Was:** `(new)`
 
-**NEEDS DECISION - left unwritten**. The scheme is not mine to choose; the decision is recorded verbatim at
-the end of this file. Everything around this block is written, and the block drops in as one substitution.
+```text
+## Documentation
+
+- [Documentation](https://windowsweep-docs.aoneahsan.com/): installation, the 26 sections, every flag, troubleshooting
+- [Safety model](https://windowsweep-docs.aoneahsan.com/safety-model): the chokepoint, protected paths, tiers, the idle gate, dry-run
+- [AI integration guide](https://windowsweep-docs.aoneahsan.com/ai-integration-guide): the --json contract, exit codes and what --yes never covers
+- [Documentation llms.txt](https://windowsweep-docs.aoneahsan.com/llms.txt): the documentation site's own summary for AI crawlers
+```
+
+**Change:** new, written at finalize on 2026-09-13. Until then this slot read *NEEDS DECISION - left
+unwritten*, because on 2026-09-08 `https://` failed the TLS handshake and the recorded answer was to leave
+the block out until a certificate existed. One exists now. The docs domain was re-added through the GitHub
+Pages API on 2026-09-12, Let's Encrypt issued a certificate naming the host, `https_enforced` is on, and
+`http://` answers 301. So ND-1 was settled by fact, and the placeholder's own spec requires this link over
+https. All four URLs answered 200 when probed on 2026-09-13.
+
+Two descriptions are the pages' own words. The safety-model line is what the live docs `llms.txt` says of
+that page, and the AI-guide line comes from its front matter. The first line names four things the docs
+hold, each a page there. The last link hands a crawler the docs site's own page list rather than copying it
+here. That list covers fourteen of its sixteen built pages; `about` and `desktop` are missing, which is
+row 9's to fix and not this surface's.
 
 ## S-005 · `llms.txt` · download and source
 
@@ -212,6 +262,10 @@ author fields, and the dummy footer for the issues link. None is guessed. The re
 source of the installers rather than the site's own `/download`, because the checksums and the signatures
 are published there, and a machine following this line should land where the files are.
 
+`Licence: MIT` stays by decision ND-3 (answered 2026-09-08, confirmed 2026-09-13). One measured oddity is
+recorded so that nobody removes a good link over it: probed on 2026-09-13, the npm page answered 403 to
+every scripted request, which is npm's bot wall, while the registry returned `windowsweep` 1.2.0 under MIT.
+
 ## S-006 · `llms.txt` · facts an answer should get right
 
 **Was:** `(new)`
@@ -225,15 +279,17 @@ are published there, and a machine following this line should land where the fil
   a hit. The desktop window and this website send usage events to Google Analytics 4, Amplitude and
   Microsoft Clarity, and errors to Sentry. Clarity records session replays. There is no opt-out.
 - Personal folders are refused unconditionally. Documents, Desktop, Pictures, credentials, cloud-sync
-  folders and browser profiles sit among 66 protected subtrees, and no flag lifts the refusal.
+  folders and browser profiles are refused by two lists: 66 protected subtrees and a set of path patterns.
+  No flag lifts the refusal.
 - It deletes. Caches have no undo because they regenerate; personal files a person selects go to the
   Recycle Bin instead.
 - Two sections are permanent: emptying the Recycle Bin (11) and clearing event logs (16). Both sit behind
   --i-understand-deep, which also gates the hibernation file (15) and disk-image compaction (20). None of
   the four runs in the safe batch.
 - Twenty-six numbered sections, 0 to 25. A section number is a frozen public contract.
-- The desktop installer is not signed with a code-signing certificate, so SmartScreen warns on first run.
-  Every release publishes a SHA-256 checksum and a minisign signature. Neither is a certificate.
+- The desktop installers are not signed with a code-signing certificate, so SmartScreen warns on first
+  run; every desktop release publishes a SHA-256 checksum and a minisign signature for each installer.
+  Neither is a certificate.
 - One authorised run removed 3,924,712,402 bytes across 11 sections, on one Windows machine, on
   7 September 2026. It is not a promise and not an average. windowsweep --scan measures a given machine and
   deletes nothing.
@@ -245,6 +301,17 @@ the tool is cross-platform, that "no telemetry" covers the window, that a checks
 that a recorded figure is a typical result. The permanent-sections line names the flag's full reach - 11,
 15, 16, 20 - beside the two that are permanent, because a sentence that says "two" and then names a flag
 covering four is the near-miss a reader who finds the other two stops trusting the rest of the file for.
+
+🔴 **Two lines corrected at finalize, 2026-09-13**. The installer line said *every release*. Only desktop
+releases publish checksums and minisign signatures; `desktop-release.yml` is the one workflow that makes
+them, and CLI releases are npm-source. It now says *every desktop release* (C-3). It also says
+*installers*, since there are two. The personal-folders line put browser profiles among the 66 protected
+subtrees, where they are not: `lib/safety.ps1` refuses them through a separate pattern table, the same one
+that holds OneDrive. So the line now names both lists and assigns no folder to either (C-4). The refusal
+itself is unchanged, and so is the fact that no flag lifts it. One join was made for rhythm alone: the
+installer line's first two sentences now share a semicolon, because the file's last 124 words had no
+sentence of 25 words or more. The bullet runs long and ends on its shortest sentence, as the fingerprint
+describes, and no word changed.
 
 ---
 
@@ -283,7 +350,9 @@ sentence is now a complete answer on its own, which is what an engine extracts. 
 *"without touching your files"* is dropped as false-adjacent: three interactive sections do touch personal
 files, with a list and a final question, and the FAQ on this very page says so. The four-clause pile-up
 loses the two claims that belong on other pages - the junction check is a mechanism `/privacy` explains, and
-the zero-network fact is `/privacy`'s opening line.
+the zero-network fact is `/privacy`'s opening line. *(2026-09-13, C-11: the site's `llms.txt` now carries
+the junction fact, in S-001, because the placeholder's spec asks for it there. This description still
+leaves it out, for the length reason above.)*
 
 ## `/download`
 
@@ -683,7 +752,7 @@ the head. `inLanguage` is `en-GB` because the Bible fixes the spelling and the c
   "name": "windowsweep",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Windows 10 (1809 and later), Windows 11",
-  "softwareVersion": "1.1.0",
+  "softwareVersion": "${VERSION}",
   "description": "windowsweep removes regenerable caches on Windows. It names every path before it touches one, and refuses documents, credentials and browser profiles.",
   "url": "https://windowsweep.aoneahsan.com/",
   "downloadUrl": "https://github.com/aoneahsan/windowsweep/releases",
@@ -691,6 +760,12 @@ the head. `inLanguage` is `en-GB` because the Bible fixes the spelling and the c
   "author": { "@id": "https://windowsweep.aoneahsan.com/#author" }
 }
 ```
+
+**Renders today as `"softwareVersion": "1.2.0"`**. `${VERSION}` is not a literal and never ships as one.
+It stands for the build-time read that already exists: `resolveVersion()` in
+`windowsweep-web/vite/prerender.ts` reads the product's `VERSION` file, checks it against the mirror
+`vite/product-version.json`, and stops the build if the two disagree. Both read 1.2.0 today, which is the
+command line's version (ND-4).
 
 **Change:** three edits, and one thing held. `description` is added and it is **S-008 verbatim**, so the node
 and the meta description are one sentence rather than two that can drift. `Windows 10 (1809+)` becomes
@@ -703,6 +778,13 @@ download page and the release tag all say 1.1.0 - and it stops being true the mo
 plan v2 puts in W4, before this site deploys in W7. `/download` already reads the release at build time
 (§7.5); this field reads the same value from the same place. A build-time value cannot go stale. A literal
 in a schema block is a claim nobody re-reads.
+
+🔴 **Superseded 2026-09-13 (HF-1, ND-4); the note above is kept as written**. It was already false when the
+fact-check ran: CLI 1.2.0 shipped on 2026-09-08, and the site deployed the same day rather than in W7. The
+node describes the command line. Its `description` is S-008, the CLI's sentence, and its `operatingSystem`
+is the CLI's support matrix, so its version is the CLI's too. The note's other claim goes with it:
+`/download` links the desktop release, still `desktop-v1.1.0`, while this field is the CLI's `VERSION`.
+Two version numbers on one site are right here. They belong to two programs.
 
 ## S-036 · site-wide · the author node
 
@@ -727,9 +809,12 @@ in a schema block is a claim nobody re-reads.
 `WebSite` and `SoftwareApplication` both point at one description of one person. `sameAs` carries the two
 profiles that are **read from the repository** - `README.md:501` names both, and `src/lib/links.ts:37`
 registers `linkedin.com/in/aoneahsan` as the owner's own profile path. No third profile is added. None was
-read.
+read. *(Corrected 2026-09-13: the README names them at lines 502 and 503, not 501; `links.ts:37` is right
+as cited.)*
 
 🔴 **It is `Person`, and row 19 says `Organization`**. That is a `NEEDS DECISION`, recorded verbatim below.
+**Decided since** (ND-2, answered 2026-09-08, confirmed 2026-09-13): `Person`. Row 19's schema cell is owed
+a keeper amendment, which the keeper makes rather than this draft.
 `Person` is written here because it is the only type the visible page supports: the footer shows
 `Ahsan Mahmood` linking to a personal site, no organisation name appears on any of the thirteen pages, and
 the dummy's own JSON-LD already declares `Person`. Declaring an `Organization` would be schema describing
@@ -775,13 +860,16 @@ content the page does not have.
 
 ---
 
-## NEEDS DECISION
+## NEEDS DECISION - all four decided
+
+🔴 **None remains open (2026-09-13)**. The three questions below are kept as they were asked, each followed
+by its answer, and a fourth that arrived with the fact-check follows them.
 
 Three of them. None is a wording preference. Each is a fact this draft could not read, an artefact it would
 have had to contradict, or a claim whose blast radius reaches past this surface, so each is left unwritten
 with the options and a recommendation rather than resolved quietly in a fence.
 
-**NEEDS DECISION: which URL scheme does the documentation link block in the site's `llms.txt` ship with?
+**DECIDED (was NEEDS DECISION): which URL scheme does the documentation link block in the site's `llms.txt` ship with?
 Measured 2026-09-08: `https://windowsweep-docs.aoneahsan.com/` fails the TLS handshake (curl returns HTTP
 000) and `http://windowsweep-docs.aoneahsan.com/` returns 200 with no redirect, because GitHub has not yet
 issued the certificate (RW-102). Options: (a) ship `https://` now, accepting that every documentation link
@@ -791,11 +879,15 @@ Documentation block from the first deploy and add it in RW-102's write-back pass
 a dead link or a downgraded one. Recommendation: (c). `llms.txt` exists to be followed rather than read, a
 dead link in it is worse than a missing section, and RW-102 already owns a write-back over that domain**.
 
+**Answer, ND-1**: settled by fact rather than chosen. The answer recorded on 2026-09-08 was (c), with the
+rider that the block ships normally if the certificate lands first. It landed on 2026-09-12 and `http://`
+now answers 301, so the block is written at S-004, over `https://`.
+
 The second one is a conflict between two approved artefacts rather than a gap. Both sides are set out. A
 type declared in a schema block is the sort of field that is set once and then believed by everything
 downstream of it, so guessing it here would be the expensive kind of quiet.
 
-**NEEDS DECISION: is the site's author node a `Person` or an `Organization`? Content-map row 19 and plan v2
+**DECIDED (was NEEDS DECISION): is the site's author node a `Person` or an `Organization`? Content-map row 19 and plan v2
 §7.7 both say `Organization`, and no organisation is named on any of the thirteen pages - the footer shows
 "Ahsan Mahmood" linking to `aoneahsan.com`, `package.json` declares an author object with a person's name
 and email, and the dummy's existing JSON-LD already declares `"@type": "Person"`. Options: (a) `Person`, as
@@ -804,7 +896,10 @@ because schema must match visible content and nothing visible supports an organi
 which needs a legal or trading name, a logo URL and whatever `sameAs` profiles belong to it, none of which
 is in either repository, so it cannot be written without inventing three facts. Recommendation: (a)**.
 
-**NEEDS DECISION: does `Licence: MIT` stay in the site's `llms.txt` (S-005)? It is a licence rather than a
+**Answer, ND-2**: (a), `Person`, as written at S-036 (answered 2026-09-08, confirmed 2026-09-13). The keeper
+owes row 19 the amendment.
+
+**DECIDED (was NEEDS DECISION): does `Licence: MIT` stay in the site's `llms.txt` (S-005)? It is a licence rather than a
 price, it is already visible in the site footer as "MIT licence · windowsweep 1.1.0", and it already ships
 in the dummy's JSON-LD as `"license": "https://opensource.org/licenses/MIT"` - so removing it from the
 machine-facing file alone would make that file less accurate than the page it describes. Against it: an
@@ -812,6 +907,13 @@ answer engine reading MIT may state a price the standing exemption says this pro
 (a) keep it, as written, because a licence is a redistribution fact and the surrounding surfaces already
 carry it - recommended; (b) remove it from `llms.txt` and leave it only where it already ships.
 Recommendation: (a)**.
+
+**Answer, ND-3**: (a), keep it (answered 2026-09-08, confirmed 2026-09-13). A licence is a redistribution
+fact, and the standing exemption is about price.
+
+**DECIDED, ND-4**, raised by the fact-check on 2026-09-13: which program does the `SoftwareApplication` node
+describe? The command line. Its `description` is S-008, the CLI's sentence, and its `operatingSystem` is the
+CLI's support matrix, so `softwareVersion` is the CLI's version, read at build time (S-035).
 
 ---
 
@@ -827,7 +929,8 @@ the route key changes.
 **Row 19's schema field is one node short**. It reads `WebSite + Organization`. Plan v2 §7.7 requires
 `WebSite` + `SoftwareApplication` (no offers) + `Organization`, and the `SoftwareApplication` block already
 ships in the dummy. Group C writes all three. This is a map-accuracy note for the keeper rather than a
-conflict, since nothing in the row forbids the node it omits.
+conflict, since nothing in the row forbids the node it omits. *(2026-09-13: with ND-2 decided, the
+keeper's amendment is one cell, from `WebSite + Organization` to `WebSite + SoftwareApplication + Person`.)*
 
 **Row 19's `CTA: none` holds**. Nothing in these thirty-six slots asks the reader to do anything. S-006's
 `windowsweep --scan` sentence is a fact about how a machine is measured, inside a list of facts, and it is
@@ -849,7 +952,8 @@ aside, and S-032 leaves it on the page.
 a bullet of S-006. Longest: the network sentence in that same bullet, at **28 words**, inside the
 fingerprint's stated 4-to-34 range. Nothing shipped runs past it. The descriptions run 113 to 153 characters
 and alternate on purpose between one long sentence and two short ones - S-030 opens on one word and closes
-on sixteen; S-008 opens on six and closes on fifteen.
+on sixteen; S-008 opens on six and closes on fifteen. *(Superseded 2026-09-13: the semicolon join at S-006
+made the installer sentence the longest, at 30 words, still inside the 34-word ceiling.)*
 
 **Length**. Every title is inside 60 characters and every description inside 155. Nothing is over. The
 tightest is named in the counts table, and those twenty-six strings total **374 words**.
@@ -872,10 +976,18 @@ run had been made against candidate strings rather than against the fences that 
 this file is now taken from the file itself, and the tokenizer and the inclusion rule are written beside it
 so the next reader can reproduce it rather than trust it.
 
+🔴 **Re-measured at finalize, 2026-09-13**. The two paragraphs above stand as written. With S-004 written and
+the C-3, C-4 and C-11 fixes in, `llms.txt` is **695** words by the same tokenizer and inclusion rule, and
+the facts block is 283 of them. That is 41 per cent longer than the docs site's 494. S-004 accounts for 64
+of the 80 added words, and it was always owed, since the placeholder's spec requires the docs link. The
+ruling on *short* is still a reviewer's to make. The cut is still S-003.
+
 **Unsure spots**. Three, all recorded verbatim above as `NEEDS DECISION`: the documentation link scheme, the
 `Person`-versus-`Organization` type, and whether `Licence: MIT` may stay. Nothing else is held. One slot is
 date-bound rather than uncertain - S-024 becomes false the day Google sign-in is enabled
 on the shared Supabase project, and it is marked in place so the person who enables it finds the sentence.
+*(2026-09-13: all three are decided, and ND-4 with them; none is open. S-024 is still true today, since
+Google sign-in stays off until MANUAL-TASKS row 15.)*
 
 ## The by-hand banned-phrase check
 
@@ -902,3 +1014,13 @@ entries are likewise not reproduced. One word needed a ruling. `cleanup` appears
 S-007 and S-009 as a noun compound, which the `tagline` surface already settled: the glossary bans `clean`
 and `sweep` as **verbs**, and `cleanup` is the product's own category word, carried by three of its twelve
 npm keywords.
+
+**Re-run at finalize, 2026-09-13**, over all thirty-six shipping fences with S-004 now written, by the same
+method and against the same list of 87 entries: zero hits. The fingerprint's never-list, first-person plural
+and the banned openers were scanned the same way. Zero hits, and no exclamation mark. The rhythm rows were
+measured by hand as well, with the hook's own code run on unfenced copies, because the hook cannot see the
+fences. The `llms.txt` running prose, 439 words with the link lists left out, scores 0.62 for burstiness,
+and after the one join at S-006 every 150-word window holds a sentence of six words or fewer and one of 25 or
+more. The thirteen descriptions score 0.46 as a set. Their range row is allowed rather than passed: each is
+a separate text of at most 155 characters, read alone in a list of results, so a 25-word sentence would be
+the whole description. No reader meets them as a stretch of prose.

@@ -10,6 +10,88 @@ is off. There is no urgency or shame language anywhere, and no sentence offers r
 support. Row 17 marked it so deliberately: it is the page that tells a reader their behaviour is recorded,
 that a session replay exists and that there is no switch.
 
+## ✅ FINALIZED 2026-09-13 - publish-ready, and GATE 4's condition is met
+
+**The slot fences below, S-001 to S-011, are the publish-ready copy**, each one the exact string that ships
+under this file's conventions. The finalizer changed three of them: S-003, S-007 and S-009. Nothing else in
+the copy moved. Everything after this block is the record of how the copy got here, corrected in place and
+dated where the world moved under it. GATE 4 itself is the main session's. This block reports only that its
+pre-authorised condition holds.
+
+**Score sheet**, checked against `docs/story/voice-fingerprint.md` (`calibrated: false`, the Bible's open
+item and not a new one) with the rubric in `aoneahsan-cccs-story-humanize/references/rubric.md`, over the
+shipping copy only. The instrument is the hook's own tokenizer and sentence splitter, run on the 12 fences
+with headings, `<svg>`, markup and the JS identifier removed and each list kept as one paragraph. It
+reproduces round 2's figures to within the two identifier tokens round 2 counted and this sheet does not:
+878 words, 69 sentences and 0.559, against 880, 69 and 0.562.
+
+| # | Row | Before (round-2 copy) | After (finalized) |
+|---|---|---|---|
+| 1 | burstiness | 0.559 PASS | **0.574** PASS |
+| 2 | range, per 150 words | 6 of 6 windows PASS | 6 of 6 PASS, after the S-009 merge; window 5 had lost its long sentence to S-007's growth |
+| 3 | banned phrases | 0 of 87 PASS | 0 of 87 PASS, headings included, no allow marker |
+| 4 | em dashes | 0 PASS | 0 PASS |
+| 5 | not X, but Y | 0 PASS | 0 PASS |
+| 6 | triplets | 2 by the formula, budget 2, PASS | 2, PASS. A reader counts 7 inventories (was 6); the new one is the three fields the audit row keeps, in the words `/account` ships. Allowed with round 2's reason |
+| 7 | openers | PASS | PASS |
+| 8 | throat-clearing | PASS, opens on *"There is no switch."* | PASS |
+| 9 | summary tell | PASS, ends on the footer notice | PASS |
+| 10 | specificity | PASS | PASS: `[9]`, four named tools, two byte figures, five named deletions, `latest.json`, twenty-six sections |
+| 11 | point of view | PASS | PASS: *"There is no switch."* and *"It happens immediately and it cannot be undone."* |
+| 12 | hedging | PASS, by the fingerprint | PASS: the voice hedges only where an answer is uncertain; every fact here was verified, and the one unmeasured thing, the analytics cookies, is bounded by category instead |
+| 13 | voice match | PASS | PASS: *"It carries none of your words."* beside specimen 9, *"Never a file path, never your user name, never the contents of anything."* |
+| 14 | palette | P and R, 0 W | P and R, 0 W |
+| | humor off, line by line | 0 W lines in 12 fences | **0 W lines**, the eight new or changed sentences included |
+| | fact consistency | **FAIL**: the fact-check's blocking finding was open, and *four things* was one short | **PASS** |
+| | sentences, words, mean, range | 69, 878, 12.7, 2-31 | 71, 937, 13.2, 2-31 |
+| | length, headings included | 989 (940 on the page alone) | **1,048** (999). S-007 +60, S-003 -1 |
+
+**Hook blindness, measured rather than assumed**. A banned word planted inside a slot fence exits 0, and
+the same word in a Change paragraph exits 2; both plants were confirmed to have applied. So the hook's
+silence on this file says nothing about the copy. The rows above were computed on an extract of the fences,
+and the real hook was then run on that extract too. It exits 0.
+
+**Fact consistency, re-verified this pass rather than inherited**. `delete_my_account()` deletes the
+`auth.users` row for `auth.uid()` and nothing else. The migration's `pg_constraint` reading cascades that
+to `profiles`, `user_settings`, `runs` and `contact_requests`, and to the auth sessions and identities.
+`admin_audit.actor` and `contact_requests.handled_by` carry no foreign key. The audit trigger writes
+`status`, `handled_at` and `handled_by`, never the message. `/account` calls the function at
+`account.ts:132`. The site only ever reads `user_settings`, so *"the settings the desktop app has synced"*
+is exact. Clarity is masked in the markup at `index.html:91`. The four destinations, the absent switch, the
+command line's zero network, the missing pricing claim and the missing consent control are unchanged, and
+each was swept again. The fact-check's two findings are both closed. No `UNVERIFIABLE` or `CONTRADICTS`
+item is open. **There is no SEO/AEO checklist for this surface, by design**: row 17 declares no schema.
+
+**What changed and why**. The fact-check's blocking finding is **CLOSED**. The page promised an account
+deletion that no shipped surface could perform, and the owner chose to build it rather than narrow the
+sentence (D14). It is live. `public.delete_my_account()` deletes the caller's own `auth.users` row and
+nothing else, EXECUTE is held by `authenticated` alone and `/account` calls it. S-007's deletion sentence was
+then rewritten to what the database does, read from the migration, the schema and the audit trigger rather
+than from any summary of them. The old *"It removes four things"* was one short, because the sign-in itself
+goes too. It was also silent about the one kind of record that outlives the account: an admin's triage
+entry, which keeps the message's id, its status and who handled it, and never the message. A second
+paragraph now says so, and says that nothing on the reader's machine is touched. The wording tracks what
+`/account` ships, with two deliberate differences. *Your profile* replaces *the profile on this page*, which
+would point at the wrong page here, and *handles* replaces *marks handled*, because the trigger fires on
+every change an admin can make. S-003's line drops a self-test count that had gone stale twice and takes
+site-home's settled sentence. S-009 joins two sentences so the range row passes again. No other shipping
+word moved.
+
+**Applying it**. Dummy first, then the app (`frontend-ui-standards` §10a), and both are outside this file's
+scope. On the live site `privacy.json` still carries the pre-draft placeholder in every key this page slots,
+`privacy.title` included, so the whole surface is unapplied and not only the keys below. Three need care.
+- S-007's deletion paragraph replaces `privacy.signedIn.accountNote`, whose *"Deleting it removes the
+  settings and the run summaries"* understates the deletion. RW-113 step 7 assigns that correction here. The
+  dummy's `<a href="account.html">` is the key's `<link>`.
+- S-007's survival paragraph has no key yet. It needs one beside `accountNote`; `account.json` calls the same
+  fact `deleteWhatStays`.
+- S-003's third fact line replaces `privacy.sends.cli.f3`. 🔴 Not `privacy.sends.web.f3`, which is the
+  Clarity line. Two keys share the name `f3`.
+
+**Still open, none of it blocking**: findings 2, 3, 6, 7 and 8 under *Reported, not fixed*. None is a
+`NEEDS DECISION`. Finding 3 should travel with the apply, though, because the table caption still says
+*"There is no other table"* four lines above a paragraph naming two more stores.
+
 ## Round 2 - what the humor-and-emotion review changed
 
 **Applied, all six, and nothing beyond them**. One **HARD FAIL**: S-007's second sentence is cut, a
@@ -78,7 +160,8 @@ stated here rather than left to be discovered.
 **Eleven slots. Four are new**, because the row's structure asks for beats the dummy has no element for:
 cookies and browser storage (S-008), and the closing zero-network beat with the address for a privacy
 question (S-010). Two more are new sub-blocks inside existing sections (S-007's stored-facts paragraph,
-S-004's fourth destination line).
+S-004's fourth destination line). ⚠️ **Finalizer, 2026-09-13**: one more new sub-block, S-007's survival
+paragraph. Like the stored-facts paragraph, it has no key in the live `privacy.json` yet.
 
 🔴 **Adding a block to an approved dummy is a structural amendment**, not a copy substitution.
 `frontend-ui-standards` §10a puts it in the dummy first with its reason in `design/README.md`. **That edit
@@ -95,6 +178,10 @@ is the parent session's, not this draft's** - this file may write only itself.
    This draft names **check `[9] No network code`** instead. The reader sees it print. That check's
    identity is stable across every count, and it is the thing the sentence is actually about. **This adds
    no fourth voice to an open decision**, which was the alternative.
+   ⚠️ **Superseded 2026-09-13, finalizer**: four premises in this item are stale. 1.2.0 is not
+   unreleased; it shipped on 2026-09-08. The site brands 1.2.0 now, not 1.1.0. The suite runs 156, not 155.
+   And site-home's decision is not open, because site-home settled the same sentence the same way. What this
+   item decided stands. S-003's Change line records the wording it now carries.
 3. 🔴 **"The only time it opens a browser is when you ask it to report an issue" is incomplete** (S-003).
    IRON rule 5 names three paths, not one: `--report-issue`, `--feedback`, and the reports manager. A
    sentence that says "the only time" and then lists a third of the times is the kind of near-miss a reader
@@ -180,7 +267,7 @@ report an issue.`
 <ul class="factlist">
   <li class="f-no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg><span>No telemetry.</span></li>
   <li class="f-no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg><span>No update check.</span></li>
-  <li class="f-no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg><span>No network call of any kind. Check <span class="mono">[9] No network code</span> greps every source file for HTTP and socket calls, and a hit fails the build. Run <span class="mono">npx windowsweep --self-test</span> to watch it go past.</span></li>
+  <li class="f-no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg><span>No network calls of any kind. Self-test check <span class="mono">[9]</span> greps the source for HTTP and socket calls and fails the build if it finds one. Run <span class="mono">npx windowsweep --self-test</span> to watch it go past.</span></li>
 </ul>
 <p class="t-sm ink-3">Session logs, reports and crash bundles are written to disk and stay there. It opens
   your browser only when you ask it to: <span class="mono">--report-issue</span>,
@@ -193,6 +280,15 @@ time it opens a browser"** becomes the three real paths; a reader who runs `--fe
 browser open would otherwise have caught the page in a small lie, on the page where a small lie is
 expensive. `--self-test` is named with the command to run it, because a refusal a reader can execute is band
 R doing its job and an unverifiable one is an adjective.
+
+⚠️ **Superseded 2026-09-13, finalizer**. The *"151, 154 and 155"* above is stale: CLI 1.2.0 shipped on
+2026-09-08 and its suite runs **156**. The decision held. The count moved again while this draft was open,
+which is the strongest argument there is for naming the check instead of counting it. The live site still
+ships the tally in `privacy.json` key `privacy.sends.cli.f3`, *"One of the 151 self-test checks greps the
+source for HTTP and socket calls"*, and against the site's own 1.2.0 footer that is false. The line above now
+carries the wording site-home settled for the same fact (its S-019, round 2, `site-home.md:891-892` as read
+today), followed by this page's own run-it sentence. **It is not updated to 156**. That number is tied to
+each release and would go stale again at 1.3.0.
 
 ---
 
@@ -221,7 +317,7 @@ line, and it runs the same engine.`
 what that one receives, because a reader scanning for *"who has my data"* counts entries rather than reading
 sentences.
 
-🔴 **Round 2 corrected the claim about where the wording comes from. It is adapted, not lifted.** Each of
+🔴 **Round 2 corrected the claim about where the wording comes from. It is adapted, not lifted**. Each of
 the four gains a subject and a verb, because a dialog can say *"The same events, in a second analytics
 tool"* under a heading that already supplies the name and a list on a web page cannot. Verbatim from the
 desktop: *"with every piece of text masked"*, *"a stack trace when something breaks, with file paths
@@ -349,8 +445,12 @@ then, immediately below the existing `<table class="tbl">`, replacing the closin
   has somewhere to be answered. Anything you send through the contact form is kept in full, subject and
   message both. Neither reaches Google Analytics 4, Amplitude, Clarity or Sentry.</p>
 <p class="t-sm ink-2" style="margin-top: var(--sp-3)">You can read every one of those values back on your
-  <a href="account.html">account page</a>, and delete the account from there. It removes four things. Your
-  profile, your settings, your run summaries and your contact requests.</p>
+  <a href="account.html">account page</a>, and delete the account from there. Deleting removes the sign-in
+  itself and everything stored against it: your profile, the settings the desktop app has synced, your run
+  summaries, and the messages you have sent. It happens immediately and it cannot be undone.</p>
+<p class="t-sm ink-2" style="margin-top: var(--sp-3)">What stays is not yours: when an admin handles one of
+  your messages, that action is logged with the message's id, its status and who handled it. It carries none
+  of your words. Nothing on your machine is touched.</p>
 ```
 
 **Change:** the intro said *"the window"* on a page that now covers three programs; it gains the sentence
@@ -393,6 +493,21 @@ under-reported a deletion the reader is entitled to know is wider than stated. �
 say "everything"** - `admin_audit` keeps `subject_id` as text with no foreign key, so status-change rows
 survive the account, and a totality claim would be false. Naming four things is checkable; *"everything"* is
 not.
+
+🔴 **Finalizer, 2026-09-13: the fact-check's blocking finding is CLOSED, and the paragraph above is superseded
+twice**. The finding was that the page offered a deletion nothing shipped could perform. That is no longer
+true. `public.delete_my_account()` is live (`desktop/supabase/migrations/20260912170206_delete_my_account_function.sql`)
+and EXECUTE is granted to `authenticated` alone. The site's `/account` calls it at
+`windowsweep-web/src/lib/account.ts:132`. **First, *four things* was one short**. The function is a single
+`delete from auth.users where id = auth.uid()`, so the sign-in itself goes, with its sessions and identities,
+and the four tables follow it by cascade. **Second, refusing *everything* was right while the sentence stood
+alone**. It no longer does. The colon list says what *everything stored against it* covers. A new paragraph
+names the one kind of record that outlives the account: `admin_audit`. Its trigger inserts
+`jsonb_build_object('status', …, 'handled_at', …, 'handled_by', …)` and never the row, so *"it carries none of
+your words"* is read from the insert itself rather than from anyone's summary. The trigger fires on every
+change an admin can make to those three columns. That is why this page says *handles* where `/account` ships
+the narrower *marks a message handled*, and the difference is finding 8 below. Nothing on the reader's
+machine is touched by any of it.
 
 ---
 
@@ -461,7 +576,7 @@ installer downloads it from Microsoft. Neither request carries anything the app 
 <p class="t-sm ink-2" style="margin-top: var(--sp-3)" data-wsw-copy="pending">On every start the desktop
   app fetches <span class="mono">latest.json</span> from the release page to see whether an update exists.
   On a machine with no WebView2, the installer downloads it from Microsoft. Neither request carries anything
-  the app knows about you. Both are ordinary downloads, so GitHub and Microsoft see them the way any website
+  the app knows about you; both are ordinary downloads, so GitHub and Microsoft see them the way any website
   sees a visit.</p>
 ```
 
@@ -470,6 +585,12 @@ already name the two requests and both hosts. The fourth is new. *"Neither reque
 knows about you"* is precisely true and, read alone, invites a reader to conclude that nothing at all is
 observable, which is not something this page can promise about somebody else's server. Saying what GitHub
 and Microsoft do see is a smaller claim honestly bounded, and it costs nothing the section was relying on.
+
+⚠️ **Finalizer, 2026-09-13: sentences three and four are joined by a semicolon**. No word changed; one
+capital was lowered. S-007's correction added 59 words to the page and moved the rubric's range windows, so
+the window holding S-008 and S-009 was left with no sentence of 25 words or more. The fingerprint's own
+semicolon, the one for two related facts, closes it. Now the bound sits in the same sentence as the claim it
+bounds.
 
 ---
 
@@ -547,6 +668,14 @@ is a **`shell.js` change, not a copy change**, and it is reported below rather t
 
 Two. Both verbatim.
 
+✅ **Both ANSWERED on 2026-09-08**, in `run-state.json` `resolvedDecisions[17]`. Neither was an owner call;
+both were taken as the writer recommended. The inventory ships as three categories; a named list waits
+until the storage inspector can be read against a real build. The Clarity gap is closed in code, and more
+strongly than option (a) asked: `windowsweep-web/index.html:91` sets `data-clarity-mask="true"` on `<body>`,
+in the markup, before any script runs. Both stay below verbatim as the record so the next reader sees what
+was asked and what was chosen; this surface carries no unanswered `NEEDS DECISION`. **The finalizer opened
+none**.
+
 > **NEEDS DECISION: the cookie and browser-storage inventory is written as three categories because the
 > exact keys cannot yet be measured.** S-008 says *what* is kept and *why*, and does not name a single
 > cookie or storage key. 🔴 **Corrected mid-draft:** this decision was first written saying the site's
@@ -599,7 +728,8 @@ wrong.
    on `index.html:36`. It needs no key. It is listed here as well as above because a decision buried in a
    copy draft is a
    decision nobody applies, and this one is the difference between a sentence being true and being true
-   soon.
+   soon. ✅ **CLOSED 2026-09-08, in code**. `index.html:91` now carries `<body data-clarity-mask="true">`,
+   so the mask is in the markup before the tag loads rather than set after an `await`.
 
 1. ✅ **CLOSED - the footer now links to the page its own notice describes.** When this draft opened, the
    four footer columns carried no Privacy entry and it lived in the header navigation only, so a notice
@@ -649,10 +779,23 @@ wrong.
    the disclosure. The sentence is left as round 2 ruled it. The fix is one word in this draft, and it
    belongs to whoever rules on that sentence next. With the byte row landed and the footer link added, this
    and the caption are what is left open on this page.
+8. **`/account` ships a narrower survival sentence than the database keeps** (finalizer, 2026-09-13).
+   `account.json` `deleteWhatStays` says the log is written *"when an admin marks a message handled"*. The
+   trigger `audit_contact_request_status()` fires on every admin change to `status`, `handled_at` or
+   `handled_by`, so a status change that is not a handled-mark survives the account too. This page says
+   *handles* for that reason. The `/account` string belongs to its own surface, so it is reported here and
+   not changed. It is one word. The direction matters: as written it implies slightly more deletion than
+   happens.
 
 ---
 
 # Self-check
+
+⚠️ **Round 2's measurements, kept as the record**. The finalizer's score sheet at the top of this file
+supersedes every figure below, because S-003, S-007 and S-009 changed after these were taken. Four claims
+below no longer hold. S-007 now bounds *everything* instead of refusing it. *"It removes four things"* no
+longer ships. S-007 runs past the 153-word ceiling this check gives every section. And the urgency sweep now
+finds `immediately` once, in S-007, where it says when the deletion happens.
 
 **1. Palette match - band by band.** Row 17 allows **P and R only, and no humor at all**. Checked sentence
 by sentence over all **12 fenced blocks** - eleven slots, because S-007 carries two.

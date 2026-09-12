@@ -528,3 +528,54 @@ escalated. It is reversible in one line, and the alternatives are recorded above
 shortening the approved tagline to fit would reopen a GATE-4-approved line and damage the one that has to
 survive being read in a list of search results; keeping the shipped strapline leaves the Bible's clearest
 prohibition in the product's most-printed sentence.
+
+## 2026-09-13 - the v3 run: four site surfaces through GATE 4, and every NEEDS DECISION they raised
+
+GATE 4 is pre-authorised for the site surfaces on the standing condition (owner, 2026-09-07 and D12): the
+finalizer's fact-consistency check PASSES and the surface carries ZERO unanswered NEEDS DECISION. Every item
+below was answered from a recorded rule, an approved artefact or a measured fact - none needed the owner - and
+each is written here because an answer that lives only in a draft does not count as an answer (the site-app
+fact-checker returned exactly that finding, correctly).
+
+### Answered, one line each, with the source of the answer
+
+| Surface | Question | Answer | Answered from |
+|---|---|---|---|
+| site-home | the published byte count of the `.msi` (and whether the two cards are corrected together) | option (a): both cards read the published sizes, **2.52 MB** and **3.24 MB** (2,520,200 and 3,244,032 bytes, decimal) | a fact - read off `desktop-v1.1.0`'s release assets, not a decision. The dummy's 2.40 / 3.09 were the same files in MiB under an MB label |
+| site-front-site | ND-1: the docs link block's URL scheme | **`https://`** | a fact - the docs certificate issued on 2026-09-12 and `http://` now 301s; the draft's "omit it" was written while HTTPS failed |
+| site-front-site | ND-2: `Person` or `Organization` | **`Person`**; row 19's schema cell is owed a keeper amendment | the rule that schema mirrors visible content - no page names an organisation, and `Organization` would need three invented facts |
+| site-front-site | ND-3: `Licence: MIT` in `llms.txt` | **kept** | a licence is a redistribution fact, not a price; the footer and the JSON-LD already carry it |
+| site-front-site | ND-4: which program the `SoftwareApplication` node describes | **the CLI**; `softwareVersion` read from `VERSION` at build time, never typed | the node's own description and operating-system matrix are the CLI's |
+| site-privacy / site-home | which draft governs the footer notice (S-011 changes it, site-home S-030 kept the old string) | **S-011** | content-map row 17 names "the footer notice line" as its own; row 16 names the home bands and `/download`. S-030 was a verbatim confirmation, not a claim to own the string |
+| site-app | NEEDS DECISION 1: what "Sign out" on `/account` signs out of | **option (a), this browser only** - `signOut({ scope: 'local' })`, shipped 2026-09-13 | the approved dummy's own sign-out note (`account.html:98-99`) already says it clears what is stored in this browser; supabase-js's `global` default was the defect, since it also ended the desktop app's session in this shared auth pool |
+
+### GATE 4, under the pre-authorisation
+
+- **site-home (row 16) - APPROVED 2026-09-13.** Fact-consistency PASS (round 3 plus the finalizer's re-check);
+  its one NEEDS DECISION answered above. All 36 slots applied, dummy first, and deployed.
+- **site-privacy (row 17) - APPROVED 2026-09-13.** Fact-consistency PASS - its blocking finding (a deletion no
+  shipped surface could perform) closed by D14's `delete_my_account()`; humour off line by line; zero NEEDS
+  DECISION. S-001..S-011 applied and deployed.
+- **site-front-site (row 19) - APPROVED 2026-09-13.** Its fact-check FAILED on a stale version literal and four
+  open questions; all five settled above, the finalizer re-ran and returned READY. The 26 route strings, the og
+  rule, the JSON-LD and `llms.txt` applied and deployed.
+- **site-front (row 9, the docs) - APPROVED 2026-09-13.** Finalizer READY, zero NEEDS DECISION; applying to the
+  docs site now.
+- **site-app (row 18)** - written, and through the developmental, line and copy edits; fact-check returned four
+  contradictions (writer edits, no owner input) and no HARD FAIL on the safety slots. Not yet at the gate.
+
+### Two corrections made outside the pipeline, and why each is not authorship
+
+- **`/privacy`'s table caption lost a false sentence.** *"There is no other table."* sat four lines above a
+  paragraph naming two more stores kept in other tables. Deleting a false sentence is a correction; no word was
+  written. Finding 7 (*"Two more things are stored"* may count the email the table already shows) needs words
+  and stays with this pipeline.
+- **The feed's missing 1.2.0 entry** was written from the CHANGELOG's own 1.2.0 items, dummy first. It is a
+  release note assembled from approved text, and is recorded here so the keeper can take it into the batch.
+
+### For the keeper, from this run
+
+The S-017 `account.syncedLede` classification (W or P) raised by the site-app developmental editor; row 19's
+schema cell (`WebSite + SoftwareApplication + Person`); the family's word is **switch**, and site-home still
+carries "There is no opt-out" in its applied band-10 copy; content-map line 72 still says the desktop app
+"sends nothing until you accept" and line 60 that the docs domain "has never resolved" - both false now.

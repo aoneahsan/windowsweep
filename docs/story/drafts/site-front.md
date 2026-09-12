@@ -13,11 +13,14 @@ repeat whatever it finds, to someone who never visits either.
 
 🔴 **Three things are true of this surface today and shape every slot below.**
 
-**The documentation domain has never resolved.** `curl https://windowsweep-docs.aoneahsan.com/` returns
+**The documentation domain has never resolved.** ~~`curl https://windowsweep-docs.aoneahsan.com/` returns
 **000**, and `https://aoneahsan.github.io/windowsweep-docs/` returns **301** to that same dead host, because
 `static/CNAME` pins it. So the whole site — this page and this text file included — is unreachable from
 outside right now. Nothing written here may assume otherwise, and nothing here fixes it: the DNS rows are
-owner-only work already tracked at `docs/MANUAL-TASKS.md` rows 11-12 and RW-040.
+owner-only work already tracked at `docs/MANUAL-TASKS.md` rows 11-12 and RW-040.~~ 🔴 **NO LONGER TRUE,
+2026-09-13**. Probed today: `https://windowsweep-docs.aoneahsan.com/` answers 200, `http://` answers 301 to
+it, and all 16 built pages answer 200 over HTTPS. The certificate was issued on 2026-09-12. Nothing on this
+surface waits on the host now.
 
 **The front door is mirrored.** `windowsweep-docs/docs/intro.md` and the repository's own
 `docs/README.md` are the same index page in two trees, and `CLAUDE.md` fixes the direction: the repository
@@ -60,6 +63,16 @@ title: 'windowsweep - a Windows cleanup CLI that names every path first'
 nothing they did not already know from the URL, and it is the single string a search engine is most likely to
 render verbatim. The replacement carries the product name, the category and the differentiator in ten words.
 It is also the only place on the page where "cleanup CLI" and "names every path" sit together.
+
+🔴 **Finalizer, 2026-09-13: the title is also the sidebar label**. Docusaurus falls back to `title` for the
+sidebar and for the Previous and Next buttons. The live site shows it. The first sidebar item and the
+Previous button on `/safety-model` both read *windowsweep documentation*. Shipped alone, this title would put
+all ten words in both places. So the installable front matter adds one line, which keeps both exactly as
+they are and changes no copy:
+```
+sidebar_label: 'windowsweep documentation'
+```
+It is the only line in the publish-ready block that no slot above issues.
 
 ### S-003 · intro.md:5 · front matter · `description`
 ```
@@ -155,7 +168,7 @@ it is answered on the page rather than routed.
 ### S-011 · intro.md:22-23 · question 7, answered here
 ```
 **Does this cleanup tool send my data anywhere?**
-No. The command-line tool makes no network calls at all, and self-test check [9] greps its own source for HTTP and socket calls and fails the run if it finds any. The desktop application is a separate program: it sends usage and crash reports, there is no switch, and in 1.1.0 no destination is configured in the build, so nothing has left the machine yet.
+No. The command-line tool makes no network calls at all, and self-test check [9] greps its own source for HTTP and socket calls and fails the run if it finds any. The desktop application is a separate program: it sends usage and crash reports. There is no switch. In 1.1.0 no destination is configured in the build, so nothing has left the machine yet.
 ```
 **Was:** (new.)
 
@@ -163,6 +176,13 @@ No. The command-line tool makes no network calls at all, and self-test check [9]
 padding — the map marks this row "re-check on every desktop release", and a bare "no" on the front door of a
 product that also ships a desktop app is the exact claim that goes stale first. Saying which program the
 claim is about is what keeps it true.
+
+**Finalizer, 2026-09-13 (row 13)**. The third sentence ran 36 words as a comma chain, past the fingerprint's
+34-word ceiling, and it buried the family's four-word sentence in its middle. It is now three sentences, and
+the only word removed is an *and*. *There is no switch.* stands alone, as it does on `desktop.md`. Re-checked
+today: `desktop-v1.1.0` is still the newest published desktop release and `desktop-v1.2.0` is a draft, so *in
+1.1.0* stays. The website is not named here. The question is about the cleanup tool, which `docs-safety`
+answers the same way; `llms.txt` names all three programs at S-046.
 
 ### S-012 · intro.md:25-31 · questions 2 to 6 and 8, routed
 ```
@@ -240,15 +260,20 @@ Explorer, and every other path on the site is written in the Windows form. The s
 ```
 | Author | Who built this, the sibling tools, how to support the work |
 | Packages | The dependency and manifest record (there are no dependencies) |
-| What the project consists of | Every part of the project with its evidence, as audited on 2026-09-05 |
-| Remaining work | The specification of every open item: evidence, success criteria, acceptance points |
-| Remaining work, one page | Percentages, the next ten actions, the owner-only rows |
+| Project status | The live status record: every phase and sub-task with its state, the evidence behind it, and the rows only the author can close |
 ```
 **Was:** the same five.
 
 **Change:** none. The parenthesis in the Packages row is the driest line on the page and it is band W's whole
 budget here, which is right for a front door about deletion. Verified: `package.json` has no `dependencies`
 key.
+
+🔴 **CORRECTED 2026-09-13: the table this slot described no longer exists**. It was drafted against five rows.
+Commit `e6ccd9f`, the same day, replaced the last three with one *Project status* row, because their targets
+(`what-this-project-consists-of.md`, `remaining-work.md`, `remaining-work-summary.md`) had left the product
+repository and would have answered 404. Installing five cells would bring three dead links back. The fence
+now holds the live three, unchanged. The Packages parenthesis is still band W's whole budget, and
+`package.json` still has no `dependencies` key.
 
 ### S-019 · intro.md:72-78 · Quick contact · the three rows
 ```
@@ -260,14 +285,22 @@ key.
 
 **Change:** none. The support URL is the only permitted one.
 
+**Finalizer, 2026-09-13**. The fence gives the cells' text, while the live Author cell carries two links,
+`[Ahsan Mahmood](https://aoneahsan.com)` and a `mailto:` link, which the installable block keeps.
+
 ### S-020 · intro.md:80 · the footer line
 ```
-Last Updated: 2026-09-05 - tool version 1.1.0
+Last Updated: 2026-09-13 - tool version 1.2.0
 ```
 **Was:** identical.
 
 **Change:** none. A visible date that is true is the freshness signal, and the version beside it is what a
 machine quotes.
+
+🔴 **CORRECTED 2026-09-13**. The live footer moved on 2026-09-08, when commit `fa80848` mirrored 1.2.0 and
+set it to *2026-09-08 - tool version 1.2.0*. The 1.1.0 line this fence held would have put the page a release
+behind npm. `VERSION`, npm and `TOOL_VERSION` in `docusaurus.config.ts` all say 1.2.0. The date is the day
+the page is applied. It moves if the apply does.
 
 ### S-021 · docusaurus.config.ts:28 · the site tagline
 
@@ -290,7 +323,7 @@ answer-first rule applies to it exactly as it does to S-006. The two now agree.
 
 ### S-023 · docusaurus.config.ts:125-126 · SoftwareApplication schema · `description`
 ```
-Command-line disk and cache cleanup for Windows developers: a guided walkthrough, a read-only scan, a dry-run that writes nothing, schema-versioned JSON reports, and one deletion chokepoint that refuses personal folders no matter what is typed.
+Command-line disk and cache cleanup for Windows developers: a guided walkthrough, a read-only scan, a dry-run that writes nothing of yours, schema-versioned JSON reports, and one deletion chokepoint that refuses personal folders no matter what is typed.
 ```
 **Was:** Command-line disk and cache cleanup for Windows developers, with a guided walkthrough, read-only
 scan mode, JSON session reports, and a safety model built on one deletion chokepoint, protected paths and an
@@ -299,6 +332,12 @@ idle gate.
 **Change:** "a safety model built on" goes, because a safety model is a document rather than a capability,
 and the clause that replaces it states what the chokepoint does. The dry-run is added, since it is the
 feature the audience asks about most and the schema omitted it.
+
+🔴 **CORRECTED 2026-09-13**. *A dry-run that writes nothing* is the claim the Bible corrected on 2026-09-07.
+A dry-run writes two files of its own, a log and a report: measured, the logs folder went from 154 files to
+155 and the reports folder from 11 to 12. §3.2 now reads *"a dry-run that writes nothing of yours"*, and
+`docs-safety` and `site-home` already say it that way. S-026 and S-036 carried the same claim and are
+corrected the same way. This slot is still unapplied. The live config carries the old description.
 
 ### S-024 · docusaurus.config.ts:118 · SoftwareApplication schema · `offers`
 
@@ -314,13 +353,18 @@ with `isAccessibleForFree` — which is the same claim in a different field and 
 Option (a) is recommended. This is not a re-opening of the pricing decision; it is the one artefact that
 decision did not name, and it is inside row 9's declared schema.
 
+✅ **ANSWERED, and already applied**. `decision-log.md` records the literal reading: the block was removed,
+and `isAccessibleForFree` is ruled out for the same reason. On 2026-09-13 the live `docusaurus.config.ts`
+carries no `offers`, only a comment saying why. Nothing here is open.
+
 ---
 
 ## §B `static/llms.txt` — the same product, addressed to a machine
 
 Every line in the Facts block is a claim a model will repeat as its own. So each one below carries the place
 it was checked, and the block grew from eight lines to sixteen because six of the eight mapped questions were
-answerable only by following a link, which a machine does not do before it answers.
+answerable only by following a link, which a machine does not do before it answers. (🔴 Seventeen since
+2026-09-13. S-046 adds the website.)
 
 ### S-025 · llms.txt:1 · the title
 ```
@@ -333,12 +377,12 @@ answerable only by following a link, which a machine does not do before it answe
 ### S-026 · llms.txt:3-8 · the summary blockquote
 ```
 > A Windows cleanup CLI for developers. It reclaims disk space by deleting only caches that rebuild
-> themselves - package managers, build tools, browsers, editors, desktop apps, Windows temp and update
-> leftovers, stale project build artefacts - and it refuses personal folders, credentials and browser state
+> themselves: package managers, build tools, browsers, editors, desktop apps, Windows temp and update
+> leftovers, stale project build artefacts. It refuses personal folders, credentials and browser state
 > outright, with no flag that overrides the refusal. Every deletion passes through one function with the
 > folder it may touch declared up front. An idle gate keeps anything used in the last 100 days. A dry-run
-> performs the whole run and writes nothing. Personal files a person selects go to the Recycle Bin; caches
-> have no undo, because they regenerate. The command-line tool makes no network calls of its own.
+> performs the whole run and writes nothing of yours. Personal files a person selects go to the Recycle Bin;
+> caches have no undo, because they regenerate. The command-line tool makes no network calls of its own.
 ```
 **Was:** > A safe, developer-aware Windows cleanup CLI. It reclaims disk space by deleting regenerable
 caches - package managers, build tools, browsers, editors, desktop apps, Windows temp and update leftovers,
@@ -355,9 +399,14 @@ regenerate" is stated beside the Recycle Bin sentence rather than left out, sinc
 those two outcomes is the fact a reader is most harmed by not knowing. "The tool" becomes "the command-line
 tool", for the reason at S-011.
 
+🔴 **CORRECTED 2026-09-13: one fact and one split**. *Writes nothing* becomes *writes nothing of yours*, for
+the reason at S-023; the two files it does write are named at S-036. And the second sentence, 45 words with
+a dash pair around a seven-item list, splits at the refusal: the list now ends its own sentence after a
+colon, as S-006's does, and the refusal opens the next one. Its words are unchanged.
+
 ### S-027 · llms.txt:10-11 · the identity paragraph
 ```
-windowsweep is a Windows PowerShell 5.1 engine with a zero-dependency Node launcher, published on npm as `windowsweep` and licensed MIT. The current version is 1.1.0 and its self-test runs 151 checks. Run `npx windowsweep --scan` first: it measures every target and deletes nothing.
+windowsweep is a Windows PowerShell 5.1 engine with a zero-dependency Node launcher, published on npm as `windowsweep` and licensed MIT. The current version is 1.2.0, and its self-test proves the guards on the machine it runs on. Run `npx windowsweep --scan` first: it measures every target and deletes nothing.
 ```
 **Was:** windowsweep is a Windows PowerShell 5.1 engine with a zero-dependency Node launcher, published on
 npm as `windowsweep` and licensed MIT. The current version is 1.1.0 and its self-test runs 151 checks. Run it
@@ -367,6 +416,13 @@ with `npx windowsweep --scan` (read-only) before anything else.
 deletes nothing" is the same fact as a sentence a model can quote. Both numbers verified this session: `npm
 view` and `VERSION` agree on 1.1.0, and the self-test printed `all 151 checks passed`.
 
+🔴 **CORRECTED 2026-09-13**. Both numbers moved on 2026-09-08, when 1.2.0 reached npm and the self-test grew
+to 156 checks; the live file already says so. The version stays. A machine quotes it, and `TOOL_VERSION` in
+`docusaurus.config.ts` says the same. The count goes: it changes with every release and nobody re-reads this
+line when it does, which is how this slot still said 151 five days after the release. `site-home` and
+`site-front-site` dropped the tally for the same reason. *Proves the guards on the machine it runs on* is
+the AI guide's own description of `--self-test`, so the check keeps its fact without a number.
+
 ### S-028 · llms.txt:13-28 · the Documentation list
 ```
 ## Documentation
@@ -374,10 +430,21 @@ view` and `VERSION` agree on 1.1.0, and the self-test printed `all 151 checks pa
 **Was:** the same heading and fourteen entries, each an absolute URL under `https://windowsweep-docs.aoneahsan.com/`.
 
 **Change:** none to the list. The absolute URLs are the canonical ones the site declares in its own
-`canonical` head tag, and a machine that has read this file has by definition resolved the host. **Reported,
+`canonical` head tag, and a machine that has read this file has by definition resolved the host. ~~**Reported,
 not fixed:** that host currently resolves to nothing, so this file is unreachable today and the URLs in it
 cannot be followed. The `## Source` block below is what a reader who found this file in the repository can
-actually use, which is a reason to keep it.
+actually use, which is a reason to keep it.~~
+
+🔴 **CORRECTED 2026-09-13: two entries added, one report retired**. The list linked 14 of the site's 16 built
+pages. `desktop` and `about` are in the sidebar and answer 200, and neither was listed, so a machine reading
+this file could not find the desktop app's network behaviour or the author. Both are added in sidebar order,
+*Desktop app* after Quick start and *About the author* last, with descriptors taken from each page's own
+headings and front matter:
+```
+- [Desktop app](https://windowsweep-docs.aoneahsan.com/desktop): what the window adds over the command line and what leaves the machine
+- [About the author](https://windowsweep-docs.aoneahsan.com/about): who built this, the sibling tools, how to support the work
+```
+The struck report is retired. All 16 URLs answered 200 over HTTPS today.
 
 ### S-029 · llms.txt:15 · Documentation · the intro descriptor
 ```
@@ -390,16 +457,24 @@ what the tool is, what it refuses, and the one command to start with
 
 ### S-030 · llms.txt:16-27 · Documentation · the other thirteen descriptors
 ```
-(unchanged: the chokepoint, protected paths, tiers, the idle gate, dry-run / what the first question changes / npx, global install, or a clone / four commands from self-test to a real cleanup / exactly what each of the 26 sections touches / every mode, flag, exit code and environment variable / dev, minimal, cache-only, system, deep, audit / sections 12-16 and 20 / the JSON schema and the exports / the contract an agent or a script runs under: the read-only sequence, then the shapes and the exit codes)
+(unchanged: the chokepoint, protected paths, tiers, the idle gate, dry-run / what the first question changes / npx, global install, or a clone / four commands from self-test to a real cleanup / exactly what each of the 26 sections touches / every mode, flag, exit code and environment variable / dev, minimal, cache-only, system, deep, audit / sections 12-16 and 20 / the JSON schema and the exports / the contract an agent or a script runs under: the safe sequence, then the shapes and the exit codes)
 ```
 **Was:** the same thirteen.
 
 **Change:** none. Each descriptor names what the page contains rather than what it is called, which is what
 makes the list navigable for a machine. Each is accurate against the page it labels.
 
+🔴 **CORRECTED 2026-09-13: not unchanged, and one word was wrong**. The live descriptor for the AI guide has
+always read *how an agent or a script runs it safely*. The wording in this fence never shipped, so *Change:
+none* was not accurate for it. The fence's wording is kept, because it names what the page contains, which is
+this slot's own rule. One word is corrected. The guide's first section is **The safe sequence**: four
+commands that end in the real safe batch (`--all --yes`), so *the read-only sequence* was false. *The safe
+sequence* is the heading's own name.
+
 ### S-031 · llms.txt:30-35 · the Source block
 ```
 ## Source
+- Homepage: https://windowsweep.aoneahsan.com
 - npm package: https://www.npmjs.com/package/windowsweep
 - Repository: https://github.com/aoneahsan/windowsweep
 - Issues: https://github.com/aoneahsan/windowsweep/issues
@@ -407,9 +482,14 @@ makes the list navigable for a machine. Each is accurate against the page it lab
 ```
 **Was:** identical.
 
-**Change:** none. Four URLs, all of which resolve today, which is more than can be said for the fourteen in
+**Change:** none. ~~Four URLs, all of which resolve today, which is more than can be said for the fourteen in
 the documentation block above them, and which is the reason this block earns its place in a file whose
-canonical host answers nothing.
+canonical host answers nothing.~~
+
+🔴 **CORRECTED 2026-09-13: one line added**. The marketing site at `https://windowsweep.aoneahsan.com` went
+live on 2026-09-08 and is the product's canonical homepage; `package.json` `homepage` points at it. A source
+block without it names every place the product lives except its front door. It goes first. The struck
+comparison is retired with S-028's report, since every URL in both blocks now resolves.
 
 ### S-032 · llms.txt:37 · the Facts heading
 ```
@@ -450,12 +530,16 @@ check [6] then walks all 105 declared targets and fails if any resolves inside o
 
 ### S-036 · llms.txt · Fact 4 · scan and dry-run
 ```
-- `--scan` and `--list-targets` are read-only. `--dry-run` performs a whole run and writes nothing: the deletion helpers short-circuit, destructive external commands are skipped, and self-test check [7c] hashes a fixture tree before and after to prove it.
+- `--scan` and `--list-targets` are read-only. `--dry-run` performs a whole run and writes nothing of yours: the deletion helpers short-circuit and destructive external commands are skipped. Self-test check [7c] hashes a fixture tree before and after to prove it. The only files it writes are its own log and report.
 ```
 **Was:** (new.)
 
 **Change:** added. This answers mapped question 5, which no line in the file previously covered. It also
 carries the rehearsal motif in the form a machine can repeat.
+
+🔴 **CORRECTED 2026-09-13**, for the reason at S-023. A model repeating *writes nothing* repeats a claim one
+directory listing falsifies, so the two files are named. *Only* keeps the sentence true under `--no-report`,
+which skips the second. The three-clause run is now two clauses (row 6), and the proof has its own sentence.
 
 ### S-037 · llms.txt · Fact 5 · the idle gate
 ```
@@ -468,12 +552,17 @@ summariser would otherwise invent. Defaults checked in `lib/config.ps1:8-9`: `da
 
 ### S-038 · llms.txt · Fact 6 · junctions
 ```
-- It never follows a junction or a symlink: a reparse point is removed as a link, and the tree it pointed at is left alone. It also handles paths beyond 260 characters - the self-test fixture removes one 445 characters long.
+- It never follows a junction or a symlink: a reparse point is removed as a link, and the tree it pointed at is left alone. It also handles paths beyond 260 characters - the self-test fixture removes one longer than 400 characters.
 ```
 **Was:** (new.)
 
 **Change:** added. Both halves are fixture-backed: check [7] prints `junction removed as a link; target
 sentinel survives`, `nested junction not followed`, and `long path (445 chars) removed`.
+
+🔴 **CORRECTED 2026-09-13**. *445* was the length on the machine the check was read on, not a property of
+the fixture. The fixture is the data folder (`%USERPROFILE%\.windowsweep` unless `WINDOWSWEEP_HOME` moves
+it) plus 421 characters of its own (`modules/release_helpers.ps1:104, 171-172`). So 445 holds only where that
+folder is 24 characters long. *Longer than 400* holds everywhere. `site-home` de-numbered it the same way.
 
 ### S-039 · llms.txt · Fact 7 · `--yes`
 ```
@@ -539,18 +628,22 @@ exists to prevent, so the eleven section numbers and the two conditional ones ar
 
 ### S-045 · llms.txt · Fact 13 · scheduling
 ```
-- `--install-task` registers a weekly Scheduled Task (Sundays, 03:00) that runs the safe batch with no prompts. It never runs an interactive section, and it refuses to install when started through npx, because the task would point at a cache npm evicts - it exits 3 and prints the global-install command instead.
+- `--install-task` registers a weekly Scheduled Task (Sundays, 03:00) that runs the safe batch with no prompts. It never runs an interactive section. It refuses to install when started through npx, because the task would point at a cache npm evicts; it exits 3 and prints the global-install command instead.
 ```
 **Was:** (new.)
 
 **Change:** added. Answers mapped question 8. Checked in `modules/release_helpers.ps1`: the box title reads
 `Sundays 03:00, safe batch, no prompts`, and `Test-NpxInstallerRefusal` sets `WS_EXIT_REFUSED`, which is 3.
 
-### S-046 · llms.txt · Facts 14 to 16 · numbers, network, and the desktop app
+**Finalizer, 2026-09-13 (rows 4 and 6)**. The second sentence splits after its first clause, and the dash
+becomes a semicolon. One *and* is removed. Nothing else moved.
+
+### S-046 · llms.txt · Facts 14 to 17 · numbers, network, the desktop app, and (since 2026-09-13) the website
 ```
-- Section numbers are a frozen public contract: 0 to 21 shipped in 1.0.0, 22 to 25 in 1.1.0, and a number is never reused for something else. Exit codes are 0 success, 1 a failure, 2 a usage error, 3 a refusal, 130 an interrupt.
+- Section numbers are a frozen public contract: 0 to 21 shipped in 1.0.0 and 22 to 25 in 1.1.0. A number is never reused for something else. Exit codes are 0 success, 1 a failure, 2 a usage error, 3 a refusal, 130 an interrupt.
 - No amount of reclaimed space is promised anywhere, because it depends on the disk. `--scan` measures it.
-- The command-line tool makes no network calls of its own, sends no telemetry and checks for no updates; self-test check [9] greps the source and fails the run if it finds an HTTP or socket call. `--report-issue`, `--feedback` and the reports manager can open a URL in the reader's own browser, after the reader asks. The desktop application is a separate program, shipped separately as `desktop-v1.1.0`: it sends usage and crash reports with no opt-out - the first-run screen is a notice, not a consent request - and in 1.1.0 no destination is configured in the build, so nothing has left the machine yet. It also makes two requests nobody is asked about, neither carrying anything it knows about you: `latest.json` from this repository on every start, and the WebView2 installer from Microsoft on a machine without it.
+- The command-line tool makes no network calls of its own, sends no telemetry and checks for no updates. Self-test check [9] greps the source and fails the run if it finds an HTTP or socket call. `--report-issue`, `--feedback` and the reports manager can open a URL in the reader's own browser, after the reader asks. The desktop application is a separate program, released as `desktop-v1.1.0`. It sends usage and crash reports. There is no switch. The first-run screen is a notice, not a consent request, and in 1.1.0 no destination is configured in the build, so nothing has left the machine yet. It also makes two requests nobody is asked about, and neither carries anything it knows about you. On every start it fetches `latest.json` from the windowsweep GitHub releases; on a machine without WebView2, it downloads the installer from Microsoft.
+- The website at https://windowsweep.aoneahsan.com is the third program under the name, and it has no switch either. Usage events go to Google Analytics 4, Amplitude and Microsoft Clarity; errors go to Sentry. Of the three, only the command-line tool is offline.
 ```
 **Was:** the last of these read: - The tool makes no network calls of its own, sends no telemetry and checks
 for no updates.
@@ -570,10 +663,28 @@ which is deliberate: the plan publishes desktop releases with `--latest` because
 
 Both replacements are taken from the wording already applied and approved on `docs/desktop.md`, so the two
 pages cannot drift apart again: *"There is no switch"*, *"In 1.1.0 no destination is configured in the build,
-so nothing has left the machine yet"*, and the two unasked requests. 🔴 That last one matters and had been
+so nothing has left the machine yet"*, and the two unasked requests. 🔴 That last one matters. It had been
 missing here: the docs page says there are **three** answers, not two, and the third is neither the engine nor
 telemetry - it is `latest.json` on every start and the WebView2 download on a machine without it. An llms.txt
 naming only two answers hands a machine a cleaner story than the page it summarises.
+
+🔴 **CORRECTED AGAIN, 2026-09-13, in four places**.
+1. *With no opt-out* becomes *There is no switch*, a sentence of its own. The family's word is *switch*
+   (`desktop.md`, `site-privacy`, the desktop README), and *opt-out* names a control, the one thing that
+   does not exist.
+2. The 51-word desktop sentence, with a dash pair inside it, becomes four. *Shipped separately* becomes
+   *released*, so the sentence stops saying *separate* twice. `desktop-v1.1.0` was re-checked today: it is
+   still the newest published desktop release, and `desktop-v1.2.0` is a draft.
+3. *From this repository* becomes *from the windowsweep GitHub releases*. Inside the docs site's own file,
+   *this repository* reads as `windowsweep-docs`; the updater reads `aoneahsan/windowsweep`.
+4. A fourth line names the third program. The website went live on 2026-09-08 and sends analytics with no
+   switch, and a fact list naming two programs hands a machine a cleaner story than the product has. That
+   is the reason this slot gave on 2026-09-08 for adding the two unasked requests.
+
+The line stands alone on purpose. On 2026-09-13 the live site's script bundle carried none of the four
+ids, and its HTML says no Clarity id is in the build yet; the analytics land with its next deploy (RW-115).
+If this file ships first, that one line can wait for the deploy without touching the rest. Fact 14's split
+is row 6's: its three-clause run became a pair and a sentence.
 
 ---
 
@@ -588,16 +699,20 @@ finished issuing it for the new domain. So this surface is now readable, and the
 longer hypothetical. ⚠️ Every URL in these slots is written `https://`, which is correct - they are what the
 site will serve - but nothing in this draft may be **link-switched** early: `P3.https-writeback` flips every
 link in the fleet in one pass, and switching one of them here would be exactly the drift that task exists to
-prevent.
+prevent. 🔴 **SUPERSEDED, 2026-09-13: the certificate landed**. GitHub issued it on 2026-09-12 once the custom
+domain was removed and re-added. `https://` answers 200 and `http://` answers 301. The one-pass link switch
+ran the same day. Nothing in this draft was switched early, because every URL here was already `https://`.
 
 **`docs/README.md` and `intro.md` have already drifted.** The repository copy links the AI guide at
 `../AI-INTEGRATION-GUIDE.md`; the site copy links `./ai-integration-guide.md`, which is a different file that
 the site keeps in `docs/`. Both are correct. It is worth writing down, because a naive re-mirror would break
-one of them.
+one of them. Still true on 2026-09-13, and two more lines differ now: the repository copy's footer reads
+*2026-09-05 - tool version 1.1.0*, and its Project status row has its own cell text. Re-mirror slot by slot.
+Never copy the file.
 
 **`og:locale` is `en_US` on an en-GB product.** `docusaurus.config.ts` sets `{ property: 'og:locale',
 content: 'en_US' }` while the Bible fixes the language as en-GB and every page is spelled that way. One line,
-outside this draft's scope.
+outside this draft's scope. ✅ **Fixed before 2026-09-13**: the live config sets `en_GB`.
 
 **The site declares four JSON-LD blocks, not two.** Row 9 names WebSite and SoftwareApplication;
 `docusaurus.config.ts` also emits `SoftwareSourceCode` and `Organization`. Both are accurate and neither is a
@@ -612,12 +727,15 @@ problem — recorded so a later reviewer does not read the extra two as unplanne
 leads with one, S-026 replaces an adjective with one, and S-035 is a refusal listed four ways. Band **W**
 appears **twice** across both artefacts: the Packages row's parenthesis at S-018, and "which is more than can
 be said for the block above them" at S-031. Neither sits near a destructive instruction. Row 9 allows P and
-R and does not ask for W, so two is the ceiling rather than a target.
+R and does not ask for W, so two is the ceiling rather than a target. (🔴 2026-09-13: once. The S-031 line
+was commentary rather than shipping copy, and it is retired. The Packages parenthesis is W's only landing.)
 
 **Rhythm.** Shortest shipping sentence: "It deletes." at two words, S-034. Then "No." at S-011, one word
 answering the question above it. Longest: the third sentence of S-046's network fact at forty-two words,
 which lists three commands and a separate program and cannot be shortened without losing one of them. The
-answer-first paragraph at S-006 runs 31, 8 and 14 words. It ends short.
+answer-first paragraph at S-006 runs 31, 8 and 14 words. It ends short. (🔴 2026-09-13: that sentence
+measured 51 and is now four, the longest 29. Nothing it lists was lost. No shipping sentence on either
+artefact now runs past the fingerprint's 34 words; the sheet is below.)
 
 **Length.** Row 9 says short, and the honest report is that both artefacts grew. Measured. `intro.md`'s prose
 above the first table goes from **67 words to 83** (S-006, S-007 and S-008); the new question block at S-009
@@ -632,9 +750,12 @@ place on this surface where length buys the most.
 
 **Unsure.** One `NEEDS DECISION`, at **S-024**, on the `offers: { price: '0' }` field in the
 SoftwareApplication schema. It is raised because that field is inside row 9's declared schema and the
-2026-09-05 pricing decision did not name it. The decision itself stands. One phrase is allowed on purpose:
+2026-09-05 pricing decision did not name it. The decision itself stands. (✅ 2026-09-13: answered and
+applied, see S-024.) One phrase is allowed on purpose:
 "elevate" is on the shared list as an inflation verb and is, here, the name of the `--elevate` flag and the
-Windows term for what it does.
+Windows term for what it does. (🔴 2026-09-13, measured: the marker exempts one line, this one. No shipping
+string matches the list, since the flag is preceded by a hyphen and *elevated* and *elevation* are other
+words. It stays because this sentence has to name the word.)
 
 Two shipping strings keep a word the glossary bans. Both are deliberate. S-010 and S-012 reproduce the
 question map's own phrasing for questions 1 and 3, "free up disk space" and "cache safely", because a
@@ -642,3 +763,62 @@ question heading is written in the reader's words while its answer is written in
 split the map itself makes: its question column says "free up" and its answer column says "reclaimable".
 Rewriting the questions into glossary vocabulary would make them phrases nobody types, which is the one thing
 an indexed question heading may not be.
+
+---
+
+## Finalize, 2026-09-13
+
+**Publish-ready**. This is the finalizer's humanize pass, checked against `docs/story/voice-fingerprint.md`
+(`calibrated: false`) and the rubric in `aoneahsan-cccs-story-humanize`. 🔴 **The lint hook cannot see this
+surface's copy**. It strips code fences, and every shipping string here is a fence. That was measured rather
+than assumed: a banned phrase planted inside S-007's fence left the hook silent at exit 0, the same sentence in
+S-007's Change paragraph was named at exit 2, and the draft's md5 was identical before and after. So the sheet
+below was computed by hand on the rendered text of the two files. A green hook says nothing about the copy.
+The reader and the fact check are the gate.
+
+```
+HUMANIZE - site-front - checked against docs/story/voice-fingerprint.md (calibrated: no)
+Scope: rendered running prose, link text without URLs. intro.md 195 words (tables and headings out);
+llms.txt 903 words (summary, identity paragraph, Facts; the two link lists are banned-checked only).
+                     intro.md  before -> after        llms.txt  before -> after
+ 1 burstiness        0.74 -> 0.67  PASS               0.58 -> 0.47  PASS
+ 2 range             PASS -> PASS                     FAIL (window 4 had no <=6) -> PASS
+ 3 banned            0 -> 0  PASS                     0 -> 0  PASS   (allow "elevate": commentary line only)
+ 4 dashes per 150    0 -> 0  PASS                     1.26 -> 0.33  FAIL -> PASS  (ASCII " - "; the hook counts none)
+ 5 not-X-but-Y       0 -> 0  PASS                     0 -> 0  PASS
+ 6 triplets          2 of 2 allowed -> 2  PASS        4 of 2 allowed -> 0  FAIL -> PASS
+ 7 openers           PASS                             PASS
+ 8 throat-clearing   PASS                             PASS
+ 9 summary tell      PASS                             PASS
+10 specificity       PASS ("self-test check [9]"; "in 1.1.0")      PASS ("66 protected subtrees"; "Sundays, 03:00")
+11 point of view     PASS ("Start with npx windowsweep --scan.")   PASS ("which windowsweep cannot answer for you")
+12 hedging           PASS ("yet")                                  PASS ("on most volumes"; "most of the audit profile")
+13 voice match       FAIL -> PASS: one 36-word comma chain -> 13 + 4 + 18
+                     FAIL -> PASS: 45, 36, 51 and 35 words -> longest 30 (fingerprint range 4-34)
+                     under specimens 2, 6, 11: "It names every path before it touches one." / "There is no switch." /
+                     "Sections 11 and 16 are permanent and have no undo of any kind." - they do not sort apart
+14 palette           PASS  P: S-006 list, S-007, every numbered fact | R: S-006 close, S-010, S-026, S-035 |
+                           W: the Packages parenthesis, once
+VERDICT: before - intro 1 FAIL (13), llms.txt 4 FAIL (2, 4, 6, 13); after - every row PASS
+```
+
+```
+FACT CHECK - against the dispatch's list, 2026-09-13, each item probed or read in the tree
+ CLI 1.2.0 on npm, self-test 156         PASS  1.2.0 stated (VERSION, TOOL_VERSION agree); no count anywhere (S-027)
+ docs site on HTTPS since 2026-09-12     PASS  https 200, http 301, 16 of 16 pages 200; every link https
+ website live, canonical homepage        PASS  first line of Source (S-031); package.json homepage agrees
+ desktop-v1.1.0 released, 1.2.0 a draft  PASS  gh release list shows desktop-v1.2.0 Draft; nothing claims past 1.1.0
+ account deletion exists                 PASS  not on this surface; no hedge to remove
+ three programs, only the CLI offline    PASS  S-046 names all three; "switch", never "opt-out"
+ no pricing claim                        PASS  no price, tier or free/paid sentence; offers stays removed (S-024)
+ llms.txt is not a ranking signal        PASS  neither file describes llms.txt at all
+ llms.txt lists every built page         PASS  16 of 16, in sidebar order (S-028)
+Also corrected, not on the list: dry-run "writes nothing" -> "of yours" (S-023, S-026, S-036; Bible 3.2) |
+445 -> "longer than 400" (S-038) | "read-only sequence" -> "safe sequence" (S-030) | Meta back to the live
+three rows (S-018) | "this repository" -> the windowsweep GitHub releases (S-046) | footer 1.2.0 (S-020)
+CONDITION: S-046's website line describes the site as its next deploy ships it (RW-115). The live bundle
+carried no analytics ids on 2026-09-13.
+```
+
+Apply §A to `windowsweep-docs/docs/intro.md`, and slot by slot to the repository's `docs/README.md`. Apply §B
+to `static/llms.txt`, and S-022 and S-023 to `docusaurus.config.ts`. S-021 stays with `tagline.md`.

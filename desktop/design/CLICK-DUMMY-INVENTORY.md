@@ -365,7 +365,7 @@ screenshot pairs, taken in the app's own WebView2 from the **installed** 1.1.0 b
 
 **Full report, with every verdict and every defect:** `desktop/design/gate4/GATE4-REPORT.md`.
 Six representative pairs sit beside it; all 88 captures and 68 logs are outside git at
-`D:\work\windows-cleanup-root\gate4-evidence\`.
+`D:\work\windowsweep-root\gate4-evidence\`.
 
 ### What was taken
 

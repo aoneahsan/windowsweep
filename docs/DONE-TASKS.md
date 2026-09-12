@@ -3,7 +3,7 @@
 Closed agent follow-ups, moved here from the root `PENDING-TASKS.md` with the date and the commit that closed
 them. Open work lives there; owner-only rows live in `docs/MANUAL-TASKS.md`.
 
-Last updated: 2026-09-07
+Last updated: 2026-09-12 (DONE-005 added on evidence)
 
 ### DONE-001 - Download and set up the desktop toolchain and dependency trees
 
@@ -159,3 +159,23 @@ removed.
 Running it against the tree first found a third case the reviewers had not: `docs/desktop.md` had **no**
 footer at all. It arrived from the story pipeline with its own front matter and never gained one, so it was
 not the append defect but the same inconsistency from the other end. It has one now.
+
+### DONE-005 - the consent notice promised analytics events that did not exist
+
+**Closed 2026-09-12, on evidence rather than by a new change.** Both halves the task asked for had already
+landed by the time this audit read the tree:
+
+- **The events exist and are emitted.** `desktop/src/lib/events.ts` declares `screen.view` and
+  `control.press` in the typed registry, `App.tsx` emits `screen.view` on every route change and
+  `PrimaryButton.tsx` emits `control.press`, fanned out inside `track()` and never at a call site - commit
+  `6f4706f` (2026-09-08). GA4's `send_page_view` stays `false` and Amplitude's `autocapture` stays `false`,
+  so the sentence "Which screens you opened and which buttons you pressed" describes exactly what is sent.
+- **The unverifiable claim was reworded, dummy first.** The Amplitude line no longer says "kept longer":
+  the dummy's Home ledger (`desktop/design/windowsweep-click-dummy/wire.js`, amended 2026-09-08 with the
+  reason in its comment) and `en.json`'s `consent.provider.amplitude.what` both read "The same events, in a
+  second analytics tool." - a checkable claim about this product rather than a vendor-retention statement no
+  file here could source.
+
+Nothing was ever collected under a wrong sentence: no telemetry key reached a build before this closed, and
+`desktop-v1.2.0` is the first build that carries the keys. The wire proof that the two events actually land
+belongs to RW-101 / RW-115, not to this entry.

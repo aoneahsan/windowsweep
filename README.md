@@ -36,14 +36,14 @@ It is the Windows member of a family with [linux-cleanup](https://github.com/aon
 
 | | |
 |---|---|
-| **Version** | `1.1.0` |
+| **Version** | `1.2.0` |
 | **License** | MIT |
 | **Node** | `>=14` (launcher only) |
 | **Runtime** | Windows PowerShell 5.1 (built in) or PowerShell 7 |
 | **Platforms** | Windows 10 (1809+) and Windows 11 |
-| **Install size** | ~109 kB packed · ~366 kB unpacked · 44 files · no dependencies |
+| **Install size** | ~117 kB packed · ~396 kB unpacked · 44 files · no dependencies |
 | **Undo** | Recycle Bin for personal files; none for caches (they regenerate) |
-| **Status** | Stable · 1.1.0, released 2026-09-04 |
+| **Status** | Stable · 1.2.0, released 2026-09-08 |
 
 <a id="table-of-contents"></a>
 ## 🧭 Table of Contents&nbsp;[#](#table-of-contents)
@@ -451,9 +451,10 @@ More: [FAQ](https://github.com/aoneahsan/windowsweep/blob/main/docs/faq.md).
 <a id="changelog"></a>
 ## 🔄 Changelog&nbsp;[#](#changelog)
 
-Latest release: **`1.1.0`** - four new sections (global packages, orphaned app data, idle programs, startup
-items), `--select` / `--select-file` so a script or a GUI can drive the interactive sections, `--notify`, and
-`candidates[]`, `targets[]`, progress lines and `--list --json` for machine callers.
+Latest release: **`1.2.0`** - `--exclude-path` honoured in every section at the deletion chokepoint (it
+protected one section out of twenty-six, and never a folder's children), a dry-run that counts exactly what a
+real run removes, `newest_write_utc` on every scanned target, `protected` in `--list --json`, `excluded[]` in
+the summary, and the console and report strings in one voice.
 Full history: [CHANGELOG.md](https://github.com/aoneahsan/windowsweep/blob/main/CHANGELOG.md).
 
 <a id="contributing"></a>

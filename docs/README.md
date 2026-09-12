@@ -46,7 +46,7 @@ The [README](https://github.com/aoneahsan/windowsweep#readme) is the elevator pi
 `remaining-work.md` (the specification of every open item), `remaining-work-summary.md` (the one-page view
 with the percentage) and `what-this-project-consists-of.md` (what exists today) live one level above the
 repository, in the workspace folder that holds it - **outside version control**. A `git clone` does not carry
-them; the whole `windows-cleanup-root` folder has to be copied. The status record above stays here.
+them; the whole `windowsweep-root` folder has to be copied. The status record above stays here.
 
 ## Quick contact
 

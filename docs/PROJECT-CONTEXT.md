@@ -1,24 +1,26 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-09-07 (session 10)
-Verified Against: commit 1904b21 on `main`, 2026-09-08 (session 11: the engine change window for 1.2.0 opened - `--exclude-path` was found to protect ONE section out of twenty-six and is now enforced at the chokepoint; `targets[].newest_write_utc` and `--list --json` `protected` added; the self-test went 151 -> 154 with each new check watched failing on its own plant. Four Rust commands landed in the desktop shell. The marketing site repository exists. 🔴 The 1.1.0 engine at 3c4d54e is NO LONGER unchanged - that invariant ended deliberately here and is replaced by "the engine equals v1.2.0 once tagged")
+Last Updated: 2026-09-12 (session 13, the audit)
+Verified Against: commit fc29532 on `main`, 2026-09-12 (session 13: CLI 1.2.0 published on 2026-09-08 and the engine equals `v1.2.0` again - the diff is empty; the marketing site live since 2026-09-08; `desktop-v1.1.0` released and installed on this machine, 1.2.0 owed; the docs site HTTP-only while GitHub withholds its certificate; the workspace root renamed to `windowsweep-root`; eight owner decisions D13-D20 recorded below)
 
 ## Identity and outcome
 - Purpose: safe, developer-aware disk and cache cleanup CLI for Windows; the Windows member of the family with
   `linux-cleanup` (Bash) and `macleanup` (Bash).
 - Primary users: developers and power users on Windows 10/11 who want to see and control every deletion.
-- Current status: **1.1.0 released** (2026-09-04) and equal to `main`: sections 0-25, the scripted-selection
-  flags, the `--json` contract, 151 self-test checks. The documentation site is deployed; its domain waits on
-  the owner DNS record. The desktop app is **built** - all eleven screens, the Tauri shell, `desktop-ci` green
-  end to end, and NSIS + MSI installers produced locally since 2026-09-06 - with GATE 4 parity and the first
-  release open. The storytelling retrofit has its Bible and content map approved and three of fourteen
-  surfaces recorded. `remaining-work.md` (at the **workspace root**, outside git) holds the specification, the
-  2026-09-07 completion plan holds the method, and the tracker holds the status.
+- Current status: **1.2.0 released** (2026-09-08) and equal to `main`: sections 0-25, the scripted-selection
+  flags, the `--json` contract with `newest_write_utc`, `protected` and `excluded[]`, `--exclude-path` at the
+  chokepoint, 156 self-test checks. The documentation site is live over HTTP (HTTPS waits on GitHub's
+  certificate). The desktop app is **released** as `desktop-v1.1.0` and installed on this machine; wave 4b,
+  RW-105 and the analytics events are built and unreleased; `desktop-v1.2.0` and the updater proof are owed.
+  The marketing site is **live** at `windowsweep.aoneahsan.com` with its SEO, telemetry, person-shaped
+  verification and parity open. The storytelling retrofit has 14 of 19 surfaces recorded or applied.
+  `remaining-work.md` (at the **workspace root**, outside git) holds the specification, the v3 completion
+  plan of 2026-09-12 holds the method, and the tracker holds the status.
 - Distribution: `npx windowsweep`, `npm install -g windowsweep`, or a clone run through `windowsweep.cmd`.
   No other channel (owner decision 2026-09-03).
 - What is open, with evidence and acceptance criteria: `../remaining-work.md` (the **workspace root**
-  `D:\work\windows-cleanup-root\`, outside this repository since 2026-09-07 - copy the folder, not the clone);
-  how it gets done: `../completion-plan-2026-09-07.md`; status:
+  `D:\work\windowsweep-root\`, outside this repository since 2026-09-07 - copy the folder, not the clone);
+  how it gets done: `../completion-plan-v3-2026-09-12.md`; status:
   `docs/features/windowsweep-completion/00-tracker.json`.
 
 ## Chosen architecture
@@ -54,12 +56,13 @@ Verified Against: commit 1904b21 on `main`, 2026-09-08 (session 11: the engine c
   never touched by design.
 - On the owner's machine (2026-09-03): hibernation to be disabled fully (`--hiberfil off`) in the admin step;
   the real run in the build session covered the safe batch in developer mode only.
-- The two repositories live side by side under `D:\work\windows-cleanup-root\` (**`windowsweep`** = the
-  product, `windowsweep-docs` = the site). Owner decision 2026-09-05, asked which layout is durable: **"Keep
-  this layout as is"**. The 2026-09-03 rename row is closed as superseded. 🔴 **The product folder was then
-  renamed from `windows-cleanup` to `windowsweep` and the owner confirmed on 2026-09-07 that the new name is
-  final**, so the "inner folder names do not change" half of the 2026-09-05 answer no longer holds. The root
-  layout is unchanged.
+- The three repositories live side by side under **`D:\work\windowsweep-root\`** (`windowsweep` = the
+  product, `windowsweep-docs` = the docs site, `windowsweep-web` = the marketing site). Owner decision
+  2026-09-05, asked which layout is durable: **"Keep this layout as is"**. 🔴 The product folder was renamed
+  from `windows-cleanup` to `windowsweep` (final, 2026-09-07), and **the root itself was renamed from
+  `windows-cleanup-root` to `windowsweep-root` and confirmed final on 2026-09-12 (D13)** - every instruction
+  record was repointed that day; the 2026-09-07 plans and the work-history records keep the old name as
+  history.
 - **Scope of "feature-complete" (2026-09-03):** the 1.0 catalogue plus the family-parity features shipped as
   1.1 - a read-only globals audit (22), an orphaned-AppData scan (23), an installed-programs idle report (24),
   a startup-items audit (25), driver/upgrade installer leftovers (26, admin), new target rows in sections 1, 8
@@ -73,6 +76,30 @@ Verified Against: commit 1904b21 on `main`, 2026-09-08 (session 11: the engine c
 - **Releases (2026-09-03):** every release from 1.0.1 on gets an annotated tag `vX.Y.Z` and a GitHub Release;
   `v1.0.0` is tagged retroactively on `70c6738`, the commit the published tarball was built from.
 
+### Session 13 decisions (2026-09-12) - the audit
+
+Asked to audit the whole project again and rewrite every record, the owner settled eight questions. His
+answers by the option label he chose, and what each one changed:
+
+| # | Question | Answer | Consequence |
+|---|---|---|---|
+| **D13** | The workspace root had been renamed to `windowsweep-root` under every record | **"Yes, windowsweep-root is final"** | every instruction record repointed; the memory note moved to the new project key; historical quotes keep the old name |
+| **D14** | `/privacy` promises account deletion no surface could perform | **"Build it"** | RW-113: a `delete_my_account()` SECURITY DEFINER RPC in this repo's schema home, wired into the site's `/account` and the desktop Account screen, proved on a throwaway alias |
+| **D15** | Google sign-in (MANUAL-TASKS row 15) | **"Yes, I will enable it during this run"** | RW-116: sign-in, contact, account, deletion and the admin gating verified as the non-admin alias and as the admin |
+| **D16** | Execution model for the remaining work | **"Fable writes audit + plan, Opus executes"** | this session ends with the v3 plan; an Opus session runs its waves. Restated mid-session: *"make sure fable 5.1 plans and save plan and then stop i will switch model to opus 5 and it will (should) implement all planned work, it should run 4 custom subagents to get all planned work as best and fast as possible implemented"* |
+| **D17** | Android | **"Keep it out"** | no Android build for the site or the CLI; Capacitor stays wired |
+| **D18** | The docs certificate GitHub has not issued in five days | **"Yes, remove and re-add via the API"** | RW-102 opens with the Pages API re-add, then one pass over every docs link |
+| **D19** | The two 1.2.0 report-body wording changes flagged for veto | **"Both stand"** | `Reclaimed` in the report tables and the HTML hero without `dry-run` are final |
+| **D20** | The sub-agent ceiling for the Opus run | **"Up to four at once"** | scopes pairwise disjoint, verified before every dispatch; hot files main-only; the standing rule of two returns afterwards |
+
+**What the audit verified rather than assumed:** the engine equals `v1.2.0` (empty diff); the self-test is
+156 and the analyzer clean today; `desktop-v1.1.0` is installed here (HKCU); the docs HTTPS failure is
+GitHub's own `*.github.io` certificate with no CAA record on the apex; the site's static HTML carries the home
+title and canonical on every route and answers 200 on unknown paths; D-9, D-13 and D-22 are done in code while
+their tracker row still read pending; TASK-005's events exist with callers; the 1.2.0 cascade left the README's
+version rows at 1.1.0 (corrected in the repo; stale in the published tarball until 1.3.0); `lib/safety.ps1`
+and `modules/self_test_extra.ps1` exceed the 500-line ceiling (RW-121).
+
 ### Session 10 decisions (2026-09-07) - the completion run
 
 Asked to confirm and finish every remaining item, the owner settled eight questions. Fable 5.1 planned the
@@ -81,7 +108,7 @@ work at `C:\Users\PC\.claude\plans\we-have-remaining-work-md-in-purrfect-wind.md
 His answers, and what each one changed:
 
 - **"Workspace root, all three"** - `remaining-work.md`, `remaining-work-summary.md` and
-  `what-this-project-consists-of.md` move to `D:\work\windows-cleanup-root\`. 🔴 **That is outside git**, so
+  `what-this-project-consists-of.md` move to `D:\work\windows-cleanup-root\` (renamed `windowsweep-root` on 2026-09-12). 🔴 **That is outside git**, so
   another machine needs the whole folder copied, not a clone. The README's two public roadmap links now point
   at the tracker JSON, which stays in the repository.
 - **"Pre-approve after a lean review"** - GATE 4 is granted **in advance** for all eleven remaining
@@ -548,24 +575,32 @@ Derived from those decisions by the agent, under the standing rules:
 ## External records and registrations
 
 - **FilesHub project id 60** (`slug: windowsweep`, public id `01M1M5FCY6TMM6KGC0W6GE79KY`), created 2026-09-03.
-  Its vault carried nothing until 2026-09-07, when the Supabase project was linked (see the Supabase section
-  below). The telemetry fields (`sentry.dsn`, `amplitude.api_key`, `clarity.project_id`) and the Google OAuth
-  client are still blank - owner rows 16 and 15. The updater's minisign private key and its password were
-  written to the vault on 2026-09-07 so a second machine can produce signed builds.
+  Its vault carries the Supabase link (id 15), the Firebase web config (the GA4 measurement id included,
+  written 2026-09-08), Sentry, Clarity and Amplitude, and the updater's minisign private key and password
+  (written 2026-09-07 so a second machine can produce signed builds). The Google OAuth client is not a vault
+  item - it lives in Supabase's own Auth -> Providers form (row 15).
 - **Palette registry:** primary hue **128** (lime), light `#4d7c0f`, dark `#a3e635` with dark on-accent text.
   Registered 2026-09-03 in `~/.claude/palettes/project-palettes.json`.
-- **Dev ports:** 5972 (docs site start), 5973 (docs site serve), 5974 (desktop Vite dev URL), in
-  `~/.dev-ports.json`.
-- **Portfolio:** `apps/WINDOWSWEEP_portfolio-info_2026-09-05.md` in the notebook, with a byte-identical copy at
-  this repository's root (outside the npm `files` allowlist). Refreshed to 1.1.0 by the 2026-09-05 audit; the
-  master links entry reads `Published v1.1.0 (2026-09-04)` with `ownerReview` still empty (owner row 5).
+- **Dev ports:** 5972 (docs site start), 5973 (docs site serve), 5974 (desktop Vite dev URL), 5975 / 5976
+  (the marketing site dev / preview), in `~/.dev-ports.json` - paths repointed to `windowsweep-root` on
+  2026-09-12.
+- **Portfolio:** `apps/WINDOWSWEEP_portfolio-info_2026-09-12.md` in the notebook, with a byte-identical copy at
+  this repository's root (outside the npm `files` allowlist). Refreshed to 1.2.0, both releases and the live
+  site by the 2026-09-12 audit; the master links entry carries `links.web` = the site, `links.docs` over HTTP
+  by decision, and `ownerReview` still empty (owner row 5).
 - **ORCID:** `windowsweep.bib` (`aoneahsan-windowsweep-2026`) in the notebook's ORCID folder and appended to
   `aoneahsan-all-works.bib`; the import and the work-type retype are owner rows in that folder's
   `MANUAL-TASKS.md` (row 24).
-- **Documentation site:** `aoneahsan/windowsweep-docs` at `D:\work\windows-cleanup-root\windowsweep-docs`,
-  deployed to GitHub Pages and green. The domain
-  `windowsweep-docs.aoneahsan.com` does not resolve yet; `package.json` `homepage`, the README links and
-  `WS_DOCS` in `lib/constants.ps1` switch only after it probes 200.
+- **Documentation site:** `aoneahsan/windowsweep-docs` at `D:\work\windowsweep-root\windowsweep-docs`,
+  deployed to GitHub Pages and green; `windowsweep-docs.aoneahsan.com` answers **HTTP 200** (all 55 sitemap
+  URLs, 2026-09-08). HTTPS waits on GitHub's certificate (the host still presents `*.github.io`; no CAA on the
+  apex); the agent re-adds the domain via the Pages API (D18). `package.json` `homepage`, the README links and
+  the repo fields switch in ONE pass after the first HTTPS 200; `WS_DOCS` in `lib/constants.ps1` moves inside
+  the 1.3.0 cascade because the engine equals `v1.2.0`.
+- **Marketing site:** `aoneahsan/windowsweep-web` (private) at `D:\work\windowsweep-root\windowsweep-web`,
+  **live** at `https://windowsweep.aoneahsan.com` since 2026-09-08 on Firebase Hosting (project `windowsweep`,
+  number 123008957321, hosting + GA4 only); the palette registry's `domain` names it since 2026-09-12;
+  `package.json` `homepage` and both repos' GitHub homepage follow in the write-back.
 
 ## Supabase
 
@@ -640,7 +675,7 @@ migration.
 - `lib/constants.ps1` - section catalogue, profiles, safe batch, version fallback (must equal `package.json` and `VERSION`).
 - `lib/actions.ps1` - `New-Target` rows + `Invoke-TargetList`; the cache-folder name allowlist for layout kinds.
 - `modules/release_helpers.ps1` - the self-test groups [1]-[12]; `modules/self_test_extra.ps1` carries groups
-  [13]-[18]. 155 checks in total (junction, dry-run, keep-newest, extension, catalogue and contract fixtures).
+  [13]-[18]. 156 checks in total (junction, dry-run, keep-newest, extension, catalogue and contract fixtures).
 - `docs/sections.md`, `docs/cli-reference.md`, README section table - must agree with the catalogue.
 
 ## Verification
@@ -684,6 +719,13 @@ migration.
   self-test guards green), and the run restarted. Keep the guard table-driven; never reintroduce per-call
   path resolution there.
 
+### 2026-09-07 - safe batch, developer mode, not elevated, THROUGH THE INSTALLED DESKTOP APP (build machine)
+- Authorised by the owner on 2026-09-07 ("Yes, the unelevated safe batch"); dry-run first, then one real
+  `--all --yes` developer-mode run from the installed `desktop-v1.1.0` build.
+- Freed 3,924,712,402 bytes across 11 sections with zero refusals; drive C: 5.84 -> 9.85 GB free. The first
+  real cleanup driven through the window; recorded in `desktop/design/gate4/GATE4-REPORT.md`.
+- No interactive section, no admin section, never elevated.
+
 ### Not yet run for real (P1 in `remaining-work.md`)
 Sections 12-16 and 20 (elevation), `--elevate` itself, section 4 (no idle AVD), 5 (daemon off), 7 for Chrome,
 8 for Slack and Granola, 17-19 (interactive), the weekly Scheduled Task, any Windows 11 machine, the `--pwsh`
@@ -718,6 +760,17 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
   Release. 🔴 The `tar` on PATH here is Git Bash's, which reads `C:\...` as a remote host - the diff step
   uses `%SystemRoot%\System32\tar.exe` explicitly and refuses to compare fewer than 30 extracted files, so a
   failed extraction can never read as "nothing disappeared".
+- 2026-09-07T17:55Z: **`desktop-v1.1.0`** published on GitHub Releases (created `--latest`, so the updater
+  endpoint went from 404 to 200): `windowsweep_1.1.0_x64-setup.exe`, `windowsweep_1.1.0_x64-setup.exe.sig`,
+  `windowsweep_1.1.0_x64_en-US.msi`, `windowsweep_1.1.0_x64_en-US.msi.sig`, `latest.json`, `SHA256SUMS.txt`
+  (the last attached by hand after the workflow lost a consistency race; the workflow now retries). Sign-in
+  and telemetry dormant in this build. Installed on this machine (HKCU `windowsweep 1.1.0`).
+- 2026-09-08T12:27Z: `windowsweep@1.2.0` published to npm by `aoneahsan` (44 files, 117.4 kB packed,
+  395.7 kB unpacked; built from `727d3a6`). The publish gate ran in full: version above the registry, a
+  content-regression diff against 1.1.0 showing an **identical 44-file set**, a secret sweep over the shipped
+  files, a smoke-install into a temp prefix (`--version`, `--list`, `--list --json`, `--self-test` 156), then
+  `npx windowsweep@1.2.0` from the registry. Annotated tag `v1.2.0`; **GitHub Release created with
+  `--latest=false`**, and `desktop-v1.1.0` verified still Latest with `latest.json` resolving.
 - Verify a published version from a directory OUTSIDE this repo: inside it, npx resolves the same-named local
   package and reports `'windowsweep' is not recognized` (`docs/troubleshooting.md`).
 
@@ -731,42 +784,23 @@ path on github.com. A link is a promise. When a document needs to point at proje
 `docs/features/windowsweep-completion/00-tracker.json`, which IS tracked.
 
 🔴 **A `git clone` does not carry any of them.** Moving this project to another machine means copying the
-whole `D:\work\windows-cleanup-root` folder, not cloning the two repositories.
+whole `D:\work\windowsweep-root` folder, not cloning the three repositories.
 
 ## Open material unknowns
 
-- **None. Every question is settled** - the CLI, the desktop app's design, the backend, the layout, the
-  tagline, the release sequence and the storytelling gates were all answered by the owner decisions recorded
-  above, the last eight of them on 2026-09-07. What remains is owner *input*, not owner *decisions*.
-- **Landed:** row 22 (the Build Tools install, 2026-09-06) and row 23 (the Supabase account and project,
-  2026-09-07).
-- **Still owed by the owner, and polled at the start of every session.** Re-polled 2026-09-07 late, and the
-  picture is finer than "the keys have not landed":
-  - **Rows 11-12, the docs domain: the DNS is DONE and correct, and only the certificate is missing.**
-    `windowsweep-docs.aoneahsan.com` is a CNAME to `aoneahsan.github.io` - the right record type for a
-    subdomain - and the site answers **HTTP 200**. But HTTPS answers **000** and the Pages API reports the
-    certificate as **not requested**. The configuration is identical to `native-update-docs`, whose own
-    certificate reads `approved` / `enforced: true` on the same account and parent domain, so the pattern is
-    proven and nothing here is misconfigured: `static/CNAME` exists, ships in `build/`, and the deployed site
-    serves it back. The custom domain was re-saved through the API to re-trigger provisioning. **This is
-    GitHub's queue, not an owner row any more** - it needs waiting, not doing. RW-040's write-back stays held
-    until HTTPS answers 200, and no link is switched early.
-  - **Rows 16/18, telemetry: three of the four keys have landed.** The vault's `vite` block now carries
-    `VITE_SENTRY_DSN`, `VITE_CLARITY_PROJECT_ID` and `VITE_AMPLITUDE_API_KEY` (plus
-    `VITE_ONESIGNAL_APP_ID` and `VITE_FILESHUB_API_URL`, neither of which the desktop app uses).
-    `configured_services` lists supabase, sentry, onesignal, clarity, amplitude and general - **`firebase`
-    and `google_cloud` are absent**, so the **GA4 measurement id is still missing**. That matters more than a
-    partial usually would: `configuredFeatures().telemetry` is true if **any one** key is present, so a build
-    carrying these three would report telemetry as configured while GA4 silently received nothing.
-  - **Row 15, Google sign-in: still off.** Probed against `auth/v1/settings` with the publishable key from
-    `GET /supabase-projects/nlmetjyytgwaxcliusuo`: providers ON = **`email` only**, `external.google` =
-    **false**. The database half is finished - G1 (`endpoints.api` + `publishable_key`) and G2
-    (`db_password` + `db_url_session_pooler`) both pass and the schema is applied - so what is blocked is
-    only the **client**. Writing `VITE_SUPABASE_URL`/`VITE_SUPABASE_PUBLISHABLE_KEY` into a release build now
-    would advertise a sign-in the app cannot complete, because `configuredFeatures()` derives `signIn` and
-    `sync` from those two vars alone and cannot see whether a provider exists.
-  - **Rows 5 and 13** (the master-links review and the ORCID import) are unchanged.
-- **Moved to a second machine** by his 2026-09-07 decision, because this one does not have the software or
-  the operating systems they need: row 20 (the candidate-path probe that settles RW-064, RW-065 and RW-066)
-  and the P1 verification runs (rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21). The handoff is §9 of
-  `../completion-plan-2026-09-07.md`.
+- **None. Every question is settled** - the last eight (D13-D20) on 2026-09-12. What remains is owner *input*
+  and second-machine work, not owner *decisions*.
+- **Still owed by the owner, polled at the start of every session:**
+  - **Row 15, Google sign-in** - a Google **Web** OAuth client with the Supabase callback, entered in the
+    project's Auth -> Providers form; he does it during the v3 run (D15). Until `external.google` reads
+    `true`, both apps report sign-in as unconfigured, honestly, and `VITE_SUPABASE_*` stay out of every build.
+  - **Rows 5 and 13** (the master-links review and the ORCID import) - unchanged.
+  - **Rows 26 and 28** (the weekly task seen in Task Scheduler; a cancelled real run's log compared) - after
+    `desktop-v1.2.0`.
+  - **Row 29, a glance at the four dashboards** once telemetry ships - the agent proves the beacons on the wire
+    and holds no dashboard login.
+- **GitHub, not the owner:** the docs certificate. The agent re-adds the domain (D18) and polls; a GitHub
+  support step becomes a MANUAL-TASKS row only if the state is still `null` a day after the re-add.
+- **Moved to a second machine** (owner, 2026-09-07): row 20 (the candidate-path probe that settles RW-064,
+  RW-065 and RW-066) and the P1 verification runs (rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21); then 1.3.0 with
+  RW-121 and `desktop-v1.3.0`. The handoff is section B11 of `../completion-plan-v3-2026-09-12.md`.

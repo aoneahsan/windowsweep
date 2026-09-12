@@ -10,7 +10,7 @@ at 390 is one nobody can act on. The axis-attribute probe was additionally taken
 width-independent (proved below), which is the only thing 390 can honestly tell us.
 
 **Pairs:** 11 screens × 2 widths × light and dark = **44 pairs, 88 captures**, all present.
-Full resolution: `D:\work\windows-cleanup-root\gate4-evidence\<screen>-<width>-<mode>-{dummy,app}.png`
+Full resolution: `D:\work\windowsweep-root\gate4-evidence\<screen>-<width>-<mode>-{dummy,app}.png`
 (outside git, 14.98 MB). Six representative pairs are copied beside this file.
 
 > 🔴 **This document now holds TWO rounds.** Round 2 is below and is current. **Round 1 follows it,
@@ -1522,7 +1522,7 @@ broken on this machine (GPU crash), so the dummy side ran **headed**.
   nothing wrong. The owner's own Chrome (`C:\Program Files\Google\Chrome`) was running throughout and was
   never touched.
 - The app: launched with `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9333`.
-- Scripts: `D:\work\windows-cleanup-root\gate4-evidence\tools\` (28 files) · logs: `…\logs\` (68 files).
+- Scripts: `D:\work\windowsweep-root\gate4-evidence\tools\` (28 files) · logs: `…\logs\` (68 files).
 - 🔴 **A full-page capture of these screens is not the document.** Both the dummy and the app are app-shell
   layouts where `document.scrollHeight === innerHeight` and `main.content` scrolls. A naive full-page
   screenshot silently returns **only the fold** — measured on the dummy Home at 1440, where `main.content`

@@ -3,7 +3,7 @@
 Open follow-ups the agent owes this project (fleet format: `### TASK-NNN`; done entries move to
 `docs/DONE-TASKS.md`). Owner-only rows live in `docs/MANUAL-TASKS.md`.
 
-Last updated: 2026-09-07
+Last updated: 2026-09-12 (TASK-005 closed to `docs/DONE-TASKS.md` on evidence; five open; the next id is TASK-011)
 
 ### TASK-004 - the elevated run has three gaps, all found by the 2026-09-07 fact-check
 
@@ -31,29 +31,6 @@ per-section confirmation.
 
 **3. It runs all six at once.** `elevation.lede` implies choosing ("ask for one"); the screen passes every
 admin id. Either the copy or the screen is wrong, and the dummy decides which.
-
-A number is never reused: the next task is TASK-011.
-
-### TASK-005 - the consent notice promises analytics events that do not exist
-
-🔴 **Not a 1.1.0 problem and it must not be treated as one:** no telemetry key is configured in that build,
-so nothing is collected at all. It becomes a live inaccuracy the day a GA4 or Amplitude key lands - owner
-row 16, three of whose four keys have already arrived.
-
-`consent.provider.ga4.what` promises "Which screens you opened and which buttons you pressed" and
-`consent.provider.amplitude.what` promises "The same events, kept longer". The only `track()` callers in the
-whole tree are three updater events in `desktop/src/lib/updater.ts`. There is no screen-view event and no
-button event, `send_page_view: false`, and Amplitude's `autocapture: false`. So GA4 would receive
-`update.check.*` plus gtag's automatic session events, and nothing the sentence describes.
-
-**To do, before any GA4 or Amplitude key reaches a build:** either emit the events the notice describes - a
-route-change event and a button event, fanned out inside `track()` and never at the call sites - or amend the
-dummy's `consent.html` and Home's ledger to describe what is actually sent, then match `en.json`. The dummy
-owns the words, so it changes first either way.
-
-⚠️ A second, separate claim in the same panel is **unverifiable rather than wrong**: Amplitude "kept longer"
-is a vendor-retention statement with no source in this repository. `desktop-safety` raised it as a
-`NEEDS DECISION` on 2026-09-05 and the decision log records no answer. It needs the owner, not a code change.
 
 A number is never reused: the next task is TASK-011.
 

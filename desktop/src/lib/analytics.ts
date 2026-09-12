@@ -75,7 +75,7 @@ declare global {
  * 2026-09-08 by running the real function over real strings rather than reading
  * it: `C:\Users\PC\AppData` scrubbed correctly, and `C:/Users/PC/AppData` came
  * back as `C:<home>/AppData/Local/Temp` - drive label AND two folder names intact.
- * `D:/work/windows-cleanup-root` came back untouched in full. That is the shape
+ * `D:/work/windowsweep-root` came back untouched in full. That is the shape
  * this app leaks most, not the backslash one: a Vite stack frame, an
  * `import.meta.url` and every `file:///C:/...` in a Sentry payload use forward
  * slashes. The class matches EITHER separator now.

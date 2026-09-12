@@ -374,3 +374,25 @@ push needs the project account's own PAT and the database password in the enviro
   secret key `auth.uid()` is null, so it returns false. It is a consistency gap with the four-role standard
   the newer migration follows, not a hole.
 - **Priority:** low.
+
+### DONE-012 - the desktop click dummy disagrees with itself in two small places
+
+**Closed 2026-09-13 in the main session.** (1) `g-tables.js:111` now writes "Report only - ..." with the
+hyphen the Sections page and the app use. (2) Both classes are STYLED rather than removed, each pinned to the
+token that equals what it already rendered - `.t-base { font-size: var(--fs-base) }` (it inherited the 16px body
+size) and `.t-2xl { font-size: var(--fs-xl) }` (32px, what the UA's `h1 { 2em }` gave it in a file with no reset) -
+so nothing moves on screen and both now follow the Text size axis. `.t-2xl` is now defined identically in the dummy
+and in the app's `shell.css:1703`, which had pinned it after a screenshot pair caught the app drawing the Splash
+wordmark at half size.
+
+**The entry as it was filed:**
+
+- **What:** (1) the gallery (`desktop/design/windowsweep-click-dummy/g-tables.js:111`) writes "Report only –
+  ..." with an en dash while the Sections page (`page-sections.js:82`) writes it with a hyphen; the app
+  follows the Sections page. (2) `t-base` (five dummy files, including the card code in `page-elevation.js`)
+  and `t-2xl` (`splash.html`) are used in the dummy and styled by no rule in its CSS.
+- **Do:** make the gallery match the Sections page; either style the two classes or remove them. Dummy-only -
+  the app is already consistent (TASK-007 found zero orphan classes across 333 selectors).
+- **Found while:** TASK-006 and TASK-007, 2026-09-13 (A-DESK).
+- **Why not fixed there:** outside those tasks' stated scope, and neither changes what a user sees.
+- **Priority:** low.

@@ -53,6 +53,12 @@ button, [role='button'] {
 .t-2xs { font-size: var(--fs-2xs); }  .t-xs { font-size: var(--fs-xs); }
 .t-sm  { font-size: var(--fs-sm); }   .t-md { font-size: var(--fs-md); }
 .t-lg  { font-size: var(--fs-lg); }   .t-xl { font-size: var(--fs-xl); }
+/* Two classes this dummy used and never styled (PENDING-TASKS TASK-012). Each is pinned to
+   the token that EQUALS what it already rendered, so nothing moves on screen and both now
+   follow the Text size axis. `.t-base` inherited the 16px body size; `.t-2xl` rendered only
+   because this file has no reset and the UA gives an h1 2em - the app, which HAS a reset,
+   drew the same wordmark at half size until it pinned the identical rule in shell.css. */
+.t-base { font-size: var(--fs-base); }   .t-2xl { font-size: var(--fs-xl); }
 .ink-2 { color: var(--c-ink-2); }     .ink-3 { color: var(--c-ink-3); }
 .accent-ink { color: var(--c-accent-ink); }
 

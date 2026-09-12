@@ -108,7 +108,7 @@
         tdS.appendChild(sw);
       } else {
         var d = el('span', 't-xs ink-3', '—');
-        d.title = 'Report only – there is nothing to select';
+        d.title = 'Report only - there is nothing to select';
         tdS.appendChild(d);
       }
       tr.appendChild(tdS);

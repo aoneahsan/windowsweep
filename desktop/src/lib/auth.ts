@@ -114,6 +114,36 @@ export async function currentUser(): Promise<AuthUser | null> {
   return data.session ? toUser(data.session) : null;
 }
 
+/**
+ * Delete the account itself, then sign this machine out.
+ *
+ * 🔴 ONE RPC, UNDER RLS - never the service role and never a row-by-row delete
+ * from here. `public.delete_my_account()` is `security definer` with
+ * `search_path = ''`, takes no argument, and derives the victim from `auth.uid()`
+ * alone, so this window cannot name someone else's account even if it tried.
+ * EXECUTE is granted to `authenticated` only: with the publishable key alone the
+ * call is refused rather than ignored.
+ *
+ * 🔴 WHAT GOES IS DECIDED BY THE SCHEMA, NOT BY THIS FUNCTION. Every user-owned
+ * table references `auth.users` with `onDelete: 'cascade'`, so deleting the auth
+ * row takes the profile, the synced settings, the run summaries and the contact
+ * requests with it. `admin_audit` does not go - it records what an administrator
+ * did and is not the person's row. The screen's sentence says exactly that and no
+ * more, which is why it is one sentence and not a reassurance.
+ *
+ * 🔴 THE SIGN-OUT IS PART OF THE OPERATION, not a courtesy afterwards. The session
+ * token outlives the row it was issued for, so a window left signed in would hold
+ * a JWT for a user that no longer exists and every later call would fail with
+ * something that reads like a bug.
+ */
+export async function deleteAccount(): Promise<void> {
+  const sb = supabase();
+  if (!sb) throw new Error('sign-in is not configured in this build');
+  const { error } = await sb.rpc('delete_my_account');
+  if (error) throw new Error(`the account could not be deleted: ${error.message}`);
+  await signOut();
+}
+
 /** 🔴 Signing out clears every local trace of the account, cached rows included. */
 export async function signOut(): Promise<void> {
   const sb = supabase();

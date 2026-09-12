@@ -65,22 +65,44 @@
     }
   }
 
+  /* 🔴 The tile and the table row are TWO VIEWS OF ONE FACT, so a toggle made in
+     either is written once (db.toggleExcluded) and painted into both. Neither view
+     is rebuilt to do it: rebuilding the table would throw away the focus of the
+     person using its switches, and that is the group the switches exist for. */
+  function paintExcluded(path, excluded) {
+    if (map && map.svg) {
+      var g = map.svg.querySelector('.tm-tile[data-path="' + CSS.escape(path) + '"]');
+      if (g) g.setAttribute('data-excluded', excluded ? 'true' : 'false');
+    }
+    var tbl = $('[data-ws-map-table]');
+    if (!tbl) return;
+    var row = tbl.querySelector('tr[data-path="' + CSS.escape(path) + '"]');
+    if (row) row.setAttribute('data-excluded', excluded ? 'true' : 'false');
+    var sw = tbl.querySelector('.switch[data-path="' + CSS.escape(path) + '"]');
+    if (sw) sw.setAttribute('aria-checked', excluded ? 'false' : 'true');
+  }
+
+  function excludeToggled(target, excluded) {
+    paintExcluded(target.path, excluded);
+    refresh();
+    ws.toast(
+      (excluded ? 'Keeping ' : 'Including ') + target.name + ' (' + fmt.bytes(target.value) + ')',
+      { undo: function () {
+        var back = db.toggleExcluded(target.path);
+        paintExcluded(target.path, back);
+        refresh();
+      } }
+    );
+  }
+
   function renderMap() {
     if (showEmpty) { applyEmptyStates(); return; }
     var mount = $('[data-ws-map]');
     if (!mount) return;
-    if (!map) map = new window.ReclaimMap(mount, {
-      onToggle: function (target, excluded) {
-        refresh();
-        ws.toast(
-          (excluded ? 'Keeping ' : 'Including ') + target.name + ' (' + fmt.bytes(target.value) + ')',
-          { undo: function () { db.toggleExcluded(target.path); refresh(); renderMap(); } }
-        );
-      }
-    });
+    if (!map) map = new window.ReclaimMap(mount, { onToggle: excludeToggled });
     map.render(db.derive.mapDataAll());
     var tbl = $('[data-ws-map-table]');
-    if (tbl) window.ReclaimMap.buildTable(tbl, db.derive.mapDataAll());
+    if (tbl) window.ReclaimMap.buildTable(tbl, db.derive.mapDataAll(), excludeToggled);
   }
 
   function renderLegend() {

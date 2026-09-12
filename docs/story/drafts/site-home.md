@@ -83,7 +83,11 @@ hero caption, and at S-036 in the fuller treatment `/download` has room for.
   blocks). Round 2 pinned `index.html` at `cfcc9cf7…` and 863 lines; the file has since gained band 15's
   second-path block and its download link, which is why the marked count moved 28 -> 29 and S-031 stopped
   being conditional. **Every `Was:` line in this file was re-resolved against these three snapshots**, and
-  each one still matches.
+  each one still matched at that moment. 🔴 **Re-pinned again at finalize, 2026-09-12:** `index.html` and
+  `shell.js` still carry the md5s above and still hold 29 and 2 marked blocks. `download.html` does not.
+  It is now `7eb09b657224acf4c08607589e1ddc93`, still 5 marked blocks, with the artefact sizes changed.
+  **One `Was:` fragment no longer resolves**: S-032's. The FINALIZED section at the end of this file
+  records which and why. The other 63 still do.
 - **en-GB** throughout. `Favorites`, `Saved Games`, `Local Storage` and `Preferences` keep their US spelling
   because they are Windows and Chromium folder names, not prose.
 
@@ -105,7 +109,7 @@ applier works by fixed-string search, so its position in this file has never mat
 
 **Why the block totals do not equal the slot totals.** `shell.js` contributes the brand tagline and the
 analytics notice to **every** page, so those two blocks render on both `index.html` and `download.html`
-while remaining **one string each**, owned once, at S-029 and S-030. The home page renders 30 pending
+while remaining **one string each**, owned once, at S-029 and S-030. Two pages, one owner. The home page renders 30 pending
 blocks (28 markup + 2 shared) and `/download` renders 7 (5 markup + 2 shared) - which is where
 `design/README.md` §12's table gets its two figures.
 
@@ -133,7 +137,8 @@ audit count appears anywhere on this surface.
 "how do I check it" answer. It is now in none. The reason is not that any of the candidates was wrong; it
 is that **every one of them is release-coupled by construction**. The site brands **1.1.0** in three places
 outside every pending block, the shipped 1.1.0 binary prints **151**, and the source at `HEAD` runs
-**155** on the way to an unreleased 1.2.0. A tally on the front door is therefore a number that goes stale
+**155** on the way to a then-unreleased 1.2.0. **Superseded 2026-09-12:** 1.2.0 shipped on
+2026-09-08 and the suite now runs **156**. The point only sharpens. A tally on the front door is therefore a number that goes stale
 on a schedule nobody is watching, on the page whose entire design argument is that its numbers can be
 checked. S-019 loses nothing by it: *check [9] greps the source for HTTP and socket calls and fails the
 build if it finds one* is the whole guarantee, and being one of N never made it truer. S-024 keeps what was
@@ -1493,6 +1498,9 @@ cascade, or cut the count entirely; the first was recommended.
 > worth defending a slot for. The engine at `HEAD` now runs **155**, which is the third value this one
 > number has taken during a single content run, and it settles the question by itself: the count is not a
 > stable claim, it is a moving one. Applied at S-001, S-019 and S-024.
+>
+> **Superseded 2026-09-12:** the engine now runs **156** and 1.2.0 shipped on 2026-09-08, so 155
+> was the third value and 156 is the fourth. The ruling stands. The reason under it is stronger.
 
 **Question 2, closed - the audit count.** Three sources disagree. `README.md:109` reads *"plus three
 read-only audits (global packages, idle programs, startup items)"* and goes on to say orphaned application
@@ -1518,7 +1526,7 @@ once and labelled as one machine's result (the receipt), or structural (0 networ
 
 **Three of round 2's four are gone, and none of them was closed by this draft.** They are recorded as
 closed rather than deleted, because a finding that vanishes silently reads as a finding that was never
-real.
+real. The record stays.
 
 1. ✅ **CLOSED - the unslottable self-test count.** Round 2 reported that the receipt's evidence ledger
    carried `<dt>Guards proved on this machine first</dt><dd>151</dd>` outside every pending block, leaving
@@ -1929,3 +1937,173 @@ resolved, dashes and quotes normalised, tag-boundary spacing before punctuation 
 resolve.** The one that needed special handling is S-030's, which lives in `shell.js` as a `' + '`
 concatenation: its three literals were joined and compared, and the result is byte-identical. The applier's
 targets all hold. The hook's verdict on this write is about this commentary alone.
+
+---
+
+## FINALIZED - 2026-09-12
+
+**The thirty-six fenced blocks above are the publish-ready copy, and this pass changed none of them.**
+`grep -c '^### S-'` still returns 36. Every fence is byte-identical to what round 3 left, and the applier's
+instruction is unchanged: substitute the interior of each marked block by fixed-string search, and leave the
+wrapper, its classes, its inline styles and its marker alone.
+
+**The copy is deliberately not reproduced under this heading, and the reason is this file's own rule.**
+Pasting the thirty-six strings into a block labelled *final* would put two places in one file in charge of
+one sentence, which is the drift the Conventions section already forbids for `shell.js` and the drift row 15
+was created to stop. The slot is the owner. So this section carries the verdict, the measurement and two
+dated corrections. For the words it points upward. **No fence was added here either**, so a script that
+extracts the shipping strings still finds exactly thirty-six.
+
+### The score sheet, measured on the shipping copy and not on this commentary
+
+Checked against `docs/story/voice-fingerprint.md`, which is still `calibrated: false`. Corpus: the text
+inside the 36 fences, tags and comments stripped, entities resolved, with the same three non-prose runs the
+self-check excludes. **2,164 words, 209 sentences.** Rubric: `aoneahsan-cccs-story-humanize` ->
+`references/rubric.md`, rows 1 to 14.
+
+| # | Row | Measured | Verdict |
+|---|---|---|---|
+| 1 | Burstiness | 0.71, sd 7.39 over mean 10.35 | PASS, target 0.45 |
+| 2 | Range per 150 words | three scopes, below | **ALLOWED** with a written reason |
+| 3 | Banned phrases | 0 hits over 87 entries | PASS, with `elevate` marked allowed |
+| 4 | Em dashes | 0 | PASS, budget 1 per 150 |
+| 5 | "not X, but Y" | 0 | PASS, budget 1 per 300 |
+| 6 | Triplet reflex | 1.39 per 500 | PASS, budget 2 |
+| 7 | Opener repetition | max 2 paragraphs | PASS |
+| 8 | Throat-clearing | absent | PASS |
+| 9 | Summary tell | absent | PASS |
+| 10 | Specificity | one concrete in every band | PASS |
+| 11 | Point of view | seven verdict sentences | PASS |
+| 12 | Hedging | three, where the answer is uncertain | PASS |
+| 13 | Voice match | five specimens land, two verbatim | PASS |
+| 14 | Palette | P dominant, R strong, W once | PASS |
+
+Thirteen rows pass and one is allowed. **No sentence of shipping copy was rewritten**, because no row that
+would have called for one failed.
+
+Four of those verdicts are judgements rather than counts, so the evidence goes beside them. **Row 7:** the
+only run of three is S-019's list items, opening *No telemetry. / No update check. / No network calls of any
+kind.* Those are not paragraphs, and the anaphora is the device the fingerprint models at specimen 9.
+**Row 11:** the fingerprint bans the first person outright, so the stance cannot be carried by an *I*, and it
+is carried by verdicts instead - *"Read it before you run anything. That is what it is for."*, *"The caches
+these tools keep are fair game. The tools are not."*, *"That order is the whole design."* **Row 13:**
+specimens 5 and 9 ship word for word at S-024 and S-020, and specimens 6, 11 and 12 ship in substance at
+S-003, S-012 and S-013, so a cold reader handed five of each could not sort them. **Row 14:** R measures
+about 35 per cent against the Bible's 25, and row 16 overrides the Bible for this surface with *R strong*.
+Band 4 is eight consecutive refusals. Trimming one to hit a ratio would be the tail wagging the dog.
+
+### Row 2, and why it is allowed rather than fixed
+
+| Scope | Result |
+|---|---|
+| The whole surface | shortest 1 word, longest 32; 86 sentences at or under 6 and 11 at or over 25. Both present |
+| Per band, the unit a reader meets | six bands exceed 150 words and **four pass**; bands 3 and 10 hold no sentence of 25 words or more |
+| The hook's greedy 150-word window, over the 36 strings concatenated | 6 of 14 windows hold none |
+
+**The third scope is an artefact of the concatenation and is nothing a reader experiences.** Thirty-six
+separate elements scattered down a page are not one essay, and a window that opens inside the hero's second
+lede and closes inside the receipt's caveat is measuring the order this file happens to list slots in.
+
+That leaves bands 3 and 10, and neither can be fixed by a move the rules allow. Band 3 is a three-step rail
+whose labels are single words: *Scan.* and *Dry-run.* and *Run.* Its longest sentence is 18. Band 10 is the
+disclosure pair, where S-020's two load-bearing sentences are reproduced without a syllable changed by
+instruction. Its longest is 21. The only available move is to merge two real sentences into a
+twenty-five-word one. In a rail step built to be scanned that reads worse, and in a safety panel it means
+editing approved copy to satisfy a statistic. So the row is allowed, here, in writing. Row 2 exists to catch
+metronomic prose. This surface runs at 0.71 with sentence lengths from 1 to 32 words, which is the opposite
+complaint.
+
+### The hook, measured on this file rather than cited
+
+A claim about a hook is only true of the hook that was run, so it was run. On a copy of this file at a
+matching path, `global-config/hooks/posttooluse-story-lint.sh` returned:
+
+| Step | The plant | Result |
+|---|---|---|
+| Baseline | none | exit 0, silent |
+| Treatment | two banned words in a sentence added inside S-027's fence | **exit 0, silent** - shipping copy, unreported |
+| Control | the identical sentence in a commentary paragraph | **exit 2**, both words named |
+
+The control is what makes the treatment evidence rather than a path typo or a broken invocation. **Both
+plants were made on a scratchpad copy and never on this file**: the real draft's md5 was
+`5a83814b0b8327267301be568b02d689` before the probe and the same after it, compared rather than eyeballed.
+So a green hook on this draft is a statement about this commentary and about nothing that ships. The
+fact-checker and a human reader are the gate on the copy, and that sentence is re-earned here rather than
+inherited.
+
+### Fact re-check, 2026-09-12
+
+Round 3 was four days ago. Every fact the dispatch restated was checked against the shipping strings, one at
+a time:
+
+| The fact, as of 2026-09-12 | What the copy says | Verdict |
+|---|---|---|
+| The CLI is **1.2.0** on npm, per `package.json` and a `CHANGELOG.md` entry dated 2026-09-08 | no slot states a CLI version | nothing to contradict |
+| The desktop app is **1.1.0** released, with 1.2.0 not yet out | S-002 `windowsweep_1.1.0_x64-setup.exe`, S-034 `desktop-v1.1.0` | correct, and no slot claims a desktop version that does not exist |
+| The docs site is live over **HTTPS** | no slot carries a docs link, and the one `HTTP` is the protocol name inside S-019's check [9] | nothing to correct |
+| **Account deletion exists**, `delete_my_account()` being live | no slot mentions it; S-025 and S-026 discuss only the contact form's sign-in wall | no hedge to falsify |
+| The self-test count is **156** | no slot states a count | the round-2 decision is what protects it |
+| The CLI makes **zero network calls**, while the window and the site send analytics to four destinations with no opt-out | S-019 is the engine and names check [9]; S-020 and S-030 are the window and the site; S-018's lede sorts the three programs before either panel is read | the two are not blurred |
+
+**The pricing sweep was re-run over all 36 slots.** Four hits, none of them a pricing claim: `free` twice at
+S-004, about disk space, and `paid` twice, inside the approved code-signing sentence at S-002 and S-036. No
+sentence says the product is free. None says there is no paid tier. The `SoftwareApplication` block sits
+outside every pending block and still carries no `offers` and no `isAccessibleForFree`; this draft adds
+neither and touches neither.
+
+**Two more were checked because a later pass will assume them.** S-024's six `<summary>` questions are
+byte-identical to the six in `index.html`, so applying that slot changes answers and nothing else. The
+site's generated `FAQPage` pairs each question against the visible text, and that pairing survives this
+draft intact. The second is the brand string. The site's `1.1.0` is not in question anywhere above: it
+brands the desktop release, which genuinely is still 1.1.0, while the CLI at 1.2.0 is a different artefact
+on a different schedule. No slot states either as a product version. None states a self-test count.
+
+### Two corrections this pass made, each named
+
+1. **Two stale figures in the commentary are marked superseded rather than rewritten.** The decision
+   paragraph near the top and the Counts section both reasoned from *155, on the way to an unreleased
+   1.2.0*. That version shipped on 2026-09-08, and the suite now runs **156**. Both sentences keep their
+   original numbers, because round 2 argued from what round 2 measured, and quietly restating it would make
+   its argument cite a figure it never saw. Each now carries a dated supersession beside it. The decision
+   they support gets stronger rather than weaker: 156 is the fourth value this one number has taken.
+2. **The `download.html` snapshot was re-pinned, and one `Was:` line has drifted.** Its md5 moved from
+   `17354530...` to `7eb09b65...` while `index.html` and `shell.js` still match round 3 exactly. Its
+   pending-block count is still 5. Design changed the artefact sizes. So S-032's `Was:` line quotes *"a 2.37
+   MB installer"* where the element now reads *"a 2.40 MB installer"*, and that one fragment no longer
+   resolves. The other four still do, checked by fixed-string search rather than sampled. Nothing applies
+   differently, because S-032's shipping sentence removes the figure altogether. An applier searching for
+   the old fragment will find nothing, so it should read the element instead. A `Was:` line is a record.
+   This record was stale.
+
+### The open NEEDS DECISION, restated verbatim
+
+Round 3 raised one and it is still open. The wording is not mine. It is reproduced word for word below,
+because a question rewritten by the person waiting on it is a different question:
+
+> **NEEDS DECISION: the published byte count of `windowsweep_1.1.0_x64_en-US.msi`.** `/download`'s second
+> artefact card prints `3.06 MB`, which came from the same superseded local build as the `.exe`'s `2.37 MB`
+> - and that one is now known to be wrong by 36,538 bytes. The card is outside every pending block, so this
+> draft cannot edit it either way; the decision is whether the corrected figure goes in beside the corrected
+> `.exe`. Options: **(a)** read both sizes off the `desktop-v1.1.0` release assets and correct the two cards
+> in one design change, which is recommended, because the page will otherwise state 2,520,200 bytes at
+> S-034 one paragraph above a card reading 2.37 MB; **(b)** drop the size from both cards and leave S-034 as
+> the only place a size appears, which is defensible and loses the at-a-glance comparison between the two
+> installers; **(c)** leave both cards alone and accept a visible contradiction, which I do not recommend on
+> the one page whose argument is that its numbers can be checked. I have the `.exe` figure and not the
+> `.msi` figure, and inventing the second to make a pair is exactly the failure this surface is written
+> against.
+
+**Its premise narrowed between rounds and the question survives it.** The two cards now read `2.40 MB` and
+`3.09 MB`, not `2.37` and `3.06`, so option (c)'s *visible contradiction* is no longer a wrong file. It is a
+mixed scale: 2,520,200 bytes is 2.40 in mebibytes and 2.52 in megabytes, and a card labelled MB carrying the
+first is the defect S-004 corrected on the receipt one band away. The `.msi` figure is still a number this
+draft does not hold. So the question stands. Option (a) is still the recommendation.
+
+### GATE 4
+
+**The fact-consistency check PASSES and one `NEEDS DECISION` is unanswered**, so the pre-authorised
+condition is met on one half and fails on the other. This surface pauses. The scope of the pause is worth
+stating precisely, though: the open question is about an `.artefact-meta` span in `download.html` that lies
+outside every pending block, so it blocks a design edit in `windowsweep-web` rather than any of the
+thirty-six slots. Whether those apply while the card question is open is the main session's call. Not mine.
+Guessing the number to clear my own gate would be the worse of the two mistakes available.

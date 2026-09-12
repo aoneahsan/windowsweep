@@ -13,7 +13,7 @@
 [![node](https://img.shields.io/node/v/windowsweep.svg)](https://nodejs.org)
 [![platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0078d4?logo=windows&logoColor=white)](https://github.com/aoneahsan/windowsweep#platform-support)
 
-[Docs](https://github.com/aoneahsan/windowsweep/blob/main/docs/README.md) · [AI Guide](https://github.com/aoneahsan/windowsweep/blob/main/AI-INTEGRATION-GUIDE.md) · [npm](https://www.npmjs.com/package/windowsweep) · [GitHub](https://github.com/aoneahsan/windowsweep) · [Changelog](https://github.com/aoneahsan/windowsweep/blob/main/CHANGELOG.md) · [Contributing](https://github.com/aoneahsan/windowsweep/blob/main/CONTRIBUTING.md) · [Support](https://github.com/aoneahsan/windowsweep/issues)
+[Website](https://windowsweep.aoneahsan.com) · [Docs](https://windowsweep-docs.aoneahsan.com/) · [AI Guide](https://github.com/aoneahsan/windowsweep/blob/main/AI-INTEGRATION-GUIDE.md) · [npm](https://www.npmjs.com/package/windowsweep) · [GitHub](https://github.com/aoneahsan/windowsweep) · [Changelog](https://github.com/aoneahsan/windowsweep/blob/main/CHANGELOG.md) · [Contributing](https://github.com/aoneahsan/windowsweep/blob/main/CONTRIBUTING.md) · [Support](https://github.com/aoneahsan/windowsweep/issues)
 
 </div>
 
@@ -180,7 +180,7 @@ cd windowsweep
 Both launchers start PowerShell with `-ExecutionPolicy Bypass`, so the machine's script policy never blocks a
 run. Logs and reports land in `%USERPROFILE%\.windowsweep\` on every path - outside the npm cache, so history
 survives `npx` evictions. Full detail:
-[Installation](https://github.com/aoneahsan/windowsweep/blob/main/docs/installation.md).
+[Installation](https://windowsweep-docs.aoneahsan.com/installation).
 
 <a id="quick-start"></a>
 ## 🚀 Quick Start&nbsp;[#](#quick-start)
@@ -239,7 +239,7 @@ comes back but costs minutes, *Recycle Bin* is recoverable until you empty it (`
 `--i-understand-deep`; *interactive* ones never run unattended unless you pass a selection. The three
 *audit only* sections are read-only and safe, but stay out of `--all` so a cleanup run is a cleanup run -
 `--profile audit` is where they live. Every section is documented in
-[Sections 0-25](https://github.com/aoneahsan/windowsweep/blob/main/docs/sections.md).
+[Sections 0-25](https://windowsweep-docs.aoneahsan.com/sections).
 
 ### Reclaim interactively
 
@@ -281,7 +281,7 @@ There is no configuration you must do. Defaults live in `%USERPROFILE%\.windowsw
 | `NO_COLOR`, `WINDOWSWEEP_NO_COLOR` | unset | Disable colour |
 | `WINDOWSWEEP_ASCII` | unset | Plain ASCII glyphs |
 
-Full reference: [CLI reference](https://github.com/aoneahsan/windowsweep/blob/main/docs/cli-reference.md).
+Full reference: [CLI reference](https://windowsweep-docs.aoneahsan.com/cli-reference).
 
 <a id="command-line"></a>
 ## 💻 Command Line&nbsp;[#](#command-line)
@@ -323,7 +323,7 @@ windowsweep [mode] [options]
 | `--json`, `--quiet`, `--no-color`, `--ascii`, `--no-report`, `--cleanup-logs` | off | Output and record controls |
 
 Every flag, exit code and environment variable:
-[CLI reference](https://github.com/aoneahsan/windowsweep/blob/main/docs/cli-reference.md).
+[CLI reference](https://windowsweep-docs.aoneahsan.com/cli-reference).
 
 <a id="examples"></a>
 ## 🧪 Examples&nbsp;[#](#examples)
@@ -344,17 +344,17 @@ Every flag, exit code and environment variable:
 ## 🎛️ Advanced Features&nbsp;[#](#advanced-features)
 
 - **Profiles** - `dev`, `minimal`, `cache-only`, `system`, `deep`, `audit`.
-  [Docs](https://github.com/aoneahsan/windowsweep/blob/main/docs/profiles.md)
+  [Docs](https://windowsweep-docs.aoneahsan.com/profiles)
 - **Keep-newest rule** - Cypress, Playwright, Gradle distributions and Squirrel app installs keep their newest
   version whatever the idle gate says.
-  [Docs](https://github.com/aoneahsan/windowsweep/blob/main/docs/safety-model.md)
+  [Docs](https://windowsweep-docs.aoneahsan.com/safety-model)
 - **Editor hygiene** - workspace storage whose folder is gone and extension folders the editor's own
   `extensions.json` no longer references.
-  [Docs](https://github.com/aoneahsan/windowsweep/blob/main/docs/sections.md)
+  [Docs](https://windowsweep-docs.aoneahsan.com/sections)
 - **Disk-image compaction** - hands back the space a Docker Desktop or WSL `.vhdx` never returns on its own.
-  [Docs](https://github.com/aoneahsan/windowsweep/blob/main/docs/admin-and-elevation.md)
+  [Docs](https://windowsweep-docs.aoneahsan.com/admin-and-elevation)
 - **Report export** - schema-versioned JSON to Markdown or a self-contained HTML page, no extra tools.
-  [Docs](https://github.com/aoneahsan/windowsweep/blob/main/docs/reports-and-logs.md)
+  [Docs](https://windowsweep-docs.aoneahsan.com/reports-and-logs)
 - **Crash bundles** - the command line writes one locally on an unexpected exit, never transmitted.
 
 <a id="desktop-app"></a>
@@ -366,13 +366,13 @@ A Tauri window that drives this engine rather than reimplementing it: it runs th
 - **A picker** for the four sections that ask a person to choose.
 - **Settings, most of them flags.**
 
-Screen by screen: [Desktop app](https://github.com/aoneahsan/windowsweep/blob/main/docs/desktop.md).
+Screen by screen: [Desktop app](https://windowsweep-docs.aoneahsan.com/desktop).
 
 The engine still makes no network calls at all. The window sends usage and crash reports to improve the product for everyone, and there is no switch. Never sent: a file path, a folder name, a drive label, your user name, your machine name, or the contents of anything. Sign-in is separate and optional.
 
-The installer is not signed with a paid code-signing certificate, so SmartScreen warns on first run. Every release publishes a SHA-256 checksum and a minisign signature the app's own updater checks; neither is a code-signing certificate. What to do about the dialog: [Desktop app](https://github.com/aoneahsan/windowsweep/blob/main/docs/desktop.md).
+The installer is not signed with a paid code-signing certificate, so SmartScreen warns on first run. Every release publishes a SHA-256 checksum and a minisign signature the app's own updater checks; neither is a code-signing certificate. What to do about the dialog: [Desktop app](https://windowsweep-docs.aoneahsan.com/desktop).
 
-Download the `.msi` or the `.exe` installer from [Releases](https://github.com/aoneahsan/windowsweep/releases). What each one installs, and what Windows says the first time: [Desktop app](https://github.com/aoneahsan/windowsweep/blob/main/docs/desktop.md).
+Download the `.msi` or the `.exe` installer from [Releases](https://github.com/aoneahsan/windowsweep/releases). What each one installs, and what Windows says the first time: [Desktop app](https://windowsweep-docs.aoneahsan.com/desktop).
 
 <a id="recovery-troubleshooting"></a>
 ## 🚑 Recovery & Troubleshooting&nbsp;[#](#recovery-troubleshooting)
@@ -387,7 +387,7 @@ Download the `.msi` or the `.exe` installer from [Releases](https://github.com/a
 | Reclaimed less than `--scan` showed | The idle gate kept recently used files; open apps were skipped | Lower `--days`, close the apps, or `--purge-all` |
 | An extension folder was removed | The editor's `extensions.json` no longer referenced it | Reinstall from the editor; referenced folders are never touched |
 
-More: [Troubleshooting](https://github.com/aoneahsan/windowsweep/blob/main/docs/troubleshooting.md).
+More: [Troubleshooting](https://windowsweep-docs.aoneahsan.com/troubleshooting).
 
 <a id="limitations"></a>
 ## 🚧 Limitations&nbsp;[#](#limitations)
@@ -428,24 +428,24 @@ An open browser keeps its cache files locked and half-written. Close it and run 
 Every Windows machine has PowerShell 5.1: no runtime to install, no binary to trust, and the source is readable
 in an afternoon.
 
-More: [FAQ](https://github.com/aoneahsan/windowsweep/blob/main/docs/faq.md).
+More: [FAQ](https://windowsweep-docs.aoneahsan.com/faq).
 
 <a id="documentation"></a>
 ## 📚 Documentation&nbsp;[#](#documentation)
 
 | Document | Read it when |
 |---|---|
-| [Documentation index](https://github.com/aoneahsan/windowsweep/blob/main/docs/README.md) | you want the full map |
-| [Quick start](https://github.com/aoneahsan/windowsweep/blob/main/docs/quick-start.md) | running your first cleanup |
-| [Safety model](https://github.com/aoneahsan/windowsweep/blob/main/docs/safety-model.md) | you want every guarantee spelled out before deleting anything |
-| [Developer mode](https://github.com/aoneahsan/windowsweep/blob/main/docs/developer-mode.md) | you want to know what the first question changes |
-| [Sections 0-25](https://github.com/aoneahsan/windowsweep/blob/main/docs/sections.md) | you want to know precisely what one section touches |
-| [CLI reference](https://github.com/aoneahsan/windowsweep/blob/main/docs/cli-reference.md) | you need an exact flag, exit code or variable |
-| [Admin sections and elevation](https://github.com/aoneahsan/windowsweep/blob/main/docs/admin-and-elevation.md) | before running the system profile or touching the hibernation file |
-| [Reports and logs](https://github.com/aoneahsan/windowsweep/blob/main/docs/reports-and-logs.md) | parsing the JSON or finding a log |
+| [Documentation index](https://windowsweep-docs.aoneahsan.com/) | you want the full map |
+| [Quick start](https://windowsweep-docs.aoneahsan.com/quick-start) | running your first cleanup |
+| [Safety model](https://windowsweep-docs.aoneahsan.com/safety-model) | you want every guarantee spelled out before deleting anything |
+| [Developer mode](https://windowsweep-docs.aoneahsan.com/developer-mode) | you want to know what the first question changes |
+| [Sections 0-25](https://windowsweep-docs.aoneahsan.com/sections) | you want to know precisely what one section touches |
+| [CLI reference](https://windowsweep-docs.aoneahsan.com/cli-reference) | you need an exact flag, exit code or variable |
+| [Admin sections and elevation](https://windowsweep-docs.aoneahsan.com/admin-and-elevation) | before running the system profile or touching the hibernation file |
+| [Reports and logs](https://windowsweep-docs.aoneahsan.com/reports-and-logs) | parsing the JSON or finding a log |
 | [AI integration guide](https://github.com/aoneahsan/windowsweep/blob/main/AI-INTEGRATION-GUIDE.md) | an agent or a script runs it for you |
-| [Desktop app](https://github.com/aoneahsan/windowsweep/blob/main/docs/desktop.md) | you want the window rather than the command line |
-| [Troubleshooting](https://github.com/aoneahsan/windowsweep/blob/main/docs/troubleshooting.md) | something failed |
+| [Desktop app](https://windowsweep-docs.aoneahsan.com/desktop) | you want the window rather than the command line |
+| [Troubleshooting](https://windowsweep-docs.aoneahsan.com/troubleshooting) | something failed |
 | [Project status](https://github.com/aoneahsan/windowsweep/blob/main/docs/features/windowsweep-completion/00-tracker.json) | you want to know what is verified and what is still open: every phase and sub-task with its state and evidence |
 
 <a id="changelog"></a>
@@ -507,7 +507,8 @@ this tool deletes files, so review what it proposes before confirming.
 
 | | |
 |---|---|
-| Documentation | https://github.com/aoneahsan/windowsweep/blob/main/docs/README.md |
+| Website | https://windowsweep.aoneahsan.com |
+| Documentation | https://windowsweep-docs.aoneahsan.com/ |
 | npm | https://www.npmjs.com/package/windowsweep |
 | Repository | https://github.com/aoneahsan/windowsweep |
 | Issues | https://github.com/aoneahsan/windowsweep/issues |

@@ -134,7 +134,11 @@ export function ReclaimMapBand({
             className="xscroll"
             style={{ maxHeight: '20rem', overflowY: 'auto', marginTop: 'var(--sp-2)' }}
           >
-            <ReclaimMapTable targets={targets} />
+            {/* 🔴 The SAME toggle the tiles call. This is the keyboard path to
+                exclusion (TASK-009) - the tiles are inside a `role="img"` and are
+                deliberately not reachable - so passing a second handler here, or
+                none, would leave the two halves of one fact able to disagree. */}
+            <ReclaimMapTable targets={targets} onToggle={onToggleExcluded} />
           </div>
         </details>
       </div>

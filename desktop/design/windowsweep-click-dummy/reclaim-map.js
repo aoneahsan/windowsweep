@@ -85,6 +85,10 @@
     svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
     svg.setAttribute('class', 'tm-svg');
     svg.setAttribute('role', 'img');
+    /* 🔴 ONE tab stop for the whole map, carrying the summary label render() sets.
+       Before this the map was 28 stops with no names; now it is one stop with a
+       name, and the per-target controls live on the table's rows. */
+    svg.setAttribute('tabindex', '0');
     root.appendChild(svg);
     this.svg = svg;
 
@@ -209,13 +213,21 @@
       g.setAttribute('data-path', d.data.path);
       g.setAttribute('data-excluded', d.data.excluded ? 'true' : 'false');
       if (self.draining[d.data.path]) g.setAttribute('data-draining', 'true');
-      if (self.interactive) {
-        g.setAttribute('tabindex', '0');
-        g.setAttribute('role', 'button');
-        g.setAttribute('aria-label',
-          d.data.name + ', ' + db.fmt.bytes(d.data.value) +
-          (d.data.excluded ? ', excluded' : ', included') + '. Activate to toggle.');
-      }
+      /* 🔴 EVERY TILE IS tabindex="-1", AND THE MAP IS ONE TAB STOP.
+         This element used to carry tabindex="0", role="button" and an aria-label,
+         INSIDE an <svg role="img">. role="img" makes its whole subtree
+         presentational, so all 28 names were computed and then discarded while all
+         28 tab stops remained: 28 of Home's 58 focusable stops, 48% of the page,
+         announcing roughly nothing. That is the cost of both approaches with the
+         benefit of neither.
+         The decision (2026-09-08, agent design authority) keeps the drawn encoding
+         for sighted users and moves the CONTROL to the table underneath, which is
+         already a real <table> carrying the same five columns and which this file's
+         own comment calls "the primary accessible representation, not a consolation
+         prize". A tile stays clickable with a pointer; the keyboard path is a
+         labelled switch on the matching row. -1 rather than omitted so the tile can
+         still be focused programmatically without ever entering the tab order. */
+      g.setAttribute('tabindex', '-1');
 
       var r = document.createElementNS(ns, 'rect');
       r.setAttribute('class', 'fill');
@@ -275,15 +287,14 @@
       g.addEventListener('mousemove', function (e) { self.showTip(e, d); });
       g.addEventListener('mouseleave', function () { self.tip.hidden = true; });
 
+      /* The pointer path only. The keydown pair went with role="button": a tile is
+         no longer reachable by keyboard, so a key handler on it would be code that
+         can never run. The table's row switch is the keyboard equivalent. */
       if (self.interactive) {
-        var act = function () {
+        g.addEventListener('click', function () {
           var nowExcluded = db.toggleExcluded(d.data.path);
           g.setAttribute('data-excluded', nowExcluded ? 'true' : 'false');
           self.onToggle(d.data, nowExcluded);
-        };
-        g.addEventListener('click', act);
-        g.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); act(); }
         });
       }
 
@@ -398,15 +409,26 @@
   };
 
   /* the accessible table carrying the same data - the primary accessible
-     representation, not a consolation prize */
-  ReclaimMap.buildTable = function (mount, data) {
+     representation, not a consolation prize.
+
+     🔴 AND IT CARRIES THE CONTROL, not just the data. Keeping a target out of the
+     next run used to be possible only by clicking its tile, which no keyboard
+     could reach once role="img" discarded the tiles' names. So the first column is
+     a real switch per row: labelled, ordered, reachable, and toggling exactly what
+     the tile toggles - one write through db.toggleExcluded, so the two cannot
+     disagree. `onToggle` is optional: the Run screen's map is a drain animation and
+     passes none, and the column is then omitted rather than rendered inert. */
+  ReclaimMap.buildTable = function (mount, data, onToggle) {
     var db = window.wsdb;
     mount.textContent = '';
+    var interactive = typeof onToggle === 'function';
     var table = document.createElement('table');
     table.className = 'tbl';
     var thead = document.createElement('thead');
     var hr = document.createElement('tr');
-    ['Section', 'Target', 'Path', 'Size', 'Idle (days)'].forEach(function (h) {
+    var heads = ['Section', 'Target', 'Path', 'Size', 'Idle (days)'];
+    if (interactive) heads.unshift('In the run');
+    heads.forEach(function (h) {
       var th = document.createElement('th'); th.textContent = h; hr.appendChild(th);
     });
     thead.appendChild(hr); table.appendChild(thead);
@@ -414,6 +436,34 @@
     (data.children || []).forEach(function (grp) {
       (grp.children || []).forEach(function (l) {
         var tr = document.createElement('tr');
+        tr.setAttribute('data-path', l.path);
+        tr.setAttribute('data-excluded', l.excluded ? 'true' : 'false');
+        if (interactive) {
+          var tdS = document.createElement('td');
+          var sw = document.createElement('button');
+          sw.className = 'switch';
+          sw.type = 'button';
+          /* 🔴 So a toggle made on the MAP can update this row in place. Rebuilding
+             the table instead would work and would throw away the focus of anyone
+             using it from the keyboard, which is the group this column exists for. */
+          sw.setAttribute('data-path', l.path);
+          sw.style.setProperty('--sw-w', 'calc(1.9rem * var(--density))');
+          sw.setAttribute('role', 'switch');
+          sw.setAttribute('aria-checked', l.excluded ? 'false' : 'true');
+          /* The name says the target and the size, because a row of 28 switches
+             called "Include" tells a screen-reader user nothing about which one
+             they are on. */
+          sw.setAttribute('aria-label',
+            'Include ' + l.name + ' in the next run, ' + db.fmt.bytes(l.value));
+          sw.addEventListener('click', function () {
+            var nowExcluded = db.toggleExcluded(l.path);
+            sw.setAttribute('aria-checked', nowExcluded ? 'false' : 'true');
+            tr.setAttribute('data-excluded', nowExcluded ? 'true' : 'false');
+            onToggle(l, nowExcluded);
+          });
+          tdS.appendChild(sw);
+          tr.appendChild(tdS);
+        }
         [grp.name, l.name, l.path, db.fmt.bytes(l.value), String(l.idle)].forEach(function (v, i) {
           var td = document.createElement('td');
           td.textContent = v;

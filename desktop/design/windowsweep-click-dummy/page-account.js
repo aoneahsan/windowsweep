@@ -25,9 +25,11 @@
         setTimeout(function () {
           db.set('signedIn', true);
           db.set('email', TEST_EMAIL);
-          card(); sync();
+          card(); sync(); deleteBand();
           ws.toast('Signed in. Your settings will sync from now on.', {
-            undo: function () { db.set('signedIn', false); db.set('email', null); card(); sync(); }
+            undo: function () {
+              db.set('signedIn', false); db.set('email', null); card(); sync(); deleteBand();
+            }
           });
         }, 1000);
       });
@@ -54,18 +56,48 @@
     out.textContent = 'Sign out';
     out.addEventListener('click', function () {
       db.set('signedIn', false); db.set('email', null);
-      card(); sync();
+      card(); sync(); deleteBand();
       ws.toast('Signed out. Everything on this machine stays exactly as it is.');
     });
-    var del = el('button', 'btn btn-danger');
-    del.type = 'button';
-    del.textContent = 'Delete the cloud copy';
-    del.addEventListener('click', function () {
-      ws.toast('This would delete your synced settings and run summaries. Local history is untouched.',
-               { assertive: true });
-    });
-    acts.appendChild(out); acts.appendChild(del);
+    /* 🔴 "Delete the cloud copy" stood here and did nothing but describe itself in a
+       toast. It is now a real control in its own band (account.html), because the
+       thing it deletes is the ACCOUNT - not a copy of anything - and a destructive
+       action that irreversible does not belong beside Sign out as a second button of
+       equal weight, with no confirmation between the pointer and the deletion. */
+    acts.appendChild(out);
     host.appendChild(acts);
+  }
+
+  /* The deletion band: shown only while signed in, and armed only by the typed word.
+     🔴 The comparison is against the trimmed value and is case-sensitive, which is
+     what "it must match exactly" on the label promises. A control that accepted
+     "Delete" would make the label a lie in the least useful direction. */
+  function deleteBand() {
+    var band = document.querySelector('[data-ws-delete]');
+    if (!band) return;
+    band.hidden = !db.facts.signedIn;
+    var field = band.querySelector('[data-ws-delete-field]');
+    var go = band.querySelector('[data-ws-delete-go]');
+    if (!field || !go) return;
+    if (!db.facts.signedIn) { field.value = ''; go.disabled = true; return; }
+    if (field.dataset.wsBound !== 'true') {
+      field.dataset.wsBound = 'true';
+      field.addEventListener('input', function () {
+        go.disabled = field.value.trim() !== 'delete';
+      });
+      go.addEventListener('click', function () {
+        window.wsWidgets.pending(go, true);
+        setTimeout(function () {
+          window.wsWidgets.pending(go, false);
+          db.set('signedIn', false); db.set('email', null);
+          field.value = '';
+          card(); sync(); deleteBand();
+          ws.toast('Your account is gone, and you are signed out here. Nothing on this PC changed.',
+                   { assertive: true });
+        }, 900);
+      });
+    }
+    go.disabled = field.value.trim() !== 'delete';
   }
 
   function sync() {
@@ -92,5 +124,5 @@
     });
   }
 
-  window.wsPage = { init: function () { card(); sync(); } };
+  window.wsPage = { init: function () { card(); sync(); deleteBand(); } };
 })();

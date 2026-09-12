@@ -30,9 +30,59 @@
         </div>
       </section>
 
+      <!-- 🔴 THE CARDS ARE A CHOICE, NOT A LIST. The lede has always said "when you
+           ask for ONE of these", and the screen ran all six - so the copy described a
+           product the screen was not. The dummy decides, and it decides in favour of
+           the copy: one switch per card. Section 15 is the exception and takes a
+           three-option segmented control instead, because `--hiberfil off|reduced|keep`
+           is the engine's own vocabulary for it and a plain on/off switch cannot say
+           which; without a value the engine prints "pass --hiberfil off|reduced|keep to
+           run this section unattended" and does nothing, which is a silent no-op behind
+           a UAC prompt. -->
       <section class="band band-app band-tight">
         <div class="wrap">
           <div class="cards" data-ws-elevated></div>
+        </div>
+      </section>
+
+      <!-- 🔴 THE DEEP GATE. Three of the six admin sections carry Batch = 'deep', and
+           `modules/runner.ps1:89-92` refuses every one of them in batch mode unless
+           `--i-understand-deep` is passed. The app never passed it, so the screen
+           offered six sections and could run three; the refusals reached the report,
+           so nobody was misled, but half the screen did nothing.
+
+           🔴 The flag is NOT a default this window may add on a person's behalf. It
+           authorises work that is irreversible or changes how Windows starts, so the
+           dummy specifies an explicit confirmation that NAMES the three consequences
+           rather than a sentence about "advanced options". It appears only when one of
+           the three is chosen, and the run button stays blocked, with the reason
+           visible, until it is answered. -->
+      <section class="band band-app band-tight" data-ws-deep-gate hidden>
+        <div class="wrap">
+          <div class="note note-danger">
+            <span aria-hidden="true">!</span>
+            <div>
+              <p class="t-sm"><strong>Two of these cannot be undone, and one changes how Windows
+                starts.</strong> windowsweep will not run them unattended until you say you know
+                that &#8211; it passes <code class="mono">--i-understand-deep</code>, and nothing
+                else in this window does.</p>
+              <ul class="t-sm ink-3" style="margin:var(--sp-2) 0 0;padding-inline-start:var(--sp-5)">
+                <li data-ws-deep-item="15"><strong>Hibernation file.</strong> Turning it off removes
+                  <code class="mono">hiberfil.sys</code> and with it Hibernate, Fast Startup and
+                  hibernate-on-critical-battery. Sleep still works. Reduced keeps Fast Startup at a
+                  smaller file.</li>
+                <li data-ws-deep-item="16"><strong>Event logs.</strong> Clearing them is permanent
+                  and removes the history a technician would use to diagnose a problem.</li>
+                <li data-ws-deep-item="20"><strong>WSL disk images.</strong> Compaction stops Docker
+                  Desktop and every WSL distro first. Start Docker again afterwards.</li>
+              </ul>
+              <label class="t-sm" style="display:flex;gap:var(--sp-2);align-items:center;margin-top:var(--sp-3)">
+                <button class="switch" type="button" role="switch" aria-checked="false"
+                        aria-label="I understand what these sections do" data-ws-deep-ok></button>
+                <span>I understand what these do. Run the ones I chose.</span>
+              </label>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -62,6 +112,9 @@
             <button class="btn btn-primary" data-ws-action="elevateRun">Ask for permission and run</button>
             <button class="btn" data-ws-action="elevateDry">Measure without elevating</button>
           </div>
+          <!-- The blocked reason is beside the control that is blocked, never in a
+               toast a person has to provoke. -->
+          <p class="t-sm" style="margin-top:var(--sp-2);color:var(--c-warn-ink)" data-ws-elevate-blocked hidden></p>
           <p class="t-sm ink-3" style="margin-top:var(--sp-2)">A scan can measure these sections
             without administrator rights. It cannot clear them.</p>
         </div>
@@ -97,7 +150,11 @@
   <footer class="statusbar">
     <span class="dot" aria-hidden="true"></span>
     <span>engine <span class="mono" data-ws-text="engineVersion">1.1.0</span></span>
-    <span class="only-wide">six sections need an elevated window</span>
+    <!-- 🔴 "six sections need an elevated window" stood here and is no longer a fact:
+         the screen is a choice, so the number is whatever was chosen. It now shows the
+         invocation itself, built from the same choice the buttons run - the rule
+         run.html:132 already follows, so a sentence cannot drift from the flags. -->
+    <span class="only-wide mono" style="opacity:.8" data-ws-text="elevateCmd">windowsweep --json --only 12,13,14 --elevate --yes --not-developer</span>
     <span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span>
   </footer>
 </div>

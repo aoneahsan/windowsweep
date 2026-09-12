@@ -95,7 +95,12 @@
           </div>
 
           <details style="margin-top:var(--sp-3)">
-            <summary class="t-xs ink-3" style="cursor:pointer">The same data as a table</summary>
+            <!-- The table is no longer only a second reading of the map: it carries a
+                 switch per target, which is how a target is kept out of the run
+                 without a pointer. The summary says so, or the control is discoverable
+                 only by opening a disclosure labelled as though it held nothing but
+                 numbers. -->
+            <summary class="t-xs ink-3" style="cursor:pointer">The same data as a table, with a switch for each target</summary>
             <div class="xscroll" style="max-height:20rem;overflow-y:auto;margin-top:var(--sp-2)" data-ws-map-table></div>
           </details>
         </div>

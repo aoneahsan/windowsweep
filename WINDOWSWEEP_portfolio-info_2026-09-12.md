@@ -29,13 +29,13 @@ Next Eligible Update After: 2026-09-19
 | iOS Bundle ID / Scheme | N/A |
 | Chrome Extension ID | N/A |
 | PyPI Package | N/A |
-| Docs URL | `windowsweep-docs.aoneahsan.com` - **live over HTTP** (200 on 2026-09-12). HTTPS is not yet available: GitHub has not issued the certificate and the host still presents GitHub's own `*.github.io` certificate, with the Pages API reporting `https_enforced: false`. Recorded as HTTP-only rather than as a live HTTPS link, because a link that fails in a browser bar is worse than one that is marked pending |
+| Docs URL | https://windowsweep-docs.aoneahsan.com - **live over HTTPS** (200 on 2026-09-12, certificate CN `windowsweep-docs.aoneahsan.com`, Let's Encrypt, issued 15:57 UTC that day). GitHub had never issued one: the host had been presenting its own `*.github.io` certificate, so the custom domain was removed and re-added through the Pages API to restart provisioning. HTTPS is now enforced and `http://` returns 301 |
 | License | MIT (standard `LICENSE` file; `package.json` declares `MIT`) |
 | Author | Ahsan Mahmood — aoneahsan@gmail.com — https://aoneahsan.com |
 | Payment / Support URL | https://aoneahsan.com/payment?project-id=windowsweep&project-identifier=windowsweep |
 | Agent-Readable Pricing | Not applicable - the product makes no pricing claim (owner decision 2026-09-05) |
 
-> **Asks for next refresh:** switch the docs URL to `https://` once GitHub issues its certificate (the agent re-adds the custom domain to restart provisioning); record `desktop-v1.2.0` when it ships with telemetry live and the updater proved; record the product site's prerendered pages and the account-deletion flow once built. Everything else - repo, npm link, site, license, contact - is recorded and verified.
+> **Asks for next refresh:** record `desktop-v1.2.0` when it ships with telemetry live and the updater proved; record the product site's prerendered pages once deployed. The docs URL moved to https on 2026-09-12 and the account-deletion RPC is live and proved. Everything else - repo, npm link, site, license, contact - is recorded and verified.
 
 ---
 

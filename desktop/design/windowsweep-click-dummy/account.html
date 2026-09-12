@@ -84,6 +84,44 @@
         </div>
       </section>
 
+      <!-- ============ DELETE THE ACCOUNT ============================================
+           Owner decision D14, 2026-09-12: "Build it." The screen offered sign in and
+           sign out only, while /privacy promised the account could be deleted from
+           here - so the promise had no control behind it.
+
+           🔴 THE SENTENCE NAMES WHAT THE DATABASE ACTUALLY DOES AND NOTHING MORE.
+           Every user-owned row references auth.users with onDelete: 'cascade', so
+           deleting the auth row takes the profile, the synced settings, the run
+           summaries and the contact requests with it. admin_audit does NOT go - it
+           records what an administrator did, and it is not the person's row. And
+           nothing on the PC is touched: this deletes a cloud account, not files.
+
+           🔴 No shame and no urgency. It sits one band under a safety surface, and a
+           product whose whole argument is "you see what goes before it goes" cannot
+           make leaving feel like a mistake. The typed confirmation is the friction;
+           the copy is not.
+           Only rendered while signed in - there is nothing to delete otherwise. -->
+      <section class="band band-app band-tight" data-ws-delete hidden>
+        <div class="wrap wrap-narrow">
+          <div class="panel pad">
+            <h2 class="t-md wide">Delete your account</h2>
+            <p class="t-sm">This removes the account itself, its profile, the settings it synced,
+              the summary of every run it holds, and any contact requests you sent us. It happens the
+              moment you press the button, and there is no undo.</p>
+            <p class="t-sm ink-3">Nothing on this PC is touched. windowsweep deletes no local files
+              here &#8211; your reports, your local history and every cleanup feature stay exactly as
+              they are, and all of it keeps working signed out.</p>
+            <label class="t-sm" style="display:block;margin-top:var(--sp-4)" for="ws-del">
+              Type <code class="mono">delete</code> to confirm. It must match exactly.</label>
+            <input class="field" id="ws-del" type="text" autocomplete="off" spellcheck="false"
+                   style="max-width:16rem;margin-top:var(--sp-2)" data-ws-delete-field>
+            <div style="margin-top:var(--sp-4)">
+              <button class="btn btn-danger" type="button" data-ws-delete-go disabled>Delete my account</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div style="height:var(--sp-16)"></div>
     </main>
   </div>

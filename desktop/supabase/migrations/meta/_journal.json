@@ -50,6 +50,13 @@
       "when": 1788850966019,
       "tag": "20260908070246_close_trigger_function_execute",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1789232526763,
+      "tag": "20260912170206_delete_my_account_function",
+      "breakpoints": true
     }
   ]
 }

@@ -449,3 +449,120 @@ engine documents and the Rust allowlist already permitted.
 ⚠️ **Still owed against this amendment:** six screens - history, report, picker, settings, account, elevation
 - carry a status-bar middle text in the dummy that the app does not render. Not part of D-18; recorded so it
 is not rediscovered.
+
+## Amendment - 2026-09-13: the account can be deleted, and Elevation became a choice
+
+Five dummy changes in one pass. Four close filed defects (`PENDING-TASKS.md` TASK-004, 007, 009, 010) and the
+fifth builds a control the product had promised in writing and never shipped.
+
+### 1. `account.html` + `page-account.js` - the deletion control (owner decision D14, 2026-09-12)
+
+**Why the DUMMY changed:** the site's `/privacy` says the account can be deleted *"from there"* and names four
+things that go. The desktop Account screen offered sign in and sign out, and the dummy's card offered a button
+called **"Delete the cloud copy"** whose whole implementation was a toast describing itself. A promise with no
+control behind it is the defect; a button that only describes what it would do is the same defect wearing a
+control.
+
+| Was | Now |
+|---|---|
+| `page-account.js`: a `btn btn-danger` beside Sign out, toasting *"This would delete your synced settings and run summaries"* | Gone. Deleting an account is not a second button of equal weight beside Sign out with nothing between the pointer and the deletion |
+| nothing | `account.html` `[data-ws-delete]`: a band, shown only while signed in, with a heading, the sentence naming what goes, the sentence naming what stays, a typed `delete` confirmation and a destructive button disabled until it matches exactly |
+
+🔴 **The sentence names what the DATABASE actually does, and no more.** Every user-owned table references
+`auth.users` with `onDelete: 'cascade'`, so the account row takes the profile, the synced settings, the run
+summaries and the contact requests with it. **`admin_audit` does not go** - it records what an administrator
+did and is not the person's row. Nothing on the PC is touched: this deletes a cloud account, not files. The
+second paragraph is the *limit* of the first, which is why both are there rather than one reassurance.
+
+**No shame and no urgency language.** It sits one screen from a safety surface, and a product whose whole
+argument is *"you see what goes before it goes"* cannot make leaving feel like a mistake. The typed word is
+the friction; the copy is not.
+
+⚠️ **Not exercised.** Google is the only provider and it is not enabled on the Supabase project yet, so nobody
+can sign in in this build and therefore nobody can reach this control. The RPC, the words and the code path
+are built; a live deletion is not.
+
+### 2. `elevation.html` + `page-elevation.js` - the screen became the choice its own lede described
+
+The lede has said *"When you ask for **one** of these"* since the dummy was drawn, and the screen ran all six
+admin sections. The dummy decides, and it decides in favour of the copy.
+
+| Change | Why |
+|---|---|
+| A `switch` on each admin card | The per-section choice the lede already promised |
+| A three-option `seg` on section 15 instead of a switch | `--hiberfil off/reduced/keep` is the engine's own vocabulary and a switch cannot say which. With no value `modules/system_admin.ps1:171` prints *"pass --hiberfil off\|reduced\|keep to run this section unattended"* and returns - a **silent no-op behind a UAC prompt**. `keep` means "not chosen" |
+| `[data-ws-deep-gate]`: a `note note-danger` naming what each CHOSEN deep section does, plus one confirming switch | `modules/runner.ps1:89-92` refuses every `Batch = 'deep'` section without `--i-understand-deep` - 15, 16 and 20 of the six offered - so the screen listed six and could run three. The flag authorises clearing every Windows Event Log permanently, removing `hiberfil.sys` with Hibernate and Fast Startup, and stopping Docker Desktop and every WSL distro. That is a decision, so it is asked, never defaulted |
+| A `[data-ws-elevate-blocked]` line under the buttons | The reason a control is blocked belongs beside the control, never in a toast a person has to provoke |
+| Section 20's card declares developer mode when it is off | `modules/runner.ps1:105` skips ids 4, 17 and 20 with developer mode off. Declared on the card rather than discovered in the log |
+| The status bar's `six sections need an elevated window` became `[data-ws-text="elevateCmd"]` | That sentence stops being a fact once the screen is a choice. It now shows the invocation, built from the same choice the buttons run - `run.html:132`'s rule, so a sentence cannot drift from the flags |
+
+**The dummy's "This window tails the log" wording was already correct and is unchanged.** What was wrong is
+that it was not TRUE: the elevated child is a separate process in its own console (`lib/safety.ps1` ->
+`Start-Process -Verb RunAs -Wait`), so nothing it prints reaches the parent's stdout, which is the only stream
+this window receives. The app now reads the child's own log and report out of the shared run folder. No dummy
+change was owed for that - a code change was.
+
+### 3. `reclaim-map.js` + `index.html` - the map is one tab stop, the table carries the control
+
+Decided 2026-09-08 under the agent's design authority; TASK-009.
+
+`role="img"` on the `<svg>` makes its subtree **presentational**, so the 28 tiles' `aria-label`s were each
+computed and then discarded while all 28 `tabindex="0"` stops remained - 28 of Home's 58 focusable stops,
+**48% of the page**, announcing roughly nothing. The cost of both approaches with the benefit of neither.
+
+| Was | Now |
+|---|---|
+| `<svg role="img">`, not focusable | `tabindex="0"` - one stop, carrying the summary label |
+| each tile `tabindex="0" role="button" aria-label=...` | each tile `tabindex="-1"`, no role, no label. `-1` rather than omitted, so a tile can still be focused programmatically |
+| a tile `keydown` handler for Enter and Space | removed - it went with `role="button"`, and a key handler on something no keyboard can focus is code that can never run |
+| `buildTable(mount, data)` - five data columns | `buildTable(mount, data, onToggle)` - an **In the run** column of labelled switches first, `data-path` on the row and the switch, and the column omitted entirely when no handler is passed (the Run screen's map is a drain, not a control) |
+| `index.html` `The same data as a table` | `The same data as a table, with a switch for each target` - otherwise the control is discoverable only by opening a disclosure labelled as though it held nothing but numbers |
+
+`wire.js` writes the toggle once through `db.toggleExcluded` and paints both views in place. Rebuilding the
+table would throw away the focus of the person using its switches, which is the group the column exists for.
+
+### 4. `shared.css` - a 44px hit area on every switch, with no visual change (TASK-010)
+
+`.switch` at `--sw-w: calc(1.9rem * var(--density))` measures **30.4 x 17**, and 19 of them sit on the
+Sections table. That is a **pointer** problem, a different argument from the touch floor that lets `.btn-sm`
+stand at 28px in a desktop-only window: a 17px target is hard to hit with a mouse whether or not a finger is
+involved.
+
+A `.switch::before` overlay, centred, `min-width`/`min-height: 44px`, painting nothing. The pill, the knob,
+the row rhythm and every GATE 4 screenshot are untouched, because a transparent pseudo-element has no
+appearance. Measured in the running app: the control box is **30.4 x 17 with the rule and 30.4 x 17 without
+it**, while the hit area is **44px x 44px** with and **auto x auto** without. `min-*` rather than a fixed
+size, so a switch already larger than 44px keeps its own box.
+
+### 5. `picker.html` - a dead class a previous edit duplicated instead of removing (TASK-007)
+
+`picker.html:120` read `class="t-sm ink-3 t-sm ink-3"`. Commit `6f4706f` removed the dead `selbar-note` -
+which resolves to nothing in either stylesheet - and left the two remaining class names written twice. Now
+`class="t-sm ink-3"`. The app had already dropped `selbar-note` and records why in `Picker.tsx`.
+
+**Sweep result, on the record:** every `className` string in `desktop/src` was extracted and compared against
+the 333 selectors in the app's own CSS. **Zero orphans.** Three apparent hits were checked and are not
+classes: `className` (a variable in `PrimaryButton.tsx`), `done` (a comparison value in `RunPerSection.tsx`)
+and the `tier-` template prefix, whose six real classes all exist.
+
+### Owed, and deliberately not taken here
+
+🔴 **"Measure without elevating" DID elevate - FIXED in the main session the same day, and the dummy needed
+no change, because its words were always right and the app was wrong.** `elevateDry` passed `--dry-run`
+alongside `--elevate`, and `windowsweep.ps1:294` relaunches on `--elevate` regardless of the mode - so the
+button labelled *"Measure without elevating"*, and the note under it saying a scan can measure these sections
+without administrator rights, both described something the invocation did not do.
+
+The invocation that was "not obvious" is settled by the dummy's own sentence: **it is a scan**. `--scan` is
+not scoped to six sections, and does not need to be - it sizes every target (`Show-ScanTable` never reaches
+the runner's admin skip at `modules/runner.ps1:98`), and the screen sums only the targets whose section was
+chosen. That is precisely what the toast's words already say: *"Measured 15.9 GB across the sections you
+chose."* So the app now runs `scanArgs`, reports the chosen sections' total inline in that sentence (the
+number is a live quantity, the carve-out §10 allows), and refreshes Home's map with the same measurement.
+The unelevated `--dry-run --only` the old code would have fallen back to if the prompt were declined measured
+nothing at all, because the runner skips every admin section before reading a byte.
+
+🔴 **It cannot come back by accident.** `elevatedArgs` no longer accepts a `dryRun` option, so a rehearsal of an
+elevated run - which would still pass `--elevate`, and so still prompt - is a compile error. Planted on
+2026-09-13: `dryRun: true` in the screen's builder call -> `TS2353: Object literal may only specify known
+properties, and 'dryRun' does not exist`; restored, typecheck green.

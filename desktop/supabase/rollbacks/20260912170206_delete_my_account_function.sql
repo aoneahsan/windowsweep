@@ -1,0 +1,15 @@
+-- ROLLBACK for 20260912170206_delete_my_account_function.sql — REVIEWED, NEVER AUTO-APPLIED.
+--
+-- 🔴 IT DESTROYS NO ROWS AND IT IS STILL AN OWNER DECISION. Dropping this function
+-- deletes nothing; what it removes is the only way a person can delete their own
+-- account. `/privacy` promises that deletion in writing and the site's `/account` and
+-- the desktop Account screen both call this RPC — so running this leaves a product
+-- whose published privacy promise it cannot keep, and the call fails with
+-- `PGRST202` (function not found in the schema cache), which reads like a deployment
+-- fault rather than a decision somebody made. Retire the promise and the two controls
+-- first, or do not run this.
+--
+-- Dropping the function drops its ACL with it, so the `revoke`/`grant` pair needs no
+-- separate statement. There is nothing to reverse about the cascades either: they are
+-- foreign keys declared on the tables, not something this migration created.
+drop function if exists public.delete_my_account();

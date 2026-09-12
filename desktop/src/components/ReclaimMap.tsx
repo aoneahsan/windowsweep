@@ -30,6 +30,16 @@
  * the exclusion set every run passes as `--exclude-path`; the Run screen's map is
  * draining what is already going, so it takes no `onToggle` and renders no
  * affordance. That is the dummy's `opts.interactive !== false`, kept.
+ *
+ * 🔴 THE MAP IS ONE TAB STOP, AND THE KEYBOARD PATH IS THE TABLE (TASK-009).
+ * Every tile used to carry `tabIndex={0}`, `role="button"` and an `aria-label`
+ * inside an `<svg role="img">`. `role="img"` makes its subtree presentational, so
+ * all 28 names were computed and then discarded while all 28 tab stops remained -
+ * 28 of Home's 58 focusable stops, 48% of the page, announcing roughly nothing.
+ * The svg is now the single stop, carrying the summary label; the tiles are
+ * `tabIndex={-1}`; and `ReclaimMapTable` grew a labelled switch per row, which is
+ * how a target is kept out of the run without a pointer. Decided 2026-09-08 under
+ * the agent's design authority and written into `reclaim-map.js` first.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -101,7 +111,6 @@ export function ReclaimMap({
   onToggle?: (path: string) => void;
 }) {
   const { t } = useTranslation();
-  const interactive = onToggle !== undefined;
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [width, setWidth] = useState(0);
   const [tip, setTip] = useState<Tip | null>(null);
@@ -200,6 +209,11 @@ export function ReclaimMap({
         viewBox={`0 0 ${String(frame.w)} ${String(frame.h)}`}
         preserveAspectRatio="xMidYMid slice"
         role="img"
+        /* 🔴 ONE stop for the whole map, carrying the summary below. Before
+           TASK-009 this element was not focusable and its 28 tiles each were, so
+           the page had 28 nameless stops and the one thing with a name was
+           unreachable. */
+        tabIndex={0}
         /* 🔴 The dummy's sentence, verbatim, whenever nothing is excluded - which
            is every state the dummy specifies. The second form is app-side copy for
            a state it has no equivalent for, and it exists because the map draws
@@ -299,31 +313,19 @@ export function ReclaimMap({
               className="tm-tile"
               key={leaf.path}
               data-excluded={leaf.excluded ? 'true' : 'false'}
-              {...(interactive
-                ? {
-                    tabIndex: 0,
-                    role: 'button',
-                    'aria-label': t(
-                      leaf.excluded ? 'home.mapTileAriaExcluded' : 'home.mapTileAriaIncluded',
-                      { name: leaf.name, amount: formatBytes(leaf.value) },
-                    ),
-                  }
-                : {})}
+              /* 🔴 -1, never 0, and no `role="button"` or `aria-label` with it.
+                 Those three together inside `role="img"` are what produced 28
+                 nameless tab stops: the names were computed and discarded by the
+                 presentational subtree while the stops survived. -1 rather than
+                 omitted so a tile can still be focused programmatically without
+                 ever entering the tab order. The keyboard equivalent of this
+                 control is the switch on the matching table row. */
+              tabIndex={-1}
               onMouseMove={(e) => { onMove(e, leaf); }}
               onMouseLeave={() => { setTip(null); }}
+              /* The pointer path only. A key handler here would be code that can
+                 never run, because nothing can focus a tile from the keyboard. */
               onClick={toggle}
-              /* Enter and Space, because a `role="button"` owes both. `preventDefault`
-                 on Space or the page scrolls under the pointer at the same time. */
-              onKeyDown={
-                toggle
-                  ? (e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        toggle();
-                      }
-                    }
-                  : undefined
-              }
             >
               {/* The second channel: the tier's own two ends, interpolated by how
                   long this target has sat unused. `reclaim-map.js:224-225`. */}

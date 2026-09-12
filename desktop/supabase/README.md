@@ -14,8 +14,16 @@ yet, so the switch cost code and no data.
 | Path | What it is |
 |---|---|
 | `../src/db/schema/sync.ts` | 🔴 **The schema, as TypeScript.** Drizzle authors it; the Supabase CLI applies it |
-| `migrations/*_cynical_ken_ellis.sql` | Generated: the two tables, RLS enabled, seven policies |
+| `../src/db/schema/site.ts` | The marketing site's three tables, in the same home (decision P8-D2) |
+| `migrations/*_cynical_ken_ellis.sql` | Generated: the two sync tables, RLS enabled, seven policies |
 | `migrations/*_magical_franklin_storm.sql` | Hand-written: the **paired privilege block** |
+| `migrations/*_platform_admin_function.sql` | Hand-written: `is_platform_admin()`, the definer every admin policy calls |
+| `migrations/*_site_tables.sql` | Generated: `profiles`, `contact_requests`, `admin_audit` + 8 policies |
+| `migrations/*_site_privileges_and_triggers.sql` | Hand-written: column-scoped grants, the three triggers |
+| `migrations/*_seed_platform_superadmins.sql` | Hand-written: the two fixed owner emails |
+| `migrations/*_close_trigger_function_execute.sql` | Hand-written: the per-function revokes, and the correction behind them |
+| `migrations/*_delete_my_account_function.sql` | Hand-written: **account deletion** — see below |
+| `rollbacks/` | One reviewed companion per migration. 🔴 Never applied automatically |
 | `../drizzle.config.ts` | The three load-bearing keys, each destructive if omitted |
 
 ## The data model, in full
@@ -54,6 +62,99 @@ privilege at **plan** time. `user_id` is deliberately outside the column-scoped
 UPDATE grant, so an upsert carrying it is refused outright with
 `permission denied for table user_settings` — naming the *table*, not the column,
 which reads exactly like a broken policy. `sync.ts` inserts and handles `23505`.
+
+## Account deletion — `public.delete_my_account()`
+
+Owner decision D14 (2026-09-12). `/privacy` promises a person can delete their
+account; this function is the whole server half of that promise, and it is
+deliberately one statement:
+
+```sql
+delete from auth.users where id = auth.uid();
+```
+
+**What goes.** Four foreign keys into `auth.users` are `on delete cascade`, so
+that one statement takes `public.profiles`, `public.user_settings`,
+`public.runs` and `public.contact_requests` with it, plus the person's
+`auth.sessions` and `auth.identities` — which is what makes the account gone
+rather than merely unreachable. **The app deletes nothing row by row**, and no
+client holds a DELETE grant it would need to.
+
+**What stays, on purpose.** `public.admin_audit` is not user-owned: it records
+what an *admin* did, and its `actor` column carries no foreign key, as does
+`contact_requests.handled_by`. An audit trail a person can erase by deleting
+their own account is not an audit trail.
+
+**Who may execute it.** `authenticated`, and nobody else — not `anon`, not
+`service_role`, not PUBLIC. It takes **no argument** and reads only
+`auth.uid()`, so which account it deletes is not an input a caller supplies and
+therefore not one a caller can forge; there is no admin path to deleting
+somebody else's account, and when one is wanted it will be its own function with
+its own gate rather than a widened grant on this one.
+
+🔴 **The `raise` is the authentication step and it must stay inside the body.**
+`delete … where id = auth.uid()` with a null uid matches zero rows and
+*succeeds* — PostgREST would answer `204` and a caller who was never signed in
+would be told their account was deleted. The function raises `42501` first.
+
+### Verify it — from `pg_proc`, and then for real
+
+Catalogue, over the Management API (which runs as `postgres`). Measured
+2026-09-12, immediately after `supabase db push --linked`:
+
+```sql
+select p.proname, pg_get_userbyid(p.proowner) as owner, p.prosecdef,
+       p.proconfig::text, p.proacl::text,
+       has_function_privilege('anon', p.oid, 'EXECUTE')          as anon_exec,
+       has_function_privilege('authenticated', p.oid, 'EXECUTE') as auth_exec,
+       has_function_privilege('service_role', p.oid, 'EXECUTE')  as svc_exec
+  from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+ where n.nspname = 'public' and p.proname = 'delete_my_account';
+```
+
+```
+owner postgres · prosecdef t · proconfig {"search_path=\"\""} · lanname plpgsql
+proacl {postgres=X/postgres,authenticated=X/postgres}
+anon_exec f · auth_exec t · svc_exec f
+```
+
+🔴 **`proacl` is the only proof, and it is not optional reading.** A function
+created in `public` on this project is born `proacl = NULL`, which is EXECUTE to
+PUBLIC — the `alter default privileges` in migration `20260908065314` has no
+effect here, because a second `pg_default_acl` row granted by `supabase_admin`
+covers the same `(schema, object type)`. `pg_default_acl` reads closed either
+way. Every function added to this schema carries its own explicit revoke.
+
+Behaviour, over PostgREST against a **seeded** throwaway user — a `(200, 0)` on
+an empty database passes vacuously, so the rows have to exist first. Measured
+2026-09-12 on `aoneahsan.apps.t1+2@gmail.com` (created confirmed through
+`POST /auth/v1/admin/users`, seeded one row in each of the four cascading
+tables, deleted by its own call, nothing left behind):
+
+| Caller | `POST /rest/v1/rpc/delete_my_account` |
+|---|---|
+| publishable key only (`anon`) | **401** `42501 permission denied for function delete_my_account` |
+| publishable key as `apikey` **and** bearer | **401** `42501`, same message |
+| secret key (`service_role`) | **403** `42501`, same message |
+| the user's own JWT | **204 No Content** |
+| `postgres`, no JWT — reaches the body | `42501 delete_my_account() requires an authenticated caller` |
+
+The 401/403 split is PostgREST's: the same refusal is `401` when the request
+carried no JWT and `403` when it carried one. Both are the **grant** refusing at
+the door, before the body runs; the last row is the only one that reaches the
+`raise`, which is why it is probed separately rather than assumed.
+
+Counts for that user, before the call and after it: `auth.users` 1 → **0**,
+`profiles` 1 → **0** (the signup trigger had made it), `user_settings` 1 → **0**,
+`runs` 1 → **0**, `contact_requests` 1 → **0**, `auth.identities` 1 → **0**.
+`admin_audit` was 0 throughout and is untouched.
+
+⚠️ One honest gap in that run: `auth.sessions` was counted **0 before the
+sign-in** and **0 after the delete**, so the session the password grant created
+was never counted while it existed — the table's 0 afterwards is real, the
+transition is not measured. What the sessions claim rests on instead is the
+catalogue: `sessions_user_id_fkey` reads `confdeltype = 'c'`, as do the seven
+other `auth.*` foreign keys into `auth.users`.
 
 ## Applying it
 

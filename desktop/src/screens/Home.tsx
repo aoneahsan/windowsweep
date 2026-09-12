@@ -209,13 +209,17 @@ export function Home() {
     [startRun, navigate, appendLog, applyProgress, finishRun, setCandidates, setScanTargets],
   );
 
+  /* 🔴 The scan carries the SAME preferences the run does (D-8). It used to take
+     developer mode alone, so the three thresholds fell back to the engine's own
+     `config.json` and a machine where someone had run `windowsweep --days 30` once
+     was measured with 30 while this screen showed 100. */
   const onScan = useCallback(() => {
     setBusy('scan');
-    void drive(scanArgs(developer, excludedPaths), false).finally(() => {
+    void drive(scanArgs({ ...prefs, excludedPaths }), false).finally(() => {
       setBusy(null);
       setScanDone(true);
     });
-  }, [drive, developer, excludedPaths]);
+  }, [drive, prefs, excludedPaths]);
 
   /* The tick is an acknowledgement, not a state: it says "that finished" and then
      gets out of the way, which is what the dummy's own busy() helper does. The

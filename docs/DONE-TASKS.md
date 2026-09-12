@@ -179,3 +179,167 @@ landed by the time this audit read the tree:
 Nothing was ever collected under a wrong sentence: no telemetry key reached a build before this closed, and
 `desktop-v1.2.0` is the first build that carries the keys. The wire proof that the two events actually land
 belongs to RW-101 / RW-115, not to this entry.
+
+### DONE-004 - the elevated run has three gaps, all found by the 2026-09-07 fact-check
+
+**Closed 2026-09-13 by A-DESK (v3 run W2), dummy first in every case.** All three gaps are closed in code;
+the flow itself is NOT exercised live, because an agent session never starts an admin run.
+- **It ran all six** -> each admin card carries its own switch; section 15 carries three options (Leave it /
+  Reduced / Turn it off), because with no `--hiberfil` value the engine prints a hint and does nothing.
+- **Three of six were refused on every run** -> `--i-understand-deep` is passed only after an explicit
+  confirmation that appears when 15, 16 or 20 is chosen and names what each one does; until then the run
+  button is blocked with the reason beside it. Rendered command lines read: default
+  `--only 12,13,14 --elevate --yes`; with 16 ticked the run is blocked with "Confirm you understand the deep
+  sections above."; after confirming, `--i-understand-deep` is added; with 15 set to "Turn it off",
+  `--only 12,13,14,15,16 ... --i-understand-deep --hiberfil off`.
+- **Nothing tailed the elevated child's log** -> `desktop/src/lib/run-tail.ts` reads the child's own log and
+  report out of the shared run folder into Run's log pane; `readReport` and `listRunFiles` finally have a
+  caller. The dummy's "tails the log" wording is now true.
+- 🔴 **A fourth defect on the same screen, found while closing this one, FIXED in the main session:** "Measure
+  without elevating" passed `--elevate --dry-run`, so it raised a UAC prompt. It now runs the engine's
+  read-only `--scan` and reports the chosen sections' total; `elevatedArgs` no longer accepts `dryRun`, so
+  the defect is a compile error (planted and watched: TS2353). Recorded in `desktop/design/README.md`.
+
+**The entry as it was filed:**
+
+The Elevation screen works and is not broken, but three things it implies are not true. Found while
+fact-checking the `desktop-readme` surface; the copy was corrected so nothing false shipped, and the code
+was left for its own task.
+
+**1. Nothing tails the elevated child's log.** `readReport()` at `desktop/src/lib/engine.ts:179` has **no
+caller anywhere** in `desktop/src`. The elevated child runs in its own console window (`lib/safety.ps1`
+relaunches with `-Verb RunAs -Wait`), so its output never reaches the parent's stderr. The dummy's
+`elevation.html` says the unelevated window "tails the log"; the draft's sentence was cut to "waits
+unelevated" instead. **To do:** read the child's own report and log from the run folder
+(`%LOCALAPPDATA%\com.aoneahsan.windowsweep\runs\<id>\`) and stream it into the Run screen's log pane -
+`readReport` already exists for exactly this and has been dead code since it was written. Then restore the
+dummy's wording, dummy first.
+
+**2. Sections 15, 16 and 20 are refused on every elevated run.** `elevatedArgs()` at `engine.ts:172` builds
+`['--only', ids, '--elevate', '--yes']` and never passes `--i-understand-deep`, which IS in the Rust
+allowlist (`engine.rs:39`). `modules/runner.ps1:89-92` refuses any `Batch = 'deep'` section without it - 11,
+15, 16 and 20. So the screen offers six admin sections and can only run three. The refusals do reach the
+report, so the user is told; nothing is silent. 🔴 **This is not a straightforward "add the flag" fix** -
+`--i-understand-deep` authorises irreversible, system-changing work, and the app adding it on the user's
+behalf is a decision, not a default. Needs a dummy amendment naming the gate, and probably an explicit
+per-section confirmation.
+
+**3. It runs all six at once.** `elevation.lede` implies choosing ("ask for one"); the screen passes every
+admin id. Either the copy or the screen is wrong, and the dummy decides which.
+
+A number is never reused: the next task is TASK-011.
+
+### DONE-006 - the catalogue's punctuation drifts from the dummy's, tree-wide
+
+**Closed 2026-09-13 by A-DESK - on evidence, with nothing to change.** Every punctuation-bearing four-word
+run in `desktop/src/i18n/locales/en.json` compared against the dummy's text: **105 match exactly, 0 differ,
+72 have no dummy source** (app-only strings). The comparison was proved not vacuous: an ASCII hyphen planted
+in `home.developerOff` reported `DRIFT=2`, and 0 after restoring. No engine file changed and the self-test
+still prints `all 156 checks passed`. ⚠️ The dummy disagrees with ITSELF on one string - the gallery
+(`g-tables.js:111`) writes "Report only – ..." with an en dash while `page-sections.js:82` uses a hyphen; the
+app follows the Sections page. Filed as TASK-012.
+
+**The entry as it was filed:**
+
+The click dummy uses U+2013 and U+2014 where a dash is meant; the app's catalogue strings mostly use ASCII
+hyphens. Found while closing D-14/15/16 on 2026-09-07, and **deliberately not swept then**: only the keys
+inside those three defects were corrected, because a half-swept punctuation pass is worse than either end -
+it leaves no way to tell a deliberate ASCII hyphen from a missed one.
+
+**Why it is not urgent:** nothing breaks and no claim is false. It is a parity difference a GATE 4 pair can
+legitimately flag as a mismatch on a screen nobody has changed.
+
+**What to do:** one sweep across every `en.json` value against the dummy's source characters, in a commit
+that does nothing else. 🔴 **Never sed it** - the engine's own console strings are ASCII-only by IRON rule 1,
+so a global replace that reaches `lib/` or `modules/` breaks the ASCII self-test check. Scope the sweep to
+`desktop/src/i18n/locales/` and prove it with the self-test still green.
+
+A number is never reused: the next task is TASK-011.
+
+### DONE-007 - `selbar-note` is styled nowhere, and `Picker.tsx` uses it
+
+**Closed 2026-09-13 by A-DESK.** Every `className` in `desktop/src` compared against the app's **333 CSS
+selectors: zero orphans** (the three apparent hits were a variable, a comparison value and a template prefix
+whose six classes all exist). The sibling the ticket feared was in the DUMMY: `picker.html:120` read
+`class="t-sm ink-3 t-sm ink-3"`, left behind when `6f4706f` removed `selbar-note` - fixed. Two dummy-only
+dead classes remain (`t-base`, `t-2xl`), filed with the dash inconsistency as TASK-012.
+
+**The entry as it was filed:**
+
+The class `selbar-note` appears in neither the app's CSS nor the dummy's, and `desktop/src/screens/Picker.tsx`
+renders a note with it - so that note has no styling today. Found 2026-09-07 while building the Sections
+selection bar, which is why the new `SectionSelbar.tsx` deliberately does **not** use it.
+
+This is the same family as the `logpane` defect: a class name that reads as intentional, resolves to nothing,
+and is invisible to every gate because unknown CSS classes are not an error anywhere.
+
+**What to do:** decide whether the note wants the dummy's existing note treatment or its own rule, add it to
+the dummy first, then the app. And sweep for siblings - `grep` every `className` string in `desktop/src`
+against the selectors that actually exist in the app's CSS. That sweep is the valuable half of this task.
+
+### DONE-009 - the reclaim map has 28 unlabelled tab stops, and `role="img"` is why
+
+**Closed 2026-09-13 by A-DESK, dummy first (`reclaim-map.js`), verified in the running dev build.** On Home
+after a scan: **28 tiles, all `tabindex="-1"`, none `role="button"`, and ONE focusable element inside the map
+(was 29)**. The map's label reads "Reclaim map: 28 targets across 9 sections, 20.7 GB reclaimable in total...";
+the table carries 28 labelled switches ("Include cache 1 in the next run, 2.0 GB"). Planted and watched: tiles
+back to `tabIndex={0}` -> `FAIL: 28 focusable tiles, 29 focusable elements inside the map frame (expected 0 and
+1)`; restored -> `PASS`. ⚠️ Not measured: the row height of the 28 new table switches on Home - if a row is
+shorter than 44 px, neighbouring hit areas overlap by a few pixels (RW-119's capture pass measures it).
+
+**The entry as it was filed:**
+
+**Decided 2026-09-08, under the agent's design authority; not an owner question.**
+
+`reclaim-map.js` sets `role="img"` on the `<svg>` **and** `tabindex="0" role="button"` with an `aria-label`
+on every tile. `role="img"` makes the subtree **presentational**, so all 28 accessible names are computed and
+then discarded while all 28 tab stops remain. Measured on the rendered page: **28 of the 58 focusable stops
+on Home, 48% of the page, are inside the map** and announce roughly nothing. That is the cost of both
+approaches with the benefit of neither.
+
+**The decision:** the map becomes **one** stop - `role="img"` kept, with its summary `aria-label`, and
+`tabindex="-1"` on the tiles - and **exclusion moves to the table rows**. `ReclaimMapTable` already carries
+the same data as a real `<table>` with the `Idle (days)` column, and the app's own source calls it *"the
+primary accessible representation, not a consolation prize"*. This keeps the drawn encoding for sighted users
+and gives everyone else labelled, ordered controls.
+
+🔴 **Dummy first.** `desktop/design/windowsweep-click-dummy/reclaim-map.js:207-215` is amended with the
+reason written into `desktop/design/README.md` beside it, and only then does the app follow - the table needs
+a per-row toggle it does not have yet, so this is real work and not an attribute change.
+
+**Found while:** closing GATE 4 parity for wave 4b by reading the rendered DOM.
+
+A number is never reused: the next task is TASK-011.
+
+### DONE-010 - the 17px section switches are a pointer problem, and `.btn-sm` is not
+
+**Closed 2026-09-13 by A-DESK, dummy first (`shared.css`), verified in the running dev build.** On Sections:
+19 switches, the visible control still **30.4 x 17**, the hit area **44 x 44 px**; a point 8 px above a switch
+and one 5 px to its left both land on it; the closest two switches are 59 px apart centre to centre, so no two
+hit areas overlap. Planted and watched: the hit-area rule removed -> `FAIL: hit area auto x auto (need >=44x44),
+above=false left=false`; the control measured 30.4 x 17 in both states, which is the proof there is no visual
+change.
+
+**The entry as it was filed:**
+
+**Decided 2026-09-08, under the agent's design authority; not an owner question.**
+
+`.btn-sm` computes to **28px** against the fleet's 44px floor. It is **byte-identical to the dummy's own
+rule**, and every other control class was checked and matches too - so the app implements the approved spec
+exactly and this is not a parity defect.
+
+**The decision on `.btn-sm`: leave it.** 44px is a **touch** floor. This window is desktop-only
+(`minWidth: 760`), mouse and keyboard, with no touch input, and changing it in the app alone would *create* a
+divergence from the dummy.
+
+**The decision on the switches: raise them.** `.switch` measures **17px**, and there are 19 on the Sections
+screen. That is small for a **pointer** target regardless of touch, which is a different argument from the
+one that lets `.btn-sm` stand. Raise the **hit area** rather than the visual size, so the control looks as
+approved and is easier to hit - dummy first, then the app.
+
+**Found while:** the same GATE 4 parity pass.
+
+🔴 **This line said TASK-008 in all FOUR places it appears, and `DONE-008` has existed in
+`docs/DONE-TASKS.md` since 2026-09-08.** Every copy would have handed the next session a number already
+spent - which is the exact precedent the rule cites. All four are corrected. A number is never reused: the
+next task is **TASK-011**.

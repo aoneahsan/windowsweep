@@ -1,6 +1,6 @@
 # windowsweep - Agent Rules
 
-Last Updated: 2026-09-12 (session 13, the audit: the workspace root renamed to `windowsweep-root` and every record repointed; CLI 1.2.0 published and equal to `main`; the marketing site live; `desktop-v1.2.0` owed; eight owner decisions D13-D20; the v3 completion plan) - Context pass: 2026-09-12 (CLAUDE.md and AGENTS.md mirrored, both under 28 KB)
+Last Updated: 2026-09-13 (the v3 run: the docs site on HTTPS and the one-pass link write-back; `delete_my_account()` applied and proved, and both apps' deletion controls built; TASK-004..010 closed; the site's prerender, 404, JSON-LD and CI built; earlier 2026-09-12, session 13's audit and the root rename) - Context pass: 2026-09-12 (CLAUDE.md and AGENTS.md mirrored, both under 28 KB)
 
 Safe, developer-aware Windows cleanup CLI: a Windows PowerShell 5.1 engine behind a dependency-free Node
 launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macleanup` (Bash). Public repo
@@ -20,13 +20,13 @@ launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macl
 - Dependency and manifest record: `docs/PACKAGES.md`
 - Follow-ups the agent owes this project: `PENDING-TASKS.md` (root)
 
-## Current state (session 13, 2026-09-12 - the audit)
+## Current state (the v3 run, 2026-09-13)
 
 **The CLI is published at 1.2.0 and the engine equals it.** `windowsweep@1.2.0` went to npm on 2026-09-08 with
 every publish-gate step run; tag `v1.2.0`, Release **`--latest=false`**, and `desktop-v1.1.0` still the
-repository Latest so the updater endpoint resolves. 🔴 The invariant is back: `git diff v1.2.0..HEAD -- lib
-modules windowsweep.ps1 bin windowsweep.cmd package.json VERSION` is **empty** and stays so until the 1.3.0
-cascade opens. Self-test **156** (check 18e covers the `--scan` developer flag), PSScriptAnalyzer 1.25.0 clean,
+repository Latest so the updater endpoint resolves. 🔴 The invariant: `git diff v1.2.0..HEAD -- lib modules
+windowsweep.ps1 bin windowsweep.cmd VERSION` is **empty** and stays so until the 1.3.0 cascade opens
+(`package.json` carries one deliberate metadata line since 2026-09-12 - see below). Self-test **156** (check 18e covers the `--scan` developer flag), PSScriptAnalyzer 1.25.0 clean,
 44-file tarball. Debts that wait for that cascade and nothing else (RW-121): `WS_DOCS` still names the GitHub
 docs, and `lib/safety.ps1` (541 lines) and `modules/self_test_extra.ps1` (537) exceed rule 6's ceiling. The
 README's at-a-glance rows were left at 1.1.0 by the cascade and corrected on 2026-09-12; the published
@@ -36,31 +36,50 @@ tarball's copy stays stale until 1.3.0 - the cascade checklist in rule 7 names t
 installed on this machine (HKCU). Built since and unreleased: wave 4b (idle shading, protected chips,
 tile-click exclusion), RW-105 (Picker Remove, cancel, drives + capacity ring, the schedule switch, heldBack),
 D-9 / D-13 / D-22, the `screen.view` / `control.press` events, a Sentry breadcrumb scrub. GATE 4 is closed on
-the eleven screens and wave 4b; the four RW-105 surfaces have no capture (RW-119). Owed: the account-deletion
-control (D14, RW-113), TASK-004 / 006 / 007 / 009 / 010, D-8 confirmed and D-21 read from the rendered slot
-(RW-103), then the `desktop-v1.2.0` cascade (`desktop/package.json`, `tauri.conf.json`, `Cargo.toml` to 1.2.0,
+the eleven screens and wave 4b. **Built in the v3 run (2026-09-13):** the account-deletion control (D14),
+TASK-004 / 006 / 007 / 009 / 010 (moved to `docs/DONE-TASKS.md`), D-8 confirmed and D-21 read from the
+rendered `runCmd` slot - and one defect found on the way: "Measure without elevating" passed `--elevate` and
+so raised a UAC prompt; it now runs the read-only `--scan`, and `elevatedArgs` no longer accepts `dryRun`, so
+the defect is a compile error. Owed: the capture pass (RW-119 + RW-103's round-7 pairs), then the
+`desktop-v1.2.0` cascade (`desktop/package.json`, `tauri.conf.json`, `Cargo.toml` to 1.2.0,
 `yarn sync:cli`) with telemetry live for the first time - the four ids are repository variables the release
 workflow passes - and the updater proved 1.1.0 -> 1.2.0 here (RW-109). 🔴 The cargo cache still holds the old
 folder names; expect the recorded `os error 3` trap on the first local Rust build and `cargo clean -p` the
 affected packages per profile.
 
-**The marketing site is LIVE** (`https://windowsweep.aoneahsan.com/`, since 2026-09-08). Twelve routes, the
-admin surface, sitemap / feed / robots. 🔴 Open: every route's static HTML still carries the home title and
-canonical, an unknown path returns 200, no `llms.txt` file, no JSON-LD in static HTML, no OG card (RW-114); no
-`.env`, so telemetry is dormant (RW-115); sign-in dormant until row 15 (RW-116, with the admin gating verified
-as a non-admin); no parity pairs against its dummy (RW-117); no CI (RW-118).
+**The marketing site is LIVE** (`https://windowsweep.aoneahsan.com/`, since 2026-09-08). **Built in the v3 run
+and waiting on its next deploy:** a prerendered static file per route with its own title, canonical, body and
+JSON-LD, a real `404.html` with the catch-all rewrite gone, an OG card, an IndexNow key (RW-114); the committed
+`.env` with the four analytics ids (RW-115); the `/account` deletion control (RW-113); a CI workflow
+(RW-118); and four strings that had gone stale on 1.2.0's release day corrected (the changelog's "Unreleased"
+entry, the footer version and tagline, the installer sizes). Still owed: the finalized `llms.txt` words, the
+deploy and its verification on the origin, sign-in (row 15, RW-116) and the parity pairs (RW-117).
 
-**The docs site is live over HTTP only.** GitHub still presents its own `*.github.io` certificate; the CNAME
-is right and the apex has no CAA record. Owner decision D18: the agent removes and re-adds the custom domain
-through the Pages API, then switches every docs link in ONE pass (RW-102). `desktop.md` correctly says "In
-1.1.0" until the desktop release moves.
+**The docs site is live over HTTPS** (2026-09-12). GitHub had never issued a certificate for the host - it was
+presenting its own `*.github.io`, which `curl` here reports as `SEC_E_WRONG_PRINCIPAL` with code 000 and which
+reads like a closed port. Under D18 the agent removed and re-added the custom domain through the Pages API;
+Let's Encrypt issued within the hour, `https_enforced` is on, `http://` returns 301, and RW-102's link switch
+ran in ONE pass across the README, the master JSON, both repo homepages and the portfolio. 🔴 `WS_DOCS` in
+`lib/constants.ps1` still names the GitHub docs and stays there until the 1.3.0 cascade (RW-121) - it is an
+engine file. `desktop.md` correctly says "In 1.1.0" until the desktop release moves.
 
-**Supabase:** project `nlmetjyytgwaxcliusuo`, seven migrations, five tables with RLS verified from the
-catalogues; every user-owned row cascades from `auth.users`, so **`delete_my_account()` is one statement**
-(RW-113, D14). Google sign-in is off; the owner enables it during the v3 run (D15).
+🔴 **One intentional post-1.2.0 delta, so the next session does not read it as drift:** `package.json`'s
+`homepage` now points at `https://windowsweep.aoneahsan.com` (the site is the canonical homepage). The
+invariant's other members - `lib`, `modules`, `windowsweep.ps1`, `bin`, `windowsweep.cmd`, `VERSION` - still
+diff EMPTY against `v1.2.0`, and that is the check to run; `package.json` carries this one metadata line and
+no behaviour change. It rejoins the tarball at the 1.3.0 cascade.
 
-**Storytelling:** 14 of 19 surfaces recorded or applied. Open: site-home (finalizer), site-privacy
-(finalizer; its deletion HARD FAIL is met by RW-113), site-front-site (fact-check + finalizer), site-front row
+**Supabase:** project `nlmetjyytgwaxcliusuo`, **eight** migrations, five tables with RLS verified from the
+catalogues. **`delete_my_account()` is applied and proved (2026-09-12)**: one `delete from auth.users` that the
+cascades finish, EXECUTE to `authenticated` only (read from `pg_proc.proacl`); on a seeded throwaway user its
+own JWT got 204 and every cascading table went 1 -> 0, while the publishable key got 401 and `service_role`
+403. Google sign-in is still off (re-probed 2026-09-13); the owner enables it during the run (D15), and until
+then neither app's deletion control can be exercised by a person.
+
+**Storytelling:** 14 of 19 surfaces recorded or applied. In the v3 run: site-home finalized (its one open
+question answered with the published byte count) and being applied; site-front-site fact-checked (FAIL on a
+stale version literal and four open questions, all settled from recorded rules) and being finalized;
+site-privacy being finalized (its deletion HARD FAIL is met - the RPC exists). Open after those: site-front row
 9 (apply to the docs, RW-112), site-app (unwritten), then the keeper batch (RW-107).
 
 **Decisions taken on 2026-09-12 (D13-D20, verbatim in `docs/PROJECT-CONTEXT.md`):** the root rename is final ·
@@ -83,11 +102,11 @@ one number cannot drift in two files; the method is `../completion-plan-v3-2026-
 | Typecheck / lint / build | no build output, so the fleet source-map rule is satisfied by construction; PSScriptAnalyzer is the lint |
 | UI rules | none apply to the CLI - it has no UI at all. They apply to the desktop app (P6), where nine mandates are met and verified, and **three are declared OUT with reasons**: 🔴 §13's admin panel and plan set are **not applicable** (no server, no plan, no limit, no second user - there is nothing to administer, and no surface makes a pricing claim), §2's upload popover has no upload field, and §16's outside-surface overlay does not arise. §10's GATE 4 parity is **closed** on the eleven screens (six rounds, 2026-09-07) and on wave 4b (the rendered DOM, 2026-09-08); the four RW-105 surfaces and a round-7 read of D-8/D-21 are still owed (RW-119, RW-103). §12's floor was measured with a MutationObserver (84 ms and 102 ms). The marketing site (P8) meets §13 with a minimal `/admin` (D10) under the same plan-set exemption. The full mapping with its evidence: `docs/PROJECT-CONTEXT.md` |
 | Docs site | `aoneahsan/windowsweep-docs` at `D:\work\windowsweep-root\windowsweep-docs`: Docusaurus 3 + React 19 + TS ~6.0.3 + yarn 4, GitHub Pages only, ports 5972/5973. Its pages MIRROR `docs/` - fix a wording error here first, then re-mirror. `docs/MANUAL-TASKS.md` and `docs/story/**` are excluded from its build |
-| Backend | 🔴 **Supabase**, since the owner's standing directive of 2026-09-05 (`~/.claude/rules/services-integrations.md`): Supabase is the default backend for every new project, never Firebase. The desktop app was switched the same day, before anything had been created on Firebase, so it cost code and no data. Hosted-only, owner-created, FilesHub-gated; the schema is **Drizzle** TypeScript at `desktop/src/db/schema/`, `supabase db push` is the only applier. Project `nlmetjyytgwaxcliusuo` (FilesHub Supabase id 15, created 2026-09-07 under a new account because all seven existing ones were at the two-project free-tier limit); seven migrations applied; **the `delete_my_account()` RPC is owed** (owner decision D14, 2026-09-12; RW-113). Google sign-in stays off until row 15, which the owner does during the v3 run (D15) |
+| Backend | 🔴 **Supabase**, since the owner's standing directive of 2026-09-05 (`~/.claude/rules/services-integrations.md`): Supabase is the default backend for every new project, never Firebase. The desktop app was switched the same day, before anything had been created on Firebase, so it cost code and no data. Hosted-only, owner-created, FilesHub-gated; the schema is **Drizzle** TypeScript at `desktop/src/db/schema/`, `supabase db push` is the only applier. Project `nlmetjyytgwaxcliusuo` (FilesHub Supabase id 15, created 2026-09-07 under a new account because all seven existing ones were at the two-project free-tier limit); eight migrations applied, the eighth being **`delete_my_account()`, applied and proved 2026-09-12** (owner decision D14; RW-113). Google sign-in stays off until row 15, which the owner does during the v3 run (D15) |
 | Desktop app (P6) | `desktop/` in this repo: Tauri 2 + React 19 + Vite 8 + Tailwind v4 + React Aria + TanStack Router (hash history), port 5974, identifier `com.aoneahsan.windowsweep`. It runs the bundled script with `--json --no-color` and reimplements no cleanup logic. `desktop/design/` holds the approved click dummy and its inventory; `desktop/src` and `desktop/src-tauri` hold the app. 🔴 `tokens.css`, `shared.css` and `components.css` were promoted **once, in one direction** on 2026-09-05 - the app's copies are authoritative and are never synced back. Its own gates are `yarn typecheck && yarn lint && yarn build` plus `yarn check:prepaint`, and `desktop-ci.yml` adds `cargo fmt --check`, `clippy -D warnings` and `cargo test`. GATE 4 (parity) is **closed** on the eleven screens and wave 4b; `desktop-v1.1.0` is released and installed on this machine; `desktop-v1.2.0` (the 1.2.0 engine, telemetry live, wave 4b, RW-105, account deletion) is owed with the updater proved 1.1.0 -> 1.2.0 (RW-109). External design-craft skills are vendored per-project in `.claude/skills/` |
 | Storytelling (P7) | `docs/story/` holds the approved Bible, the voice fingerprint (`calibrated: false`, open and not blocking), the approved 14-surface content map, the decision log, `run-state.json` and `drafts/`. GATE 1 and GATE 2 are cleared; **14 of 19 surfaces are recorded or applied** (the desktop trio, readme, tagline, desktop-readme, the six docs surfaces, ai-guide, cli-strings, report-bodies). 🔴 **GATE 4 is pre-authorised for every remaining surface** - site-home, site-privacy, site-front-site, site-front, site-app (owner, 2026-09-07 and D12) - on a stated condition: the finalizer's fact-consistency check PASSES and the surface carries zero unanswered `NEEDS DECISION`. Either one failing pauses **that surface only**. The dummy's words are amended before the app's (`~/.claude/rules/frontend-ui-standards.md` §10a) |
 | Marketing site (P8, **LIVE** since 2026-09-08) | `aoneahsan/windowsweep-web` (private, D9) at `D:\work\windowsweep-root\windowsweep-web`, deployed to Firebase Hosting at `https://windowsweep.aoneahsan.com` (200 on both hosts). A web **app**: Supabase for the backend (the **same** project as the desktop app - one auth pool), **Firebase for hosting and GA4 only**, Amplitude + Clarity + Sentry with no opt-out, Capacitor wired with **no Android folder** (P8-D3; Android is out of scope, D17). Twelve routes incl. `/contact`, `/account` and a minimal `/admin` (D10); its story surfaces live in this repo's `docs/story/`. **Open:** prerendered routes + a real 404 + `llms.txt` + JSON-LD + an OG card (RW-114), telemetry live (RW-115), sign-in / contact / account / deletion / admin verified as a person once row 15 lands (RW-116), GATE 4 parity against its dummy (RW-117), a CI workflow (RW-118), the records write-back. It is the product's **canonical homepage**: `package.json` `homepage` and both repos' GitHub homepage move to it in RW-102's one-pass write-back |
-| Context Budget Last Verified | 2026-09-12 — CLAUDE.md 20,752 B / PENDING-TASKS.md 7,354 B; re-check due 2026-09-22 |
+| Context Budget Last Verified | 2026-09-13 — CLAUDE.md 22,792 B / PENDING-TASKS.md 2,641 B; re-check due 2026-09-23 |
 
 ## IRON rules for this repository
 

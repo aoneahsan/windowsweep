@@ -3,7 +3,7 @@
 Open follow-ups the agent owes this project (fleet format: `### TASK-NNN`; done entries move to
 `docs/DONE-TASKS.md`). Owner-only rows live in `docs/MANUAL-TASKS.md`.
 
-Last updated: 2026-09-13 (TASK-004, 006, 007, 009, 010, 011 and 012 closed to `docs/DONE-TASKS.md` by the v3 run; TASK-013 filed the same day; the next id is TASK-014)
+Last updated: 2026-09-13 (TASK-004, 006, 007, 009, 010, 011 and 012 closed to `docs/DONE-TASKS.md` by the v3 run; TASK-013 and TASK-014 filed the same day; the next id is TASK-015)
 
 ### TASK-013 - the desktop app's cloud sync is written and never called
 
@@ -30,3 +30,17 @@ finished run, `deleteRun` leaves 0 rows, and the rows hold no path (read them ov
 
 **Why it was not fixed there.** It is a feature, not a two-line fix; it needs the live sign-in to verify, which
 row 15 gates; and it was outside that dispatch's scope.
+
+### TASK-014 - the desktop design records are over the 500-line ceiling
+
+**Found while working on:** the desktop round-7 fixes and RW-122 (2026-09-13). **Priority: low.**
+`desktop/design/README.md` is 714 lines (568 before the round-7 amendments) and
+`desktop/design/gate4/GATE4-REPORT.md` 1,860, both over the house 500-line rule. **Do:** move the design
+README's dated amendment sections into a sibling `desktop/design/AMENDMENTS.md` with a pointer, and split the
+GATE 4 report by round (one file per round under `design/gate4/`, the report itself an index plus the
+current verdict), exactly as the site repo did (`windowsweep-web/design/AMENDMENTS.md`, its TASK-004), with a
+no-line-lost proof that fails on a genuinely removed line. **Not in scope, and why:** the click dummy's own
+scripts and stylesheets (`app.js` 752, `shared.css` 964, `components.css` 653, `wire.js` 618, `tokens.css`
+540) are the design record, which RW-122 recorded as untouched, and they never ship. **Why it was not fixed
+there:** round 8 prepends to the report next, and splitting it under a running round would put two writers
+on one file.

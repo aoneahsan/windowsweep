@@ -39,8 +39,12 @@ const POLL_MS = 700;
 const ELEVATED_HEADER = '# Elevated: yes';
 
 export interface RunTail {
-  /** Sweep once more, so the last lines the child wrote are not lost, then stop. */
-  finish: () => Promise<void>;
+  /**
+   * Sweep once more, so the last lines the child wrote are not lost, then stop.
+   * Resolves with the sections the child's report says ran or failed part-way -
+   * the ones whose measurements that run has spent - or none if it wrote none.
+   */
+  finish: () => Promise<number[]>;
 }
 
 interface TailState {
@@ -114,6 +118,23 @@ interface ReportTotals {
 }
 
 /**
+ * The sections of the child's `steps[]` that ran or failed part-way - every one
+ * of them may have deleted something (`lib/log.ps1` -> `Add-ReportStep`). Read by
+ * type, never trusted, for the reason `quoteReport` gives.
+ */
+function spentSections(doc: object): number[] {
+  const steps: unknown = (doc as { steps?: unknown }).steps;
+  if (!Array.isArray(steps)) return [];
+  const out: number[] = [];
+  for (const step of steps as unknown[]) {
+    if (typeof step !== 'object' || step === null) continue;
+    const { section, status } = step as { section?: unknown; status?: unknown };
+    if (typeof section === 'number' && (status === 'ran' || status === 'failed')) out.push(section);
+  }
+  return out;
+}
+
+/**
  * The child wrote its own `report-*.json` (schema 1, `lib/log.ps1` -> `Save-Report`)
  * and no `--json` summary ever reaches this window, so the run's number would
  * otherwise be readable only by opening a file. One line, from the engine's own
@@ -128,45 +149,47 @@ async function quoteReport(
   state: TailState,
   onLine: (line: string) => void,
   format: (totals: { amount: string; ran: number; skipped: number }) => string,
-): Promise<void> {
+): Promise<number[]> {
   let names: string[];
   try {
     names = await listRunFiles(runId);
   } catch {
-    return;
+    return [];
   }
   const reports = names.filter((n) => n.toLowerCase().startsWith('report-'));
   /* Same rule, same reason: the first report in the folder belongs to whichever
      process wrote one first. With no child there is nothing to quote. */
   const child = reports.length > 1 ? (reports[reports.length - 1] ?? null) : null;
-  if (child === null || state.emitted.has(child)) return;
+  if (child === null || state.emitted.has(child)) return [];
   state.emitted.set(child, 1);
 
   let text: string;
   try {
     text = await readReport(runId, child);
   } catch {
-    return;
+    return [];
   }
   let totals: ReportTotals;
+  let spent: number[];
   try {
     const doc: unknown = JSON.parse(text);
-    if (typeof doc !== 'object' || doc === null) return;
+    if (typeof doc !== 'object' || doc === null) return [];
+    spent = spentSections(doc);
     const maybe: unknown = (doc as { totals?: unknown }).totals;
-    if (typeof maybe !== 'object' || maybe === null) return;
+    if (typeof maybe !== 'object' || maybe === null) return spent;
     /* No assertion: every field of `ReportTotals` is optional, so an object is
        already assignable to it - and each one is then checked by type below
        rather than trusted. */
     totals = maybe;
   } catch {
-    return;
+    return [];
   }
   /* 🔴 Narrowed by TYPE, not coerced. `String(x)` on a field that turned out to be
      an object prints `[object Object]` into the log pane, and `Number(x)` on one
      prints `NaN` - both of which would be this window inventing a fact about
      somebody's elevated run rather than declining to state one. */
   const amount = typeof totals.total_reclaimed_human === 'string' ? totals.total_reclaimed_human : '';
-  if (amount === '') return;
+  if (amount === '') return spent;
   onLine(
     format({
       amount,
@@ -174,6 +197,7 @@ async function quoteReport(
       skipped: typeof totals.steps_skipped === 'number' ? totals.steps_skipped : 0,
     }),
   );
+  return spent;
 }
 
 /**
@@ -198,7 +222,7 @@ export function tailElevatedRun(
       state.running = false;
       window.clearInterval(timer);
       await sweep(runId, state, onLine);
-      await quoteReport(runId, state, onLine, reportLine);
+      return quoteReport(runId, state, onLine, reportLine);
     },
   };
 }

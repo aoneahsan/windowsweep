@@ -13,16 +13,16 @@
  * (`page-run.js:161-163`). A bar that crept along while the engine said nothing
  * would be inventing progress.
  *
- * 🔴 `pending.runProgress` IS RE-CLASSED `prototype`, AND IT STAYS DECLARED -
- * PERMANENTLY. It is the one declaration on this screen that does not describe
- * unbuilt work, so it is not a `pending-wave` and no later wave closes it. The
- * dummy's sliding bar is animation over phases that do not exist, which is
- * `prototype` under §10a's exemption classes; there is no engine change that would
- * make it real, because "how far through a section is" is not a question the
- * engine can answer - it walks a tree it has not finished measuring. Deleting this
- * sentence would leave a one-step bar with no explanation and read as a defect;
- * leaving it classed `pending-wave` would promise a wave that is never coming.
- * Both are wrong, in opposite directions.
+ * 🔴 THE ONE-STEP BAR IS `prototype`, AND A `prototype` DIFFERENCE CARRIES NO
+ * SENTENCE ON SCREEN. The dummy's sliding bar is animation over phases that do not
+ * exist; no engine change could make it real, because "how far through a section
+ * is" is not a question the engine can answer. An in-app declaration is owed by a
+ * `pending-wave` gap only, and this is not one. The note that stood under the rows
+ * named the design artefact to a person using the product (D-31, GATE 4 round 7)
+ * and carried words the dummy does not have, so it is gone rather than reworded.
+ *
+ * 🔴 A waiting row shows the scan's figure bare, as the dummy's row does
+ * (`page-run.js:51`) - the word `expected` after it was this app's own (D-30).
  */
 
 import { useTranslation } from 'react-i18next';
@@ -45,8 +45,14 @@ export interface PerSectionRow {
 }
 
 /**
- * Merge the three things that know about a section into one row list, in a fixed
- * order so rows never jump around while a person is watching them.
+ * Merge the three things that know about a section into one row list.
+ *
+ * 🔴 BIGGEST FIRST, the dummy's own rule (`page-run.js` builds its queue from
+ * `db.derive.safeRunSections()`, sorted by bytes) and the order Home's ladder already
+ * uses - then the sections with nothing measured, in catalogue order. The key is
+ * the scan's figure, which does not change while a run is in flight, so no row moves
+ * while a person watches it; a section the finished run has spent keys on what it
+ * freed instead. It used to be catalogue order (GATE 4 round 8 prep).
  */
 export function perSectionRows({
   catalogue,
@@ -76,12 +82,13 @@ export function perSectionRows({
     .filter((id) => id !== SCAN_PSEUDO_SECTION)
     .sort((a, b) => a - b);
   const ids = reported.length > 0 ? reported : queue;
-  return ids.map((id) => {
+  const rows = ids.map((id): PerSectionRow => {
     const event = progress[id];
     const result = results.find((r) => r.section === id);
     const targets = scanTargets.filter((x) => x.section === id);
     const ended = event?.event === 'end';
-    const state = ended || result ? 'done' : event?.event === 'start' ? 'running' : 'queued';
+    const state: PerSectionRow['state'] =
+      ended || result ? 'done' : event?.event === 'start' ? 'running' : 'queued';
     return {
       id,
       key: catalogue?.sections.find((s) => s.id === id)?.key ?? String(id),
@@ -91,10 +98,12 @@ export function perSectionRows({
       state,
     };
   });
+  const key = (row: PerSectionRow): number => row.expectedBytes ?? row.freedBytes ?? -1;
+  /* `ids` is in catalogue order already, and `sort` is stable, so ties keep it. */
+  return rows.sort((a, b) => key(b) - key(a));
 }
 
 function Row({ row }: { row: PerSectionRow }) {
-  const { t } = useTranslation();
   const width = row.state === 'done' ? '100%' : '0%';
 
   return (
@@ -112,7 +121,7 @@ function Row({ row }: { row: PerSectionRow }) {
           {row.freedBytes !== null
             ? formatBytes(row.freedBytes)
             : row.expectedBytes !== null
-              ? `${formatBytes(row.expectedBytes)} ${t('run.expected')}`
+              ? formatBytes(row.expectedBytes)
               : ''}
         </span>
       </div>
@@ -144,9 +153,6 @@ export function RunPerSection({ rows }: { rows: PerSectionRow[] }) {
         ) : (
           rows.map((row) => <Row row={row} key={row.id} />)
         )}
-        {/* The permanent `prototype` declaration for the bar that does not creep.
-            Not a gap - a difference from the dummy that will not close. */}
-        <p className="t-xs ink-3">{t('pending.runProgress')}</p>
       </div>
     </div>
   );

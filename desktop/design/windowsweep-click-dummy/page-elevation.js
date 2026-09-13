@@ -43,13 +43,19 @@
   }
 
   /* The command this screen would run, built from the choice rather than described
-     - the same rule the Run screen's status bar follows. */
+     - the same rule the Run screen's status bar follows.
+     D-27 (GATE 4 round 7): the three thresholds D-8 put on every run are here too.
+     The Run screen's line was amended for them and this one was not, so it showed
+     a shorter invocation than the elevated run passes. */
   function commandLine() {
     var ids = chosenIds();
     var parts = ['windowsweep', '--json', '--only', ids.join(','), '--elevate', '--yes'];
     if (chosenDeepIds().length > 0 && deepOk) parts.push('--i-understand-deep');
     if (chosen[15] && hiberfil !== 'keep') parts.push('--hiberfil', hiberfil);
     parts.push(db.facts.developer ? '--developer' : '--not-developer');
+    parts.push('--days', String(db.facts.idleDays));
+    parts.push('--temp-days', String(db.facts.tempDays));
+    parts.push('--large-file-mb', String(db.facts.largeFileMb || 100));
     return parts.join(' ');
   }
 
@@ -174,12 +180,21 @@
                      { assertive: true });
           }, 900);
         }
+        /* D-28 (GATE 4 round 7): the measurement lands BESIDE the control that asked
+           for it, as a polite status note, rather than in a toast that disappears -
+           the house standard is that a result appears where the person is looking,
+           and a toast is the fallback. The app already did this; the dummy follows. */
         if (t.dataset.wsAction === 'elevateDry') {
           window.wsWidgets.pending(t, true);
+          var note = document.querySelector('[data-ws-measured]');
+          if (note) note.hidden = true;
           setTimeout(function () {
             window.wsWidgets.pending(t, false);
-            ws.toast('Measured 15.9 GB across the sections you chose. Nothing was deleted, and no ' +
-                     'permission was needed to look.');
+            if (note) {
+              note.textContent = 'Measured 15.9 GB across the sections you chose. Nothing was deleted, and no ' +
+                                 'permission was needed to look.';
+              note.hidden = false;
+            }
           }, 1100);
         }
       });

@@ -48,7 +48,7 @@
       st.dataset.role = 'status';
       st.style.marginInlineStart = 'auto';
       top.appendChild(st);
-      var by = el('span', 'num t-xs', fmt.bytes(item.bytes));
+      var by = el('span', 'num t-xs', item.unmeasured ? '' : fmt.bytes(item.bytes));
       by.dataset.role = 'bytes';
       top.appendChild(by);
       row.appendChild(top);
@@ -62,6 +62,20 @@
 
       mount.appendChild(row);
     });
+  }
+
+  /* GATE 4 round 8 prep: the queue is the WHOLE safe batch. It listed only the
+     sections with tiles, but the engine also runs the batch's report-only sections
+     (0 health, 21 disk usage) and reports progress for each - a list without them
+     disagrees with its own "N of M". The measured ones come first, biggest first
+     (db.derive.safeRunSections, the ladder's order); the rest follow in catalogue
+     order with no figure, exactly as the app draws them. */
+  function runQueue() {
+    var measured = db.derive.safeRunSections();
+    var have = {};
+    measured.forEach(function (r) { have[r.section] = true; });
+    return measured.concat(window.wsSeed.SAFE_BATCH.filter(function (id) { return !have[id]; })
+      .map(function (id) { return { section: id, bytes: 0, count: 0, unmeasured: true }; }));
   }
 
   function rowFor(id) { return document.querySelector('[data-ws-runlist] [data-section="' + id + '"]'); }
@@ -125,7 +139,7 @@
 
   function start() {
     cancelled = false; freed = 0; doneCount = 0; startedAt = Date.now();
-    queue = db.derive.safeRunSections();
+    queue = runQueue();
     if (!queue.length) { ws.toast('Nothing in the safe batch to run.'); return; }
 
     buildList();
@@ -199,7 +213,7 @@
         map = new window.ReclaimMap(mount, { interactive: false });
         map.render(db.derive.mapData());
       }
-      queue = db.derive.safeRunSections();
+      queue = runQueue();
       buildList();
       window.wsWire.setText('runTotal', String(queue.length));
       /* 🔴 This line silently overwrote the amendment made to run.html on 2026-09-07:

@@ -195,7 +195,11 @@
     close: 'M5 5l10 10M15 5 5 15',
     min: 'M4 10h12',
     max: 'M5 5h10v10H5z',
-    menu: 'M3 6h14M3 10h14M3 14h14'
+    menu: 'M3 6h14M3 10h14M3 14h14',
+    /* The Admin rail entry has always named this icon (NAV below) and the map never
+       defined it, so svgIcon fell back to 'doc' - the same mark as Reports and
+       Components. Drawn now, the path the app draws (GATE 4 round 8 prep). */
+    backend: 'M3 5h14v4H3zM3 11h14v4H3zM6 7h.01M6 13h.01'
   };
 
   function svgIcon(name, size) {

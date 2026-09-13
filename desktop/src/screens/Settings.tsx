@@ -9,6 +9,14 @@
  * 2026-09-07, so there is nothing to revoke and the copy says so plainly. A
  * control a person can press that changes nothing is worse than no control.
  *
+ * 🔴 The tablist is named "Settings sections", the dummy's own name for it - it
+ * repeated the page heading, which a screen reader had just read (D-35).
+ *
+ * 🔴 NO STATUS-BAR NOTE HERE, and that is deliberate rather than an omission. The
+ * dummy's reads "settings sync when you are signed in", and nothing in this window
+ * syncs yet - `lib/sync.ts` has no caller. A note promising it would be the
+ * product claiming behaviour it does not have; it arrives with the sync wiring.
+ *
  * 🔴 General and About live in their own files. This screen is the tab frame; the
  * two tabs with real content in them each outgrew a branch in it, and the 500-line
  * ceiling is the point at which a file is doing too much rather than a number to
@@ -53,7 +61,7 @@ export function Settings() {
       <section className="band band-app">
         <div className="wrap">
           <div className="tabs">
-            <div className="tablist" role="tablist" aria-label={t('settings.title')}>
+            <div className="tablist" role="tablist" aria-label={t('settings.tabsLabel')}>
               {TABS.map((x) => (
                 <button
                   className="tab"

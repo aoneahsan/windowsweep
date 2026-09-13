@@ -1,10 +1,24 @@
 @import 'tailwindcss';
-@import './tokens.css';
+/* tokens.css and shell.css were split by concern (RW-122: both had passed the 500-line
+   ceiling). The parts are imported in the order the two files held them, so the
+   cascade is unchanged, and no declaration was edited in the move - each set of parts
+   concatenates back to its original byte for byte. */
+@import './tokens/01-type-space-motion.css';
+@import './tokens/02-colour.css';
 @import './theme-bridge.css';
 
 /* The dummy's shared chrome, promoted alongside the tokens. Component classes
    live here rather than as Tailwind utilities because the click dummy is the
    specification and its class names are what GATE 4 compares against. */
-@import './shell.css';
+@import './shell/01-base-shell-rail.css';
+@import './shell/02-bands-controls.css';
+@import './shell/03-reclaim-map-zones.css';
+@import './shell/04-tables-panel-responsive.css';
+@import './shell/05-atmosphere.css';
+@import './shell/06-disclosure.css';
+@import './shell/07-actions.css';
+@import './shell/08-forms.css';
+@import './shell/09-navigation-overlays-display.css';
+@import './shell/10-charts-interaction.css';
 
 @custom-variant light (&:where([data-appearance='light'], [data-appearance='light'] *));

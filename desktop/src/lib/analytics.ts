@@ -49,11 +49,48 @@ const providers: Provider[] = [];
 let appVersion = '0.0.0';
 let started = false;
 
+/**
+ * Events tracked before every destination has registered, replayed to each one as
+ * it registers.
+ *
+ * 🔴 WHY: `main.tsx` starts analytics with `void` and does not wait, and the router
+ * emits the first `screen.view` as it resolves - before GA4 and Amplitude have
+ * finished loading. `track()` sends only to providers already in the list, so that
+ * first screen view reached nothing but whatever happened to be ready first. Proved
+ * on the wire on the marketing site, whose code has the same shape.
+ *
+ * 🔴 REPLAYED TO THE PROVIDER THAT JUST REGISTERED, AND ONLY TO IT. A destination
+ * that was already ready received each event live; replaying the whole queue to
+ * everyone would send those twice. So an event goes to a provider exactly once:
+ * live if the provider was ready when it was tracked, or in that provider's own
+ * replay if it was not. The queue holds already-scrubbed events, is capped (the
+ * oldest go first), and is cleared for good once `startAnalytics` settles.
+ */
+const PENDING_CAP = 50;
+const pending: { event: string; props: EventProps }[] = [];
+let queueing = true;
+
+/** Add a destination, then hand it what was tracked before it existed. */
+function register(provider: Provider): void {
+  providers.push(provider);
+  if (!provider.ready) return;
+  for (const queued of pending) {
+    try {
+      provider.send(queued.event, queued.props);
+    } catch {
+      /* a replay that fails is dropped for that destination only, as a live send is */
+    }
+  }
+}
+
+/** Microsoft Clarity's global: a function that also carries its own call queue. */
+type ClarityFn = ((...args: unknown[]) => void) & { q?: unknown[] };
+
 declare global {
   interface Window {
     dataLayer?: unknown[];
     gtag?: (...args: unknown[]) => void;
-    clarity?: (...args: unknown[]) => void;
+    clarity?: ClarityFn;
   }
 }
 
@@ -124,7 +161,7 @@ async function startGa4(measurementId: string): Promise<void> {
   await loadScript(`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`);
   gtag('config', measurementId, { send_page_view: false, app_version: appVersion });
 
-  providers.push({
+  register({
     name: 'ga4',
     ready: true,
     send: (event, props) => { window.gtag?.('event', event, props); },
@@ -136,7 +173,7 @@ async function startAmplitude(apiKey: string): Promise<void> {
   // 🔴 awaited on `.promise`, not on the call - init resolves before its
   // destination plugins attach, and events fired in that window are dropped.
   await amplitude.init(apiKey, undefined, { appVersion, autocapture: false }).promise;
-  providers.push({
+  register({
     name: 'amplitude',
     ready: true,
     send: (event, props) => { amplitude.track(event, props); },
@@ -144,8 +181,23 @@ async function startAmplitude(apiKey: string): Promise<void> {
 }
 
 async function startClarity(projectId: string): Promise<void> {
+  /* 🔴 THE QUEUE STUB FIRST, exactly as Microsoft's own snippet defines it. The
+     tag's first statement reads `window.clarity.v`; with no `window.clarity` it
+     throws, the tag never starts, and `ready` below read false for ever - so
+     Clarity received nothing while every window still downloaded it. It pushes
+     `arguments`, not a rest array, for the reason the gtag shim above records. */
+  if (!window.clarity) {
+    const queue: unknown[] = [];
+    window.clarity = Object.assign(
+      function clarity(..._args: unknown[]): void {
+        // eslint-disable-next-line prefer-rest-params
+        queue.push(arguments);
+      },
+      { q: queue },
+    );
+  }
   await loadScript(`https://www.clarity.ms/tag/${encodeURIComponent(projectId)}`);
-  providers.push({
+  register({
     name: 'clarity',
     ready: typeof window.clarity === 'function',
     send: (event) => { window.clarity?.('event', event); },
@@ -198,7 +250,7 @@ async function startSentry(dsn: string): Promise<void> {
       return event;
     },
   });
-  providers.push({
+  register({
     name: 'sentry',
     ready: true,
     send: (event, props) => { Sentry.addBreadcrumb({ category: 'app', message: event, data: props }); },
@@ -225,6 +277,10 @@ export async function startAnalytics(keys: AnalyticsKeys, version: string): Prom
 
   // A destination that fails to start must never take the app down with it.
   await Promise.allSettled(jobs);
+  /* Every destination that is going to register has; nothing is replayed after
+     this, so the queue would only be memory. */
+  queueing = false;
+  pending.length = 0;
 }
 
 /**
@@ -237,6 +293,10 @@ export async function startAnalytics(keys: AnalyticsKeys, version: string): Prom
  */
 export function track(event: EventName, props: EventProps = {}): void {
   const safe = scrubProps(props);
+  if (queueing) {
+    if (pending.length >= PENDING_CAP) pending.shift();
+    pending.push({ event, props: safe });
+  }
   for (const p of providers) {
     if (!p.ready) continue;
     try {

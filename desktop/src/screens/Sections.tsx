@@ -25,7 +25,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Trans, useTranslation } from 'react-i18next';
 
-import { useIncludedScanTargets, useRunPreferences, useStore } from '../state/store';
+import { useStore } from '../state/store';
+import { useIncludedScanTargets, useRunPreferences } from '../state/derived';
 import { filterSections, SECTION_FILTERS, type SectionFilter } from '../lib/catalogue';
 import { newRunId, run, safeBatchArgs } from '../lib/engine';
 import { formatBytes } from '../lib/format';
@@ -128,8 +129,9 @@ export function Sections() {
       <section className="band band-app band-tight">
         <div className="wrap">
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--sp-4)', alignItems: 'flex-end' }}>
+            {/* No eyebrow: the dummy has none here (`sections.html:27-31`), and
+                "The catalogue" the app had printed was its own word (D-34). */}
             <div>
-              <p className="caps ink-3">{t('sections.eyebrow')}</p>
               <h1 className="t-xl wide">{t('sections.title')}</h1>
               <p className="t-sm ink-3">{t('sections.lede')}</p>
             </div>

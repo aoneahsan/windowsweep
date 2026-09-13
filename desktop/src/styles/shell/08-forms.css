@@ -1,0 +1,249 @@
+/* ============================================================================
+   2. FORMS - field structure first, because it is what makes an error visible
+   ============================================================================ */
+
+/* A field wrapper carries label, required marker, description, error and count.
+   RAC derives aria-describedby from Text/FieldError children, so the anatomy is
+   Label > Input > Text[slot=description] > FieldError - not a pile of divs. */
+.fw { display: flex; flex-direction: column; gap: var(--sp-1); }
+.fw-lbl, .react-aria-Label {
+  font-size: var(--fs-xs); font-weight: 600; color: var(--c-ink-2);
+  display: flex; align-items: center; gap: var(--sp-1);
+}
+.fw-req { color: var(--c-danger); }
+.fw-desc, .react-aria-Text[slot="description"] { font-size: var(--fs-xs); color: var(--c-ink-3); }
+.fw-err, .react-aria-FieldError {
+  font-size: var(--fs-xs); color: var(--c-danger); font-weight: 500;
+  display: flex; align-items: center; gap: var(--sp-1);
+}
+/* The message never animates in - the user needs to read it now. */
+.fw-err { animation: none !important; }
+.fw-count { font-size: var(--fs-2xs); color: var(--c-ink-3); margin-inline-start: auto; }
+.fw-count[data-over="true"] { color: var(--c-danger); font-weight: 700; }
+.fw-row { display: flex; align-items: baseline; gap: var(--sp-2); }
+
+.react-aria-Input, .react-aria-TextField input, .react-aria-SearchField input {
+  width: 100%; padding: var(--sp-2) var(--sp-3);
+  background: var(--c-well); color: var(--c-ink);
+  border: 1px solid var(--c-line-strong); border-radius: var(--r-md);
+  font: inherit; font-size: var(--fs-sm);
+}
+.field:focus-visible, .react-aria-Input[data-focused], .react-aria-Input:focus-visible {
+  outline: 2px solid var(--c-accent); outline-offset: 1px; border-color: var(--c-accent);
+}
+.field::placeholder { color: var(--c-ink-3); opacity: 1; }
+.field:disabled, .field[data-disabled] { opacity: .5; cursor: not-allowed; }
+/* read-only is visibly different from disabled: it is legible and selectable. */
+.field[readonly], .field[data-readonly] {
+  background: transparent; border-style: dashed; opacity: 1; color: var(--c-ink-2);
+}
+.field[aria-invalid="true"], .field[data-invalid], .react-aria-Input[data-invalid] {
+  border-color: var(--c-danger);
+  background: color-mix(in oklab, var(--c-danger) 7%, var(--c-well));
+}
+.field-mono { font-family: var(--ff-mono); font-size: var(--fs-xs); }
+
+/* affix wrapper - password reveal, search clear, number stepper */
+.fx { position: relative; display: flex; align-items: center; }
+.fx > .field { padding-inline-end: calc(2.1rem * var(--density)); }
+.fx-btn {
+  position: absolute; inset-inline-end: var(--sp-1);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: calc(1.7rem * var(--density)); height: calc(1.7rem * var(--density));
+  border: 0; border-radius: var(--r-sm); background: none; color: var(--c-ink-3); cursor: pointer;
+}
+@media (hover: hover) { .fx-btn:hover { color: var(--c-ink); background: var(--c-hover); } }
+.fx-btn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: -2px; }
+.fx-step { display: flex; flex-direction: column; position: absolute; inset-inline-end: var(--sp-1); }
+.fx-step .fx-btn { position: static; height: calc(.9rem * var(--density)); }
+
+/* Rich text. THERE IS NO <textarea> IN A SHIPPED PRODUCT - every multi-line
+   input is an editor. This is tiptap-SHAPED over contenteditable: the real
+   toolbar and the real states, with tiptap itself arriving in the app. */
+.rt { border: 1px solid var(--c-line-strong); border-radius: var(--r-md); background: var(--c-well); }
+.rt:focus-within { outline: 2px solid var(--c-accent); outline-offset: 1px; border-color: var(--c-accent); }
+.rt-bar {
+  display: flex; flex-wrap: wrap; gap: var(--sp-1); padding: var(--sp-1);
+  border-bottom: 1px solid var(--c-line);
+}
+.rt-btn {
+  min-width: calc(1.7rem * var(--density)); height: calc(1.7rem * var(--density));
+  border: 0; border-radius: var(--r-sm); background: none; color: var(--c-ink-2);
+  font-size: var(--fs-xs); font-weight: 700; cursor: pointer;
+}
+@media (hover: hover) { .rt-btn:hover { background: var(--c-hover); color: var(--c-ink); } }
+.rt-btn[aria-pressed="true"] { background: var(--c-accent-soft); color: var(--c-accent-ink); }
+.rt-btn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: -2px; }
+.rt-body {
+  min-height: 5.5rem; padding: var(--sp-3); font-size: var(--fs-sm); line-height: 1.55; outline: none;
+}
+.rt-body:empty::before { content: attr(data-placeholder); color: var(--c-ink-3); }
+.rt-body p { margin: 0 0 var(--sp-2); }
+.rt-body p:last-child { margin-bottom: 0; }
+.rt-ft {
+  display: flex; padding: var(--sp-1) var(--sp-3); border-top: 1px solid var(--c-line);
+  font-size: var(--fs-2xs); color: var(--c-ink-3);
+}
+
+/* Choice */
+.chk, .react-aria-Checkbox, .rad, .react-aria-Radio {
+  display: inline-flex; align-items: flex-start; gap: var(--sp-2);
+  font-size: var(--fs-sm); cursor: pointer;
+}
+.chk-box, .rad-box {
+  flex: none; width: calc(1.05rem * var(--density)); height: calc(1.05rem * var(--density));
+  margin-block-start: .15em;
+  border: 1.5px solid var(--c-line-strong); background: var(--c-well);
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background var(--d-instant) var(--ease-mech), border-color var(--d-instant) var(--ease-mech);
+}
+.chk-box { border-radius: var(--r-xs); }
+.rad-box { border-radius: 50%; }
+.chk-box svg { width: 80%; height: 80%; opacity: 0; color: var(--c-on-accent); }
+.rad-dot { width: 45%; height: 45%; border-radius: 50%; background: var(--c-on-accent); opacity: 0; }
+.chk input, .rad input {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.chk input:checked ~ .chk-box, .react-aria-Checkbox[data-selected] .chk-box,
+.rad input:checked ~ .rad-box, .react-aria-Radio[data-selected] .rad-box {
+  background: var(--c-accent); border-color: var(--c-accent);
+}
+.chk input:checked ~ .chk-box svg, .react-aria-Checkbox[data-selected] .chk-box svg,
+.rad input:checked ~ .rad-box .rad-dot, .react-aria-Radio[data-selected] .rad-box .rad-dot { opacity: 1; }
+.chk input:indeterminate ~ .chk-box { background: var(--c-accent); border-color: var(--c-accent); }
+.chk input:indeterminate ~ .chk-box::after {
+  content: ""; width: 60%; height: 2px; background: var(--c-on-accent); border-radius: 1px;
+}
+.chk input:focus-visible ~ .chk-box, .rad input:focus-visible ~ .rad-box,
+.react-aria-Checkbox[data-focus-visible] .chk-box, .react-aria-Radio[data-focus-visible] .rad-box {
+  outline: 2px solid var(--c-accent); outline-offset: 2px;
+}
+.chk input:disabled ~ *, .rad input:disabled ~ * { opacity: .45; }
+.chk[data-invalid] .chk-box, .rad[data-invalid] .rad-box { border-color: var(--c-danger); }
+.chk-grp, .rad-grp, .react-aria-RadioGroup, .react-aria-CheckboxGroup {
+  display: flex; flex-direction: column; gap: var(--sp-2);
+}
+.chk-grp[data-row], .rad-grp[data-row] { flex-direction: row; flex-wrap: wrap; gap: var(--sp-4); }
+
+/* switch base is in shared.css; here are the states */
+.switch[aria-checked="true"], .react-aria-Switch[data-selected] .switch { background: var(--c-accent); }
+.switch:focus-visible, .react-aria-Switch[data-focus-visible] .switch {
+  outline: 2px solid var(--c-accent); outline-offset: 2px;
+}
+.switch[aria-disabled="true"], .switch:disabled { opacity: .45; cursor: not-allowed; }
+
+/* segmented control - one tab stop, arrows within, so RadioGroup not buttons */
+.seg, .react-aria-RadioGroup[data-segmented] {
+  display: inline-flex; padding: 2px; gap: 2px;
+  background: var(--c-well); border: 1px solid var(--c-line); border-radius: var(--r-md);
+}
+.seg-opt {
+  position: relative; padding: var(--sp-1) var(--sp-3); border-radius: calc(var(--r-md) - 2px);
+  font-size: var(--fs-xs); font-weight: 600; color: var(--c-ink-3); cursor: pointer; white-space: nowrap;
+}
+.seg-opt input { position: absolute; opacity: 0; width: 100%; height: 100%; inset: 0; margin: 0; cursor: pointer; }
+.seg-opt:has(input:checked), .react-aria-Radio[data-selected].seg-opt {
+  background: var(--c-panel); color: var(--c-ink); box-shadow: var(--wm-panel-shadow);
+}
+.seg-opt:has(input:focus-visible) { outline: 2px solid var(--c-accent); outline-offset: 1px; }
+
+/* select + combobox - the trigger and the popover are ours; the listbox DOM is RAC's */
+.sel-btn, .react-aria-Select .react-aria-Button {
+  display: flex; align-items: center; gap: var(--sp-2); width: 100%;
+  padding: var(--sp-2) var(--sp-3); min-height: calc(2.25rem * var(--density));
+  background: var(--c-well); color: var(--c-ink);
+  border: 1px solid var(--c-line-strong); border-radius: var(--r-md);
+  font-size: var(--fs-sm); text-align: start;
+}
+.sel-btn > .sel-val { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sel-btn > .sel-caret { flex: none; color: var(--c-ink-3); transition: transform var(--d-quick) var(--ease-mech); }
+.sel-btn[aria-expanded="true"] > .sel-caret { transform: rotate(180deg); }
+.sel-btn[aria-expanded="true"], .sel-btn:focus-visible { border-color: var(--c-accent); }
+.sel-btn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 1px; }
+.lbox, .react-aria-ListBox {
+  max-height: 15rem; overflow: auto; padding: var(--sp-1);
+  background: var(--c-panel); border: 1px solid var(--c-line-strong);
+  border-radius: var(--r-md); box-shadow: var(--wm-raise-shadow);
+}
+.lbox-item, .react-aria-ListBoxItem {
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3); border-radius: var(--r-sm);
+  font-size: var(--fs-sm); cursor: default; outline: none;
+}
+@media (hover: hover) { .lbox-item:hover, .react-aria-ListBoxItem[data-hovered] { background: var(--c-hover); } }
+.lbox-item[data-focused], .react-aria-ListBoxItem[data-focused] { background: var(--c-hover); }
+.lbox-item[aria-selected="true"], .react-aria-ListBoxItem[data-selected] {
+  background: var(--c-accent-soft); color: var(--c-accent-ink); font-weight: 600;
+}
+.lbox-empty { padding: var(--sp-4); text-align: center; color: var(--c-ink-3); font-size: var(--fs-xs); }
+
+/* tag / multi-select input */
+.tags {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-1);
+  padding: var(--sp-1) var(--sp-2); min-height: calc(2.25rem * var(--density));
+  background: var(--c-well); border: 1px solid var(--c-line-strong); border-radius: var(--r-md);
+}
+.tags:focus-within { outline: 2px solid var(--c-accent); outline-offset: 1px; border-color: var(--c-accent); }
+.tag {
+  display: inline-flex; align-items: center; gap: var(--sp-1);
+  padding: 1px var(--sp-1) 1px var(--sp-2); border-radius: var(--r-sm);
+  background: var(--c-accent-soft); color: var(--c-accent-ink);
+  font-size: var(--fs-2xs); font-weight: 600;
+}
+.tag-x { border: 0; background: none; color: inherit; cursor: pointer; line-height: 1; padding: 0 2px; }
+.tag-x:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 1px; }
+.tags-in { flex: 1; min-width: 5rem; border: 0; background: none; color: inherit; font: inherit; font-size: var(--fs-sm); outline: none; }
+
+/* slider - RAC SliderTrack / SliderThumb anatomy */
+.sld, .react-aria-Slider { display: flex; flex-direction: column; gap: var(--sp-1); }
+.sld-track, .react-aria-SliderTrack {
+  position: relative; height: calc(1.1rem * var(--density)); display: flex; align-items: center; cursor: pointer;
+}
+.sld-track::before {
+  content: ""; position: absolute; inset-inline: 0; height: 4px;
+  border-radius: var(--r-pill); background: var(--c-line-strong);
+}
+.sld-fill { position: absolute; inset-inline-start: 0; height: 4px; border-radius: var(--r-pill); background: var(--c-accent); }
+.sld-thumb, .react-aria-SliderThumb {
+  position: absolute; width: calc(.95rem * var(--density)); height: calc(.95rem * var(--density));
+  border-radius: 50%; background: var(--c-panel); border: 2px solid var(--c-accent);
+  box-shadow: var(--wm-panel-shadow); transform: translateX(-50%);
+}
+.sld-thumb:focus-visible, .react-aria-SliderThumb[data-focus-visible] {
+  outline: 2px solid var(--c-accent); outline-offset: 2px;
+}
+.sld input[type="range"] {
+  position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; margin: 0; cursor: pointer;
+}
+
+/* file upload. Rule 2: an upload field carries an info affordance stating
+   purpose, types, max size and an example BEFORE the pick - and the numbers it
+   shows are the numbers that are enforced. */
+.drop {
+  display: flex; flex-direction: column; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-6); text-align: center;
+  border: 1.5px dashed var(--c-line-strong); border-radius: var(--r-md); background: var(--c-well);
+  transition: border-color var(--d-quick) var(--ease-mech), background var(--d-quick) var(--ease-mech);
+}
+.drop[data-state="dragging"] { border-color: var(--c-accent); background: var(--c-accent-soft); }
+.drop[data-state="rejected"] { border-color: var(--c-danger); background: color-mix(in oklab, var(--c-danger) 7%, var(--c-well)); }
+.drop[data-state="done"] { border-style: solid; border-color: var(--c-ok); }
+/* A hint under an upload field is prose, not a label: it obeys the 15px floor. */
+.drop-hint { font-size: var(--fs-sm); color: var(--c-ink-3); }
+
+/* stepper / multi-step */
+.steps { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; }
+.step { display: flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-xs); color: var(--c-ink-3); }
+.step-n {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: calc(1.5rem * var(--density)); height: calc(1.5rem * var(--density));
+  border-radius: 50%; border: 1.5px solid var(--c-line-strong);
+  font-size: var(--fs-2xs); font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.step[data-state="current"] { color: var(--c-ink); font-weight: 700; }
+.step[data-state="current"] .step-n { border-color: var(--c-accent); background: var(--c-accent-soft); color: var(--c-accent-ink); }
+.step[data-state="done"] .step-n { background: var(--c-ok); border-color: var(--c-ok); color: var(--c-on-accent); }
+.step-bar { flex: 1; min-width: var(--sp-4); height: 1.5px; background: var(--c-line); }
+
+

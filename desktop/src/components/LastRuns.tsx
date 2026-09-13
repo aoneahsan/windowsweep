@@ -121,10 +121,12 @@ export function LastRuns({ history }: { history: HistoryEntry[] }) {
               <>
                 <div>
                   <p className="num t-xl wide accent-ink">{formatBytes(last.freedBytes)}</p>
+                  {/* `count` rather than a named value, so i18next picks the plural
+                      form - `1 sections` was the concatenated shape (D-33). */}
                   <p className="t-sm ink-3">
                     {t('home.lastWhen', {
                       when: formatRelative(new Date(last.startedAt)),
-                      sections: last.sections.length,
+                      count: last.sections.length,
                       mode: last.mode,
                     })}
                   </p>
@@ -151,7 +153,7 @@ export function LastRuns({ history }: { history: HistoryEntry[] }) {
           </div>
           <div className="well pad">
             {/* `index.html:239-244` - the switch, then its state, then the note. */}
-            <ScheduleSwitch />
+            <ScheduleSwitch label={t('home.scheduleSwitch')} />
             <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-3)' }}>{t('home.scheduleNote')}</p>
           </div>
         </div>

@@ -66,3 +66,31 @@ export function formatDuration(ms: number): string {
   const rest = s % 60;
   return rest === 0 ? `${formatCount(m)}m` : `${formatCount(m)}m ${formatCount(rest)}s`;
 }
+
+/**
+ * Section ids the way the dummy writes them: a run of consecutive ids becomes a
+ * range, and the pieces are joined as a list - `[12, 13, 14, 15, 16, 20]` reads
+ * "12–16 and 20" (`elevation.html:25`). Derived from the ids it is given, so a
+ * section the engine adds moves the words with no copy edit.
+ */
+export function formatIdRanges(ids: readonly number[]): string {
+  const sorted = [...new Set(ids)].sort((a, b) => a - b);
+  const pieces: string[] = [];
+  let first: number | null = null;
+  let last: number | null = null;
+  const close = () => {
+    if (first === null || last === null) return;
+    pieces.push(first === last ? formatCount(first) : `${formatCount(first)}–${formatCount(last)}`);
+  };
+  for (const id of sorted) {
+    if (last !== null && id === last + 1) {
+      last = id;
+      continue;
+    }
+    close();
+    first = id;
+    last = id;
+  }
+  close();
+  return new Intl.ListFormat(FORMAT_LOCALE, { type: 'conjunction' }).format(pieces);
+}

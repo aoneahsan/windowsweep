@@ -403,7 +403,7 @@ dropped** - and three of its mandates genuinely do not apply to a local disk uti
 | 5 | `.env.example` in sync, no server secret in a `VITE_` var | every value is a public client identifier; `configuredFeatures()` reports what is absent |
 | 6 | SVG-first assets | `src-tauri/icons/icon.svg` is the master; every PNG and the `.ico` are exported from it |
 | 9a | Three colour treatments, light and dark | lime / sky / plum, hue 128 registered; 264 combinations measured with zero contrast failures |
-| 9b | No `<textarea>` in a shipped product | zero in any component. The one match in `src/styles/shell.css` is the rule's own comment |
+| 9b | No `<textarea>` in a shipped product | zero in any component. The one match in `src/styles/shell/08-forms.css` is the rule's own comment (`shell.css` was split by concern on 2026-09-13, RW-122) |
 | 11 | ONE theme control, applied pre-paint from one table | `src/lib/axes.json` is the single table; `public/prepaint.js` is GENERATED from it and `yarn check:prepaint` fails the build on drift |
 | 14 | Every string through `t()` from day one | enforced by `no-restricted-syntax` AST selectors at `error`, watched failing on two different plants |
 | 15 | External links leave the origin, and the do-follow policy | `lib/links.ts` is the one policy module; a raw `href="http…"` appears nowhere in a component |

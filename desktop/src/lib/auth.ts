@@ -144,10 +144,20 @@ export async function deleteAccount(): Promise<void> {
   await signOut();
 }
 
-/** 🔴 Signing out clears every local trace of the account, cached rows included. */
+/**
+ * 🔴 Signing out clears every local trace of the account, cached rows included.
+ *
+ * 🔴 SCOPE `'local'`, NEVER THE DEFAULT. supabase-js signs out `'global'` unless
+ * told otherwise, which revokes EVERY session the account holds - and the website
+ * at windowsweep.aoneahsan.com shares this auth pool, so signing out of this window
+ * would have signed the same person out of the site in their browser too. The
+ * sentence on the Account screen promises the local traces go, and nothing about
+ * other devices; `'local'` ends this machine's session and only that. (The
+ * website made the same change on 2026-09-13.)
+ */
 export async function signOut(): Promise<void> {
   const sb = supabase();
-  if (sb) await sb.auth.signOut();
+  if (sb) await sb.auth.signOut({ scope: 'local' });
   try {
     window.localStorage.removeItem('windowsweep:history-cloud');
   } catch {

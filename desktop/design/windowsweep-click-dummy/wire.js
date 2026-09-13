@@ -479,6 +479,13 @@
     setText('devState', db.facts.developer
       ? 'On – keeping anything used in the last ' + db.facts.idleDays + ' days'
       : 'Off – every cache is offered in full');
+    /* D-25: the caption follows the switch. Off is not "left alone" - with developer
+       mode off the engine clears every dev cache completely (lib/actions.ps1:130). */
+    setText('devNote', db.facts.developer
+      ? 'Caches you have used recently are left alone, so your next build is not a cold one.'
+      : 'Nothing is being held back – every cache is offered in full.');
+    /* D-36: the slider's own reading, beside its label. */
+    setText('idleReadout', db.facts.idleDays + (db.facts.idleDays === 1 ? ' day' : ' days'));
     var devSw = $('[data-ws-action="devMode"]');
     if (devSw) devSw.setAttribute('aria-checked', db.facts.developer ? 'true' : 'false');
 
@@ -489,6 +496,10 @@
     var ex = db.facts.excluded.length;
     setText('excludedNote', ex === 0 ? 'nothing excluded'
       : ex + (ex === 1 ? ' target kept' : ' targets kept') + ' out of the run');
+    /* D-36: with nothing kept out there is nothing to bring back, so the control is
+       disabled rather than left pressable as a no-op - which is what the app does. */
+    var clr = $('[data-ws-action="clearExclusions"]');
+    if (clr) clr.disabled = ex === 0;
 
     renderDrives();
     renderLadder();
@@ -504,6 +515,8 @@
       setTimeout(function () { delete btn.dataset.state; if (then) then(); }, 700);
     }, ms);
   }
+
+  var schedAckTimer = null;
 
   document.addEventListener('click', function (e) {
     var t = e.target.closest('[data-ws-action]');
@@ -543,10 +556,14 @@
       }
     }
 
+    /* The acknowledgements below land AT the control, not in a toast - §12: a
+       result appears where the person is looking, and a toast is the fallback
+       (GATE 4 round 8 prep, the D-28 class). */
     if (a === 'clearExclusions') {
       db.set('excluded', []);
       renderMap(); refresh();
-      ws.toast('Every target is back in the run.');
+      t.dataset.state = 'done';
+      setTimeout(function () { delete t.dataset.state; }, 700);
     }
 
     if (a === 'devMode') {
@@ -557,9 +574,9 @@
     if (a === 'schedule') {
       db.set('schedule', !db.facts.schedule);
       refresh();
-      ws.toast(db.facts.schedule
-        ? 'Weekly task registered. It runs the safe batch only.'
-        : 'Weekly task removed.');
+      setText('scheduleAck', db.facts.schedule ? 'Scheduled for Sundays at 03:00.' : 'The task was removed.');
+      clearTimeout(schedAckTimer);
+      schedAckTimer = setTimeout(function () { setText('scheduleAck', ''); }, 4000);
     }
 
     if (a === 'soon') {

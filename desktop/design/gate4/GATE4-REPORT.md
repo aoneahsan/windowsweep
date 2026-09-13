@@ -1796,3 +1796,65 @@ installed build**: two one-line defects at the IPC boundary (D-1, D-2) stop the 
 all, and until they are fixed the majority of GATE 4 cannot be judged. D-11 is already fixed in source and
 needs only a rebuild. D-3, D-4, D-8, D-9 and D-10 are parity and copy work; **D-10 is a false statement
 shipping in both the dummy and the app.**
+
+
+---
+
+# APPENDED 2026-09-13 by the web layer (A-DESK-2) - declarations for round 8
+
+Appended, not a verdict: round 8 judges. This records what the web layer DECLARES under the four exemption
+classes, so the round can check each one rather than rediscover it. The dummy amendments made the same day
+are logged in `design/README.md` ("what round 8 would otherwise flag").
+
+## A-1 - Declared divergences
+
+| Dummy element | Words | Class | Why, and what the app does instead |
+|---|---|---|---|
+| `settings.html:64` status-bar note | *settings sync when you are signed in* | `pending-wave` - **TASK-013** | `src/lib/sync.ts` has no caller: nothing in the window syncs yet, so the app withholds a sentence describing behaviour no code performs. The desktop sync wiring must land before `SUPABASE_ENABLED` flips; the words ship with it. The dummy keeps them (it specifies the finished product) |
+| `account.html:73` disclosure | *What happens when two machines disagree* (and its body) | `pending-wave` - **TASK-013** | same wave, same reason |
+| `account.html` stored-data table, Last seen | *A timestamp, refreshed when this window syncs, …* | **not exempt** | ships verbatim (`account.stored.lastSeen.why`) |
+| status bar `app 0.1.0-design` (`seed.js:174`) | *app 0.1.0-design* | `prototype` | the dummy's own build label; the window prints its real version in the title-bar chip (`live-number`) |
+
+## A-2 - Every toast still in the dummy, each with its class
+
+Four toast acknowledgements moved to the control in the dummy (D-28 class; the README table lists them), and
+the Picker's Clear with them. What remains:
+
+| Dummy | Words | Class | What the app does |
+|---|---|---|---|
+| `wire.js:88` tile keep / include, with Undo | *Keeping {name} ({size})* / *Including …* | `pending-wave` | click-to-keep on a tile is declared on Home since 2026-09-07 (`ExcludePaths` reaches only `modules/projects.ps1`) |
+| `wire.js:530-532` Scan / Re-scan | *Read-only scan finished. Nothing was deleted.* · *Re-scanning…* | `prototype` | stands in for a scan the dummy cannot run; the app's Scan answers at the control (pending, then done) and the map, hero and freshness line carry the result |
+| `wire.js:537` Home dry-run | *Dry-run: {size} across {n} sections. Nothing was deleted.* | `prototype` | the app's dry-run opens the Run screen, whose hero and per-section rows carry the result |
+| `wire.js:552` Reclaim, with Undo | *Freed {size}. A real run would have written a report.* | `prototype` | the app's Reclaim opens the Run screen and its finish band; a deletion run has no Undo there (the Recycle Bin is the recycle tier's) |
+| `wire.js:584` · `app.js:249` | *That screen is not in this prototype.* · *That screen is in the next batch of this dummy …* | `prototype` | dummy navigation stubs |
+| `page-run.js:113` | *Run cancelled. {size} had already been freed.* · *Freed {size}. Report written.* | `prototype` | the Run hero and finish band carry the same result in place |
+| `page-run.js:143` | *Nothing in the safe batch to run.* | `prototype` (channel) | the same words inline (`run.nothingToRun`) |
+| `page-sections.js:242` Clear, with Undo | *Selection cleared.* | `prototype` | Clear answers in place - every switch off, the bar leaves - as the dummy's Picker Clear now does |
+| `page-sections.js:250` | *Dry-run across {n} sections. Nothing was deleted.* | `prototype` | the app opens the Run screen |
+| `page-sections.js:258` | *Sections {ids} need you to choose items first. Nothing was run.* | `prototype` (channel) | the same words, verbatim, beside the button as `role="alert"` - the assertive live region the toast stands for |
+| `page-picker.js:289` Remove these | *Sent {n} items to the Recycle Bin …* · *This would ask you to confirm {n} permanent deletions first …* | `prototype` | stands in for the run: the app writes the select file and opens the Run screen. A real deletion - never pressed in verification |
+| `page-elevation.js:178` | *Windows would show its permission prompt here for …* | `prototype` | stands in for UAC; the app starts the engine's own `--elevate` |
+| `page-history.js:154` | *Loaded the next page - twenty at a time …* | `prototype` | narration of pagination; the app's list grows in place |
+| `page-report.js:111,115` | *Opens %USERPROFILE%\.windowsweep\reports\… in your …* · *Markdown and HTML come from the engine's own --export …* | `prototype` | the dummy cannot open or export a file |
+| `page-consent.js:37` | *Thanks - that is all. Nothing else to set up.* | `prototype` | Continue leaves the notice for Home; the navigation is the acknowledgement |
+| `page-splash.js:49,64` | *It will install the next time you close windowsweep.* · *Downloaded and verified. This is a design prototype, so nothing restarts.* | `pending-wave` | the update band, declared `pending-wave` since round 1 |
+| `page-account.js:29,60,103` | *Signed in. Your settings will sync from now on.* · *Signed out. …* · *Your account is gone, …* | `pending-wave` | the account surface is dormant until `SUPABASE_ENABLED` (declared on screen since round 1); the sign-in sentence also names sync, TASK-013 |
+| `playground.js:152` | *Link copied - it carries the exact dial settings.* | `prototype` | the component gallery, not a product screen |
+
+## A-3 - Closed since round 7 (for the round to confirm, not to exempt)
+
+- **The populated Picker** - header, chips and filter, table, note, file disclosure and selection bar match the
+  dummy; the not-asked state (`picker.html?empty=1`) and section 17 with developer mode off are drawn in both.
+  The file field reads a dropped or chosen file, matches it like the engine, ticks matches, lists each
+  unmatched line, and refuses a file over 256 KB or of another type AT the zone. Proved on the running app
+  (dev build, IPC guarded to `--list`, `--scan` and dry-runs) with a real 307,230-byte file, a real `.csv`,
+  and a selection file of two real candidates plus two unmatched lines.
+- **The four D-28-class toasts** - the dummy answers at the control, as the app does.
+- **Rail "Choose" badge** - `live-number`, built: the catalogue's interactive-section count (4).
+- **Status-bar notes** on History, Report, Picker and Account - built, the dummy's words.
+- **Run rows** - order is the dummy's biggest-first rule (not `demo-data`), followed; membership amended in the
+  dummy to the whole safe batch.
+- **Schedule state word** - the Settings row no longer prints *Off* beside its switch; the dummy has none there.
+- **Admin rail icon** - the dummy now draws the `backend` icon its own `NAV` named; the app unchanged.
+- **Held-back count sub-line** - built: *{n} caches used in the last {days} days*, the dummy's words, counted
+  from the scan's newest-write stamps in the developer-safe sections.

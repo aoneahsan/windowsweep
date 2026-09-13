@@ -28,6 +28,14 @@
  * figure is not the figure that runs is worse than one that differs from a
  * prototype.
  *
+ * 🔴 THE DEVELOPER ROW IS THE DUMMY'S OWN ROW (D-26, GATE 4 round 7). It carried
+ * Home's two lines - the state line and its caption - where `page-settings.js`
+ * gives this row a description of what the switch keeps and a consequence that
+ * follows it. On: what it holds back right now, from `useHeldBackBytes`, the same
+ * figure Home's well shows. Off: that nothing is held back. The consequence was
+ * reworded in the dummy first, so that the figure's honest "not measured" state -
+ * which is how every session here begins, before a dry-run - reads as a sentence.
+ *
  * 🔴 THE TEN APPEARANCE AXES ARE NOT HERE, and the dummy is explicit about why:
  * "The theme axes are NOT duplicated here: they live in the one theme control,
  * reachable from the title bar on every screen." Mandate 11 asks for one control
@@ -37,12 +45,9 @@
 
 import { useTranslation } from 'react-i18next';
 
-import {
-  useStore,
-  MIN_IDLE_DAYS, MAX_IDLE_DAYS,
-  MIN_TEMP_DAYS, MAX_TEMP_DAYS,
-  MIN_LARGE_FILE_MB, MAX_LARGE_FILE_MB,
-} from '../state/store';
+import { useStore, MIN_IDLE_DAYS, MAX_IDLE_DAYS, MIN_TEMP_DAYS, MAX_TEMP_DAYS, MIN_LARGE_FILE_MB, MAX_LARGE_FILE_MB } from '../state/store';
+import { useHeldBackBytes } from '../state/derived';
+import { formatBytes } from '../lib/format';
 import { ScheduleSwitch } from './ScheduleSwitch';
 
 /** The dummy's `row()` - text on the left, one control on the right. */
@@ -120,13 +125,20 @@ export function SettingsGeneral() {
   const setTempDays = useStore((s) => s.setTempDays);
   const largeFileMb = useStore((s) => s.largeFileMb);
   const setLargeFileMb = useStore((s) => s.setLargeFileMb);
+  const heldBack = useHeldBackBytes();
 
   return (
     <div className="set-grp">
       <SettingRow
         title={t('home.developerTitle')}
-        description={developer ? t('home.developerOn', { days: idleDays }) : t('home.developerOff')}
-        consequence={t('home.developerNote')}
+        description={t('settings.developerDesc')}
+        consequence={
+          developer
+            ? t('settings.developerHeld', {
+                amount: heldBack === null ? t('home.notMeasured') : formatBytes(heldBack),
+              })
+            : t('settings.developerHeldNone')
+        }
         control={
           <button
             className="switch"
@@ -203,7 +215,7 @@ export function SettingsGeneral() {
         title={t('settings.scheduleTitle')}
         description={t('settings.scheduleDesc')}
         consequence={t('settings.scheduleConseq')}
-        control={<ScheduleSwitch />}
+        control={<ScheduleSwitch label={t('settings.scheduleTitle')} stateWord={false} />}
       />
     </div>
   );

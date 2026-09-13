@@ -84,18 +84,30 @@
     if (!host) return;
     var g = el('div', 'set-grp');
 
+    /* D-26 (GATE 4 round 7). Two changes to the consequence, both so the app can
+       carry these words verbatim:
+       - It printed "Right now that holds back -." because it handed fmt.bytes the
+         ARRAY heldByDeveloperMode() returns, not its total - a dash for the figure.
+       - The figure the app shows here needs a scan AND a dry-run, so every session
+         starts with it unmeasured, and "Right now that holds back not measured." is
+         not a sentence. Written as label and value - the Home well's own caption -
+         both states read. settings.html?empty=1 renders the unmeasured one, the way
+         index.html?empty=1 renders Home's. */
     var held = db.derive.heldByDeveloperMode();
+    var heldBytes = held.reduce(function (a, t) { return a + t.bytes; }, 0);
+    var unmeasured = new URLSearchParams(location.search).get('empty') === '1';
     var devRow = row('Developer mode',
       'Keeps package, build and test-runner caches that were used inside the idle window, instead of ' +
       'clearing them completely.',
+      /* No toast (GATE 4 round 8 prep, the D-28 class): the consequence line under
+         the title re-renders with the switch, which is the answer where the person
+         is already looking. */
       swx(db.facts.developer, 'Developer mode', function (on) {
         db.set('developer', on);
         general();
-        ws.toast(on ? 'Developer mode on \u2013 recent caches are kept.'
-                    : 'Developer mode off \u2013 those caches will be cleared completely.');
       }),
       db.facts.developer
-        ? 'Right now that holds back ' + fmt.bytes(db.derive.heldByDeveloperMode()) + '.'
+        ? 'Held back right now: ' + (unmeasured ? 'not measured' : fmt.bytes(heldBytes)) + '.'
         : 'Nothing is being held back \u2013 every cache is offered in full.');
     g.appendChild(devRow);
 
@@ -117,13 +129,27 @@
       num(db.facts.largeFileMb, 'MB', function (v) { db.set('largeFileMb', v); }),
       'Maps to --large-file-mb ' + db.facts.largeFileMb + '.'));
 
+    /* The acknowledgement sits beside the switch as a polite status line, not in a
+       toast - the same component and the same words as Home's schedule band. */
+    var schedCtl = el('div');
+    schedCtl.style.cssText = 'display:flex;gap:var(--sp-3);align-items:flex-start';
+    var schedAck = el('p', 't-xs ink-3');
+    schedAck.setAttribute('role', 'status');
+    var schedTimer = null;
+    schedCtl.appendChild(swx(db.facts.schedule, 'Weekly schedule', function (on) {
+      db.set('schedule', on);
+      schedAck.textContent = on ? 'Scheduled for Sundays at 03:00.' : 'The task was removed.';
+      clearTimeout(schedTimer);
+      schedTimer = setTimeout(function () { schedAck.textContent = ''; }, 4000);
+    }));
+    var schedTxt = el('div');
+    schedTxt.style.minWidth = '0';
+    schedTxt.appendChild(schedAck);
+    schedCtl.appendChild(schedTxt);
     g.appendChild(row('Weekly schedule',
       'A Windows Scheduled Task that runs the safe batch, notifies you, and never touches an ' +
       'interactive section.',
-      swx(db.facts.schedule, 'Weekly schedule', function (on) {
-        db.set('schedule', on);
-        ws.toast(on ? 'Scheduled for Sundays at 03:00.' : 'The task was removed.');
-      }),
+      schedCtl,
       'Maps to --install-task, which refuses under npx because that cache is evicted.'));
 
     host.textContent = '';

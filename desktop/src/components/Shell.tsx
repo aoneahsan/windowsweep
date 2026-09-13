@@ -8,7 +8,7 @@
  * changed in the dummy first and copied here second.
  */
 
-import { useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { Link, useRouterState, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 /* 🔴 `getCurrentWindow` is imported lazily, inside the handler. Calling it during
@@ -20,7 +20,8 @@ import { useTranslation } from 'react-i18next';
 
 import { Icon, type IconName } from './Icon';
 import { ThemePanel } from './ThemePanel';
-import { useIncludedScanTargets, useRunPreferences, useStore } from '../state/store';
+import { useStore } from '../state/store';
+import { useIncludedScanTargets, useRunPreferences } from '../state/derived';
 import { reclaimableBytes, reclaimableSectionCount } from '../lib/reclaim';
 import { formatBytes } from '../lib/format';
 import { logDirectory } from '../lib/cli';
@@ -75,7 +76,7 @@ async function windowAction(action: WindowAction): Promise<void> {
 /**
  * 🔴 The classes here are the dummy's, and that is not cosmetic. The first
  * translation invented `tb-name`, `tb-spacer`, `tb-btn` and `tb-close`, none of
- * which exists in `shell.css` - so all four controls had no hover, no press and no
+ * which exists in the shell stylesheet (`styles/shell/`) - so all four controls had no hover, no press and no
  * close-red, and the whole title bar was four dead-looking buttons. `tb-title`,
  * `wincontrols`, `wc` and `wc-close` are the real vocabulary.
  *
@@ -107,11 +108,46 @@ function TitleMark() {
   );
 }
 
-function Titlebar({ onOpenTheme }: { onOpenTheme: () => void }) {
+/**
+ * The drawer button - `app.js:662-669`, first in the dummy's title bar.
+ *
+ * 🔴 IT WAS MISSING, AND WITHOUT IT THE APP HAD NO NAVIGATION BELOW 900 PX.
+ * `styles/shell/04-tables-panel-responsive.css` slides the rail off-screen under
+ * 900 px and shows `.drawer-btn` there - one breakpoint for both, mandate 4 - so the
+ * stylesheet was waiting for a button nothing rendered. `tauri.conf.json` allows the
+ * window down to 760, so every width from 760 to 899 had the rail hidden and no way
+ * to open it. Found beside GATE 4 round 7's 760 pairs, where the dummy's bar shows the
+ * button.
+ */
+function DrawerButton({ open, onToggle }: { open: boolean; onToggle: () => void }) {
+  const { t } = useTranslation();
+  return (
+    <button
+      className="btn btn-ghost btn-sm tb-interactive drawer-btn"
+      type="button"
+      aria-label={t('nav.menu')}
+      aria-expanded={open}
+      aria-controls="ws-rail"
+      onClick={onToggle}
+    >
+      <Icon name="menu" size={15} />
+    </button>
+  );
+}
+
+function Titlebar({
+  onOpenTheme,
+  drawer,
+}: {
+  onOpenTheme: () => void;
+  /** Present on the screens that have a rail; Splash and Consent have none to open. */
+  drawer?: { open: boolean; onToggle: () => void };
+}) {
   const { t } = useTranslation();
   const version = useStore((s) => s.engineVersion);
   return (
     <header className="titlebar" data-tauri-drag-region>
+      {drawer ? <DrawerButton open={drawer.open} onToggle={drawer.onToggle} /> : null}
       <TitleMark />
       <span className="tb-title">{t('app.name')}</span>
       {/* The ENGINE's version, which is what the dummy's badge carries - the one
@@ -152,7 +188,7 @@ function Rail() {
   const sectionCount = reclaimableSectionCount(summary, scanTargets, scannedAt !== null);
 
   return (
-    <nav className="rail" aria-label={t('nav.label')}>
+    <nav className="rail" id="ws-rail" aria-label={t('nav.label')}>
       {NAV.map((entry, i) =>
         isGroup(entry) ? (
           <div className="rail-group caps" key={`g${String(i)}`}>
@@ -170,6 +206,14 @@ function Rail() {
             {entry.to === '/sections' && catalogue ? (
               <span className="rail-badge">{catalogue.sections.length}</span>
             ) : null}
+            {/* `app.js` NAV: Choose carries a badge as Sections does - the number of
+                sections that need a person, from the engine's own catalogue, so a new
+                interactive section moves it with no app change. */}
+            {entry.to === '/picker' && catalogue ? (
+              <span className="rail-badge">
+                {catalogue.sections.filter((section) => section.batch === 'interactive').length}
+              </span>
+            ) : null}
           </Link>
         ),
       )}
@@ -185,6 +229,14 @@ function Rail() {
   );
 }
 
+/** The four screens whose status-bar note is one fixed sentence in the dummy. */
+const FIXED_NOTES: Record<string, string> = {
+  '/history': 'status.history',
+  '/report': 'status.report',
+  '/picker': 'status.picker',
+  '/account': 'status.account',
+};
+
 interface StatusNote {
   text: string;
   /** A path or a command line, which the dummy sets in mono and dims to .8. */
@@ -197,9 +249,14 @@ interface StatusNote {
  * passed down: a screen renders INSIDE this shell and cannot hand its chrome a
  * prop.
  *
- *  - Home     `index.html:307` a logs path
- *  - Sections `sections.html:114` `N of 26 shown`
- *  - Run      `run.html:129` the command line this window runs
+ *  - Home      `index.html:307` a logs path
+ *  - Sections  `sections.html:114` `N of 26 shown`
+ *  - Run       `run.html:129` the command line this window runs
+ *  - Elevation `elevation.html:157` the elevated invocation, as the screen has
+ *              chosen it - the one note a screen publishes rather than the shell
+ *              deriving, because it is built from the screen's own choice (D-29)
+ *  - History, Report, Picker and Account carry a fixed sentence each - the
+ *    dummy's own, owed since the 2026-09-07 amendment and built for round 8
  *
  * 🔴 Each one calls the same function its screen calls. The count comes from
  * `filterSections`, which is what the Sections table itself renders from, and the
@@ -219,6 +276,7 @@ function useRouteStatusNote(): StatusNote | null {
      function the Start button calls - a status bar that assembled its own flags
      would be free to disagree with the run happening above it. */
   const excludedPaths = useStore((s) => s.excludedPaths);
+  const elevationCommand = useStore((s) => s.elevationCommand);
 
   if (path === '/') {
     /* 🔴 The engine's own `log_file`, not the command-line tool's fixed folder.
@@ -250,7 +308,12 @@ function useRouteStatusNote(): StatusNote | null {
     };
   }
 
-  return null;
+  if (path === '/elevation') {
+    return elevationCommand === null ? null : { text: elevationCommand, machine: true };
+  }
+
+  const fixed = FIXED_NOTES[path];
+  return fixed ? { text: t(fixed) } : null;
 }
 
 function StatusBar({ note }: { note?: string }) {
@@ -292,9 +355,28 @@ export function Shell({
   rail?: boolean;
 }) {
   const [themeOpen, setThemeOpen] = useState(false);
+  /* The drawer's state lives here and is mirrored onto `<html data-drawer>`, the
+     attribute `styles/shell/04-tables-panel-responsive.css` reads - the dummy's own mechanism. Every route renders its
+     own Shell, so navigating remounts this and the drawer closes behind the link
+     that was pressed; the cleanup puts the attribute back for the screens with no
+     rail. Escape closes it too, since it covers the content while open. */
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  useLayoutEffect(() => {
+    document.documentElement.setAttribute('data-drawer', drawerOpen ? 'open' : 'closed');
+    return () => { document.documentElement.setAttribute('data-drawer', 'closed'); };
+  }, [drawerOpen]);
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setDrawerOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); };
+  }, [drawerOpen]);
   return (
     <div className="app">
-      <Titlebar onOpenTheme={() => { setThemeOpen(true); }} />
+      <Titlebar
+        onOpenTheme={() => { setThemeOpen(true); }}
+        {...(rail ? { drawer: { open: drawerOpen, onToggle: () => { setDrawerOpen((x) => !x); } } } : {})}
+      />
       {/* 🔴 `shell-bare` is load-bearing, not cosmetic. `.shell` is a two-column
           grid whose first column is `auto`, which sizes to MAX-CONTENT - with the
           rail gone, the content column collapses to the width of its widest line

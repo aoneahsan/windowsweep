@@ -1,0 +1,153 @@
+/* ==================== part 2 of 2: components.css ==================== */
+/* ============================================================================
+   windowsweep desktop - the COMPONENT layer (click-dummy A3 / GATE 2)
+
+   Loaded after shared.css on every page. shared.css owns the app shell, bands
+   and each screen's own furniture; this file owns the reusable vocabulary that
+   every page from A4 on is composed from.
+
+   THE ANATOMY IS REACT ARIA'S, NOT OURS.
+
+   Every widget RAC owns is styled through BOTH selectors:
+
+       .btn, .react-aria-Button          { ... }
+       .btn:active, .btn[data-pressed]   { ... }
+
+   The dummy renders the plain element and drives just enough behaviour to be
+   judged; the app renders the RAC component. Because the selector list carries
+   both, THIS FILE MOVES INTO THE APP UNCHANGED and only the behaviour is
+   deleted. A hand-rolled listbox would be discarded in translation and the
+   effort with it - so the internal DOM of an interactive widget is never
+   invented here.
+
+   RAC state attributes are used in place of CSS pseudo-classes wherever the two
+   differ in behaviour: [data-hovered] [data-pressed] [data-focus-visible]
+   [data-selected] [data-disabled] [data-invalid] [data-expanded] [data-open].
+   They are modality-correct - data-hovered does not stick after a tap, which
+   :hover does on touch.
+
+   Rules binding every block below:
+     - semantic tokens only; a grep for -[ returns nothing
+     - hover behind @media (hover: hover) so a tap leaves no stuck state
+     - :focus-visible, never :focus - a mouse click must not leave a ring
+     - anything numeric multiplies --density or --type-scale, so a theme axis
+       cannot miss it
+   ============================================================================ */
+
+
+/* ============================================================================
+   1. ACTIONS
+   ============================================================================ */
+
+.react-aria-Button {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--sp-2);
+  min-height: calc(2.25rem * var(--density));
+  padding: var(--sp-2) var(--sp-4);
+  border: 1px solid var(--c-line-strong);
+  border-radius: var(--r-md);
+  background: color-mix(in oklab, var(--c-ink) 4%, transparent);
+  font-size: var(--fs-sm); font-weight: 500;
+  transition: background var(--d-instant) var(--ease-mech),
+              border-color var(--d-instant) var(--ease-mech),
+              transform var(--d-instant) var(--ease-mech);
+}
+
+@media (hover: hover) {
+  .btn:hover:not(:disabled):not([data-disabled]),
+  .react-aria-Button[data-hovered] {
+    background: color-mix(in oklab, var(--c-ink) 9%, transparent);
+    border-color: var(--c-accent);
+  }
+}
+.btn:active:not(:disabled), .btn[data-pressed],
+.react-aria-Button[data-pressed] { transform: translateY(1px); }
+
+.btn:focus-visible, .react-aria-Button[data-focus-visible],
+.react-aria-Button:focus-visible {
+  outline: 2px solid var(--c-accent); outline-offset: 2px;
+}
+
+/* Disabled still explains itself: `disabled` removes a control from the tab
+   order AND from screen readers, so a bare greyed-out button is invisible to
+   some users and inexplicable to the rest. Every disabled control in this
+   product carries a reason in `title` or an adjacent description. */
+.btn:disabled, .btn[data-disabled], .react-aria-Button[data-disabled] {
+  opacity: .45; cursor: not-allowed; transform: none;
+}
+
+/* Pending lands ON the control that was pressed, never only in a toast. */
+.btn[data-state="pending"] { position: relative; color: transparent !important; pointer-events: none; }
+.btn[data-state="pending"]::after {
+  content: ""; position: absolute; inset: 0; margin: auto;
+  width: 1em; height: 1em; border-radius: 50%;
+  border: 2px solid color-mix(in oklab, currentColor 25%, transparent);
+  border-top-color: var(--c-ink-2);
+  animation: ws-spin .7s linear infinite;
+}
+.btn-primary[data-state="pending"]::after { border-top-color: var(--c-on-accent); }
+@keyframes ws-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .btn[data-state="pending"]::after { animation-duration: 2.4s; } }
+:root[data-motion="reduced"] .btn[data-state="pending"]::after { animation-duration: 2.4s; }
+
+.btn-block { width: 100%; }
+.btn-icon { padding: var(--sp-2); min-width: calc(2.25rem * var(--density)); aspect-ratio: 1; }
+
+.btn[aria-pressed="true"], .react-aria-ToggleButton[data-selected] {
+  background: var(--c-accent-soft); border-color: var(--c-accent); color: var(--c-accent-ink);
+}
+
+.btn-group { display: inline-flex; }
+.btn-group > .btn { border-radius: 0; margin-inline-start: -1px; }
+.btn-group > .btn:first-child {
+  border-start-start-radius: var(--r-md); border-end-start-radius: var(--r-md); margin-inline-start: 0;
+}
+.btn-group > .btn:last-child { border-start-end-radius: var(--r-md); border-end-end-radius: var(--r-md); }
+.btn-group > .btn[aria-pressed="true"] { position: relative; z-index: 1; }
+
+/* Menu - RAC Menu / MenuItem anatomy */
+.menu, .react-aria-Menu {
+  min-width: 13rem; padding: var(--sp-1);
+  background: var(--c-panel); color: var(--c-ink);
+  border: 1px solid var(--c-line-strong); border-radius: var(--r-md);
+  box-shadow: var(--wm-raise-shadow);
+}
+.menu-item, .react-aria-MenuItem {
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3); border-radius: var(--r-sm);
+  font-size: var(--fs-sm); cursor: default; outline: none; width: 100%;
+  background: none; border: 0; color: inherit; text-align: start;
+}
+@media (hover: hover) {
+  .menu-item:hover:not([aria-disabled="true"]), .react-aria-MenuItem[data-hovered] { background: var(--c-hover); }
+}
+.menu-item[data-focused], .react-aria-MenuItem[data-focused] { background: var(--c-hover); }
+.menu-item:focus-visible, .react-aria-MenuItem[data-focus-visible] {
+  outline: 2px solid var(--c-accent); outline-offset: -2px;
+}
+.menu-item.is-danger { color: var(--c-danger); }
+.menu-item[aria-disabled="true"], .react-aria-MenuItem[data-disabled] { opacity: .45; }
+.menu-item .kbd { margin-inline-start: auto; }
+.menu-sep { height: 1px; margin: var(--sp-1) 0; background: var(--c-line); border: 0; }
+.menu-label {
+  padding: var(--sp-2) var(--sp-3) var(--sp-1);
+  font-size: var(--fs-2xs); font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--c-ink-3);
+}
+.menu-check { width: 1em; flex: none; opacity: 0; }
+.menu-item[aria-checked="true"] .menu-check { opacity: 1; }
+
+.lnk {
+  color: var(--c-accent-ink); text-decoration: underline;
+  text-underline-offset: 2px; text-decoration-thickness: 1px; border-radius: var(--r-xs);
+}
+@media (hover: hover) { .lnk:hover { text-decoration-thickness: 2px; } }
+.lnk:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+
+.kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0 var(--sp-1); min-width: 1.5em; height: 1.5em;
+  border: 1px solid var(--c-line-strong); border-bottom-width: 2px; border-radius: var(--r-xs);
+  background: var(--c-well); font-family: var(--ff-mono); font-size: var(--fs-2xs); color: var(--c-ink-2);
+}
+
+

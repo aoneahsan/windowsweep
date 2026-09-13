@@ -31,7 +31,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useIncludedScanTargets, useRunPreferences, useStore } from '../state/store';
+import { useStore } from '../state/store';
+import { useIncludedScanTargets, useRunPreferences } from '../state/derived';
 import { formatBytes } from '../lib/format';
 import { isCleanupRun } from '../lib/cli';
 import { newRunId, run, safeBatchArgs } from '../lib/engine';
@@ -39,7 +40,7 @@ import { safeRunSections } from '../lib/catalogue';
 import { stateOf } from '../lib/control-state';
 import { RunPerSection, perSectionRows } from '../components/RunPerSection';
 import { ReclaimMap } from '../components/ReclaimMap';
-import { drainMapTargets, reclaimableBytes, toMapTargets } from '../lib/reclaim';
+import { drainMapTargets, safeRunBytes, toMapTargets } from '../lib/reclaim';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { RunCancel } from '../components/RunCancel';
 
@@ -56,7 +57,6 @@ export function RunScreen() {
      place excluded tiles are still drawn, dimmed. */
   const scanTargets = useIncludedScanTargets();
   const scannedAt = useStore((s) => s.scannedAt);
-  const developer = useStore((s) => s.developer);
   const prefs = useRunPreferences();
   const excludedPaths = useStore((s) => s.excludedPaths);
   const runId = useStore((s) => s.runId);
@@ -64,7 +64,7 @@ export function RunScreen() {
   const appendLog = useStore((s) => s.appendLog);
   const applyProgress = useStore((s) => s.applyProgress);
   const finishRun = useStore((s) => s.finishRun);
-  const setScanTargets = useStore((s) => s.setScanTargets);
+  const spendScanTargets = useStore((s) => s.spendScanTargets);
 
   const [starting, setStarting] = useState(false);
   /* 🔴 Local, and transient by design. It is the outcome of the run in this
@@ -104,15 +104,21 @@ export function RunScreen() {
      the loaded page over CDP rather than out of the source - which is the same
      lesson D-21 exists for, one file away.
 
-     So: what is there to reclaim, until a run starts spending it. `not measured`
-     when nothing has been scanned is this app's own honest state - the dummy's
-     seed always has data, so it never renders it - and it is the word Home and
-     the rail already use for the same figure. */
+     So: what the run below would reclaim, until it starts spending it. `not
+     measured` when nothing has been scanned is this app's own honest state - the
+     dummy's seed always has data, so it never renders it - and it is the word Home
+     and the rail already use for the same figure.
+
+     🔴 "WHAT THE RUN WOULD RECLAIM" IS THE SAFE BATCH, NOT THE SCAN. This read the
+     whole scan's total, so the hero said `READY TO RUN 53.6 GB` above a Start
+     button whose run the per-section rows expected to free 11.5 GB. It is
+     `safeRunBytes` now - the number Home's Reclaim button and its ladder carry, and
+     the sum of the rows beneath. (GATE 4 round 7, decided by the main session.) */
   const freedSoFar = Object.values(progress).reduce(
     (total, p) => total + (p.event === 'end' ? (p.freedBytes ?? 0) : 0),
     0,
   );
-  const measured = reclaimableBytes(summary, scanTargets, scannedAt !== null);
+  const measured = safeRunBytes(catalogue, scanTargets, scannedAt !== null);
   /* 🔴 A CANCELLED RUN'S HERO IS THE SUM OF THE SECTIONS THE ENGINE SAID IT
      FINISHED, and `not measured` when that sum is zero.
      Those `##windowsweep ... event=end freed_bytes=N` lines are complete facts:
@@ -145,16 +151,11 @@ export function RunScreen() {
     firstAt === null ? null : (phase === 'running' ? clock : (lastAt ?? firstAt)) - firstAt;
 
   /* The queue the band lists: the engine's own safe batch, which is exactly what
-     the Start button below runs. */
+     the Start button below runs - whole, whatever developer mode says, because the
+     engine runs it whole (`lib/catalogue.ts` -> `safeRunSections`). */
   const queue = useMemo(
-    () => (catalogue ? safeRunSections(catalogue, developer).map((s) => s.id) : []),
-    [catalogue, developer],
-  );
-
-  /* The draining map's tiles: every scanned target whose section has not finished. */
-  const drainTargets = useMemo(
-    () => drainMapTargets(toMapTargets(catalogue, scanTargets), progress),
-    [catalogue, scanTargets, progress],
+    () => (catalogue ? safeRunSections(catalogue).map((s) => s.id) : []),
+    [catalogue],
   );
 
   const rows = useMemo(
@@ -172,6 +173,22 @@ export function RunScreen() {
         },
       }),
     [catalogue, queue, progress, summary, scanTargets, t],
+  );
+
+  /* The draining map's tiles: the targets of the sections the band below lists,
+     minus every section that has finished.
+     🔴 NOT THE WHOLE SCAN. "What is going" drew every measured target, so on this
+     machine it showed section 4's 20 GB of emulator images - an opt-in section the
+     safe run never touches - under a hero reading what the run frees. A tile that
+     can never leave, on a map whose hint is "Tiles leave as each section finishes",
+     is the same claim as a button offering more than its action delivers (GATE 4
+     round 7). The dummy could not show it: every seeded target sits in the safe
+     batch. Reading `rows` keeps map, band and hero on one rule - the safe batch
+     before a run, the sections the engine reported once one has run. */
+  const rowIds = useMemo(() => new Set(rows.map((row) => row.id)), [rows]);
+  const drainTargets = useMemo(
+    () => drainMapTargets(toMapTargets(catalogue, scanTargets.filter((x) => rowIds.has(x.section))), progress),
+    [catalogue, scanTargets, rowIds, progress],
   );
 
   const onStart = useCallback(() => {
@@ -199,20 +216,19 @@ export function RunScreen() {
            can. Without this the screen would say "The run stopped before it
            finished" over somebody's own deliberate choice. */
         finishRun(r.summary, r.exitCode > 1 && !r.cancelled);
-        /* Those targets have just been deleted; redrawing them would be a lie.
+        /* A completed run's sections are spent by `finishRun` from its summary.
            🔴 A cancelled run has no summary at all - it never reached the line that
-           writes one - and it is exactly the case where some of the measured
-           targets are gone and nothing says which. So the measurements are dropped
-           on that path too, and the hero falls back to "not measured" rather than
-           promising bytes that may already have been reclaimed. */
-        if (r.cancelled || (r.summary && !r.summary.dry_run)) setScanTargets([]);
+           writes one - so the sections the engine reported STARTING are spent
+           here: each may have deleted part of what it measured, and nothing says
+           how much. A section that never started is untouched and stays counted. */
+        if (r.cancelled) spendScanTargets(Object.keys(useStore.getState().progress).map(Number));
       })
       .catch((e: unknown) => {
         appendLog(e instanceof Error ? e.message : String(e));
         finishRun(null, true);
       })
       .finally(() => { setStarting(false); });
-  }, [queue.length, startRun, prefs, excludedPaths, appendLog, applyProgress, finishRun, setScanTargets]);
+  }, [queue.length, startRun, prefs, excludedPaths, appendLog, applyProgress, finishRun, spendScanTargets]);
 
   const inFlight = starting || phase === 'running';
 
@@ -265,12 +281,12 @@ export function RunScreen() {
                 the two numbers appear together.
 
                 Why they disagreed: `done` counts the engine's own `end` events,
-                while `queue` is `safeRunSections(catalogue, developer)`, and
-                `catalogue.ts` drops every `dev` section when developer mode is
-                off. But the ENGINE only skips a dev section for ids 4, 17 and 20
-                (`modules/runner.ps1:105`), and none of those is in the safe batch
-                - so the engine ran all eleven while the app's denominator dropped
-                four. Two rules for one quantity.
+                while `queue` came from a `safeRunSections` that dropped every
+                `dev` section when developer mode was off. But the ENGINE only
+                skips a dev section for ids 4, 17 and 20 (`modules/runner.ps1:105`),
+                and none of those is in the safe batch - so the engine ran all
+                eleven while the app's denominator dropped four. Two rules for one
+                quantity. (That rule is gone from `safeRunSections` too now.)
 
                 `rows` comes from `perSectionRows`, which already derives the set
                 from the reported sections and falls back to the queue before a
@@ -417,8 +433,11 @@ export function RunScreen() {
           <RunPerSection rows={rows} />
 
           <div className="c7 rise">
+            {/* `run.html:80-83` - the dummy's heading and its sub-line, verbatim
+                (D-30). */}
             <div className="zone-label">
               <span className="caps">{t('run.logTitle')}</span>
+              <span className="t-sm ink-3">{t('run.logHint')}</span>
             </div>
             {/* 🔴 `logview` - the dummy's class, which carries the well background,
                 the monospace size, the fixed height and the scroll. The app invented
@@ -434,19 +453,20 @@ export function RunScreen() {
               aria-live="off"
               aria-busy={phase === 'running'}
             >
+              {/* The dummy's own lines (`page-run.js:25-32`): a bare row inheriting
+                  `.logview`'s mono type, and at rest its idle line, dimmed - not a
+                  sentence of this app's. */}
               {log.length === 0 ? (
-                <p className="t-sm ink-3">{t('run.logEmpty')}</p>
+                <div className="l-dim">{t('run.idleHint')}</div>
               ) : (
                 log.map((entry, i) => (
-                  <div className="t-sm mono" key={`${String(entry.at)}-${String(i)}`}>
-                    {entry.line}
-                  </div>
+                  <div key={`${String(entry.at)}-${String(i)}`}>{entry.line}</div>
                 ))
               )}
             </div>
             {/* `run.html:85-94` - the window displays the engine's own reporting and
                 does none of the deleting. The sentence is the dummy's, verbatim. */}
-            <details className="disclose">
+            <details className="disclose" style={{ marginTop: 'var(--sp-3)' }}>
               <summary>
                 <span className="disclose-line">{t('run.provenanceSummary')}</span>
                 <span className="disclose-more">{t('consent.detailsMore')}</span>

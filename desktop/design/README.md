@@ -566,3 +566,149 @@ nothing at all, because the runner skips every admin section before reading a by
 elevated run - which would still pass `--elevate`, and so still prompt - is a compile error. Planted on
 2026-09-13: `dryRun: true` in the screen's builder call -> `TS2353: Object literal may only specify known
 properties, and 'dryRun' does not exist`; restored, typecheck green.
+
+## Amendment - 2026-09-13 (later): GATE 4 round 7
+
+Round 7 (`gate4/GATE4-REPORT.md`, R7.x) came back not clean. Six of its findings were the dummy's to change
+first, and one decision gave a live number its quantity. Each change below is the dummy moving so the app can
+carry its words verbatim; none edits the finished product down to what is built.
+
+### 1. `index.html` + `wire.js` - the developer caption follows the switch (D-25), and two Home details (D-36)
+
+| Was | Now, and why |
+|---|---|
+| `index.html:130` one fixed caption: *"Caches you have used recently are left alone, so your next build is not a cold one."* | `[data-ws-text="devNote"]`, set in `refresh()`. With developer mode OFF the page read *"Off - every cache is offered in full"* directly above that sentence - false at that setting, in the direction that understates deletion (the engine clears every dev cache completely, `lib/actions.ps1:130`). Off now carries this dummy's own words for it, from its Settings row: *"Nothing is being held back - every cache is offered in full."* The two lines overlap in the OFF state; the dummy's words were kept over new prose, and the keeper may tighten them |
+| "Include everything" pressable with nothing excluded - a no-op | disabled while `excluded` is empty, as the app does |
+| the idle window's value appeared only inside the count sentence | the label carries its reading, `[data-ws-text="idleReadout"]` ("100 days"), as the app does - the slider no longer moves in silence |
+
+### 2. `page-settings.js` - the developer row's consequence (D-26)
+
+It printed *"Right now that holds back -."*: `fmt.bytes` was handed the ARRAY `heldByDeveloperMode()` returns,
+not its total. And the figure the app shows there needs a scan AND a dry-run, so every session starts with it
+unmeasured - where *"Right now that holds back not measured."* is not a sentence. It is now label and value,
+the Home well's own caption: *"Held back right now: 17.3 GB."* / *"Held back right now: not measured."*;
+`settings.html?empty=1` renders the second, the way `index.html?empty=1` renders Home's empty states. Off is
+unchanged: *"Nothing is being held back - every cache is offered in full."*
+
+### 3. `page-elevation.js` + `elevation.html` - the command line (D-27) and the measured note (D-28)
+
+- `commandLine()` gains `--days`, `--temp-days` and `--large-file-mb`: D-8 put them on every run and the Run
+  screen's line was amended for them; this one was not. The status slot's static text now equals what renders
+  by default, so it cannot be D-21 again.
+- "Measure without elevating" answers in `[data-ws-measured]`, a `note note-info` with `role="status"` beside
+  the control, instead of a toast. The house standard is that a result lands where the person is looking and a
+  toast is the fallback; the app already did this.
+
+### 4. `picker.html` + `page-picker.js` - sections 18 and 19 (D-37)
+
+The chips and `META` described 18 and 19 the wrong way round against this dummy's own `seed.js` and the engine
+catalogue (18 `partials`, 19 `large`). Both texts had in fact been written about section 19's two faces - its
+size threshold, and the installers and archives it finds - and neither about 18. Section 19 keeps the one that
+names its threshold (the setting Settings controls). Section 18 takes the engine's own description of it
+(`modules/personal.ps1`, `Invoke-Section18`: *"Half-finished downloads left behind by browsers and download
+managers"*) and keeps this dummy's Downloads-only sentence, which is true of both. Chip 18 reads
+`18 · partial downloads`. The page also reads `?section=`, which Home's "Choose items" has always passed and
+this page ignored, so every card opened section 17. ⚠️ This re-opens `desktop-cockpit` S-038 and S-039; the
+keeper owes them a pass.
+
+### 5. `page-account.js` - the sign-out sentence (D-38, signed-in state)
+
+The app's signed-in card carries *"Signing out clears every local trace of the account, including the rows
+cached from your other machines."* under Sign out, and the dummy owns the words, so it is written here. It is
+exact since 2026-09-13: sign-out is scope `'local'`, which ends this machine's session and never the same
+person's session on the website sharing the account.
+
+### 6. Which quantity the Reclaim button's live number fills - no word changes
+
+The button's sentence stays *"Reclaim {amount}"*. `{amount}` is **what the safe run frees** - the ladder's own
+total, `safeRunBytes` - and the Run screen's idle hero carries the same figure; the Home hero keeps the total
+reclaimable. The seed made the two equal (every seeded target sits in a safe-batch section), so this dummy
+never decided; the button's own word, "Reclaim", does. The same decision puts only the listed sections' tiles
+on the Run screen's "What is going" map. Decided by the main session on round 7.
+
+### Not amended, and why
+
+- **Settings' status note, *"settings sync when you are signed in"*, and Account's *"What happens when two
+  machines disagree"*** stay in the dummy and are withheld from the app: nothing in the window syncs yet
+  (`src/lib/sync.ts` has no caller), and both describe behaviour no code performs. They arrive with the sync
+  wiring, or the dummy withdraws them - the main session's call.
+- **The populated Picker's frame** - the section chips, the table, the note, the file disclosure and the
+  selection bar - is not yet the app's; the app's Picker still carries words this dummy never had. It was
+  unreachable until round 7's D-23 was fixed, so no round has judged it. Owed next, with one decision this
+  dummy must make first: a section nothing has asked the engine about yet.
+
+## Amendment - 2026-09-13 (later still): what round 8 would otherwise flag
+
+Round 7's fixes were accepted; this pass closes what was left on its list, dummy first. Where the app had
+written words before the dummy had them, the words move here now and the log says so - that order was the
+wrong way round. Nothing below edits the finished product down to what is built.
+
+### 1. `picker.html` + `page-picker.js` - the populated Picker, and the section nothing has asked yet
+
+The frame round 7 could not judge (the app's Picker was unreachable until D-23) is now the app's too: the
+section's own header, the chips and filter, the table, the note, the file disclosure and the selection bar.
+Four changes to the dummy came first:
+
+| Was | Now, and why |
+|---|---|
+| every section seeded, so the dummy never drew a section the engine had not been asked about | `picker.html?empty=1` draws it: *"Nothing has been offered yet."* over *"A dry-run costs nothing and deletes nothing."* and a **Dry-run** button. In the window the engine is the only source of these rows and offers a section's list only once a run has asked, so "never asked" and "asked, nothing here" are different facts with different words. The title line was the app's (it had carried it since the Picker was built - app first, the wrong way round); the body is this dummy's own History and gallery sentence, the button its Sections button |
+| section 17 listed whatever the seed held with developer mode off | *"Nothing to choose here"* over *"Developer mode is off, so the engine skips this one. Turn it on in Settings first."* - Elevation's words for section 20. The engine skips 17 outright in that state (`modules/runner.ps1`, the 4/17/20 rule), so offering its rows would promise a deletion the run will not make |
+| the header's count was every chosen row, divided by the rows of the section in view - two rows ticked in 17 read "2 of 2 chosen" over section 18 | the header speaks for the section in view (its chosen bytes, "N of M chosen" of its own rows); the selection bar keeps speaking for the whole selection ("across sections 17, 23") |
+| *"Cleared."* toast with Undo | no toast: every switch goes off and the bar slides away, which is the answer where the person is looking (the D-28 rule below) |
+
+The command line in the disclosure now follows the section in view (`--only 23` over section 23); its file path
+stays an example (`demo-data`).
+
+### 2. `picker.html` + `page-picker.js` - "Drive this from a file instead" is the gallery's upload field, working
+
+The zone was a static stub whose button raised a toast of invented figures. It is now the gallery's whole
+field (`g-forms.js`, "specialised"): the **Selection file** label, the **?** affordance stating *Purpose*,
+*Types*, *Max size* and an *Example* before the pick, the zone, and its states. A dropped or chosen file is read
+in the page and matched the way the engine reads a `--select-file` (`windowsweep.ps1`: each line trimmed, blank
+lines and `#` comments skipped; `lib/ui.ps1` `Resolve-SelectedPaths`: case-insensitive against the candidates
+this section offers). Matches are ticked and added to the selection; nothing is uploaded, and "Remove these"
+still carries the selection.
+
+| State | Words |
+|---|---|
+| idle | *"Drop a selection file here, or choose one"* (unchanged) |
+| dragging | *"Release to read it"* (the gallery's) |
+| done | *"4 paths, 2 matched"* - the gallery's *"402 paths, 397 matched"*, with the file's own numbers |
+| rejected, size | *"That file is 300 KB - the limit is 256 KB"* - the gallery's sentence, with the file's own size |
+| rejected, type | *"notes.csv is not a .txt or .list file"* - **new**, one plain functional line |
+| rejected, unreadable | *"That file could not be read."* - **new**, one plain functional line |
+| per unmatched line | *"No candidate here matches D:\work\nothing\here"* - **new** as copy, but it is the engine's own note (*"--select-file: no candidate here matches $want"*), shown before the run rather than after; past twenty lines the rest read *"and N more"*, the safe-run ladder's words |
+
+The limits the affordance prints are the limits enforced (`.txt`/`.list`, 256 KB) - the gallery's own rule
+under this field. The unmatched lines sit in a `note note-warn` under the zone.
+
+### 3. Four acknowledgements move from a toast to the control (the D-28 class)
+
+§12: a result lands where the person is looking, and a toast is the fallback. Round 7 filed the channel on one
+control (D-28); these four were the same class.
+
+| Where | Was | Now |
+|---|---|---|
+| `index.html` + `wire.js` - Include everything | *"Every target is back in the run."* toast | the button's own done state (700 ms); it is disabled again at once, since nothing is left to include |
+| `index.html` + `wire.js` - the weekly schedule switch | *"Weekly task registered. It runs the safe batch only."* / *"Weekly task removed."* toasts | a `role="status"` line beside the switch, `[data-ws-text="scheduleAck"]`: *"Scheduled for Sundays at 03:00."* / *"The task was removed."* for 4 s. These were the app's words (`home.scheduleDone`, `home.scheduleRemoved`) - app first, now drawn here |
+| `page-settings.js` - the developer switch | *"Developer mode on - recent caches are kept."* / *"... off - those caches will be cleared completely."* toasts | none: the consequence line under the title re-renders with the switch |
+| `page-settings.js` - the schedule row | the switch alone | the same status line beside the switch, the same words as Home's |
+
+### 4. `page-run.js` - the queue is the whole safe batch
+
+The per-section list showed only the sections with seeded tiles, but the engine also runs the batch's
+report-only sections (0 health, 21 disk usage) and reports progress for each, so the list disagreed with its
+own "N of M". The measured sections come first, biggest first (the ladder's order - a rule, not `demo-data`,
+so the app follows it); the rest follow in catalogue order with no figure, as the app draws them.
+
+### 5. `app.js` - the Admin rail entry draws its own icon
+
+`NAV` has always named the Admin entry's icon `backend`, and the icon map never defined it, so `svgIcon` fell
+back to `doc` - the same mark as Reports and Components. The map now draws `backend`, the path the app draws.
+The app did not change; the dummy now matches what its own `NAV` asked for.
+
+### Declared rather than amended
+
+`gate4/GATE4-REPORT.md` carries the list, appended the same day: the two sync sentences (`pending-wave`,
+TASK-013), `app 0.1.0-design` (`prototype`), and every toast still in the dummy, each with its class. The
+Remove-these, scan, dry-run and Reclaim toasts stay: each stands in for a run this dummy cannot perform.

@@ -38,21 +38,30 @@
  * read `useIncludedScanTargets()` - one derivation, because a figure with several
  * consumers is not fixed when only some of them are, and here the consequence of
  * missing one is a button offering to reclaim bytes the run will refuse.
+ *
+ * 🔴 THE HERO IS WHAT IS RECLAIMABLE; THE BUTTON IS WHAT PRESSING IT RECLAIMS. The
+ * button runs the safe batch, so it carries `safeRunBytes` - the ladder's own
+ * total, one number in both places - and never the hero's figure, which also
+ * counts sections a safe run does not touch. `lib/reclaim.ts` records the
+ * decision (GATE 4 round 7).
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
-import { useIncludedScanTargets, useRunPreferences, useStore } from '../state/store';
+import { useStore } from '../state/store';
+import { useIncludedScanTargets, useRunPreferences } from '../state/derived';
 import {
   reclaimableBytes,
   reclaimableSectionCount,
   reclaimableTargetCount,
+  safeRunBytes,
   toMapTargets,
 } from '../lib/reclaim';
 import { formatBytes } from '../lib/format';
-import { newRunId, run, scanArgs, safeBatchArgs } from '../lib/engine';
+import { scanArgs, safeBatchArgs } from '../lib/engine';
+import { useEngineRun } from '../state/use-engine-run';
 import { safeRunSections } from '../lib/catalogue';
 import { controlState, stateOf } from '../lib/control-state';
 import { ReclaimMapBand } from '../components/ReclaimMapBand';
@@ -113,6 +122,7 @@ export function Home() {
   const toggleExcluded = useStore((s) => s.toggleExcluded);
   const clearExclusions = useStore((s) => s.clearExclusions);
   const candidates = useStore((s) => s.candidates);
+  const offeredSections = useStore((s) => s.offeredSections);
   const history = useStore((s) => s.history);
   const phase = useStore((s) => s.phase);
   const scannedAt = useStore((s) => s.scannedAt);
@@ -121,12 +131,8 @@ export function Home() {
   const idleDays = useStore((s) => s.idleDays);
   const setIdleDays = useStore((s) => s.setIdleDays);
   const prefs = useRunPreferences();
-  const startRun = useStore((s) => s.startRun);
-  const appendLog = useStore((s) => s.appendLog);
-  const applyProgress = useStore((s) => s.applyProgress);
-  const finishRun = useStore((s) => s.finishRun);
-  const setCandidates = useStore((s) => s.setCandidates);
   const setScanTargets = useStore((s) => s.setScanTargets);
+  const runEngine = useEngineRun();
 
   /* 🔴 Which action is in flight, not merely whether one is. The pending state
      belongs on the control that was pressed, and the other two have to refuse a
@@ -144,6 +150,8 @@ export function Home() {
   /* One home for this figure, in lib/reclaim.ts - it was computed here AND in
      Shell.tsx, and both copies read a run's result off a scan's summary. */
   const reclaimable = reclaimableBytes(summary, includedTargets, measured);
+  /* What the Reclaim button's run would free - the ladder's total, not the hero's. */
+  const safeTotal = safeRunBytes(catalogue, includedTargets, measured);
 
   /* 🔴 ONE load for the two places this page draws a disk: the rails in zone 4 and
      the ring in the hero. Two fetches would let them disagree about the same drive
@@ -170,43 +178,22 @@ export function Home() {
   }, [scannedAt]);
   const minutesAgo = scannedAt === null ? null : Math.max(0, Math.floor((now - scannedAt) / 60_000));
 
+  /* The run itself - start, stream, record, and the failure path - is the shared
+     `useEngineRun`; what is Home's own is where it goes and what it does to the
+     map. The candidates a run offered reach the Picker through `finishRun`. */
   const drive = useCallback(
     async (args: string[], goToRun: boolean) => {
-      const id = newRunId();
-      startRun(id);
-      if (goToRun) void navigate({ to: '/run' });
-      /* 🔴 The rejection path is not hypothetical and it is not rare. The engine
-         refuses a run for ordinary reasons - a missing library, a refused path, an
-         exit before the summary - and until this try/catch existed every one of
-         them left `phase` on 'running' for ever, because the callers below only
-         chain `.finally()` and that does not handle a rejection. The reason is
-         appended to the log pane, beside the engine's own output. */
-      try {
-        const result = await run(args, id, {
-          onLog: appendLog,
-          onProgress: (section, event, status, freedBytes) => {
-            applyProgress({ section, event, ...(status ? { status } : {}), ...(freedBytes !== undefined ? { freedBytes } : {}) });
-          },
-        });
-        finishRun(result.summary, result.exitCode > 1);
-        if (result.summary) setCandidates(result.summary.candidates);
-        /* 🔴 `targets[]` is filled by `--scan` and empty in every other mode, so
-           this only ever ADDS measurements - a dry-run must not blank the map.
-           A real run is the one case that spends them: those paths have just been
-           deleted, and redrawing them afterwards would be a lie. */
-        if (result.summary && result.summary.targets.length > 0) {
-          setScanTargets(result.summary.targets);
-        } else if (result.summary && !result.summary.dry_run) {
-          setScanTargets([]);
-        }
-        return result;
-      } catch (e: unknown) {
-        appendLog(e instanceof Error ? e.message : String(e));
-        finishRun(null, true);
-        return null;
+      const result = await runEngine(args, () => { if (goToRun) void navigate({ to: '/run' }); });
+      /* 🔴 `targets[]` is filled by `--scan` and empty in every other mode, so
+         this only ever ADDS measurements - a dry-run must not blank the map. A real
+         run spends the rows of the sections it ran, and `finishRun` does that for
+         every screen, so this one no longer clears everything itself. */
+      if (result?.summary && result.summary.targets.length > 0) {
+        setScanTargets(result.summary.targets);
       }
+      return result;
     },
-    [startRun, navigate, appendLog, applyProgress, finishRun, setCandidates, setScanTargets],
+    [runEngine, navigate, setScanTargets],
   );
 
   /* 🔴 The scan carries the SAME preferences the run does (D-8). It used to take
@@ -289,7 +276,7 @@ export function Home() {
       acc.count += 1;
       bySection.set(target.section, acc);
     }
-    const rows = safeRunSections(catalogue, developer).map((section) => {
+    const rows = safeRunSections(catalogue).map((section) => {
       const measured = bySection.get(section.id);
       return {
         id: section.id,
@@ -300,7 +287,7 @@ export function Home() {
     });
     if (bySection.size > 0) rows.sort((a, b) => (b.bytes ?? -1) - (a.bytes ?? -1));
     return rows;
-  }, [catalogue, developer, includedTargets]);
+  }, [catalogue, includedTargets]);
 
   const interactive = (catalogue?.sections ?? []).filter((s) => s.batch === 'interactive');
   const adminSections = (catalogue?.sections ?? []).filter((s) => s.admin);
@@ -399,12 +386,12 @@ export function Home() {
               control="home.reclaim"
               size="lg"
               onPress={onReclaim}
-              disabled={running || reclaimable === null}
+              disabled={running || safeTotal === null}
               state={stateOf(busy === 'reclaim')}
               label={
-                reclaimable === null
+                safeTotal === null
                   ? t('home.reclaimUnmeasured')
-                  : t('home.reclaim', { amount: formatBytes(reclaimable) })
+                  : t('home.reclaim', { amount: formatBytes(safeTotal) })
               }
             />
           </div>
@@ -456,7 +443,7 @@ export function Home() {
               <span className="caps">{t('home.safeRunTitle')}</span>
             </div>
             {catalogue ? (
-              <SafeRunLadder rows={ladderRows} measured={measured} />
+              <SafeRunLadder rows={ladderRows} total={safeTotal} />
             ) : (
               /* Reading the catalogue and having an empty safe batch are two
                  different facts, and the ladder must not report the second while
@@ -470,7 +457,7 @@ export function Home() {
       </section>
 
       {/* ZONE 6 */}
-      <NeedsAPerson sections={interactive} candidates={candidates} />
+      <NeedsAPerson sections={interactive} candidates={candidates} offeredSections={offeredSections} />
 
       {/* ZONES 7 + 8 */}
       <HomeSafety />

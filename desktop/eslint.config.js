@@ -73,7 +73,7 @@ export default tseslint.config(
           // Literal text between JSX tags. Punctuation and single symbols are fine.
           selector: 'JSXText[value=/[A-Za-z]{2,}/]',
           message:
-            'User-visible text must go through t(). Add a key to src/i18n/locales/en.json and render {t("key")}.',
+            'User-visible text must go through t(). Add a key to the matching file under src/i18n/locales/en/ and render {t("key")}.',
         },
         {
           // A hard-coded string in an attribute a person actually reads or hears.

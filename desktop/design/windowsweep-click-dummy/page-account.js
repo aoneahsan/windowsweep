@@ -66,6 +66,14 @@
        equal weight, with no confirmation between the pointer and the deletion. */
     acts.appendChild(out);
     host.appendChild(acts);
+    /* D-38 (GATE 4 round 7): the app carries this sentence under Sign out, and the
+       dummy owns the words - so it is written here. Since 2026-09-13 it is exact:
+       sign-out is scope 'local', so it ends this machine's session and never the
+       same person's session on the website, which shares the account. */
+    var note = el('p', 't-sm ink-3',
+      'Signing out clears every local trace of the account, including the rows cached from your other machines.');
+    note.style.marginTop = 'var(--sp-3)';
+    host.appendChild(note);
   }
 
   /* The deletion band: shown only while signed in, and armed only by the typed word.

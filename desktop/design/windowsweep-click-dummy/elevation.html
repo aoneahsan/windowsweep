@@ -117,6 +117,9 @@
           <p class="t-sm" style="margin-top:var(--sp-2);color:var(--c-warn-ink)" data-ws-elevate-blocked hidden></p>
           <p class="t-sm ink-3" style="margin-top:var(--sp-2)">A scan can measure these sections
             without administrator rights. It cannot clear them.</p>
+          <!-- D-28 (GATE 4 round 7): "Measure without elevating" answers here, beside the
+               control, as a polite status note - not in a toast. -->
+          <p class="note note-info" role="status" style="margin-top:var(--sp-3)" data-ws-measured hidden></p>
         </div>
       </section>
 
@@ -154,7 +157,7 @@
          the screen is a choice, so the number is whatever was chosen. It now shows the
          invocation itself, built from the same choice the buttons run - the rule
          run.html:132 already follows, so a sentence cannot drift from the flags. -->
-    <span class="only-wide mono" style="opacity:.8" data-ws-text="elevateCmd">windowsweep --json --only 12,13,14 --elevate --yes --not-developer</span>
+    <span class="only-wide mono" style="opacity:.8" data-ws-text="elevateCmd">windowsweep --json --only 12,13,14 --elevate --yes --developer --days 100 --temp-days 3 --large-file-mb 100</span>
     <span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span>
   </footer>
 </div>

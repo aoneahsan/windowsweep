@@ -126,9 +126,11 @@
                 <button class="switch" role="switch" aria-checked="true" data-ws-action="devMode" aria-label="Developer mode"></button>
                 <div>
                   <p class="t-sm" data-ws-text="devState">On – keeping anything used recently</p>
-                  <p class="t-sm ink-3" style="margin-top:var(--sp-1)">
-                    Caches you have used recently are left alone, so your next build is not a cold one.
-                  </p>
+                  <!-- D-25 (GATE 4 round 7): this caption follows the switch. It was one fixed
+                       sentence, so the OFF state read "every cache is offered in full" directly
+                       above "caches you have used recently are left alone". Off now carries this
+                       dummy's own words for it, from the Settings row. -->
+                  <p class="t-sm ink-3" style="margin-top:var(--sp-1)" data-ws-text="devNote">Caches you have used recently are left alone, so your next build is not a cold one.</p>
                 </div>
               </div>
               <div class="well pad-s" style="display:flex;flex-wrap:wrap;gap:var(--sp-5);align-items:center;margin-top:var(--sp-4)">
@@ -139,7 +141,12 @@
                     <span class="num" data-ws-text="idleDays">100</span> days</p>
                 </div>
                 <div style="flex:1;min-width:11rem">
-                  <label class="caps ink-3" for="idle">Idle window</label>
+                  <!-- D-36 (GATE 4 round 7): the control carries its own reading, as the app's
+                       does, so the slider never moves in silence. -->
+                  <div style="display:flex;align-items:baseline;gap:var(--sp-2)">
+                    <label class="caps ink-3" for="idle">Idle window</label>
+                    <span class="num t-sm wide" data-ws-text="idleReadout">100 days</span>
+                  </div>
                   <input id="idle" class="field" type="range" min="7" max="365" step="1" value="100" data-ws-action="idleDays">
                   <p class="t-sm ink-3">Lower it to include more caches.</p>
                 </div>
@@ -247,6 +254,9 @@
               <button class="switch" role="switch" aria-checked="false" data-ws-action="schedule" aria-label="Weekly scheduled run"></button>
               <div>
                 <p class="t-sm" data-ws-text="scheduleState">Off</p>
+                <!-- The acknowledgement lands here, beside the switch, not in a toast (GATE 4
+                     round 8 prep, the D-28 class). -->
+                <p class="t-xs ink-3" role="status" data-ws-text="scheduleAck"></p>
                 <p class="t-sm ink-3">Runs the safe batch once a week and tells you what it freed. Never the
                   sections that need you.</p>
               </div>

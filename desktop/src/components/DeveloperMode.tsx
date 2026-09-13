@@ -26,22 +26,27 @@
  * `lib/reclaim.ts` -> `heldBackBytes`, which also records the four guards that
  * keep the subtraction like-for-like.
  *
- * 🔴 THE DUMMY'S COUNT SUB-LINE IS DECLINED - "N caches used in the last M days".
- * The bytes above it come from subtracting two totals, which yields a number and
- * no set, so there is nothing to count. The dummy derives both from one array
- * (`db.js` -> `heldByDeveloperMode`) and this app cannot: that array filters whole
- * targets by idle age, while the engine's gate is per FILE inside a target
- * (`lib/actions.ps1:210`). Printing a count from the target-level rule beside a
- * byte figure from the subtraction would read as "these N caches account for those
- * bytes" when the two answer different questions. Reported for the dummy rather
- * than reworded here.
+ * 🔴 THE DUMMY'S COUNT SUB-LINE IS BUILT - "N caches used in the last M days". It was
+ * declined while the figure above it was a whole-batch subtraction with no set
+ * behind it. Both now read the same developer sections (`lib/reclaim.ts`): the
+ * figure is what the idle gate keeps there, the count is how many of those caches
+ * were written inside the window - a fact from the scan's own timestamps, and one
+ * that holds back at least that much. `recentDeveloperCaches` records what it
+ * cannot see.
+ *
+ * 🔴 THE CAPTION UNDER THE STATE LINE FOLLOWS THE SWITCH (D-25, GATE 4 round 7 -
+ * the dummy was amended first, `index.html` `[data-ws-text="devNote"]`). It was
+ * one fixed sentence, so with developer mode OFF the page read "Off - every cache
+ * is offered in full" directly above "Caches you have used recently are left
+ * alone": false at that setting, and false in the direction that understates
+ * deletion. Off now carries the dummy's own sentence for it, from its Settings row.
  */
 
 import { useTranslation } from 'react-i18next';
 
 import { formatBytes } from '../lib/format';
-import { heldBackBytes } from '../lib/reclaim';
-import { MAX_IDLE_DAYS, MIN_IDLE_DAYS, useIncludedScanTargets, useStore } from '../state/store';
+import { MAX_IDLE_DAYS, MIN_IDLE_DAYS } from '../state/store';
+import { useHeldBackBytes, useRecentDeveloperCaches } from '../state/derived';
 
 export function DeveloperMode({
   developer,
@@ -56,13 +61,9 @@ export function DeveloperMode({
 }) {
   const { t } = useTranslation();
   /* Read here rather than threaded through Home, which is already at the file
-     ceiling - and this is the only consumer of the figure, so there is no second
-     copy to keep in step. */
-  const summary = useStore((s) => s.summary);
-  const catalogue = useStore((s) => s.catalogue);
-  const scannedAt = useStore((s) => s.scannedAt);
-  const includedTargets = useIncludedScanTargets();
-  const heldBack = heldBackBytes(summary, includedTargets, catalogue, developer, scannedAt !== null);
+     ceiling. The same hook feeds the Settings row, so the two cannot differ. */
+  const heldBack = useHeldBackBytes();
+  const recent = useRecentDeveloperCaches();
 
   return (
     <div className="panel pad">
@@ -77,7 +78,9 @@ export function DeveloperMode({
         />
         <div>
           <p className="t-sm">{developer ? t('home.developerOn', { days: idleDays }) : t('home.developerOff')}</p>
-          <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-1)' }}>{t('home.developerNote')}</p>
+          <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-1)' }}>
+            {developer ? t('home.developerNote') : t('home.developerNoteOff')}
+          </p>
         </div>
       </div>
 
@@ -104,6 +107,11 @@ export function DeveloperMode({
           <p className="num t-lg wide">
             {heldBack === null ? t('home.notMeasured') : formatBytes(heldBack)}
           </p>
+          {/* `index.html`'s `devHeldN` line. Absent before a scan: there is no count
+              to state until something has read the timestamps. */}
+          {recent === null ? null : (
+            <p className="t-xs ink-3">{t('home.heldBackCount', { count: recent, days: idleDays })}</p>
+          )}
         </div>
 
         <div style={{ flex: '1 1 11rem', minWidth: '11rem' }}>

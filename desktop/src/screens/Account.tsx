@@ -15,10 +15,23 @@
  * The band at the foot calls `delete_my_account()` and signs out - dummy first, in
  * `account.html`'s `[data-ws-delete]`.
  *
+ * 🔴 THE DUMMY'S FRAME (D-38, GATE 4 round 7): the `Optional` eyebrow, the lede's
+ * bold "never gated", the card beside the "What is stored, exactly" table, and the
+ * Sync band. It was one narrow column carrying two paragraphs of its own words.
+ *
+ * 🔴 THE SYNC BAND SAYS "LOCAL" IN EVERY STATE, because that is what is true:
+ * nothing in this window syncs yet (`lib/sync.ts` has no caller). The dummy's
+ * signed-in rows ("Synced 2 minutes ago") describe a wiring that has not landed,
+ * and its "What happens when two machines disagree" disclosure describes conflict
+ * handling - the newer change wins, with an Undo - that no code performs. That
+ * disclosure is withheld rather than shipped as a promise; it arrives with the
+ * sync wiring.
+ *
  * ⚠️ NOT EXERCISED ON THIS MACHINE. Google is the only provider and it is not
  * enabled on the Supabase project yet, so nobody can sign in here and therefore
- * nobody can reach this control. What IS verified is the code path and the words;
- * what is NOT is a live deletion. Saying so is the point.
+ * nobody can reach the signed-in card or the deletion control. What IS verified is
+ * the code path and the words; what is NOT is a live deletion. Saying so is the
+ * point.
  */
 
 import { useState } from 'react';
@@ -37,6 +50,23 @@ import { PrimaryButton } from '../components/PrimaryButton';
  * direction that matters least to the product and most to the reader.
  */
 const CONFIRM_WORD = 'delete';
+
+/** The five rows of `account.html`'s "What is stored, exactly", in its order. */
+const STORED = ['email', 'name', 'settings', 'runs', 'lastSeen'] as const;
+
+/** The dummy's Sync rows (`page-account.js` -> `sync()`), each with its local state. */
+const SYNC_ROWS = [
+  { key: 'settings', state: 'localOnly' },
+  { key: 'runs', state: 'localOnly' },
+  { key: 'paths', state: 'never' },
+] as const;
+
+/** The avatar's letters: the first two words of the name, or the email's first letter. */
+function initials(displayName: string | null, email: string): string {
+  const words = (displayName ?? '').trim().split(/\s+/).filter(Boolean);
+  const letters = words.length > 0 ? words.slice(0, 2).map((w) => w.charAt(0)) : [email.charAt(0)];
+  return letters.join('').toUpperCase();
+}
 
 export function Account() {
   const { t } = useTranslation();
@@ -90,28 +120,35 @@ export function Account() {
   return (
     <>
       <section className="band band-app band-tight">
-        <div className="wrap wrap-narrow">
-          <p className="caps ink-3">{t('nav.account')}</p>
+        <div className="wrap">
+          <p className="caps ink-3">{t('account.eyebrow')}</p>
           <h1 className="t-xl wide">{t('account.title')}</h1>
           {/* The approved wording: what sign-in does, and nothing about pricing. */}
-          <p className="lede">{t('account.lede')}</p>
+          <p className="lede">
+            <Trans i18nKey="account.lede" components={{ 1: <strong /> }} />
+          </p>
         </div>
       </section>
 
-      <section className="band band-app band-tight">
-        <div className="wrap wrap-narrow">
-          <div className="panel pad">
-            {user ? (
-              <>
-                <div className="lst">
-                  <div className="lst-i">
-                    <div style={{ flex: 1 }}>
-                      <div>{user.displayName ?? user.email}</div>
-                      <div className="t-sm ink-3">{user.email}</div>
+      <section className="band band-app">
+        <div className="wrap">
+          <div className="g12">
+            <div className="c6">
+              <div className="panel pad">
+                {user ? (
+                  <>
+                    <div style={{ display: 'flex', gap: 'var(--sp-4)', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <span className="ava ava-lg" aria-hidden="true">
+                        {initials(user.displayName, user.email)}
+                      </span>
+                      <div>
+                        <p className="t-md wide">{t('account.signedIn')}</p>
+                        <p className="t-sm ink-3">{user.email}</p>
+                      </div>
                     </div>
-                    <div className="lst-x">
+                    <div style={{ display: 'flex', gap: 'var(--sp-2)', marginTop: 'var(--sp-5)', flexWrap: 'wrap' }}>
                       <button
-                        className="btn btn-sm"
+                        className="btn"
                         type="button"
                         onClick={onSignOut}
                         disabled={signingOut}
@@ -120,50 +157,102 @@ export function Account() {
                         <span className="btn-label">{t('account.signOut')}</span>
                       </button>
                     </div>
-                  </div>
+                    <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-3)' }}>
+                      {t('account.signOutNote')}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    {/* 🔴 `role="status"`: the account has just been deleted and the
+                        band that did it is gone, so this is the only acknowledgement
+                        there is. It must reach a screen reader too, and politely -
+                        the action has already finished, so nothing is interrupted. */}
+                    {deleted ? (
+                      <div className="note note-info" style={{ marginBottom: 'var(--sp-4)' }} role="status">
+                        <span aria-hidden="true">i</span>
+                        <span className="t-sm">{t('account.deleteDone')}</span>
+                      </div>
+                    ) : null}
+                    <p className="caps ink-3">{t('account.cardEyebrow')}</p>
+                    <h2 className="t-lg wide">{t('account.cardTitle')}</h2>
+                    <p className="t-base">{t('account.cardBody')}</p>
+                    <div style={{ marginTop: 'var(--sp-4)' }}>
+                      <PrimaryButton
+                        control="account.signIn"
+                        size="lg"
+                        onPress={onSignIn}
+                        disabled={busy || !features.signIn}
+                        state={stateOf(busy)}
+                        label={features.signIn ? t('account.signIn') : t('account.notConfigured')}
+                      />
+                    </div>
+                    <p className="t-sm ink-3">{t('account.browserNote')}</p>
+                    {!features.signIn ? (
+                      <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-2)' }}>
+                        {t('account.notConfiguredNote')}
+                      </p>
+                    ) : null}
+                    {/* 🔴 `role="alert"`: a failed sign-in must interrupt, because the
+                        person is about to act on the belief that it worked. */}
+                    {error ? (
+                      <div className="note note-warn" style={{ marginTop: 'var(--sp-3)' }} role="alert">
+                        <span aria-hidden="true">⚠</span>
+                        <span className="t-sm">{error}</span>
+                      </div>
+                    ) : null}
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="c6">
+              <div className="well pad">
+                <h2 className="t-md wide">{t('account.storedTitle')}</h2>
+                <div className="xscroll" style={{ marginTop: 'var(--sp-3)' }}>
+                  <table className="tbl">
+                    <thead>
+                      <tr>
+                        <th>{t('account.storedColField')}</th>
+                        <th>{t('account.storedColWhy')}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {STORED.map((row) => (
+                        <tr key={row}>
+                          <td className="t-sm">{t(`account.stored.${row}.field`)}</td>
+                          <td className="t-sm ink-3">{t(`account.stored.${row}.why`)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
                 <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-3)' }}>
-                  {t('account.signOutNote')}
-                </p>
-              </>
-            ) : (
-              <>
-                {/* 🔴 `role="status"`: the account has just been deleted and the
-                    band that did it is gone, so this is the only acknowledgement
-                    there is. It must reach a screen reader too, and politely -
-                    the action has already finished, so nothing is interrupted. */}
-                {deleted ? (
-                  <div className="note note-info" style={{ marginBottom: 'var(--sp-4)' }} role="status">
-                    <span aria-hidden="true">i</span>
-                    <span className="t-sm">{t('account.deleteDone')}</span>
-                  </div>
-                ) : null}
-                <p className="t-sm">{t('account.whatSyncs')}</p>
-                <p className="t-sm ink-3">{t('account.whatNeverSyncs')}</p>
-                <div style={{ marginTop: 'var(--sp-4)' }}>
-                  <PrimaryButton
-                    control="account.signIn"
-                    onPress={onSignIn}
-                    disabled={busy || !features.signIn}
-                    state={stateOf(busy)}
-                    label={features.signIn ? t('account.signIn') : t('account.notConfigured')}
+                  <Trans
+                    i18nKey="account.neverStored"
+                    components={{ 1: <strong />, 3: <span className="badge badge-outline" /> }}
                   />
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="band band-well band-tight">
+        <div className="wrap">
+          <h2 className="t-md wide">{t('account.syncTitle')}</h2>
+          <div className="lst panel" style={{ marginTop: 'var(--sp-3)' }}>
+            {SYNC_ROWS.map((row) => (
+              <div className="lst-i" key={row.key}>
+                <div style={{ flex: 1 }}>
+                  <div className="t-base">{t(`account.sync.${row.key}`)}</div>
+                  <div className="t-sm ink-3">{t(`account.sync.${row.state}`)}</div>
                 </div>
-                {!features.signIn ? (
-                  <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-2)' }}>
-                    {t('account.notConfiguredNote')}
-                  </p>
-                ) : null}
-                {/* 🔴 `role="alert"`: a failed sign-in must interrupt, because the
-                    person is about to act on the belief that it worked. */}
-                {error ? (
-                  <div className="note note-warn" style={{ marginTop: 'var(--sp-3)' }} role="alert">
-                    <span aria-hidden="true">⚠</span>
-                    <span className="t-sm">{error}</span>
-                  </div>
-                ) : null}
-              </>
-            )}
+                <div className="lst-x">
+                  <span className="badge badge-neutral">{t('account.sync.badgeLocal')}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

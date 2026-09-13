@@ -42,8 +42,10 @@
           <div class="filters">
             <span class="caps ink-3" style="margin-inline-end:var(--sp-2)">Section</span>
             <button class="fchip" data-ws-pick="17" aria-pressed="true">17 &#183; artefacts</button>
-            <button class="fchip" data-ws-pick="18" aria-pressed="false">18 &#183; large files</button>
-            <button class="fchip" data-ws-pick="19" aria-pressed="false">19 &#183; downloads</button>
+            <!-- D-37 (GATE 4 round 7): 18 is partial downloads and 19 is large files, as
+                 seed.js and the engine's catalogue both say. The two labels were swapped. -->
+            <button class="fchip" data-ws-pick="18" aria-pressed="false">18 &#183; partial downloads</button>
+            <button class="fchip" data-ws-pick="19" aria-pressed="false">19 &#183; large files</button>
             <button class="fchip" data-ws-pick="23" aria-pressed="false">23 &#183; orphaned data</button>
             <input class="field" type="search" placeholder="Filter by path or project"
                    data-ws-pick-search style="max-width:16rem;margin-inline-start:auto">
@@ -88,11 +90,39 @@
               <p>A plain UTF-8 file with one full path per line is matched, case-insensitively, against the
                 candidates this section offers. A line that matches nothing is warned about individually
                 rather than failing the run.</p>
-              <p class="mono t-xs">windowsweep --only 17 --select-file D:\selections\artefacts.txt</p>
-              <div class="drop" data-w-drop style="margin-top:var(--sp-3)">
-                <p class="t-sm">Drop a selection file here, or choose one</p>
-                <p class="drop-hint">.txt or .list &#183; up to 256 KB &#183; one full path per line</p>
-                <button class="btn" data-ws-action="pickFile">Choose a file</button>
+              <!-- The command follows the section in view, so it is never "--only 17" over
+                   section 23. The path is an example (demo-data). -->
+              <p class="mono t-xs">windowsweep --only <span data-ws-text="pickOnly">17</span> --select-file D:\selections\artefacts.txt</p>
+              <!-- 2026-09-13 (after GATE 4 round 7): the gallery's upload field, whole - label,
+                   the info affordance with purpose, types, size and an example BEFORE the pick,
+                   the zone and its four states (g-forms.js "specialised"). The file is read
+                   here, in the page: nothing leaves the machine, and the lines are matched
+                   against THIS section's candidates the way the engine matches them. -->
+              <div>
+                <div class="fw-lbl">Selection file
+                  <button class="fx-btn" type="button" style="position:static" aria-label="What this file must contain"
+                          data-w-tip aria-describedby="pick-file-tip">?</button>
+                </div>
+                <div style="position:relative;margin-top:var(--sp-2)">
+                  <div class="drop" data-w-drop data-state="idle" data-ws-pick-drop>
+                    <p class="t-sm" data-ws-pick-drop-text role="status">Drop a selection file here, or choose one</p>
+                    <p class="drop-hint">.txt or .list &#183; up to 256 KB &#183; one full path per line</p>
+                    <button class="btn" type="button" data-ws-action="pickFile">Choose a file</button>
+                    <input type="file" accept=".txt,.list" hidden data-ws-pick-input>
+                  </div>
+                  <div class="pop" id="pick-file-tip" role="tooltip" style="position:absolute;z-index:30;top:0;inset-inline-start:0">
+                    <div><b>Purpose: </b>One full path per line; each is matched against the candidates a section offers.</div>
+                    <div><b>Types: </b>.txt or .list, UTF-8</div>
+                    <div><b>Max size: </b>256 KB</div>
+                    <div><b>Example: </b>D:\work\old-app\node_modules</div>
+                  </div>
+                </div>
+                <!-- One line per path that matched nothing in this section - the engine's own
+                     "no candidate here matches" note, shown before the run rather than after. -->
+                <div class="note note-warn" data-ws-pick-warn hidden style="margin-top:var(--sp-3)">
+                  <span aria-hidden="true">&#9888;</span>
+                  <div data-ws-pick-warn-list style="display:flex;flex-direction:column;gap:var(--sp-1);min-width:0"></div>
+                </div>
               </div>
             </div>
           </details>

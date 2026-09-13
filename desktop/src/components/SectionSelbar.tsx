@@ -55,7 +55,8 @@ export function SectionSelbar({
   return (
     <div className="selbar">
       <span className="num t-md wide">{selection.length}</span>
-      <span className="t-sm ink-2">{t('sections.selSelected')}</span>
+      {/* `count` so the noun agrees with the number beside it (D-33). */}
+      <span className="t-sm ink-2">{t('sections.selSelected', { count: selection.length })}</span>
       <span className="tb-sep" />
       <span className="num t-md wide accent-ink">
         {measured.length === 0 ? t('sections.totalUnmeasured') : formatBytes(total)}

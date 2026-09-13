@@ -7,7 +7,7 @@
  *
  * 🔴 THE CLASSES ARE THE DUMMY'S, and that is what makes the panel visible at all.
  * The first translation invented `tm-scrim`, `tm`, `tm-dlg`, `tm-hd`, `tm-body`,
- * `axis-cards` and `axis-card` - not one of which exists in `shell.css`. The
+ * `axis-cards` and `axis-card` - not one of which exists in the shell stylesheet (`styles/shell/`). The
  * result passed typecheck, lint and build while the panel had no scrim, no
  * surface, and no selected state on ANY of the ten axes: pressing a card changed
  * the whole app and the card itself looked identical before and after. The real

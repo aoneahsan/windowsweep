@@ -29,19 +29,27 @@
  * carries three options rather than a switch: with no value the engine prints "pass
  * --hiberfil off|reduced|keep to run this section unattended" and does nothing -
  * a silent no-op behind a UAC prompt.
+ *
+ * 🔴 D-29 (GATE 4 round 7): the eyebrow names the section ids as the dummy does,
+ * derived from the catalogue; the lede's "never elevates itself" is bold and the
+ * flags and the runs folder are set as code, markup the catalogue values carry for
+ * `Trans`; and the command line lives in the status bar, where the dummy puts it
+ * - published through the store, because that bar is chrome this screen renders
+ * inside and cannot hand a prop.
  */
 
-import { useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
-import { useRunPreferences, useStore } from '../state/store';
+import { useStore } from '../state/store';
+import { useRunPreferences } from '../state/derived';
 import { commandLine, elevatedArgs, newRunId, run, scanArgs } from '../lib/engine';
-import { formatBytes } from '../lib/format';
+import { formatBytes, formatIdRanges } from '../lib/format';
 import { tailElevatedRun } from '../lib/run-tail';
 import { controlState, stateOf } from '../lib/control-state';
 import { PrimaryButton } from '../components/PrimaryButton';
-import type { Section } from '../lib/catalogue';
+import { DEV_GATED_SECTIONS, type Section } from '../lib/catalogue';
 
 /** What section 15 may be told to do. `keep` is "not chosen", so it is never sent. */
 type Hiberfil = 'keep' | 'reduced' | 'off';
@@ -53,8 +61,11 @@ const HIBERFIL_OPTIONS: Hiberfil[] = ['keep', 'reduced', 'off'];
  * is never reused." A key or a title would be free to drift; 15 cannot.
  */
 const HIBERFIL_SECTION = 15;
-/** `Dev = $true` sections the engine skips with developer mode off (`runner.ps1:105`). */
-const DEV_GATED = new Set([4, 17, 20]);
+
+/** The markup the catalogue values carry: `<1>` bold, `<3>` code - as the dummy sets them. */
+const MARKUP = { 1: <strong />, 3: <code className="mono" /> };
+/** The step bodies set their flags and paths as code throughout. */
+const CODE = { 1: <code className="mono" />, 3: <code className="mono" /> };
 
 export function Elevation() {
   const { t } = useTranslation();
@@ -71,6 +82,8 @@ export function Elevation() {
   const applyProgress = useStore((s) => s.applyProgress);
   const finishRun = useStore((s) => s.finishRun);
   const setScanTargets = useStore((s) => s.setScanTargets);
+  const spendScanTargets = useStore((s) => s.spendScanTargets);
+  const setElevationCommand = useStore((s) => s.setElevationCommand);
   /* 🔴 WHICH one is running, not just that something is. Pressing "Ask for
      permission and run" hands over to Windows' own UAC prompt, which can take
      seconds to appear - and both buttons looked untouched the whole time. */
@@ -130,6 +143,16 @@ export function Elevation() {
       excludedPaths,
     });
   }
+
+  /* The invocation, built from the one builder the buttons run, published for the
+     status bar (`elevation.html` `[data-ws-text="elevateCmd"]`) - `run.html:132`'s
+     rule, so the sentence cannot drift from the flags. A layout effect, so the
+     first painted frame already carries it; cleared when the screen goes. */
+  const command = commandLine(buildArgs());
+  useLayoutEffect(() => {
+    setElevationCommand(command);
+    return () => { setElevationCommand(null); };
+  }, [command, setElevationCommand]);
 
   /**
    * "Measure without elevating" - the engine's read-only `--scan`, and nothing else.
@@ -223,8 +246,10 @@ export function Elevation() {
       .finally(() => {
         /* One last sweep before stopping: the child writes its closing lines and
            its report as it exits, so a tail stopped on the promise alone loses the
-           end of the run - which is the part carrying the number. */
-        void tail.finish();
+           end of the run - which is the part carrying the number. The parent never
+           prints a summary, so the child's own report is what says which sections
+           were spent (owner item 3a). */
+        void tail.finish().then(spendScanTargets);
         setBusy(null);
       });
   }
@@ -233,9 +258,13 @@ export function Elevation() {
     <>
       <section className="band band-app band-tight">
         <div className="wrap">
-          <p className="caps ink-3">{t('elevation.eyebrow')}</p>
+          <p className="caps ink-3">
+            {t('elevation.eyebrow', { count: admin.length, ids: formatIdRanges(admin.map((s) => s.id)) })}
+          </p>
           <h1 className="t-xl wide">{t('elevation.title', { count: admin.length })}</h1>
-          <p className="lede">{t('elevation.lede')}</p>
+          <p className="lede">
+            <Trans i18nKey="elevation.lede" components={MARKUP} />
+          </p>
         </div>
       </section>
 
@@ -249,7 +278,7 @@ export function Elevation() {
                     style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', flexWrap: 'wrap' }}
                   >
                     <span className="num t-sm ink-3">{s.id}</span>
-                    <span style={{ fontWeight: 600 }}>
+                    <span className="t-base" style={{ fontWeight: 600 }}>
                       {s.key}
                     </span>
                     <span className="badge badge-danger">{t('sections.admin')}</span>
@@ -303,7 +332,7 @@ export function Elevation() {
 
                   {/* Declared on the card rather than discovered in the log: with
                       developer mode off the engine skips this section outright. */}
-                  {DEV_GATED.has(s.id) && !developer ? (
+                  {DEV_GATED_SECTIONS.has(s.id) && !developer ? (
                     <p className="t-xs ink-3">{t('elevation.devOff')}</p>
                   ) : null}
                 </div>
@@ -323,14 +352,17 @@ export function Elevation() {
               <span aria-hidden="true">!</span>
               <div>
                 <p className="t-sm">
-                  <strong>{t('elevation.deepGateTitle')}</strong> {t('elevation.deepGateBody')}
+                  <strong>{t('elevation.deepGateTitle')}</strong>{' '}
+                  <Trans i18nKey="elevation.deepGateBody" components={MARKUP} />
                 </p>
                 <ul
                   className="t-sm ink-3"
                   style={{ margin: 'var(--sp-2) 0 0', paddingInlineStart: 'var(--sp-5)' }}
                 >
                   {chosenDeep.map((s) => (
-                    <li key={s.id}>{t(`elevation.deepWhat.${s.id}`)}</li>
+                    <li key={s.id}>
+                      <Trans i18nKey={`elevation.deepWhat.${String(s.id)}`} components={MARKUP} />
+                    </li>
                   ))}
                 </ul>
                 <label
@@ -369,7 +401,9 @@ export function Elevation() {
                   <div className="t-sm">
                     <strong>{t(`elevation.step.${k}.title`)}</strong>
                   </div>
-                  <div className="t-sm ink-3">{t(`elevation.step.${k}.body`)}</div>
+                  <div className="t-sm ink-3">
+                    <Trans i18nKey={`elevation.step.${k}.body`} components={CODE} />
+                  </div>
                 </div>
               </div>
             ))}
@@ -411,11 +445,6 @@ export function Elevation() {
               {t('elevation.measured', { amount: formatBytes(measured) })}
             </p>
           ) : null}
-          {/* The invocation itself, built from the same builder the buttons run -
-              `run.html:132`'s rule, so a sentence cannot drift from the flags. */}
-          <p className="t-xs mono ink-3" style={{ marginTop: 'var(--sp-3)', wordBreak: 'break-all' }}>
-            {commandLine(buildArgs())}
-          </p>
         </div>
       </section>
 

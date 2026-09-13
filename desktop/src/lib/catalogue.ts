@@ -62,6 +62,14 @@ export const PERMANENT_TIERS: ReadonlySet<SectionTier> = new Set<SectionTier>(['
 /** Tiers that move items to the Recycle Bin rather than deleting them outright. */
 export const RECYCLE_TIERS: ReadonlySet<SectionTier> = new Set<SectionTier>(['recycle']);
 
+/**
+ * The `Dev = $true` sections the engine skips OUTRIGHT with developer mode off -
+ * `modules/runner.ps1:105`, `$Id -in @(4, 17, 20)` - recording the step as
+ * `skipped` with the note `developer mode off`. Keyed by id, which IRON rule 4
+ * freezes. Elevation says so on section 20's card and the Picker on section 17's.
+ */
+export const DEV_GATED_SECTIONS: ReadonlySet<number> = new Set([4, 17, 20]);
+
 export function parseCatalogue(stdout: string): Catalogue {
   const line = stdout
     .split(/\r?\n/)
@@ -149,10 +157,19 @@ export function filterSections(
 /**
  * The sections a plain, unelevated safe run would touch. Derived from the engine's
  * own `safe_batch`, never from a rule this app invents about which tier is safe.
+ *
+ * 🔴 THE WHOLE SAFE BATCH, WHATEVER DEVELOPER MODE SAYS. This used to drop every
+ * `dev` section when developer mode was off, which is the engine's rule read
+ * backwards. The engine skips a dev section only for ids 4, 17 and 20
+ * (`modules/runner.ps1:105`), and none of those is in the safe batch - so a safe
+ * run with developer mode OFF still runs pkg, build, runners and docker, and
+ * `lib/actions.ps1:130` turns their prune into a full clear. The ladder, the Run
+ * queue and the Reclaim figure were therefore hiding exactly the sections that
+ * lose the most at that setting. Developer mode decides HOW a dev cache is cleared,
+ * never WHETHER its section runs.
  */
-export function safeRunSections(catalogue: Catalogue, developer: boolean): Section[] {
+export function safeRunSections(catalogue: Catalogue): Section[] {
   return catalogue.safe_batch
     .map((id) => sectionById(catalogue, id))
-    .filter((s): s is Section => Boolean(s))
-    .filter((s) => developer || !s.dev);
+    .filter((s): s is Section => Boolean(s));
 }

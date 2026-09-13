@@ -21,6 +21,11 @@
  * live region is what makes the change reach a screen reader at the moment it
  * happens.
  *
+ * 🔴 ONE COMPONENT, TWO NAMES. The dummy names the switch for the screen it sits
+ * on: "Weekly scheduled run" on Home (`index.html` zone 11) and "Weekly schedule"
+ * in Settings (`page-settings.js`). The caller passes its own, so a screen reader
+ * hears what each screen's dummy says (D-32, GATE 4 round 7).
+ *
  * ⚠️ `unknown` renders as a DISABLED switch with no state word. It means the query
  * itself could not be made, and the two words the dummy owns - "On - Sundays at
  * 03:00" and "Off" - are both assertions this window would not be entitled to
@@ -36,7 +41,18 @@ import { useTranslation } from 'react-i18next';
 import { newRunId, run, scheduleArgs } from '../lib/engine';
 import { isScheduled, scheduleStatus, type ScheduleStatus } from '../lib/schedule';
 
-export function ScheduleSwitch() {
+export function ScheduleSwitch({
+  label,
+  stateWord = true,
+}: {
+  label: string;
+  /**
+   * The "On - Sundays at 03:00" / "Off" line beside the switch. Home's dummy draws
+   * it (`index.html` `scheduleState`); the Settings row's does not - there the row's
+   * own sentences carry the meaning - so Settings passes `false`.
+   */
+  stateWord?: boolean;
+}) {
   const { t } = useTranslation();
   const [status, setStatus] = useState<ScheduleStatus | null>(null);
   const [busy, setBusy] = useState(false);
@@ -118,7 +134,7 @@ export function ScheduleSwitch() {
         type="button"
         role="switch"
         aria-checked={on}
-        aria-label={t('settings.scheduleTitle')}
+        aria-label={label}
         disabled={status === null || unreadable || busy}
         aria-busy={busy}
         onClick={toggle}
@@ -126,7 +142,7 @@ export function ScheduleSwitch() {
       <div style={{ minWidth: 0 }}>
         {/* The dummy's `scheduleState` slot. Nothing is printed for `unknown`,
             because both of its words would be claims. */}
-        {unreadable ? null : (
+        {unreadable || !stateWord ? null : (
           <p className="t-sm">{on ? t('home.scheduleOn') : t('home.scheduleOff')}</p>
         )}
         {/* 🔴 `role="status"` - polite, at the control, within a frame of the

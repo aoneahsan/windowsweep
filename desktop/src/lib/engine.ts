@@ -11,7 +11,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 
 import { parseCatalogue, type Catalogue } from './catalogue';
-import { parseProgressLine, parseRunSummary, type Candidate, type RunSummary } from './cli';
+import { parseProgressLine, parseRunSummary, type RunSummary } from './cli';
 
 /* 🔴 The argument builders moved to `engine-args.ts` when this file crossed the
    project's 500-line ceiling, and are re-exported from here so every existing
@@ -243,9 +243,4 @@ export async function listRunFiles(runId: string): Promise<string[]> {
 
 export async function appVersion(): Promise<string> {
   return invoke<string>('app_version');
-}
-
-/** Candidates the last run offered, ready for the picker. */
-export function candidatesOf(summary: RunSummary | null): Candidate[] {
-  return summary?.candidates ?? [];
 }

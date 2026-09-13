@@ -12,13 +12,12 @@
  * wrapping the app in it.
  */
 
-import { useMemo } from 'react';
 import { create } from 'zustand';
 
-import { includedOnly, toggleExclusion, usableExclusions } from '../lib/exclusions';
+import { toggleExclusion, usableExclusions } from '../lib/exclusions';
+import { interactiveSectionIds, mergeOffers } from '../lib/offers';
 import type { Catalogue } from '../lib/catalogue';
-import type { RunPreferences } from '../lib/engine';
-import type { Candidate, RunSummary, ProgressEvent, ScanTarget } from '../lib/cli';
+import { isCleanupRun, type Candidate, type RunSummary, type ProgressEvent, type ScanTarget } from '../lib/cli';
 import type { AuthUser } from '../lib/auth';
 import { readPrefs, writePrefs, applyAllAxes, type AxisPrefs } from '../lib/theme';
 
@@ -84,11 +83,23 @@ interface StoreState {
    */
   scannedAt: number | null;
   setScanTargets: (rows: ScanTarget[]) => void;
+  /**
+   * Drop the rows of the sections a real run has just worked on.
+   *
+   * 🔴 PER SECTION (GATE 4 round 7, owner item 3a). A real run from the Sections
+   * screen used to leave Home counting - and offering to reclaim - what that run
+   * had just deleted, because only Home's own Reclaim cleared the measurements,
+   * and that cleared all of them. What a run touched is known to the section; what
+   * it did not touch is still measured, and stays.
+   */
+  spendScanTargets: (sections: readonly number[]) => void;
 
-  /* --- selection -------------------------------------------------------- */
+  /* --- what the interactive sections offered, and what a person ticked ----
+     Written by `finishRun` alone, from every run's summary - see
+     `lib/offers.ts` for why that is per section and never per run. */
   candidates: Candidate[];
+  offeredSections: number[];
   selectedPaths: Set<string>;
-  setCandidates: (rows: Candidate[]) => void;
   toggleCandidate: (path: string) => void;
   setSelection: (paths: string[]) => void;
 
@@ -171,6 +182,15 @@ interface StoreState {
   /* --- account ---------------------------------------------------------- */
   user: AuthUser | null;
   setUser: (user: AuthUser | null) => void;
+
+  /* --- the Elevation screen's command line, for the status bar -----------
+     🔴 The dummy puts it in the status bar's middle slot (`elevation.html`
+     `[data-ws-text="elevateCmd"]`), and that bar is chrome the screen renders
+     inside - it cannot be handed a prop. The line is built from the screen's own
+     choice, so the screen publishes it here and the shell reads it; null when the
+     screen is not mounted. (D-29.) */
+  elevationCommand: string | null;
+  setElevationCommand: (line: string | null) => void;
 }
 
 const HISTORY_KEY = 'windowsweep:history';
@@ -275,6 +295,23 @@ export const useStore = create<StoreState>()((set, get) => ({
   finishRun: (summary, failed = false) => {
     set({ phase: failed ? 'failed' : 'done', summary });
     if (!summary) return;
+    /* 🔴 D-23: every path that lands a summary lands its candidates, because this
+       is the one place they all pass through. A ticked row that is no longer on
+       offer is unticked with it, so "Remove these" can never carry a path the
+       list no longer shows. */
+    const before = { candidates: get().candidates, offeredSections: get().offeredSections };
+    const offers = mergeOffers(before, summary, interactiveSectionIds(get().catalogue));
+    if (offers !== before) {
+      const onOffer = new Set(offers.candidates.map((row) => row.path));
+      set({ ...offers, selectedPaths: new Set([...get().selectedPaths].filter((path) => onOffer.has(path))) });
+    }
+    /* A real run has deleted inside every section that ran or failed part-way;
+       a refused or skipped section never started, and a dry-run deleted nothing. */
+    if (!summary.dry_run && isCleanupRun(summary)) {
+      get().spendScanTargets(
+        summary.sections.filter((step) => step.status === 'ran' || step.status === 'failed').map((step) => step.section),
+      );
+    }
     get().addHistory({
       runId: get().runId ?? '',
       startedAt: new Date(startedAt).toISOString(),
@@ -291,10 +328,18 @@ export const useStore = create<StoreState>()((set, get) => ({
   scanTargets: [],
   scannedAt: null,
   setScanTargets: (rows) => { set({ scanTargets: rows, scannedAt: rows.length > 0 ? Date.now() : null }); },
+  spendScanTargets: (sections) => {
+    if (sections.length === 0) return;
+    const spent = new Set(sections);
+    const rows = get().scanTargets.filter((row) => !spent.has(row.section));
+    if (rows.length === get().scanTargets.length) return;
+    /* The rows that remain keep their measurement time: they were not touched. */
+    set({ scanTargets: rows, scannedAt: rows.length > 0 ? get().scannedAt : null });
+  },
 
   candidates: [],
+  offeredSections: [],
   selectedPaths: new Set<string>(),
-  setCandidates: (rows) => { set({ candidates: rows, selectedPaths: new Set<string>() }); },
   toggleCandidate: (path) => {
     const next = new Set(get().selectedPaths);
     if (next.has(path)) next.delete(path);
@@ -351,7 +396,15 @@ export const useStore = create<StoreState>()((set, get) => ({
     applyAllAxes(prefs);
     set({ prefs });
   },
-  developer: readLocal<boolean>(DEVELOPER_KEY, false),
+  /* 🔴 ON UNTIL SOMEONE TURNS IT OFF - D-24, GATE 4 round 7. It read `false`, and
+     because this window passes the flag on every run the engine's own
+     conservative default never applied: every first-run safe run went out with
+     `--not-developer` and offered every toolchain cache in full, under a caption
+     saying recent caches are left alone. The engine resolves "flag > saved answer
+     > interactive question > conservative default (yes)" (`lib/config.ps1` ->
+     `Resolve-DeveloperMode`) and the dummy's `DEFAULT_FACTS` say `true`. A person
+     who switched it off has `false` stored, and keeps it. */
+  developer: readLocal<boolean>(DEVELOPER_KEY, true),
   setDeveloper: (on) => {
     writeLocal(DEVELOPER_KEY, on);
     set({ developer: on });
@@ -390,48 +443,7 @@ export const useStore = create<StoreState>()((set, get) => ({
 
   user: null,
   setUser: (user) => { set({ user }); },
+
+  elevationCommand: null,
+  setElevationCommand: (line) => { set({ elevationCommand: line }); },
 }));
-
-/**
- * Every preference a run carries, read in one line.
- *
- * 🔴 Four atomic subscriptions rather than one selector returning an object: a
- * selector that builds a new object every call re-renders on every unrelated store
- * change, and the log pane appends thousands of lines during a purge. Each field
- * here is compared by value, so a screen re-renders when a preference moves and
- * not when the log does.
- *
- * 🔴 The idle window is ONE field with two readers - Home's control and Settings'
- * control set the same `idleDays`, never a copy each. Two copies of a number a
- * person can edit in two places is how a window ends up showing 100 beside a run
- * that used 30.
- */
-export function useRunPreferences(): RunPreferences {
-  const developer = useStore((s) => s.developer);
-  const idleDays = useStore((s) => s.idleDays);
-  const tempDays = useStore((s) => s.tempDays);
-  const largeFileMb = useStore((s) => s.largeFileMb);
-  return { developer, idleDays, tempDays, largeFileMb };
-}
-
-/**
- * The measured targets a run would ACTUALLY touch: everything the last `--scan`
- * found, minus what the person has clicked out of it.
- *
- * 🔴 ONE derivation, and it is the one every figure reads - the hero number, the
- * Reclaim button, the safe-run ladder, the Sections table and total, the per-
- * section rows and the status bar. The recorded failure it exists to prevent is
- * `reclaimableBytes`, which lived in two files and was wrong the same way in both;
- * a second copy of this filter would be that defect again, in a place where being
- * wrong means the window promising more than the run delivers.
- *
- * 🔴 THE ONE DELIBERATE EXCEPTION IS HOME'S MAP, which draws the excluded tiles
- * too, dimmed, so "what I turned off" stays visible instead of silently vanishing
- * (`reclaim-map.js` -> `mapDataAll`). It reads `scanTargets` directly and carries
- * the flag per tile; nothing else may.
- */
-export function useIncludedScanTargets(): ScanTarget[] {
-  const scanTargets = useStore((s) => s.scanTargets);
-  const excludedPaths = useStore((s) => s.excludedPaths);
-  return useMemo(() => includedOnly(scanTargets, excludedPaths), [scanTargets, excludedPaths]);
-}

@@ -689,3 +689,24 @@ Also recorded: S-017 (`account.syncedLede`) is classed P, which keeps row 18's p
 (the desktop sync module has no caller) is product TASK-013, so S-017 and S-019 cannot yet name their trigger.
 Two corrections were made outside the pipeline and neither is authorship: `/privacy`'s caption lost a false
 sentence, and the feed's 1.2.0 entry was assembled from the CHANGELOG's own items.
+
+## 2026-09-13 (later) - GATE 4 round 8's decision point D-48: a Permanent removal is confirmed first
+
+Round 8 found that "Remove these" with the Picker's deletion mode on **Permanent** deletes at once: the app has
+no confirmation, and the engine's own final question for 18, 19 and 23 (`Confirm-Ui -NoAutoYes -ScriptedOk`,
+`lib/ui.ps1:161`) is answered by the `--select-file` the window writes. The dummy said both things - its Picker
+note describes an unattended scripted run, its stand-in toast promised a confirmation.
+
+**Decided (orchestrator, under design authority - `~/.claude/rules/frontend-ui-standards.md` §8 - and flagged
+to the owner, reversible):** option 1 of three, **a confirmation before a Permanent removal**, drawn in the
+dummy first. It names how many items go, says they do not go to the Recycle Bin and that Permanent has no undo
+(the bar's own approved sentence), and offers *Remove permanently* and *Cancel*, with Cancel focused first.
+Recycle Bin mode keeps its single press, because it is recoverable. **Why this and not the other two:** the
+Bible's core promise is that the reader knows what goes before it goes, and its safety rules forbid implying
+a deletion is reversible; the engine asks its final question precisely so a permanent removal is never one
+keypress, and a window that answers that question on the reader's behalf must ask it itself. Keeping today's
+behaviour (option 2) would make the dummy promise less than the CLI already does; removing Permanent from the
+Picker (option 3) would take away a choice the engine offers on the command line.
+
+**D-49, decided with it:** when section 17's rows are in the selection, the bar says so - 17's rows are
+deleted outright whichever mode is chosen, and the choice covers 18, 19 and 23 (`modules/projects.ps1:157`).

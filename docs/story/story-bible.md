@@ -1,6 +1,7 @@
 # Story Bible - windowsweep
 
-Status: **APPROVED at GATE 1, 2026-09-05** · Slug: `windowsweep` · Language: en-GB · Last updated: 2026-09-05
+Status: **APPROVED at GATE 1, 2026-09-05** · Slug: `windowsweep` · Language: en-GB · Last updated: 2026-09-13
+(the keeper batch: the glossary gains **switch**; section 3 was corrected on 2026-09-07 and is unchanged)
 
 Built from repository evidence on 2026-09-05 and **approved as drafted** by the owner the same day: asked to
 approve the Bible, the palette and the registry entry, he chose *"Approved as drafted"*. The premise in
@@ -117,6 +118,7 @@ lower-case, even at the start of a sentence, and never "WindowSweep" or "Window 
 | protected | refused by the chokepoint, unconditionally | blacklisted, blocked |
 | reclaim | what the tool does to space | free up, clean, purge (except the literal `--purge-all` flag) |
 | developer mode | the answer to the first-run question | dev mode, pro mode |
+| switch | what the analytics does not have: *"There is no switch."* The desktop window and the site send usage events and crash reports, and the first-run screen is a notice, not a request (added 2026-09-13, keeper) | opt-out, opt out, turn off tracking |
 
 **Numbers are always exact and always sourced.** The tool never estimates in prose; `--scan` measures, and
 the copy points at it. **Never state a gigabyte figure as a promise.**

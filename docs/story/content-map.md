@@ -1,7 +1,9 @@
 # Content map - windowsweep
 
-Status: **APPROVED at GATE 2, 2026-09-05** · Bible: approved 2026-09-05 · Last updated: **2026-09-07**
-(three rows amended on the owner's answers - see the amendment note at the end)
+Status: **APPROVED at GATE 2, 2026-09-05** · Bible: approved 2026-09-05 · Last updated: **2026-09-13**
+(the keeper batch: every status cell carries its applying commit; row 12, row 19's schema and question row 7
+corrected - each a map-accuracy correction forced by an owner decision or a release, recorded in
+`decision-log.md` 2026-09-13; earlier, three rows amended on the owner's answers - the amendment note at the end)
 
 One row per surface that will be written. **A surface with no row is not written** - that rule is what stops
 a writer improvising a store listing in the documentation's register. Every field here traces back to a Bible
@@ -16,25 +18,25 @@ The tone bands are the Bible's: **P** precision-before-an-irreversible-act (60),
 
 | # | Surface | Awareness | Structure | Tone band | Length | CTA | Schema | Status |
 |---|---|---|---|---|---|---|---|---|
-| 1 | `readme` | problem-aware, solution-sceptical | Problem → the gamble they already lost → the guarantees → proof → install | P dominant, R strong, W twice | existing structure, fixed anchors | `npx windowsweep --scan` | SoftwareApplication (docs site only) | planned |
-| 2 | `tagline` | unaware, scanning a list | one sentence, no context assumed | P only | ≤ 110 chars, 🔴 **FIVE** places must agree | none | none | **approved (GATE 4, 2026-09-07)** - lands with 1.2.0 |
-| 3 | `docs-start` (intro, installation, quick-start) | problem-aware | What it is → what it refuses → four commands in order | P, R | ~400 words per page | run `--scan` | none | planned |
-| 4 | `docs-safety` (safety-model, developer-mode) | solution-sceptical | The chokepoint → the refusals, listed → the idle gate → what has no undo | **P and R only, no W** | as long as the subject needs | none | none | planned |
-| 5 | `docs-reference` (sections, cli-reference, profiles, admin-and-elevation, reports-and-logs) | evaluating | reference tables with a prose line per entry saying what it does *not* touch | P, minimal R | reference length | none | none | planned |
-| 6 | `docs-help` (troubleshooting, faq) | stuck, mid-task | symptom → cause → the exact command | P, W allowed once per page | short answers | the fixing command | FAQPage, 🔴 **page-scoped on `faq` only** | drafted, awaiting apply |
-| 7 | `docs-about` (author) | curious | who built it, the sibling tools, how to support it | W allowed, P underneath | short | the payment link | none | planned |
-| 8 | `ai-guide` | a machine, or a person writing automation | contract-first: the safe sequence, then the shapes | P only, no W | reference length | none | none | planned |
-| 9 | `site-front` (docs intro + `llms.txt`) | arriving cold from search | answer-first: what it is, what it refuses, one command | P, R | short | `npx windowsweep --scan` | WebSite + SoftwareApplication | planned |
-| 10 | `cli-strings` | mid-run, in a terminal | terse imperative; every action names its path or count | P dominant | one line each | the next command | none | planned |
-| 11 | `desktop-moment` (Home, Run, Splash, Account) | first-run or mid-run | the number, then what it will touch, then the action | P, R | a screen | Start the safe run | none | **recorded** (GATE 4, 2026-09-05) |
-| 12 | `desktop-safety` (Consent, Elevation) | being asked for permission | what is being asked → exactly what happens → how to revoke | **P and R only. 🔴 No humor at all** | a screen | accept or decline, equally weighted | none | **recorded** (GATE 4, 2026-09-05) |
-| 13 | `desktop-cockpit` (Sections, Picker, History, Settings, Report) | working | dense tables with a plain line above each | P, W in the empty states | a screen | varies per screen | none | **recorded** (GATE 4, 2026-09-05) |
-| 14 | `desktop-readme` (+ the docs-site desktop page) | evaluating the app | what it adds over the CLI, what it sends, the SmartScreen note | P, R | **~900 words** (raised from ~600, 2026-09-07) | download | none | **GATE 4 approved 2026-09-07, awaiting apply** |
-| 15 | `report-bodies` (the exported Markdown and HTML a run writes) | reading a record after the fact | headings and labels only; every number keeps the console's own vocabulary | P only | about thirty strings | none | none | **added 2026-09-07**, unwritten |
-| 16 | `site-home` (the marketing site's home bands and `/download`) | unaware to problem-aware, arriving cold | hero promise -> the gamble they already lost -> the guarantees as refusals -> proof -> the two install paths | P dominant, R strong, W once | a landing page, 12-15 bands | `npx windowsweep --scan` and the desktop download | SoftwareApplication, 🔴 **no `offers`, no `isAccessibleForFree`** | **added 2026-09-08**, unwritten |
-| 17 | `site-privacy` (`/privacy` and the footer notice line) | being told, not asked | the one line -> the four destinations -> the refusals -> the CLI's zero-network fact | **P and R only. 🔴 No humor at all** | one page | none | none | **added 2026-09-08**, unwritten |
-| 18 | `site-app` (sign-in, `/contact`, `/account`, `/admin`, empty and error states, 404) | working | plain lines above dense tables; every action names what it does | P, W in the empty states | a screen each | varies per screen | none | **added 2026-09-08**; written and through GATE 4 on 2026-09-13 (pre-authorised), applied with its code preconditions |
-| 19 | `site-front` for the SITE (its `llms.txt`, per-route `<title>`/description, the JSON-LD text) | a machine, or a search result | answer-first | P only | short | none | WebSite + Organization | **added 2026-09-08**, unwritten |
+| 1 | `readme` | problem-aware, solution-sceptical | Problem → the gamble they already lost → the guarantees → proof → install | P dominant, R strong, W twice | existing structure, fixed anchors | `npx windowsweep --scan` | SoftwareApplication (docs site only) | **recorded 2026-09-13** - applied `0b17870` (W twice by amendment, 2026-09-08) |
+| 2 | `tagline` | unaware, scanning a list | one sentence, no context assumed | P only | ≤ 110 chars, 🔴 **FIVE** places must agree | none | none | **recorded 2026-09-13** - applied in CLI 1.2.0 (`727d3a6`) and every tracked place |
+| 3 | `docs-start` (intro, installation, quick-start) | problem-aware | What it is → what it refuses → four commands in order | P, R | ~400 words per page | run `--scan` | none | **recorded 2026-09-13** - applied `b961e7c`, mirrored |
+| 4 | `docs-safety` (safety-model, developer-mode) | solution-sceptical | The chokepoint → the refusals, listed → the idle gate → what has no undo | **P and R only, no W** | as long as the subject needs | none | none | **recorded 2026-09-13** - applied `ece0ff2`, mirrored |
+| 5 | `docs-reference` (sections, cli-reference, profiles, admin-and-elevation, reports-and-logs) | evaluating | reference tables with a prose line per entry saying what it does *not* touch | P, minimal R | reference length | none | none | **recorded 2026-09-13** - applied `58b8ab7`, mirrored |
+| 6 | `docs-help` (troubleshooting, faq) | stuck, mid-task | symptom → cause → the exact command | P, W allowed once per page | short answers | the fixing command | FAQPage, 🔴 **page-scoped on `faq` only** | **recorded 2026-09-13** - applied `b6bd940`, mirrored |
+| 7 | `docs-about` (author) | curious | who built it, the sibling tools, how to support it | W allowed, P underneath | short | the payment link | none | **recorded 2026-09-13** - applied `b6bd940`, mirrored |
+| 8 | `ai-guide` | a machine, or a person writing automation | contract-first: the safe sequence, then the shapes | P only, no W | reference length | none | none | **recorded 2026-09-13** - applied `58b8ab7`, mirrored |
+| 9 | `site-front` (docs intro + `llms.txt`) | arriving cold from search | answer-first: what it is, what it refuses, one command | P, R | short | `npx windowsweep --scan` | WebSite + SoftwareApplication | **recorded 2026-09-13** - applied to the docs site (windowsweep-docs `ee831e5`), mirrored `1bb9fd2` |
+| 10 | `cli-strings` | mid-run, in a terminal | terse imperative; every action names its path or count | P dominant | one line each | the next command | none | **recorded 2026-09-13** - applied in CLI 1.2.0 (`727d3a6`) |
+| 11 | `desktop-moment` (Home, Run, Splash, Account) | first-run or mid-run | the number, then what it will touch, then the action | P, R | a screen | Start the safe run | none | **recorded** (GATE 4, 2026-09-05); **re-recorded 2026-09-13** with GATE 4 round 7's amendments, dummy first (`7e78de7`) |
+| 12 | `desktop-safety` (Consent, Elevation) | Consent: being told (a notice, not a request) · Elevation: being asked for a Windows permission | Consent: what is sent -> exactly what happens -> what is never sent · Elevation: what each section does -> the read-only measure first -> the UAC prompt | **P and R only. 🔴 No humor at all** | a screen | Consent: one Continue · Elevation: measure without elevating first, then the elevated run | none | **re-recorded 2026-09-13** - Consent a notice since the owner removed the opt-out (2026-09-07; verified against `desktop/src/screens/Consent.tsx`, one `onContinue`, no decline path), Elevation per round 7 (`7e78de7`); first recorded GATE 4 2026-09-05 |
+| 13 | `desktop-cockpit` (Sections, Picker, History, Settings, Report) | working | dense tables with a plain line above each | P, W in the empty states | a screen | varies per screen | none | **recorded** (GATE 4, 2026-09-05); **re-recorded 2026-09-13** - the populated Picker, its not-asked state, the selection file, D-37's chips, dummy first (`7e78de7`) |
+| 14 | `desktop-readme` (+ the docs-site desktop page) | evaluating the app | what it adds over the CLI, what it sends, the SmartScreen note | P, R | **~900 words** (raised from ~600, 2026-09-07) | download | none | **recorded 2026-09-13** - applied `87491d5` (GATE 4 2026-09-07) |
+| 15 | `report-bodies` (the exported Markdown and HTML a run writes) | reading a record after the fact | headings and labels only; every number keeps the console's own vocabulary | P only | about thirty strings | none | none | **recorded 2026-09-13** - applied in CLI 1.2.0 (`727d3a6`); "Freed" -> "Reclaimed" and the hero label stand (owner, D19) |
+| 16 | `site-home` (the marketing site's home bands and `/download`) | unaware to problem-aware, arriving cold | hero promise -> the gamble they already lost -> the guarantees as refusals -> proof -> the two install paths | P dominant, R strong, W once | a landing page, 12-15 bands | `npx windowsweep --scan` and the desktop download | SoftwareApplication, 🔴 **no `offers`, no `isAccessibleForFree`** | **recorded 2026-09-13** - GATE 4 2026-09-13, applied web `377a6f2`; band 10 "opt-out" -> "switch" `85752cc` |
+| 17 | `site-privacy` (`/privacy` and the footer notice line) | being told, not asked | the one line -> the four destinations -> the refusals -> the CLI's zero-network fact | **P and R only. 🔴 No humor at all** | one page | none | none | **recorded 2026-09-13** - GATE 4 2026-09-13, applied web `377a6f2` |
+| 18 | `site-app` (sign-in, `/contact`, `/account`, `/admin`, empty and error states, 404) | working | plain lines above dense tables; every action names what it does | P, W in the empty states | a screen each | varies per screen | none | **recorded 2026-09-13** - GATE 4 2026-09-13 (pre-authorised, #15 taken in), applied web `07aa763`, follow-ups `85752cc` |
+| 19 | `site-front` for the SITE (its `llms.txt`, per-route `<title>`/description, the JSON-LD text) | a machine, or a search result | answer-first | P only | short | none | WebSite + SoftwareApplication + Person (ND-2: schema mirrors visible content, and no page names an organisation) | **recorded 2026-09-13** - GATE 4 2026-09-13, applied web `377a6f2`; llms.txt "opt-out" -> "switch" `85752cc` |
 
 **Order of writing** (owner decision 2026-09-05, "story first, then the app"): rows **11, 12, 13** first,
 because RW-093 writes their approved words into the click dummy before any app code is built against them.
@@ -57,9 +59,11 @@ Questions the audience actually types, each with an answer-first sentence of 60 
 
 🔴 **Source, stated honestly: these are derived from the product's own FAQ and troubleshooting pages, the
 sibling tools' documentation, and the phrasing already in the README's keyword line. There is no Search
-Console data for this project yet** - the docs domain has never resolved, so no query report exists. No
-search volume is claimed or invented. Once the domain is live and Search Console has data, this table is
-revised against real queries (RW-040 unblocks that).
+Console data for this project yet** - the docs domain has been live over HTTPS since 2026-09-12 and the site
+since 2026-09-08, but no Search Console or Bing property has been verified yet (the owner's rows: product
+MANUAL-TASKS, web MANUAL-TASKS row 2), so no query report exists. No search volume is claimed or invented.
+Once a property has data, this table is revised against real queries (RW-040). *(Corrected 2026-09-13: it
+said the docs domain had never resolved.)*
 
 | # | Question | Answer-first sentence | Keywords | Surface | Freshness |
 |---|---|---|---|---|---|
@@ -69,7 +73,7 @@ revised against real queries (RW-040 unblocks that).
 | 4 | is it safe to use a windows cleaner / will it delete my files | Every deletion passes through one function with a declared folder, and personal folders are refused unconditionally - no flag overrides it. Personal files you do select go to the Recycle Bin, not to nothing. | safe windows cleaner, cleaner deleted my files | 4, 1 | stable |
 | 5 | how to see what a cleanup tool will delete before it deletes it | `--scan` measures every target and deletes nothing; `--dry-run` performs the whole run and writes nothing. The rehearsal is the same command as the performance, minus one word. | dry run cleanup, preview before delete | 3, 4 | stable |
 | 6 | windows update cache / SoftwareDistribution taking up space | Section 12 clears the Windows Update cache, Delivery Optimization and the servicing logs. It needs an elevated console, so it skips with the exact command when you are not elevated. | windows update cache, softwaredistribution folder | 5 | stable |
-| 7 | does this cleanup tool send my data anywhere | No. The command-line tool makes no network calls at all, and its own test suite fails the build if any appear. The desktop app can send analytics and sends nothing until you accept. | no telemetry cleaner, offline disk cleanup | 9, 4 | **re-check on every desktop release** |
+| 7 | does this cleanup tool send my data anywhere | The command line sends nothing at all: it makes no network calls, and its own test suite fails the build if any appear. The desktop window and the website send analytics - usage events and crash reports, never a file path - and there is no switch. (Corrected 2026-09-13; the old answer said the app sends nothing until you accept.) | no telemetry cleaner, offline disk cleanup | 9, 4 | **re-check on every desktop release** |
 | 8 | how to run a disk cleanup on a schedule on windows | `--install-task` registers a weekly Scheduled Task that runs the safe batch and notifies you. It never runs an interactive section, and it refuses to install from an npx cache, which Windows evicts. | scheduled disk cleanup, weekly cleanup task | 5, 6 | stable |
 
 **Internal-link floor:** every indexed page links to the safety model and to one reference page. The safety

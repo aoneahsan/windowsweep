@@ -588,3 +588,104 @@ The S-017 `account.syncedLede` classification (W or P) raised by the site-app de
 schema cell (`WebSite + SoftwareApplication + Person`); the family's word is **switch**, and site-home still
 carries "There is no opt-out" in its applied band-10 copy; content-map line 72 still says the desktop app
 "sends nothing until you accept" and line 60 that the docs domain "has never resolved" - both false now.
+
+## 2026-09-13 (later) - the keeper batch (plan v3 W6), recorded in the main session
+
+**Why the main session holds the pen:** the batch was dispatched to `story-bible-keeper` twice and both
+dispatches froze right after announcing their skill loadout; neither wrote a byte, and each was stopped. The
+batch is record-keeping the orchestrator already holds, and no gate is decided here - GATE 4 was given for
+every surface below under the owner's pre-authorisation (2026-09-07, D12), each on its stated condition.
+
+### Every surface, recorded (content map status cells now carry these commits)
+
+| Row | Surface | Applied |
+|---|---|---|
+| 1 | readme | `0b17870` (W twice, by the 2026-09-08 amendment) |
+| 2 | tagline | CLI 1.2.0 (`727d3a6`) and every tracked place |
+| 3-8 | docs-start · docs-safety · docs-reference · docs-help · docs-about · ai-guide | `b961e7c` · `ece0ff2` · `58b8ab7` · `b6bd940` · `b6bd940` · `58b8ab7`, each mirrored to the docs site |
+| 9 | site-front (the docs) | windowsweep-docs `ee831e5`, mirrored `1bb9fd2` |
+| 10, 15 | cli-strings · report-bodies | CLI 1.2.0 (`727d3a6`) |
+| 11, 13 | desktop-moment · desktop-cockpit | first recorded 2026-09-05; re-recorded with GATE 4 round 7's amendments and the Picker (`7e78de7`), dummy first |
+| 12 | desktop-safety | re-recorded - the corrections below |
+| 14 | desktop-readme | `87491d5` |
+| 16, 17, 19 | site-home · site-privacy · site-front-site | windowsweep-web `377a6f2`; the "switch" correction `85752cc` |
+| 18 | site-app | windowsweep-web `07aa763`, follow-ups `85752cc` |
+
+### Corrections to approved artefacts - each forced by an owner decision or a release, none a creative choice
+
+- **Row 12 (desktop-safety), three cells.** "being asked for permission" / "-> how to revoke" / "accept or
+  decline, equally weighted" described a choice the owner removed on 2026-09-07. Verified against
+  `desktop/src/screens/Consent.tsx`: one `onContinue`, no decline path. The row now keeps the two screens
+  apart - Consent is being told, Elevation is being asked for a Windows permission.
+- **Question row 7.** "The desktop app can send analytics and sends nothing until you accept" became: the
+  command line sends nothing at all; the desktop window and the website send analytics, never a file path, and
+  there is no switch. Built from approved wording (`/privacy`'s lede, `docs/desktop.md`).
+- **Row 19's schema** is `WebSite + SoftwareApplication + Person` (ND-2, 2026-09-13), not `+ Organization`.
+- **The question map's honesty note** said the docs domain had never resolved; it has been live over HTTPS
+  since 2026-09-12. The dated GATE 2 record further down says the same and stays as written - it was true
+  then.
+- **The glossary gains "switch"** (never "opt-out"). Three shipped site strings still said it and were
+  corrected dummy first (windowsweep-web `85752cc`): `home.privacy.web.noOptOut` *"There is no opt-out switch.
+  This is a notice, not a consent request."* -> *"There is no switch. This is a notice, not a consent
+  request."*; `seo.privacy.description` *"... to four destinations, with no opt-out."* -> *"... to four
+  destinations. There is no switch."*; `llms.txt` *"There is no opt-out."* -> *"There is no switch."* A
+  naming correction to match `/privacy`'s lede and `docs/desktop.md`; no sentence was otherwise rewritten.
+- **Checked and already true, so not edited:** Bible section 3's commitments 2 and 3 (corrected 2026-09-07,
+  the blockquote under section 3) and fingerprint sentence 9 (*"Never a file path, never your user name,
+  never the contents of anything."*).
+
+### Desktop strings that changed with GATE 4 round 7 and the Picker work (`7e78de7`), by surface
+
+Every one was written into the click dummy first and recorded in `desktop/design/README.md`'s round-7
+amendment; the app copies the dummy.
+- **desktop-moment:** the Run log heading *Log* and its sub-line (D-30); the drives line and *reclaimable on
+  C:* and the switch named *Weekly scheduled run* (D-32); the Account eyebrow, bold phrase and Sync band
+  (D-38); `home.heldBackCount_*`; the status-bar notes on History, Report, Picker and Account;
+  `pending.body` reworded so no rendered string names the dummy; `pending.runProgress` deleted (D-31).
+- **desktop-safety:** the Elevation eyebrow *Sections 12-16 and 20* built from the catalogue, its bold phrase
+  and code spans (D-29); the command line carrying the three thresholds and the inline measure note (D-27,
+  D-28).
+- **desktop-cockpit:** chip 18 *partial downloads* and chip 19 *large files*, section 18 in the engine's own
+  description (D-37, which reopened S-038/S-039); *Held back right now: {amount}.* (D-26); the Sections
+  eyebrow removed and the tablist named *Settings sections* (D-34, D-35); the populated Picker and its
+  not-asked state (*Nothing has been offered yet.* / *A dry-run costs nothing and deletes nothing.* /
+  *Dry-run*); the selection-file field's words; the schedule acknowledgements *Scheduled for Sundays at
+  03:00.* / *The task was removed.*, which moved from the app into the dummy.
+- **Three new functional lines, not from the dummy's first draft:** *{{name}} is not a .txt or .list file* ·
+  *That file could not be read.* · *No candidate here matches {{line}}* (the engine's own `--select-file`
+  note). The dummy now draws all three.
+- Plural forms across 13 counted strings (i18next plural keys) changed the form, not the words.
+
+**Voice check:** none of these alters the voice or the palette. They are labels and plain statements in P,
+the safety surface carries no light line, and the three new lines are ordinary refusals that name the file.
+Recorded as applied.
+
+### Site strings from the follow-up batch (`85752cc`)
+
+No catalogue key was added or changed apart from the "switch" correction. Dummy-only: `admin.inbox.refused`
+is now drawn (`admin-inbox.html?refuse=1`), the header chip reads 1.2.0, `error.html`'s title is S-040's
+heading, the counter reads *0 / 4,000*.
+
+### Open items, resolved with their source
+
+| # | Item | Resolution |
+|---|---|---|
+| 1 | desktop-safety no longer described the product | re-recorded; row 12 corrected |
+| 2 | fingerprint sentence 9 and Bible 3's third commitment | already corrected on 2026-09-07; verified, not edited |
+| 3 | rows 16-19 added under D12 | recorded as an amendment to the approved map, not a re-approval |
+| 4 | readme "W once" vs two shipped W lines | option (a), taken 2026-09-08; row 1 reads W twice |
+| 5 | question row 7 false | corrected |
+| 6 | row 1's self-check drifted two words | the line editor's deliberate change; the applied README is the record, so the draft's table was not re-measured |
+| 7 | "Freed" -> "Reclaimed", the dry-run hero label | the owner: both stand (D19, 2026-09-12) |
+| 8 | `--scan` ignored the developer flag | fixed in CLI 1.2.0 (self-test check 18e) |
+| 9 | row 12 false in three cells | corrected |
+| 10 | site-front's three stale claims | corrected before apply; applied `ee831e5` |
+| 11 | the docs site unreachable | live since 2026-09-08, HTTPS since 2026-09-12 |
+| 12 | four site-dummy edits owed | landed in windowsweep-web `f528f73`; band 15 now closes on both install paths |
+| 13 | C-091's label names one of three outcomes | **stays open**: an engine string, deferred to the 1.3.0 cascade (RW-121) |
+| 0 | the fingerprint is `calibrated: false` | **stays open**, not blocking: it needs the owner's own samples |
+
+Also recorded: S-017 (`account.syncedLede`) is classed P, which keeps row 18's palette. site-app's reported #7
+(the desktop sync module has no caller) is product TASK-013, so S-017 and S-019 cannot yet name their trigger.
+Two corrections were made outside the pipeline and neither is authorship: `/privacy`'s caption lost a false
+sentence, and the feed's 1.2.0 entry was assembled from the CHANGELOG's own items.

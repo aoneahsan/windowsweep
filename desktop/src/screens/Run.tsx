@@ -33,7 +33,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
 import { useIncludedScanTargets, useRunPreferences } from '../state/derived';
-import { formatBytes } from '../lib/format';
+import { formatBytes, formatBytesParts } from '../lib/format';
 import { isCleanupRun } from '../lib/cli';
 import { newRunId, run, safeBatchArgs } from '../lib/engine';
 import { safeRunSections } from '../lib/catalogue';
@@ -268,8 +268,9 @@ export function RunScreen() {
                 <span>{t('home.notMeasured')}</span>
               ) : (
                 <>
-                  <span>{formatBytes(heroBytes).split(' ')[0]}</span>
-                  <span className="unit">{formatBytes(heroBytes).split(' ')[1]}</span>
+                  {/* `fmt.bytesParts` - the hero's own two decimals (D-46). */}
+                  <span>{formatBytesParts(heroBytes).value}</span>
+                  <span className="unit">{formatBytesParts(heroBytes).unit}</span>
                 </>
               )}
             </p>
@@ -455,8 +456,15 @@ export function RunScreen() {
             >
               {/* The dummy's own lines (`page-run.js:25-32`): a bare row inheriting
                   `.logview`'s mono type, and at rest its idle line, dimmed - not a
-                  sentence of this app's. */}
-              {log.length === 0 ? (
+                  sentence of this app's.
+
+                  🔴 AT REST IS AT REST (D-50, GATE 4 round 8). The store keeps the log
+                  of the last engine session, whatever it was - a Home scan leaves its
+                  lines, this machine's paths and drive table among them - and they
+                  used to sit here under "not started". Until this window starts a run
+                  (running, failed, or a cleanup run finished) the pane shows the
+                  dummy's idle line, as the hero above it shows its idle state. */}
+              {log.length === 0 || (notRunYet && phase !== 'running' && phase !== 'failed') ? (
                 <div className="l-dim">{t('run.idleHint')}</div>
               ) : (
                 log.map((entry, i) => (

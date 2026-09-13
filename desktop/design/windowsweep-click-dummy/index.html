@@ -222,6 +222,11 @@
               <div>
                 <p class="caps ink-3" style="margin-bottom:var(--sp-3)">Never touched</p>
                 <div class="chipfield" data-ws-protected></div>
+                <!-- GATE 4 round 8, D-52: the app's lead line and the engine's own category
+                     sentences (seed.js PROTECT_CATEGORIES), drawn here first (§10a). -->
+                <p class="t-xs ink-3" style="margin-top:var(--sp-4)">And these kinds of thing, wherever they are:</p>
+                <ul class="t-xs ink-3" data-ws-protected-cats
+                    style="margin:var(--sp-2) 0 0;padding-inline-start:var(--sp-5);display:flex;flex-direction:column;gap:var(--sp-1)"></ul>
               </div>
             </div>
           </details>
@@ -235,17 +240,21 @@
           <div class="c8">
             <div class="zone-label"><span class="caps">The last eight runs</span></div>
             <div class="panel pad" style="display:flex;gap:var(--sp-6);align-items:center;flex-wrap:wrap">
-              <div>
+              <div data-ws-last-figure>
                 <p class="num t-xl wide accent-ink" data-ws-text="lastFreed">0 B</p>
                 <p class="t-sm ink-3" data-ws-text="lastWhen">-</p>
               </div>
               <div style="flex:1;min-width:14rem" data-ws-spark></div>
-              <div class="panel pad" data-ws-spark-empty hidden style="flex:1;min-width:14rem">
-                <p><strong>No run has finished in this window yet.</strong></p>
+              <!-- GATE 4 round 8, D-53: before any run the band's own panel carries the two
+                   lines, and the figure, the chart and "Open the report" - which would all
+                   describe a run that does not exist - step aside. It was a panel inside the
+                   panel, beside a seeded figure. -->
+              <div data-ws-spark-empty hidden>
+                <p class="t-md wide">No run has finished in this window yet.</p>
                 <p class="t-sm ink-3">A dry-run costs nothing and deletes nothing, and it is recorded here
                   like any other run.</p>
               </div>
-              <a class="btn btn-sm" href="#reports" data-ws-action="soon">Open the report</a>
+              <a class="btn btn-sm" href="#reports" data-ws-action="soon" data-ws-last-open>Open the report</a>
             </div>
           </div>
           <div class="c4">

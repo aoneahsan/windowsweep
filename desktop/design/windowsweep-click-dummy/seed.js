@@ -139,6 +139,17 @@
     'C:\\Windows\\Installer', 'C:\\$WinREAgent', 'C:\\Windows.old'
   ];
 
+  /* GATE 4 round 8, D-52: the engine's OWN category sentences, verbatim - the constant
+     WS_PROTECT_CATEGORIES (lib/constants.ps1:33), which --list-targets prints and
+     --list --json publishes as protected.categories. Not seed: the window prints the
+     engine's words, so this dummy draws the same words rather than inventing a copy. */
+  var PROTECT_CATEGORIES = [
+    'every drive root, Windows, System32, Program Files, ProgramData, the user profile root and AppData roots',
+    'browser profile data (Local Storage, IndexedDB, cookies, history, bookmarks, extensions, PWA CacheStorage)',
+    'editor user data (settings, globalStorage, local History); UWP LocalState; toolchains (nvm, npm globals, corepack, ...)',
+    'NTUSER.DAT, UsrClass.dat, hiberfil/pagefile/swapfile (only powercfg touches hiberfil), Prefetch, Windows\\Installer, WinSxS (DISM only)'
+  ];
+
   var DRIVES = [
     { letter:'C:', total: 272.9*GB, free: 21.0*GB,  reclaimable: 28.4*GB },
     { letter:'D:', total: 203.4*GB, free: 55.8*GB,  reclaimable: 12.9*GB },
@@ -168,7 +179,7 @@
   window.wsSeed = {
     GB: GB, MB: MB,
     TIERS: TIERS, SECTIONS: SECTIONS, TARGETS: TARGETS, CANDIDATES: CANDIDATES,
-    PROTECTED: PROTECTED, DRIVES: DRIVES, RUNS: RUNS, GLOBALS: GLOBALS,
+    PROTECTED: PROTECTED, PROTECT_CATEGORIES: PROTECT_CATEGORIES, DRIVES: DRIVES, RUNS: RUNS, GLOBALS: GLOBALS,
     SAFE_BATCH: SAFE_BATCH, SAFE_BATCH_ADMIN: SAFE_BATCH_ADMIN,
     INTERACTIVE: INTERACTIVE, PROFILES: PROFILES,
     ENGINE_VERSION: '1.1.0', APP_VERSION: '0.1.0-design'

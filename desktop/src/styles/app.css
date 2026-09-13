@@ -20,5 +20,6 @@
 @import './shell/08-forms.css';
 @import './shell/09-navigation-overlays-display.css';
 @import './shell/10-charts-interaction.css';
+@import './shell/11-history-report.css';
 
 @custom-variant light (&:where([data-appearance='light'], [data-appearance='light'] *));

@@ -36,6 +36,12 @@ interface CommonProps {
   size?: 'sm' | 'lg';
   /** Pending while the work runs, done for its moment afterwards. */
   state?: ControlState;
+  /**
+   * `danger` paints the dummy's `btn-danger` in place of `btn-primary` - the
+   * destructive action of an alert dialog (`picker.html` `#pick-confirm`). It is
+   * still the primary control of its surface, so it is still reported here.
+   */
+  tone?: 'primary' | 'danger';
 }
 
 /**
@@ -48,10 +54,11 @@ type PrimaryButtonProps = CommonProps &
   ({ onPress: () => void; disabled?: boolean } | { onPress?: never; disabled: true });
 
 export function PrimaryButton(props: PrimaryButtonProps) {
-  const { control, label, size, state = 'idle', disabled = false } = props;
+  const { control, label, size, state = 'idle', disabled = false, tone = 'primary' } = props;
   const route = useRouterState({ select: (s) => s.location.pathname });
 
-  const className = size ? `btn btn-${size} btn-primary` : 'btn btn-primary';
+  const toneClass = tone === 'danger' ? 'btn-danger' : 'btn-primary';
+  const className = size ? `btn btn-${size} ${toneClass}` : `btn ${toneClass}`;
 
   return (
     <button

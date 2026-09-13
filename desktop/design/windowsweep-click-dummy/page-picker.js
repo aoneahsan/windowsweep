@@ -149,6 +149,9 @@
     keys.forEach(function (k) { secs[chosen[k].section] = 1; });
     window.wsWire.setText('pickWhere', 'across section' + (Object.keys(secs).length > 1 ? 's ' : ' ') +
       Object.keys(secs).join(', '));
+    /* D-49: 17's rows are deleted outright whichever mode is chosen. */
+    var line17 = document.querySelector('[data-ws-pick-17]');
+    if (line17) line17.hidden = !secs[17];
   }
 
   /* ---- the selection file ---------------------------------------------------
@@ -210,6 +213,16 @@
       settle('done', lines.length + ' path' + (lines.length === 1 ? '' : 's') + ', ' + matched + ' matched');
       warn(missed);
     }, function () { settle('rejected', 'That file could not be read.'); });
+  }
+
+  /* The app writes the selection file and opens the Run screen, where the engine's
+     own log carries what happened. This dummy has no engine, so the removal goes to
+     run.html - the way Sections' "Run selected" does - instead of a toast that
+     named a destination 17's rows never reach (D-49). */
+  function startRemoval() {
+    var go = document.querySelector('[data-ws-action="pickGo"]');
+    window.wsWidgets.pending(go, true);
+    setTimeout(function () { location.href = 'run.html'; }, 600);
   }
 
   function choose(id) {
@@ -281,18 +294,22 @@
         }
         if (a === 'pickGo') {
           var mode = document.querySelector('input[name="pick-mode"]:checked');
-          var perm = mode && mode.value === 'permanent';
           var n = Object.keys(chosen).length;
-          window.wsWidgets.pending(t, true);
-          setTimeout(function () {
-            window.wsWidgets.pending(t, false);
-            ws.toast(perm
-              ? 'This would ask you to confirm ' + n + ' permanent deletions first \u2013 a confirmation ' +
-                '--yes never answers.'
-              : 'Sent ' + n + ' item' + (n === 1 ? '' : 's') + ' to the Recycle Bin. Recoverable until ' +
-                'you empty it.',
-              { assertive: perm });
-          }, 800);
+          if (!n) return;
+          /* D-48 (GATE 4 round 8, decided): Permanent asks first, in the gallery's
+             destructive alert dialog. The toast that stood here promised that
+             confirmation without providing it. */
+          if (mode && mode.value === 'permanent') {
+            window.wsWire.setText('pickConfirmTitle', 'Remove ' + n + ' item' + (n === 1 ? '' : 's') +
+              ' permanently?');
+            window.wsWidgets.openDialog('pick-confirm');
+            return;
+          }
+          startRemoval();
+        }
+        if (a === 'pickGoPermanent') {
+          window.wsWidgets.closeDialog('pick-confirm');
+          startRemoval();
         }
       });
     }

@@ -40,7 +40,7 @@
   var heroShown = 0;
   function paintHero(bytes) {
     var n = $('[data-ws-hero-n]'), u = $('[data-ws-hero-u]');
-    if (!n) return;
+    if (!n || showEmpty) return;
     countTo(n, heroShown, bytes, function (v) {
       var p = fmt.bytesParts(v);
       n.textContent = p.n;
@@ -96,7 +96,12 @@
   }
 
   function renderMap() {
-    if (showEmpty) { applyEmptyStates(); return; }
+    if (showEmpty) {
+      applyEmptyStates();
+      var emptyTbl = $('[data-ws-map-table]');
+      if (emptyTbl) window.ReclaimMap.buildTable(emptyTbl, { children: [] }, excludeToggled);
+      return;
+    }
     var mount = $('[data-ws-map]');
     if (!mount) return;
     if (!map) map = new window.ReclaimMap(mount, { onToggle: excludeToggled });
@@ -110,7 +115,7 @@
     if (!mount) return;
     mount.textContent = '';
     var present = {};
-    db.derive.activeTargets().forEach(function (t) {
+    (showEmpty ? [] : db.derive.activeTargets()).forEach(function (t) {
       var s = db.section[t.section]; if (s) present[s.tier] = true;
     });
     S.TIERS.filter(function (t) { return present[t.key]; }).forEach(function (t) {
@@ -220,11 +225,12 @@
       row.appendChild(el('span', 'drive-name', d.letter));
 
       var cap = el('div', 'cap');
-      var usedPct = ((d.used - d.reclaimable) / d.total) * 100;
-      var reclPct = (d.reclaimable / d.total) * 100;
+      var recl0 = showEmpty ? 0 : d.reclaimable;
+      var usedPct = ((d.used - recl0) / d.total) * 100;
+      var reclPct = (recl0 / d.total) * 100;
       var a = el('i', 'cap-seg cap-used');  a.style.width = Math.max(0, usedPct) + '%';
       var b = el('i', 'cap-seg cap-recl pulse'); b.style.width = Math.max(0, reclPct) + '%';
-      b.title = fmt.bytes(d.reclaimable) + ' reclaimable on ' + d.letter;
+      if (!showEmpty) b.title = fmt.bytes(d.reclaimable) + ' reclaimable on ' + d.letter;
       cap.appendChild(a); cap.appendChild(b);
       row.appendChild(cap);
 
@@ -232,7 +238,8 @@
       right.style.textAlign = 'end';
       right.style.whiteSpace = 'nowrap';
       var free = el('div', 'num'); free.textContent = fmt.bytes(d.free) + ' free';
-      var recl = el('div', 'num accent-ink'); recl.textContent = '+' + fmt.bytes(d.reclaimable);
+      var recl = el('div', 'num accent-ink');
+      recl.textContent = showEmpty ? 'not measured' : '+' + fmt.bytes(d.reclaimable);
       right.appendChild(free); right.appendChild(recl);
       row.appendChild(right);
 
@@ -268,6 +275,7 @@
        block of dead space under Developer Mode. Four is enough to show the shape;
        the rest are one click away - the same answer as everywhere else on the page. */
     var SHOWN = 4;
+    if (showEmpty) { renderLadderUnmeasured(mount, SHOWN); return; }
     var rest = rows.slice(SHOWN);
     rows = rows.slice(0, SHOWN);
     rows.forEach(function (r) {
@@ -313,6 +321,38 @@
     }
   }
 
+  /* D-53 (GATE 4 round 8): before a scan the ladder still names the safe batch, in
+     catalogue order, and says of every rung that it is not measured - the window's
+     own rendering, drawn here so its words have an approved counterpart. */
+  function renderLadderUnmeasured(mount, shown) {
+    var ids = S.SAFE_BATCH.slice();
+    ids.slice(0, shown).forEach(function (id) {
+      var sec = db.section[id];
+      var rung = el('div', 'rung');
+      var left = el('div');
+      left.appendChild(el('div', 't-sm', sec ? sec.key : String(id)));
+      left.appendChild(el('div', 't-xs ink-3', 'not measured'));
+      rung.appendChild(left);
+      rung.appendChild(el('div', 'num t-sm', 'not measured'));
+      mount.appendChild(rung);
+    });
+    var rest = ids.slice(shown);
+    if (!rest.length) return;
+    var more = el('details', 'ladder-more');
+    var sum = el('summary');
+    sum.appendChild(el('span', null, 'and ' + rest.length + ' more'));
+    sum.appendChild(el('span', 'num accent-ink', 'not measured'));
+    more.appendChild(sum);
+    rest.forEach(function (id) {
+      var sec2 = db.section[id];
+      var line = el('div', 'rung-mini');
+      line.appendChild(el('span', 't-sm', sec2 ? sec2.key : String(id)));
+      line.appendChild(el('span', 'num t-sm ink-2', 'not measured'));
+      more.appendChild(line);
+    });
+    mount.appendChild(more);
+  }
+
   /* --------------------------------------------------------- needs a person */
   function renderNeeds() {
     var mount = $('[data-ws-needs]');
@@ -332,10 +372,11 @@
       card.appendChild(top);
 
       var n = el('p', 'num t-md wide');
-      n.textContent = fmt.bytes(r.bytes);
+      n.textContent = showEmpty ? 'nothing offered yet' : fmt.bytes(r.bytes);
       card.appendChild(n);
 
-      card.appendChild(el('p', 't-xs ink-3', r.count + ' item' + (r.count === 1 ? '' : 's') + ' waiting'));
+      var waiting = showEmpty ? 0 : r.count;
+      card.appendChild(el('p', 't-xs ink-3', waiting + ' item' + (waiting === 1 ? '' : 's') + ' waiting'));
 
       var t = el('span', 'tier tier-' + (s ? s.tier : 'recycle'));
       t.appendChild(el('span', 't-xs ink-3', s ? s.tier : ''));
@@ -362,6 +403,11 @@
       c.title = 'Refused regardless of any flag';
       mount.appendChild(c);
     });
+    var cats = $('[data-ws-protected-cats]');
+    if (cats) {
+      cats.textContent = '';
+      S.PROTECT_CATEGORIES.forEach(function (sentence) { cats.appendChild(el('li', null, sentence)); });
+    }
   }
 
   /* ------------------------------------------------------------- sparkline */
@@ -505,6 +551,41 @@
     renderLadder();
     renderLegend();
     renderRing();
+    applyBeforeScan();
+  }
+
+  /* D-53 (GATE 4 round 8): index.html?empty=1 is the WHOLE of Home before a scan, not
+     only its map and its last runs. The window has said all of this since the first
+     unmeasured build - "not measured", "Scan first", "nothing offered yet" - and the
+     dummy seeded every one of those bands, so its words had no approved counterpart.
+     Re-applied after every refresh, because the switches and the slider refresh. */
+  function applyBeforeScan() {
+    if (!showEmpty) return;
+    var n = $('[data-ws-hero-n]'), u = $('[data-ws-hero-u]');
+    if (n) n.textContent = 'not measured';
+    if (u) u.textContent = '';
+    var sub = $('.hero-sub');
+    if (sub) sub.textContent = 'Nothing has been measured yet. A scan reads sizes and deletes nothing.';
+    var scanLabel = $('[data-ws-action="scan"] .btn-label');
+    if (scanLabel) scanLabel.textContent = 'Scan';
+    var reclaim = $('[data-ws-action="reclaim"]');
+    if (reclaim) {
+      reclaim.disabled = true;
+      var label = reclaim.querySelector('.btn-label');
+      if (label) label.textContent = 'Scan first';
+    }
+    var ring = $('[data-ws-ring]');
+    if (ring) ring.hidden = true;
+    setText('reclaimBtn', '-');
+    setText('sectionCount', '0');
+    setText('devHeld', 'not measured');
+    var heldN = $('[data-ws-text="devHeldN"]');
+    if (heldN && heldN.parentElement) heldN.parentElement.hidden = true;
+    setText('safeTotal', 'not measured');
+    ['[data-ws-last-figure]', '[data-ws-last-open]'].forEach(function (sel) {
+      var node = $(sel);
+      if (node) node.hidden = true;
+    });
   }
 
   /* --------------------------------------------------------------- actions */

@@ -59,7 +59,7 @@ import {
   safeRunBytes,
   toMapTargets,
 } from '../lib/reclaim';
-import { formatBytes } from '../lib/format';
+import { formatBytes, formatBytesParts } from '../lib/format';
 import { scanArgs, safeBatchArgs } from '../lib/engine';
 import { useEngineRun } from '../state/use-engine-run';
 import { safeRunSections } from '../lib/catalogue';
@@ -324,8 +324,9 @@ export function Home() {
                 <span>{t('home.notMeasured')}</span>
               ) : (
                 <>
-                  <span>{formatBytes(reclaimable).split(' ')[0]}</span>
-                  <span className="unit">{formatBytes(reclaimable).split(' ')[1]}</span>
+                  {/* `fmt.bytesParts` - the hero's own two decimals (D-46). */}
+                  <span>{formatBytesParts(reclaimable).value}</span>
+                  <span className="unit">{formatBytesParts(reclaimable).unit}</span>
                 </>
               )}
             </p>

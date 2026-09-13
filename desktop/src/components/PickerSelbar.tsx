@@ -14,9 +14,12 @@
  * matters - "The Recycle Bin can be emptied later. Permanent has no undo." It sits
  * next to the control, not in a toast after the fact.
  *
- * ⚠️ THE MODE GOVERNS THE `recycle` SECTIONS ONLY - 18, 19 and 23. Section 17 is tier
+ * 🔴 THE MODE GOVERNS THE `recycle` SECTIONS ONLY - 18, 19 and 23. Section 17 is tier
  * `rebuilds` and its artefacts go through `Remove-PathSafe` outright whichever way
- * this is set (`modules/projects.ps1:157`); `lib/engine-args.ts` records the same.
+ * this is set (`modules/projects.ps1:157`). While one of its rows is chosen the bar
+ * says so, in the words decided with D-48 (GATE 4 round 8, D-49): a bar reading
+ * "Recycle Bin" over rows that are deleted outright understates deletion, which is
+ * round 7's D-25 again.
  */
 
 import { useTranslation } from 'react-i18next';
@@ -38,6 +41,7 @@ export function PickerSelbar({
   failed,
   onClear,
   onRemove,
+  outright,
 }: {
   count: number;
   bytes: number;
@@ -50,11 +54,16 @@ export function PickerSelbar({
   failed: string | null;
   onClear: () => void;
   onRemove: () => void;
+  /** A row of section 17 is chosen - those rows go outright whichever mode is set. */
+  outright: boolean;
 }) {
   const { t } = useTranslation();
 
   return (
-    <div className="selbar" hidden={count === 0}>
+    /* The consequence line takes a full-width line of its own under the controls, as
+       `picker.html` now draws it: with section 17's sentence the one-row bar squeezed
+       its own controls ("Remove these" broke onto two lines). */
+    <div className="selbar" hidden={count === 0} style={{ flexWrap: 'wrap', rowGap: 'var(--sp-1)' }}>
       <span className="num t-md wide">{count}</span>
       <span className="t-sm ink-2">{t('picker.chosenWord')}</span>
       <span className="tb-sep" />
@@ -105,12 +114,15 @@ export function PickerSelbar({
           label={t('picker.remove')}
         />
       </div>
-      <p className="t-sm ink-3">{t('picker.consequence')}</p>
+      <p className="t-sm ink-3" style={{ flexBasis: '100%' }}>
+        {t('picker.consequence')}
+        {outright ? <> {t('picker.consequence17')}</> : null}
+      </p>
       {/* 🔴 The engine's own refusal, verbatim, beside the button that was pressed.
           It appears only when nothing ran: once a run has started its reasons go
           to the Run screen's log with the engine's other lines. */}
       {failed === null ? null : (
-        <p className="t-xs" role="alert" style={{ color: 'var(--c-warn-ink)' }}>
+        <p className="t-xs" role="alert" style={{ color: 'var(--c-warn-ink)', flexBasis: '100%' }}>
           {failed}
         </p>
       )}

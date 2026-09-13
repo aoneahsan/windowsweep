@@ -190,20 +190,39 @@ export function ReclaimMap({
      unmounts one and mounts the other, the ResizeObserver stays attached to the
      node that left, and `width` freezes at whatever it was when the map was
      empty - so the first scan could lay the treemap out against a stale frame.
-     Switching only the children keeps the observed node identical. */
+     Switching only the children keeps the observed node identical.
+
+     🔴 D-39 (GATE 4 round 8): WITH NOTHING TO DRAW, THE FRAME IS HIDDEN AND THE
+     DUMMY'S PANEL STANDS IN ITS PLACE. The note used to sit `position: absolute`
+     inside a frame whose only content it was - 2 px of borders with
+     `overflow: hidden` - so 1 px of it showed, on every Home before a scan, and a
+     visibility check passes clipped text. `index.html?empty=1` draws the state as
+     a `panel pad` beside the map, so the app does too. The frame stays MOUNTED
+     while hidden, so the ResizeObserver above keeps watching the same node and
+     reports the real width the moment a scan gives it tiles. */
   return (
-    <div className="tm-frame" ref={rootRef} onMouseLeave={() => { setTip(null); }}>
+    <>
       {/* 🔴 The zero state and the unmeasured state are two different things and
-          the app has both. The dummy only has the first, because its numbers are
-          seeded and there is no "before a scan" for it. */}
+          the app has both. Unmeasured is `index.html?empty=1`'s panel, word for word
+          and class for class. Zero keeps the type of the dummy's own zero note
+          (`reclaim-map.js` `renderZero`) in the same box: the dummy also draws the
+          protected locations as ghost tiles behind that note, which this window does
+          not - the note, at least, is now seen. */}
       {!laid ? (
-        <div className="tm-empty-note">
-          <p className="t-lg wide">{measured ? t('home.mapZeroTitle') : t('home.mapUnmeasuredTitle')}</p>
-          <p className="t-sm ink-2" style={{ maxWidth: '30rem' }}>
-            {measured ? t('home.mapZeroBody') : t('home.mapUnmeasuredBody')}
-          </p>
-        </div>
-      ) : (
+        measured ? (
+          <div className="panel pad">
+            <p className="t-lg wide">{t('home.mapZeroTitle')}</p>
+            <p className="t-sm ink-2" style={{ maxWidth: '30rem' }}>{t('home.mapZeroBody')}</p>
+          </div>
+        ) : (
+          <div className="panel pad">
+            <p><strong>{t('home.mapUnmeasuredTitle')}</strong></p>
+            <p className="t-sm ink-3">{t('home.mapUnmeasuredBody')}</p>
+          </div>
+        )
+      ) : null}
+    <div className="tm-frame" ref={rootRef} hidden={!laid} onMouseLeave={() => { setTip(null); }}>
+      {!laid ? null : (
       <svg
         className="tm-svg"
         viewBox={`0 0 ${String(frame.w)} ${String(frame.h)}`}
@@ -415,5 +434,6 @@ export function ReclaimMap({
         </div>
       ) : null}
     </div>
+    </>
   );
 }

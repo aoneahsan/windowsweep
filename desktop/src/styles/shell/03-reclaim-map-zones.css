@@ -50,10 +50,6 @@
 .tm-tile[data-draining='true'] { opacity: 0; transition: opacity var(--d-mod) var(--ease-exit); }
 .tm-label { pointer-events: none; font-family: var(--ff-ui); font-weight: 600; }
 .tm-sub   { pointer-events: none; font-family: var(--ff-mono); }
-.tm-empty-note {
-  position: absolute; inset: 0; display: grid; place-content: center; gap: var(--sp-2);
-  text-align: center; padding: var(--sp-6);
-}
 .tm-tip {
   position: absolute; z-index: 5; pointer-events: none;
   background: var(--c-bleed); color: var(--c-ink);

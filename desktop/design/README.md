@@ -712,3 +712,137 @@ The app did not change; the dummy now matches what its own `NAV` asked for.
 `gate4/GATE4-REPORT.md` carries the list, appended the same day: the two sync sentences (`pending-wave`,
 TASK-013), `app 0.1.0-design` (`prototype`), and every toast still in the dummy, each with its class. The
 Remove-these, scan, dry-run and Reclaim toasts stay: each stands in for a run this dummy cannot perform.
+
+## Amendment - 2026-09-13 (round 8): the removal path, and Home before a scan
+
+Round 8 (`gate4/GATE4-REPORT.md`, R8.4 and R8.6) closed round 7 and found three blockers on the Picker's
+removal path, which no round had reached before. All three were the dummy's to change first. Two of its gap
+findings were the dummy's alone. The app followed each change; its own items are listed at the end.
+
+### 1. `shared.css` - the selection bar's segment joins the ink reset (D-47)
+
+`.selbar` swaps to the bleed inks, and the reset list that hands a segment back its base inks only named
+`.band-bleed .seg`. In light theme the selected "Recycle Bin" read 1.09:1, and "Permanent" 2.24:1.
+`.selbar .seg` is now in the list, with a comment naming it the fourth occurrence. Measured after, both
+sides, a row chosen:
+
+| theme | selected option | unselected option |
+|---|---|---|
+| light | 16.74 : 1 | 4.87 : 1 |
+| dark | 15.52 : 1 | 6.67 : 1 |
+
+### 2. `picker.html` + `page-picker.js` - a Permanent removal is confirmed first (D-48, decided)
+
+Decided 2026-09-13 (`docs/story/decision-log.md`, "GATE 4 round 8's decision point D-48"). With the mode on
+Permanent, "Remove these" opens the gallery's destructive alert dialog (`g-overlays.js`, "alert
+(destructive)") as `#pick-confirm`. Cancel is focused first, Escape means Cancel, and only "Remove
+permanently" goes on. Recycle Bin mode keeps its single press, because it is recoverable.
+
+| part | words |
+|---|---|
+| title | *Remove {count} item permanently?* / *Remove {count} items permanently?* |
+| body | *They do not go to the Recycle Bin. Permanent has no undo.* - the second sentence is the bar's own |
+| buttons | *Cancel* · *Remove permanently* |
+
+The stand-in toast for both modes is gone. It promised the confirmation ("This would ask you to confirm…")
+without providing it, and told the Recycle Bin story ("Sent N items to the Recycle Bin") about rows of 17
+that never reach it. A removal now goes to `run.html`, the way Sections' "Run selected" does. The window
+opens its Run screen at the same point. So `A-2`'s entry for `page-picker.js:289` describes a toast that no
+longer exists.
+
+### 3. `picker.html` + `page-picker.js` - what the mode governs (D-49, decided with D-48)
+
+Section 17's artefacts go through `Remove-PathSafe` whichever mode is set (`modules/projects.ps1:157`).
+While one of its rows is chosen, the consequence line ends: *"Section 17's rows are deleted outright
+whichever you choose; this choice covers 18, 19 and 23."* It is hidden otherwise.
+
+**One layout change came with it.** On one row, the longer line squeezed the bar's own controls: "Remove
+these" broke onto two lines, and so did the figure. So the bar wraps, and the consequence line takes a
+full-width row of its own under the controls. The window draws the same.
+
+### 4. `index.html` + `wire.js` - `?empty=1` is the whole of Home before a scan (D-53)
+
+It emptied only the map and the last runs, while every other band stayed seeded. So the window's
+before-a-scan words had no approved counterpart. They were app-first, the wrong way round. They are drawn
+here now:
+
+| band | before a scan |
+|---|---|
+| hero | *not measured* · *Nothing has been measured yet. A scan reads sizes and deletes nothing.* · **Scan** · **Scan first** (disabled) · the ring is not drawn |
+| map | the existing panel; the table keeps its header and has no rows; the legend has no tier chips |
+| drives | each rail's free space, and *not measured* for its reclaimable slice |
+| developer mode | *not measured*, with no count line |
+| ladder | every rung of the safe batch, in catalogue order, *not measured*; *and 7 more*; the total *not measured* |
+| these need a person | *nothing offered yet* · *0 items waiting* |
+| last runs | the band's own panel carries the two lines; the figure, the chart and "Open the report" step aside. It used to be a panel inside the panel, beside a seeded figure, and it now has the window's anatomy |
+| rail foot | *-* · *across 0 sections* |
+
+### 5. `index.html` + `seed.js` + `wire.js` - what is never touched, in the engine's words (D-52)
+
+Under the chip field: the window's lead *"And these kinds of thing, wherever they are:"*, then the engine's
+four category sentences, verbatim (`seed.js` `PROTECT_CATEGORIES`, copied from `WS_PROTECT_CATEGORIES`,
+`lib/constants.ps1:33`). These are the engine's words, not seed text.
+
+### 6. `app.js` - the drawer says what it opens (D-54)
+
+The Menu button carries `aria-controls="ws-rail"` and an `aria-expanded` that follows the drawer. Escape
+closes the drawer. This is what the window already did.
+
+### The app's own round-8 items, no dummy change
+
+- D-39: the map's before-a-scan note is the dummy's panel instead of a note clipped to 1 px.
+- D-40: the bar slides again (Tailwind's layered `[hidden]` rule beat `.selbar[hidden]`).
+- D-43: Consent's status note.
+- D-44, the Home half: *safe batch* / *sections …* instead of the engine's mode, and a scan is no longer
+  listed as a run.
+- D-45: the drop zone's hidden button is named by the field's label.
+- D-46: bytes print as `fmt.bytes` does (whole KB), and the two heroes as `bytesParts` does (two decimals).
+- D-50: Run at rest shows the idle line.
+- D-51: `--list --json` is set in code.
+- The held-back well's two columns now match this dummy's.
+
+## Amendment - 2026-09-13 (latest): History and Report with data (D-41, D-42, D-44's second half)
+
+Rounds 1-2 closed both screens empty; round 8 judged them with data. Dummy first, then the app. Nothing
+below edits the finished product down to what is built; what the window cannot do yet is declared.
+
+### 1. `history.html` + `page-history.js` - History (D-41)
+
+| Was | Now, and why |
+|---|---|
+| *"Every run this machine has made, and a summary ..."* | *"Every run made in this window, and a summary of runs from your other machines if you are signed in."* The window records the runs it starts; the weekly Scheduled Task it registers and any command-line run report to `%USERPROFILE%\.windowsweep\reports`, which the window does not list. Home already says "in this window" |
+| empty row *"windowsweep has not run on this machine yet. ..."* | *"No run has finished in this window yet. A dry-run costs nothing and deletes nothing."* (Home's sentence). A `Dry-runs` filter with none reads *"No dry-runs yet"* / *"A dry-run costs nothing and deletes nothing."*; the heading is an h2 (the page has one h1) |
+| *"freed in the last 1 runs"* | *"freed in the last run"* for one |
+| Freed per run: a hand-built path normalised min..max | d3 from zero - Home's spark's scale for the same metric (min..max drew a 2.4 GB run as if it freed nothing); real runs only; none: *"No real run has finished in this window yet."* inside the unchanged 900 x 90 frame; one run sits mid-frame |
+| relative day by rounded elapsed hours; exact stamp in UTC | local calendar days; the exact stamp in local time, as the report file's name is stamped |
+| 6 rows; "Load 20 more" adds 20 and raises a toast | twenty a page; no toast (the rows and the count answer; the count is a polite live region); inert (`aria-disabled` + `data-disabled`) once all are drawn; a chip returns to page one |
+| eight seeded runs | + seventeen older (demo-data), so the second page exists |
+| - | the `Show` label names the chip group; each open link is described by its row's When; a dry-run row opens `report.html?dry=1`; `history.html?empty=1` draws the screen before any run |
+
+Unchanged: a scan is never a row (it measures and deletes nothing; `lib/run-mode.ts` `isRunRecord`). `Other
+machines` keeps its signed-in and signed-out words - the finished product's.
+
+### 2. `report.html` + `page-report.js` - Report (D-42)
+
+| Was | Now, and why |
+|---|---|
+| static *"Freed 3.31 GB"* over rows adding to 5.7 GB; *"Safe batch · ... 5 ran · 3 skipped"* over a table showing 6 and 2 | both read from the steps: *"Freed 5.7 GB"*, *"safe batch · 8 sections attempted · 6 ran · 2 skipped · nothing refused · 17 seconds"*; *"N refused"* / *"N failed"* when present. The opening words are History's (D-44): one run, one name |
+| *Show the JSON* toast *"Opens ...run-<stamp>.json in your text editor."* | a read-only panel under the header with the file as written, named by its file; the window may not open a local path (the opener is granted `https:` and `mailto:` only) |
+| an empty bar read `skipped` (21 diskusage beside "ran") | the step's status word, or `0 B` when it ran and freed nothing |
+| every drive gained up to 3.31 GB, each ticked | the freed bytes land on C:; D: and E: unchanged, no tick - the tick means "this succeeded" |
+| badges `ran` / neutral | + `dry-run` outline, `refused` warn, `failed` danger; the word stays the engine's |
+| Section column automatic | `width: 11rem`: the engine leaves most notes empty and automatic layout gave Section the Note column's room |
+| `%USERPROFILE%\.windowsweep\reports\run-<stamp>.json` | the run's own file in the window's layout (demo-data; the window prints the engine's path): the engine names it `report-<stamp>-<pid>.json`, and the window gives each run its own folder via `--reports-dir` |
+| crumbs `ol` | inside `nav aria-label="Breadcrumb"` |
+| - | `?dry=1`: *"A dry-run would reclaim 5.7 GB"*, *"What each section would free"*, *"Would free"*, `dry-run` badges, estimates in ink |
+| - | `?empty=1`: *"No run to report yet."* + *"A report is written for every run, including a dry-run, and the file on disk says exactly what this screen says."* (the app's words, app-first, now drawn here) |
+| - | `?gone=1`: the History crumb + *"That run is no longer in this window's history."* |
+| - | `?unreadable=1` / `=missing`: the History record's figure, the meta line held empty, *Show the JSON* inert and described by *"This run's report file could not be read, so only its summary is shown."* (+ the Rust side's reason) / *"No report file was found for this run, so only its summary is shown."* |
+
+Unchanged: *Export...* and its toast - the finished product.
+
+### Declared rather than amended
+- History `Other machines`: `pending-wave` (TASK-013) - the window shows *"No runs from other machines"* over
+  *"Run summaries from your other machines are not synced in this build yet. The filter is named here rather
+  than hidden, so what is missing is a stated gap rather than something you have to discover."*
+- Report *Export...*: `pending-wave` - the button is drawn disabled with *Export is not built into this window yet...*; the build needs `--export` on the Rust allowlist and a reveal permission (product PENDING-TASKS TASK-015)

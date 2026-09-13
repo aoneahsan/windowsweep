@@ -23,7 +23,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Shell } from '../components/Shell';
 import { useStore } from '../state/store';
@@ -233,7 +233,9 @@ export function Splash() {
                   <span className="disclose-more">{t('consent.detailsMore')}</span>
                 </summary>
                 <div className="disclose-body">
-                  <p>{t('splash.detailsWhat')}</p>
+                  {/* `--list --json` is set in code, as `splash.html` sets it - the value
+                      used to carry literal backticks, printed as they were (D-51). */}
+                  <p><Trans i18nKey="splash.detailsWhat" components={{ 1: <code className="mono" /> }} /></p>
                   <p>{t('splash.detailsNothing')}</p>
                 </div>
               </details>

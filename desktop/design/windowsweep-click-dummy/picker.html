@@ -133,7 +133,10 @@
     </main>
   </div>
 
-  <div class="selbar" data-ws-pickbar hidden>
+  <!-- GATE 4 round 8, D-49: with section 17's sentence the one-row bar squeezed its own
+       controls ("Remove these" broke onto two lines, the figure too), so the consequence
+       line takes a full-width line of its own under them. -->
+  <div class="selbar" data-ws-pickbar hidden style="flex-wrap:wrap;row-gap:var(--sp-1)">
     <span class="num t-md wide" data-ws-text="pickCount2">0</span>
     <span class="t-sm ink-2">chosen</span>
     <span class="tb-sep"></span>
@@ -147,7 +150,31 @@
       <button class="btn btn-sm" data-ws-action="pickClear">Clear</button>
       <button class="btn btn-sm btn-primary" data-ws-action="pickGo">Remove these</button>
     </div>
-    <p class="t-sm ink-3">The Recycle Bin can be emptied later. Permanent has no undo.</p>
+    <!-- GATE 4 round 8, D-49 (decided with D-48): section 17's artefacts go through
+         Remove-PathSafe whichever mode is set (modules/projects.ps1:157), so when one of its
+         rows is chosen the bar says what the choice governs. -->
+    <p class="t-sm ink-3" style="flex-basis:100%">The Recycle Bin can be emptied later. Permanent has no undo.<span data-ws-pick-17 hidden> Section 17's rows are deleted outright whichever you choose; this choice covers 18, 19 and 23.</span></p>
+  </div>
+
+  <!-- GATE 4 round 8, D-48 (decided 2026-09-13, docs/story/decision-log.md): a Permanent
+       removal is confirmed first. The gallery's destructive alert dialog (g-overlays.js,
+       "alert (destructive)"): Cancel is focused first and Escape is Cancel; only "Remove
+       permanently" goes on. Recycle Bin mode keeps its single press - it is recoverable. -->
+  <div class="scrim" id="pick-confirm" hidden>
+    <div class="dlg dlg-sm dlg-danger" role="alertdialog" aria-modal="true"
+         aria-labelledby="pick-confirm-t" aria-describedby="pick-confirm-d">
+      <div class="dlg-hd">
+        <div class="dlg-icon" aria-hidden="true">!</div>
+        <div><h2 class="t-md wide" id="pick-confirm-t" data-ws-text="pickConfirmTitle">Remove 2 items permanently?</h2></div>
+      </div>
+      <div class="dlg-bd">
+        <p class="t-sm" id="pick-confirm-d">They do not go to the Recycle Bin. Permanent has no undo.</p>
+      </div>
+      <div class="dlg-ft">
+        <button class="btn" type="button" data-w-close data-autofocus>Cancel</button>
+        <button class="btn btn-danger" type="button" data-ws-action="pickGoPermanent">Remove permanently</button>
+      </div>
+    </div>
   </div>
 
   <footer class="statusbar">

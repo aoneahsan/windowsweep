@@ -54,6 +54,7 @@ export const CONTROL_IDS = [
   'run.start',
   'sections.runSelected',
   'picker.remove',
+  'picker.removePermanently',
   'consent.continue',
   'account.signIn',
   'elevation.askAndRun',

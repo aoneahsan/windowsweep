@@ -96,7 +96,12 @@ export function DeveloperMode({
           marginTop: 'var(--sp-4)',
         }}
       >
-        <div style={{ flex: '1 1 14rem' }}>
+        {/* The dummy's two columns (`index.html`, the held-back well): the reading
+            at its own width, the idle window taking the rest. Both used to grow here,
+            which moved the slider half a column right - hidden while the reading's
+            count line was long, and plain once `index.html?empty=1` drew the state
+            before a scan (D-53, GATE 4 round 8). */}
+        <div>
           <p className="caps ink-3">{t('home.heldBackTitle')}</p>
           {/* `index.html:130` - the dummy's `.num.t-lg.wide` slot. 🔴 `not
               measured` is this app's own honest state and the word Home's hero and
@@ -114,7 +119,7 @@ export function DeveloperMode({
           )}
         </div>
 
-        <div style={{ flex: '1 1 11rem', minWidth: '11rem' }}>
+        <div style={{ flex: 1, minWidth: '11rem' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--sp-2)' }}>
             <label className="caps ink-3" htmlFor="idle-window">{t('home.idleWindow')}</label>
             {/* The value the slider is at. The dummy prints this number inside the

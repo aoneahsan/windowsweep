@@ -115,7 +115,12 @@ export function SelectionFileField({
           </Tooltip>
         </TooltipTrigger>
       </div>
+      {/* 🔴 D-45 (GATE 4 round 8): the zone's hidden drop button took React Aria's own
+          default name, "DropZone", from its string table - a component name outside
+          this catalogue. Named by the field's own label; the zone's state line is
+          appended to it, so it reads "Selection file, Drop a selection file here …". */}
       <DropZone
+        aria-label={t('picker.fileLabel')}
         className="drop"
         data-state={dragging ? 'dragging' : verdict.state}
         style={{ marginTop: 'var(--sp-2)' }}

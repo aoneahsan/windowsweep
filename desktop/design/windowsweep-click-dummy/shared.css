@@ -940,7 +940,12 @@ body::after {
    1.09:1 the moment it was added, because a component added later does not know
    about a list written earlier. So the list is explicit and alphabetised, every
    surface-painting component belongs in it, and the CONTRAST SWEEP is what
-   catches an omission - it has now found all three, each time before release. */
+   catches an omission - it has now found all three, each time before release.
+
+   FOURTH (GATE 4 round 8, D-47): the same control in the Picker's FIXED selection
+   bar. `.selbar` takes the bleed inks without being a `.band-bleed` band, so the
+   list missed it and the selected "Recycle Bin" read 1.09:1 in light theme. The
+   sweep could not see it: the bar is hidden until a row is chosen. */
 .band-bleed .card,
 .band-bleed .card-sel,
 .band-bleed .disclose,
@@ -955,7 +960,8 @@ body::after {
 .band-bleed .rt,
 .band-bleed .seg,
 .band-bleed .tags,
-.band-bleed .well {
+.band-bleed .well,
+.selbar .seg {
   --c-ink: var(--c-base-ink);
   --c-ink-2: var(--c-base-ink-2);
   --c-ink-3: var(--c-base-ink-3);

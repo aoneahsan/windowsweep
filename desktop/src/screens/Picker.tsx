@@ -47,6 +47,7 @@ import { DEV_GATED_SECTIONS } from '../lib/catalogue';
 import { newRunId, run, selectionArgs, writeSelectFile } from '../lib/engine';
 import { PickerTable, type PickerBody } from '../components/PickerTable';
 import { PickerSelbar, type DeleteMode } from '../components/PickerSelbar';
+import { PickerConfirm } from '../components/PickerConfirm';
 
 /* 🔴 Loaded when the Picker is, never on first paint. The field is the only user of
    React Aria's drag-and-drop and tooltip layers, and bundling them into the entry
@@ -64,6 +65,14 @@ const NOTE_MARKUP = {
   7: <code className="mono" />,
 };
 const COUNT_MARKUP = { 1: <span className="num" />, 3: <span className="num" /> };
+
+/**
+ * The one interactive section whose rows go outright whichever mode is chosen:
+ * section 17 is tier `rebuilds`, and `modules/projects.ps1:157` removes its
+ * artefacts through `Remove-PathSafe`, never `Send-ToRecycleBin`. Keyed by id,
+ * which IRON rule 4 freezes. The bar says so while one of its rows is chosen (D-49).
+ */
+const OUTRIGHT_SECTION = 17;
 
 interface PickerQuery {
   section: number;
@@ -114,6 +123,8 @@ export function Picker() {
   const mode: DeleteMode = search.mode === 'permanent' ? 'permanent' : 'recycle';
 
   const [busy, setBusy] = useState(false);
+  /** The Permanent confirmation is open (D-48). Only its "Remove permanently" runs. */
+  const [confirming, setConfirming] = useState(false);
   /** The engine's own refusal, rendered as data beside the button that was pressed. */
   const [failed, setFailed] = useState<string | null>(null);
 
@@ -332,7 +343,16 @@ export function Picker() {
         busy={busy}
         failed={failed}
         onClear={() => { setSelection([]); setFailed(null); }}
-        onRemove={onRemove}
+        /* 🔴 D-48 (GATE 4 round 8, decided): Permanent asks first. Recycle Bin keeps
+           its single press - it is recoverable. */
+        onRemove={() => { if (mode === 'permanent') setConfirming(true); else onRemove(); }}
+        outright={chosenSections.includes(OUTRIGHT_SECTION)}
+      />
+      <PickerConfirm
+        isOpen={confirming}
+        count={chosen.length}
+        onCancel={() => { setConfirming(false); }}
+        onConfirm={() => { setConfirming(false); onRemove(); }}
       />
     </>
   );

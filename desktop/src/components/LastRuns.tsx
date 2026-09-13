@@ -29,6 +29,7 @@ import { area, curveMonotoneX, line } from 'd3-shape';
 import { useTranslation } from 'react-i18next';
 
 import { formatBytes, formatRelative } from '../lib/format';
+import { isRunRecord, runModeLabel } from '../lib/run-mode';
 import type { HistoryEntry } from '../state/store';
 import { ScheduleSwitch } from './ScheduleSwitch';
 
@@ -97,9 +98,12 @@ export function LastRuns({ history }: { history: HistoryEntry[] }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  /* Newest first in the store; the chart reads oldest first, eight at most. */
-  const runs = [...history.slice(0, 8)].reverse();
-  const last = history[0];
+  /* Newest first in the store; the chart reads oldest first, eight at most.
+     🔴 Runs only (D-44): a scan measures and deletes nothing, and the store keeps it
+     beside the runs - it read here as `1 section · scan`, a run of nothing. */
+  const records = history.filter(isRunRecord);
+  const runs = [...records.slice(0, 8)].reverse();
+  const last = records[0];
 
   return (
     <section className="band band-well band-tight">
@@ -127,7 +131,9 @@ export function LastRuns({ history }: { history: HistoryEntry[] }) {
                     {t('home.lastWhen', {
                       when: formatRelative(new Date(last.startedAt)),
                       count: last.sections.length,
-                      mode: last.mode,
+                      /* The dummy's words for what ran (`safe batch`,
+                         `sections 1, 2, 3`), not the engine's flag (D-44). */
+                      mode: runModeLabel(last, t),
                     })}
                   </p>
                 </div>

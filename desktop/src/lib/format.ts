@@ -18,8 +18,15 @@ const BYTE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
 /**
  * Bytes as the engine reports them - binary steps, because that is what Windows
  * shows in Explorer and a mismatch between the two reads as the tool lying.
+ *
+ * 🔴 THE DUMMY'S OWN FORMAT (D-46, GATE 4 round 8). `db.js` `fmt.bytes` prints bytes
+ * and kilobytes WHOLE and megabytes upward to one decimal - `94 B`, `293 KB`,
+ * `962.0 MB`, `1.4 GB` - and this printed one decimal everywhere (`293.0 KB`),
+ * which the word check could not see because it masks digits. Every call site but
+ * the two heroes is a `fmt.bytes` site in the dummy, so this is the one they share.
+ * No grouping, as `toFixed` has none: a unit never holds more than 1023 of itself.
  */
-export function formatBytes(bytes: number, fractionDigits = 1): string {
+export function formatBytes(bytes: number): string {
   if (!Number.isFinite(bytes) || bytes <= 0) return '0 B';
   let value = bytes;
   let unit = 0;
@@ -27,11 +34,38 @@ export function formatBytes(bytes: number, fractionDigits = 1): string {
     value /= 1024;
     unit += 1;
   }
-  const digits = unit === 0 ? 0 : fractionDigits;
+  const digits = unit < 2 ? 0 : 1;
   return `${new Intl.NumberFormat(FORMAT_LOCALE, {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
+    useGrouping: false,
   }).format(value)} ${BYTE_UNITS[unit]}`;
+}
+
+/**
+ * The two heroes' figure, split into its number and its unit - `db.js`
+ * `fmt.bytesParts`, which Home's readout (`wire.js` `paintHero`) and the Run
+ * screen's (`page-run.js`) draw from: gigabytes upward to TWO decimals (`29.73 GB`),
+ * everything smaller to one. Split here rather than by cutting a formatted string
+ * at its space, which is how the heroes used to get it.
+ */
+export function formatBytesParts(bytes: number): { value: string; unit: string } {
+  if (!Number.isFinite(bytes) || bytes <= 0) return { value: '0', unit: 'B' };
+  let value = bytes;
+  let unit = 0;
+  while (value >= 1024 && unit < BYTE_UNITS.length - 1) {
+    value /= 1024;
+    unit += 1;
+  }
+  const digits = unit >= 3 ? 2 : 1;
+  return {
+    value: new Intl.NumberFormat(FORMAT_LOCALE, {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
+      useGrouping: false,
+    }).format(value),
+    unit: BYTE_UNITS[unit] ?? 'B',
+  };
 }
 
 export function formatCount(n: number): string {

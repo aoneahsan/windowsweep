@@ -233,6 +233,8 @@
   function buildRail(mount) {
     if (!mount || mount.dataset.built === '1') return;
     mount.dataset.built = '1';
+    /* The drawer button's aria-controls names this (D-54). */
+    if (!mount.id) mount.id = 'ws-rail';
     var here = currentPage();
     NAV.forEach(function (item) {
       if (item.group) { mount.appendChild(el('div', 'rail-group caps', item.group)); return; }
@@ -663,12 +665,23 @@
     if (!bar || bar.dataset.built === '1') return;
     bar.dataset.built = '1';
 
+    /* GATE 4 round 8, D-54: the button says what it opens and whether it is open
+       (aria-controls, aria-expanded), and Escape closes the drawer, since it covers
+       the content while open - what the window already does. */
     var drawer = el('button', 'btn btn-ghost btn-sm tb-interactive drawer-btn');
     drawer.setAttribute('aria-label', 'Menu');
+    drawer.setAttribute('aria-controls', 'ws-rail');
+    drawer.setAttribute('aria-expanded', 'false');
     drawer.appendChild(svgIcon('menu', 15));
+    function setDrawer(open) {
+      document.documentElement.setAttribute('data-drawer', open ? 'open' : 'closed');
+      drawer.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
     drawer.addEventListener('click', function () {
-      var r = document.documentElement;
-      r.setAttribute('data-drawer', r.getAttribute('data-drawer') === 'open' ? 'closed' : 'open');
+      setDrawer(document.documentElement.getAttribute('data-drawer') !== 'open');
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && document.documentElement.getAttribute('data-drawer') === 'open') setDrawer(false);
     });
     bar.appendChild(drawer);
 

@@ -39,7 +39,6 @@ export function SectionSelbar({
   onRun: () => void;
 }) {
   const { t } = useTranslation();
-  if (selection.length === 0) return null;
 
   const chosen = sections.filter((s) => selection.includes(s.id));
   const measured = selection.map(bytesOf).filter((b): b is number => b !== null);
@@ -53,7 +52,11 @@ export function SectionSelbar({
   ].filter(Boolean).join(' · ');
 
   return (
-    <div className="selbar">
+    /* 🔴 Always rendered and `hidden` while nothing is selected, as the dummy's
+       `[data-ws-selbar]` is: returning null made the bar pop in and out, where
+       `.selbar[hidden]` slides it (D-40, GATE 4 round 8). Hidden, it is out of the tab
+       order and the accessibility tree too (`visibility: hidden` after the slide). */
+    <div className="selbar" hidden={selection.length === 0}>
       <span className="num t-md wide">{selection.length}</span>
       {/* `count` so the noun agrees with the number beside it (D-33). */}
       <span className="t-sm ink-2">{t('sections.selSelected', { count: selection.length })}</span>

@@ -1,112 +1,85 @@
 /**
- * History - what has run on this machine, newest first.
+ * History - every run this window has made, newest first. `history.html` +
+ * `page-history.js`, band for band (D-41, GATE 4 round 8).
  *
- * Translated from `history.html`. The Mode column uses the ENGINE's own
- * vocabulary - `safe batch`, `profile: dev`, or an explicit section list - because
- * the five friendly names the dummy used to carry existed nowhere in the engine,
- * which meant a person could not match a row here to anything they could type.
+ * Rounds 1-2 closed this screen while it was empty; with data it drew four
+ * app-only things the dummy never had and missed most of what the dummy draws. It
+ * is now the dummy's frame: the heading with what the real runs freed, *Freed per
+ * run*, the sticky `Show` band, the six-column table, and *Load 20 more* with its
+ * sentence. The eyebrow, the `Reclaimed` and `Took` columns and the signed-out
+ * sentence are gone - the last one also promised that signing in brings other
+ * machines' runs, which this build cannot do.
  *
- * 🔴 The filter lives in the URL. Local runs come from this machine's own store;
- * rows from other machines only appear when signed in, and the empty state says
- * which of the two you are looking at rather than showing one blank table.
+ * 🔴 The filter and the page live in the URL (`?filter=dryRuns&page=2`), replaced
+ * rather than pushed, so Back leaves the screen instead of walking every chip; a
+ * default is omitted, so `/history` is the unfiltered first page.
+ *
+ * 🔴 The list is this window's own - `state/store.ts` records a run when it finishes,
+ * and a scan is a measurement rather than a run (`lib/history-rows.ts`). It is drawn
+ * twenty rows at a time from that local list; the rows of other machines arrive with
+ * cloud sync, which the `Other machines` chip says plainly is not in this build.
  */
 
+import { useMemo, useState } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
-import { formatBytes, formatDateTime, formatDuration } from '../lib/format';
-
-type Filter = 'all' | 'thisMachine' | 'dryRuns';
-const FILTERS: Filter[] = ['all', 'thisMachine', 'dryRuns'];
+import {
+  HISTORY_PAGE_SIZE,
+  cleanupRuns,
+  freedTotal,
+  parseHistoryFilter,
+  parseHistoryPage,
+  rowsFor,
+  type HistoryFilter,
+} from '../lib/history-rows';
+import { HistoryHeader } from '../components/history/HistoryHeader';
+import { FreedPerRun } from '../components/history/FreedPerRun';
+import { HistoryShow } from '../components/history/HistoryShow';
+import { HistoryTable } from '../components/history/HistoryTable';
+import { HistoryPager } from '../components/history/HistoryPager';
 
 export function History() {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const history = useStore((s) => s.history);
-  const user = useStore((s) => s.user);
-  const search: { filter?: Filter } = useSearch({ strict: false });
-  const filter: Filter = FILTERS.includes(search.filter ?? 'all') ? (search.filter ?? 'all') : 'all';
+  const search: { filter?: unknown; page?: unknown } = useSearch({ strict: false });
+  const filter = parseHistoryFilter(search.filter);
+  const page = parseHistoryPage(search.page);
 
-  const rows = history.filter((r) => (filter === 'dryRuns' ? r.dryRun : true));
+  /* The relative days are read against one clock per visit; nothing here ages
+     inside a minute, and a clock read during render would not be pure. */
+  const [now] = useState(() => Date.now());
+
+  const runs = useMemo(() => cleanupRuns(history), [history]);
+  const rows = useMemo(() => rowsFor(runs, filter), [runs, filter]);
+  const totals = freedTotal(rows);
+  const visible = rows.slice(0, page * HISTORY_PAGE_SIZE);
+
+  const go = (next: { filter: HistoryFilter; page: number }) => {
+    void navigate({
+      to: '/history',
+      search: {
+        ...(next.filter === 'all' ? {} : { filter: next.filter }),
+        ...(next.page > 1 ? { page: next.page } : {}),
+      },
+      replace: true,
+    });
+  };
 
   return (
     <>
+      <HistoryHeader freedBytes={totals.bytes} runs={totals.runs} />
+      <FreedPerRun runs={runs} />
+      <HistoryShow filter={filter} onChoose={(f) => { go({ filter: f, page: 1 }); }} />
+
       <section className="band band-app band-tight">
         <div className="wrap">
-          <p className="caps ink-3">{t('history.eyebrow')}</p>
-          <h1 className="t-xl wide">{t('history.title')}</h1>
-          {/* `fchip` inside `filters` - the dummy's filter vocabulary, which
-              carries a pressed state. See the note in `Sections.tsx`. */}
-          <div className="filters" style={{ marginTop: 'var(--sp-4)' }}>
-            {FILTERS.map((f) => (
-              <button
-                className="fchip"
-                type="button"
-                key={f}
-                aria-pressed={filter === f}
-                onClick={() => { void navigate({ to: '/history', search: { filter: f } }); }}
-              >
-                {t(`history.filter.${f}`)}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="band band-well band-tight">
-        <div className="wrap">
-          {rows.length === 0 ? (
-            <div className="panel pad">
-              <p>{t('history.emptyTitle')}</p>
-              <p className="t-sm ink-3">{t('history.emptyBody')}</p>
-            </div>
-          ) : (
-            <div className="xscroll" style={{ overflowX: 'auto' }}>
-              <table className="tbl">
-                <thead>
-                  <tr>
-                    <th>{t('history.colWhen')}</th>
-                    <th>{t('history.colMode')}</th>
-                    <th>{t('history.colSections')}</th>
-                    <th>{t('history.colReclaimed')}</th>
-                    <th>{t('history.colTook')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((r) => (
-                    <tr key={r.runId}>
-                      <td>{formatDateTime(r.startedAt)}</td>
-                      <td>
-                        {r.mode}
-                        {r.dryRun ? (
-                          <span className="badge badge-outline" style={{ marginInlineStart: 'var(--sp-2)' }}>
-                            {t('history.dryRun')}
-                          </span>
-                        ) : null}
-                        {r.elevated ? (
-                          <span className="badge badge-danger" style={{ marginInlineStart: 'var(--sp-2)' }}>
-                            {t('sections.admin')}
-                          </span>
-                        ) : null}
-                      </td>
-                      <td className="num">{r.sections.length}</td>
-                      <td className="num">
-                        {formatBytes(r.dryRun ? r.estimatedBytes : r.freedBytes)}
-                      </td>
-                      <td className="num">{formatDuration(r.durationMs)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {!user ? (
-            <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-3)' }}>
-              {t('history.signedOutNote')}
-            </p>
-          ) : null}
+          <HistoryTable rows={visible} filter={filter} hasRuns={runs.length > 0} now={now} />
+          <HistoryPager
+            shown={visible.length}
+            total={rows.length}
+            onMore={() => { go({ filter, page: page + 1 }); }}
+          />
         </div>
       </section>
 

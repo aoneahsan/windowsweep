@@ -57,6 +57,17 @@
   visibility: hidden;
   transition: translate var(--d-mod) var(--ease-mech), visibility 0s linear var(--d-mod);
 }
+/* 🔴 D-40 (GATE 4 round 8): in the WINDOW the rule above lost its first declaration.
+   Tailwind v4's preflight hides `[hidden]` with `display: none !important` inside
+   `@layer base`, and an important declaration in a layer beats an unlayered
+   important one - so the bar vanished in one frame instead of sliding (measured: 0 px
+   translate in the first frame, no animation). The same declaration is restated INSIDE
+   `base`, where the two importants meet on specificity and `.selbar[hidden]`
+   (0,2,0) beats `[hidden]:where(…)` (0,1,0). Preflight itself is untouched, and so is
+   every other `[hidden]` in the app. The dummy has no preflight and needs neither. */
+@layer base {
+  .selbar[hidden] { display: flex !important; }
+}
 
 /* ---------------------------------------------------------------------------
    PROGRESS - determinate, always. "How far along" is the question being asked.

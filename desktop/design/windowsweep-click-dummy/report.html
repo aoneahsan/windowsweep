@@ -20,32 +20,82 @@
 
     <main class="content">
 
-      <section class="band band-app band-tight">
+      <!-- report.html?empty=1 - nothing has run in this window yet. These were the app's
+           words before this page had any; drawn here since the round-8 amendment. -->
+      <section class="band band-app" data-ws-report-empty hidden>
+        <div class="wrap wrap-narrow">
+          <!-- report.html?gone=1 - a link names a run that has left the list (it keeps the
+               newest 200 records): the way back, and one sentence -->
+          <nav aria-label="Breadcrumb" data-ws-report-gone hidden>
+            <ol class="crumbs" style="margin-bottom:var(--sp-3)">
+              <li><a class="lnk" href="history.html">History</a></li>
+            </ol>
+          </nav>
+          <h1 class="t-lg wide" data-ws-report-empty-title>No run to report yet.</h1>
+          <p class="lede" data-ws-report-empty-lede>A report is written for every run, including a dry-run, and
+            the file on disk says exactly what this screen says.</p>
+        </div>
+      </section>
+
+      <section class="band band-app band-tight" data-ws-report-band>
         <div class="wrap">
-          <ol class="crumbs" style="margin-bottom:var(--sp-3)">
-            <li><a class="lnk" href="history.html">History</a></li>
-            <li><span aria-current="page">2026-09-04 09:14</span></li>
-          </ol>
+          <nav aria-label="Breadcrumb">
+            <ol class="crumbs" style="margin-bottom:var(--sp-3)">
+              <li><a class="lnk" href="history.html">History</a></li>
+              <li><span aria-current="page">2026-09-04 09:14</span></li>
+            </ol>
+          </nav>
           <div style="display:flex;flex-wrap:wrap;gap:var(--sp-4);align-items:flex-end">
             <div>
-              <h1 class="t-xl wide">Freed 3.31 GB</h1>
-              <p class="t-sm ink-3">Safe batch &#183; 8 sections attempted &#183; 5 ran &#183; 3 skipped
-                &#183; nothing refused &#183; 17 seconds</p>
+              <!-- page-report.js writes both lines from the steps below -->
+              <h1 class="t-xl wide" data-ws-report-title>Freed 5.7 GB</h1>
+              <p class="t-sm ink-3" data-ws-report-meta>safe batch &#183; 8 sections attempted &#183; 6 ran &#183;
+                2 skipped &#183; nothing refused &#183; 17 seconds</p>
             </div>
             <div style="margin-inline-start:auto;display:flex;gap:var(--sp-2);flex-wrap:wrap">
-              <button class="btn" data-ws-action="reportOpen">Show the JSON</button>
+              <button class="btn" data-ws-action="reportOpen" aria-expanded="false">Show the JSON</button>
               <button class="btn" data-ws-action="reportExport">Export&#8230;</button>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="band band-app band-tight">
+      <!-- Show the JSON: the file itself, read-only, in the window (the build may not open
+           a local path in an editor). Raw text, so it reads as a text editor would show it. -->
+      <section class="band band-app band-tight" id="report-json" data-ws-report-json hidden>
+        <div class="wrap">
+          <div class="panel pad">
+            <div class="fw-row" style="margin-bottom:var(--sp-3)">
+              <code class="mono t-xs ink-3" data-ws-report-json-name>report.json</code>
+            </div>
+            <div data-ws-report-json-box role="region" tabindex="0" aria-label="report.json"
+                 style="max-height:24rem;overflow:auto;background:var(--c-well);border:1px solid var(--c-line);border-radius:var(--r-md);padding:var(--sp-3)">
+              <pre data-ws-report-json-text style="margin:0;white-space:pre;font-family:var(--ff-mono);font-size:var(--fs-xs);line-height:1.55;color:var(--c-ink-2)"></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- report.html?unreadable=1 (and =missing) - the run is on record, its file is not:
+           said once, where the bands would be. The reason line is the Rust side's own words. -->
+      <section class="band band-app band-tight" data-ws-report-unreadable hidden>
+        <div class="wrap">
+          <div class="note note-warn" id="report-unreadable" role="status">
+            <span aria-hidden="true">!</span>
+            <span class="t-sm"><span data-ws-report-unreadable-text>This run&#8217;s report file could not be read,
+              so only its summary is shown.</span><span class="t-xs ink-3" data-ws-report-unreadable-reason
+              style="display:block;margin-top:var(--sp-1)">the report could not be read: The system cannot find
+              the file specified. (os error 2)</span></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="band band-app band-tight" data-ws-report-band>
         <div class="wrap">
           <div class="g12">
             <div class="c9">
               <div class="panel pad">
-                <span class="caps ink-3">What each section freed</span>
+                <span class="caps ink-3" data-ws-report-bars-title>What each section freed</span>
                 <div data-ws-report-bars style="margin-top:var(--sp-3)"></div>
               </div>
             </div>
@@ -59,7 +109,7 @@
         </div>
       </section>
 
-      <section class="band band-app band-tight">
+      <section class="band band-app band-tight" data-ws-report-band>
         <div class="wrap">
           <div class="panel" style="overflow:visible">
             <div class="xscroll">
@@ -67,9 +117,11 @@
               <thead>
                 <tr>
                   <th style="width:3rem">#</th>
-                  <th>Section</th>
+                  <!-- a set width: the engine leaves most notes empty, and under automatic
+                       layout Section then took the Note column's room -->
+                  <th style="width:11rem">Section</th>
                   <th style="width:7rem">Status</th>
-                  <th style="width:7rem" class="num-cell">Freed</th>
+                  <th style="width:7rem" class="num-cell" data-ws-report-freed-col>Freed</th>
                   <th>Note</th>
                 </tr>
               </thead>
@@ -80,7 +132,7 @@
         </div>
       </section>
 
-      <section class="band band-well band-tight">
+      <section class="band band-well band-tight" data-ws-report-band>
         <div class="wrap">
           <details class="disclose">
             <summary>
@@ -88,7 +140,10 @@
               <span class="disclose-more">Details</span>
             </summary>
             <div class="disclose-body">
-              <p>Written to <code class="mono">%USERPROFILE%\.windowsweep\reports\run-&lt;stamp&gt;.json</code>
+              <!-- The run's own path, from page-report.js (demo-data; the window prints the
+                   real one): the window gives every run its own folder, and the engine names
+                   the file report-<stamp>.json, never run-<stamp>.json. -->
+              <p>Written to <code class="mono" data-ws-report-path style="overflow-wrap:anywhere">report.json</code>
                 by the engine itself, in schema 1. This window renders that file &#8211; it does not
                 compute anything of its own, which is why a report opened here and a report opened in a
                 text editor can never disagree.</p>

@@ -229,12 +229,14 @@ function Rail() {
   );
 }
 
-/** The four screens whose status-bar note is one fixed sentence in the dummy. */
+/** The screens whose status-bar note is one fixed sentence in the dummy. */
 const FIXED_NOTES: Record<string, string> = {
   '/history': 'status.history',
   '/report': 'status.report',
   '/picker': 'status.picker',
   '/account': 'status.account',
+  /* `consent.html:71` - the first-run notice's own note (D-43, GATE 4 round 8). */
+  '/consent': 'status.consent',
 };
 
 interface StatusNote {
@@ -256,7 +258,8 @@ interface StatusNote {
  *              chosen it - the one note a screen publishes rather than the shell
  *              deriving, because it is built from the screen's own choice (D-29)
  *  - History, Report, Picker and Account carry a fixed sentence each - the
- *    dummy's own, owed since the 2026-09-07 amendment and built for round 8
+ *    dummy's own, owed since the 2026-09-07 amendment and built for round 8 -
+ *    and so does Consent, whose note round 8 found missing (D-43)
  *
  * 🔴 Each one calls the same function its screen calls. The count comes from
  * `filterSections`, which is what the Sections table itself renders from, and the
@@ -356,10 +359,11 @@ export function Shell({
 }) {
   const [themeOpen, setThemeOpen] = useState(false);
   /* The drawer's state lives here and is mirrored onto `<html data-drawer>`, the
-     attribute `styles/shell/04-tables-panel-responsive.css` reads - the dummy's own mechanism. Every route renders its
-     own Shell, so navigating remounts this and the drawer closes behind the link
-     that was pressed; the cleanup puts the attribute back for the screens with no
-     rail. Escape closes it too, since it covers the content while open. */
+     attribute `styles/shell/04-tables-panel-responsive.css` reads - the dummy's own
+     mechanism. Every route renders its own Shell, so navigating remounts this and the
+     drawer closes behind the link that was pressed; the cleanup puts the attribute
+     back for the screens with no rail. Escape closes it too, since it covers the
+     content while open. */
   const [drawerOpen, setDrawerOpen] = useState(false);
   useLayoutEffect(() => {
     document.documentElement.setAttribute('data-drawer', drawerOpen ? 'open' : 'closed');

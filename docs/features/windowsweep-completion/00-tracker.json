@@ -870,8 +870,8 @@
         {
           "id": "P8.gate4-parity",
           "title": "RW-117: screenshot pairs of every page against the site dummy at 390/760/1440 light/dark, the sweeps with two plants each, the 100 ms floor",
-          "status": "pending",
-          "note": "Plan v3 W3 (A-TEST). Evidence to D:/work/windowsweep-root/site-evidence/ and design/gate4/GATE4-REPORT.md; the 32 distinctive dummy sentences re-matched after the story applies.",
+          "status": "in_progress",
+          "note": "ROUND 1 RAN 2026-09-13 (RW-117; windowsweep-web design/gate4/GATE4-REPORT.md, commit 1d2a525; evidence in site-evidence/parity/ in the workspace root): NOT CLEAN. 84 pairs (14 pages x 390/760/1440 x light/dark) against the deployed 85752cc, 0 match - the shared header, footer and theme panel carry four defects every page inherits: S-01 a raw footer key (footer.links.privacy missing), S-02 five links rendered empty (<link> is an HTML void element to the i18n parser), S-14 four theme settings and Reset unreachable (the panel body does not scroll), S-03 the error page with no chrome and its message hidden; plus S-04..S-09 and S-13 blocking, S-10/S-12/S-15 not, X-01..X-05 shared by both sides, D-01/D-02 dummy-only. The words are close: 6,312 boxes, 6,102 matched; on 11 of 14 pages every body word matches. Sweeps: 0 overflow, 0 text under 12 px; 548 of 732 touch targets at 390 under 44 px; five plants red. The 100 ms floor held on four of five actions (the theme panel 97-137 ms). Signed-in states pending-wave (row 15). Decided (orchestrator, design authority): S-04 the dummy home band 14 gains the sign-in-off state; S-05 the dummy sitemap drops the 404 card and absorbs the machine-readable panel; S-11 the dummy installer buttons link the files. Fix batch dispatched (A-SITE-4); round 2 next. | PRIOR NOTE: Plan v3 W3 (A-TEST). Evidence to D:/work/windowsweep-root/site-evidence/ and design/gate4/GATE4-REPORT.md; the 32 distinctive dummy sentences re-matched after the story applies.",
           "awaitingUser": false
         },
         {

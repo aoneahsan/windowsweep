@@ -634,8 +634,9 @@ all seven existing ones were at the two-project free-tier limit):
 Five forward-only migrations, authored in Drizzle at `desktop/src/db/schema/site.ts` and applied with
 `supabase db push`. The schema's ONE home stays the **desktop** repo (owner decision P8-D2); the site reads
 generated types at `windowsweep-web/src/db/types.ts`, which is **generated, never authored** -
-`supabase gen types typescript --linked --schema public` from `../windowsweep/desktop`, re-run after every
-migration.
+re-run after every migration by the procedure in `windowsweep-web/docs/runbooks/regenerate-db-types.md`
+(`--project-id` with the account PAT in the environment, into a temporary file first - never `--linked`,
+which the CLI refuses under its cached login, and never a redirect straight into the real file).
 
 - `profiles`, `contact_requests`, `admin_audit`. RLS on all three, 8 policies, 4 triggers, column-scoped
   grants. `supabase/rollbacks/` exists beside the migrations and is **never applied automatically**.

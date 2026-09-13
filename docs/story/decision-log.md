@@ -559,10 +559,19 @@ fact-checker returned exactly that finding, correctly).
 - **site-front-site (row 19) - APPROVED 2026-09-13.** Its fact-check FAILED on a stale version literal and four
   open questions; all five settled above, the finalizer re-ran and returned READY. The 26 route strings, the og
   rule, the JSON-LD and `llms.txt` applied and deployed.
-- **site-front (row 9, the docs) - APPROVED 2026-09-13.** Finalizer READY, zero NEEDS DECISION; applying to the
-  docs site now.
-- **site-app (row 18)** - written, and through the developmental, line and copy edits; fact-check returned four
-  contradictions (writer edits, no owner input) and no HARD FAIL on the safety slots. Not yet at the gate.
+- **site-front (row 9, the docs) - APPROVED 2026-09-13.** Finalizer READY, zero NEEDS DECISION. Applied to the
+  docs site's `intro.md` and `static/llms.txt` (docs `ee831e5`) and the product's `docs/README.md` mirror
+  (`1bb9fd2`).
+- **site-app (row 18) - APPROVED 2026-09-13.** Two rounds of the lean panel. Round 1's fact-check raised four
+  contradictions, fixed by the writer from the dummy and the code with no owner input; round 2 brought in the
+  developmental edit, the line edit, the fact-check and the humor-emotion review. The finalizer re-verified the
+  seven round-2 fixes against the code, changed no shipping word (41 fences byte-identical to round 2, 13 PASS
+  + 1 ALLOWED) and returned READY with zero NEEDS DECISION. Its one condition: the apply carries
+  the code fixes that make its words true, and #15 goes in with them (the admin inbox names the wrong cause for
+  a failed status change). Taken in, so GATE 4 holds. The apply brings in #4 (a `PageHead` on the three admin
+  routes), #6 (`{{max}}` formatted, so it reads 4,000), #14 (`/contact` gains the sign-in-off branch, app and
+  dummy), #15, #11 (the users page shows its failure instead of the empty state, before S-034's aside ships)
+  and #16 (the same for the inbox, the audit log and `/account`).
 
 ### Two corrections made outside the pipeline, and why each is not authorship
 

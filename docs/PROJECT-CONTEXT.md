@@ -100,6 +100,22 @@ their tracker row still read pending; TASK-005's events exist with callers; the 
 version rows at 1.1.0 (corrected in the repo; stale in the published tarball until 1.3.0); `lib/safety.ps1`
 and `modules/self_test_extra.ps1` exceed the 500-line ceiling (RW-121).
 
+### Session 14 decisions (2026-09-13/14) - the v3 run, taken from recorded rules, none from the owner
+
+No owner question arose in the run; each call below was answerable from a rule in force, an approved artefact
+or a measured fact, and each is reversible in one change. Recorded so nobody asks them again.
+
+| Question | Settled as | Because |
+|---|---|---|
+| A Permanent removal from the Picker asked no confirmation (GATE 4 round 8, D-48) | **Confirm first**: an alert dialog naming the count, *"They do not go to the Recycle Bin. Permanent has no undo."*, Cancel focused; Recycle Bin mode keeps one press | the Bible's core promise and its rule against implying a deletion is reversible; the engine's own final question exists so a permanent removal is never one keypress, and the window answers it on the reader's behalf. `docs/story/decision-log.md` 2026-09-13 |
+| Section 17's rows under a "Recycle Bin" bar (D-49) | the bar says 17's rows are deleted outright whichever mode is picked | `modules/projects.ps1:157` - the engine removes them through `Remove-PathSafe` in either mode |
+| The Report's *Export...* (D-42) | **declared `pending-wave`** on screen for 1.2.0; the build is TASK-015 | it needs `--export` on the Rust allowlist and a reveal permission on a release-gated build; the parity rules define the class for exactly this |
+| "opt-out" in three shipped site strings | **"switch"**, the family's word, now in the Bible's glossary | `/privacy`'s lede and `docs/desktop.md` already said *"There is no switch."* |
+| The site's home band 14, sitemap 404 card, installer links (site GATE 4 S-04, S-05, S-11) | the dummy gains band 14's sign-in-off state; the sitemap drops the 404 card and absorbs the machine-readable panel; the installer buttons link the files | design authority (`frontend-ui-standards.md` §8), dummy first |
+| Sign-out on `/account` and the desktop Account screen | **this browser / this machine only** (`scope: 'local'`) | the approved dummy's sign-out note; supabase-js's `global` default ended the other app's session in the shared auth pool |
+| May the site's build need the network? | **yes, for the release check** (`vite/release-strings.ts`) | a gate that skips itself offline is the decorative gate the rules forbid; CI and every deploy have the network |
+| The desktop catalogue crossed 500 lines | split into `locales/en/{shell,home,sections,account}.json`, locales discovered by glob | the site's precedent and the house cap; a second language is now one directory and no code |
+
 ### Session 10 decisions (2026-09-07) - the completion run
 
 Asked to confirm and finish every remaining item, the owner settled eight questions. Fable 5.1 planned the
@@ -770,6 +786,16 @@ migration it could express.
 - Freed 3,924,712,402 bytes across 11 sections with zero refusals; drive C: 5.84 -> 9.85 GB free. The first
   real cleanup driven through the window; recorded in `desktop/design/gate4/GATE4-REPORT.md`.
 - No interactive section, no admin section, never elevated.
+
+### 2026-09-13 - the marketing site's telemetry, on the wire from the deployed origin
+
+After web `07aa763`, three clean first loads of `/` in Chrome for Testing on its own profile, anonymous: GA4,
+Amplitude, Clarity and Sentry each received the landing `screen.view` exactly once; the route change and a
+control press reached GA4 and Amplitude; Clarity's uploads carried no readable page text (0 of 258 phrases, 0 of
+14 labels); 212 requests and 22 bodies carried no drive path, user name, machine name or email; blocking a
+destination turned it red. The first capture of the same day had found Clarity never started (no queue stub)
+and the landing view lost for GA4 and Amplitude (sent before they registered) - both fixed first. Evidence:
+`site-evidence/wire/` in the workspace root, outside git.
 
 ### Not yet run for real (P1 in `remaining-work.md`)
 Sections 12-16 and 20 (elevation), `--elevate` itself, section 4 (no idle AVD), 5 (daemon off), 7 for Chrome,

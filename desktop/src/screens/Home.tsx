@@ -40,10 +40,11 @@
  * missing one is a button offering to reclaim bytes the run will refuse.
  *
  * 🔴 THE HERO IS WHAT IS RECLAIMABLE; THE BUTTON IS WHAT PRESSING IT RECLAIMS. The
- * button runs the safe batch, so it carries `safeRunBytes` - the ladder's own
- * total, one number in both places - and never the hero's figure, which also
- * counts sections a safe run does not touch. `lib/reclaim.ts` records the
- * decision (GATE 4 round 7).
+ * button runs the safe batch, so its figure starts from `safeRunBytes` - the
+ * ladder's own total - and never the hero's, which also counts sections a safe run
+ * does not touch (GATE 4 round 7). Since round 9 (D-60) it is the last rehearsal's
+ * estimate while that ran with the current arguments, and otherwise "Reclaim up
+ * to" a bound: `lib/rehearsal.ts`. "Dry-run first" is that rehearsal.
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -51,7 +52,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
-import { useIncludedScanTargets, useRunPreferences } from '../state/derived';
+import { useIncludedScanTargets, useReclaimOffer, useRunPreferences } from '../state/derived';
 import {
   reclaimableBytes,
   reclaimableSectionCount,
@@ -59,7 +60,8 @@ import {
   safeRunBytes,
   toMapTargets,
 } from '../lib/reclaim';
-import { formatBytes, formatBytesParts } from '../lib/format';
+import { rehearsalFrom } from '../lib/rehearsal';
+import { formatBytes } from '../lib/format';
 import { scanArgs, safeBatchArgs } from '../lib/engine';
 import { useEngineRun } from '../state/use-engine-run';
 import { safeRunSections } from '../lib/catalogue';
@@ -75,6 +77,7 @@ import { AdminNotice } from '../components/AdminNotice';
 import { DeveloperMode } from '../components/DeveloperMode';
 import { HomeDrives } from '../components/HomeDrives';
 import { CapacityRing } from '../components/CapacityRing';
+import { HeroFigure } from '../components/HeroFigure';
 import { useDriveRows } from '../lib/drives';
 import type { MapTarget } from '../components/ReclaimMap';
 
@@ -113,7 +116,6 @@ export function Home() {
 
   const catalogue = useStore((s) => s.catalogue);
   const engineError = useStore((s) => s.engineError);
-  const summary = useStore((s) => s.summary);
   /* The whole scan - the map's data, and only the map's. */
   const scanTargets = useStore((s) => s.scanTargets);
   /* What a run would actually touch. Every figure below reads this one. */
@@ -132,6 +134,7 @@ export function Home() {
   const setIdleDays = useStore((s) => s.setIdleDays);
   const prefs = useRunPreferences();
   const setScanTargets = useStore((s) => s.setScanTargets);
+  const recordRehearsal = useStore((s) => s.recordRehearsal);
   const runEngine = useEngineRun();
 
   /* 🔴 Which action is in flight, not merely whether one is. The pending state
@@ -143,15 +146,19 @@ export function Home() {
 
   /* 🔴 `measured` is `scannedAt`, not `length > 0`. Once a tile can be clicked
      out, an empty INCLUDED list is a perfectly ordinary state after a real
-     measurement - "you excluded everything" - and reading it as "nothing has been
-     measured" would print the last run's estimate instead of the 0 that is true. */
+     measurement - "you excluded everything" - whose true answer is 0.
+     🔴 And every figure, word and state on this page that says "measured" keys on
+     THIS, never on whether some run left a summary (D-55): a Picker ask is a run,
+     and it measures nothing the hero claims. */
   const measured = scannedAt !== null;
 
   /* One home for this figure, in lib/reclaim.ts - it was computed here AND in
      Shell.tsx, and both copies read a run's result off a scan's summary. */
-  const reclaimable = reclaimableBytes(summary, includedTargets, measured);
-  /* What the Reclaim button's run would free - the ladder's total, not the hero's. */
+  const reclaimable = reclaimableBytes(includedTargets, measured);
+  /* The ladder's total - what the safe run could free - not the hero's. */
   const safeTotal = safeRunBytes(catalogue, includedTargets, measured);
+  /* The Reclaim button's figure: an estimate or a bound, and which (D-60). */
+  const offer = useReclaimOffer();
 
   /* 🔴 ONE load for the two places this page draws a disk: the rails in zone 4 and
      the ring in the hero. Two fetches would let them disagree about the same drive
@@ -233,10 +240,18 @@ export function Home() {
     return () => { window.clearTimeout(to); };
   }, [cleared]);
 
+  /* 🔴 THIS PRESS IS THE REHEARSAL (D-60). What it returns is recorded with the
+     arguments it ran with - captured here, at the press - so the Reclaim button can
+     tell whether the estimate still describes the run it offers. */
   const onDryRun = useCallback(() => {
     setBusy('dryRun');
-    void drive(safeBatchArgs({ dryRun: true, ...prefs, excludedPaths }), true).finally(() => { setBusy(null); });
-  }, [drive, prefs, excludedPaths]);
+    void drive(safeBatchArgs({ dryRun: true, ...prefs, excludedPaths }), true)
+      .then((result) => {
+        const rehearsal = result ? rehearsalFrom({ prefs, excludedPaths, ...result }) : null;
+        if (rehearsal) recordRehearsal(rehearsal);
+      })
+      .finally(() => { setBusy(null); });
+  }, [drive, prefs, excludedPaths, recordRehearsal]);
 
   const onReclaim = useCallback(() => {
     setBusy('reclaim');
@@ -319,38 +334,21 @@ export function Home() {
           <HeroSweep />
           <div>
             <p className="caps ink-3">{t('home.reclaimableNow')}</p>
-            <p className="hero-num">
-              {reclaimable === null ? (
-                <span>{t('home.notMeasured')}</span>
-              ) : (
-                <>
-                  {/* `fmt.bytesParts` - the hero's own two decimals (D-46). */}
-                  <span>{formatBytesParts(reclaimable).value}</span>
-                  <span className="unit">{formatBytesParts(reclaimable).unit}</span>
-                </>
-              )}
-            </p>
+            <HeroFigure bytes={reclaimable} />
             {/* 🔴 The dummy's whole sub-line: when it was measured, what it spans,
-                and the re-scan beside it (`index.html:48-53`). The freshness clause
-                needs a measurement to be fresh OF - after a real run the targets
-                have been spent and the figure comes from the run's own summary, so
-                that state keeps the span and drops the clause rather than dating a
-                number no scan produced. */}
+                and the re-scan beside it (`index.html:48-53`) - or, before a scan,
+                its `?empty=1` sentence. There is no third state any more: the one
+                that dated no scan was a run's summary standing in for one (D-55). */}
             <p className="hero-sub">
-              {reclaimable === null ? (
+              {minutesAgo === null ? (
                 t('home.heroSubUnmeasured')
               ) : (
                 <>
-                  {minutesAgo === null
-                    ? t('home.heroSub', {
-                        targets: reclaimableTargetCount(summary, includedTargets, measured),
-                        sections: reclaimableSectionCount(summary, includedTargets, measured),
-                      })
-                    : t('home.heroSubMeasured', {
-                        count: minutesAgo,
-                        targets: reclaimableTargetCount(summary, includedTargets, measured),
-                        sections: reclaimableSectionCount(summary, includedTargets, measured),
-                      })}
+                  {t('home.heroSubMeasured', {
+                    count: minutesAgo,
+                    targets: reclaimableTargetCount(includedTargets, measured),
+                    sections: reclaimableSectionCount(includedTargets, measured),
+                  })}
                   {' · '}
                   {/* The dummy's own acknowledgement for this control is on the
                       Scan button, not on the link: `wire.js:486` hands the pending
@@ -372,7 +370,9 @@ export function Home() {
               disabled={running}
               {...controlState(stateOf(busy === 'scan', scanDone))}
             >
-              <span className="btn-label">{summary ? t('home.scanAgain') : t('home.scanFirst')}</span>
+              {/* The word follows the measurement, not the last run (D-55): the
+                  dummy's before-a-scan Home reads "Scan". */}
+              <span className="btn-label">{measured ? t('home.scanAgain') : t('home.scanFirst')}</span>
             </button>
             <button
               className="btn"
@@ -387,12 +387,14 @@ export function Home() {
               control="home.reclaim"
               size="lg"
               onPress={onReclaim}
-              disabled={running || safeTotal === null}
+              disabled={running || offer === null}
               state={stateOf(busy === 'reclaim')}
               label={
-                safeTotal === null
+                offer === null
                   ? t('home.reclaimUnmeasured')
-                  : t('home.reclaim', { amount: formatBytes(safeTotal) })
+                  : offer.upTo
+                    ? t('home.reclaimUpTo', { amount: formatBytes(offer.amount) })
+                    : t('home.reclaim', { amount: formatBytes(offer.amount) })
               }
             />
           </div>

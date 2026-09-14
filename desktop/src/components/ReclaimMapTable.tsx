@@ -25,6 +25,15 @@ import type { MapTarget } from './reclaim-map-model';
  * inert. The Run screen's map is a drain animation over targets that are already
  * going; a switch there would offer to keep something the engine has been told to
  * delete.
+ *
+ * 🔴 THE PATH TAKES THE WIDTH THAT IS LEFT, AND ELLIPSISES INSIDE IT (D-58, GATE 4
+ * round 9 - `reclaim-map.js` was amended first). It had no maximum: one
+ * 128-character path on this machine grew the table until Size and Idle sat 307 px
+ * beyond the band's own scroller at 1440. `width: 100%` with `max-width: 0` is what
+ * lets an auto-layout cell shrink below its text; the whole path stays in the
+ * cell's text - what a screen reader reads - and one hover away in `title`. The
+ * Target cell keeps to one line, so the room the path gives up is not taken back by
+ * a wrapped label.
  */
 export function ReclaimMapTable({
   targets,
@@ -70,8 +79,20 @@ export function ReclaimMapTable({
               </td>
             ) : null}
             <td>{row.sectionKey}</td>
-            <td>{row.label}</td>
-            <td className="mono t-2xs">{row.path}</td>
+            <td style={{ whiteSpace: 'nowrap' }}>{row.label}</td>
+            <td
+              className="mono t-2xs"
+              title={row.path}
+              style={{
+                width: '100%',
+                maxWidth: 0,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {row.path}
+            </td>
             <td className="num-cell">{formatBytes(row.bytes)}</td>
             <td className="num-cell">{row.idleDays === null ? '—' : String(row.idleDays)}</td>
           </tr>

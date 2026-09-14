@@ -27,7 +27,8 @@
     signedIn: false,
     email: null,
     schedule: false,
-    selection: []          // section ids selected on the Sections screen
+    selection: [],         // section ids selected on the Sections screen
+    rehearsal: null        // D-60: the last "Dry-run first" - the arguments it ran with, and its estimate
   };
 
   var facts = Object.assign({}, DEFAULT_FACTS, store.get(FACTS_KEY, {}) || {});
@@ -112,6 +113,33 @@
     return bySection().filter(function (r) { return S.SAFE_BATCH.indexOf(r.section) !== -1; });
   }
   function safeRunBytes() { return safeRunSections().reduce(function (a, r) { return a + r.bytes; }, 0); }
+
+  /* D-60 (GATE 4 round 9) - the figure the Reclaim button and the Run screen's idle
+     hero carry. It replaces the quantity round 7's decision 6 gave them.
+
+     After a rehearsal ("Dry-run first") with the CURRENT arguments - the same
+     sections, developer mode, --days, --temp-days, --large-file-mb and exclusions -
+     it is that rehearsal's estimate, the engine's own figure. Before one, or once
+     any argument has moved since, it is an UPPER BOUND and says so ("Reclaim up
+     to"): the safe run's measured total less what developer mode holds back. That
+     is a true bound, because a run cannot free more than was measured and not held
+     back. Here activeTargets() has already set the held-back caches aside, so the
+     bound is safeRunBytes(); the window subtracts its own measured held-back figure.
+     Home's hero keeps the measured total - what is there, not what a press does. */
+  function runArgs() {
+    return {
+      developer: facts.developer, idleDays: facts.idleDays, tempDays: facts.tempDays,
+      largeFileMb: facts.largeFileMb, excluded: facts.excluded.slice().sort()
+    };
+  }
+  function offer() {
+    var r = facts.rehearsal;
+    if (r && JSON.stringify(r.args) === JSON.stringify(runArgs())) return { amount: r.estimate, upTo: false };
+    return { amount: safeRunBytes(), upTo: true };
+  }
+  /* The estimate is this prototype's own dry-run figure - the one its toast reports -
+     recorded with the arguments it ran with. A real run spends it: set it to null. */
+  function rehearse() { set('rehearsal', { args: runArgs(), estimate: safeRunBytes() }); }
 
   function needsAPerson() {
     var m = {};
@@ -214,12 +242,12 @@
   window.wsdb = {
     facts: facts, section: section,
     set: set, toggleExcluded: toggleExcluded, isExcluded: isExcluded,
-    toggleSelected: toggleSelected, setSelection: setSelection, reset: reset,
+    toggleSelected: toggleSelected, setSelection: setSelection, reset: reset, rehearse: rehearse,
     on: function (f) { listeners.push(f); },
     derive: {
       activeTargets: activeTargets, heldByDeveloperMode: heldByDeveloperMode,
       reclaimable: reclaimable, bySection: bySection,
-      safeRunSections: safeRunSections, safeRunBytes: safeRunBytes,
+      safeRunSections: safeRunSections, safeRunBytes: safeRunBytes, offer: offer,
       needsAPerson: needsAPerson, mapData: mapData, mapDataAll: mapDataAll, drives: drives
     },
     fmt: { bytes: bytes, bytesParts: bytesParts, relDate: relDate }

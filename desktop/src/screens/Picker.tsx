@@ -173,8 +173,12 @@ export function Picker() {
     setBusy(true);
     setFailed(null);
     const id = newRunId();
+    /* Whether the run itself began - the one fact that decides which failure below
+       this is. */
+    let started = false;
     writeSelectFile(id, paths)
       .then((selectFilePath) => {
+        started = true;
         startRun(id);
         void navigate({ to: '/run' });
         return run(
@@ -200,9 +204,18 @@ export function Picker() {
            `write_select_file` - a path with a line break in it, say - means nothing
            ran at all, and there is no Run screen to carry the message. It is shown
            beside the button instead. Once the run has started, the reason belongs
-           in the log with the engine's own lines. */
+           in the log with the engine's own lines.
+
+           🔴 AND A REFUSAL BEFORE ANYTHING STARTED IS NOT A RUN (D-59, GATE 4
+           round 9). It used to call `finishRun(null, true)` here too, so Run read
+           STOPPED over the previous rehearsal's rows and Home's scan button
+           reverted - a run recorded that never began. Now it touches no run state
+           at all: the reason is at the control, and nothing else moved. */
         const reason = e instanceof Error ? e.message : String(e);
-        setFailed(reason);
+        if (!started) {
+          setFailed(reason);
+          return;
+        }
         appendLog(reason);
         finishRun(null, true);
       })

@@ -22,9 +22,11 @@
  * No single field reports what the gate kept. The DIFFERENCE between two fields
  * does: the safe-batch scan subset minus a dry-run's `estimated_bytes`, which is
  * what that run would actually delete with the gate applied. So the figure appears
- * once a dry-run has run and reads "not measured" until then - see
- * `lib/reclaim.ts` -> `heldBackBytes`, which also records the four guards that
- * keep the subtraction like-for-like.
+ * once "Dry-run first" has rehearsed the safe run, and reads "not measured" until
+ * then - and again once developer mode, the idle window or the exclusions move,
+ * because a gap measured under other arguments is not this one (D-60,
+ * `lib/rehearsal.ts`). `lib/reclaim.ts` -> `heldBackBytes` records the four guards
+ * that keep the subtraction like-for-like.
  *
  * 🔴 THE DUMMY'S COUNT SUB-LINE IS BUILT - "N caches used in the last M days". It was
  * declined while the figure above it was a whole-batch subtraction with no set

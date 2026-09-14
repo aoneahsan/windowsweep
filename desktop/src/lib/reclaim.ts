@@ -14,14 +14,19 @@
  * the sub-line counts distinct sections present in the targets
  * (`derive.bySection().length`) - never the sections that ran.
  *
- * 🔴 THE RECLAIM BUTTON AND THE RUN SCREEN'S HERO READ WHAT THE SAFE RUN FREES -
- * `safeRunBytes` below, the same figure the ladder totals. They used to carry the
- * total, so on this machine the button read `Reclaim 53.6 GB` over a run the
- * ladder expected to free 11.5 GB: a button labelled with an amount the action
- * does not deliver. The dummy never decided between the two because its seed makes
- * them equal (every seeded target sits in a safe-batch section); the button's own
- * word, "Reclaim", decides it - the number is what pressing it reclaims. Decided by
- * the main session on GATE 4 round 7 and recorded in `design/README.md`.
+ * 🔴 THE RECLAIM BUTTON AND THE RUN SCREEN'S HERO READ WHAT THE SAFE RUN FREES,
+ * starting from `safeRunBytes` below - the same figure the ladder totals. They used
+ * to carry the total, so on this machine the button read `Reclaim 53.6 GB` over a
+ * run the ladder expected to free 11.5 GB: a button labelled with an amount the
+ * action does not deliver (GATE 4 round 7, decision 6). Round 9 refined the
+ * quantity (D-60): after a rehearsal with the current arguments they carry its
+ * estimate, and otherwise a bound worded as one - `lib/rehearsal.ts`.
+ *
+ * 🔴 AND NOTHING HERE FALLS BACK TO A RUN (D-55, GATE 4 round 9). The hero read the
+ * last run's `estimated_bytes` whenever no scan had measured, and a Picker ask IS
+ * a run (`--only 19 --dry-run`): with no scan in the session, one ask put `0 B ·
+ * across 0 targets in 1 section` over "Nothing measured yet." Only a `--scan`
+ * measures what the hero claims, so until one has, every figure here says so.
  */
 
 import { idleDaysOf, isCleanupRun, type ProgressEvent, type RunSummary, type ScanTarget } from './cli';
@@ -32,12 +37,11 @@ import type { MapTarget } from '../components/ReclaimMap';
 /**
  * Total bytes a run could reclaim, or `null` when nothing has been measured.
  *
- * Scan data wins whenever it exists, because it is a measurement of what is on
- * disk now; a dry-run does not change that, and a real run clears the targets it
- * has just deleted.
+ * Only a scan answers this - a measurement of what is on disk now. A dry-run does
+ * not change it, a real run spends the targets it has just deleted, and no run's
+ * summary stands in for it: its figure answers a different question (D-55).
  */
 export function reclaimableBytes(
-  summary: RunSummary | null,
   scanTargets: ScanTarget[],
   /**
    * Whether a scan has measured this machine at all - `scannedAt !== null`.
@@ -45,49 +49,36 @@ export function reclaimableBytes(
    * 🔴 A SEPARATE FACT from "the list is non-empty", and conflating them was a
    * live defect the moment exclusions existed: the rows handed in here are the
    * INCLUDED ones, so a person who excludes everything hands in an empty array
-   * after a real measurement. Reading emptiness as "nothing measured" would have
-   * fallen through to the last run's `estimated_bytes` and printed a figure from
-   * a different question - a window promising bytes a run would refuse, which is
-   * the exact failure `--exclude-path` exists to prevent.
+   * after a real measurement. Reading emptiness as "nothing measured" would print
+   * `not measured` over a measurement whose true answer is 0.
    */
   measured: boolean,
 ): number | null {
-  if (measured) {
-    return scanTargets.reduce((total, target) => total + target.bytes, 0);
-  }
-  if (!summary) return null;
-  return summary.estimated_bytes > 0 ? summary.estimated_bytes : summary.freed_bytes;
+  if (!measured) return null;
+  return scanTargets.reduce((total, target) => total + target.bytes, 0);
 }
 
 /**
- * How many sections that figure spans.
- *
- * With scan data this is the number of DISTINCT sections holding a target, which
- * is what the reader is being told. Falling back to a run's `sections[]` is
- * correct only in the run case, where those are the sections that produced the
- * bytes being shown.
+ * How many sections that figure spans: the number of DISTINCT sections holding a
+ * target, which is what the reader is being told, and 0 before a scan - the rail's
+ * `across 0 sections`, never the sections some run happened to step through.
  */
-export function reclaimableSectionCount(
-  summary: RunSummary | null,
-  scanTargets: ScanTarget[],
-  measured: boolean,
-): number {
-  if (measured) {
-    return new Set(scanTargets.map((target) => target.section)).size;
-  }
-  return summary?.sections.length ?? 0;
+export function reclaimableSectionCount(scanTargets: ScanTarget[], measured: boolean): number {
+  if (!measured) return 0;
+  return new Set(scanTargets.map((target) => target.section)).size;
 }
 
 /**
- * What a safe run would free, or `null` when nothing has been measured - the
- * figure the ladder totals, the Reclaim button carries and the Run screen's idle
- * hero shows. ONE derivation for all three, for the reason this file exists.
+ * What a safe run could free, or `null` when nothing has been measured - the
+ * figure the ladder totals, and where the Reclaim button's and the Run screen's
+ * idle figure start (`lib/rehearsal.ts` -> `reclaimOffer`). ONE derivation, for
+ * the reason this file exists.
  *
  * Every included target whose section is in the engine's own `safe_batch`, at the
  * size the scan measured on disk. With developer mode ON the engine keeps recent
  * files inside the dev caches, so this is the ceiling of what goes; what the idle
- * gate keeps is `heldBackBytes`, shown beside it rather than subtracted from it,
- * because that figure needs a dry-run and this one must not wait for one.
+ * gate keeps is `heldBackBytes`, which needs a rehearsal to measure - the ladder
+ * shows it beside this total, and the button's bound subtracts it once measured.
  */
 export function safeRunBytes(
   catalogue: Catalogue | null,
@@ -102,14 +93,9 @@ export function safeRunBytes(
     .reduce((total, target) => total + target.bytes, 0);
 }
 
-/** How many targets that figure spans. */
-export function reclaimableTargetCount(
-  summary: RunSummary | null,
-  scanTargets: ScanTarget[],
-  measured: boolean,
-): number {
-  if (measured) return scanTargets.length;
-  return summary?.targets.length ?? 0;
+/** How many targets that figure spans - 0 before a scan, for the same reason. */
+export function reclaimableTargetCount(scanTargets: ScanTarget[], measured: boolean): number {
+  return measured ? scanTargets.length : 0;
 }
 
 /**
@@ -204,6 +190,13 @@ function developerSafeSections(catalogue: Catalogue): Set<number> {
  * dropped, yields a number that looks reasonable and is not.
  */
 export function heldBackBytes(
+  /**
+   * The last REHEARSAL's summary - Home's "Dry-run first" - while its developer
+   * mode, idle window and exclusions are still the current ones, else `null`
+   * (`lib/rehearsal.ts` -> `heldBackApplies`). 🔴 Not the latest summary: every run
+   * replaces that, so one Picker ask used to wipe this figure, and a gap measured
+   * under `--days 100` is not what `--days 30` holds back.
+   */
   summary: RunSummary | null,
   scanTargets: ScanTarget[],
   catalogue: Catalogue | null,
@@ -228,9 +221,9 @@ export function heldBackBytes(
     typeof summary.developer === 'boolean' ? summary.developer : summary.developer === 'true';
   if (!ranAsDeveloper) return null;
 
-  /* 3. The rehearsal must have run EVERY developer section of the safe batch - the
-        whole batch, or a Sections dry-run that included them. A section it did not
-        run has no estimate, and a partial figure would read as the whole of it. */
+  /* 3. The rehearsal must have run EVERY developer section of the safe batch. A
+        section it did not run - the engine skipped it - has no estimate, and a
+        partial figure would read as the whole of it. */
   const estimate = new Map(
     summary.sections.filter((step) => step.status === 'dry-run').map((step) => [step.section, step.freed_bytes]),
   );

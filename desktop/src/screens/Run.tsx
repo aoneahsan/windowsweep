@@ -32,16 +32,17 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
-import { useIncludedScanTargets, useRunPreferences } from '../state/derived';
-import { formatBytes, formatBytesParts } from '../lib/format';
+import { useIncludedScanTargets, useReclaimOffer, useRunPreferences } from '../state/derived';
+import { formatBytes } from '../lib/format';
 import { isCleanupRun } from '../lib/cli';
 import { newRunId, run, safeBatchArgs } from '../lib/engine';
 import { safeRunSections } from '../lib/catalogue';
 import { stateOf } from '../lib/control-state';
 import { RunPerSection, perSectionRows } from '../components/RunPerSection';
 import { ReclaimMap } from '../components/ReclaimMap';
-import { drainMapTargets, safeRunBytes, toMapTargets } from '../lib/reclaim';
+import { drainMapTargets, toMapTargets } from '../lib/reclaim';
 import { PrimaryButton } from '../components/PrimaryButton';
+import { HeroFigure } from '../components/HeroFigure';
 import { RunCancel } from '../components/RunCancel';
 
 export function RunScreen() {
@@ -56,7 +57,6 @@ export function RunScreen() {
      the drain nor in the per-section figures beside it. Home's map is the one
      place excluded tiles are still drawn, dimmed. */
   const scanTargets = useIncludedScanTargets();
-  const scannedAt = useStore((s) => s.scannedAt);
   const prefs = useRunPreferences();
   const excludedPaths = useStore((s) => s.excludedPaths);
   const runId = useStore((s) => s.runId);
@@ -112,13 +112,18 @@ export function RunScreen() {
      🔴 "WHAT THE RUN WOULD RECLAIM" IS THE SAFE BATCH, NOT THE SCAN. This read the
      whole scan's total, so the hero said `READY TO RUN 53.6 GB` above a Start
      button whose run the per-section rows expected to free 11.5 GB. It is
-     `safeRunBytes` now - the number Home's Reclaim button and its ladder carry, and
-     the sum of the rows beneath. (GATE 4 round 7, decided by the main session.) */
+     the Reclaim button's figure now, the ladder's total its starting point.
+     (GATE 4 round 7, decided by the main session.)
+
+     🔴 AND AT REST IT IS THE BUTTON'S FIGURE, WORDS INCLUDED (D-60, round 9): the
+     last rehearsal's estimate while that ran with the current arguments, otherwise
+     "up to" the bound - `run.html`'s own "up to" variant. Once a run starts, the
+     hero counts what the engine reported freed, which is no bound. */
   const freedSoFar = Object.values(progress).reduce(
     (total, p) => total + (p.event === 'end' ? (p.freedBytes ?? 0) : 0),
     0,
   );
-  const measured = safeRunBytes(catalogue, scanTargets, scannedAt !== null);
+  const offer = useReclaimOffer();
   /* 🔴 A CANCELLED RUN'S HERO IS THE SUM OF THE SECTIONS THE ENGINE SAID IT
      FINISHED, and `not measured` when that sum is zero.
      Those `##windowsweep ... event=end freed_bytes=N` lines are complete facts:
@@ -133,7 +138,8 @@ export function RunScreen() {
       ? (summary.dry_run ? summary.estimated_bytes : summary.freed_bytes)
       : phase === 'running'
         ? freedSoFar
-        : measured;
+        : (offer?.amount ?? null);
+  const heroUpTo = !cancelled && !isCleanupRun(summary) && phase !== 'running' && offer?.upTo === true;
 
   /* Elapsed from the engine's own first and last line rather than a stopwatch
      this screen keeps: the log is what the run actually did, and it stops growing
@@ -259,21 +265,9 @@ export function RunScreen() {
                       ? t('run.eyebrowReady')
                       : t('run.eyebrowDone')}
             </p>
-            {/* 🔴 The dummy's hero, which this screen did not have (D-22). The
-                number is `.hero-num` with the unit in its own `.unit` span - the
-                same shape Home uses, because it is the same component in the
-                dummy. */}
-            <p className="hero-num">
-              {heroBytes === null ? (
-                <span>{t('home.notMeasured')}</span>
-              ) : (
-                <>
-                  {/* `fmt.bytesParts` - the hero's own two decimals (D-46). */}
-                  <span>{formatBytesParts(heroBytes).value}</span>
-                  <span className="unit">{formatBytesParts(heroBytes).unit}</span>
-                </>
-              )}
-            </p>
+            {/* 🔴 The dummy's hero, which this screen did not have (D-22) - the
+                same component Home uses, because it is one in the dummy. */}
+            <HeroFigure bytes={heroBytes} upTo={heroUpTo} />
             {/* `run.html:30-34` - done, of the total, then the elapsed clause.
                 🔴 The total is the number of rows the per-section band below is
                 showing, NOT the queue's length. It used to be `queue.length` and

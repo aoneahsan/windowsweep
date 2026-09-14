@@ -467,7 +467,19 @@
         [grp.name, l.name, l.path, db.fmt.bytes(l.value), String(l.idle)].forEach(function (v, i) {
           var td = document.createElement('td');
           td.textContent = v;
-          if (i === 2) td.className = 'mono t-2xs';
+          /* D-58 (GATE 4 round 9): the Path cell takes the width that is LEFT and
+             ellipsises inside it - the whole path one hover away (`title`), and in
+             full in the cell's own text, which is what a screen reader reads. It had
+             no maximum at all: one 128-character path on a real machine grew the
+             table until Size and Idle sat 307 px beyond the band's own scroller, and
+             this seed's short paths hid it. The Target cell keeps to one line, so
+             the room the path gives up is not taken back by a wrapped label. */
+          if (i === 1) td.style.whiteSpace = 'nowrap';
+          if (i === 2) {
+            td.className = 'mono t-2xs';
+            td.title = v;
+            td.style.cssText = 'width:100%;max-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+          }
           if (i >= 3) td.className = 'num-cell';
           tr.appendChild(td);
         });

@@ -11,7 +11,8 @@
 import { useMemo } from 'react';
 
 import { includedOnly } from '../lib/exclusions';
-import { heldBackBytes, recentDeveloperCaches } from '../lib/reclaim';
+import { heldBackBytes, recentDeveloperCaches, safeRunBytes } from '../lib/reclaim';
+import { heldBackApplies, isCurrentRehearsal, reclaimOffer, type ReclaimOffer } from '../lib/rehearsal';
 import type { RunPreferences } from '../lib/engine';
 import type { ScanTarget } from '../lib/cli';
 import { useStore } from './store';
@@ -62,17 +63,51 @@ export function useIncludedScanTargets(): ScanTarget[] {
 
 /**
  * What developer mode is holding back right now - `lib/reclaim.ts` ->
- * `heldBackBytes`, read once for its two screens: Home's "Held back right now" and
- * the consequence line under Settings' developer switch. Two call sites assembling
- * the same five inputs is how one of them ends up passing the whole scan.
+ * `heldBackBytes`, read once for its three readers: Home's "Held back right now",
+ * the consequence line under Settings' developer switch, and the Reclaim button's
+ * bound. Several call sites assembling the same inputs is how one of them ends up
+ * passing the whole scan.
+ *
+ * 🔴 Measured by the last rehearsal, and only while developer mode, the idle window
+ * and the exclusions are still the ones it ran with (`lib/rehearsal.ts` ->
+ * `heldBackApplies`, which says why each of the three matters).
  */
 export function useHeldBackBytes(): number | null {
-  const summary = useStore((s) => s.summary);
+  const rehearsal = useStore((s) => s.rehearsal);
   const catalogue = useStore((s) => s.catalogue);
-  const developer = useStore((s) => s.developer);
   const scannedAt = useStore((s) => s.scannedAt);
+  const excludedPaths = useStore((s) => s.excludedPaths);
+  const prefs = useRunPreferences();
   const includedTargets = useIncludedScanTargets();
-  return heldBackBytes(summary, includedTargets, catalogue, developer, scannedAt !== null);
+  const applies = heldBackApplies(rehearsal, prefs, excludedPaths);
+  return heldBackBytes(
+    applies ? rehearsal.summary : null,
+    includedTargets,
+    catalogue,
+    prefs.developer,
+    scannedAt !== null,
+  );
+}
+
+/**
+ * What the Reclaim button and the Run screen's idle hero carry (D-60): the last
+ * rehearsal's estimate while it ran with the current arguments, otherwise the
+ * measured safe-batch total less what is held back, worded as the bound it is.
+ * `null` until a scan has measured - "Scan first" / "not measured".
+ */
+export function useReclaimOffer(): ReclaimOffer | null {
+  const rehearsal = useStore((s) => s.rehearsal);
+  const catalogue = useStore((s) => s.catalogue);
+  const scannedAt = useStore((s) => s.scannedAt);
+  const excludedPaths = useStore((s) => s.excludedPaths);
+  const prefs = useRunPreferences();
+  const includedTargets = useIncludedScanTargets();
+  const heldBack = useHeldBackBytes();
+  return reclaimOffer({
+    safeTotal: safeRunBytes(catalogue, includedTargets, scannedAt !== null),
+    heldBack,
+    current: isCurrentRehearsal(rehearsal, prefs, excludedPaths) ? rehearsal : null,
+  });
 }
 
 /**

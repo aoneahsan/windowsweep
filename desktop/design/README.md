@@ -846,3 +846,88 @@ Unchanged: *Export...* and its toast - the finished product.
   *"Run summaries from your other machines are not synced in this build yet. The filter is named here rather
   than hidden, so what is missing is a stated gap rather than something you have to discover."*
 - Report *Export...*: `pending-wave` - the button is drawn disabled with *Export is not built into this window yet...*; the build needs `--export` on the Rust allowlist and a reveal permission (product PENDING-TASKS TASK-015)
+
+## Amendment - 2026-09-14: GATE 4 round 9
+
+Round 9 (`gate4/GATE4-REPORT.md`, R9.6 and R9.7) closed round 8's blockers and found one more, D-55, with four
+small items; the main session then decided D-60. Two of them were the dummy's to change first, and the app
+followed each. The app's own items are listed at the end.
+
+### 1. `reclaim-map.js` - a long path ellipsises, and Size stays in view (D-58)
+
+The table's Path cell had no maximum, the same rule on both sides. One 128-character path on a real machine grew
+the table until Size and Idle sat 307 px beyond the band's own scroller at 1440; this seed's short paths hid it.
+The Path cell now takes the width that is left (`width: 100%; max-width: 0`) and ellipsises inside it. The whole
+path stays in the cell's text, which is what a screen reader reads, and one hover away in `title`. The Target cell
+keeps to one line, so the room the path gives up is not taken back by a wrapped label.
+
+Measured with a 128-character path set into this page's seed (in the page only):
+
+| width | before: table overflow, Size's right edge | after |
+|---|---|---|
+| 1440 | 443 px; 323 px beyond the scroller | 0 px; 119 px inside it |
+| 760 | 891 px; 771 px beyond | 0 px; 119 px inside |
+
+### 2. `db.js`, `index.html`, `wire.js`, `run.html`, `page-run.js` - the Reclaim button states a bound or the engine's own estimate (D-60, decided)
+
+This replaces the quantity decision 6 gave `{amount}` (the 2026-09-13 round-7 amendment, section 6). Decision 6
+stands in its own words - the button's number is what the safe run frees. What changes is how that number is
+known.
+
+Round 9 measured the window offering *"Reclaim 34.2 GB"* while the engine's own dry-run of the same arguments
+estimated 2.0 GB. Of the gap, 22.0 GB was the held-back figure shown beside the button; browsers (8.1 GB to
+245 MB) and temp (2.8 GB to 784 MB) took most of the rest - the engine's own gates, the temp window and files in
+use, cutting the measured total down. The measured safe-batch total is what is on disk, not what a press frees,
+and the Bible says never to state a gigabyte figure as a promise.
+
+Decided by the main session on 2026-09-14 (`docs/story/decision-log.md`):
+
+- **(a) After a rehearsal with the current arguments** - "Dry-run first", the safe batch dry, with the same
+  sections, developer mode, `--days`, `--temp-days`, `--large-file-mb` and exclusions - the button and the Run
+  screen's idle hero show that rehearsal's estimate: the engine's own figure.
+- **(b) Before one, or once any of those has changed since,** they show an upper bound, worded as one: *"Reclaim
+  up to {amount}"*. The amount is the measured safe-batch total less what is held back. It is a true bound,
+  because the engine cannot free more than was measured and not held back.
+- **The Home hero keeps the measured total.** It describes what is there, not what a press will do.
+
+| where | before a rehearsal, or after an argument moved (b) | after a rehearsal with the current arguments (a) |
+|---|---|---|
+| Home's primary button | *Reclaim up to {amount}* | *Reclaim {amount}* (the existing sentence) |
+| Run's idle hero | *up to*, in its own `.unit` span before the figure | the figure alone |
+| either, before a scan | *Scan first*, disabled; *not measured* (unchanged) | |
+
+How this dummy draws both: `db.facts.rehearsal` records the arguments "Dry-run first" ran with, and its estimate -
+this prototype's own dry-run figure, the one its toast reports. `db.derive.offer()` compares them with the current
+arguments, the exclusions as a set. Press "Dry-run first" and the button drops *up to*; move the idle window, the
+developer switch, an exclusion or a Settings threshold and it returns; move it back and the estimate returns.
+Starting the safe run on `run.html`, or Home's Reclaim, spends the rehearsal. The seed has no gate but the idle
+window, so here the estimate equals the bound and only the words change; on a real machine they differ, as above.
+
+**What the window subtracts, and only while it holds.** Held back is each developer section's size on disk less
+the rehearsal's estimate for it, so it measures developer mode, the idle window and the exclusions, and nothing
+else. After any of those three moves it reads *not measured* until the next rehearsal, and nothing is subtracted:
+a gap measured under `--days 100` would hold back more than a run at `--days 30` does, and the bound built from it
+would stop being one. `--temp-days` and `--large-file-mb` govern sections 10 and 19, which are not developer
+sections, so the figure survives them and is subtracted. With developer mode off it is 0 by definition. (This
+dummy sets its held-back caches aside per target in `activeTargets()`, so its bound is `safeRunBytes()` itself -
+the difference `lib/reclaim.ts` already records, unchanged here.)
+
+Measured in the window on this machine: before a rehearsal *"Reclaim up to 34.2 GB"* (the ladder's 34.2 GB, held
+back not measured), and the Run hero *up to 34.19 GB*; after "Dry-run first" *"Reclaim 1.9 GB"*, the Run screen
+reading *"A dry-run would reclaim 1.9 GB."* and, at rest, *1.92 GB*; `--days 90` *"up to 34.2 GB"*, back to 100
+*"1.9 GB"*; `--temp-days 4` *"up to 12.2 GB"* (34.2 less the 22.0 GB held back); developer mode off *"up to
+34.2 GB"*; one target excluded *"up to 32.5 GB"*.
+
+New strings in the window's catalogue: `home.reclaimUpTo` *"Reclaim up to {{amount}}"* and `run.heroUpTo`
+*"<1>up to</1> <2>{{value}}</2><3>{{unit}}</3>"* - one key, so a language can put the qualifier after the number.
+The keeper takes both into desktop-moment's record.
+
+### The app's own round-9 items, no dummy change
+
+- D-55: Home's hero, its sub-line, the scan button's word and the rail foot read the scan and nothing else. A
+  Picker ask (`--only N --dry-run`) is a run, and it measures nothing the hero claims; before a scan, Home is
+  `index.html?empty=1` whatever has run. The one sub-line state this dummy never drew - a span with no
+  freshness, after a run's summary stood in for a scan - is gone with it.
+- D-56: a dry-run's report ticks no drive (`page-report.js`: `gained = !DRY && …`).
+- D-57: the last-runs line ages on its own half-minute clock, before a scan as after one.
+- D-59: a refused `write_select_file` is shown at the control and records no run.

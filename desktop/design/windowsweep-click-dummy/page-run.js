@@ -143,6 +143,11 @@
     if (!queue.length) { ws.toast('Nothing in the safe batch to run.'); return; }
 
     buildList();
+    /* From here the hero counts what was freed, which is no bound (D-60), and a real
+       run spends the last rehearsal's estimate. */
+    var upTo = document.querySelector('[data-ws-hero-upto]');
+    if (upTo) upTo.hidden = true;
+    db.set('rehearsal', null);
     document.querySelector('[data-ws-action="runStart"]').disabled = true;
     document.querySelector('[data-ws-action="runCancel"]').disabled = false;
     var fin = document.querySelector('[data-ws-finish]');

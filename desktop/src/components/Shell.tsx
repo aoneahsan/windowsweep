@@ -176,16 +176,16 @@ function Titlebar({
 function Rail() {
   const { t } = useTranslation();
   const path = useRouterState({ select: (s) => s.location.pathname });
-  const summary = useStore((s) => s.summary);
   const catalogue = useStore((s) => s.catalogue);
 
   /* Read from lib/reclaim.ts, not recomputed. This copy and Home's disagreed with
-     the map and the ladder on the same screen: after a scan both showed 0 B. */
+     the map and the ladder on the same screen: after a scan both showed 0 B. And
+     before a scan it is the dummy's `-` / `across 0 sections`, whatever ran (D-55). */
   const scanTargets = useIncludedScanTargets();
   const scannedAt = useStore((s) => s.scannedAt);
-  const bytes = reclaimableBytes(summary, scanTargets, scannedAt !== null);
+  const bytes = reclaimableBytes(scanTargets, scannedAt !== null);
   const reclaimable = bytes === null ? '-' : formatBytes(bytes);
-  const sectionCount = reclaimableSectionCount(summary, scanTargets, scannedAt !== null);
+  const sectionCount = reclaimableSectionCount(scanTargets, scannedAt !== null);
 
   return (
     <nav className="rail" id="ws-rail" aria-label={t('nav.label')}>

@@ -55,8 +55,12 @@
           <div class="hero-actions">
             <button class="btn" data-ws-action="scan"><span class="btn-label">Scan again</span></button>
             <button class="btn" data-ws-action="dryRun"><span class="btn-label">Dry-run first</span></button>
+            <!-- D-60 (GATE 4 round 9): "Reclaim up to {amount}" until a rehearsal with the
+                 current arguments, then "Reclaim {amount}" - that rehearsal's estimate.
+                 Press "Dry-run first" for the second; move any argument for the first
+                 again. db.js -> offer() says which, and why the bound is a true one. -->
             <button class="btn btn-primary btn-lg" data-ws-action="reclaim">
-              <span class="btn-label">Reclaim <span data-ws-text="reclaimBtn">0 B</span></span>
+              <span class="btn-label">Reclaim <span data-ws-text="reclaimUpTo">up to </span><span data-ws-text="reclaimOffer">0 B</span></span>
             </button>
           </div>
 

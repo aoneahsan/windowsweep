@@ -509,8 +509,16 @@
   /* --------------------------------------------------------------- refresh */
   function refresh() {
     var total = db.derive.reclaimable();
-    paintHero(total);
+    /* D-60: the Reclaim button and the Run screen's idle hero carry the offer - a
+       rehearsal's estimate, or a bound worded as one; Home's hero and the rail foot
+       keep the measured total. */
+    var offer = db.derive.offer();
+    paintHero(page === 'run.html' ? offer.amount : total);
+    var heroUpTo = $('[data-ws-hero-upto]');
+    if (heroUpTo) heroUpTo.hidden = !offer.upTo;
     setText('reclaimBtn', fmt.bytes(total));
+    setText('reclaimUpTo', offer.upTo ? 'up to ' : '');
+    setText('reclaimOffer', fmt.bytes(offer.amount));
     setText('safeTotal', fmt.bytes(db.derive.safeRunBytes()));
     setText('targetCount', String(db.derive.activeTargets().length));
     setText('sectionCount', String(db.derive.bySection().length));
@@ -615,6 +623,11 @@
 
     if (a === 'dryRun') {
       busy(t, 'Previewing', 800, function () {
+        /* D-60: this press is THE rehearsal. It is recorded with the arguments it ran
+           with, and the Reclaim button answers at once: its figure is now this
+           estimate, no longer a bound - until any of those arguments moves. */
+        db.rehearse();
+        refresh();
         ws.toast('Dry-run: ' + fmt.bytes(db.derive.safeRunBytes()) + ' across ' +
                  db.derive.safeRunSections().length + ' sections. Nothing was deleted.');
       });
@@ -629,6 +642,10 @@
           t.dataset.state = 'done';
           paintHero(0);
           setText('reclaimBtn', '0 B');
+          /* A real run spends the rehearsal's estimate with the bytes (D-60). */
+          db.set('rehearsal', null);
+          setText('reclaimUpTo', 'up to ');
+          setText('reclaimOffer', '0 B');
           setTimeout(function () { delete t.dataset.state; }, 900);
           ws.toast('Freed ' + fmt.bytes(freed) + '. A real run would have written a report.', {
             undo: function () { map.draining = {}; renderMap(); refresh(); }

@@ -22,7 +22,7 @@
  * contradict each other about one Scheduled Task.
  */
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { scaleLinear } from 'd3-scale';
 import { area, curveMonotoneX, line } from 'd3-shape';
@@ -105,6 +105,18 @@ export function LastRuns({ history }: { history: HistoryEntry[] }) {
   const runs = [...records.slice(0, 8)].reverse();
   const last = records[0];
 
+  /* 🔴 THE LINE'S OWN CLOCK (D-57, GATE 4 round 9). "8 minutes ago" is a relative
+     time, and it used to age only on Home's clock, which ticks once a scan has
+     measured - so before a scan it stood still (125 s, unchanged, measured). The
+     half-minute tick lives here now, and only while there is a run to age. */
+  const [now, setNow] = useState(() => Date.now());
+  const lastAt = last?.startedAt ?? null;
+  useEffect(() => {
+    if (lastAt === null) return;
+    const tick = window.setInterval(() => { setNow(Date.now()); }, 30_000);
+    return () => { window.clearInterval(tick); };
+  }, [lastAt]);
+
   return (
     <section className="band band-well band-tight">
       <div className="wrap g12 rise">
@@ -129,7 +141,9 @@ export function LastRuns({ history }: { history: HistoryEntry[] }) {
                       form - `1 sections` was the concatenated shape (D-33). */}
                   <p className="t-sm ink-3">
                     {t('home.lastWhen', {
-                      when: formatRelative(new Date(last.startedAt)),
+                      /* Clamped: a run that lands between ticks is "just now", not
+                         in the future. */
+                      when: formatRelative(new Date(last.startedAt), new Date(Math.max(now, Date.parse(last.startedAt)))),
                       count: last.sections.length,
                       /* The dummy's words for what ran (`safe batch`,
                          `sections 1, 2, 3`), not the engine's flag (D-44). */

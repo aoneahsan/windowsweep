@@ -17,6 +17,7 @@ import { create } from 'zustand';
 import { toggleExclusion, usableExclusions } from '../lib/exclusions';
 import { interactiveSectionIds, mergeOffers } from '../lib/offers';
 import type { Catalogue } from '../lib/catalogue';
+import type { Rehearsal } from '../lib/rehearsal';
 import { isCleanupRun, type Candidate, type RunSummary, type ProgressEvent, type ScanTarget } from '../lib/cli';
 import type { AuthUser } from '../lib/auth';
 import { readPrefs, writePrefs, applyAllAxes, type AxisPrefs } from '../lib/theme';
@@ -93,6 +94,14 @@ interface StoreState {
    * it did not touch is still measured, and stays.
    */
   spendScanTargets: (sections: readonly number[]) => void;
+  /**
+   * The last "Dry-run first", with the arguments it ran with (D-60,
+   * `lib/rehearsal.ts`). Kept apart from `summary` for the reason `scanTargets` is:
+   * every run replaces the summary, and a Picker ask must not erase the estimate
+   * the Reclaim button carries. Session-only, like the scan it sits beside.
+   */
+  rehearsal: Rehearsal | null;
+  recordRehearsal: (rehearsal: Rehearsal) => void;
 
   /* --- what the interactive sections offered, and what a person ticked ----
      Written by `finishRun` alone, from every run's summary - see
@@ -331,11 +340,19 @@ export const useStore = create<StoreState>()((set, get) => ({
   spendScanTargets: (sections) => {
     if (sections.length === 0) return;
     const spent = new Set(sections);
+    /* 🔴 A real run inside a section the last rehearsal estimated has spent that
+       estimate too (D-60) - the button must not go on offering bytes that are gone.
+       Every real run reaches here, finished or cancelled; a section it never
+       started deleted nothing, and a run elsewhere leaves the estimate standing. */
+    if (get().rehearsal?.summary.sections.some((step) => spent.has(step.section))) set({ rehearsal: null });
     const rows = get().scanTargets.filter((row) => !spent.has(row.section));
     if (rows.length === get().scanTargets.length) return;
     /* The rows that remain keep their measurement time: they were not touched. */
     set({ scanTargets: rows, scannedAt: rows.length > 0 ? get().scannedAt : null });
   },
+
+  rehearsal: null,
+  recordRehearsal: (rehearsal) => { set({ rehearsal }); },
 
   candidates: [],
   offeredSections: [],

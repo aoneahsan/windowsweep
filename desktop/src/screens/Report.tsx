@@ -127,7 +127,7 @@ export function Report() {
                 <div className="c3">
                   <div className="well pad rep-disk">
                     <span className="caps ink-3">{t('report.diskTitle')}</span>
-                    <DiskBeforeAfter disk={ready.report.disk} />
+                    <DiskBeforeAfter disk={ready.report.disk} dryRun={ready.report.dryRun} />
                   </div>
                 </div>
               </div>

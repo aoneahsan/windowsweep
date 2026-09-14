@@ -710,3 +710,18 @@ Picker (option 3) would take away a choice the engine offers on the command line
 
 **D-49, decided with it:** when section 17's rows are in the selection, the bar says so - 17's rows are
 deleted outright whichever mode is chosen, and the choice covers 18, 19 and 23 (`modules/projects.ps1:157`).
+
+## 2026-09-14 - GATE 4 round 9's D-60: the Reclaim button states a bound or the engine's own estimate, never more
+
+Round 9 measured Home offering *"Reclaim 34.2 GB"* while the engine's dry-run of the same arguments estimated
+2.0 GB (22.0 GB of the gap is the held-back figure the button sits beside). The Bible: *"Never state a gigabyte
+figure as a promise."* Round 7's decision 6 said the button's amount is *what the safe run frees* and filled it
+with the measured total, which the engine's gates (the idle window, the temp window, files in use) cut down.
+
+**Decided (orchestrator, a refinement of decision 6 in its own words; reversible):** after a rehearsal with the
+current arguments the button and the Run screen's idle hero show **the rehearsal's estimate** - the engine's own
+figure; before one, or once an argument has changed, they read **"Reclaim up to {amount}"**, where the amount is
+the measured safe-batch total less what is held back - a true upper bound, since the engine cannot free more than
+it measured and did not hold back. The Home hero keeps the measured total: that one describes what is there, not
+what a press will do. New words on desktop-moment: *"Reclaim up to {{amount}}"* and the Run hero's equivalent,
+drawn in the dummy first. Recorded here so the keeper takes them into desktop-moment's record.

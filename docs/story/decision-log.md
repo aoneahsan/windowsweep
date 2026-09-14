@@ -725,3 +725,23 @@ the measured safe-batch total less what is held back - a true upper bound, since
 it measured and did not hold back. The Home hero keeps the measured total: that one describes what is there, not
 what a press will do. New words on desktop-moment: *"Reclaim up to {{amount}}"* and the Run hero's equivalent,
 drawn in the dummy first. Recorded here so the keeper takes them into desktop-moment's record.
+
+## 2026-09-14 - GATE 4 round 10's D-61: every figure that describes a run follows D-60's rule
+
+Round 10 confirmed D-60 on the Reclaim button and then found the same promise two bands lower: Home's ladder
+foot reads *"Total a safe run would free 34.2 GB"* while the button beside it, after a rehearsal of the same
+run, reads *"Reclaim 1.9 GB"*; the Run screen at rest lists eleven rows totalling 34.3 GB where the rehearsal's
+own rows are 0 B, 245.0 MB and 42.6 MB. `SafeRunLadder.tsx`'s own header states the invariant: that total "is
+the same number the Reclaim button carries", so the two cannot print different figures.
+
+**Decided (orchestrator, the same reasoning as D-60, to be applied in the next session):** every figure that
+describes what a run **would free** follows one rule - after a rehearsal with the current arguments it carries
+the rehearsal's own numbers (the ladder's per-section rows and total, and the Run screen's at-rest rows), and
+before one, or after any argument changes, it is worded as the bound it is ("up to"), exactly as the button is.
+A figure that describes what is **there** - the Home hero's measured total, a section card's measured size -
+keeps the measured number and says so. The words are decided in the dummy first, as D-60's were; the dummy's
+own seed cannot show the difference (no gate but the idle window), so the dummy gains the gated state rather
+than being left unable to express it.
+
+**Also filed by round 10, not blocking:** D-62 - at 760 the Home target table overflows 53 px on the longest
+engine title (the dummy reproduces it exactly, so the rule is the dummy's).

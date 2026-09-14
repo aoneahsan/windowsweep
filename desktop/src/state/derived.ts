@@ -11,8 +11,21 @@
 import { useMemo } from 'react';
 
 import { includedOnly } from '../lib/exclusions';
-import { heldBackBytes, recentDeveloperCaches, safeRunBytes } from '../lib/reclaim';
-import { heldBackApplies, isCurrentRehearsal, reclaimOffer, type ReclaimOffer } from '../lib/rehearsal';
+import {
+  heldBackBySection,
+  measuredBySection,
+  recentDeveloperCaches,
+  safeRunBytes,
+} from '../lib/reclaim';
+import { safeRunSections } from '../lib/catalogue';
+import {
+  heldBackApplies,
+  isCurrentRehearsal,
+  reclaimOffer,
+  runFigures,
+  type ReclaimOffer,
+  type RunFigures,
+} from '../lib/rehearsal';
 import type { RunPreferences } from '../lib/engine';
 import type { ScanTarget } from '../lib/cli';
 import { useStore } from './store';
@@ -63,7 +76,7 @@ export function useIncludedScanTargets(): ScanTarget[] {
 
 /**
  * What developer mode is holding back right now - `lib/reclaim.ts` ->
- * `heldBackBytes`, read once for its three readers: Home's "Held back right now",
+ * `heldBackBySection`, read once for its readers: Home's "Held back right now",
  * the consequence line under Settings' developer switch, and the Reclaim button's
  * bound. Several call sites assembling the same inputs is how one of them ends up
  * passing the whole scan.
@@ -72,7 +85,7 @@ export function useIncludedScanTargets(): ScanTarget[] {
  * and the exclusions are still the ones it ran with (`lib/rehearsal.ts` ->
  * `heldBackApplies`, which says why each of the three matters).
  */
-export function useHeldBackBytes(): number | null {
+export function useHeldBackBySection(): Map<number, number> | null {
   const rehearsal = useStore((s) => s.rehearsal);
   const catalogue = useStore((s) => s.catalogue);
   const scannedAt = useStore((s) => s.scannedAt);
@@ -80,13 +93,22 @@ export function useHeldBackBytes(): number | null {
   const prefs = useRunPreferences();
   const includedTargets = useIncludedScanTargets();
   const applies = heldBackApplies(rehearsal, prefs, excludedPaths);
-  return heldBackBytes(
+  return heldBackBySection(
     applies ? rehearsal.summary : null,
     includedTargets,
     catalogue,
     prefs.developer,
     scannedAt !== null,
   );
+}
+
+/** The same figure as one number, summed once - never derived a second time. */
+export function useHeldBackBytes(): number | null {
+  const held = useHeldBackBySection();
+  if (held === null) return null;
+  let total = 0;
+  for (const bytes of held.values()) total += bytes;
+  return total;
 }
 
 /**
@@ -105,6 +127,37 @@ export function useReclaimOffer(): ReclaimOffer | null {
   const heldBack = useHeldBackBytes();
   return reclaimOffer({
     safeTotal: safeRunBytes(catalogue, includedTargets, scannedAt !== null),
+    heldBack,
+    current: isCurrentRehearsal(rehearsal, prefs, excludedPaths) ? rehearsal : null,
+  });
+}
+
+/**
+ * What a run would free from each section, and whether those figures are bounds
+ * (D-61) - `lib/rehearsal.ts` -> `runFigures` says why, and why it is all or
+ * nothing. Two readers, which is what this file is for: Home's ladder and the Run
+ * screen's waiting rows, the two bands that were printing the measured total
+ * beside a button carrying the engine's estimate.
+ *
+ * 🔴 Over the engine's own safe batch, because that is the run both bands describe
+ * and the run the buttons on both screens start. Its figures therefore sum to
+ * `useReclaimOffer`'s amount, which is the invariant the ladder's header states.
+ */
+export function useRunFigures(): RunFigures {
+  const catalogue = useStore((s) => s.catalogue);
+  const rehearsal = useStore((s) => s.rehearsal);
+  const excludedPaths = useStore((s) => s.excludedPaths);
+  const prefs = useRunPreferences();
+  const includedTargets = useIncludedScanTargets();
+  const heldBack = useHeldBackBySection();
+  const sections = useMemo(
+    () => (catalogue ? safeRunSections(catalogue).map((s) => s.id) : []),
+    [catalogue],
+  );
+  const measured = useMemo(() => measuredBySection(includedTargets), [includedTargets]);
+  return runFigures({
+    sections,
+    measured,
     heldBack,
     current: isCurrentRehearsal(rehearsal, prefs, excludedPaths) ? rehearsal : null,
   });

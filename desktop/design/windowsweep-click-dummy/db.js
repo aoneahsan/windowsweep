@@ -94,6 +94,18 @@
     });
   }
 
+  /* D-61: what the engine's OTHER gates keep back inside a target it does run -
+     a file a program still has open, a temp file newer than the temp window. The
+     seed declares it per target with its reason (S.GATED); developer mode is not
+     in that table, because activeTargets() has already set its caches aside.
+     Clamped to the target's own size: a gate cannot keep back more than there is. */
+  var gate = {};
+  S.GATED.forEach(function (g) { gate[g.path] = g; });
+  function keptByEngine(t) {
+    var g = gate[t.path];
+    return g ? Math.min(t.bytes, g.keeps) : 0;
+  }
+
   function sum(list) { return list.reduce(function (a, t) { return a + t.bytes; }, 0); }
 
   function reclaimable() { return sum(activeTargets()); }
@@ -132,14 +144,78 @@
       largeFileMb: facts.largeFileMb, excluded: facts.excluded.slice().sort()
     };
   }
-  function offer() {
+  /* The rehearsal that still describes the run on offer, or null. A record written
+     before D-61 carried one total and no per-section rows, so it cannot answer the
+     ladder; it is read as absent rather than as an estimate of unknown shape. */
+  function currentRehearsal() {
     var r = facts.rehearsal;
-    if (r && JSON.stringify(r.args) === JSON.stringify(runArgs())) return { amount: r.estimate, upTo: false };
+    if (!r || !r.sections) return null;
+    return JSON.stringify(r.args) === JSON.stringify(runArgs()) ? r : null;
+  }
+  function sumSections(sections) {
+    return Object.keys(sections).reduce(function (a, k) { return a + sections[k]; }, 0);
+  }
+  function offer() {
+    var r = currentRehearsal();
+    if (r) return { amount: sumSections(r.sections), upTo: false };
     return { amount: safeRunBytes(), upTo: true };
   }
-  /* The estimate is this prototype's own dry-run figure - the one its toast reports -
-     recorded with the arguments it ran with. A real run spends it: set it to null. */
-  function rehearse() { set('rehearsal', { args: runArgs(), estimate: safeRunBytes() }); }
+  /* What a dry-run of the safe batch would report, SECTION BY SECTION - the engine
+     writes a figure for each step it takes, in a dry-run as in a real one, and its
+     total is their sum (verified against a real `--json --dry-run`: eleven
+     `sections[].freed_bytes` summing exactly to `estimated_bytes`, with the
+     top-level `freed_bytes` 0). Recorded with the arguments it ran with; a real run
+     spends it (set it to null). */
+  function rehearsalEstimate() {
+    var m = {};
+    /* Every step the run takes reports a figure, including the report-only sections
+       that free nothing - so the ladder shows the engine's own 0 B rather than
+       falling back to a measured number for one rung out of eleven. */
+    S.SAFE_BATCH.forEach(function (id) { m[id] = 0; });
+    activeTargets().forEach(function (t) {
+      if (m[t.section] === undefined) return;
+      m[t.section] += Math.max(0, t.bytes - keptByEngine(t));
+    });
+    return m;
+  }
+  function rehearse() { set('rehearsal', { args: runArgs(), sections: rehearsalEstimate() }); }
+
+  /* D-61 (GATE 4 round 10) - EVERY FIGURE THAT DESCRIBES WHAT A RUN WOULD FREE
+     FOLLOWS ONE RULE, not just the Reclaim button D-60 fixed. The ladder's rungs
+     and total and the Run screen's waiting rows are the same claim in plainer
+     words, and they were printing the measured total beside a button carrying the
+     engine's estimate - eighteen times it, on the machine round 10 measured.
+
+       (a) after a rehearsal with the CURRENT arguments, each figure is that
+           rehearsal's own number for its section, and the total is their sum -
+           which is the button's figure, so the band and the button cannot differ;
+       (b) before one, or once any argument has moved since, each figure is the
+           measured size less what developer mode is measured to hold back, and it
+           is worded as the bound it is ("up to").
+
+     A figure describing what IS THERE keeps its measured number: Home's hero, the
+     drives, the map, a section card on the Sections screen. This is only about the
+     figures that describe a run.
+
+     Sorted by the figure shown, so "which step frees the most" stays true in both
+     states - after a rehearsal the shape of the run really is the estimate's shape. */
+  function safeRunRows() {
+    var r = currentRehearsal();
+    var measured = {};
+    bySection().forEach(function (row) { measured[row.section] = row; });
+    /* 🔴 Nothing is subtracted here and that is not an omission: bySection() counts
+       activeTargets(), which has already set developer mode's held-back caches
+       aside, so a rung is net of it and the rungs sum to safeRunBytes() - the
+       bound offer() carries. The window's own figures are sizes on disk and it
+       subtracts its measured held-back total there, exactly as D-60's amendment
+       records for the button. Same rule, one subtraction each. */
+    var rows = S.SAFE_BATCH.filter(function (id) { return measured[id]; }).map(function (id) {
+      var m = measured[id];
+      return { section: id, count: m.count, bytes: r ? (r.sections[id] || 0) : m.bytes };
+    });
+    rows.sort(function (a, b) { return b.bytes - a.bytes; });
+    return { rows: rows, upTo: !r };
+  }
 
   function needsAPerson() {
     var m = {};
@@ -248,6 +324,7 @@
       activeTargets: activeTargets, heldByDeveloperMode: heldByDeveloperMode,
       reclaimable: reclaimable, bySection: bySection,
       safeRunSections: safeRunSections, safeRunBytes: safeRunBytes, offer: offer,
+      safeRunRows: safeRunRows, keptByEngine: keptByEngine,
       needsAPerson: needsAPerson, mapData: mapData, mapDataAll: mapDataAll, drives: drives
     },
     fmt: { bytes: bytes, bytesParts: bytesParts, relDate: relDate }

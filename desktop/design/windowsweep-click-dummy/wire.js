@@ -269,8 +269,11 @@
     var mount = $('[data-ws-ladder]');
     if (!mount) return;
     mount.textContent = '';
-    var rows = db.derive.safeRunSections();
-    var max = rows.length ? rows[0].bytes : 1;
+    /* D-61: the rungs carry the same figure the total and the button do - the
+       rehearsal's own number per section after one, the bound before it. Sorted by
+       what is shown, so "which step frees the most" stays true in both states. */
+    var rows = db.derive.safeRunRows().rows;
+    var max = rows.length && rows[0].bytes > 0 ? rows[0].bytes : 1;
     /* Eight rungs made this column twice the height of the one beside it and left a
        block of dead space under Developer Mode. Four is enough to show the shape;
        the rest are one click away - the same answer as everywhere else on the page. */
@@ -519,7 +522,17 @@
     setText('reclaimBtn', fmt.bytes(total));
     setText('reclaimUpTo', offer.upTo ? 'up to ' : '');
     setText('reclaimOffer', fmt.bytes(offer.amount));
-    setText('safeTotal', fmt.bytes(db.derive.safeRunBytes()));
+    /* D-61: the ladder's total IS the button's figure - the invariant the band's
+       own words had broken, printing the measured total under "would free" beside a
+       button carrying the engine's estimate. Both states are worded for what they
+       are, here and on the rungs. */
+    setText('safeTotal', fmt.bytes(offer.amount));
+    setText('safeTotalLabel', offer.upTo
+      ? 'Total a safe run would free up to'
+      : 'Total a safe run would free');
+    setText('ladderBasis', offer.upTo
+      ? 'Sizes on disk — a run frees up to this. A dry-run gives the engine’s own figure.'
+      : 'The last dry-run’s own figures, for these exact settings.');
     setText('targetCount', String(db.derive.activeTargets().length));
     setText('sectionCount', String(db.derive.bySection().length));
     setText('engineVersion', S.ENGINE_VERSION);
@@ -590,6 +603,12 @@
     var heldN = $('[data-ws-text="devHeldN"]');
     if (heldN && heldN.parentElement) heldN.parentElement.hidden = true;
     setText('safeTotal', 'not measured');
+    /* D-61: before a scan there is no figure to qualify, so the band says nothing
+       about which of the two it would be - the caption goes, and the label loses
+       its "up to". The rungs already read "not measured" (D-53). */
+    setText('safeTotalLabel', 'Total a safe run would free');
+    var basis = $('[data-ws-text="ladderBasis"]');
+    if (basis) basis.hidden = true;
     ['[data-ws-last-figure]', '[data-ws-last-open]'].forEach(function (sel) {
       var node = $(sel);
       if (node) node.hidden = true;
@@ -628,7 +647,11 @@
            estimate, no longer a bound - until any of those arguments moves. */
         db.rehearse();
         refresh();
-        ws.toast('Dry-run: ' + fmt.bytes(db.derive.safeRunBytes()) + ' across ' +
+        /* 🔴 D-61: the toast is a figure describing this run too, and it was
+           reporting the MEASURED total - so the acknowledgement of the rehearsal
+           contradicted the button the rehearsal had just filled. It carries the
+           rehearsal's own estimate, which is what a dry-run reports. */
+        ws.toast('Dry-run: ' + fmt.bytes(db.derive.offer().amount) + ' across ' +
                  db.derive.safeRunSections().length + ' sections. Nothing was deleted.');
       });
     }

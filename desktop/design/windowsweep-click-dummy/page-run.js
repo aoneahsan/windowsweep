@@ -70,12 +70,18 @@
      disagrees with its own "N of M". The measured ones come first, biggest first
      (db.derive.safeRunSections, the ladder's order); the rest follow in catalogue
      order with no figure, exactly as the app draws them. */
+  /* D-61 (GATE 4 round 10): the waiting rows carry the same figure the ladder and
+     the Reclaim button do - the rehearsal's own number per section after one with
+     these arguments, the bound before it. They used to be the measured sizes on
+     disk, so eleven rows queued 34.3 GB beside a hero reading the engine's 1.9 GB.
+     A section the rehearsal measured at nothing shows its 0 B; before a rehearsal
+     there is no figure for it at all, which is what `unmeasured` still means. */
   function runQueue() {
-    var measured = db.derive.safeRunSections();
+    var offer = db.derive.safeRunRows();
     var have = {};
-    measured.forEach(function (r) { have[r.section] = true; });
-    return measured.concat(window.wsSeed.SAFE_BATCH.filter(function (id) { return !have[id]; })
-      .map(function (id) { return { section: id, bytes: 0, count: 0, unmeasured: true }; }));
+    offer.rows.forEach(function (r) { have[r.section] = true; });
+    return offer.rows.concat(window.wsSeed.SAFE_BATCH.filter(function (id) { return !have[id]; })
+      .map(function (id) { return { section: id, bytes: 0, count: 0, unmeasured: offer.upTo }; }));
   }
 
   function rowFor(id) { return document.querySelector('[data-ws-runlist] [data-section="' + id + '"]'); }
@@ -147,6 +153,10 @@
        run spends the last rehearsal's estimate. */
     var upTo = document.querySelector('[data-ws-hero-upto]');
     if (upTo) upTo.hidden = true;
+    /* D-61: and the band's caption goes with it. From here every figure in the list
+       is what the engine reported, not what a run would free. */
+    var basis = document.querySelector('[data-ws-text="runBasis"]');
+    if (basis) basis.hidden = true;
     db.set('rehearsal', null);
     document.querySelector('[data-ws-action="runStart"]').disabled = true;
     document.querySelector('[data-ws-action="runCancel"]').disabled = false;
@@ -221,6 +231,11 @@
       queue = runQueue();
       buildList();
       window.wsWire.setText('runTotal', String(queue.length));
+      /* D-61: which of the two the figures beside the rows are - the ladder's own
+         sentences, because they are the same figures answering the same question. */
+      window.wsWire.setText('runBasis', db.derive.safeRunRows().upTo
+        ? 'Sizes on disk — a run frees up to this. A dry-run gives the engine’s own figure.'
+        : 'The last dry-run’s own figures, for these exact settings.');
       /* 🔴 This line silently overwrote the amendment made to run.html on 2026-09-07:
          the static slot said one thing and the page rendered another, so the dummy
          disagreed with the app it is supposed to specify. A grep of the HTML confirmed

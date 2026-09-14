@@ -161,9 +161,14 @@
           <div class="c5 rise">
             <div class="zone-label"><span class="caps">A safe run, step by step</span></div>
             <div class="panel pad">
+              <!-- D-61 (GATE 4 round 10): which of the two figures this column is
+                   carrying, said once for the band rather than "up to" eleven times
+                   down a numeric column. It changes when "Dry-run first" changes it,
+                   which is how the reader can tell the states apart at all. -->
+              <p class="t-xs ink-3" style="margin-bottom:var(--sp-3)" data-ws-text="ladderBasis">Sizes on disk &mdash; a run frees up to this. A dry-run gives the engine&rsquo;s own figure.</p>
               <div class="ladder" data-ws-ladder></div>
               <div class="ladder-total">
-                <span class="t-sm ink-2">Total a safe run would free</span>
+                <span class="t-sm ink-2" data-ws-text="safeTotalLabel">Total a safe run would free up to</span>
                 <span class="num t-md wide accent-ink" data-ws-text="safeTotal">0 B</span>
               </div>
             </div>

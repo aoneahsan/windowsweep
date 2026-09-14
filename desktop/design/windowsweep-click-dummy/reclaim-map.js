@@ -472,9 +472,30 @@
              full in the cell's own text, which is what a screen reader reads. It had
              no maximum at all: one 128-character path on a real machine grew the
              table until Size and Idle sat 307 px beyond the band's own scroller, and
-             this seed's short paths hid it. The Target cell keeps to one line, so
-             the room the path gives up is not taken back by a wrapped label. */
-          if (i === 1) td.style.whiteSpace = 'nowrap';
+             this seed's short paths hid it.
+
+             🔴 D-62 (GATE 4 round 10): AND THE TARGET CELL DOES THE SAME, for the
+             same reason one row later. Round 9 gave it `nowrap` alone, so the room
+             the path gave up could not be taken back by a WRAPPED label - but a long
+             one-line label simply pushed the table instead: at 760 this machine's
+             longest engine title held a 304 px column and the table overflowed its
+             own scroller by 53 px, `Idle (days)` ending 38 px past the right edge.
+             A cap in pixels would only move the number at which it breaks - the
+             engine's longest safe-batch title is half again as long as the one that
+             found this ("docker image prune (unused images older than N days)", 52
+             characters) - so both text columns now shrink and ellipsise, and the
+             table's width is bounded by the four columns that cannot. 760 is the
+             narrowest the product can be (`tauri.conf.json`, minWidth), so it is
+             where this has to hold. */
+          if (i === 1) {
+            td.title = v;
+            td.textContent = '';
+            var name = document.createElement('span');
+            name.textContent = v;
+            name.style.cssText = 'display:block;max-width:calc(13rem * var(--density));' +
+              'overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+            td.appendChild(name);
+          }
           if (i === 2) {
             td.className = 'mono t-2xs';
             td.title = v;

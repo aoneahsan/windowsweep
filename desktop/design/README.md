@@ -931,3 +931,109 @@ The keeper takes both into desktop-moment's record.
 - D-56: a dry-run's report ticks no drive (`page-report.js`: `gained = !DRY && …`).
 - D-57: the last-runs line ages on its own half-minute clock, before a scan as after one.
 - D-59: a refused `write_select_file` is shown at the control and records no run.
+
+---
+
+## Amendment - 2026-09-14 (later): GATE 4 round 10
+
+Round 10 confirmed D-60 on the Reclaim button and then found the same promise two bands lower, as **D-61**;
+it also filed **D-62**, a 760 overflow. Both are the dummy's to change first, and the app follows each. D-61
+needed this dummy to gain a state its seed could not show, which is the larger half of this amendment.
+
+### 1. `seed.js`, `db.js`, `index.html`, `wire.js`, `run.html`, `page-run.js` - every figure that describes a run follows D-60's rule (D-61, decided)
+
+**What round 10 measured.** After a rehearsal, with the Reclaim button reading *Reclaim 1.9 GB* - the engine's
+own estimate for that exact run - Home's ladder foot still read *"Total a safe run would free 34.2 GB"* and the
+Run screen's eleven waiting rows still totalled 34.3 GB (`pkg 13.7 GB`, `browsers 8.1 GB`, `build 5.1 GB`, …),
+where the rehearsal's own rows were `0 B`, `245.0 MB` and `42.6 MB`. Eighteen times the figure, in plainer
+words, on the same screen. `SafeRunLadder.tsx`'s own header states the invariant it broke: that the total "is
+the same number the Reclaim button carries".
+
+**Decided by the main session on 2026-09-14** (`docs/story/decision-log.md`), the same reasoning as D-60:
+
+- **(a) After a rehearsal with the current arguments** - the same sections, developer mode, `--days`,
+  `--temp-days`, `--large-file-mb` and exclusions - every figure that describes what a run **would free**
+  carries that rehearsal's own number: the ladder's rungs, its "and N more" roll-up, its total, and the Run
+  screen's waiting rows.
+- **(b) Before one, or once any argument has moved since,** each is the **bound** it is and is worded as one.
+- **A figure that describes what is THERE keeps its measured number** and is not touched: Home's hero, the
+  drives, the map, a section card on the Sections screen.
+
+| where | (b) before a rehearsal, or after an argument moved | (a) after a rehearsal with the current arguments |
+|---|---|---|
+| the ladder's total row | *Total a safe run would free up to {amount}* | *Total a safe run would free {amount}* |
+| the ladder's rungs and roll-up | the bound per section | the rehearsal's own figure per section |
+| both bands' caption | *Sizes on disk — a run frees up to this. A dry-run gives the engine's own figure.* | *The last dry-run's own figures, for these exact settings.* |
+| Run's waiting rows | the bound per section | the rehearsal's own figure per section |
+| either, before a scan | the caption is not drawn at all, the label loses its *up to*, the rungs read *not measured* (D-53) | |
+
+**Why a caption rather than "up to" on every figure.** Eleven *up to* prefixes down a numeric column is noise,
+and it would break the column's alignment; the qualifier belongs to the band, said once. It is also what makes
+the state CHANGE visible: press "Dry-run first" and the sentence changes with the numbers, which is how a
+reader can tell the two apart at all.
+
+**And the ladder re-ranks.** The rungs sort by the figure shown, so *which step frees the most* stays true in
+both states - after a rehearsal the shape of the run really is the estimate's shape. Sorted by size on disk it
+would have put a section the engine estimates at 0 B on the top rung with an empty bar.
+
+**The state this dummy gained, and why it had to.** Its seed had no gate but the idle window, so bound,
+estimate and ladder total were one number here and pressing "Dry-run first" changed only the words - the
+prototype could not draw the defect it is meant to specify the fix for. `seed.js` now declares, per target,
+what the engine's **other** gates keep back and why: a file a running program still has open, and a temp file
+newer than `--temp-days` (`S.GATED`, twelve rows, each naming its gate - *Chrome is running*, *newer than the
+temp window, or open*). That is demo data like every byte figure in the file, and it is clamped to the target's
+own size on read. 🔴 **Developer mode is deliberately not in that table**: its idle gate is already modelled
+one layer up, where `activeTargets()` sets a recently-used dev cache aside and `heldByDeveloperMode()` reports
+it as "Held back right now". A second subtraction for the same gate would count it twice.
+
+`db.derive.safeRunRows()` is the one rule, used by the ladder and by the Run queue; `rehearse()` now records a
+figure per section rather than one total, which is what the engine's own summary carries
+(`sections[].freed_bytes`, filled in a dry-run exactly as in a real one).
+
+Measured here, at 1440: before a rehearsal *Total a safe run would free up to 29.7 GB* beside *Reclaim up to
+29.7 GB*, rungs `build 8.8 GB · pkg 7.2 GB · browsers 3.7 GB · temp 2.7 GB` and *and 4 more 7.3 GB*; after
+"Dry-run first" *Total a safe run would free 19.9 GB* beside *Reclaim 19.9 GB*, rungs `build 8.8 GB · pkg
+7.2 GB · runners 1.9 GB · temp 757.8 MB` and *and 4 more 1.3 GB* - the ladder re-ranked, browsers falling from
+3.7 GB to 388.0 MB because this seed now says Chrome and Edge are running. Run's rows move with it, and its
+hero drops its *up to*.
+
+🔴 **One more figure was making the same claim and is fixed with them:** the dry-run's own toast reported
+`safeRunBytes()` - the measured total - so the acknowledgement of the rehearsal contradicted the button the
+rehearsal had just filled. It carries the estimate now: *Dry-run: 19.9 GB across 8 sections. Nothing was
+deleted.*
+
+**What the window does differently, and why that is the same rule.** This dummy's per-section figure is already
+net of developer mode (its `activeTargets()` drops a held-back cache outright), so a rung here IS the bound.
+The window's figures are sizes on disk, so it subtracts its own measured held-back figure per section - the
+difference `lib/reclaim.ts` has recorded since D-60, unchanged. One subtraction each; the rungs sum to the
+button's amount on both sides.
+
+### 2. `reclaim-map.js` - the Target cell is capped, not merely kept to one line (D-62)
+
+Round 9's D-58 gave the Path cell the width that is left and kept the Target cell to one line, so the room the
+path gave up could not be taken back by a wrapped label. A long label then simply pushed the table instead.
+Measured here at 760 with this machine's longest engine title set into the rows (*Windows Error Reporting
+archive (system)*, 40 characters), the table overflowed its own scroller by **53 px** with `Idle (days)` ending
+**38 px** past the right edge and the Target column holding **304 px** - the same three numbers round 10
+reported from the window, which is how this is known to be the dummy's rule rather than the app's.
+
+🔴 **A cap in pixels chosen to fit that title would only move the width at which it breaks.** The engine's
+longest safe-batch title is half again as long - *docker image prune (unused images older than N days)*, 52
+characters, `modules/docker.ps1:7` - and with it the same table overflowed **138 px**. So the label now lives
+in a block span with its own maximum (`13rem * var(--density)`), which is what bounds an auto-layout cell's
+contribution; the whole label stays in the cell's text, which is what a screen reader reads, and one hover away
+in `title`.
+
+⚠️ **Not by giving Target the Path's own `width:100%; max-width:0`**, which was tried first and measured: the
+two flexible columns do not share, the label swallows the path's width entirely and Path collapses to **59 px**
+even at 1440. The cap leaves Path the rest.
+
+| width | title | before: overflow · `Idle (days)` past the scroller · Target · Path | after |
+|---|---|---|---|
+| 760 | 40 chars | 53 px · 38 px · 304 px · 59 px | 0 px · 15 px inside · 232 px · 78 px |
+| 760 | 52 chars | 138 px · 123 px · 388 px · 59 px | 0 px · 15 px inside · 232 px · 78 px |
+| 1440 | 52 chars | 0 px · 15 px inside · 388 px · 369 px | 0 px · 15 px inside · 232 px · 526 px |
+
+Each "before" was measured with the pre-D-62 rule put back in place and the plant verified to have applied
+first; the file was restored byte-identical afterwards. 760 is where this has to hold, because
+`tauri.conf.json` sets `minWidth: 760` and the product cannot be narrower.

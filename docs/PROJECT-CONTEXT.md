@@ -1,7 +1,7 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-09-12 (session 13, the audit)
-Verified Against: commit fc29532 on `main`, 2026-09-12 (session 13: CLI 1.2.0 published on 2026-09-08 and the engine equals `v1.2.0` again - the diff is empty; the marketing site live since 2026-09-08; `desktop-v1.1.0` released and installed on this machine, 1.2.0 owed; the docs site HTTP-only while GitHub withholds its certificate; the workspace root renamed to `windowsweep-root`; eight owner decisions D13-D20 recorded below)
+Last Updated: 2026-09-14 (session 15, the v3 run's GATE 4 rounds)
+Verified Against: commit 280e6f4 on `main`, 2026-09-14 (session 15: the engine still diffs EMPTY against `v1.2.0`; the docs site on HTTPS with its own certificate; the marketing site deployed with every route prerendered, telemetry proved on the wire and three build gates added; all nineteen story surfaces recorded and P7 closed; the desktop app through GATE 4 rounds 7-10 with every finding fixed but D-61 open, which is why `desktop-v1.2.0` is still an unpublished draft. Polled the same day: `external.google` **false**, docs HTTPS 200 with a valid certificate, npm `latest` 1.2.0, `latest.json` 1.1.0)
 
 ## Identity and outcome
 - Purpose: safe, developer-aware disk and cache cleanup CLI for Windows; the Windows member of the family with
@@ -115,6 +115,9 @@ or a measured fact, and each is reversible in one change. Recorded so nobody ask
 | Sign-out on `/account` and the desktop Account screen | **this browser / this machine only** (`scope: 'local'`) | the approved dummy's sign-out note; supabase-js's `global` default ended the other app's session in the shared auth pool |
 | May the site's build need the network? | **yes, for the release check** (`vite/release-strings.ts`) | a gate that skips itself offline is the decorative gate the rules forbid; CI and every deploy have the network |
 | The desktop catalogue crossed 500 lines | split into `locales/en/{shell,home,sections,account}.json`, locales discovered by glob | the site's precedent and the house cap; a second language is now one directory and no code |
+| The Reclaim button promised the measured total (GATE 4 round 9, **D-60**) | after a rehearsal with the CURRENT arguments the button carries **that rehearsal's own estimate**; before one, or once any argument changes, it is worded as the bound it is - *"Reclaim up to"* | round 9 measured *Reclaim 34.2 GB* beside the engine's own dry run of the same arguments estimating 2.0 GB: the engine's gates - the idle window, the temp window, a browser in use - cut the measured total down. The Bible: never state a gigabyte figure as a promise. `src/lib/rehearsal.ts` |
+| The same promise two bands lower (GATE 4 round 10, **D-61**) | the rule generalises: **every** figure that describes what a run WOULD FREE follows D-60 - Home's ladder rows and total, and the Run screen's at-rest rows. A figure that describes what **is there** - Home's hero, a section card's measured size - keeps its measured number | `SafeRunLadder.tsx`'s own header states the invariant it was breaking: the ladder total "is the same number the Reclaim button carries", so the two cannot print different figures. Decided 2026-09-14, dummy first; the dummy gains the gated state its seed cannot show. `docs/story/decision-log.md` |
+| A 53 px overflow at 760 on the longest engine title (**D-62**) | fixed in the same wave, **not** release-blocking | the dummy reproduces it exactly, so the rule is the dummy's; `tauri.conf.json` sets `minWidth: 760`, so 760 is the narrowest real width |
 
 ### Session 10 decisions (2026-09-07) - the completion run
 

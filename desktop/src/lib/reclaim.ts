@@ -77,7 +77,7 @@ export function reclaimableSectionCount(scanTargets: ScanTarget[], measured: boo
  * Every included target whose section is in the engine's own `safe_batch`, at the
  * size the scan measured on disk. With developer mode ON the engine keeps recent
  * files inside the dev caches, so this is the ceiling of what goes; what the idle
- * gate keeps is `heldBackBytes`, which needs a rehearsal to measure - the ladder
+ * gate keeps is `heldBackBySection`, which needs a rehearsal to measure - the ladder
  * shows it beside this total, and the button's bound subtracts it once measured.
  */
 export function safeRunBytes(
@@ -96,6 +96,31 @@ export function safeRunBytes(
 /** How many targets that figure spans - 0 before a scan, for the same reason. */
 export function reclaimableTargetCount(scanTargets: ScanTarget[], measured: boolean): number {
   return measured ? scanTargets.length : 0;
+}
+
+/**
+ * What the scan measured for each section, and across how many targets - the
+ * rungs of Home's ladder and the waiting figures of the Run screen's rows.
+ *
+ * 🔴 ONE derivation, for the reason this file exists. It lived twice: inline in
+ * `Home.tsx`'s `ladderRows` and again inside `perSectionRows`, two screens
+ * grouping the same rows by the same key with the same `bytes <= 0` question
+ * answered differently - Home skipped an empty target, the Run rows counted it and
+ * printed `0 B`. The rule here is Home's, because a target measuring nothing is
+ * not a step that frees anything.
+ */
+export function measuredBySection(
+  scanTargets: readonly ScanTarget[],
+): Map<number, { bytes: number; count: number }> {
+  const out = new Map<number, { bytes: number; count: number }>();
+  for (const target of scanTargets) {
+    if (target.bytes <= 0) continue;
+    const row = out.get(target.section) ?? { bytes: 0, count: 0 };
+    row.bytes += target.bytes;
+    row.count += 1;
+    out.set(target.section, row);
+  }
+  return out;
 }
 
 /**
@@ -189,7 +214,7 @@ function developerSafeSections(catalogue: Catalogue): Set<number> {
  * The guards below are what keep the subtraction like-for-like. Each one, if
  * dropped, yields a number that looks reasonable and is not.
  */
-export function heldBackBytes(
+export function heldBackBySection(
   /**
    * The last REHEARSAL's summary - Home's "Dry-run first" - while its developer
    * mode, idle window and exclusions are still the current ones, else `null`
@@ -203,11 +228,11 @@ export function heldBackBytes(
   developer: boolean,
   /** `scannedAt !== null` - the same separate fact every other figure here reads. */
   measured: boolean,
-): number | null {
+): Map<number, number> | null {
   /* 🔴 OFF HOLDS NOTHING BACK, and that is a definition rather than a
      measurement: with developer mode off the engine clears every dev cache
      completely (`lib/actions.ps1:130`). */
-  if (!developer) return 0;
+  if (!developer) return new Map();
   if (!measured || !catalogue || !summary || !isCleanupRun(summary)) return null;
 
   /* 1. It must be a REHEARSAL. A real run's per-section figure is what went, and
@@ -233,12 +258,10 @@ export function heldBackBytes(
   /* 4. The included targets only, because the rehearsal carried the same
         `--exclude-path` flags. Clamped at zero per section: the two walks of a live
         disk are minutes apart, and a negative "held back" is a nonsense one. */
-  let held = 0;
+  const held = new Map<number, number>();
+  const onDisk = measuredBySection(scanTargets);
   for (const id of developerSections) {
-    const onDisk = scanTargets
-      .filter((target) => target.section === id)
-      .reduce((total, target) => total + target.bytes, 0);
-    held += Math.max(0, onDisk - (estimate.get(id) ?? 0));
+    held.set(id, Math.max(0, (onDisk.get(id)?.bytes ?? 0) - (estimate.get(id) ?? 0)));
   }
   return held;
 }
@@ -248,7 +271,7 @@ export function heldBackBytes(
  * "N caches used in the last M days" under "Held back right now", or `null` before
  * a scan has measured anything.
  *
- * Counted over the same developer sections as `heldBackBytes`, from the one fact
+ * Counted over the same developer sections as `heldBackBySection`, from the one fact
  * the 1.2.0 scan reports per target: the newest write anywhere under it. A cache
  * written inside the window holds back at least that much, which is the sentence's
  * whole claim. ⚠️ The engine's gate also reads access and creation times, which the

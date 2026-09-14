@@ -113,6 +113,47 @@
     T(0,  'Health report',        'reports\\health-<stamp>.txt',                                       0, 0)
   ];
 
+  /* -------------------------------------------------------------------------
+     WHAT THE ENGINE'S OWN GATES KEEP BACK, per target (D-61, GATE 4 round 10).
+
+     🔴 THE FACT THIS SEED DID NOT HAVE, AND WITHOUT IT THE DUMMY CANNOT DRAW THE
+     DIFFERENCE D-61 IS ABOUT. A `--scan` measures what is ON DISK; a `--dry-run`
+     reports what the run WOULD delete, which is less, because the engine holds
+     things back that a size on disk cannot see: a file a running program still
+     has open, and a temp file newer than `--temp-days`. Round 9 measured browsers
+     8.1 GB -> 245 MB and temp 2.8 GB -> 784 MB on a real machine for exactly that
+     reason. With no gate but the idle window, this dummy's bound and its estimate
+     were one number and the two states were indistinguishable here - which is why
+     the ladder could promise a figure the run does not deliver and this prototype
+     could not show it.
+
+     🔴 DEVELOPER MODE IS NOT IN THIS TABLE, ON PURPOSE. Its idle gate is already
+     modelled, one layer up: `activeTargets()` sets a recently-used dev cache aside
+     altogether and `heldByDeveloperMode()` reports it as "Held back right now". A
+     second subtraction for the same gate would count it twice. Everything here is
+     a gate developer mode does not own.
+
+     `keeps` is demo data like every byte figure in this file, and is clamped to the
+     target's own size on read. `gate` is why - the engine's own reason, in the
+     words its dry-run log uses.
+     ------------------------------------------------------------------------- */
+  function G(path, keeps, gate) { return { path: path, keeps: keeps, gate: gate }; }
+
+  var GATED = [
+    G('%APPDATA%\\Code\\Cache',                                          742 * MB, 'VS Code is running'),
+    G('%APPDATA%\\Code\\CachedData',                                     538 * MB, 'VS Code is running'),
+    G('%APPDATA%\\Cursor\\Cache',                                        417 * MB, 'Cursor is running'),
+    G('%LOCALAPPDATA%\\Google\\Chrome\\User Data\\Default\\Cache',       1.86 * GB, 'Chrome is running'),
+    G('%LOCALAPPDATA%\\Google\\Chrome\\User Data\\Default\\Code Cache',   611 * MB, 'Chrome is running'),
+    G('%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\Default\\Cache',       934 * MB, 'Edge is running'),
+    G('%APPDATA%\\discord\\Cache',                                        721 * MB, 'Discord is running'),
+    G('%APPDATA%\\Slack\\Cache',                                          464 * MB, 'Slack is running'),
+    G('%LOCALAPPDATA%\\Spotify\\Data',                                    402 * MB, 'Spotify is running'),
+    G('%LOCALAPPDATA%\\Microsoft\\Windows\\INetCache',                    780 * MB, 'in use by Explorer'),
+    G('%LOCALAPPDATA%\\D3DSCache',                                        486 * MB, 'in use by the display driver'),
+    G('%TEMP%',                                                          1.98 * GB, 'newer than the temp window, or open')
+  ];
+
   /* the interactive sections - these need a person, and `--yes` never answers them */
   var CANDIDATES = [
     { section:17, path:'D:\\work\\archived\\legacy-portal\\node_modules',   bytes: 1.42*GB, idle:412, project:'legacy-portal' },
@@ -178,7 +219,7 @@
 
   window.wsSeed = {
     GB: GB, MB: MB,
-    TIERS: TIERS, SECTIONS: SECTIONS, TARGETS: TARGETS, CANDIDATES: CANDIDATES,
+    TIERS: TIERS, SECTIONS: SECTIONS, TARGETS: TARGETS, GATED: GATED, CANDIDATES: CANDIDATES,
     PROTECTED: PROTECTED, PROTECT_CATEGORIES: PROTECT_CATEGORIES, DRIVES: DRIVES, RUNS: RUNS, GLOBALS: GLOBALS,
     SAFE_BATCH: SAFE_BATCH, SAFE_BATCH_ADMIN: SAFE_BATCH_ADMIN,
     INTERACTIVE: INTERACTIVE, PROFILES: PROFILES,

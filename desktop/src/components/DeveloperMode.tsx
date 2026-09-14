@@ -25,7 +25,7 @@
  * once "Dry-run first" has rehearsed the safe run, and reads "not measured" until
  * then - and again once developer mode, the idle window or the exclusions move,
  * because a gap measured under other arguments is not this one (D-60,
- * `lib/rehearsal.ts`). `lib/reclaim.ts` -> `heldBackBytes` records the four guards
+ * `lib/rehearsal.ts`). `lib/reclaim.ts` -> `heldBackBySection` records the four guards
  * that keep the subtraction like-for-like.
  *
  * 🔴 THE DUMMY'S COUNT SUB-LINE IS BUILT - "N caches used in the last M days". It was

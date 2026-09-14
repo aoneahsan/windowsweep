@@ -32,7 +32,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
-import { useIncludedScanTargets, useReclaimOffer, useRunPreferences } from '../state/derived';
+import { useIncludedScanTargets, useReclaimOffer, useRunFigures, useRunPreferences } from '../state/derived';
+import { useElapsedMs } from '../state/use-elapsed';
 import { formatBytes } from '../lib/format';
 import { isCleanupRun } from '../lib/cli';
 import { newRunId, run, safeBatchArgs } from '../lib/engine';
@@ -124,6 +125,17 @@ export function RunScreen() {
     0,
   );
   const offer = useReclaimOffer();
+  /* 🔴 D-61: the waiting rows below carry the same figure this hero does, per
+     section - they were the measured sizes on disk, so eleven rows queued 34.3 GB
+     under a hero reading the engine's own 1.9 GB estimate for that same run. */
+  const figures = useRunFigures();
+  /* 🔴 And the band says which of the two it is showing, ONLY AT REST: once
+     anything has run, the rows are the engine's own reports of what happened, not
+     a description of what a run would free. Same test as the eyebrow's, `cancelled`
+     first for the reason recorded there. */
+  const perSectionBasis = cancelled || !notRunYet || phase === 'running'
+    ? null
+    : (figures.upTo ? 'bound' : 'estimate');
   /* 🔴 A CANCELLED RUN'S HERO IS THE SUM OF THE SECTIONS THE ENGINE SAID IT
      FINISHED, and `not measured` when that sum is zero.
      Those `##windowsweep ... event=end freed_bytes=N` lines are complete facts:
@@ -141,20 +153,9 @@ export function RunScreen() {
         : (offer?.amount ?? null);
   const heroUpTo = !cancelled && !isCleanupRun(summary) && phase !== 'running' && offer?.upTo === true;
 
-  /* Elapsed from the engine's own first and last line rather than a stopwatch
-     this screen keeps: the log is what the run actually did, and it stops growing
-     when the run stops, which freezes the figure at the right value with no timer
-     left running. */
-  const firstAt = log[0]?.at ?? null;
-  const lastAt = log.length > 0 ? (log[log.length - 1]?.at ?? null) : null;
-  const [clock, setClock] = useState(() => Date.now());
-  useEffect(() => {
-    if (phase !== 'running') return;
-    const tick = window.setInterval(() => { setClock(Date.now()); }, 1000);
-    return () => { window.clearInterval(tick); };
-  }, [phase]);
-  const elapsedMs =
-    firstAt === null ? null : (phase === 'running' ? clock : (lastAt ?? firstAt)) - firstAt;
+  /* Elapsed from the engine's own log rather than a stopwatch this screen keeps -
+     `state/use-elapsed.ts`, where the reasoning moved with it. */
+  const elapsedMs = useElapsedMs(log, phase);
 
   /* The queue the band lists: the engine's own safe batch, which is exactly what
      the Start button below runs - whole, whatever developer mode says, because the
@@ -172,13 +173,14 @@ export function RunScreen() {
         progress,
         results: summary?.sections ?? [],
         scanTargets,
+        figures: figures.bySection,
         labels: {
           queued: t('run.statusQueued'),
           running: t('run.statusRunning'),
           done: t('run.statusDone'),
         },
       }),
-    [catalogue, queue, progress, summary, scanTargets, t],
+    [catalogue, queue, progress, summary, scanTargets, figures, t],
   );
 
   /* The draining map's tiles: the targets of the sections the band below lists,
@@ -425,7 +427,7 @@ export function RunScreen() {
 
       <section className="band band-app">
         <div className="wrap g12">
-          <RunPerSection rows={rows} />
+          <RunPerSection rows={rows} basis={perSectionBasis} />
 
           <div className="c7 rise">
             {/* `run.html:80-83` - the dummy's heading and its sub-line, verbatim

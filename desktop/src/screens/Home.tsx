@@ -45,6 +45,12 @@
  * does not touch (GATE 4 round 7). Since round 9 (D-60) it is the last rehearsal's
  * estimate while that ran with the current arguments, and otherwise "Reclaim up
  * to" a bound: `lib/rehearsal.ts`. "Dry-run first" is that rehearsal.
+ *
+ * 🔴 AND SINCE ROUND 10 (D-61) THE LADDER CARRIES EXACTLY THAT FIGURE, rung by
+ * rung and in its total, because it was making the same promise in plainer words:
+ * *"Total a safe run would free 34.2 GB"* two bands under *"Reclaim 1.9 GB"*. The
+ * hero is the one figure on this page that still describes what is THERE, which is
+ * why it keeps the measured total and is not touched by any of this.
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -52,12 +58,17 @@ import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
-import { useIncludedScanTargets, useReclaimOffer, useRunPreferences } from '../state/derived';
 import {
+  useIncludedScanTargets,
+  useReclaimOffer,
+  useRunFigures,
+  useRunPreferences,
+} from '../state/derived';
+import {
+  measuredBySection,
   reclaimableBytes,
   reclaimableSectionCount,
   reclaimableTargetCount,
-  safeRunBytes,
   toMapTargets,
 } from '../lib/reclaim';
 import { rehearsalFrom } from '../lib/rehearsal';
@@ -155,10 +166,16 @@ export function Home() {
   /* One home for this figure, in lib/reclaim.ts - it was computed here AND in
      Shell.tsx, and both copies read a run's result off a scan's summary. */
   const reclaimable = reclaimableBytes(includedTargets, measured);
-  /* The ladder's total - what the safe run could free - not the hero's. */
-  const safeTotal = safeRunBytes(catalogue, includedTargets, measured);
-  /* The Reclaim button's figure: an estimate or a bound, and which (D-60). */
+  /* The Reclaim button's figure: an estimate or a bound, and which (D-60).
+     🔴 It is the ladder's total too (D-61). The ladder used to total `safeRunBytes`
+     - the measured size on disk - so after a rehearsal the band promised 34.2 GB
+     under a button offering 1.9 GB. */
   const offer = useReclaimOffer();
+  /* The same rule, per section, for the rungs - and shared with the Run screen's
+     waiting rows, which were making the identical claim (D-61). */
+  const figures = useRunFigures();
+  /* What the scan measured, for the "N targets" line only. */
+  const measuredCounts = useMemo(() => measuredBySection(includedTargets), [includedTargets]);
 
   /* 🔴 ONE load for the two places this page draws a disk: the rails in zone 4 and
      the ring in the hero. Two fetches would let them disagree about the same drive
@@ -279,30 +296,22 @@ export function Home() {
     [mapTargets],
   );
 
-  /* The ladder's rungs: the engine's own safe batch, with a figure only where a
-     scan measured one. Sorted biggest-first once there is something to sort. */
+  /* The ladder's rungs: the engine's own safe batch, each carrying what a run
+     would free from it (D-61, `lib/rehearsal.ts` -> `runFigures`) - the last
+     rehearsal's own figure while it still describes this run, otherwise the bound.
+     The target count beside it stays the SCAN's: it says what is there.
+     Sorted by the figure shown, biggest first, once there is something to sort. */
   const ladderRows = useMemo<LadderRow[]>(() => {
     if (!catalogue) return [];
-    const bySection = new Map<number, { bytes: number; count: number }>();
-    for (const target of includedTargets) {
-      if (target.bytes <= 0) continue;
-      const acc = bySection.get(target.section) ?? { bytes: 0, count: 0 };
-      acc.bytes += target.bytes;
-      acc.count += 1;
-      bySection.set(target.section, acc);
-    }
-    const rows = safeRunSections(catalogue).map((section) => {
-      const measured = bySection.get(section.id);
-      return {
-        id: section.id,
-        key: section.key,
-        bytes: measured?.bytes ?? null,
-        count: measured?.count ?? null,
-      };
-    });
-    if (bySection.size > 0) rows.sort((a, b) => (b.bytes ?? -1) - (a.bytes ?? -1));
+    const rows = safeRunSections(catalogue).map((section) => ({
+      id: section.id,
+      key: section.key,
+      bytes: figures.bySection.get(section.id) ?? null,
+      count: measuredCounts.get(section.id)?.count ?? null,
+    }));
+    if (figures.bySection.size > 0) rows.sort((a, b) => (b.bytes ?? -1) - (a.bytes ?? -1));
     return rows;
-  }, [catalogue, includedTargets]);
+  }, [catalogue, figures, measuredCounts]);
 
   const interactive = (catalogue?.sections ?? []).filter((s) => s.batch === 'interactive');
   const adminSections = (catalogue?.sections ?? []).filter((s) => s.admin);
@@ -446,7 +455,7 @@ export function Home() {
               <span className="caps">{t('home.safeRunTitle')}</span>
             </div>
             {catalogue ? (
-              <SafeRunLadder rows={ladderRows} total={safeTotal} />
+              <SafeRunLadder rows={ladderRows} total={offer?.amount ?? null} upTo={offer?.upTo ?? true} />
             ) : (
               /* Reading the catalogue and having an empty safe batch are two
                  different facts, and the ladder must not report the second while

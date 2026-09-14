@@ -76,7 +76,14 @@
 
           <div class="c5 rise">
             <div class="zone-label"><span class="caps">Per section</span></div>
-            <div class="panel pad" data-ws-runlist style="display:flex;flex-direction:column;gap:var(--sp-3)"></div>
+            <div class="panel pad" style="display:flex;flex-direction:column;gap:var(--sp-3)">
+              <!-- D-61 (GATE 4 round 10): the waiting rows describe what the run
+                   would free, so they follow the same rule as the ladder and the
+                   button. Said once for the band; it goes the moment the run starts,
+                   because from then on the figures are what the engine reported. -->
+              <p class="t-xs ink-3" data-ws-text="runBasis">Sizes on disk &mdash; a run frees up to this. A dry-run gives the engine&rsquo;s own figure.</p>
+              <div data-ws-runlist style="display:flex;flex-direction:column;gap:var(--sp-3)"></div>
+            </div>
           </div>
 
           <div class="c7 rise">

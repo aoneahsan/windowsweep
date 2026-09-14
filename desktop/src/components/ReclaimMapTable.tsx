@@ -34,6 +34,19 @@ import type { MapTarget } from './reclaim-map-model';
  * cell's text - what a screen reader reads - and one hover away in `title`. The
  * Target cell keeps to one line, so the room the path gives up is not taken back by
  * a wrapped label.
+ *
+ * 🔴 AND THE TARGET CELL IS CAPPED (D-62, GATE 4 round 10 - the dummy amended
+ * first). One line was not enough: a long label simply pushed the table instead of
+ * wrapping it, and at 760 - the narrowest this window can be, `tauri.conf.json`
+ * `minWidth` - this machine's longest engine title held a 304 px column and the
+ * table overflowed its own scroller by 53 px, `Idle (days)` ending 38 px past the
+ * right edge. A cap in pixels chosen to fit that one title would only move the
+ * width at which it breaks: the engine's longest safe-batch title is half again as
+ * long ("docker image prune (unused images older than N days)"), and in the dummy
+ * it overflowed 138 px. So the label lives in a block span with its own maximum,
+ * which is what bounds an auto-layout cell's contribution without taking the room
+ * the path needs - two flexible columns both at `max-width: 0` made the label
+ * swallow the path's width entirely (Path 59 px at 1440, measured).
  */
 export function ReclaimMapTable({
   targets,
@@ -79,7 +92,19 @@ export function ReclaimMapTable({
               </td>
             ) : null}
             <td>{row.sectionKey}</td>
-            <td style={{ whiteSpace: 'nowrap' }}>{row.label}</td>
+            <td title={row.label}>
+              <span
+                style={{
+                  display: 'block',
+                  maxWidth: 'calc(13rem * var(--density))',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {row.label}
+              </span>
+            </td>
             <td
               className="mono t-2xs"
               title={row.path}

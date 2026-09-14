@@ -1,6 +1,6 @@
 # windowsweep - Agent Rules
 
-Last Updated: 2026-09-13 (the v3 run: the docs site on HTTPS and the one-pass link write-back; `delete_my_account()` applied and proved, and both apps' deletion controls built; TASK-004..010 closed; the site's prerender, 404, JSON-LD and CI built; earlier 2026-09-12, session 13's audit and the root rename) - Context pass: 2026-09-12 (CLAUDE.md and AGENTS.md mirrored, both under 28 KB)
+Last Updated: 2026-09-14 (GATE 4 rounds 7-10 on the desktop with every finding but D-61 fixed; the site deployed, prerendered per route, telemetry proved on the wire, three build gates added and two parity rounds run; all nineteen story surfaces recorded and P7 closed. Earlier 2026-09-13: the docs site on HTTPS, `delete_my_account()`, TASK-004..010) - Context pass: 2026-09-12 (CLAUDE.md and AGENTS.md mirrored, both under 28 KB)
 
 Safe, developer-aware Windows cleanup CLI: a Windows PowerShell 5.1 engine behind a dependency-free Node
 launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macleanup` (Bash). Public repo
@@ -20,7 +20,7 @@ launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macl
 - Dependency and manifest record: `docs/PACKAGES.md`
 - Follow-ups the agent owes this project: `PENDING-TASKS.md` (root)
 
-## Current state (the v3 run, 2026-09-13)
+## Current state (the v3 run, 2026-09-14)
 
 **The CLI is published at 1.2.0 and the engine equals it.** `windowsweep@1.2.0` went to npm on 2026-09-08 with
 every publish-gate step run; tag `v1.2.0`, Release **`--latest=false`**, and `desktop-v1.1.0` still the
@@ -32,28 +32,41 @@ docs, and `lib/safety.ps1` (541 lines) and `modules/self_test_extra.ps1` (537) e
 README's at-a-glance rows were left at 1.1.0 by the cascade and corrected on 2026-09-12; the published
 tarball's copy stays stale until 1.3.0 - the cascade checklist in rule 7 names the README rows for that reason.
 
-**The desktop app is released at 1.1.0 and 1.2.0 is owed.** `desktop-v1.1.0` carries all six artefacts and is
-installed on this machine (HKCU). Built since and unreleased: wave 4b (idle shading, protected chips,
-tile-click exclusion), RW-105 (Picker Remove, cancel, drives + capacity ring, the schedule switch, heldBack),
-D-9 / D-13 / D-22, the `screen.view` / `control.press` events, a Sentry breadcrumb scrub. GATE 4 is closed on
-the eleven screens and wave 4b. **Built in the v3 run (2026-09-13):** the account-deletion control (D14),
-TASK-004 / 006 / 007 / 009 / 010 (moved to `docs/DONE-TASKS.md`), D-8 confirmed and D-21 read from the
-rendered `runCmd` slot - and one defect found on the way: "Measure without elevating" passed `--elevate` and
-so raised a UAC prompt; it now runs the read-only `--scan`, and `elevatedArgs` no longer accepts `dryRun`, so
-the defect is a compile error. Owed: the capture pass (RW-119 + RW-103's round-7 pairs), then the
-`desktop-v1.2.0` cascade (`desktop/package.json`, `tauri.conf.json`, `Cargo.toml` to 1.2.0,
-`yarn sync:cli`) with telemetry live for the first time - the four ids are repository variables the release
-workflow passes - and the updater proved 1.1.0 -> 1.2.0 here (RW-109). 🔴 The cargo cache still holds the old
+**The desktop app is cascaded to 1.2.0 and `desktop-v1.2.0` is HELD AT DRAFT, deliberately.** The manifests,
+`Cargo.lock` and `WS_VERSION_FALLBACK` are at 1.2.0 (`78ee314`) and the bundled engine is in sync. GATE 4 then
+ran **four more rounds** against the real bundled engine: round 7 (D-23..D-38), round 8 (History and Report
+judged with data for the first time, plus the removal path round 7 opened - **D-48**: a Permanent removal
+confirms first), round 9 (**D-60**: the Reclaim button states a bound or the engine's own rehearsal estimate,
+never the measured total), and round 10, which closed everything before it and left exactly one defect open.
+
+🔴 **D-61 is what holds the release.** Home's ladder foot says *"Total a safe run would free 34.2 GB"* and the
+Run screen's at-rest rows total 34.3 GB, while the same run's rehearsal says 1.9 GB - the promise D-60 just
+closed on the button, made again two bands lower. The rule is decided in `docs/story/decision-log.md`
+(2026-09-14): a figure describing what a run **would free** carries the rehearsal's own numbers after one and
+is worded as a bound ("up to") before one; a figure describing what **is there** keeps its measured number.
+Dummy first. D-62 (a 53 px overflow at 760 on the longest engine title) is filed and not blocking. Apply both,
+run a round 11 limited to Home's ladder, the Run screen at rest and that table - and the moment a round is
+CLEAN, cut the release exactly as `../release-kit/README.md` lists its eleven steps (the notes, the updater
+proof on this machine's installed 1.1.0, the first-boot beacons, the docs and site updates, the deploy).
+`desktop-v1.1.0` stays Latest until then, so the updater keeps resolving. 🔴 The cargo cache still holds the old
 folder names; expect the recorded `os error 3` trap on the first local Rust build and `cargo clean -p` the
 affected packages per profile.
 
-**The marketing site is LIVE** (`https://windowsweep.aoneahsan.com/`, since 2026-09-08). **Built in the v3 run
-and waiting on its next deploy:** a prerendered static file per route with its own title, canonical, body and
-JSON-LD, a real `404.html` with the catch-all rewrite gone, an OG card, an IndexNow key (RW-114); the committed
-`.env` with the four analytics ids (RW-115); the `/account` deletion control (RW-113); a CI workflow
-(RW-118); and four strings that had gone stale on 1.2.0's release day corrected (the changelog's "Unreleased"
-entry, the footer version and tagline, the installer sizes). Still owed: the finalized `llms.txt` words, the
-deploy and its verification on the origin, sign-in (row 15, RW-116) and the parity pairs (RW-117).
+**The marketing site is LIVE and deployed with all of it** (`https://windowsweep.aoneahsan.com/`): a
+prerendered static file for **every built route** with its own title, canonical, body and JSON-LD (`/account`
+and the three `/admin` pages had been answered by the rewrite with the HOME page's head - found twice by its
+own parity rounds, fixed in `784b883`), a real `404.html`, an OG card, IndexNow, the committed `.env`, the
+`/account` deletion control and CI. Telemetry was proved **on the wire** from the deployed origin - 212
+requests, all four destinations, 0 of 258 captured phrases carrying a path, user name, machine name or email -
+after two real defects in that path were found and fixed on both surfaces (Clarity loaded without its queue
+stub; every event fired before a destination registered was dropped). Three build gates now live under
+`vite/`: `catalogue-keys.ts` (unresolved `t()` keys, missing registry rows, void elements written as
+containers), `release-strings.ts` (every release-coupled string, checked against GitHub's own `latest.json`),
+and the prerender's `/contact` and `/signin` branch assertions. 🔴 **The release gate FAILS the site build from
+the moment 1.2.0 becomes Latest until `src/content/download.ts` moves** - that is the forcing function, not a
+nuisance. Still owed: GATE 4 parity **round 3** (round 1's 22 findings fixed; round 2 matched 6,504 of 6,504
+words and 2,394 of 2,394 focus stops and left four items - S-16, S-17, S-18, D-03 - whose fixes land with this
+session), and sign-in verified as a person once row 15 lands (RW-116).
 
 **The docs site is live over HTTPS** (2026-09-12). GitHub had never issued a certificate for the host - it was
 presenting its own `*.github.io`, which `curl` here reports as `SEC_E_WRONG_PRINCIPAL` with code 000 and which
@@ -76,11 +89,11 @@ own JWT got 204 and every cascading table went 1 -> 0, while the publishable key
 403. Google sign-in is still off (re-probed 2026-09-13); the owner enables it during the run (D15), and until
 then neither app's deletion control can be exercised by a person.
 
-**Storytelling:** 14 of 19 surfaces recorded or applied. In the v3 run: site-home finalized (its one open
-question answered with the published byte count) and being applied; site-front-site fact-checked (FAIL on a
-stale version literal and four open questions, all settled from recorded rules) and being finalized;
-site-privacy being finalized (its deletion HARD FAIL is met - the RPC exists). Open after those: site-front row
-9 (apply to the docs, RW-112), site-app (unwritten), then the keeper batch (RW-107).
+**Storytelling: all 19 surfaces are written, applied and RECORDED, and P7 is closed** (`809bdd6`). The keeper
+batch recorded every surface with its commit, corrected the content map's row 12, row 19 schema and question
+row 7, added the "switch" glossary row, and stamped `run-state.json` `recorded` with 2 open and 27 resolved
+decisions. The voice fingerprint stays `calibrated: false` - open, not blocking, and waiting on the owner's
+own samples.
 
 **Decisions taken on 2026-09-12 (D13-D20, verbatim in `docs/PROJECT-CONTEXT.md`):** the root rename is final ·
 account deletion is BUILT · Google sign-in lands during the run · Fable plans and Opus executes · Android

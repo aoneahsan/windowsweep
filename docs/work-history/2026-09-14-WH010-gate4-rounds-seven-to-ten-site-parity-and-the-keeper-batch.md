@@ -156,8 +156,7 @@ with what each carries. The files worth naming for the next session:
 5. **W7 close-out**: recompute `remaining-work-summary.md` from its table; refresh
    `what-this-project-consists-of.md` §7/§11/§13/§15; both `PROJECT-CONTEXT.md` files; the three CLAUDE/AGENTS
    pairs (**the web pair has drifted - re-mirror from `CLAUDE.md`**); the portfolio file and the master JSON;
-   the memory note; and WH011. Clean up the test run folders under
-   `%LOCALAPPDATA%\com.aoneahsan.windowsweep\runs\` (only 2026-09-13/14 stamps).
+   the memory note; and WH011.
 
 **Still the owner's:** row 15 (Google sign-in - `external.google` is still `false`, which blocks RW-116 and,
 for the desktop half, TASK-013 first), rows 5 and 13, a glance at the four analytics dashboards, rows 26 and
@@ -180,6 +179,11 @@ that keyboard.
   evidence.
 - A 5.37 GB runaway log (a stuck Python REPL traceback loop) had cut C: to 4.99 GB free; deleting it and
   killing the orphaned helper brought C: back to 10.36 GB.
+- **The 218 folders under `%LOCALAPPDATA%\com.aoneahsan.windowsweep\runs\` are deliberately left in
+  place.** 151 of them are this run's test runs, but they are also the populated History and Report the
+  rounds judged with real data for the first time, and a later full round re-judges those surfaces
+  against them. The 47 from 2026-09-07 include the owner's own safe batch and are evidence. The whole
+  folder is 2.6 MB - not a trade worth making.
 
 ## Session metrics
 

@@ -24,7 +24,7 @@ Three answers, because three different things are running.
 
 **The engine sends nothing, ever.** No network calls at all, and a self-test check fails the build if one appears.
 
-**The window sends usage and crash reports, to improve the product for everyone.** There is no switch. The first-run screen is a notice with one **Continue**. Four destinations - product analytics, behaviour analytics, session replay with every piece of text masked, and crash reports with file paths stripped out. In 1.1.0 no destination is configured in the build, so nothing has left the machine yet. That is a fact about this release, not a promise: it stops being true the day a key is added.
+**The window sends usage and crash reports, to improve the product for everyone.** There is no switch. The first-run screen is a notice with one **Continue**. Four destinations - product analytics, behaviour analytics, session replay with every piece of text masked, and crash reports with file paths stripped out. In 1.1.0 no destination was configured in the build, so nothing left the machine. From 1.2.0 all four are, and the reports are sent from the first launch.
 
 **Two requests run without asking, and neither carries anything this app knows about you.** On every start the app fetches `latest.json` from this repository's releases; on a machine with no WebView2, the installer downloads it from Microsoft.
 
@@ -41,7 +41,7 @@ Optional, Google, and it opens your normal browser rather than a window inside t
 | your email address and display name | the section numbers it ran |
 | a last-seen timestamp | bytes reclaimed, bytes estimated, and an id |
 
-In 1.1.0 this is dormant: Google is not enabled on the backend project, and the Account screen reports sign-in as unconfigured.
+In 1.2.0 this is still dormant: Google is not enabled on the backend project, and the Account screen reports sign-in as unconfigured.
 
 ## Install it
 

@@ -12,7 +12,7 @@ The [README](https://github.com/aoneahsan/windowsweep#readme) is the short versi
 windowsweep removes only regenerable caches, and refuses your documents, credentials and browser state outright. Start with `npx windowsweep --scan`, which deletes nothing and measures what is reclaimable. Then read the [safety model](./safety-model.md).
 
 **Does this cleanup tool send my data anywhere?**
-No. The command-line tool makes no network calls at all, and self-test check [9] greps its own source for HTTP and socket calls and fails the run if it finds any. The desktop application is a separate program: it sends usage and crash reports. There is no switch. In 1.1.0 no destination is configured in the build, so nothing has left the machine yet.
+No. The command-line tool makes no network calls at all, and self-test check [9] greps its own source for HTTP and socket calls and fails the run if it finds any. The desktop application is a separate program: it sends usage and crash reports. There is no switch. In 1.1.0 no destination was configured in the build; from 1.2.0 all four are.
 
 | The question | Where it is answered |
 |---|---|

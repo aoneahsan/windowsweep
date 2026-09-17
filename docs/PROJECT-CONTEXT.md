@@ -1,7 +1,7 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-09-14 (session 15, the v3 run's GATE 4 rounds)
-Verified Against: commit 280e6f4 on `main`, 2026-09-14 (session 15: the engine still diffs EMPTY against `v1.2.0`; the docs site on HTTPS with its own certificate; the marketing site deployed with every route prerendered, telemetry proved on the wire and three build gates added; all nineteen story surfaces recorded and P7 closed; the desktop app through GATE 4 rounds 7-10 with every finding fixed but D-61 open, which is why `desktop-v1.2.0` is still an unpublished draft. Polled the same day: `external.google` **false**, docs HTTPS 200 with a valid certificate, npm `latest` 1.2.0, `latest.json` 1.1.0)
+Last Updated: 2026-09-17 (session 16, the v4 audit: D21-D24, the two unrecorded GATE 4 rounds, the unintended real run of 2026-09-14)
+Verified Against: commit 2e73921 on `main`, 2026-09-17 (session 16, every gate re-run today and all exit 0: self-test 156, version parity 1.2.0, `npm pack` 44 files, PSScriptAnalyzer 1.25.0 with 0 findings, the engine still diffing EMPTY against `v1.2.0`; desktop typecheck/lint/build/check:prepaint clean with no source maps; site typecheck/lint/build clean with all three build gates, the prerender assertions and 13 routes each carrying its own title; docs typecheck/build clean with no MANUAL or story file in `build/`; CI green on all three repos. Live: docs HTTPS 200, the site 200 with a real 404 on an unknown path, npm `latest` 1.2.0, `latest.json` still 1.1.0, `desktop-v1.2.0` still a draft, 1.1.0 installed here, release-kit pre-flight 23/23. Polled the same day: `external.google` still **false**)
 
 ## Identity and outcome
 - Purpose: safe, developer-aware disk and cache cleanup CLI for Windows; the Windows member of the family with
@@ -99,6 +99,36 @@ title and canonical on every route and answers 200 on unknown paths; D-9, D-13 a
 their tracker row still read pending; TASK-005's events exist with callers; the 1.2.0 cascade left the README's
 version rows at 1.1.0 (corrected in the repo; stale in the published tarball until 1.3.0); `lib/safety.ps1`
 and `modules/self_test_extra.ps1` exceed the 500-line ceiling (RW-121).
+
+### Session 16 decisions (2026-09-17) - the v4 audit, four from the owner
+
+He ran his standard audit prompt: understand the whole project, refresh every record to the state of the
+tree, estimate what is left, then finish it and deploy. Fable 5.1 audited read-only and wrote
+`../completion-plan-v4-2026-09-17.md`; Opus 5 executes it. Four decisions, each his verbatim option:
+
+- **D21 - "One writer at a time".** Final, and it supersedes D20's four and the three of 2026-09-14. His
+  standing audit prompt still carries the line "it should run 4 custom subagents", so he was asked directly
+  and chose the one-writer ceiling on context cost. Read-only explorers may run beside the single writer;
+  hot files stay main-only; agents never commit, push, deploy or publish.
+- **D22 - "I will enable it before Opus runs"** (row 15, the Google Web OAuth client). 🔴 Probed the same
+  day and `external.google` still reads **false**, so ordering rule O6 governs: do everything else first,
+  re-poll, and if it is still off when `desktop-v1.2.0` is cut, that release ships with sign-in dormant
+  exactly as 1.1.0 did. Never wait on it, and never claim it flipped without a fresh probe.
+- **D23 - "Yes, cut 1.3.0 now".** RW-121 ships in this run, so the CLI closes here rather than on the second
+  machine. 🔴 The **desktop stays at 1.2.0**: `desktop-release.yml` compares the app manifests with `VERSION`
+  at the tagged commit, so the desktop tag is cut first, and because the bundled engine is untracked and
+  copied at build time a later dev build carries a 1.3.0 engine under a 1.2.0 app until the next desktop
+  release catches up. That consequence is stated in the release notes, not left to be discovered.
+- **D24 - "Straight through".** Records, then every unblocked item to the release and the deploys, then the
+  records again. No review in between; he reviews at the end, himself.
+
+**What the audit found that no record said.** Desktop GATE 4 round 11 and site parity round 3 both ran on
+2026-09-14 *after* the last commit and neither was recorded - the only trace was an uncommitted edit to the
+tracker saying each was "running". Round 11 saved no driver stdout, so its verdict is lost and it is re-run
+as round 12; round 3 saved everything and yields a verdict from its own files. An unintended **real run**
+happened that day (recorded under "Verified runs"). Four pending tasks filed on 2026-09-13/14 were in no
+planning file. And the root `README.md` still called the docs site HTTP-only, five days after HTTPS was
+enforced. Everything else the records claimed re-verified true.
 
 ### Session 14 decisions (2026-09-13/14) - the v3 run, taken from recorded rules, none from the owner
 
@@ -789,6 +819,32 @@ migration it could express.
 - Freed 3,924,712,402 bytes across 11 sections with zero refusals; drive C: 5.84 -> 9.85 GB free. The first
   real cleanup driven through the window; recorded in `desktop/design/gate4/GATE4-REPORT.md`.
 - No interactive section, no admin section, never elevated.
+
+### 2026-09-14 - 🔴 AN UNINTENDED REAL RUN, started by a GATE 4 guard that reported success and did nothing
+
+Found on 2026-09-17 while auditing, not on the day. **It was not authorised**: the owner's 2026-09-07 grant
+was for one real safe batch and that had been spent. Nothing was harmed, and it is recorded here because it
+is his machine and because the cause is reusable.
+
+- `%LOCALAPPDATA%\com.aoneahsan.windowsweep\runs\r11-guard-probe\` - `Mode: all`, `Dry-run: no`,
+  `Elevated: no`, `Launcher: desktop`, windowsweep 1.2.0 on PowerShell 5.1.19041.7663.
+- `meta`: 2026-09-14T16:40:12+05:00 to 16:41:53, 101 s, `developer_mode: true`, `idle_days: 100`,
+  `temp_days: 3`. Sections 0,1,2,3,5,6,7,8,9,10,21 - "Sections run / skipped: 11 / 0".
+- **"Reclaimed: 1.8 GB"**; the closing drive table reads C: 9.5 GB free of 272.9 GB. No interactive section,
+  no admin section, never elevated - the same safe batch the two authorised runs used.
+- 🔴 **Cause, and the rule it produces:** GATE 4 round 11 installed an IPC guard by assigning a wrapper to
+  `window.__TAURI_INTERNALS__.invoke` so that Reclaim could be timed without deleting anything. That property
+  is **non-writable and non-configurable**, so the assignment was a **silent no-op while the guard reported
+  "installed"** - and the next press started a real run. Recorded in the surviving driver
+  `gate4-evidence/round11/drivers/16-focusplants-ack.mjs`. **Never guard Tauri IPC by assigning to
+  `invoke`.** Guard at the CDP transport (`Fetch` on `http://ipc.localhost/*`) and prove it fail-closed with
+  a probe call before the first press. This is the second instance of the class here; the first is the
+  recorded postMessage-IPC blind spot. Ask of any guard: *what did I read back to prove it is installed?*
+- 🔴 **A 28-folder sweep missed it** because that sweep filtered on the `YYYY-MM-DD` folder prefix and this
+  folder is named `r11-guard-probe`. List the whole directory, then filter.
+- It is also why **D-63** (a rehearsal going stale when the disk changes under it) was observable at all: the
+  run removed roughly what the stored rehearsal had estimated, leaving the app's own newest measurement
+  contradicting the figures it was still printing.
 
 ### 2026-09-13 - the marketing site's telemetry, on the wire from the deployed origin
 

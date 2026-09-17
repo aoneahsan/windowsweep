@@ -820,6 +820,27 @@ migration it could express.
   real cleanup driven through the window; recorded in `desktop/design/gate4/GATE4-REPORT.md`.
 - No interactive section, no admin section, never elevated.
 
+### 2026-09-17 - the in-app updater proved 1.1.0 -> 1.2.0 on this machine, and the first beacons
+
+The only end-to-end proof that the release chain works: that a shipped build finds its successor, verifies
+its minisign signature and replaces itself. **No cleanup ran** - this is an update and a first boot.
+
+- Installed 1.1.0 launched with a WebView2 DevTools port. It found the release **by itself**, drew the update
+  band, and the line named the version in the product's own words: *"Version 1.2.0 is ready"*. On the press
+  it installed and restarted; HKCU `DisplayVersion` moved **1.1.0 -> 1.2.0 after 10 s**.
+- `latest.json` resolves to 1.2.0 with `windows-x86_64`, `-msi` and `-nsis`; an NSIS-installed app resolves
+  the `-nsis` entry, and its signature is present. The platform key was read from the request, not inferred.
+- **First-boot beacons from the installed 1.2.0**: Google Analytics 4 one request, 204, `screen.view`;
+  Amplitude three requests, 200, `screen.view`; Clarity two requests, 200. **Sentry received nothing, which
+  is correct** - it reports on an error and there was none; its DSN is a repository variable the workflow
+  passes, so it is configured and idle.
+- 🔴 **The capture reported "personal-data matches: 7" and every one was its own instrument.** Its needle was
+  `/[A-Za-z]:\|[A-Za-z]://`, and the second half matches the `s:/` inside every `https://`, so it flagged
+  7 of 7 requests against their own URLs. Re-checked with honest patterns - a drive letter followed by a real
+  system directory, a `/Users/<name>` segment, a UNC path, the machine name, an email, the user name as a path
+  segment - and every one returned **0**. The needle is fixed in `release-kit/updater-proof.mjs` and proved
+  7/7 both ways. A matcher that flags everything is indistinguishable from one that works until someone reads
+  what it matched.
 ### 2026-09-14 - 🔴 AN UNINTENDED REAL RUN, started by a GATE 4 guard that reported success and did nothing
 
 Found on 2026-09-17 while auditing, not on the day. **It was not authorised**: the owner's 2026-09-07 grant
@@ -904,6 +925,17 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
 - Verify a published version from a directory OUTSIDE this repo: inside it, npx resolves the same-named local
   package and reports `'windowsweep' is not recognized` (`docs/troubleshooting.md`).
 
+- 2026-09-17T14:41Z: **`desktop-v1.2.0`** published on GitHub Releases, created `--latest` (IRON rule 13), on
+  commit `3c0c889` - the commit GATE 4 round 12 blessed with the first clean verdict since round 6. Six
+  assets plus `SHA256SUMS.txt`: `windowsweep_1.2.0_x64-setup.exe` (2,615,532 B, sha256
+  `bb389f9f…63b8`), `windowsweep_1.2.0_x64_en-US.msi` (3,346,432 B, sha256 `c6374d34…2f0e`), a `.sig` for
+  each, and `latest.json`. The `desktop-release` workflow built both installers in 4m42s with every step
+  green. The stale draft built from `9735c7a` was deleted with its tag first; `desktop-v1.1.0` held Latest
+  until the moment this published, so the updater endpoint never stopped resolving.
+  🔴 **This is the first build that carries the four telemetry ids** (repository variables the workflow
+  passes) and the first with the Report export. Sign-in ships **dormant**: the Supabase build-variable step
+  was skipped because `external.google` still reads false, exactly as ordering rule O6 says it should.
+  It bundles the **1.2.0** engine; CLI 1.3.0 follows the same day and the desktop moves to it next release.
 ## Two traps in this workspace's own layout
 
 🔴 **`remaining-work-summary.md`, `remaining-work.md`, `what-this-project-consists-of.md` and both completion

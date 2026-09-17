@@ -124,3 +124,59 @@ the Picker's Clear with them. What remains:
 - **Admin rail icon** - the dummy now draws the `backend` icon its own `NAV` named; the app unchanged.
 - **Held-back count sub-line** - built: *{n} caches used in the last {days} days*, the dummy's words, counted
   from the scan's newest-write stamps in the developer-safe sections.
+
+---
+
+## §updater — `desktop-v1.2.0`, released 2026-09-17 and proved end to end
+
+The release GATE 4 round 12 blessed. Cut on `3c0c889`, published `--latest` (IRON rule 13), and the two
+proofs the release sequence exists for, both run from `release-kit/`.
+
+**The pre-flight first.** `node preflight.mjs` — 23 anchor checks across both repos, changing nothing —
+**PASS 23/23**, so no anchor had moved since it was written. The stale draft (built from `9735c7a`, never
+published) was deleted with its tag; `desktop-v1.1.0` held Latest throughout, so the updater endpoint never
+stopped resolving. The `desktop-release` workflow built both installers in **4m42s**, every step green
+including *"The release carries every artefact the shipped copy promises"*. Six assets plus `SHA256SUMS.txt`.
+
+**The in-app updater, 1.1.0 → 1.2.0, on this machine.** This is the only end-to-end proof that `.sig`
+verification works.
+
+```
+HKCU before: {"DisplayVersion":"1.1.0", ...}
+launched C:\Users\PC\AppData\Local\windowsweep\windowsweep-desktop.exe pid 26536
+connected to http://tauri.localhost/   runtime: tauri
+update band visible; line naming 1.2.0: "Version 1.2.0 is ready"
+press: clicked
+HKCU after:  {"DisplayVersion":"1.2.0", ...} after 10 s
+```
+
+The installed 1.1.0 found the release **by itself** — nothing was pointed at it — drew the band with the
+version in its own words, installed on the press and restarted. `latest.json` resolves to `1.2.0` with
+`windows-x86_64`, `-msi` and `-nsis` entries; an NSIS-installed app resolves the `-nsis` entry, whose asset
+is `windowsweep_1.2.0_x64-setup.exe` and whose signature is present.
+
+**The first-boot beacons** (`node updater-proof.mjs beacons`, from the installed 1.2.0 — the first build to
+carry the four telemetry ids, which the workflow passes as repository variables):
+
+| Host | Requests | Status | Events |
+|---|---|---|---|
+| `www.google-analytics.com` | 1 | 204 | `screen.view` |
+| `api2.amplitude.com` | 3 | 200 | `screen.view` |
+| `www.clarity.ms` + `scripts.clarity.ms` | 2 | 200 | (tag load) |
+
+**Sentry received nothing, and that is correct rather than missing.** It reports on an error and the first
+boot had none; `VITE_SENTRY_DSN` is a repository variable the workflow passes, so it is configured and idle.
+
+🔴 **The kit reported "personal-data matches: 7" and every one was its own instrument.** Its first needle was
+`/[A-Za-z]:\|[A-Za-z]:\//`, whose second half matches the **`s:/` inside every `https://`** — so it flagged
+7 of 7 requests against their own URLs. Re-checked with honest patterns (a drive letter followed by a real
+system directory, a `/Users/<name>` segment, a UNC path, the machine name `P52-AHSAN-WINDO`, an email, the
+user name as a path segment): **0 hits, on every one.** The needle is fixed in `updater-proof.mjs` to
+`/(?:^|[^A-Za-z])[A-Za-z]:[\/]/` and proved 7/7 both ways — it misses `https://`, `wss://` and
+`api2.amplitude.com/2/httpapi`, and still catches `C:\Users\PC\AppData`, `D:/work/...`, a path mid-sentence
+and one inside a JSON body. **Recorded because a matcher that flags everything is indistinguishable from one
+that works, until someone reads what it matched.**
+
+**No real cleanup run was involved at any point.** The three engine runs of the day were two `--scan` and one
+`--all --yes --dry-run`, each reporting `total_reclaimed_bytes: 0`, checked across every run folder including
+the ones without a date prefix.

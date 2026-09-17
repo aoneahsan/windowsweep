@@ -33,6 +33,17 @@ export interface Rehearsal {
   excludedPaths: string[];
   /** The engine's own summary of it. */
   summary: RunSummary;
+  /**
+   * When it finished, to compare against `scannedAt` (D-63).
+   *
+   * 🔴 THIS WINDOW'S CLOCK, NOT THE ENGINE'S, and that is a limit rather than a
+   * choice: the engine writes `meta.finished_at` into the REPORT FILE
+   * (`lib/log.ps1`), never into the one-line `--json` summary this app parses, so
+   * `RunSummary` has no finish time to read. Stamped here, the instant the run
+   * resolved, which is the same instant `setScanTargets` stamps `scannedAt` with -
+   * one clock, so the two are comparable, which is the only property D-63 needs.
+   */
+  finishedAt: number;
 }
 
 /**
@@ -50,7 +61,12 @@ export function rehearsalFrom(input: {
   const { summary } = input;
   if (!summary || input.cancelled || input.exitCode > 1) return null;
   if (!isCleanupRun(summary) || !summary.dry_run || summary.mode !== 'all') return null;
-  return { prefs: { ...input.prefs }, excludedPaths: [...input.excludedPaths].sort(), summary };
+  return {
+    prefs: { ...input.prefs },
+    excludedPaths: [...input.excludedPaths].sort(),
+    summary,
+    finishedAt: Date.now(),
+  };
 }
 
 function sameSet(sorted: readonly string[], other: readonly string[]): boolean {
@@ -59,13 +75,40 @@ function sameSet(sorted: readonly string[], other: readonly string[]): boolean {
   return sorted.every((path, i) => path === next[i]);
 }
 
-/** Whether the rehearsal ran with exactly the arguments the safe run would pass now. */
+/**
+ * Whether the rehearsal ran with exactly the arguments the safe run would pass now,
+ * AND no scan has re-measured the machine since it finished.
+ *
+ * 🔴 D-63 (GATE 4 round 11) - THE ARGUMENTS WERE THE ONLY THING THIS COMPARED, AND
+ * THEY ARE HALF THE QUESTION. A rehearsal's per-section figures are estimates of
+ * files that were on disk when it ran. Press Scan afterwards and the window has a
+ * newer measurement of the same machine - a person emptied a cache, a build ran, an
+ * installer cleaned up after itself - while every argument is untouched, so the
+ * rehearsal stayed "current" and the bands went on printing estimates the app's own
+ * newest measurement contradicted.
+ *
+ * So the rule is both halves: the arguments equal the run's AND `finishedAt >=
+ * scannedAt`. After a later scan the figures fall back to D-60's bound wording -
+ * "Reclaim up to ...", built from the NEW scan - until the next "Dry-run first".
+ *
+ * 🔴 The REAL-RUN half of this was already done one file away and is not repeated
+ * here: `state/store.ts` -> `spendScanTargets` drops the rehearsal outright when a
+ * real run spends a section it estimated. That is a stronger answer for a stronger
+ * event - those bytes are gone, not merely re-counted.
+ *
+ * `scannedAt` null means nothing has ever been measured, so no scan can have
+ * finished after anything: the rehearsal is left alone, and every figure built from
+ * it is `null` at that point anyway.
+ */
 export function isCurrentRehearsal(
   rehearsal: Rehearsal | null,
   prefs: RunPreferences,
   excludedPaths: readonly string[],
+  /** `scannedAt` from the store - when the live measurements were taken. */
+  scannedAt: number | null,
 ): rehearsal is Rehearsal {
   if (!rehearsal) return false;
+  if (scannedAt !== null && rehearsal.finishedAt < scannedAt) return false;
   const was = rehearsal.prefs;
   return (
     was.developer === prefs.developer &&
@@ -125,6 +168,48 @@ export function reclaimOffer(input: {
   if (input.current) return { amount: input.current.summary.estimated_bytes, upTo: false };
   /* An unmeasured held-back figure subtracts nothing: the bound stays true, only looser. */
   return { amount: Math.max(0, input.safeTotal - (input.heldBack ?? 0)), upTo: true };
+}
+
+/**
+ * Which figure a band of per-section rows is showing, said once for the band.
+ *
+ * `null` is "these rows are not describing a run at all" - one has happened, or one
+ * is happening, so the rows are the engine's own reports. `'unmeasured'` is the
+ * fourth state and is NOT the same fact: nothing has been measured, so there is no
+ * figure to qualify (D-64).
+ */
+export type FigureBasis = 'bound' | 'estimate' | 'unmeasured' | null;
+
+/**
+ * 🔴 D-64 (GATE 4 round 11) - THE BAND ASKED WHETHER A RUN HAD HAPPENED AND NEVER
+ * WHETHER ANYTHING HAD BEEN MEASURED. On a fresh session `runFigures` returns an
+ * empty map with `upTo: true`, so the Run screen's `Per section` band printed
+ * `offer.basisBound` - "Sizes on disk - a run frees up to this" - over eleven rows
+ * carrying no figures at all, while Home's ladder one screen away correctly drew no
+ * caption. Two bands describing one run, disagreeing about whether its figures exist.
+ *
+ * 🔴 `offer === null` IS that fact, and it is deliberately the same expression Home's
+ * ladder reads (`SafeRunLadder.tsx` -> `measured = total !== null`, whose `total` is
+ * this offer's amount), so the two cannot drift apart again. 🔴 NOT "the figure map
+ * is empty": emptiness and "nothing measured" are separate facts - exclude every
+ * target after a real scan and the map is empty while the true answer is 0 - and
+ * `lib/reclaim.ts` records that exact conflation as a defect it already had to fix.
+ */
+export function perSectionBasis(input: {
+  /** A person stopped the run: tested first, for the reason `Run.tsx`'s eyebrow records. */
+  cancelled: boolean;
+  /** No CLEANUP run has happened in this window - `!isCleanupRun(summary)`. */
+  notRunYet: boolean;
+  /** The engine is busy. */
+  running: boolean;
+  /** `reclaimOffer`'s result: `null` until a scan has measured something. */
+  offer: ReclaimOffer | null;
+  /** `runFigures().upTo` - whether those figures are the bound or the rehearsal's own. */
+  upTo: boolean;
+}): FigureBasis {
+  if (input.cancelled || !input.notRunYet || input.running) return null;
+  if (input.offer === null) return 'unmeasured';
+  return input.upTo ? 'bound' : 'estimate';
 }
 
 /** What a run would free from each section, and whether those figures are bounds. */

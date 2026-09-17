@@ -19,6 +19,14 @@
   var map = null, timer = null, cancelled = false;
   /* Reachable, not described: run.html?failed=1 renders the engine-refused state. */
   var failed = new URLSearchParams(location.search).get('failed') === '1';
+  /* D-64 (GATE 4 round 11): run.html?empty=1 is this screen BEFORE ANYTHING HAS BEEN
+     MEASURED - the state the dummy had drawn for Home (D-53) and for Settings, and
+     never for Run, so the app's own first-open Run screen had no approved
+     counterpart at all. It was printing "Sizes on disk - a run frees up to this"
+     over eleven rows carrying no figures, while Home correctly said nothing: two
+     screens disagreeing about one fact. The seed always has data, which is exactly
+     why this state has to be reachable rather than described. */
+  var beforeScan = new URLSearchParams(location.search).get('empty') === '1';
   var freed = 0, doneCount = 0, startedAt = 0;
   var queue = [];
 
@@ -48,7 +56,13 @@
       st.dataset.role = 'status';
       st.style.marginInlineStart = 'auto';
       top.appendChild(st);
-      var by = el('span', 'num t-xs', item.unmeasured ? '' : fmt.bytes(item.bytes));
+      /* D-64: "not measured" before a scan, which is the word Home's rungs, its hero
+         and the held-back well already use for it - a blank cell in a column of
+         byte figures reads as a zero. A row that simply has no figure for THIS run
+         (a report-only section before a rehearsal) still shows nothing: that is a
+         different fact and it keeps its blank. */
+      var by = el('span', 'num t-xs',
+        item.beforeScan ? 'not measured' : item.unmeasured ? '' : fmt.bytes(item.bytes));
       by.dataset.role = 'bytes';
       top.appendChild(by);
       row.appendChild(top);
@@ -77,6 +91,14 @@
      A section the rehearsal measured at nothing shows its 0 B; before a rehearsal
      there is no figure for it at all, which is what `unmeasured` still means. */
   function runQueue() {
+    /* D-64: before a scan the queue is still the whole safe batch - the engine runs
+       it whatever this window has measured, and the app builds the same rows from
+       the catalogue - but not one of them has a figure. */
+    if (beforeScan) {
+      return window.wsSeed.SAFE_BATCH.map(function (id) {
+        return { section: id, bytes: 0, count: 0, beforeScan: true };
+      });
+    }
     var offer = db.derive.safeRunRows();
     var have = {};
     offer.rows.forEach(function (r) { have[r.section] = true; });
@@ -145,6 +167,9 @@
 
   function start() {
     cancelled = false; freed = 0; doneCount = 0; startedAt = Date.now();
+    /* D-64: from the press on, this screen is about the run and not about what had
+       been measured before it - the rows are the engine's own reports either way. */
+    beforeScan = false;
     queue = runQueue();
     if (!queue.length) { ws.toast('Nothing in the safe batch to run.'); return; }
 
@@ -223,7 +248,12 @@
 
   window.wsPage = {
     init: function () {
-      var mount = document.querySelector('[data-ws-map]');
+      /* D-64: nothing measured is nothing to draw and nothing to drain, so the whole
+         band goes - which is what the app does, its map band being rendered only
+         while it has tiles. */
+      var mapBand = document.querySelector('[data-ws-run-map]');
+      if (beforeScan && mapBand) mapBand.hidden = true;
+      var mount = beforeScan ? null : document.querySelector('[data-ws-map]');
       if (mount) {
         map = new window.ReclaimMap(mount, { interactive: false });
         map.render(db.derive.mapData());
@@ -232,8 +262,13 @@
       buildList();
       window.wsWire.setText('runTotal', String(queue.length));
       /* D-61: which of the two the figures beside the rows are - the ladder's own
-         sentences, because they are the same figures answering the same question. */
-      window.wsWire.setText('runBasis', db.derive.safeRunRows().upTo
+         sentences, because they are the same figures answering the same question.
+         🔴 D-64: and before a scan it is NEITHER. There is no figure to qualify, so
+         the caption goes rather than guessing one - the same answer applyBeforeScan()
+         gives Home's ladderBasis, which is the same sentence about the same run. */
+      var basis = document.querySelector('[data-ws-text="runBasis"]');
+      if (beforeScan) { if (basis) basis.hidden = true; }
+      else window.wsWire.setText('runBasis', db.derive.safeRunRows().upTo
         ? 'Sizes on disk — a run frees up to this. A dry-run gives the engine’s own figure.'
         : 'The last dry-run’s own figures, for these exact settings.');
       /* 🔴 This line silently overwrote the amendment made to run.html on 2026-09-07:

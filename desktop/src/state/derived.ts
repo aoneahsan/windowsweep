@@ -116,6 +116,11 @@ export function useHeldBackBytes(): number | null {
  * rehearsal's estimate while it ran with the current arguments, otherwise the
  * measured safe-batch total less what is held back, worded as the bound it is.
  * `null` until a scan has measured - "Scan first" / "not measured".
+ *
+ * 🔴 `scannedAt` reaches `isCurrentRehearsal` as well as `safeRunBytes` now (D-63):
+ * a scan that finished after the rehearsal re-measured the machine, so the estimate
+ * describes a disk the window has since read again, and the figure goes back to the
+ * bound built from that newer scan.
  */
 export function useReclaimOffer(): ReclaimOffer | null {
   const rehearsal = useStore((s) => s.rehearsal);
@@ -128,7 +133,7 @@ export function useReclaimOffer(): ReclaimOffer | null {
   return reclaimOffer({
     safeTotal: safeRunBytes(catalogue, includedTargets, scannedAt !== null),
     heldBack,
-    current: isCurrentRehearsal(rehearsal, prefs, excludedPaths) ? rehearsal : null,
+    current: isCurrentRehearsal(rehearsal, prefs, excludedPaths, scannedAt) ? rehearsal : null,
   });
 }
 
@@ -146,6 +151,7 @@ export function useReclaimOffer(): ReclaimOffer | null {
 export function useRunFigures(): RunFigures {
   const catalogue = useStore((s) => s.catalogue);
   const rehearsal = useStore((s) => s.rehearsal);
+  const scannedAt = useStore((s) => s.scannedAt);
   const excludedPaths = useStore((s) => s.excludedPaths);
   const prefs = useRunPreferences();
   const includedTargets = useIncludedScanTargets();
@@ -159,7 +165,7 @@ export function useRunFigures(): RunFigures {
     sections,
     measured,
     heldBack,
-    current: isCurrentRehearsal(rehearsal, prefs, excludedPaths) ? rehearsal : null,
+    current: isCurrentRehearsal(rehearsal, prefs, excludedPaths, scannedAt) ? rehearsal : null,
   });
 }
 

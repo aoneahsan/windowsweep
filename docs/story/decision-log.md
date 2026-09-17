@@ -745,3 +745,56 @@ than being left unable to express it.
 
 **Also filed by round 10, not blocking:** D-62 - at 760 the Home target table overflows 53 px on the longest
 engine title (the dummy reproduces it exactly, so the rule is the dummy's).
+
+## 2026-09-17 - GATE 4 round 11's D-63: a rehearsal goes stale when a later scan re-measures the disk
+
+Round 11 ran on 2026-09-14 and its verdict was never written down, so its two findings were recovered on
+2026-09-17 from the drivers that survive. `isCurrentRehearsal` compared the run's arguments and the exclusion
+set and nothing else, so a rehearsal stayed "current" after a scan had re-measured the same disk, and the
+bands went on printing the engine's per-section estimate while the window held a newer measurement
+contradicting it. The condition was not hypothetical: a real run that day removed roughly what the stored
+rehearsal had estimated, which is the only reason the edge was visible at all.
+
+**Decided (orchestrator, an extension of D-60's rule to the input rather than the output; reversible):** a
+rehearsal is current only while its arguments equal the run's **and** no scan has finished after it. After a
+later scan every figure that describes what a run would free falls back to D-60's bound wording, built from
+the new scan, until the next *Dry-run first*. The rehearsal now carries `finishedAt`, and it is this window's
+clock rather than the engine's: `meta.finished_at` is written into the report **file** and never reaches the
+`--json` summary the app parses, and comparability with `scannedAt` is the only property the rule needs.
+**No dummy change and no new words** - `db.js` already draws both states, and only which of them is shown
+moved. The real-run half of the same rule was already in the tree and was not duplicated.
+
+## 2026-09-17 - GATE 4 round 11's D-64: the Run screen before anything is measured is the DUMMY's state to gain
+
+On a fresh session the Run screen's per-section band printed *"Sizes on disk - a run frees up to this"* over
+eleven rows carrying no figures at all, while Home's ladder correctly drew no caption. The test asked whether
+a **run** had happened and never whether anything had been **measured**, so the two bands disagreed about the
+same screen state.
+
+🔴 **The dummy was the side missing the state.** It models Home before a scan (`index.html?empty=1`,
+`applyBeforeScan()`, added as D-53 in round 8) and Settings the same round, and it had never modelled Run - so
+the app's own first-open Run screen had no approved counterpart to be judged against. That is the one
+direction the dummy-first order does not cover, and it is resolved the way D-53 was resolved.
+
+**Decided (orchestrator, design authority; reversible):** `run.html?empty=1` renders the before-a-scan state -
+no basis caption, the rows reading *not measured* in the window's own existing word, the map band absent, and
+the hero's "up to" gone with the figure it qualified - and then the app matches. The app's "nothing measured"
+test is `offer === null`, deliberately the same expression Home's ladder reads, so the two bands cannot drift
+apart again; it is **not** an empty-figure-map test, which `lib/reclaim.ts` already records as a conflation it
+had to fix once. **No new words anywhere** - every string was already in the dummy and the catalogue.
+
+## 2026-09-17 - D-65: the held-back figure follows D-63's freshness rule too
+
+Found while verifying D-63 rather than by a round, and fixed in the same wave because it is the same defect
+one function over. `heldBackApplies` checks developer mode, the idle window and the exclusions and **never**
+the rehearsal's age, while `heldBackBySection` subtracts the rehearsal's per-section **estimate** from the
+**current** scan's size on disk. After a later scan that subtraction is new-minus-old, and Home prints the
+result as a stated quantity: *"Held back right now: N"*. The Reclaim bound stays true either way, which is why
+D-63 was scoped to the estimate branch - but a figure a person reads as a measurement must not be a
+measurement of two different moments.
+
+**Decided (orchestrator, D-63 applied consistently; reversible):** `heldBackApplies` takes `scannedAt` and
+additionally requires the rehearsal to be no older than the last scan, exactly as `isCurrentRehearsal` now
+does. Its consumer already holds `scannedAt`, so the change is the predicate and its call. **No dummy change
+and no new words**: when the rehearsal no longer applies the window already says *"not measured"*, which is
+the honest answer and the one the dummy already draws.

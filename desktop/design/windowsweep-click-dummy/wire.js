@@ -579,13 +579,27 @@
      only its map and its last runs. The window has said all of this since the first
      unmeasured build - "not measured", "Scan first", "nothing offered yet" - and the
      dummy seeded every one of those bands, so its words had no approved counterpart.
-     Re-applied after every refresh, because the switches and the slider refresh. */
+     Re-applied after every refresh, because the switches and the slider refresh.
+
+     D-64 (GATE 4 round 11): the same state on RUN, which this dummy did not have at
+     all - run.html?empty=1 renders it, and page-run.js carries the part that is the
+     Run screen's own. The two pieces below are shared, because both heroes are one
+     component. */
   function applyBeforeScan() {
     if (!showEmpty) return;
     var n = $('[data-ws-hero-n]'), u = $('[data-ws-hero-u]');
     if (n) n.textContent = 'not measured';
     if (u) u.textContent = '';
-    var sub = $('.hero-sub');
+    /* D-64: with no figure there is nothing to qualify, so the bound's word goes with
+       it - the same rule the ladder's caption follows below. Only run.html's hero
+       carries it (D-60). */
+    var upTo = $('[data-ws-hero-upto]');
+    if (upTo) upTo.hidden = true;
+    /* 🔴 HOME'S sub-line, and only Home's (D-64). This file runs on every page and
+       `.hero-sub` matches the Run screen's too, whose sentence is its own - "0 of 11
+       sections - not started" - before a scan exactly as after one. Keyed on Home's
+       own Reclaim button rather than on a file name, like every other selector here. */
+    var sub = $('[data-ws-action="reclaim"]') ? $('.hero-sub') : null;
     if (sub) sub.textContent = 'Nothing has been measured yet. A scan reads sizes and deletes nothing.';
     var scanLabel = $('[data-ws-action="scan"] .btn-label');
     if (scanLabel) scanLabel.textContent = 'Scan';

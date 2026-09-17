@@ -37,6 +37,7 @@ import { useTranslation } from 'react-i18next';
 
 import { formatBytes } from '../lib/format';
 import { measuredBySection } from '../lib/reclaim';
+import type { FigureBasis } from '../lib/rehearsal';
 import type { Catalogue } from '../lib/catalogue';
 import type { ProgressEvent, RunSectionResult, ScanTarget } from '../lib/cli';
 import { SCAN_PSEUDO_SECTION } from '../lib/cli';
@@ -123,7 +124,8 @@ export function perSectionRows({
   return rows.sort((a, b) => key(b) - key(a));
 }
 
-function Row({ row }: { row: PerSectionRow }) {
+function Row({ row, unmeasured }: { row: PerSectionRow; unmeasured: boolean }) {
+  const { t } = useTranslation();
   const width = row.state === 'done' ? '100%' : '0%';
 
   return (
@@ -137,12 +139,21 @@ function Row({ row }: { row: PerSectionRow }) {
         >
           {row.status}
         </span>
+        {/* 🔴 D-64: before a scan the cell SAYS SO rather than going blank. A blank
+            in a column of byte figures reads as a zero, and the dummy's rungs, this
+            app's hero, its drives and the held-back well all already carry this one
+            word for the same state. `unmeasured` is the band's own state, not a
+            per-row one: a row that merely has no figure for THIS run - a report-only
+            section before a rehearsal - keeps its blank, because that is a different
+            fact. */}
         <span className="num t-xs">
           {row.freedBytes !== null
             ? formatBytes(row.freedBytes)
             : row.expectedBytes !== null
               ? formatBytes(row.expectedBytes)
-              : ''}
+              : unmeasured
+                ? t('home.notMeasured')
+                : ''}
         </span>
       </div>
       <div className="prog" style={{ marginTop: 'var(--sp-1)' }}>
@@ -162,10 +173,12 @@ export function RunPerSection({
 }: {
   rows: PerSectionRow[];
   /**
-   * Which figure the waiting rows carry, or `null` once a run has started and they
-   * are the engine's own reports rather than a description of a run (D-61).
+   * Which figure the waiting rows carry - `lib/rehearsal.ts` -> `perSectionBasis`,
+   * which decides it and says why. `null` and `'unmeasured'` both draw no caption
+   * and are NOT the same fact (D-64): the first means these rows report a run that
+   * happened, the second that nothing has been measured to describe.
    */
-  basis: 'bound' | 'estimate' | null;
+  basis: FigureBasis;
 }) {
   const { t } = useTranslation();
 
@@ -178,15 +191,15 @@ export function RunPerSection({
         className="panel pad"
         style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}
       >
-        {basis === null ? null : (
+        {basis === 'bound' || basis === 'estimate' ? (
           <p className="t-xs ink-3">
             {basis === 'bound' ? t('offer.basisBound') : t('offer.basisEstimate')}
           </p>
-        )}
+        ) : null}
         {rows.length === 0 ? (
           <p className="t-sm ink-3">{t('run.nothingToRun')}</p>
         ) : (
-          rows.map((row) => <Row row={row} key={row.id} />)
+          rows.map((row) => <Row row={row} unmeasured={basis === 'unmeasured'} key={row.id} />)
         )}
       </div>
     </div>

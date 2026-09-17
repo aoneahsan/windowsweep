@@ -38,6 +38,7 @@ import { formatBytes } from '../lib/format';
 import { isCleanupRun } from '../lib/cli';
 import { newRunId, run, safeBatchArgs } from '../lib/engine';
 import { safeRunSections } from '../lib/catalogue';
+import { perSectionBasis } from '../lib/rehearsal';
 import { stateOf } from '../lib/control-state';
 import { RunPerSection, perSectionRows } from '../components/RunPerSection';
 import { ReclaimMap } from '../components/ReclaimMap';
@@ -129,13 +130,17 @@ export function RunScreen() {
      section - they were the measured sizes on disk, so eleven rows queued 34.3 GB
      under a hero reading the engine's own 1.9 GB estimate for that same run. */
   const figures = useRunFigures();
-  /* 🔴 And the band says which of the two it is showing, ONLY AT REST: once
-     anything has run, the rows are the engine's own reports of what happened, not
-     a description of what a run would free. Same test as the eyebrow's, `cancelled`
-     first for the reason recorded there. */
-  const perSectionBasis = cancelled || !notRunYet || phase === 'running'
-    ? null
-    : (figures.upTo ? 'bound' : 'estimate');
+  /* 🔴 Which of the figures the band is showing, said once for the band and only at
+     rest - and only once something has been MEASURED (D-64). The rule and the two
+     traps behind it live in `lib/rehearsal.ts` -> `perSectionBasis`, beside the
+     figures it describes, because it is pure and it is that module's question. */
+  const basis = perSectionBasis({
+    cancelled,
+    notRunYet,
+    running: phase === 'running',
+    offer,
+    upTo: figures.upTo,
+  });
   /* 🔴 A CANCELLED RUN'S HERO IS THE SUM OF THE SECTIONS THE ENGINE SAID IT
      FINISHED, and `not measured` when that sum is zero.
      Those `##windowsweep ... event=end freed_bytes=N` lines are complete facts:
@@ -427,7 +432,7 @@ export function RunScreen() {
 
       <section className="band band-app">
         <div className="wrap g12">
-          <RunPerSection rows={rows} basis={perSectionBasis} />
+          <RunPerSection rows={rows} basis={basis} />
 
           <div className="c7 rise">
             {/* `run.html:80-83` - the dummy's heading and its sub-line, verbatim

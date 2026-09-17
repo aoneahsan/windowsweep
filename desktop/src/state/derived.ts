@@ -82,8 +82,10 @@ export function useIncludedScanTargets(): ScanTarget[] {
  * passing the whole scan.
  *
  * 🔴 Measured by the last rehearsal, and only while developer mode, the idle window
- * and the exclusions are still the ones it ran with (`lib/rehearsal.ts` ->
- * `heldBackApplies`, which says why each of the three matters).
+ * and the exclusions are still the ones it ran with - and only while no scan has
+ * re-measured the machine since (D-65). `lib/rehearsal.ts` -> `heldBackApplies` says
+ * why each of the four matters; the fourth is there because this figure is
+ * `onDisk - estimate`, and a later scan moves only one side of that subtraction.
  */
 export function useHeldBackBySection(): Map<number, number> | null {
   const rehearsal = useStore((s) => s.rehearsal);
@@ -92,7 +94,7 @@ export function useHeldBackBySection(): Map<number, number> | null {
   const excludedPaths = useStore((s) => s.excludedPaths);
   const prefs = useRunPreferences();
   const includedTargets = useIncludedScanTargets();
-  const applies = heldBackApplies(rehearsal, prefs, excludedPaths);
+  const applies = heldBackApplies(rehearsal, prefs, excludedPaths, scannedAt);
   return heldBackBySection(
     applies ? rehearsal.summary : null,
     includedTargets,

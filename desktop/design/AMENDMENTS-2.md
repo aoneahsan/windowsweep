@@ -315,3 +315,65 @@ emptiness and "nothing measured" are separate facts - exclude every target after
 empty while the true answer is 0 - and `lib/reclaim.ts` already records that exact conflation as a defect it
 had to fix once. `RunPerSection.tsx`'s `basis` gains a fourth value, `'unmeasured'`, because drawing no
 caption is not the same fact as a run having happened.
+
+---
+
+## Amendment - 2026-09-17 (later): D-65, and the Report screen's Export built (TASK-015, TASK-016)
+
+No dummy file changed in this batch, and three of the four items below say why not. The one that is a design
+decision - what History lists - was decided BY the dummy rather than against it.
+
+### 1. No dummy change - the held-back figure goes stale the same way a rehearsal does (D-65)
+
+D-63 gave `isCurrentRehearsal` a second half: a rehearsal is current only while its arguments hold **and** no
+scan has finished after it. `heldBackApplies` - the narrower predicate behind *"Held back right now"* - was
+left alone, because the Reclaim figure it feeds is a BOUND either way and a looser bound is still true.
+
+That reasoning does not reach the held-back figure itself. It is `onDisk - estimate`, where `onDisk` comes
+from the live scan and the estimate from the rehearsal, so a later scan moves one side of a subtraction and
+Home prints the difference as a stated quantity. Same rule, same shape, now on both predicates. Nothing on
+screen is new: when the figure does not apply the window already says *not measured*.
+
+### 2. `page-report.js:115`'s sentence stops being a `prototype` toast and starts shipping (TASK-015)
+
+*Export...* was declared `pending-wave` on the reasoning that this window could pass neither the engine's
+`--export` flag nor reveal a file. Both halves were about HOW, not whether:
+
+- `src-tauri/src/export.rs` runs the engine's own `--export both latest` against the run's own folder with a
+  **fixed** argument vector, so nothing new goes on the webview's flag allowlist - the caller sends a run id
+  and nothing else;
+- it reveals the result from **Rust**, so no capability is granted to the webview at all. 🔴 The plugin's
+  `opener:allow-reveal-item-in-dir` permission would have been the wider answer, not the narrower one: unlike
+  `open_url` and `open_path`, that command accepts **no scope**, so granting it is an unscoped reveal of any
+  path however the capability file is written.
+
+The window still converts nothing - `modules/reports.ps1` writes both files - which is what keeps an exported
+report and this page from drifting apart, and is what the sentence says.
+
+**The words are the dummy's, verbatim.** *"Markdown and HTML come from the engine's own --export, not from
+this window - so an exported report and this page cannot drift apart."* The dummy delivers it as a toast; this
+app ships no toast component, so it is a `role="status"` line beside the button - the same trade
+`ScheduleSwitch` records. A refusal prints the ENGINE'S own words unchanged, for the reason recorded there.
+The `Export is not built into this window yet` note is gone, which also brings the band closer to
+`report.html:57`, where there is no note beside the button at all.
+
+🔴 **One mechanism detail, no words and no layout:** the button gained a `.btn-label` span. `.btn[data-state]`
+fades that span and draws the spinner over it, so a button without one has no pending paint - the dummy's own
+convention on every control that shows a state.
+
+### 3. No dummy change - a scan is not a History row (TASK-016 item 2)
+
+`finishRun` recorded every summary, `--scan` included, and the list keeps the newest 200 - so pressing Scan
+spent a slot and pushed a real run off the end. 🔴 **The dummy decides this and decides it as a FILTER, not a
+second cap:** its eight seeded runs are `safe batch`, `sections ...` and `profile: ...` (`seed.js` -> `RUNS`),
+it has never drawn a scan row, and all three of the app's readers already filter one out. So a scan no longer
+becomes a row, and rows an earlier build wrote are dropped as the store loads - otherwise the cap stays spent
+on every machine that has already used this window.
+
+### 4. No dummy change - two more that are invisible to it
+
+A read no longer creates the folder it is reading (`engine.rs` -> `existing_run_dir`), and the nine shell
+screens are loaded per route. Neither changes a rendered pixel. The one place the second could have: its
+`Suspense` fallback is deliberately WORDLESS, because the app's single loading sentence -
+*"Reading the catalogue from the engine"* - describes a different fact, and the dummy has no counterpart to
+take one from; it is static HTML with no chunk to wait for.

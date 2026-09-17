@@ -19,6 +19,11 @@ import { interactiveSectionIds, mergeOffers } from '../lib/offers';
 import type { Catalogue } from '../lib/catalogue';
 import type { Rehearsal } from '../lib/rehearsal';
 import { isCleanupRun, type Candidate, type RunSummary, type ProgressEvent, type ScanTarget } from '../lib/cli';
+/* 🔴 The value import is one-way at runtime: `run-mode.ts` only type-imports
+   `HistoryEntry` back from here, and a type import is erased, so there is no cycle
+   to resolve. Taken rather than inlining `mode !== 'scan'` a fourth time - one
+   vocabulary for one fact, which is the rule that module exists for. */
+import { isRunRecord } from '../lib/run-mode';
 import type { AuthUser } from '../lib/auth';
 import { readPrefs, writePrefs, applyAllAxes, type AxisPrefs } from '../lib/theme';
 
@@ -203,6 +208,8 @@ interface StoreState {
 }
 
 const HISTORY_KEY = 'windowsweep:history';
+/** How many runs are kept. Named rather than a literal in the slice that applies it. */
+const HISTORY_LIMIT = 200;
 const EXCLUDED_KEY = 'windowsweep:excludedPaths';
 const DEVELOPER_KEY = 'windowsweep:developer';
 const IDLE_DAYS_KEY = 'windowsweep:idleDays';
@@ -321,6 +328,18 @@ export const useStore = create<StoreState>()((set, get) => ({
         summary.sections.filter((step) => step.status === 'ran' || step.status === 'failed').map((step) => step.section),
       );
     }
+    /* 🔴 A SCAN IS NOT A HISTORY ROW (TASK-016 item 2). Every summary landed here,
+       `--scan` included, and `addHistory` keeps the newest 200 - so pressing Scan
+       spent a slot that no screen has ever displayed, and pushed a real run off the
+       end of a list that had room for it. The three consumers all filter scans out
+       already (`lib/history-rows.ts` -> `cleanupRuns`, `LastRuns`, Report), and the
+       click dummy - which owns this screen - has never drawn a scan row: its eight
+       seeded runs are `safe batch`, `sections …` and `profile: …`
+       (`seed.js` -> `RUNS`). So the dummy specifies FILTER, not a second cap, and
+       this is the one place every summary passes through.
+
+       The same test the displays use, from the module that already decides it. */
+    if (!isCleanupRun(summary)) return;
     get().addHistory({
       runId: get().runId ?? '',
       startedAt: new Date(startedAt).toISOString(),
@@ -395,9 +414,14 @@ export const useStore = create<StoreState>()((set, get) => ({
   },
   setSectionSelection: (ids) => { set({ sectionSelection: [...ids].sort((a, b) => a - b) }); },
 
-  history: readLocal<HistoryEntry[]>(HISTORY_KEY, []),
+  /* 🔴 Scan rows an earlier build wrote are dropped on the way in, or the cap stays
+     spent for the next 200 runs on every machine that has already used this window
+     (TASK-016 item 2). Nothing displays them - all three readers filter scans - so
+     this removes no row anybody could see, and it is what makes the fix true of an
+     existing install rather than only of a fresh one. */
+  history: readLocal<HistoryEntry[]>(HISTORY_KEY, []).filter(isRunRecord),
   addHistory: (entry) => {
-    const history = [entry, ...get().history].slice(0, 200);
+    const history = [entry, ...get().history].slice(0, HISTORY_LIMIT);
     writeLocal(HISTORY_KEY, history);
     set({ history });
   },

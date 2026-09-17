@@ -69,6 +69,16 @@ are logged in `design/README.md` ("what round 8 would otherwise flag").
 | `account.html` stored-data table, Last seen | *A timestamp, refreshed when this window syncs, …* | **not exempt** | ships verbatim (`account.stored.lastSeen.why`) |
 | status bar `app 0.1.0-design` (`seed.js:174`) | *app 0.1.0-design* | `prototype` | the dummy's own build label; the window prints its real version in the title-bar chip (`live-number`) |
 
+### A-1 (b) - Known limitations, which are NOT exemptions
+
+A limitation is not one of the four classes: nothing here is waiting for a wave, and no dummy element is
+being withheld. It is recorded beside them because a round should be able to check it rather than file it
+again.
+
+| What | Why it is true, and why it stays true |
+|---|---|
+| **History lists only the runs made in THIS window.** A run started by the weekly Scheduled Task, or from a terminal, reports to `%USERPROFILE%\.windowsweep\reports` and never appears in it | The window's History is its own record of what it started (`state/store.ts` -> `addHistory`), not an index of the engine's reports folder. 🔴 **The screen already says so and says it truthfully** - its lede reads *"in this window"* - so nothing on screen over-claims. Building the other reading means reading, parsing and paging a folder this window does not own, whose files another process is writing while it reads; it is a feature, not a fix, and it is **declared rather than built** (product PENDING-TASKS TASK-016 item 1) |
+
 ## A-2 - Every toast still in the dummy, each with its class
 
 Four toast acknowledgements moved to the control in the dummy (D-28 class; the README table lists them), and
@@ -89,7 +99,8 @@ the Picker's Clear with them. What remains:
 | `page-picker.js:289` Remove these | *Sent {n} items to the Recycle Bin …* · *This would ask you to confirm {n} permanent deletions first …* | `prototype` | stands in for the run: the app writes the select file and opens the Run screen. A real deletion - never pressed in verification |
 | `page-elevation.js:178` | *Windows would show its permission prompt here for …* | `prototype` | stands in for UAC; the app starts the engine's own `--elevate` |
 | `page-history.js:154` | *Loaded the next page - twenty at a time …* | `prototype` | narration of pagination; the app's list grows in place |
-| `page-report.js:111,115` | *Opens %USERPROFILE%\.windowsweep\reports\… in your …* · *Markdown and HTML come from the engine's own --export …* | `prototype` | the dummy cannot open or export a file |
+| `page-report.js:111` | *Opens %USERPROFILE%\.windowsweep\reports\… in your …* | `prototype` | the dummy cannot open a file |
+| `page-report.js:115` | *Markdown and HTML come from the engine's own --export …* | **not exempt, as of 2026-09-17** | **TASK-015 built the export.** These words now ship verbatim as `report.exportDone`, a `role="status"` line beside the button - the dummy's sentence, this app's placement, the trade `ScheduleSwitch` already records. The press runs the engine's own `--export both latest` against the run's folder and reveals the two files it wrote |
 | `page-consent.js:37` | *Thanks - that is all. Nothing else to set up.* | `prototype` | Continue leaves the notice for Home; the navigation is the acknowledgement |
 | `page-splash.js:49,64` | *It will install the next time you close windowsweep.* · *Downloaded and verified. This is a design prototype, so nothing restarts.* | `pending-wave` | the update band, declared `pending-wave` since round 1 |
 | `page-account.js:29,60,103` | *Signed in. Your settings will sync from now on.* · *Signed out. …* · *Your account is gone, …* | `pending-wave` | the account surface is dormant until `SUPABASE_ENABLED` (declared on screen since round 1); the sign-in sentence also names sync, TASK-013 |

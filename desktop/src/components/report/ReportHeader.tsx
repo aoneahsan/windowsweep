@@ -5,23 +5,31 @@
  * The breadcrumb names the run by the same exact minute its History row shows, so
  * the row that was clicked and the page it opened read as one thing.
  *
- * 🔴 *Export...* IS DECLARED, NOT BUILT - `pending-wave` (coordinator decision for
- * desktop 1.2.0; the build is product PENDING-TASKS TASK-015). The dummy's export
- * hands the file to the engine's own `--export md|html`; this window may pass neither
- * that flag (`src-tauri/src/args.rs` allowlists no `--export`) nor reveal or save a
- * file (the capability file grants neither). So the dummy's button is drawn DISABLED
- * with its reason beside it, rather than hidden (a quiet drop) or live (a promise the
- * first press breaks). The note names no terminal command on purpose: the command
- * line's `--export` reads its own default reports folder, not this window's per-run
- * folder, so it would not find this report.
+ * 🔴 *Export...* IS BUILT (TASK-015), and the declaration that stood here is gone.
+ * It was `pending-wave` on the reasoning that this window could pass neither the
+ * engine's `--export` flag nor reveal a file. Both halves turned out to be about
+ * HOW rather than whether: `src-tauri/src/export.rs` runs the engine's own export
+ * with a FIXED argument vector, so nothing goes on the webview's flag allowlist,
+ * and it reveals the result from Rust, so no capability is granted to the webview
+ * either. The window still converts nothing - `modules/reports.ps1` writes both
+ * files, which is what keeps an exported report and this page from drifting apart.
+ *
+ * 🔴 The acknowledgement is AT THE CONTROL, and the words are the dummy's. This app
+ * ships no toast component; the dummy delivers this sentence as one
+ * (`page-report.js` -> `reportExport`) and here it is a `role="status"` line beside
+ * the button, which is the placement `ScheduleSwitch` already records for exactly
+ * this trade. A refusal is the ENGINE'S OWN, verbatim, for the reason recorded
+ * there: the reasons are the engine's and paraphrasing one would put this window's
+ * words over the engine's fact.
  */
 
-import { useId } from 'react';
+import { useCallback, useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { Button } from 'react-aria-components';
 import { useTranslation } from 'react-i18next';
 
 import { formatBytes } from '../../lib/format';
+import { exportRunReports } from '../../lib/engine';
+import { controlState, stateOf } from '../../lib/control-state';
 import { exactStamp } from '../../lib/history-dates';
 import type { ReportLoad } from '../../lib/report-loader';
 import type { HistoryEntry } from '../../state/store';
@@ -61,15 +69,27 @@ interface ReportHeaderProps {
 
 export function ReportHeader({ entry, load, jsonOpen, jsonId, reasonId, onToggleJson }: ReportHeaderProps) {
   const { t } = useTranslation();
-  const exportNoteId = useId();
   const report = load.status === 'ready' ? load.report : null;
-  /* The note says "the report file named below", which is true only while there is
-     one: it is drawn from the first frame of a read (so nothing moves when the file
-     lands) and withdrawn when the file turns out missing or unreadable - there, the
-     disabled button is described by that note instead. */
-  const exportNoteShown = load.status === 'loading' || load.status === 'ready';
-  /* A key omitted rather than set to `undefined` - React Aria's props are exact. */
-  const exportDescribedBy = exportNoteShown ? exportNoteId : reasonId;
+
+  const [exporting, setExporting] = useState(false);
+  const [exported, setExported] = useState(false);
+  /* The engine's own refusal, held so it can be printed unchanged. */
+  const [exportFailed, setExportFailed] = useState<string | null>(null);
+
+  /* 🔴 The state flips BEFORE the await, so the control answers the press within a
+     frame rather than when PowerShell gets round to it - §12's 100 ms, and the
+     reason `controlState` exists. The previous outcome is cleared at the same
+     moment: a tick left over from the last export would be answering this press. */
+  const onExport = useCallback(() => {
+    if (report === null || exporting) return;
+    setExporting(true);
+    setExported(false);
+    setExportFailed(null);
+    exportRunReports(entry.runId)
+      .then(() => { setExported(true); })
+      .catch((e: unknown) => { setExportFailed(e instanceof Error ? e.message : String(e)); })
+      .finally(() => { setExporting(false); });
+  }, [report, exporting, entry.runId]);
 
   /* The report's own total once the file is read, the History record's until then.
      Both are the engine's one number for the run (`$ws.TotalFreed` /
@@ -106,16 +126,34 @@ export function ReportHeader({ entry, load, jsonOpen, jsonId, reasonId, onToggle
               >
                 {t('report.showJson')}
               </button>
-              {/* `pending-wave`: disabled, and React Aria has no focusable-disabled
-                  Button, so the reason sits beside it as visible text and is linked;
-                  a disabled button stays in the accessibility tree, so the link is read. */}
-              <Button className="btn" isDisabled {...(exportDescribedBy ? { 'aria-describedby': exportDescribedBy } : {})}>
-                {t('report.export')}
-              </Button>
+              {/* 🔴 The `.btn-label` span is not decoration: `.btn[data-state]` fades
+                  that span and draws the spinner over it, so a button without one has
+                  no pending paint at all. It wraps the same word in the same place -
+                  the dummy's own convention on every control that shows a state.
+                  Disabled while there is no file to export; the reason beside it is
+                  the one the unreadable case already prints, and a disabled button
+                  stays in the accessibility tree so the link is read. */}
+              <button
+                className="btn"
+                type="button"
+                disabled={report === null || exporting}
+                aria-describedby={reasonId ?? undefined}
+                onClick={onExport}
+                {...controlState(stateOf(exporting, exported))}
+              >
+                <span className="btn-label">{t('report.export')}</span>
+              </button>
             </div>
-            {exportNoteShown ? (
-              <p className="t-xs ink-3 rep-export-note" id={exportNoteId}>{t('report.exportPending')}</p>
-            ) : null}
+            {/* 🔴 Polite, at the control, in the same slot the declaration used to
+                occupy - so the band's height does not move between the two. */}
+            <p role="status" className="t-xs ink-3 rep-export-note">
+              {exported ? t('report.exportDone') : ''}
+            </p>
+            {exportFailed === null ? null : (
+              <p role="alert" className="t-xs rep-export-note" style={{ color: 'var(--c-warn-ink)' }}>
+                {exportFailed}
+              </p>
+            )}
           </div>
         </div>
       </div>

@@ -10,7 +10,7 @@
  * `useState`, so the back button works and a state is linkable.
  */
 
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import {
   createHashHistory,
   createRootRoute,
@@ -23,17 +23,8 @@ import {
 } from '@tanstack/react-router';
 
 import { Shell } from './components/Shell';
-import { Home } from './screens/Home';
-import { RunScreen } from './screens/Run';
-import { Sections } from './screens/Sections';
 import { Consent } from './screens/Consent';
 import { Splash } from './screens/Splash';
-import { Settings } from './screens/Settings';
-import { History } from './screens/History';
-import { Picker } from './screens/Picker';
-import { Report } from './screens/Report';
-import { Account } from './screens/Account';
-import { Elevation } from './screens/Elevation';
 import { useStore } from './state/store';
 import { loadCatalogue } from './lib/engine';
 import { track } from './lib/analytics';
@@ -93,11 +84,52 @@ const rootRoute = createRootRoute({ component: RootLayout });
 const consentRoute = createRoute({ getParentRoute: () => rootRoute, path: '/consent', component: Consent });
 const splashRoute = createRoute({ getParentRoute: () => rootRoute, path: '/splash', component: Splash });
 
-function withShell(Component: () => React.ReactElement) {
+/**
+ * 🔴 THE NINE SHELL SCREENS ARE SPLIT BY ROUTE (TASK-016 item 4). All eleven were
+ * imported at the top of this file, so opening the window parsed and executed the
+ * Picker's table, the Report's charts, History's, Settings' ten axis panels and the
+ * Elevation screen before anyone had navigated anywhere.
+ *
+ * 🔴 Consent and Splash stay EAGER, and that is the point rather than an omission:
+ * `RootLayout` navigates to `/splash` on boot, so they are the two screens a launch
+ * is certain to reach. Deferring the screen the app opens on would move a fetch
+ * onto the critical path to save a chunk nothing avoids.
+ *
+ * 🔴 Named exports, so each import is mapped to a `default` - `lazy` takes a module
+ * with one and these screens have none. A default export per screen would work too
+ * and would cost the codebase its one-name-per-thing rule.
+ */
+const Home = lazy(() => import('./screens/Home').then((m) => ({ default: m.Home })));
+const RunScreen = lazy(() => import('./screens/Run').then((m) => ({ default: m.RunScreen })));
+const Sections = lazy(() => import('./screens/Sections').then((m) => ({ default: m.Sections })));
+const Picker = lazy(() => import('./screens/Picker').then((m) => ({ default: m.Picker })));
+const History = lazy(() => import('./screens/History').then((m) => ({ default: m.History })));
+const Report = lazy(() => import('./screens/Report').then((m) => ({ default: m.Report })));
+const Account = lazy(() => import('./screens/Account').then((m) => ({ default: m.Account })));
+const Settings = lazy(() => import('./screens/Settings').then((m) => ({ default: m.Settings })));
+const Elevation = lazy(() => import('./screens/Elevation').then((m) => ({ default: m.Elevation })));
+
+/**
+ * 🔴 ONE `Suspense`, and it is INSIDE the shell rather than around the `Outlet`.
+ * Around the outlet, every navigation would blank the title bar, the rail and the
+ * status bar - the whole window - while a chunk arrived. Here the shell stays
+ * painted and the pressed rail item is already marked, so the navigation is
+ * acknowledged where the person is looking and only the content area waits.
+ *
+ * 🔴 The fallback is DELIBERATELY WORDLESS. The app has one loading sentence,
+ * `common.loading` - "Reading the catalogue from the engine" - and that is a
+ * different fact; printing it here would have the window name something it is not
+ * doing. The dummy has no counterpart to invent one from either: it is static HTML
+ * and has no chunks to wait for. In a packaged window the chunk is a local file, so
+ * this is a frame, not a wait.
+ */
+function withShell(Component: React.ComponentType) {
   return function Wrapped() {
     return (
       <Shell>
-        <Component />
+        <Suspense fallback={null}>
+          <Component />
+        </Suspense>
       </Shell>
     );
   };

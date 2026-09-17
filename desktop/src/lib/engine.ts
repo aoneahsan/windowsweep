@@ -241,6 +241,22 @@ export async function listRunFiles(runId: string): Promise<string[]> {
   return invoke<string[]>('list_run_files', { runId });
 }
 
+/**
+ * Export this run's report to Markdown and HTML, and reveal them.
+ *
+ * 🔴 NOT `run` WITH AN `--export` FLAG. The engine's own `--export` is what converts
+ * the file, but routing it through `run_clean` would mean putting `--export` and a
+ * `--reports-dir` on the argument allowlist the webview can reach - and that is a
+ * flag pair aimed at a folder. `src-tauri/src/export.rs` builds a FIXED vector
+ * instead: this call sends a run id and nothing else.
+ *
+ * Resolves to both written paths, in the order they were written. It rejects with
+ * the engine's own words when the engine refused, which the caller prints verbatim.
+ */
+export async function exportRunReports(runId: string): Promise<string[]> {
+  return invoke<string[]>('export_run_reports', { runId });
+}
+
 export async function appVersion(): Promise<string> {
   return invoke<string>('app_version');
 }

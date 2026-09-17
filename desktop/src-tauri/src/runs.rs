@@ -15,7 +15,7 @@ use std::path::Path;
 
 use tauri::AppHandle;
 
-use crate::engine::run_dir;
+use crate::rundir::{existing_run_dir, run_dir};
 
 /// The fixed name of the selection list. The caller does not choose it, which is
 /// most of why this command cannot be aimed anywhere.
@@ -31,7 +31,7 @@ const SELECT_FILE_NAME: &str = "select.txt";
 ///
 /// `canonicalize` is what does the resolving, and it only works on a path that
 /// exists - so a path being written is checked by its PARENT, which does exist.
-fn ensure_inside(base: &Path, candidate: &Path) -> Result<(), String> {
+pub(crate) fn ensure_inside(base: &Path, candidate: &Path) -> Result<(), String> {
     let real_base = base
         .canonicalize()
         .map_err(|e| format!("the run folder could not be resolved: {e}"))?;
@@ -145,7 +145,10 @@ fn is_listable(name: &str) -> bool {
 /// `read_run_report`, whose own check refuses anything with a separator in it.
 #[tauri::command]
 pub fn list_run_files(app: AppHandle, run_id: String) -> Result<Vec<String>, String> {
-    let dir = run_dir(&app, &run_id)?;
+    // 🔴 `existing_run_dir`, not `run_dir`: listing is a read, and a read that
+    // creates the folder it is listing answers "no files" for a run it has just
+    // brought into being (TASK-016 item 3).
+    let dir = existing_run_dir(&app, &run_id)?;
     let entries =
         std::fs::read_dir(&dir).map_err(|e| format!("the run folder could not be read: {e}"))?;
 

@@ -22,6 +22,7 @@ use tauri::{AppHandle, Emitter, Manager, State};
 
 use crate::args::{validate, wants_summary};
 use crate::cancel::{ChildHandle, RunRegistry};
+use crate::rundir::{existing_run_dir, run_dir};
 
 /// 🔴 `rename_all = "camelCase"` is LOAD-BEARING, and its absence made every
 /// `run_clean` call fail — the app could not run a cleanup at all.
@@ -103,7 +104,7 @@ fn strip_verbatim_prefix(path: &Path) -> PathBuf {
 }
 
 /// The bundled engine, resolved from the app's own resources.
-fn script_path(app: &AppHandle) -> Result<PathBuf, String> {
+pub(crate) fn script_path(app: &AppHandle) -> Result<PathBuf, String> {
     let dir = app
         .path()
         .resolve("windowsweep", tauri::path::BaseDirectory::Resource)
@@ -116,26 +117,6 @@ fn script_path(app: &AppHandle) -> Result<PathBuf, String> {
     // happy with a verbatim one - it is only PowerShell that is not. Stripping
     // afterwards keeps the check strict and hands the shell something it can use.
     Ok(strip_verbatim_prefix(&script))
-}
-
-/// Where this run's report and log are written, so an elevated second window and
-/// this one can both find them.
-pub fn run_dir(app: &AppHandle, run_id: &str) -> Result<PathBuf, String> {
-    if run_id.is_empty()
-        || !run_id
-            .chars()
-            .all(|c| c.is_ascii_alphanumeric() || c == '-')
-    {
-        return Err("that is not a run id".into());
-    }
-    let base = app
-        .path()
-        .app_local_data_dir()
-        .map_err(|e| format!("no local data directory: {e}"))?
-        .join("runs")
-        .join(run_id);
-    std::fs::create_dir_all(&base).map_err(|e| format!("could not create the run folder: {e}"))?;
-    Ok(base)
 }
 
 /// Run the engine, streaming its stderr to the window as it arrives.
@@ -339,7 +320,9 @@ pub fn read_run_report(
     if bad {
         return Err("that is not a file name inside the run folder".into());
     }
-    let path = run_dir(&app, &run_id)?.join(file_name);
+    // 🔴 `existing_run_dir`, not `run_dir`: a read must not create the folder it is
+    // reading from (TASK-016 item 3).
+    let path = existing_run_dir(&app, &run_id)?.join(file_name);
     std::fs::read_to_string(&path).map_err(|e| format!("the report could not be read: {e}"))
 }
 

@@ -122,22 +122,40 @@ export function isCurrentRehearsal(
 /**
  * Whether its per-section estimates still measure what developer mode holds back.
  *
- * 🔴 NARROWER THAN "CURRENT", AND NOT OPTIONAL. The held-back figure is each
- * developer section's size on disk less the rehearsal's estimate for it, so it is a
- * measurement of developer mode, the idle window and the exclusions - and of those
- * only: `--temp-days` and `--large-file-mb` govern sections 10 and 19, which are not
- * developer sections. A gap measured under `--days 100` subtracted from a run at
- * `--days 30` would hold back more than that run does, and the bound built from it
- * would stop being one; a re-included target has no estimate in the old figure at
- * all. So after any of the three moves, the figure is `not measured` until the next
- * rehearsal, and nothing is subtracted.
+ * 🔴 NARROWER THAN "CURRENT" ON THE ARGUMENTS, AND NOT OPTIONAL. The held-back
+ * figure is each developer section's size on disk less the rehearsal's estimate for
+ * it, so it is a measurement of developer mode, the idle window and the exclusions -
+ * and of those only: `--temp-days` and `--large-file-mb` govern sections 10 and 19,
+ * which are not developer sections. A gap measured under `--days 100` subtracted
+ * from a run at `--days 30` would hold back more than that run does, and the bound
+ * built from it would stop being one; a re-included target has no estimate in the
+ * old figure at all. So after any of the three moves, the figure is `not measured`
+ * until the next rehearsal, and nothing is subtracted.
+ *
+ * 🔴 D-65 - AND IT TAKES `scannedAt` TOO, FOR THE REASON `isCurrentRehearsal` DOES.
+ * The subtraction is `onDisk - estimate`, and `onDisk` comes from the LIVE scan
+ * while the estimate came from the rehearsal (`lib/reclaim.ts` ->
+ * `heldBackBySection`). Scan again and the two sides stop describing the same
+ * moment: a dev cache that has grown since makes the difference larger than
+ * anything the engine will actually hold back, and Home prints that difference as a
+ * stated quantity - "Held back right now". The Reclaim bound survived it either way
+ * (it can only move between `safeTotal - heldBack` and `safeTotal`, both of which
+ * are still bounds), which is why D-63 left this predicate alone; the figure a
+ * person READS did not survive it, which is why D-65 does not.
+ *
+ * Same rule, same shape: the three arguments hold AND `finishedAt >= scannedAt`.
+ * `scannedAt` null means nothing has been measured at all, and then there is no
+ * `onDisk` side to disagree with.
  */
 export function heldBackApplies(
   rehearsal: Rehearsal | null,
   prefs: RunPreferences,
   excludedPaths: readonly string[],
+  /** `scannedAt` from the store - when the live measurements were taken. */
+  scannedAt: number | null,
 ): rehearsal is Rehearsal {
   if (!rehearsal) return false;
+  if (scannedAt !== null && rehearsal.finishedAt < scannedAt) return false;
   return (
     rehearsal.prefs.developer === prefs.developer &&
     rehearsal.prefs.idleDays === prefs.idleDays &&

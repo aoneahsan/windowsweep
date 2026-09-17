@@ -798,3 +798,39 @@ additionally requires the rehearsal to be no older than the last scan, exactly a
 does. Its consumer already holds `scannedAt`, so the change is the predicate and its call. **No dummy change
 and no new words**: when the rehearsal no longer applies the window already says *"not measured"*, which is
 the honest answer and the one the dummy already draws.
+
+## 2026-09-17 - TASK-015: the Report export is built, and it deliberately adds NO capability
+
+The *Export...* control was declared `pending-wave` because the window could neither pass `--export` nor
+reveal a file - both questions about *how*, not about whether the product should do it. Both are answered.
+`src-tauri/src/export.rs` runs the engine's own `--export both latest` against that run's own folder with a
+**fixed** argument vector, so nothing joins the webview's flag allowlist, and it reveals the result from Rust.
+The written paths are **derived** from the report's stem rather than parsed out of the engine's prose - both
+converters default their output to `ChangeExtension($Json, '.md'/'.html')` - and because a derivation is a
+prediction, the command checks both files exist before returning them. A path that is not there is a failure,
+not a fact handed back.
+
+🔴 **And the capability the plan asked for was refused, correctly.** The instruction was to grant
+`opener:allow-reveal-item-in-dir` scoped to the runs folder. **That scope cannot exist.** In
+`tauri-plugin-opener-2.5.5/src/commands.rs`, `reveal_item_in_dir(paths: Vec<PathBuf>)` takes no
+`CommandScope` and no `GlobalScope` and performs no scope check at all, where `open_path` directly above it
+takes both and builds a `Scope` from them. An `"allow"` list beside that identifier is never read, so the
+grant would have been an **unscoped reveal of any path on disk, from the webview**, while the capability file
+looked scoped. The plain Rust function is called instead and the webview supplies only a run id, which the
+run-folder resolver already constrains. **No capability was added.** The reasoning sits in the module's own
+doc comment so nobody re-adds it, and the plan was corrected the same day.
+
+**The words are the dummy's own, verbatim** - `page-report.js` carries one sentence for this control, and it
+is about provenance rather than result: *"Markdown and HTML come from the engine's own --export, not from
+this window - so an exported report and this page cannot drift apart."* It ships at the control.
+
+**Decided (orchestrator, design authority; reversible): the success line stays that sentence and nothing
+more.** The dummy specifies no result words, Explorer opening at the written files is the result a person
+sees, and inventing *"Two files, beside the report"* would put words in the product that no approved artefact
+carries. If round 12 judges the acknowledgement insufficient, the dummy is amended first and the app follows.
+
+**Decided in the same breath: the route-transition placeholder stays wordless.** Splitting the eleven screens
+behind `React.lazy` took the entry chunk from 854,889 to 363,778 bytes, and its `Suspense` fallback draws
+nothing. The app's only loading sentence is *"Reading the catalogue from the engine"*, which is a different
+fact - printing it would have the window name something it is not doing - and in a packaged window the chunk
+is a local file, so this is a frame rather than a wait. A placeholder with words would need the dummy first.

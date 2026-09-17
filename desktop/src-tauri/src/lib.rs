@@ -8,7 +8,9 @@ mod args;
 mod cancel;
 mod drives;
 mod engine;
+mod export;
 mod oauth;
+mod rundir;
 mod runs;
 mod schedule;
 
@@ -34,6 +36,7 @@ pub fn run() {
             engine::app_version,
             engine::run_clean,
             engine::read_run_report,
+            export::export_run_reports,
             cancel::cancel_run,
             drives::list_drives,
             runs::write_select_file,

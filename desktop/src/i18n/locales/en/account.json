@@ -89,7 +89,7 @@
   "report.metaSeparator": " · ",
   "report.showJson": "Show the JSON",
   "report.export": "Export…",
-  "report.exportPending": "Export is not built into this window yet. The report file named below is the complete record of this run.",
+  "report.exportDone": "Markdown and HTML come from the engine’s own --export, not from this window – so an exported report and this page cannot drift apart.",
   "report.barsTitle": "What each section freed",
   "report.barsTitleDryRun": "What each section would free",
   "report.barsAria": "Bytes freed by each section in this run",

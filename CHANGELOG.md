@@ -20,9 +20,6 @@ version rows inside the published package.
 - **The documentation address the tool carries is now the documentation site**,
   `https://windowsweep-docs.aoneahsan.com`, instead of the README on GitHub. The site has served the
   same pages over HTTPS since 2026-09-12.
-
-### Internal
-
 - **`lib/external.ps1`** takes `Invoke-External`, `Test-CommandPresent`, `Test-ProcessRunning`,
   `Test-IsAdmin`, `Test-CanElevate` and `Invoke-Elevated` out of `lib/safety.ps1`, which is back under
   500 lines. The deletion chokepoint stays where it was: running a process and raising privilege are a
@@ -30,9 +27,13 @@ version rows inside the published package.
 - **`modules/self_test_contract.ps1`** takes self-test group [18] out of `modules/self_test_extra.ps1`,
   same fixture, same checks. Both moves are verbatim, and each was watched failing on a planted defect
   before it was believed.
-- The self-test reports **160 checks**, up from 156, because groups [3] and [4] check every engine file
-  by name and there are now two more files. No check was added, changed or removed.
-- The README's at-a-glance rows inside the published package were stale at 1.1.0 through the 1.2.0
+- **The self-test grew by the two new files**, because groups [3] and [4] check every engine file by
+  name. No check was added, changed or removed - the suite is the same suite, counting one more file
+  twice.
+
+### Fixed
+
+- **The README at-a-glance rows inside the published package** were stale at 1.1.0 through the 1.2.0
   cascade. They are correct here.
 
 ## [1.2.0] - 2026-09-08

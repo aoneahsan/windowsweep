@@ -73,4 +73,4 @@ them; the whole `windowsweep-root` folder has to be copied. The status record ab
 | **Author** | [Ahsan Mahmood](https://aoneahsan.com) - [aoneahsan@gmail.com](mailto:aoneahsan@gmail.com) |
 | **Support the work** | https://aoneahsan.com/payment?project-id=windowsweep&project-identifier=windowsweep |
 
-Last Updated: 2026-09-13 - tool version 1.2.0
+Last Updated: 2026-09-17 - tool version 1.3.0

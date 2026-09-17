@@ -29,7 +29,7 @@ $Script:WS = @{
   Refusals = @(); Hints = @(); ExitCode = 0; Finished = $false; AllowOwnData = $false
 }
 
-foreach ($lib in @('constants', 'ui', 'log', 'fs', 'safety', 'config', 'scan', 'actions')) {
+foreach ($lib in @('constants', 'ui', 'log', 'fs', 'safety', 'external', 'config', 'scan', 'actions')) {
   . (Join-Path $Script:WS_ROOT "lib\$lib.ps1")
 }
 foreach ($m in (Get-ChildItem -LiteralPath (Join-Path $Script:WS_ROOT 'modules') -Filter '*.ps1' | Sort-Object Name)) {

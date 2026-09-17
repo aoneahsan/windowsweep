@@ -187,6 +187,10 @@ function Show-SessionSummary {
   Write-Kv 'Duration:' (Format-Duration $secs)
   $ran = @($ws.Report.steps | Where-Object { $_.status -in 'ran', 'dry-run' }).Count
   $skipped = @($ws.Report.steps | Where-Object { $_.status -notin 'ran', 'dry-run' }).Count
+  # C-091: 'skipped' is every step that did not run, so it folds in REFUSED and FAILED as well as skipped.
+  # The label is kept deliberately - the exported report was aligned to this exact wording on purpose, and
+  # renaming both costs two surfaces and a stored artefact's vocabulary to buy a word. The fact lives here,
+  # beside the slot, so a reader of `9 / 2` can find out which.
   Write-Kv 'Sections run / skipped:' "$ran / $skipped"
   Write-Kv 'Log:' $ws.LogFile
   $rep = Save-Report

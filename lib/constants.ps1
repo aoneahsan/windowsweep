@@ -4,7 +4,7 @@
 # Single source of truth for the version is package.json: the Node launcher exports it as
 # WINDOWSWEEP_VERSION. A direct checkout falls back to this literal; the version:check script
 # asserts the two never drift.
-$Script:WS_VERSION_FALLBACK = '1.2.0'
+$Script:WS_VERSION_FALLBACK = '1.3.0'
 
 $Script:WS_NAME = 'windowsweep'
 $Script:WS_TAGLINE = 'Developer-aware Windows cleanup CLI: dry-run first, personal folders refused, zero install via npx.'
@@ -16,7 +16,7 @@ $Script:WS_GITHUB = 'https://github.com/aoneahsan'
 $Script:WS_REPO = 'https://github.com/aoneahsan/windowsweep'
 $Script:WS_ISSUES = 'https://github.com/aoneahsan/windowsweep/issues'
 $Script:WS_NPM = 'https://www.npmjs.com/package/windowsweep'
-$Script:WS_DOCS = 'https://github.com/aoneahsan/windowsweep/blob/main/docs/README.md'
+$Script:WS_DOCS = 'https://windowsweep-docs.aoneahsan.com'
 $Script:WS_SUPPORT = 'https://aoneahsan.com/payment?project-id=windowsweep&project-identifier=windowsweep'
 $Script:WS_LICENSE = 'MIT License'
 

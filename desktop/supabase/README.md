@@ -24,6 +24,7 @@ yet, so the switch cost code and no data.
 | `migrations/*_close_trigger_function_execute.sql` | Hand-written: the per-function revokes, and the correction behind them |
 | `migrations/*_delete_my_account_function.sql` | Hand-written: **account deletion** — see below |
 | `migrations/*_revoke_is_platform_admin_service_role.sql` | Hand-written: removes `service_role`'s EXECUTE on `is_platform_admin()`, which the older migration's `from public, anon` revoke had left standing. `authenticated` keeps it - every admin policy calls it as the querying user. Verified from `pg_proc` on 2026-09-13: `authenticated=X/postgres` and nothing else beside the owner |
+| `migrations/*_runs_user_started_at_index.sql` | Generated: `runs_user_id_started_at_idx` on `runs (user_id, started_at desc)`, the index behind the Account screen's run list (TASK-013) - one person's rows, newest first, 20 a page, plus their count. Additive, approved by the owner for the shared project on 2026-09-24 (D36) |
 | `rollbacks/` | One reviewed companion per migration. 🔴 Never applied automatically |
 | `../drizzle.config.ts` | The three load-bearing keys, each destructive if omitted |
 

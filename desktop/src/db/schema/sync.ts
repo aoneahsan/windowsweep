@@ -21,6 +21,7 @@ import { sql } from 'drizzle-orm';
 import {
   bigint,
   boolean,
+  index,
   integer,
   jsonb,
   pgPolicy,
@@ -93,7 +94,9 @@ export const runs = pgTable(
       .notNull()
       .references(() => authUsers.id, { onDelete: 'cascade' }),
     startedAt: timestamp('started_at', { withTimezone: true }).notNull(),
-    /** `all`, `scan`, `profile: dev` - the engine's own vocabulary, never invented. */
+    /** The engine's own cleanup-mode word, never invented: `walkthrough`, `menu`, `all` or `only`
+        (`windowsweep.ps1`). A profile run records `only` - the profile's name is not a mode. A scan is
+        never a row: it deletes nothing, and the desktop app does not sync it (TASK-016, TASK-013). */
     mode: text('mode').notNull(),
     dryRun: boolean('dry_run').notNull(),
     elevated: boolean('elevated').notNull(),
@@ -107,7 +110,11 @@ export const runs = pgTable(
     estimatedBytes: bigint('estimated_bytes', { mode: 'number' }).notNull().default(0),
     durationMs: integer('duration_ms').notNull().default(0),
   },
-  () => [
+  (t) => [
+    /* The Account screen's run list (TASK-013): `eq(user_id)`, newest first, keyset on `started_at`,
+       20 a page, plus its count. Without this every read and count scanned the table. Additive; approved
+       by the owner for the shared production project on 2026-09-24 (D36). */
+    index('runs_user_id_started_at_idx').on(t.userId, t.startedAt.desc()),
     pgPolicy('runs_select_own', {
       for: 'select',
       to: authenticatedRole,

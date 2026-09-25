@@ -451,3 +451,23 @@ stood on 2026-09-25; the main session re-syncs both sides after this surface's G
   other-machine rows read so far - exact once that list is read to its end, which is every list of one page. An
   exact figure for a longer list needs a server-side aggregate; reported with TASK-013.
 - **Freed per run** stays this window's own runs, as the dummy's does (`spark` reads `localRuns()`).
+
+## Amendment - 2026-09-25 (later): the team voice on Settings, and the portfolio off the roster (D44-D46)
+
+The owner's fleet rule of 2026-09-25 - a product speaks as its team, never as one person - reaches the Settings
+screen's house-promotion block. Story surface `team-voice` (row 13), GATE 4 by the owner, verbatim: *"Approve, ship
+them (Recommended)"*. Changed here first, then in the app:
+
+1. **The heading** *More from the same developer* becomes **More from the same team**. *The same team*, not *the
+   windowsweep team*: every other product on the roster markets under its own team name, so crediting them to
+   windowsweep's would be a claim no surface backs - the shared maker is credited without claiming its products.
+2. **The note under it** keeps every claim and changes only whose tools they are: *These are the team’s own
+   tools, not an advertising network – nothing here is sold, tracked or third-party, and windowsweep never appears
+   in its own list.*
+3. **The personal-portfolio entry** (*Meet the Developer - The developer behind these tools.*) leaves the rendered
+   roster (D46) through an `OFF_ROSTER` filter at the vendoring drop. The vendored row stays in `ROSTER_SOURCE`,
+   because a vendored copy is never hand-edited, and the promotion audit uses the same predicate so its counts match
+   what renders. Fourteen products show, as the app shows them.
+
+App: `src/i18n/locales/en/account.json` (`settings.promoTitle`, `settings.promoNote`), `src/lib/ecosystem.ts`.
+Checked before `desktop-v1.3.0` by its own parity pass on Settings (D44).

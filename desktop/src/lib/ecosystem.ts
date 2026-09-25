@@ -58,8 +58,19 @@ export const ROSTER_SOURCE: readonly EcosystemProduct[] = [
   { id: 'strata-storage', name: 'Strata Storage', tagline: 'One storage API over localStorage, IndexedDB, cookies and native.' },
 ];
 
+/**
+ * 🔴 OFF EVERY PRODUCT ROSTER - owner decision D46 (2026-09-25): the personal-portfolio
+ * entry. The fleet rule of that day says a product speaks as its team and never as one
+ * person, and "Meet the Developer" is exactly that line. The row stays in
+ * `ROSTER_SOURCE`, because a vendored copy is never hand-edited, and leaves here.
+ */
+export const OFF_ROSTER: ReadonlySet<string> = new Set(['aoneahsan-portfolio']);
+
+/** What the vendoring drop keeps - this project out, and every id kept off rosters. */
+const vendored = (p: EcosystemProduct): boolean => p.id !== SELF_ID && !OFF_ROSTER.has(p.id);
+
 /** LAYER 1 - the vendoring drop. */
-export const ROSTER: readonly EcosystemProduct[] = ROSTER_SOURCE.filter((p) => p.id !== SELF_ID);
+export const ROSTER: readonly EcosystemProduct[] = ROSTER_SOURCE.filter(vendored);
 
 /** LAYER 2 - the display resolver, applied again at render time. */
 export function promotedProducts(): EcosystemProduct[] {
@@ -82,7 +93,7 @@ export interface PromoAuditCase {
  */
 export function promoAudit(): PromoAuditCase[] {
   const vend = (on: boolean): readonly EcosystemProduct[] =>
-    on ? ROSTER_SOURCE.filter((p) => p.id !== SELF_ID) : ROSTER_SOURCE;
+    on ? ROSTER_SOURCE.filter(vendored) : ROSTER_SOURCE;
   const show = (list: readonly EcosystemProduct[], on: boolean): string[] =>
     (on ? list.filter((p) => p.id !== SELF_ID) : list).map((p) => p.id);
 

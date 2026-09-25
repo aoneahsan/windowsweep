@@ -99,8 +99,10 @@ framework build deletes only the hand-rolled behaviour.
 
 ## 5. House promotions, and the two layers that keep this app out of its own list
 
-`settings.html` carries the ecosystem roster under **More from the same developer**. The fleet rule requires
-**two** independent layers, each proved by removing the other.
+`settings.html` carries the ecosystem roster under **More from the same team** (until 2026-09-25 *More from the
+same developer*; the team-voice run, owner decisions D44-D46, which also drop the personal-portfolio entry at the
+vendoring layer - `OFF_ROSTER`). The fleet rule requires **two** independent layers, each proved by removing the
+other.
 
 | Layer | Where | What it does |
 |---|---|---|

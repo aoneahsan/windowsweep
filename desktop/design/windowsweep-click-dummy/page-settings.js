@@ -36,8 +36,14 @@
     { id: 'strata-storage', name: 'Strata Storage', blurb: 'One storage API over localStorage, IndexedDB, cookies and native.' }
   ];
 
-  /* LAYER 1 - the vendoring drop: this project's own id leaves the roster as it is taken in. */
-  var ROSTER = ROSTER_SOURCE.filter(function (p) { return p.id !== SELF; });
+  /* OFF EVERY PRODUCT ROSTER - owner decision D46 (2026-09-25): the personal-portfolio entry. A product
+     speaks as its team and never as one person, and "Meet the Developer" is exactly that line. The row
+     stays in ROSTER_SOURCE, because a vendored copy is never hand-edited, and leaves at the drop. */
+  var OFF_ROSTER = ['aoneahsan-portfolio'];
+  function vendored(p) { return p.id !== SELF && OFF_ROSTER.indexOf(p.id) === -1; }
+
+  /* LAYER 1 - the vendoring drop: this project's own id, and every id kept off rosters, leave as it is taken in. */
+  var ROSTER = ROSTER_SOURCE.filter(vendored);
 
   function row(title, desc, control, consequence) {
     var r = el('div', 'set-row');
@@ -301,9 +307,9 @@
       promo.appendChild(card);
     });
     var h = el('div');
-    h.appendChild(el('h3', 't-md wide', 'More from the same developer'));
+    h.appendChild(el('h3', 't-md wide', 'More from the same team'));
     h.appendChild(el('p', 't-sm ink-3',
-      'These are the developer\u2019s own tools, not an advertising network \u2013 nothing here is sold, ' +
+      'These are the team\u2019s own tools, not an advertising network \u2013 nothing here is sold, ' +
       'tracked or third-party, and windowsweep never appears in its own list.'));
     h.style.marginTop = 'var(--sp-4)';
     g.appendChild(h);
@@ -316,7 +322,7 @@
      asks whether this app could promote itself; the fourth removes both, and MUST come back present -
      without that control the other three prove only that the roster happens not to contain the id. */
   window.wsPromoAudit = function () {
-    var vend = function (on) { return on ? ROSTER_SOURCE.filter(function (p) { return p.id !== SELF; }) : ROSTER_SOURCE; };
+    var vend = function (on) { return on ? ROSTER_SOURCE.filter(vendored) : ROSTER_SOURCE; };
     var show = function (list, on) { return (on ? list.filter(function (p) { return p.id !== SELF; }) : list).map(function (p) { return p.id; }); };
     var cases = [
       ['both layers', true, true, false],

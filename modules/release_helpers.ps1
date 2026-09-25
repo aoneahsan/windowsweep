@@ -5,10 +5,8 @@ function Show-Version {
   Write-Host ("  $Script:WS_NAME v$(Get-ToolVersion)")
   Write-Host ("  $Script:WS_TAGLINE")
   Write-Host ''
-  Write-Host ("  Author:    $Script:WS_AUTHOR")
-  Write-Host ("  Email:     $Script:WS_EMAIL")
+  Write-Host ("  Author:    $Script:WS_TEAM")
   Write-Host ("  Web:       $Script:WS_WEB")
-  Write-Host ("  LinkedIn:  $Script:WS_LINKEDIN")
   Write-Host ("  Source:    $Script:WS_REPO")
   Write-Host ("  License:   $Script:WS_LICENSE")
   Write-Host ''

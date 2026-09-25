@@ -9,6 +9,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-09-25
+
+No change to what is cleaned, how it is decided, or what is refused. This release names the team as the
+tool's maker instead of one person, and points the web address it prints at the product's own site.
+
+### Changed
+
+- **The maker lines name the team.** The end-of-run line, the walkthrough and the usage header read
+  *by the windowsweep team*; `--version` and the session log's header read `Author: The windowsweep team`.
+- **The web address the tool prints is the product's own site**, `https://windowsweep.aoneahsan.com`,
+  instead of a personal site: the `Web:` row of `--version` and `--feedback`, the session log's header and
+  the walkthrough. The contact form lives there.
+- **The report credits** keep their four keys and their string type, so a reader of `schema_version: 1`
+  keeps working: `author.name` is `the windowsweep team`, `author.website` is the product's site, and
+  `author.email` and `author.linkedin` are empty strings. A report written earlier keeps what it recorded.
+- **The Email and LinkedIn rows of `--version` are gone**, and so is the email address in the usage
+  header and the session log's header. The address stays where it is a contact channel: the crash message
+  and `--feedback`.
+
+### Fixed
+
+- **The README's install-size row inside the 1.3.0 package** said 44 files and about 396 kB unpacked;
+  that package held 46 files and about 400 kB, because the two files 1.3.0 split out were never counted.
+  The row is measured from this package.
+
 ## [1.3.0] - 2026-09-17
 
 No change to what is cleaned, how it is decided, or what is refused. This release moves one printed

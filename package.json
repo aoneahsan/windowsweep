@@ -1,6 +1,6 @@
 {
   "name": "windowsweep",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Developer-aware Windows cleanup CLI: dry-run first, personal folders refused, zero install via npx.",
   "bin": {
     "windowsweep": "bin/windowsweep.js"

@@ -14,7 +14,7 @@ function Initialize-Log {
   $header = @(
     '# ============================================================'
     "# $Script:WS_NAME v$(Get-ToolVersion) - session log"
-    "# Author:   $Script:WS_AUTHOR <$Script:WS_EMAIL>"
+    "# Author:   $Script:WS_TEAM"
     "# Web:      $Script:WS_WEB"
     "# License:  $Script:WS_LICENSE"
     "# Started:  $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss zzz')"
@@ -106,7 +106,7 @@ function Save-Report {
     schema_version = 1
     credits = [ordered]@{
       tool = $Script:WS_NAME; tool_version = (Get-ToolVersion); tool_homepage = $Script:WS_REPO; tool_license = $Script:WS_LICENSE
-      author = [ordered]@{ name = $Script:WS_AUTHOR; email = $Script:WS_EMAIL; website = $Script:WS_WEB; linkedin = $Script:WS_LINKEDIN }
+      author = [ordered]@{ name = $Script:WS_AUTHOR; email = ''; website = $Script:WS_WEB; linkedin = '' }
     }
     meta = [ordered]@{
       started_at = $ws.Report.startedAt

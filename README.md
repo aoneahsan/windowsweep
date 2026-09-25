@@ -36,14 +36,14 @@ It is the Windows member of a family with [linux-cleanup](https://github.com/aon
 
 | | |
 |---|---|
-| **Version** | `1.3.0` |
+| **Version** | `1.3.1` |
 | **License** | MIT |
 | **Node** | `>=14` (launcher only) |
 | **Runtime** | Windows PowerShell 5.1 (built in) or PowerShell 7 |
 | **Platforms** | Windows 10 (1809+) and Windows 11 |
-| **Install size** | ~117 kB packed · ~396 kB unpacked · 44 files · no dependencies |
+| **Install size** | ~120 kB packed · ~401 kB unpacked · 46 files · no dependencies |
 | **Undo** | Recycle Bin for personal files; none for caches (they regenerate) |
-| **Status** | Stable · 1.3.0, released 2026-09-17 |
+| **Status** | Stable · 1.3.1, released 2026-09-25 |
 
 <a id="table-of-contents"></a>
 ## 🧭 Table of Contents&nbsp;[#](#table-of-contents)
@@ -451,12 +451,15 @@ More: [FAQ](https://windowsweep-docs.aoneahsan.com/faq).
 <a id="changelog"></a>
 ## 🔄 Changelog&nbsp;[#](#changelog)
 
-Latest release: **`1.3.0`** - nothing about what is cleaned, how it is decided or what is refused changed.
-The documentation address the tool carries is now the documentation site, two files that had grown past the
-project's own 500-line ceiling are split (the deletion chokepoint stays exactly where it was), and the
-at-a-glance rows inside the published package are correct again.
+Latest release: **`1.3.1`** - nothing about what is cleaned, how it is decided or what is refused changed.
+The tool names the windowsweep team as its maker instead of one person, and the web address it prints is the
+product's own site.
 
-Before it, **`1.2.0`** - `--exclude-path` honoured in every section at the deletion chokepoint (it
+Before it, **`1.3.0`** - the documentation address the tool carries became the documentation site, two files
+that had grown past the project's own 500-line ceiling were split (the deletion chokepoint stayed exactly where
+it was), and the at-a-glance rows inside the published package were corrected.
+
+Before that, **`1.2.0`** - `--exclude-path` honoured in every section at the deletion chokepoint (it
 protected one section out of twenty-six, and never a folder's children), a dry-run that counts exactly what a
 real run removes, `newest_write_utc` on every scanned target, `protected` in `--list --json`, `excluded[]` in
 the summary, and the console and report strings in one voice.

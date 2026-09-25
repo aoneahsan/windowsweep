@@ -71,13 +71,17 @@ jobs:
       - name: Enable corepack and yarn 4
         run: corepack enable
 
+      # HUSKY=0: desktop/package.json installs the pre-commit hook from its postinstall (D37); a CI runner
+      # commits nothing, so the hook would only write git config it never uses.
       - name: Install
+        env:
+          HUSKY: '0'
         run: yarn install --immutable
 
-      # 🔴 Supabase is behind a switch because it is not wired yet. The shared
-      # project has no Google OAuth client today, so `SUPABASE_ENABLED` is absent -
-      # and an absent variable is not `'true'`, so this step is skipped and the two
-      # names never enter the environment at all.
+      # 🔴 Supabase is behind a switch. `SUPABASE_ENABLED` is `true` since 2026-09-25 (TASK-013
+      # verified live, O6'), so this step exports the two names for the build below; with the
+      # variable absent or anything but `'true'` it is skipped and they never enter the
+      # environment at all.
       #
       # The guard is on THIS step and not on the build, deliberately. Putting
       # `if:` on a build step does not build it without Supabase; it does not build
@@ -122,6 +126,11 @@ jobs:
 
       - name: Build the web layer
         run: yarn build
+
+      # vitest, the pre-approved classes only (D37): the settings newest-wins rule and
+      # calendar days across a clock change. Built first, so a test never judges stale output.
+      - name: Unit tests
+        run: yarn test
 
       # No source map may reach a release build.
       - name: No source maps in the output

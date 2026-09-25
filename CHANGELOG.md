@@ -24,17 +24,15 @@ tool's maker instead of one person, and points the web address it prints at the 
 - **The report credits** keep their four keys and their string type, so a reader of `schema_version: 1`
   keeps working: `author.name` is `the windowsweep team`, `author.website` is the product's site, and
   `author.email` and `author.linkedin` are empty strings. A report written earlier keeps what it recorded.
-
-### Removed
-
-- The **Email** and **LinkedIn** rows of `--version`, and the email address in the usage header and the
-  session log's header. The address stays where it is a contact channel: the crash message and `--feedback`.
+- **The Email and LinkedIn rows of `--version` are gone**, and so is the email address in the usage
+  header and the session log's header. The address stays where it is a contact channel: the crash message
+  and `--feedback`.
 
 ### Fixed
 
-- **The README's install-size row inside the 1.3.0 package** said 44 files and about 396 kB unpacked; that package
-  held 46 files and about 400 kB, because the two files 1.3.0 split out were never counted. The row is measured
-  from this package.
+- **The README's install-size row inside the 1.3.0 package** said 44 files and about 396 kB unpacked;
+  that package held 46 files and about 400 kB, because the two files 1.3.0 split out were never counted.
+  The row is measured from this package.
 
 ## [1.3.0] - 2026-09-17
 

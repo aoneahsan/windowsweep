@@ -965,3 +965,70 @@ machines separately - `reconcile` compares dates, never values), the owner, verb
 **At publish, the date moved - by the owner's own rule.** The page deploys on 2026-09-25 (Pakistan time), so
 S-008 ships *"These terms apply from 25 September 2026."* - "the day it goes live", exactly as the finalizer's
 note instructed the applier. No other word moved.
+
+## 2026-09-25 - `site-signin-strings` round 1 closed: fact-check PASS, three answers from the record
+
+Dev-editor two changes (taken), writer revision, line editor (S-005 reordered so the two adjacent `/sitemap`
+rows no longer both open "A notice"), copy editor (one naming fix in commentary), fact-checker **PASS** - 60
+claims verified, three contradictions, all in commentary. One of them changes the implementation, not the
+words: **a real cancel returns `error=access_denied` with NO `error_code`** (GoTrue's `OAuthError` sets
+`error` and `error_description` only; `signup_disabled`, `user_banned` and the rest carry an `error_code`).
+So `signin.cancelled` shows exactly for that signature, and every other error on the redirect shows
+`db.error.unknown`.
+
+Its three NEEDS DECISION, none an owner call, decided in the main session as recommended:
+
+1. **S-003 "Nothing on your machine was touched"** stays. "Your machine" means the disk the product cleans -
+   the approved `error.lede` and both deletion bands already ship it that way - and the browser's own storage
+   is `/privacy`'s to disclose. Recorded as a Bible §7 glossary row (2026-09-25).
+2. **The residual misfire** - a Workspace-admin block also returns `access_denied` - is accepted: "no account
+   was created or changed" stays true for that reader, and the case is rare for a consumer product.
+3. **The consent-screen publish** gets its own MANUAL-TASKS row (the records close-out), with the exemption
+   that a sign-in asking only for email and profile needs no verification.
+
+The content map's row 19 label collided with row 9 (`site-front` for both); row 19 is `site-front-site`, as
+this log and `run-state.json` already said.
+
+## 2026-09-25 - `desktop-sync-strings` round 1 closed: fact-check PASS, two record gaps closed
+
+Dev-editor five changes (taken), writer revision (two new slots: `account.runs.removeNote`, `home.settingsReplaced`),
+line editor (0 shipping strings changed; D42 recorded in the draft), copy editor (one spelling fix), fact-checker
+**PASS** - 61 claims verified, three contradictions, none inside a fence. The humor-emotion reviewer was not run:
+the lean panel adds it only on a safety surface, and sync failures and a settings notice are not one (W is 0 in
+every string anyway).
+
+**The two record gaps it named, closed here rather than asked, because the record already answers them:**
+
+1. **D40's lifetime.** The owner's option was *"Account + a Home line (Recommended)"* - on the Sync band until
+   the next settings change or sign-out, plus the Home line while it stands - offered beside *"Also kept across
+   restarts"*, which he did not take. So the notice lives in memory only and **closing windowsweep ends it**;
+   `home.settingsReplaced` says exactly that.
+2. **The S-165 amendment.** The writer's options were (a) the Sync band only, with S-165 amended to *"The newer
+   change wins, and this screen tells you which one it was, with an Undo that puts the other back"*, and
+   (b) *"as (a), plus one line on Home"*. The owner took (b), so the S-165 amendment is part of D40. It is written
+   into the dummy with the rest (`desktop/design/AMENDMENTS-2.md`) and shown at this surface's GATE 4, which is
+   the owner's own (rows 11-13).
+
+Contradictions: the draft's lines 9 and 91 credit SY-06's order to Bible §10, which states the no-undo rule and
+no order - the order is the account-deletion band's (`account.deleteWhatGoes` -> `deleteWhatStays`); the
+finalizer corrects the attribution. `desktop-cockpit.md` S-078's note ("the app shows whatever name the other
+machine registered") contradicts the schema and Bible §7 - superseded by SY-04, amended at record time. Three
+stale records still say sync "is written and never called" (`PENDING-TASKS.md` TASK-013's title,
+`history-rows.ts:56-59`, `HistoryTable.tsx:16-18`) - the TASK-013 implementation corrects the code comments and
+the main session the task title.
+
+## 2026-09-25 - GATE 4 for rows 18/19 `site-signin-strings`: under the standing pre-authorisation, applied
+
+Both conditions met and checked: the finalizer returned **READY** with fact-consistency PASS, and zero NEEDS
+DECISION remain (the writer's one and the fact-checker's three are answered above). The five strings shipped
+byte-identical to the finalized draft - `seo.signin.description` (155 characters), `sitemap.blurb.signin` (105),
+`seo.error.description` (116), `signin.cancelled` (77) and `sitemap.blurb.privacy` (98) - dummy first (amendment
+23), applied in windowsweep-web `d72b40c` and deployed 2026-09-25 with sign-in live. Verified on the origin with
+JavaScript off: the new `/signin` description, all three `/sitemap` blurbs, `/contact` on the sign-in-on branch,
+and Google's authorize endpoint answering 302 through the project's callback with `scope=email profile`.
+
+**`desktop-sync-strings`, finalized 2026-09-25:** READY - fact-consistency PASS, zero NEEDS DECISION, and all 16
+fences byte-identical to round 1 (the humanize pass found nothing to change in shipping copy). Removed:
+`history.cloudPending`. Dummy-only: S-165's first sentence becomes *"The newer change wins, and this screen tells
+you which one it was, with an Undo that puts the other back."* - its second sentence stays as approved. GATE 4 is
+the owner's own (rows 11-13), asked with the dummy once TASK-013's states are drawn in it.

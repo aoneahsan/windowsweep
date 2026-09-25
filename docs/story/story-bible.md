@@ -119,6 +119,8 @@ lower-case, even at the start of a sentence, and never "WindowSweep" or "Window 
 | reclaim | what the tool does to space | free up, clean, purge (except the literal `--purge-all` flag) |
 | developer mode | the answer to the first-run question | dev mode, pro mode |
 | switch | what the analytics does not have: *"There is no switch."* The desktop window and the site send usage events and crash reports, and the first-run screen is a notice, not a request (added 2026-09-13, keeper) | opt-out, opt out, turn off tracking |
+| your machine | the disk the product cleans, and the files on it - never the browser's own storage, which `/privacy` discloses. So *"Nothing on your machine was touched"* is true of an error page, and the approved `error.lede` and both deletion bands already use it this way (added 2026-09-25, keeper) | your computer, your device, your system |
+| machine | the sync noun: *this machine*, *another machine*. Never a machine name or host name - neither is ever synced. "PC" only inside the account-deletion band (added 2026-09-25, keeper) | device, computer, laptop |
 
 **Numbers are always exact and always sourced.** The tool never estimates in prose; `--scan` measures, and
 the copy points at it. **Never state a gigabyte figure as a promise.**

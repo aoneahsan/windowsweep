@@ -293,6 +293,43 @@
     g.appendChild(row('Version', 'What is installed right now.', el('span', 'badge badge-neutral', 'up to date'), ''));
     g.appendChild(v);
 
+    /* Where the source lives, and how to support the work. The app has carried this panel since its first
+       Settings build (8593cd3); no round judged it until round 14 found it here missing (D-67), and the
+       owner kept it with its words unchanged (D47). Each button hands an address to the system browser:
+       both wait while one is handed over, that one ticks, then idle - the app's controlState. The dummy
+       opens nothing. */
+    var panel = el('div', 'panel pad');
+    panel.appendChild(el('p', 't-sm',
+      'windowsweep reclaims disk space on Windows. It names every path before it touches one, and refuses ' +
+      'your documents, credentials and browser state outright. The desktop window drives the same engine ' +
+      'the command-line tool runs.'));
+    var links = el('div');
+    links.style.display = 'flex';
+    links.style.gap = 'var(--sp-2)';
+    links.style.flexWrap = 'wrap';
+    links.style.marginTop = 'var(--sp-3)';
+    var buttons = ['Source', 'Support this work'].map(function (label) {
+      var b = el('button', 'btn btn-sm');
+      b.type = 'button';
+      b.appendChild(el('span', 'btn-label', label));
+      links.appendChild(b);
+      return b;
+    });
+    buttons.forEach(function (b) {
+      b.addEventListener('click', function () {
+        buttons.forEach(function (x) { x.disabled = true; });
+        window.wsWidgets.pending(b, true);
+        setTimeout(function () {
+          window.wsWidgets.pending(b, false);
+          buttons.forEach(function (x) { x.disabled = false; });
+          b.dataset.state = 'done';
+          setTimeout(function () { delete b.dataset.state; }, 900);
+        }, 300);
+      });
+    });
+    panel.appendChild(links);
+    g.appendChild(panel);
+
     /* House promotions: the roster, self-excluded twice over.
        LAYER 2 - the display resolver drops the id again, so a roster re-vendored without layer 1 still
        cannot promote this app to its own users. Each layer is proved by removing the other; the harness

@@ -1088,3 +1088,17 @@ records - the next commit; the docs site - windowsweep-docs `4b18660`; the marke
 windowsweep-web `8ed047c`, deployed 2026-09-25 and verified on the origin with JavaScript off (one `Organization`, no
 `Person`, the new lede, `llms.txt`, the card). The desktop Settings change is checked by its own parity round before
 the tag (D44). Kept (D45): the Terms operator, the licence and copyright lines, the npm `author` field, source comments.
+
+## 2026-09-25 (latest) - GATE 4 on two older Settings strings round 14 found (D-66, D-67)
+
+The team-voice change passed its own parity round (round 14), which found two Settings strings no round had cleared.
+**D-66, *settings sync when you are signed in*** (the status bar): the dummy's own approved words, withheld from the
+app since round 8 because nothing synced; TASK-013 made the sentence true, so the app now carries it. No new words.
+**D-67, the About tab's panel**: *"windowsweep reclaims disk space on Windows. It names every path before it touches
+one, and refuses your documents, credentials and browser state outright. The desktop window drives the same engine
+the command-line tool runs."*, with the labels **Source** and **Support this work**. App-side copy since the first
+Settings build (`8593cd3`, 2026-09-05), shipped in `desktop-v1.1.0` and `desktop-v1.2.0`, never in the dummy.
+**GATE 4 by the owner (a desktop row), verbatim: *"Keep it, add to dummy (Recommended)"*** (D47) - the words are
+kept unchanged and written into the dummy first (`desktop/design/AMENDMENTS-2.md`, the D-66/D-67 amendment).
+Checked in the main session before asking: each claim matches approved copy (the docs index's opening, the safety
+model's refusals) and the product's own behaviour; no first person, no maker named (D45). Round 15 checks the pair.

@@ -235,6 +235,9 @@ const FIXED_NOTES: Record<string, string> = {
   '/report': 'status.report',
   '/picker': 'status.picker',
   '/account': 'status.account',
+  /* `settings.html:64` - withheld from round 8 until something synced; TASK-013 made it true
+     (D-66, GATE 4 round 14). */
+  '/settings': 'status.settings',
   /* `consent.html:71` - the first-run notice's own note (D-43, GATE 4 round 8). */
   '/consent': 'status.consent',
 };
@@ -259,7 +262,8 @@ interface StatusNote {
  *              deriving, because it is built from the screen's own choice (D-29)
  *  - History, Report, Picker and Account carry a fixed sentence each - the
  *    dummy's own, owed since the 2026-09-07 amendment and built for round 8 -
- *    and so does Consent, whose note round 8 found missing (D-43)
+ *    and so does Consent, whose note round 8 found missing (D-43), and Settings,
+ *    whose note waited for sync to exist (D-66)
  *
  * 🔴 Each one calls the same function its screen calls. The count comes from
  * `filterSections`, which is what the Sections table itself renders from, and the

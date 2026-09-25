@@ -7,6 +7,7 @@
   "status.report": "schema 1 - the same file the CLI writes",
   "status.picker": "a person chooses these - --yes never does",
   "status.account": "sync is optional - runs are never gated",
+  "status.settings": "settings sync when you are signed in",
   "status.consent": "first run - what the window sends",
   "nav.label": "Main",
   "nav.menu": "Menu",

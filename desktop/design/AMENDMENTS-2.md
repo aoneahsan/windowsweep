@@ -471,3 +471,23 @@ them (Recommended)"*. Changed here first, then in the app:
 
 App: `src/i18n/locales/en/account.json` (`settings.promoTitle`, `settings.promoNote`), `src/lib/ecosystem.ts`.
 Checked before `desktop-v1.3.0` by its own parity pass on Settings (D44).
+
+## Amendment - 2026-09-25 (latest): Settings' status note arrives, and the About panel the app always had (D-66, D-67, D47)
+
+GATE 4 round 14 (`gate4/rounds/round-14.md`) found the team-voice change clean and two older differences on the
+Settings screen, both from before it:
+
+1. **No dummy change - the status note arrives in the app (D-66).** `settings.html:64`'s *settings sync when you are
+   signed in* was withheld from the app since round 8 (`AMENDMENTS.md`, *Not amended*): nothing synced then. TASK-013
+   made it true, so the app now carries it (`Shell.tsx` `FIXED_NOTES['/settings']`, `shell.json` `status.settings`).
+   That closes the round-8 item; its Account half, *What happens when two machines disagree*, arrived with TASK-013.
+2. **`page-settings.js` - the About tab's panel, written in from the app (D-67).** The app has carried it since its
+   first Settings build (`8593cd3`, 2026-09-05), and no round judged it until round 14 found the dummy without it.
+   The owner kept it with its words unchanged - D47, verbatim: *"Keep it, add to dummy (Recommended)"* - so it is
+   copied here as the app shows it, between the version lines and the house promotions: *windowsweep reclaims disk
+   space on Windows. It names every path before it touches one, and refuses your documents, credentials and browser
+   state outright. The desktop window drives the same engine the command-line tool runs.*, then **Source** and
+   **Support this work**. Each button hands an address to the system browser: both wait while one is handed over,
+   that one ticks, then idle, as the app's `controlState` does. The dummy opens nothing.
+
+Checked by round 15 on Settings before `desktop-v1.3.0` is tagged (D44).

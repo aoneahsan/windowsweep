@@ -160,6 +160,11 @@ in production and approved", then approved executing plan v5 with custom agents.
   the npm `author` field stay, as legal and registry facts. **D46 "Drop it from product rosters
   (Recommended)"** - the personal-portfolio entry ("Meet the Developer") leaves every product roster; the
   portfolio keeps its own voice where it lives.
+- **D47 - the About panel stays** (asked 2026-09-25, after GATE 4 round 14 found D-67: a Settings -> About panel the
+  app has carried since its first build and the dummy never had). **"Keep it, add to dummy (Recommended)"** - its
+  three sentences and the **Source** / **Support this work** buttons are kept word for word and written into the
+  dummy first; the answer is also that panel's GATE 4. D-66 (the Settings status note) was the main session's call by
+  the round-8 amendment and arrives in the app. Both are checked by round 15 before the tag (D44).
 
 ### Session 14 decisions (2026-09-13/14) - the v3 run, taken from recorded rules, none from the owner
 

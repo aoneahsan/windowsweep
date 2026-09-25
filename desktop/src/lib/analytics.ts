@@ -140,8 +140,12 @@ function loadScript(src: string): Promise<void> {
     const el = document.createElement('script');
     el.async = true;
     el.src = src;
-    el.onload = () => { resolve(); };
-    el.onerror = () => { reject(new Error(`could not load ${src}`)); };
+    el.onload = () => {
+      resolve();
+    };
+    el.onerror = () => {
+      reject(new Error(`could not load ${src}`));
+    };
     document.head.appendChild(el);
   });
 }
@@ -158,13 +162,17 @@ async function startGa4(measurementId: string): Promise<void> {
   }
   window.gtag = gtag;
   gtag('js', new Date());
-  await loadScript(`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`);
+  await loadScript(
+    `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`
+  );
   gtag('config', measurementId, { send_page_view: false, app_version: appVersion });
 
   register({
     name: 'ga4',
     ready: true,
-    send: (event, props) => { window.gtag?.('event', event, props); },
+    send: (event, props) => {
+      window.gtag?.('event', event, props);
+    },
   });
 }
 
@@ -176,7 +184,9 @@ async function startAmplitude(apiKey: string): Promise<void> {
   register({
     name: 'amplitude',
     ready: true,
-    send: (event, props) => { amplitude.track(event, props); },
+    send: (event, props) => {
+      amplitude.track(event, props);
+    },
   });
 }
 
@@ -193,14 +203,16 @@ async function startClarity(projectId: string): Promise<void> {
         // eslint-disable-next-line prefer-rest-params
         queue.push(arguments);
       },
-      { q: queue },
+      { q: queue }
     );
   }
   await loadScript(`https://www.clarity.ms/tag/${encodeURIComponent(projectId)}`);
   register({
     name: 'clarity',
     ready: typeof window.clarity === 'function',
-    send: (event) => { window.clarity?.('event', event); },
+    send: (event) => {
+      window.clarity?.('event', event);
+    },
   });
 }
 
@@ -209,7 +221,27 @@ async function startSentry(dsn: string): Promise<void> {
   Sentry.init({
     dsn,
     release: `windowsweep-desktop@${appVersion}`,
-    sendDefaultPii: false,
+    /* 🔴 SENTRY 11 INVERTED THE DEFAULT. v10's `sendDefaultPii: false` is gone, and its
+       replacement COLLECTS every category it is not told about - user info (which is
+       what lets the server infer an IP address), cookies, headers, bodies, query
+       strings, local variables (`@sentry/core` 11.0.0's `resolveDataCollectionOptions`,
+       read 2026-09-25). Deleting the removed option alone compiles cleanly and starts
+       sending all of it. So every category is switched off here BY NAME - the same
+       nothing-about-the-person position the old flag held, now stated field by field,
+       exactly as the marketing site's `src/lib/sentry.ts` states it. `beforeSend` below
+       stays the second layer. */
+    dataCollection: {
+      userInfo: false,
+      cookies: false,
+      httpHeaders: false,
+      httpBodies: [],
+      urlQueryParams: false,
+      graphQL: { document: false, variables: false },
+      genAI: { inputs: false, outputs: false },
+      databaseQueryData: false,
+      queues: false,
+      stackFrameVariables: false,
+    },
     beforeSend(event) {
       // the same promise as `scrub`, applied to anything Sentry assembled itself
       if (event.message) event.message = scrub(event.message);
@@ -253,7 +285,9 @@ async function startSentry(dsn: string): Promise<void> {
   register({
     name: 'sentry',
     ready: true,
-    send: (event, props) => { Sentry.addBreadcrumb({ category: 'app', message: event, data: props }); },
+    send: (event, props) => {
+      Sentry.addBreadcrumb({ category: 'app', message: event, data: props });
+    },
   });
 }
 
@@ -306,4 +340,3 @@ export function track(event: EventName, props: EventProps = {}): void {
     }
   }
 }
-

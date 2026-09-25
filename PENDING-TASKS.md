@@ -3,7 +3,7 @@
 Open follow-ups the agent owes this project (fleet format: `### TASK-NNN`; done entries move to
 `docs/DONE-TASKS.md`). Owner-only rows live in `docs/MANUAL-TASKS.md`.
 
-Last updated: 2026-09-25 (TASK-013: the code is done and the task waits only on its live verification - see its status block. Earlier 2026-09-17: TASK-014, TASK-015 and TASK-016 closed to `docs/DONE-TASKS.md` as DONE-013, DONE-014 and DONE-015 by the v4 run. TASK-013 is the only one left open, and it is blocked on owner row 15 - Google sign-in was re-probed on 2026-09-17 and still reads false)
+Last updated: 2026-09-25 (TASK-017 filed from RW-116: the admin's browser writes the handled fields. TASK-013: the code is done and the task waits only on its live verification - see its status block. Earlier 2026-09-17: TASK-014, TASK-015 and TASK-016 closed to `docs/DONE-TASKS.md` as DONE-013, DONE-014 and DONE-015 by the v4 run. TASK-013 is the only one left open, and it is blocked on owner row 15 - Google sign-in was re-probed on 2026-09-17 and still reads false)
 
 ### TASK-013 - the desktop app's cloud sync is written and never called
 
@@ -41,3 +41,28 @@ finished run, `deleteRun` leaves 0 rows, and the rows hold no path (read them ov
 
 **Why it was not fixed there.** It is a feature, not a two-line fix; it needs the live sign-in to verify, which
 row 15 gates; and it was outside that dispatch's scope.
+
+### TASK-017 - an admin's browser writes `handled_at` and `handled_by` on a contact request
+
+**Found while working on:** RW-116, the site verified as a person (2026-09-25), flow 3 as `t1+admin`.
+**Priority: low** - only a platform admin can write these fields, and the audit trail is sound; but the inbox's
+record of *when* and *by whom* is whatever the admin's client sent. **Needs the owner:** it is a change to the
+production database (D30/D36 pattern), so it is applied only on his yes.
+
+**The defect.** `20260908065528_site_privileges_and_triggers.sql:109` grants
+`update (status, handled_at, handled_by)` on `public.contact_requests` to `authenticated`, and the site sends
+both handled fields itself. Measured: the stored `handled_at` was `2026-09-25T09:48:18.983Z` while the audit row
+for the same write reads `09:48:18.738Z` - the browser's clock, 245 ms apart - and nothing stops an admin
+sending any time, or another admin's id as `handled_by`. The audit trigger's `actor` and `at` are server-side,
+so `admin_audit` itself is right.
+
+**What to do.** A forward migration from the schema's home (`desktop/src/db/schema/site.ts`, `drizzle-kit
+generate --custom`): a `BEFORE UPDATE` trigger on `contact_requests` that sets `handled_at = now()` and
+`handled_by = auth.uid()` when `status` becomes `handled`, and nulls both when it goes back to `new`; then the
+grant narrowed to `update (status)`, with its rollback beside it in `supabase/rollbacks/`. Regenerate
+`windowsweep-web/src/db/types.ts`, drop the two fields from the site's triage write, and re-run RW-116 flow 3's
+Mark handled / Undo pair, reading `handled_at` against the audit row's `at` (equal to the millisecond, since
+both come from one transaction's `now()`).
+
+**Why it was not fixed there.** RW-116 was verification, run by an agent that writes no repository file; the
+fix is a production schema change, which needs the owner's approval first.

@@ -504,8 +504,8 @@ this tool deletes files, so review what it proposes before confirming.
 <a id="author"></a>
 ## 👤 Author&nbsp;[#](#author)
 
-**Ahsan Mahmood** - [aoneahsan.com](https://aoneahsan.com) · [GitHub](https://github.com/aoneahsan) ·
-[LinkedIn](https://linkedin.com/in/aoneahsan) · [aoneahsan@gmail.com](mailto:aoneahsan@gmail.com)
+**The windowsweep team** - [team page](https://windowsweep-docs.aoneahsan.com/about) ·
+[contact form](https://windowsweep.aoneahsan.com/contact), after signing in
 
 <a id="links"></a>
 ## 🔗 Links&nbsp;[#](#links)

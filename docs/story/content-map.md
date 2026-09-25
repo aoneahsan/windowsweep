@@ -226,3 +226,19 @@ can say is who runs the service, the rules for using it, the risk of the softwar
 🔴 **No pricing claim, in either direction** - the same rule as rows 16 to 19. The page says nothing about
 price, free or otherwise; the MIT licence is a redistribution fact, not a price. And no claim of a security,
 privacy or legal property the product does not have (Bible section 10).
+
+## Amendment - 2026-09-25: rows 7 and 19 speak for the team (team-voice, D45)
+
+A map-accuracy correction forced by the owner's fleet rule of 2026-09-25 (a product speaks as its team, never as one
+person) and his decision D45; the surfaces' own words went through the `team-voice` run and its GATE 4.
+
+- **Row 7 `docs-about`** stops being the author's page: its label `(author)` reads as **the team page**, and its
+  first beat *who built it* as **who makes it, and how to reach the team**. The file names stay (`docs/author.md`,
+  mirrored to the docs site's `about.md`), because `/about` is a frozen URL. 🔴 **Its Steam sentence quotes a
+  candidate row** (`docs/sections.md:270`, *Steam with games installed*): whoever ships the Steam target edits the
+  team page's line *"Steam's shader cache is one of them, because the build machine has Steam and no games"* in the
+  same release - the tracker's `P5.RW-064` carries the same pointer.
+- **Row 19 `site-front-site`**: its schema cell `Person (ND-2 ... no page names an organisation)` becomes
+  **`Organization`**, *The windowsweep team*, with the docs team page as its `url` - named on every route by the
+  footer's team link, so ND-2's rule (schema describes only what a page shows) still holds, now of the team.
+- Row 9's docs-site structured data and row 1's README Author body follow the same entity string (Bible section 7).

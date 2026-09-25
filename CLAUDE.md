@@ -121,8 +121,10 @@ Everything else about where the work stands is in the tracker and `../remaining-
    first three. Deletion behaviour changes are documented in the changelog and in `docs/sections.md`. Every
    release from 1.0.1 on gets an annotated tag `vX.Y.Z` and a GitHub Release.
 8. **Public repository.** No secrets, no credentials, no machine-specific paths beyond the owner's records in
-   `docs/PROJECT-CONTEXT.md` and `docs/MANUAL-TASKS.md`. The author block is name, site, GitHub, LinkedIn and
-   the public email; never a phone number. The tarball is the `files` allowlist only (`.github/`, `docs/`,
+   `docs/PROJECT-CONTEXT.md` and `docs/MANUAL-TASKS.md`. The product speaks as **the windowsweep team**, never as
+   one person (D45, 2026-09-25): the README's Author section names the team with its team page and contact form;
+   the licence, the LICENSE copyright and the npm `author` field keep the owner's name as legal and registry
+   facts; never a phone number. The tarball is the `files` allowlist only (`.github/`, `docs/`,
    `desktop/`, `temp/`, `CLAUDE.md`, `AGENTS.md`, the portfolio file and the three root planning files never
    ship; CI sweeps the listing by name).
 9. **Governance.** `main` is protected by a ruleset (owner-only bypass, required check `ci`); the owner pushes

@@ -1057,3 +1057,34 @@ unchanged, one wording across every surface"* - that page becomes the team's.
 **Gates.** GATE 4 for row 13 (the desktop Settings strings) is the owner's own. Rows 1, 7, 9, 16 and 19 sit under
 `gate4PreAuthorised` (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); they are shown to him in
 the same batch regardless, because the rule is his and new. Draft: `docs/story/drafts/team-voice.md`.
+
+## 2026-09-25 - GATE 4 for `team-voice`: approved, applied, recorded
+
+**Row 13 (the desktop Settings strings) - the owner's own GATE 4**, shown the final words and the rest of the pass:
+*"Approve, ship them (Recommended)"*. **Rows 1, 7, 9, 16 and 19** under `gate4PreAuthorised`: its condition met - the
+finalizer READY, fact-consistency PASS after one ruled correction, zero open NEEDS DECISION. **Rows 10 and 15** (the
+engine's maker lines and the report credits) are finalized in the draft and ship with the next CLI release, because
+the engine stays byte-identical to the published v1.3.0 until `desktop-v1.3.0` is tagged.
+
+**Panel:** lean, by the owner's choice - writer (two rounds), developmental editor (four changes, all applied),
+line editor, copy editor, fact-checker, keeper (the main session), finalizer. **Rulings from the record, each written
+into the draft:** the roster credit is *the same team* (every other roster product markets under its own team
+name); the Organization carries the team page as its `url`; TV-17..TV-22 are in scope under D45; TV-23 (the
+installer's `publisher`) is kept for `desktop-v1.3.0` as an installer registry fact.
+
+**Found and corrected on the way:**
+1. 🔴 **Row 7's approved stance sentence was false**: *"None of the three makes a network call"* - macleanup's opt-in
+   `--check-update` asks the npm registry for a newer version (its own FAQ and `mac-cleanup.sh`). It now reads *"None
+   of the three makes a network call unless you ask one to check for an update."* The false sentence had been public
+   since `b6bd940`, pushed 2026-09-08 and recorded here 2026-09-13.
+2. **The docs site's `about.md` never received row 7's approved text.** The 2026-09-13 record says the surfaces were
+   *"each mirrored to the docs site"*; that was wrong for this page, whose file name differs from its source's
+   (`author.md`). It is mirrored now, byte for byte below its front matter (windowsweep-docs `4b18660`).
+3. The docs site's `llms.txt` still named the desktop as *released as `desktop-v1.1.0`*; the 1.3.0 docs step corrects
+   it (`../release-kit-1.3.0/docs-release-1.3.0-source.txt`).
+
+**Applied:** desktop dummy + app - windowsweep `8f3a03f`; the README, `docs/author.md` and `docs/README.md` with these
+records - the next commit; the docs site - windowsweep-docs `4b18660`; the marketing site, dummy first (amendment 24) -
+windowsweep-web `8ed047c`, deployed 2026-09-25 and verified on the origin with JavaScript off (one `Organization`, no
+`Person`, the new lede, `llms.txt`, the card). The desktop Settings change is checked by its own parity round before
+the tag (D44). Kept (D45): the Terms operator, the licence and copyright lines, the npm `author` field, source comments.

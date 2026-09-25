@@ -41,7 +41,9 @@ Verified Against: commit 2e73921 on `main`, 2026-09-17 (session 16, every gate r
   rounds of candidates; verified free on npm (incl. `window-sweep`) and unclaimed by any real product.
 - npm publish of 1.0.0 approved by the owner on 2026-09-03 "to secure the spot"; token comes from the FilesHub
   developer-accounts vault (`aoneahsan-npm-pat`), never stored in the repo.
-- Author block carries name, site, GitHub, LinkedIn and the public email only; no phone number (2026-09-03).
+- The product speaks as **the windowsweep team**, never as one person (D45, 2026-09-25; it replaces the 2026-09-03
+  author-block rule of name, site, GitHub, LinkedIn and email): the README's Author section names the team, its team
+  page and its contact form; the licence, LICENSE copyright and npm `author` field keep the owner's name. No phone number.
 - Section numbers are frozen from the release that introduced them; a retired section stays as a no-op and a
   number is never reused. 0-21 shipped in 1.0.0, 22-25 in 1.1.0; the next new section starts at 26 (which is
   free because RW-066's driver-leftover section was deferred, not shipped).

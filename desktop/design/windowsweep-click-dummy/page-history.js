@@ -12,14 +12,26 @@
      same metric, and only real runs are points on it (a dry-run freed nothing);
    - the relative day counts local calendar days, and the exact stamp is local time,
      because it is matched against a report file stamped in local time;
-   - history.html?empty=1 draws the screen before anything has run. */
+   - history.html?empty=1 draws the screen before anything has run.
+
+   Amended 2026-09-25 (TASK-013, SY-04 and SY-05) - History reads the account:
+   - another machine's row says "another machine" in Where. The schema stores no machine
+     name, so the laptop this used to name was a name nothing could supply;
+   - a summary removed on the Account screen is gone here too (the same `cloudRemoved`);
+   - the Other machines chip's empty state is corrected (signed in) and entered (signed out);
+   - history.html?fail=list draws a first read that failed; ?fail=listMore refuses the
+     first Load 20 more, and the next press works. Signed in, that press is a read of
+     the account's next page, so it goes pending. */
 (function () {
   'use strict';
   var ws = window.ws, db = window.wsdb, S = window.wsSeed, el = ws.el, fmt = db.fmt;
 
   var PAGE = 20;
   var filter = 'all', shown = PAGE;
-  var EMPTY = new URLSearchParams(location.search).get('empty') === '1';
+  var Q = new URLSearchParams(location.search);
+  var EMPTY = Q.get('empty') === '1';
+  var FAIL = Q.get('fail');
+  var moreRefused = false;
   var DAY = 864e5;
 
   /* demo-data: the eight seeded runs, plus seventeen older ones so a second page of
@@ -43,17 +55,27 @@
     return runs;
   }
 
-  function all() {
-    var local = localRuns();
-    /* Rows from another machine, deliberately thin - that IS the design. They
-       exist only when signed in: showing them signed out would be claiming a
-       sync that is not happening. */
-    var cloud = db.facts.signedIn ? [
-      { at: new Date(Date.now() - 4 * DAY), freed: 8.4e9, sections: 9, mode: null, where: 'laptop', cloud: true },
-      { at: new Date(Date.now() - 21 * DAY), freed: 2.2e9, sections: 4, mode: null, where: 'laptop', cloud: true }
-    ] : [];
-    return local.concat(cloud).sort(function (a, b) { return b.at - a.at; });
+  /* Rows from another machine, deliberately thin - that IS the design. They exist only
+     when signed in: showing them signed out would be claiming a sync that is not
+     happening. Where says "another machine" and never a name (SY-04): the schema stores
+     none. The ids are the Account screen's, so a summary removed there is gone here. */
+  function cloudRuns() {
+    if (!db.facts.signedIn || FAIL === 'list') return [];
+    var gone = db.facts.cloudRemoved || [];
+    return [
+      { id: 'laptop-4', at: new Date(Date.now() - 4 * DAY), freed: 8.4e9, sections: 9, mode: null,
+        where: 'another machine', cloud: true, dry: false },
+      { id: 'laptop-21', at: new Date(Date.now() - 21 * DAY), freed: 2.2e9, sections: 4, mode: null,
+        where: 'another machine', cloud: true, dry: false }
+    ].filter(function (r) { return gone.indexOf(r.id) === -1; });
   }
+
+  function all() {
+    return localRuns().concat(cloudRuns()).sort(function (a, b) { return b.at - a.at; });
+  }
+
+  /* The chips that list the account's rows - so the ones a failed read leaves unknown. */
+  function listsCloud() { return filter !== 'local'; }
 
   function match(r) {
     if (filter === 'local') return !r.cloud;
@@ -81,12 +103,14 @@
       two(d.getHours()) + ':' + two(d.getMinutes());
   }
 
+  /* SY-05: the title says what the account holds, and the signed-in body says what fills
+     it - an empty filter proves only that the account holds nothing from elsewhere. */
   function emptyRow(tb) {
     var title, body;
     if (filter === 'cloud') {
-      title = 'No runs from other machines';
+      title = 'No run summaries from other machines';
       body = db.facts.signedIn
-        ? 'None of your other machines has run windowsweep yet.'
+        ? 'When a run finishes in the desktop app on another machine signed in as you, its summary appears here.'
         : 'Sign in and your other machines’ run summaries appear here. Nothing syncs while you are signed out.';
     } else if (filter === 'dry' && localRuns().length) {
       title = 'No dry-runs yet';
@@ -105,13 +129,28 @@
     td.appendChild(e); tr.appendChild(td); tb.appendChild(tr);
   }
 
+  /* SY-02c's first key, at the head of the table on every chip that lists the account's
+     rows - this window's own rows still show under it. On Other machines it is the only
+     row: an unreadable account must not read as an empty one. */
+  function failedRow(tb) {
+    var tr = el('tr'), td = el('td'); td.colSpan = 6;
+    var n = el('div', 'note note-warn');
+    n.setAttribute('role', 'status');
+    n.appendChild(el('span', null, '!')).setAttribute('aria-hidden', 'true');
+    n.appendChild(el('span', 't-sm', 'The run summaries in your account could not be read. Nothing on this ' +
+      'machine changed, and windowsweep tries again the next time you open this screen.'));
+    td.appendChild(n); tr.appendChild(td); tb.appendChild(tr);
+  }
+
   function paint() {
     var list = all().filter(match);
     var tb = document.querySelector('[data-ws-hist-rows]');
     if (!tb) return;
     tb.textContent = '';
 
-    if (!list.length) emptyRow(tb);
+    var unread = db.facts.signedIn && FAIL === 'list' && listsCloud();
+    if (unread) failedRow(tb);
+    if (!list.length && !(unread && filter === 'cloud')) emptyRow(tb);
 
     list.slice(0, shown).forEach(function (r, i) {
       var tr = el('tr');
@@ -130,7 +169,7 @@
       if (r.cloud) {
         var s = el('div');
         s.style.cssText = 'display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap';
-        s.appendChild(el('span', 't-sm ink-3', r.sections + ' sections'));
+        s.appendChild(el('span', 't-sm ink-3', r.sections + (r.sections === 1 ? ' section' : ' sections')));
         s.appendChild(el('span', 'badge badge-outline', 'summary only'));
         sec.appendChild(s);
       } else {
@@ -149,8 +188,12 @@
       var op = el('td');
       var b;
       if (r.cloud) {
-        b = el('span', 't-xs ink-3', '—');
+        /* S-079's sentence is also said, not only shown on hover: a title on a span that
+           takes no focus reaches no screen reader. */
+        b = el('span', 't-xs ink-3');
         b.title = 'The full report stays on the machine that made it.';
+        b.appendChild(el('span', null, '—')).setAttribute('aria-hidden', 'true');
+        b.appendChild(el('span', 'visually-hidden', 'The full report stays on the machine that made it.'));
       } else {
         b = el('a', 'btn btn-sm btn-ghost', '›');
         b.href = 'report.html' + (r.dry ? '?dry=1' : '');
@@ -234,13 +277,37 @@
     host.appendChild(s);
   }
 
+  function moreFailedLine(visible) {
+    var n = document.querySelector('[data-ws-hist-more-failed]');
+    if (n) n.hidden = !visible;
+  }
+
+  /* Signed in, on a chip that lists the account's rows, the next page may have to be read
+     from the account first - so the press goes pending. ?fail=listMore refuses the first
+     one: the rows and the count stay, the line beside the button says so, and the next
+     press works. */
+  function loadMore(t) {
+    moreFailedLine(false);
+    if (!db.facts.signedIn || !listsCloud()) { shown += PAGE; paint(); return; }
+    window.wsWidgets.pending(t, true);
+    setTimeout(function () {
+      window.wsWidgets.pending(t, false);
+      if (FAIL === 'listMore' && !moreRefused) { moreRefused = true; moreFailedLine(true); return; }
+      shown += PAGE;
+      paint();
+    }, 500);
+  }
+
   window.wsPage = {
     init: function () {
+      /* a failure state is an account's, so it signs the prototype in */
+      if (FAIL && !db.facts.signedIn) { db.set('signedIn', true); db.set('email', 'you@example.com'); }
       paint(); spark();
       document.querySelectorAll('[data-ws-hist]').forEach(function (b) {
         b.addEventListener('click', function () {
           filter = b.dataset.wsHist;
           shown = PAGE;
+          moreFailedLine(false);
           document.querySelectorAll('[data-ws-hist]').forEach(function (o) {
             o.setAttribute('aria-pressed', o === b ? 'true' : 'false');
           });
@@ -251,9 +318,8 @@
          looking (the D-28 rule the round-8 amendment applied to four other toasts). */
       document.addEventListener('click', function (e) {
         var t = e.target.closest('[data-ws-action="histMore"]');
-        if (!t || t.getAttribute('aria-disabled') === 'true') return;
-        shown += PAGE;
-        paint();
+        if (!t || t.getAttribute('aria-disabled') === 'true' || t.dataset.state === 'pending') return;
+        loadMore(t);
       });
     }
   };

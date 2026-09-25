@@ -81,9 +81,14 @@
             </div>
           </div>
           <div class="pager" style="margin-top:var(--sp-4)">
-            <button class="btn btn-sm" data-ws-action="histMore" aria-describedby="hist-showing">Load 20 more</button>
+            <!-- .btn-label: signed in, the press can be a read of the account's next page, and
+                 pending needs the span to paint (2026-09-25). -->
+            <button class="btn btn-sm" data-ws-action="histMore" aria-describedby="hist-showing"><span class="btn-label">Load 20 more</span></button>
             <span class="t-xs ink-3" id="hist-showing" role="status">showing <span class="num" data-ws-text="histShown">0</span> of
               <span class="num" data-ws-text="histAll">0</span></span>
+            <!-- SY-02c, a later page: beside the button, whose count stays. history.html?fail=listMore -->
+            <span class="t-sm" role="alert" style="margin-inline-start:var(--sp-2)" data-ws-hist-more-failed hidden>The
+              next page could not be read; nothing on this machine changed. Press again to retry.</span>
           </div>
           <p class="t-sm ink-3" style="margin-top:var(--sp-2)">Twenty at a time with a cursor, never the
             whole table &#8211; the same budget the engine itself keeps.</p>

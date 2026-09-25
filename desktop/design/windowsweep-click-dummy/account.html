@@ -67,36 +67,67 @@
       <section class="band band-well band-tight">
         <div class="wrap">
           <h2 class="t-md wide" tabindex="-1" data-ws-sync-title>Sync</h2>
+          <!-- The three rows, and under a row its second line when there is one (2026-09-25,
+               D39-D42): a failure in its own words (SY-02a/b), or the replacement notice with its
+               Undo (SY-03). One second line per row. page-account.js -> sync(). -->
           <div class="lst panel" style="margin-top:var(--sp-3)" data-ws-sync></div>
           <!-- ============ THE RUN SUMMARIES THE ACCOUNT HOLDS (TASK-013, 2026-09-24) ========
                The rows the "Run summaries" line above counts, each drawn the way History
                draws a cloud row - because that is all a stored summary has. Each can be
                removed from the account: the "added or removed, never edited" the disclosure
-               below describes. Removing one touches nothing on any machine.
-               Drawn only while signed in, and only when the account holds a summary (its
-               empty line is not written yet - AMENDMENTS-2.md). page-account.js -> runs(). -->
+               below describes. A Remove deletes the account's row and touches no file on any
+               machine; when this machine sent the run, it also drops the id from this
+               machine's own upload record, which is why the count above moves.
+               Drawn while signed in, in one of three states (2026-09-25): the list with the
+               line that says what Remove does above it (SY-06), the empty line (SY-01), or the
+               failed first read (SY-02c). page-account.js -> runs(). -->
           <div data-ws-cloud-runs hidden style="margin-top:var(--sp-5)">
             <h3 class="t-base wide">Run summaries</h3>
-            <div class="panel" style="margin-top:var(--sp-3);overflow:visible">
-              <div class="xscroll">
-                <table class="tbl">
-                  <thead>
-                    <tr>
-                      <th style="width:11rem">When</th>
-                      <th style="width:6rem">Mode</th>
-                      <th>Sections</th>
-                      <th style="width:7rem" class="num-cell">Freed</th>
-                      <th><span class="visually-hidden">Remove</span></th>
-                    </tr>
-                  </thead>
-                  <tbody data-ws-cloud-rows></tbody>
-                </table>
+            <!-- SY-06: said before the first Remove is pressed, and every Remove's
+                 aria-describedby names its row's When and then this line. -->
+            <p class="t-sm ink-3" id="cloud-remove-note" style="margin-top:var(--sp-2)" data-ws-cloud-note>Remove
+              deletes one run&#8217;s summary from your account; it touches no log or report on this machine or
+              any other. There is no undo.</p>
+            <div data-ws-cloud-list>
+              <div class="panel" style="margin-top:var(--sp-3);overflow:visible">
+                <div class="xscroll">
+                  <table class="tbl">
+                    <thead>
+                      <tr>
+                        <th style="width:11rem">When</th>
+                        <th style="width:6rem">Mode</th>
+                        <th>Sections</th>
+                        <th style="width:7rem" class="num-cell">Freed</th>
+                        <th><span class="visually-hidden">Remove</span></th>
+                      </tr>
+                    </thead>
+                    <tbody data-ws-cloud-rows></tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="pager" style="margin-top:var(--sp-4)">
+                <button class="btn btn-sm" type="button" data-ws-action="cloudMore" aria-describedby="cloud-showing"><span class="btn-label">Load 20 more</span></button>
+                <span class="t-xs ink-3" id="cloud-showing" role="status">showing <span class="num" data-ws-text="cloudShown">0</span> of
+                  <span class="num" data-ws-text="cloudAll">0</span></span>
+                <!-- SY-02c, a later page: beside the button, whose count stays. The person just
+                     pressed, so it interrupts. account.html?fail=listMore -->
+                <span class="t-sm" role="alert" style="margin-inline-start:var(--sp-2)" data-ws-cloud-more-failed hidden>The
+                  next page could not be read; nothing on this machine changed. Press again to retry.</span>
               </div>
             </div>
-            <div class="pager" style="margin-top:var(--sp-4)">
-              <button class="btn btn-sm" type="button" data-ws-action="cloudMore" aria-describedby="cloud-showing"><span class="btn-label">Load 20 more</span></button>
-              <span class="t-xs ink-3" id="cloud-showing" role="status">showing <span class="num" data-ws-text="cloudShown">0</span> of
-                <span class="num" data-ws-text="cloudAll">0</span></span>
+            <!-- SY-01: signed in, the first read answered, and the account holds nothing - which
+                 includes the moment after the last Remove. In the table's place. -->
+            <div class="panel pad" style="margin-top:var(--sp-3)" data-ws-cloud-empty hidden>
+              <p class="t-sm ink-3">Your account holds no run summaries. When a run finishes in the desktop app
+                on any machine signed in as you, its summary appears here; runs from before you signed in stay
+                on this machine.</p>
+            </div>
+            <!-- SY-02c, the first page: in the table's place, the Report screen's own treatment
+                 for a read that failed. account.html?fail=list -->
+            <div class="note note-warn" role="status" style="margin-top:var(--sp-3)" data-ws-cloud-failed hidden>
+              <span aria-hidden="true">!</span>
+              <span class="t-sm">The run summaries in your account could not be read. Nothing on this machine
+                changed, and windowsweep tries again the next time you open this screen.</span>
             </div>
           </div>
           <details class="disclose" style="margin-top:var(--sp-4)">
@@ -105,9 +136,11 @@
               <span class="disclose-more">Details</span>
             </summary>
             <div class="disclose-body">
-              <p>The newer change wins, and you are told which one it was with an <strong>Undo</strong> that
-                puts the other back. Settings are small and rarely edited on two machines at once, so a
-                silent merge would be more surprising than a visible choice.</p>
+              <!-- S-165, amended by D40 (2026-09-24): the notice and its Undo now exist, on this
+                   screen's Settings row, so the promise names where it is kept. -->
+              <p>The newer change wins, and this screen tells you which one it was, with an
+                <strong>Undo</strong> that puts the other back. Settings are small and rarely edited on two
+                machines at once, so a silent merge would be more surprising than a visible choice.</p>
               <p>Run history never conflicts: a run belongs to the machine that made it and is only ever
                 added or removed, never edited.</p>
             </div>

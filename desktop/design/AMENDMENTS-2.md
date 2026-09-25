@@ -405,3 +405,49 @@ summary can be seen and removed. There is no Where column: the schema stores no 
 - The "What happens when two machines disagree" disclosure stays withheld in the app: its Undo has no words.
 - History's `Other machines` stays `pending-wave`. Its sentence ("not synced in this build yet") and this
   dummy's `where: 'laptop'` for a cloud row both wait on History reading `fetchRuns` - outside this change.
+
+## Amendment - 2026-09-25: TASK-013's remaining states - failures, the notice and its Undo, Home's line, other machines
+
+The four gaps declared above were answered: D39-D42 by the owner, the words by the story run
+`desktop-sync-strings` (round 1 closed 2026-09-25, fact-check PASS), and the main session decided that Account
+says what Remove does before it is pressed. Each state is drawn here first - by URL where only a real account
+could otherwise reach it, as `?empty=1` is - and the app then matches it. The words are the draft's as they
+stood on 2026-09-25; the main session re-syncs both sides after this surface's GATE 4.
+
+### 1. `account.html` + `page-account.js` - the Sync band's second lines, and the run list's three states
+
+| Was | Now, and why |
+|---|---|
+| a failure had no words: the row kept "Local only" or its last time | SY-02a, a second line in the Settings row, one at a time, split by the step that failed: *"Your account's settings could not be read, so this machine keeps its own. ..."* (`?fail=settingsRead`; the row stays "Local only") or *"Your latest settings have not reached your account. ..."* (`?fail=settingsWrite`; the last "Synced ..." time stays) |
+| - | SY-02b under "N of M runs uploaded", the one failure that writes something: *"One run summary has not reached your account. ..."* / *"3 run summaries have not reached ..."* (`?pending=1`, `?pending=3`) |
+| - | SY-03 (D40): *"Your account held newer settings, so they replaced this machine's."* with **Undo** beside it, described by the notice (`?replaced=1`). Undo puts this machine's side back as a change made here - dated now and sent - so it ends the notice, and focus goes to the Sync heading as the control leaves. It also ends at any settings change on any screen and at sign-out, and lives only while the window is open: the prototype keeps it beside a snapshot of every setting, and Reset prototype stands for closing the window. D41: on untouched settings the account's are taken without a word, so change any synced setting first. D42 draws nothing - the notice needs a value that differs. The notice outranks a failure line, because it carries the Undo |
+| the list hidden unless the account held a summary | three states while signed in. The rows, under SY-06: *"Remove deletes one run's summary from your account; it touches no log or report on this machine or any other. There is no undo."* - under the heading, above the table, only while rows exist; every Remove's `aria-describedby` is its When, then this line. SY-01 when the account holds nothing, the moment after the last Remove included: *"Your account holds no run summaries. ..."*, in the table's place. SY-02c's first key when the first read failed (`?fail=list`), in the table's place as the Report screen's unreadable-file note - and the count above does not move, because it is this machine's own record |
+| *Load 20 more* answered at once | pending, since in the window it is a network read. `?fail=listMore` refuses the first press: *"The next page could not be read; nothing on this machine changed. Press again to retry."* beside the button, `role="alert"`, the count unchanged. Twenty older laptop rows are seeded for that state only, so a second page exists |
+| a Remove always succeeded | D39: `?fail=remove` refuses each row's first press. The row stays, a row under it says *"windowsweep could not confirm that this run summary was removed, so it stays in the list. ..."* (`role="alert"`), and the line goes with that row's next press. Nothing is queued |
+| a removed row came back on reload | the prototype remembers it (`cloudRemoved`): the account's row is what goes, so History stops drawing a removed laptop row too |
+| S-165 *"The newer change wins, and you are told which one it was with an Undo that puts the other back. ..."* | *"The newer change wins, and this screen tells you which one it was, with an Undo that puts the other back. ..."* - the S-165 amendment is part of D40 (decision log, 2026-09-25); the second sentence stands. The disclosure now ships in the app |
+| comment: *"Removing one touches nothing on any machine."* | corrected - a Remove touches no file; when this machine sent the run it also drops the id from this machine's upload record, which is why the count moves (the draft's reported item 6) |
+
+### 2. `index.html` - Home's line while the notice stands (SY-07)
+
+| Was | Now, and why |
+|---|---|
+| - | D40's Home line, after the sub-line and before Scan, Dry-run first and Reclaim, in reading and tab order: *"Your account held newer settings, so they replaced this machine's. Developer mode is one of them, and it decides what a run started here keeps. Undo is on the Account screen until you change a setting here, sign out or close windowsweep."* "the Account screen" is a link, the line's one control; `note note-info` inside an always-present `role="status"`. It reads the notice's record, so the two begin and end together - Home's switch or slider ends both. Home had no page script, so its `wsPage.init` is inline, on the hook every page uses |
+
+### 3. `history.html` + `page-history.js` - other machines, read from the account (SY-04, SY-05)
+
+| Was | Now, and why |
+|---|---|
+| Where: *laptop* | *"another machine"* (SY-04): the schema stores no machine name, and the Account screen says so. S-078's `laptop` and its note (*"the app shows whatever name the other machine registered"*) are superseded - the note contradicted the schema and Bible §7 (decision log, 2026-09-25) |
+| *"No runs from other machines"* / *"None of your other machines has run windowsweep yet."* | *"No run summaries from other machines"* / *"When a run finishes in the desktop app on another machine signed in as you, its summary appears here."* (SY-05) - after TASK-013's Remove an empty filter proves only that the account holds nothing from elsewhere. The signed-out body (S-088) is unchanged |
+| - | `?fail=list`: SY-02c's first key heads the table on every chip that lists the account's rows, with this window's rows under it; on Other machines it is the only row, so an unreadable account never reads as an empty one |
+| *Load 20 more* plain | `.btn-label`; signed in, on a chip that lists the account's rows, it goes pending, and `?fail=listMore` refuses the first press with SY-02c's second key beside it |
+| the other machine's Open cell: *—* with a `title` | the same glyph, and S-079's sentence also said in a visually hidden span: a `title` on a span that takes no focus reaches no screen reader |
+
+### Declared rather than amended
+
+- **History's header over other machines' rows.** The dummy totals every listed row. The window reads the account
+  twenty rows at a time and the account offers no sum, so the figure covers this window's runs and the
+  other-machine rows read so far - exact once that list is read to its end, which is every list of one page. An
+  exact figure for a longer list needs a server-side aggregate; reported with TASK-013.
+- **Freed per run** stays this window's own runs, as the dummy's does (`spark` reads `localRuns()`).

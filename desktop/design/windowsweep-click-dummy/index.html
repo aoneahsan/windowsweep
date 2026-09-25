@@ -51,6 +51,21 @@
               <span class="num" data-ws-text="sectionCount">0</span> sections
               &middot; <button class="link-q" data-ws-action="rescan">re-scan</button>
             </p>
+            <!-- SY-07 (D40, 2026-09-25): while the Account screen's replacement notice stands,
+                 one line here - after the sub-line, before Scan, Dry-run first and Reclaim, in
+                 reading and tab order - because developer mode decides what a run started here
+                 keeps. The live region is always present so a replacement landing while Home is
+                 open is announced. Reach it with account.html?replaced=1 after changing any
+                 synced setting (D41), then come back here. Its one control is the link. -->
+            <div role="status">
+              <div class="note note-info" style="margin-top:var(--sp-4)" data-ws-settings-replaced hidden>
+                <span aria-hidden="true">i</span>
+                <span class="t-sm">Your account held newer settings, so they replaced this machine&#8217;s.
+                  Developer mode is one of them, and it decides what a run started here keeps. Undo is on
+                  <a class="lnk" href="account.html">the Account screen</a> until you change a setting here,
+                  sign out or close windowsweep.</span>
+              </div>
+            </div>
           </div>
           <div class="hero-actions">
             <button class="btn" data-ws-action="scan"><span class="btn-label">Scan again</span></button>
@@ -363,6 +378,37 @@
 <script src="db.js"></script>
 <script src="reclaim-map.js"></script>
 <script src="widgets.js"></script>
+<!-- Home's own page init, on the hook every page uses (wire.js -> boot calls wsPage.init).
+     SY-07 reads the record page-account.js writes, so the notice and this line begin and end
+     together: a settings change on any screen (a snapshot of every setting is kept with the
+     record), Undo, sign-out, and Reset prototype - this dummy's closing of the window. -->
+<script>
+(function () {
+  'use strict';
+  var db = window.wsdb, ws = window.ws;
+  function settingsNow() {
+    return JSON.stringify([db.facts.developer, db.facts.idleDays, db.facts.tempDays,
+      db.facts.largeFileMb, ws.store.get('prefs', {})]);
+  }
+  function paint() {
+    var n = db.facts.settingsReplaced;
+    if (n && (!db.facts.signedIn || n.after !== settingsNow())) { db.set('settingsReplaced', null); n = null; }
+    var line = document.querySelector('[data-ws-settings-replaced]');
+    if (line) line.hidden = !n;
+  }
+  window.wsPage = {
+    init: function () {
+      paint();
+      /* the developer switch and the idle slider write through the store; the theme
+         panel writes prefs directly, so a press anywhere is re-checked as well */
+      db.on(paint);
+      ['click', 'change'].forEach(function (type) {
+        document.addEventListener(type, function () { setTimeout(paint, 0); });
+      });
+    }
+  };
+})();
+</script>
 <script src="wire.js"></script>
 <script src="demo.js"></script>
 </body>

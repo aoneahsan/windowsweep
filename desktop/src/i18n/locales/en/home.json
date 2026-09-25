@@ -6,6 +6,7 @@
   "home.heroSubMeasured_other": "measured {{count}} minutes ago across $t(home.countTargets, {\"count\": {{targets}} }) in $t(home.countSections, {\"count\": {{sections}} })",
   "home.rescan": "re-scan",
   "home.heroSubUnmeasured": "Nothing has been measured yet. A scan reads sizes and deletes nothing.",
+  "home.settingsReplaced": "$t(account.sync.conflict.notice) Developer mode is one of them, and it decides what a run started here keeps. Undo is on <1>the Account screen</1> until you change a setting here, sign out or close windowsweep.",
   "home.countTargets_one": "{{count}} target",
   "home.countTargets_other": "{{count}} targets",
   "home.countSections_one": "{{count}} section",

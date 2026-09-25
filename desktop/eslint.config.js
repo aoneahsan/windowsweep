@@ -49,6 +49,12 @@ export default tseslint.config(
     },
   },
   {
+    // 🔴 The ONE exemption from `no-console`: the project logger itself. Everything
+    // else logs through it (`src/lib/logger.ts`).
+    files: ['src/lib/logger.ts'],
+    rules: { 'no-console': 'off' },
+  },
+  {
     ...react.configs['recommended-typescript'],
     files: ['**/*.tsx'],
   },

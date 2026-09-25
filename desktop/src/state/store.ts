@@ -25,8 +25,26 @@ import { isCleanupRun, type Candidate, type RunSummary, type ProgressEvent, type
    vocabulary for one fact, which is the rule that module exists for. */
 import { isRunRecord } from '../lib/run-mode';
 import type { AuthUser } from '../lib/auth';
-import { noteRunFinished, noteSettingsChanged } from '../lib/sync-hooks';
+import { noteLocalSettingChanged, noteRunFinished, noteSettingsChanged } from '../lib/sync-hooks';
 import { readPrefs, writePrefs, applyAllAxes, type AxisPrefs } from '../lib/theme';
+import {
+  DEFAULT_IDLE_DAYS,
+  DEFAULT_LARGE_FILE_MB,
+  DEFAULT_TEMP_DAYS,
+  clampIdleDays,
+  clampLargeFileMb,
+  clampTempDays,
+} from './thresholds';
+
+/* The controls' ranges, where every screen that draws one has always imported them. */
+export {
+  MAX_IDLE_DAYS,
+  MAX_LARGE_FILE_MB,
+  MAX_TEMP_DAYS,
+  MIN_IDLE_DAYS,
+  MIN_LARGE_FILE_MB,
+  MIN_TEMP_DAYS,
+} from './thresholds';
 
 export type RunPhase = 'idle' | 'running' | 'done' | 'failed';
 
@@ -217,26 +235,6 @@ const IDLE_DAYS_KEY = 'windowsweep:idleDays';
 const TEMP_DAYS_KEY = 'windowsweep:tempDays';
 const LARGE_FILE_MB_KEY = 'windowsweep:largeFileMb';
 
-/** The engine's own default idle threshold - `lib/config.ps1`, `days = 100`. Not
-    exported: nothing outside this module has a reason to know the seed value. */
-const DEFAULT_IDLE_DAYS = 100;
-/** The range the click dummy's own control offers (`index.html:138`). */
-export const MIN_IDLE_DAYS = 7;
-export const MAX_IDLE_DAYS = 365;
-
-/** The engine's own temp threshold - `lib/config.ps1`, `tempDays = 3`. */
-const DEFAULT_TEMP_DAYS = 3;
-export const MIN_TEMP_DAYS = 1;
-export const MAX_TEMP_DAYS = 90;
-
-/** The engine's own large-file threshold - `lib/config.ps1`, `largeFileMb = 100`.
-    🔴 NOT the dummy's 500: that row is a prototype stub whose input has an empty
-    handler (`page-settings.js:106`), while every other default in this store is
-    taken from the engine so the number on screen is the number that runs. */
-const DEFAULT_LARGE_FILE_MB = 100;
-export const MIN_LARGE_FILE_MB = 1;
-export const MAX_LARGE_FILE_MB = 100_000;
-
 /** When the run in flight began, so `finishRun` can record how long it took. */
 let startedAt = Date.now();
 
@@ -249,24 +247,6 @@ function readLocal<T>(key: string, fallback: T): T {
   } catch {
     return fallback;
   }
-}
-
-/**
- * The engine refuses `--days` unless it is a whole number, and the Rust side
- * refuses a value that looks like a flag, so the one place this value is set is
- * also the place it is made safe to pass. A stored value from an older build - or
- * a hand-edited one - is clamped rather than trusted.
- */
-function clampIdleDays(days: number): number {
-  if (!Number.isFinite(days)) return DEFAULT_IDLE_DAYS;
-  return Math.min(MAX_IDLE_DAYS, Math.max(MIN_IDLE_DAYS, Math.round(days)));
-}
-
-/** Same contract as `clampIdleDays`: the engine refuses anything but a whole
-    number, and the Rust side refuses a value that looks like a flag. */
-function clampWhole(value: number, min: number, max: number, fallback: number): number {
-  if (!Number.isFinite(value)) return fallback;
-  return Math.min(max, Math.max(min, Math.round(value)));
 }
 
 function writeLocal(key: string, value: unknown): void {
@@ -456,33 +436,32 @@ export const useStore = create<StoreState>()((set, get) => ({
     set({ developer: on });
     noteSettingsChanged();
   },
+  /* 🔴 These three stay on this machine and never sync - but each is a setting, so a
+     real change to one ends a standing replacement notice (D40, SY-07's "until you
+     change a setting here"). Through `sync-hooks.ts`, so the path stays boot-safe. */
   idleDays: clampIdleDays(readLocal<number>(IDLE_DAYS_KEY, DEFAULT_IDLE_DAYS)),
   setIdleDays: (days) => {
     const value = clampIdleDays(days);
+    const changed = value !== get().idleDays;
     writeLocal(IDLE_DAYS_KEY, value);
     set({ idleDays: value });
+    if (changed) noteLocalSettingChanged();
   },
-  tempDays: clampWhole(
-    readLocal<number>(TEMP_DAYS_KEY, DEFAULT_TEMP_DAYS),
-    MIN_TEMP_DAYS,
-    MAX_TEMP_DAYS,
-    DEFAULT_TEMP_DAYS,
-  ),
+  tempDays: clampTempDays(readLocal<number>(TEMP_DAYS_KEY, DEFAULT_TEMP_DAYS)),
   setTempDays: (days) => {
-    const value = clampWhole(days, MIN_TEMP_DAYS, MAX_TEMP_DAYS, DEFAULT_TEMP_DAYS);
+    const value = clampTempDays(days);
+    const changed = value !== get().tempDays;
     writeLocal(TEMP_DAYS_KEY, value);
     set({ tempDays: value });
+    if (changed) noteLocalSettingChanged();
   },
-  largeFileMb: clampWhole(
-    readLocal<number>(LARGE_FILE_MB_KEY, DEFAULT_LARGE_FILE_MB),
-    MIN_LARGE_FILE_MB,
-    MAX_LARGE_FILE_MB,
-    DEFAULT_LARGE_FILE_MB,
-  ),
+  largeFileMb: clampLargeFileMb(readLocal<number>(LARGE_FILE_MB_KEY, DEFAULT_LARGE_FILE_MB)),
   setLargeFileMb: (mb) => {
-    const value = clampWhole(mb, MIN_LARGE_FILE_MB, MAX_LARGE_FILE_MB, DEFAULT_LARGE_FILE_MB);
+    const value = clampLargeFileMb(mb);
+    const changed = value !== get().largeFileMb;
     writeLocal(LARGE_FILE_MB_KEY, value);
     set({ largeFileMb: value });
+    if (changed) noteLocalSettingChanged();
   },
 
   updateOutcome: 'unknown',

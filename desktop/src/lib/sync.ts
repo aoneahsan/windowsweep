@@ -28,10 +28,15 @@
  * outright with `permission denied for table user_settings` - naming the TABLE,
  * not the column, which reads exactly like a broken policy. This inserts and
  * handles `23505`.
+ *
+ * 🔴 EVERY FAILURE IS LOGGED HERE, AT ITS SOURCE, with the step it happened at and
+ * PostgREST's own message (`failure` below) - once, before it is thrown to whichever
+ * screen says so in words. The message names a table or a constraint, never a value.
  */
 
 import type { RunSummary } from './cli';
 import { supabase } from './auth';
+import { logger } from './logger';
 
 /** The only run fields that ever leave the machine. */
 export interface SyncedRun {
@@ -54,6 +59,15 @@ export interface SyncedSettings {
 
 /** A WRITE with no client is a caller's mistake, not a quiet success to record as synced. */
 const NOT_CONFIGURED = 'sync is not configured in this build';
+
+/** The steps a failure is logged against - one per request this module makes. */
+type SyncStep = 'settings read' | 'settings write' | 'run list read' | 'run upload' | 'run remove';
+
+/** Log a failure with its step, and hand back the error to throw. */
+function failure(step: SyncStep, message: string): Error {
+  logger.warn(`sync: ${step} failed`, { step, error: message });
+  return new Error(message);
+}
 
 /**
  * `lib/engine.ts` -> `newRunId`: a UTC stamp cut to the second, then up to six
@@ -157,7 +171,7 @@ export async function fetchSettings(userId: string): Promise<SyncedSettings | nu
     // the same column the policy reads
     .eq('user_id', userId)
     .maybeSingle<SettingsRow>();
-  if (error) throw new Error(`settings could not be read: ${error.message}`);
+  if (error) throw failure('settings read', `settings could not be read: ${error.message}`);
   if (!data) return null;
   return {
     prefs: data.prefs ?? {},
@@ -184,7 +198,7 @@ export async function pushSettings(
   settings: SyncedSettings,
 ): Promise<SettingsWrite> {
   const sb = supabase();
-  if (!sb) throw new Error(NOT_CONFIGURED);
+  if (!sb) throw failure('settings write', NOT_CONFIGURED);
 
   const now = new Date().toISOString();
   /* An address the session did not carry is left out, never written as '' over the stored one. */
@@ -201,7 +215,7 @@ export async function pushSettings(
   if (!insert.error) return 'saved';
   // 23505 = unique_violation: the row already exists, which is the normal case.
   if (insert.error.code !== '23505') {
-    throw new Error(`settings could not be saved: ${insert.error.message}`);
+    throw failure('settings write', `settings could not be saved: ${insert.error.message}`);
   }
 
   // 🔴 `user_id` is NOT in this payload - it is outside the UPDATE grant, and
@@ -224,7 +238,7 @@ export async function pushSettings(
        row stands and the caller takes it instead. Nothing would SAY so: an update the
        filter excludes is a 200 with 0 rows, which is why the count is read. */
     .lte('settings_updated_at', settings.updatedAt);
-  if (update.error) throw new Error(`settings could not be saved: ${update.error.message}`);
+  if (update.error) throw failure('settings write', `settings could not be saved: ${update.error.message}`);
   return update.count === 1 ? 'saved' : 'stale';
 }
 
@@ -234,8 +248,10 @@ export async function pushSettings(
  * 🔴 The undo is not decoration. Two machines editing settings is the ordinary
  * case for this product - one desktop, one laptop - and silently discarding the
  * older side means a person changes a setting, walks to the other machine and
- * finds it reverted with no explanation. The caller shows `replaced` in an undo
- * toast.
+ * finds it reverted with no explanation. The caller keeps `replaced` for the
+ * Account screen's Sync band, which states the replacement on its Settings row with
+ * an Undo beside it, and for Home's one line while it stands (D40,
+ * `lib/sync-session.ts` -> `noteReplacement`). The app has no toast.
  */
 export function reconcileSettings(
   local: SyncedSettings,
@@ -263,6 +279,28 @@ interface RunRow {
 }
 
 /**
+ * What one list reads of the account's runs, narrowed BY THE DATABASE - so the count
+ * the first page carries is the list's own, never a number worked out from the rows.
+ */
+export interface RunsFilter {
+  /**
+   * Run ids to leave out: History passes the runs this window holds, so what comes back
+   * came from another machine. Each id is held to `newRunId`'s vocabulary on the way
+   * into the query, so a hand-edited History cannot write the filter's syntax.
+   */
+  excluding?: readonly string[];
+  /** Dry-runs only - History's `Dry-runs` chip. */
+  dryRunsOnly?: boolean;
+}
+
+/** One page of runs, the cursor to the next, and - on the first page only - how many there are. */
+export interface RunsPage {
+  runs: SyncedRun[];
+  nextCursor: string | null;
+  total: number | null;
+}
+
+/**
  * One page of a person's own runs, newest first.
  *
  * Keyset, not offset: `before` is the previous page's oldest `startedAt`. An
@@ -273,11 +311,12 @@ interface RunRow {
  * reading the rows (`~/.claude/rules/data-fetch-budget.md`). Later pages carry
  * `total: null`: the count is the first page's answer, and asking again per page
  * would pay for the same number twenty rows at a time.
+ *
+ * `filter` narrows the rows and that count together, server-side. Its exclusion list
+ * is bounded by History's own cap of 200 runs, which keeps the query string in the
+ * low kilobytes.
  */
-export async function fetchRuns(
-  userId: string,
-  before?: string,
-): Promise<{ runs: SyncedRun[]; nextCursor: string | null; total: number | null }> {
+export async function fetchRuns(userId: string, before?: string, filter: RunsFilter = {}): Promise<RunsPage> {
   const sb = supabase();
   if (!sb) return { runs: [], nextCursor: null, total: 0 };
 
@@ -291,9 +330,12 @@ export async function fetchRuns(
     .order('started_at', { ascending: false })
     .limit(RUNS_PAGE_SIZE);
   if (before) runsQuery = runsQuery.lt('started_at', before);
+  const excluded = (filter.excluding ?? []).filter((id) => RUN_ID.test(id));
+  if (excluded.length > 0) runsQuery = runsQuery.not('run_id', 'in', `(${excluded.join(',')})`);
+  if (filter.dryRunsOnly) runsQuery = runsQuery.eq('dry_run', true);
 
   const { data, error, count } = await runsQuery;
-  if (error) throw new Error(`run history could not be read: ${error.message}`);
+  if (error) throw failure('run list read', `run history could not be read: ${error.message}`);
 
   const rows = (data ?? []) as RunRow[];
   const runs: SyncedRun[] = rows.map((r) => ({
@@ -325,7 +367,7 @@ export async function fetchRuns(
  */
 export async function pushRun(userId: string, run: SyncedRun): Promise<void> {
   const sb = supabase();
-  if (!sb) throw new Error(NOT_CONFIGURED);
+  if (!sb) throw failure('run upload', NOT_CONFIGURED);
   const { error } = await sb.from('runs').insert({
     run_id: run.runId,
     user_id: userId,
@@ -340,7 +382,7 @@ export async function pushRun(userId: string, run: SyncedRun): Promise<void> {
   });
   // A re-sync of a run already stored is not an error worth surfacing.
   if (error && error.code !== '23505') {
-    throw new Error(`the run could not be saved: ${error.message}`);
+    throw failure('run upload', `the run could not be saved: ${error.message}`);
   }
 }
 
@@ -354,7 +396,7 @@ export async function pushRun(userId: string, run: SyncedRun): Promise<void> {
  */
 export async function deleteRun(userId: string, runId: string): Promise<void> {
   const sb = supabase();
-  if (!sb) throw new Error(NOT_CONFIGURED);
+  if (!sb) throw failure('run remove', NOT_CONFIGURED);
   const { error } = await sb.from('runs').delete().eq('user_id', userId).eq('run_id', runId);
-  if (error) throw new Error(`the run could not be removed: ${error.message}`);
+  if (error) throw failure('run remove', `the run could not be removed: ${error.message}`);
 }

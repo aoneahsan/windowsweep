@@ -89,6 +89,7 @@ import { DeveloperMode } from '../components/DeveloperMode';
 import { HomeDrives } from '../components/HomeDrives';
 import { CapacityRing } from '../components/CapacityRing';
 import { HeroFigure } from '../components/HeroFigure';
+import { SettingsReplacedLine } from '../components/account/SettingsReplacedLine';
 import { useDriveRows } from '../lib/drives';
 import type { MapTarget } from '../components/ReclaimMap';
 
@@ -370,6 +371,8 @@ export function Home() {
                 </>
               )}
             </p>
+            {/* SY-07 (D40): while the account's newer settings stand replaced here. */}
+            <SettingsReplacedLine />
           </div>
           <div className="hero-actions">
             <button

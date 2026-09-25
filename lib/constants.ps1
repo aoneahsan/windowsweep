@@ -4,15 +4,16 @@
 # Single source of truth for the version is package.json: the Node launcher exports it as
 # WINDOWSWEEP_VERSION. A direct checkout falls back to this literal; the version:check script
 # asserts the two never drift.
-$Script:WS_VERSION_FALLBACK = '1.3.0'
+$Script:WS_VERSION_FALLBACK = '1.3.1'
 
 $Script:WS_NAME = 'windowsweep'
 $Script:WS_TAGLINE = 'Developer-aware Windows cleanup CLI: dry-run first, personal folders refused, zero install via npx.'
-$Script:WS_AUTHOR = 'Ahsan Mahmood'
+# The maker is the team, never one person. WS_AUTHOR lands mid-line ("by the windowsweep team");
+# WS_TEAM is the form a label shows standing alone ("Author: The windowsweep team").
+$Script:WS_AUTHOR = 'the windowsweep team'
+$Script:WS_TEAM = 'The windowsweep team'
 $Script:WS_EMAIL = 'aoneahsan@gmail.com'
-$Script:WS_WEB = 'https://aoneahsan.com'
-$Script:WS_LINKEDIN = 'https://linkedin.com/in/aoneahsan'
-$Script:WS_GITHUB = 'https://github.com/aoneahsan'
+$Script:WS_WEB = 'https://windowsweep.aoneahsan.com'
 $Script:WS_REPO = 'https://github.com/aoneahsan/windowsweep'
 $Script:WS_ISSUES = 'https://github.com/aoneahsan/windowsweep/issues'
 $Script:WS_NPM = 'https://www.npmjs.com/package/windowsweep'

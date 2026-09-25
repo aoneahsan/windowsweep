@@ -103,7 +103,7 @@ OUTPUT
   Logs:    $($Script:WS.LogsDir)
   Reports: $($Script:WS.ReportsDir)
 
-$Script:WS_NAME v$v  by $Script:WS_AUTHOR <$Script:WS_EMAIL>  $Script:WS_WEB
+$Script:WS_NAME v$v  by $Script:WS_AUTHOR  $Script:WS_WEB
 $Script:WS_REPO  -  $Script:WS_LICENSE
 "@
   Write-Host $text

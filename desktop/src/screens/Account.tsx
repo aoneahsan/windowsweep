@@ -19,13 +19,13 @@
  * bold "never gated", the card beside the "What is stored, exactly" table, and the
  * Sync band. It was one narrow column carrying two paragraphs of its own words.
  *
- * 🔴 THE SYNC BAND SAYS "LOCAL" IN EVERY STATE, because that is what is true:
- * nothing in this window syncs yet (`lib/sync.ts` has no caller). The dummy's
- * signed-in rows ("Synced 2 minutes ago") describe a wiring that has not landed,
- * and its "What happens when two machines disagree" disclosure describes conflict
- * handling - the newer change wins, with an Undo - that no code performs. That
- * disclosure is withheld rather than shipped as a promise; it arrives with the
- * sync wiring.
+ * 🔴 SYNC IS WIRED (TASK-013), AND THE SYNC BAND SAYS WHICH STATE IT IS IN: the
+ * dummy's signed-in rows while sync runs, "Local only" with no keys in the build or
+ * nobody signed in (`components/account/SyncBand.tsx`). This screen hands sign-in
+ * and sign-out to `lib/sync-session.ts`, and on arrival it restores a session an
+ * earlier launch left - `currentUser()` had no caller, so after a restart this screen
+ * said "Not signed in" over a live session. The dummy's "What happens when two
+ * machines disagree" disclosure stays withheld: its Undo has no words yet.
  *
  * ⚠️ NOT EXERCISED ON THIS MACHINE. Google is the only provider and it is not
  * enabled on the Supabase project yet, so nobody can sign in here and therefore
@@ -34,14 +34,16 @@
  * point.
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
 import { deleteAccount, signIn, signOut } from '../lib/auth';
 import { configuredFeatures } from '../lib/config';
 import { controlState, stateOf } from '../lib/control-state';
+import { restoreSync, startSync, stopSync } from '../lib/sync-session';
 import { PrimaryButton } from '../components/PrimaryButton';
+import { SyncBand } from '../components/account/SyncBand';
 
 /**
  * 🔴 The typed confirmation, compared EXACTLY. The label promises "it must match
@@ -53,13 +55,6 @@ const CONFIRM_WORD = 'delete';
 
 /** The five rows of `account.html`'s "What is stored, exactly", in its order. */
 const STORED = ['email', 'name', 'settings', 'runs', 'lastSeen'] as const;
-
-/** The dummy's Sync rows (`page-account.js` -> `sync()`), each with its local state. */
-const SYNC_ROWS = [
-  { key: 'settings', state: 'localOnly' },
-  { key: 'runs', state: 'localOnly' },
-  { key: 'paths', state: 'never' },
-] as const;
 
 /** The avatar's letters: the first two words of the name, or the email's first letter. */
 function initials(displayName: string | null, email: string): string {
@@ -84,16 +79,30 @@ export function Account() {
   const [deleted, setDeleted] = useState(false);
   const features = configuredFeatures();
 
+  /* A session an earlier launch left is restored into the store on arrival, and sync
+     starts for it. A build without keys returns at once and touches nothing. */
+  useEffect(() => {
+    void restoreSync();
+  }, []);
+
+  /* 🔴 Sync stops BEFORE the account goes, so no upload finishing mid-delete can write
+     the account's ledger back after `signOut` cleared it. A deletion that fails leaves
+     the account standing, so sync starts again for it. */
   function onDelete() {
+    const who = user;
     setDeleting(true);
     setError(null);
+    stopSync();
     void deleteAccount()
       .then(() => {
         setUser(null);
         setConfirmWord('');
         setDeleted(true);
       })
-      .catch((e: unknown) => { setError(e instanceof Error ? e.message : String(e)); })
+      .catch((e: unknown) => {
+        setError(e instanceof Error ? e.message : String(e));
+        if (who) void startSync(who);
+      })
       .finally(() => { setDeleting(false); });
   }
 
@@ -101,17 +110,27 @@ export function Account() {
     setBusy(true);
     setError(null);
     void signIn()
-      .then(setUser)
+      .then((signedIn) => {
+        setUser(signedIn);
+        void startSync(signedIn);
+      })
       .catch((e: unknown) => { setError(e instanceof Error ? e.message : String(e)); })
       .finally(() => { setBusy(false); });
   }
 
   /* 🔴 Sign-in opens a browser and waits for a redirect - the slowest thing on
      any of these screens, and until now the only sign that it had started was
-     nothing at all. `busy` was already tracked and never rendered. */
+     nothing at all. `busy` was already tracked and never rendered.
+
+     Sign-out stops sync on both sides of ending the session: before, so nothing
+     writes the account's ledger back after `signOut` clears it; after, in case a
+     finishing run restored the session in between. Nothing local is deleted -
+     the settings and the History stay on this machine. */
   function onSignOut() {
     setSigningOut(true);
+    stopSync();
     void signOut().finally(() => {
+      stopSync();
       setUser(null);
       setSigningOut(false);
     });
@@ -238,24 +257,7 @@ export function Account() {
         </div>
       </section>
 
-      <section className="band band-well band-tight">
-        <div className="wrap">
-          <h2 className="t-md wide">{t('account.syncTitle')}</h2>
-          <div className="lst panel" style={{ marginTop: 'var(--sp-3)' }}>
-            {SYNC_ROWS.map((row) => (
-              <div className="lst-i" key={row.key}>
-                <div style={{ flex: 1 }}>
-                  <div className="t-base">{t(`account.sync.${row.key}`)}</div>
-                  <div className="t-sm ink-3">{t(`account.sync.${row.state}`)}</div>
-                </div>
-                <div className="lst-x">
-                  <span className="badge badge-neutral">{t('account.sync.badgeLocal')}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <SyncBand user={user} />
 
       {/* 🔴 DELETE THE ACCOUNT. `account.html`'s `[data-ws-delete]` band, matched.
           Owner decision D14 (2026-09-12): the app's own `/privacy` promised the

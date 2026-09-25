@@ -25,6 +25,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { openUrl } from '@tauri-apps/plugin-opener';
 
 import { supabaseConfig } from './config';
+import { clearRunLedger } from './sync-local';
 
 export interface AuthUser {
   /** `auth.users.id` - the value every RLS policy compares against. */
@@ -154,6 +155,10 @@ export async function deleteAccount(): Promise<void> {
  * sentence on the Account screen promises the local traces go, and nothing about
  * other devices; `'local'` ends this machine's session and only that. (The
  * website made the same change on 2026-09-13.)
+ *
+ * 🔴 THE RUN LEDGER IS ONE OF THOSE TRACES (TASK-013): which of this machine's runs
+ * the account holds, and the uploads still waiting to be tried. It goes here; the
+ * settings and the History stay, because they were never the account's.
  */
 export async function signOut(): Promise<void> {
   const sb = supabase();
@@ -163,4 +168,5 @@ export async function signOut(): Promise<void> {
   } catch {
     /* nothing cached, or storage unavailable */
   }
+  clearRunLedger();
 }

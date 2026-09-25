@@ -66,8 +66,39 @@
 
       <section class="band band-well band-tight">
         <div class="wrap">
-          <h2 class="t-md wide">Sync</h2>
+          <h2 class="t-md wide" tabindex="-1" data-ws-sync-title>Sync</h2>
           <div class="lst panel" style="margin-top:var(--sp-3)" data-ws-sync></div>
+          <!-- ============ THE RUN SUMMARIES THE ACCOUNT HOLDS (TASK-013, 2026-09-24) ========
+               The rows the "Run summaries" line above counts, each drawn the way History
+               draws a cloud row - because that is all a stored summary has. Each can be
+               removed from the account: the "added or removed, never edited" the disclosure
+               below describes. Removing one touches nothing on any machine.
+               Drawn only while signed in, and only when the account holds a summary (its
+               empty line is not written yet - AMENDMENTS-2.md). page-account.js -> runs(). -->
+          <div data-ws-cloud-runs hidden style="margin-top:var(--sp-5)">
+            <h3 class="t-base wide">Run summaries</h3>
+            <div class="panel" style="margin-top:var(--sp-3);overflow:visible">
+              <div class="xscroll">
+                <table class="tbl">
+                  <thead>
+                    <tr>
+                      <th style="width:11rem">When</th>
+                      <th style="width:6rem">Mode</th>
+                      <th>Sections</th>
+                      <th style="width:7rem" class="num-cell">Freed</th>
+                      <th><span class="visually-hidden">Remove</span></th>
+                    </tr>
+                  </thead>
+                  <tbody data-ws-cloud-rows></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="pager" style="margin-top:var(--sp-4)">
+              <button class="btn btn-sm" type="button" data-ws-action="cloudMore" aria-describedby="cloud-showing"><span class="btn-label">Load 20 more</span></button>
+              <span class="t-xs ink-3" id="cloud-showing" role="status">showing <span class="num" data-ws-text="cloudShown">0</span> of
+                <span class="num" data-ws-text="cloudAll">0</span></span>
+            </div>
+          </div>
           <details class="disclose" style="margin-top:var(--sp-4)">
             <summary>
               <span class="disclose-line">What happens when two machines disagree</span>

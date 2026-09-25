@@ -28,6 +28,7 @@ import { Splash } from './screens/Splash';
 import { useStore } from './state/store';
 import { loadCatalogue } from './lib/engine';
 import { track } from './lib/analytics';
+import { configuredFeatures } from './lib/config';
 
 /**
  * 🔴 THE APP BOOTS THROUGH SPLASH, and until now it did not.
@@ -73,6 +74,18 @@ function RootLayout() {
       cancelled = true;
     };
   }, [setCatalogue, setEngineError]);
+
+  /* 🔴 TASK-013: a session left by an earlier launch resumes syncing at boot, not
+     only when the Account screen opens - otherwise a finished run before that
+     screen is visited would wait in the upload queue for no reason. Loaded by a
+     dynamic import so a build with no Supabase keys never pulls the client in. */
+  useEffect(() => {
+    if (!configuredFeatures().sync) return;
+    void import('./lib/sync-session').then(
+      (sync) => sync.restoreSync(),
+      () => undefined,
+    );
+  }, []);
 
   return <Outlet />;
 }

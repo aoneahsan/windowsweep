@@ -377,3 +377,31 @@ screens are loaded per route. Neither changes a rendered pixel. The one place th
 `Suspense` fallback is deliberately WORDLESS, because the app's single loading sentence -
 *"Reading the catalogue from the engine"* - describes a different fact, and the dummy has no counterpart to
 take one from; it is static HTML with no chunk to wait for.
+
+## Amendment - 2026-09-24: the Sync band goes live, and the run summaries it counts (TASK-013)
+
+The desktop app's sync was written and never called (product `PENDING-TASKS.md` TASK-013). Wiring it makes
+the Sync band's signed-in rows true for the first time, and the wiring owes the account's run list and a
+control that removes one. The dummy drew neither, so it is amended first; the app then matches it.
+
+### 1. `account.html` + `page-account.js` - the run summaries the account holds
+
+| Was | Now, and why |
+|---|---|
+| *"3 of 8 runs uploaded ..."* a fixed string | the same words, now counting this machine's runs the account holds, so removing one below moves the count where it is read |
+| - | under the three rows, while signed in and only when the account holds a summary: **Run summaries** (h3) over When · Mode · Sections · Freed and a Remove column, each row drawn the way History draws a cloud row - relative day over the exact local minute, the `dry-run` / `real run` badge, "N sections" with `summary only`, the bytes - twenty a page, *Load 20 more* and "showing N of M" exactly as History pages. demo-data: the newest three of `seed.js` RUNS (this machine) and the two laptop rows `history.html` draws |
+| - | **Remove** on each row - the one new label. It answers at the control (pending, then the row goes and the polite count changes; no toast). Focus moves to the row that took its place, else the Sync heading, which gains `tabindex="-1"`. The verb is the disclosure's own: a run is "only ever added or removed, never edited" |
+| *Load 20 more* plain text | wrapped in `.btn-label`, because in the window this press is a network read and pending needs the span to paint |
+
+Why here and not only in History: History's `Other machines` shows what OTHER machines ran; this is everything
+the account stores, from every machine, beside the table that says what is stored - the one place a stored
+summary can be seen and removed. There is no Where column: the schema stores no machine name ("Never stored:
+... your machine name"), so a stored row cannot say which machine made it.
+
+### Declared rather than amended - each returned as NEEDS DECISION with TASK-013
+- The list's empty line (signed in, the account holds nothing): not drawn; the band's "0 of N runs uploaded" says it.
+- A failed read, write or Remove has no words of its own: the row stays, the settings row keeps "Local only" or
+  its last "Synced ..." time, and the run count counts only what the account confirmed.
+- The "What happens when two machines disagree" disclosure stays withheld in the app: its Undo has no words.
+- History's `Other machines` stays `pending-wave`. Its sentence ("not synced in this build yet") and this
+  dummy's `where: 'laptop'` for a cloud row both wait on History reading `fetchRuns` - outside this change.

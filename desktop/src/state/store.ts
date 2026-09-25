@@ -25,6 +25,7 @@ import { isCleanupRun, type Candidate, type RunSummary, type ProgressEvent, type
    vocabulary for one fact, which is the rule that module exists for. */
 import { isRunRecord } from '../lib/run-mode';
 import type { AuthUser } from '../lib/auth';
+import { noteRunFinished, noteSettingsChanged } from '../lib/sync-hooks';
 import { readPrefs, writePrefs, applyAllAxes, type AxisPrefs } from '../lib/theme';
 
 export type RunPhase = 'idle' | 'running' | 'done' | 'failed';
@@ -340,7 +341,7 @@ export const useStore = create<StoreState>()((set, get) => ({
 
        The same test the displays use, from the module that already decides it. */
     if (!isCleanupRun(summary)) return;
-    get().addHistory({
+    const entry: HistoryEntry = {
       runId: get().runId ?? '',
       startedAt: new Date(startedAt).toISOString(),
       mode: summary.mode,
@@ -350,7 +351,10 @@ export const useStore = create<StoreState>()((set, get) => ({
       freedBytes: summary.freed_bytes,
       estimatedBytes: summary.estimated_bytes,
       durationMs: Math.max(0, Date.now() - startedAt),
-    });
+    };
+    get().addHistory(entry);
+    /* Then sync, when this build has it: `lib/sync.ts` -> `stripRun` is the run's only way out. */
+    noteRunFinished(summary, entry);
   },
 
   scanTargets: [],
@@ -436,6 +440,7 @@ export const useStore = create<StoreState>()((set, get) => ({
     writePrefs(prefs);
     applyAllAxes(prefs);
     set({ prefs });
+    noteSettingsChanged();
   },
   /* 🔴 ON UNTIL SOMEONE TURNS IT OFF - D-24, GATE 4 round 7. It read `false`, and
      because this window passes the flag on every run the engine's own
@@ -449,6 +454,7 @@ export const useStore = create<StoreState>()((set, get) => ({
   setDeveloper: (on) => {
     writeLocal(DEVELOPER_KEY, on);
     set({ developer: on });
+    noteSettingsChanged();
   },
   idleDays: clampIdleDays(readLocal<number>(IDLE_DAYS_KEY, DEFAULT_IDLE_DAYS)),
   setIdleDays: (days) => {

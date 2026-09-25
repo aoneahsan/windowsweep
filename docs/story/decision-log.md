@@ -1032,3 +1032,11 @@ fences byte-identical to round 1 (the humanize pass found nothing to change in s
 `history.cloudPending`. Dummy-only: S-165's first sentence becomes *"The newer change wins, and this screen tells
 you which one it was, with an Undo that puts the other back."* - its second sentence stays as approved. GATE 4 is
 the owner's own (rows 11-13), asked with the dummy once TASK-013's states are drawn in it.
+
+## 2026-09-25 - GATE 4 for rows 11-13 `desktop-sync-strings`: APPROVED by the owner
+
+Shown the sixteen final strings as a table beside the desktop dummy's captures of every state
+(`../site-evidence/desktop-strings-gate4/shots/`: the Account states with the Sync band in view, Home's line,
+History's rows, failure and empty states), with S-165's amended first sentence and `history.cloudPending`'s
+removal. The owner, verbatim: *"Approve, ship them (Recommended)"*. They ship in `desktop-v1.3.0` with TASK-013,
+exactly as the dummy draws them.

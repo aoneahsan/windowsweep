@@ -18,23 +18,45 @@ import { Trans, useTranslation } from 'react-i18next';
 
 import { HISTORY_PAGE_SIZE } from '../../lib/history-rows';
 
-export function HistoryPager({ shown, total, onMore }: { shown: number; total: number; onMore: () => void }) {
+export function HistoryPager({
+  shown,
+  total,
+  onMore,
+  pending = false,
+  failed = false,
+}: {
+  shown: number;
+  total: number;
+  onMore: () => void;
+  /** The next page of the account's rows is being read (TASK-013). */
+  pending?: boolean;
+  /** That read failed: the rows read stand, and SY-02c's second line says so beside the button. */
+  failed?: boolean;
+}) {
   const { t } = useTranslation();
   const countId = useId();
   const exhausted = shown >= total;
+  const inert = exhausted || pending;
   return (
     <>
       <div className="pager hist-pager">
         <button
           className="btn btn-sm"
           type="button"
-          aria-disabled={exhausted || undefined}
+          aria-disabled={inert || undefined}
+          aria-busy={pending || undefined}
           data-disabled={exhausted ? '' : undefined}
+          data-pending={pending ? '' : undefined}
           aria-describedby={countId}
-          onClick={exhausted ? undefined : onMore}
+          onClick={inert ? undefined : onMore}
         >
-          {t('history.loadMore', { count: HISTORY_PAGE_SIZE })}
+          <span className="btn-label">{t('history.loadMore', { count: HISTORY_PAGE_SIZE })}</span>
         </button>
+        {failed ? (
+          <span className="t-sm" role="alert" style={{ marginInlineStart: 'var(--sp-2)' }}>
+            {t('account.sync.failed.listMore')}
+          </span>
+        ) : null}
         <span className="t-xs ink-3" id={countId} role="status">
           <Trans
             i18nKey="history.showing"

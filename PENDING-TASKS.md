@@ -3,9 +3,20 @@
 Open follow-ups the agent owes this project (fleet format: `### TASK-NNN`; done entries move to
 `docs/DONE-TASKS.md`). Owner-only rows live in `docs/MANUAL-TASKS.md`.
 
-Last updated: 2026-09-17 (TASK-014, TASK-015 and TASK-016 closed to `docs/DONE-TASKS.md` as DONE-013, DONE-014 and DONE-015 by the v4 run. TASK-013 is the only one left open, and it is blocked on owner row 15 - Google sign-in was re-probed on 2026-09-17 and still reads false)
+Last updated: 2026-09-25 (TASK-013: the code is done and the task waits only on its live verification - see its status block. Earlier 2026-09-17: TASK-014, TASK-015 and TASK-016 closed to `docs/DONE-TASKS.md` as DONE-013, DONE-014 and DONE-015 by the v4 run. TASK-013 is the only one left open, and it is blocked on owner row 15 - Google sign-in was re-probed on 2026-09-17 and still reads false)
 
 ### TASK-013 - the desktop app's cloud sync is written and never called
+
+**Status 2026-09-25 - the code is DONE; the task stays open for its live verification.** Wired dummy first in
+`d0977c1` (the Account sync band, the account's run list on `runs_user_id_started_at_idx`, boot restore),
+`1edd900` (the failure, pending and replaced states, Undo, Home's line, the threshold setters, a desktop logger)
+and the History commit after it (other machines' summaries read by `lib/history-cloud.ts`, the failed-read and
+empty states, and a build-start gate, `desktop/vite/catalogue-keys.ts`, after a removed key was found still in
+use). The words are story surface `desktop-sync-strings`, GATE 4 by the owner 2026-09-25. **Closes when:** a dev
+build with the Supabase keys runs an injected non-admin session through sign-in, a settings round trip, a
+dry-run's upload, History's other-machine row and a Remove - dry-runs only - plus the two-user RLS probe; then
+`SUPABASE_ENABLED` and the two repository variables are set (O6'), and `desktop-v1.3.0` ships it. The title's
+defect no longer holds: every function in `lib/sync.ts` has callers.
 
 **Found while working on:** the v3 run's desktop round-7 fixes (2026-09-13), reading `desktop/src/lib` for the
 sign-out scope. **Priority: high, and it blocks one thing** - setting the `SUPABASE_ENABLED` repository

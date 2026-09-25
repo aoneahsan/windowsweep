@@ -51,12 +51,10 @@ export function cleanupRuns(history: readonly HistoryEntry[]): HistoryEntry[] {
 }
 
 /**
- * The rows one chip shows.
+ * This window's own rows one chip shows.
  *
- * 🔴 `otherMachines` is EMPTY BY CONSTRUCTION in this build: a summary from another
- * machine arrives only through cloud sync, and the desktop app's sync is written and
- * never called (PENDING-TASKS TASK-013). The screen says so in place of rows - a
- * `pending-wave` declaration - rather than hiding the chip the dummy draws.
+ * `otherMachines` holds none of them by definition: another machine's rows are the
+ * account's, read by `lib/history-cloud.ts` and merged in by the screen (TASK-013).
  */
 export function rowsFor(runs: readonly HistoryEntry[], filter: HistoryFilter): HistoryEntry[] {
   if (filter === 'otherMachines') return [];
@@ -69,7 +67,7 @@ export function rowsFor(runs: readonly HistoryEntry[], filter: HistoryFilter): H
  * were. A dry-run deleted nothing, so it adds to neither - the dummy computes the
  * same two numbers over the same filtered list (`page-history.js` -> `paint`).
  */
-export function freedTotal(rows: readonly HistoryEntry[]): { bytes: number; runs: number } {
+export function freedTotal(rows: readonly { dryRun: boolean; freedBytes: number }[]): { bytes: number; runs: number } {
   let bytes = 0;
   let runs = 0;
   for (const r of rows) {

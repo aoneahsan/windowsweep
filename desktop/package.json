@@ -21,7 +21,7 @@
     "test:watch": "vitest",
     "gates": "yarn check:prepaint && yarn typecheck && yarn lint && yarn build && yarn test",
     "deps:outdated": "npx -y npm-check-updates",
-    "deps:update": "npx -y npm-check-updates -u && yarn install",
+    "deps:update": "npx -y npm-check-updates -u --reject typescript && yarn install",
     "postinstall": "cd .. && husky desktop/.husky",
     "sync:cli": "node scripts/sync-cli.mjs",
     "tauri": "tauri",

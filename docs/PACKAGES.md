@@ -183,7 +183,8 @@ platform package without its build script.
 - **`typescript` `~6.0.3`.** TypeScript 7.0.2 is the registry's `latest` and is blocked fleet-wide:
   `@typescript-eslint/typescript-estree` 8.70.1 peers `typescript >=4.8.4 <6.1.0`, so TS 7 removes `yarn lint`.
   6.0.3 is the newest 6.0.x. `yarn deps:update` runs the fleet's plain `ncu -u`, which proposes 7 - read
-  `~/.claude/rules/package-version-known-issues.md` first and keep `~6.0.3`.
+  `~/.claude/rules/package-version-known-issues.md` first and keep `~6.0.3`. `yarn deps:update` passes `--reject typescript`, because
+  `npm-check-updates -u` moves a package past its own tilde range - without it the script would break this pin.
 - **`drizzle-kit` `~0.31` and `drizzle-orm` `^0.45`** - the ledger's stable lines (below). Today they are also the
   registry's `latest` (0.31.11 / 0.45.3), so `ncu -u` moves them only within the lines.
 - **ESLint is no longer pinned.** The `~9.39.5` pin ended with ESLint 10 fleet-wide (owner, 2026-09-17). The block

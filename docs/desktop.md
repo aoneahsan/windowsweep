@@ -41,7 +41,7 @@ Optional, Google, and it opens your normal browser rather than a window inside t
 | your email address and display name | the section numbers it ran |
 | a last-seen timestamp | bytes reclaimed, bytes estimated, and an id |
 
-In 1.2.0 this is still dormant: Google is not enabled on the backend project, and the Account screen reports sign-in as unconfigured.
+In 1.1.0 and 1.2.0 this was dormant, because Google was not enabled on the backend project; from 1.3.0 it is on.
 
 ## Install it
 

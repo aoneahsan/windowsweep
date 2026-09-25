@@ -834,3 +834,134 @@ behind `React.lazy` took the entry chunk from 854,889 to 363,778 bytes, and its 
 nothing. The app's only loading sentence is *"Reading the catalogue from the engine"*, which is a different
 fact - printing it would have the window name something it is not doing - and in a packaged window the chunk
 is a local file, so this is a frame rather than a wait. A placeholder with words would need the dummy first.
+
+## 2026-09-24 - row 20 `site-terms`: the Terms page, and the six answers that shape it
+
+**Why the surface exists.** The owner, verbatim: *"i need 'terms & conditions' page as well on
+https://windowsweep.aoneahsan.com/, do that now first, so i can get google cloud console app in production and
+approved"*. Google sign-in went live on the backend the same morning, and Google's consent screen asks for a
+terms-of-service address beside the privacy policy's. GATE 2 for row 20 is that request (the content-map
+amendment of the same date).
+
+**The four facts he chose before a word was written (D31-D34):** governing law **Pakistan** and its courts; the
+minimum age is **whatever Google requires for an account where the reader lives**; the operator is **Ahsan
+Mahmood**, contact `aoneahsan@gmail.com`; the scope is **the site, the account and the software**.
+
+**The panel, named by the owner for this run:** *"Lean panel (Recommended)"* - dev-editor, the writer revises,
+line-editor, copy-editor, then the fact-checker together with the humor-emotion reviewer (mandatory: a legal
+safety surface), the keeper, the finalizer. The same panel `/privacy` went through under D12. 🔴 **GATE 4 is his,
+explicitly** - `site-terms` is outside the standing pre-authorisation's scope list.
+
+**The writer's first draft (13 slots, 533 words) raised three NEEDS DECISION, all answered the turn they arrived,
+each with the recommended option:**
+
+- **ND-1, acceptance:** *"One sentence (Recommended)"* - the lede ends *"Using any of them means you accept these
+  terms."* No product change at sign-in.
+- **ND-2, misuse:** *"One sentence (Recommended)"* - the contact-form section ends *"An account used to send abuse
+  or spam through the contact form may be deleted."* He can already do this as the project's owner; the page now
+  states it.
+- **ND-3, the as-is position:** *"Site + account too (Recommended)"* - *"This website and the account service are
+  provided as they are, with no promise that either is available at any given time, and no liability is accepted
+  for data lost from an account."* The software's position and the service's now match.
+
+**Two facts the packet stated too broadly, corrected by the writer against the code before the owner saw them** -
+worth keeping, because the packet was written from records: personal files go to the Recycle Bin **by default
+only** (`--permanent` and the desktop Picker's *Permanent* choice delete outright); and an administrator section
+asks through UAC **unless the console is already elevated**, in which case sections 12 and 13 run with no prompt.
+The page states both exactly.
+
+**The developmental round (2026-09-24), and one more answer.** The dev-editor returned five changes (S-006's
+"a dry-run comes first" claimed a safeguard nothing enforces; S-005 restated `/privacy`'s retention clause; S-006's
+elevation line sat inside the therefore-chain; the bound nouns - the desktop app had three names and "program"
+counted two and three; S-007's heading promised an inventory it points away from), all taken, and one NEEDS
+DECISION, answered by the owner the turn it arrived: **the effective date is the day the page goes live** -
+*"The day it goes live (Recommended)"* - set at publish, so a legal date never predates the page it dates.
+
+## 2026-09-24 - rows 11 and 13 (`desktop-moment`, `desktop-cockpit`): the strings TASK-013's sync wiring needs
+
+TASK-013 wired the desktop app's cloud sync (Account screen, dummy first - amendment in
+`desktop/design/AMENDMENTS-2.md`). Its implementer returned three `NEEDS DECISION` for sentences no approved
+artefact carries, and found two History strings the wiring makes stale. A run on the same two approved rows,
+**in parallel with row 20's**, on its own draft file (`docs/story/drafts/desktop-sync-strings.md`), so neither
+surface waits on the other; `run-state.json` tracks row 20 as the primary run and names this one beside it.
+The strings: (1) the Account cloud-run list's empty line; (2) a sync-failure line - what failed, that nothing on
+this PC changed, and that it is tried again; (3) the conflict notice when the account's newer settings replace
+this machine's, with an Undo; (4) History's other-machine rows, whose dummy label `laptop` is a machine name the
+schema never stores - and a host name must never be synced - so it needs a label that names none; (5)
+`history.cloudPending`, a pending-wave sentence that becomes false once other machines' rows are read. GATE 4 for
+rows 11-13 was the owner's own on 2026-09-05, so these strings go to him with row 20's.
+
+## 2026-09-24 - rows 18 and 19 (`site-app`, `site-front-site`): the strings sign-in going live makes false
+
+Google sign-in is on at the backend (D25), and the site's build turns its sign-in state on by probing
+`/auth/v1/settings` once the `.env` pair is filled (plan v5 W2). The OFF-only strings (`contact.blockedLead`,
+`contact.blocked`, their `/account` twins) simply stop rendering then - but three strings render in EVERY state and
+become false: `seo.signin.description` (*"It is not enabled yet"*), `sitemap.blurb.signin` (*"Carries the honest
+not-configured-yet state"*), and `seo.error.description`, which reuses the 404's *"That path does not exist"* on a
+page whose path does exist and failed to load (found by the S-25 fix, 2026-09-24). Plus web **TASK-007**: one line
+at the sign-in control when a Google sign-in is cancelled at Google. A third run in parallel, on its own draft
+(`docs/story/drafts/site-signin-strings.md`); both rows are inside the standing GATE 4 pre-authorisation (lean
+panel, finalizer PASS, zero NEEDS DECISION).
+
+## 2026-09-24 (later) - row 20's specialist round, and four more answers (D38-D41)
+
+**`site-terms`, round 1 specialists.** The fact-checker: **PASS** on S-001 to S-013 - 54 claims verified, one
+unverifiable until publish (the date, which the owner's own rule sets at deploy), three contradictions, none
+inside a fence. The humor-emotion reviewer: **PASS**, 0 hard fails, one misfire - S-011's sitemap blurb named the
+copy's own register (*"A safety surface: no humour, no urgency."*), which no reader has been given; its
+two-part replacement is taken. Reconciled in the main session (the keeper's step, no conflict between the two):
+
+- **The link S-006 vouches for was wrong, and the record said it was fixed.** `docs/safety-model.md` still
+  carried the pre-fix `Recoverable?` tier table, two `## Developer mode` and two `## No undo` headings, and two
+  table rows with a duplicated first cell. The approved `docs-safety` S-015 is recorded as applied in `ece0ff2`;
+  that commit applied part of it. Not an owner question - the fix was approved on 2026-09-08 - so it is applied
+  now, re-mirrored to `windowsweep-docs`, and the page is re-read on the live docs site before `/terms` ships.
+- **S-013's commentary** said "longest by twenty"; it is eighteen. Commentary only; fixed by the finalizer.
+- **ND-3 of the fact-check, the age sentence** - asked the turn it arrived. **D38**, verbatim: *"Manage own
+  account (Recommended)"* - the page says the age Google requires **to manage your own Google Account** in the
+  country where the reader lives, so a child on a parent-supervised account does not qualify.
+
+**`desktop-sync-strings`, the writer's three NEEDS DECISION** - each asked the turn it arrived, each answered
+with the recommended option:
+
+- **D39, a failed Remove:** *"Manual retry (Recommended)"* - kept as built. The row stays, the line says so, and
+  Remove can be pressed again; nothing is queued, because a deletion carried out later, while nobody watches
+  the list, runs against the product's premise of naming what it touches before it touches it.
+- **D40, the conflict notice:** *"Account + a Home line (Recommended)"* - on the Sync band's Settings row until
+  the next settings change or sign-out, **plus one line on Home above the run control while it stands**, because
+  a replacement can land at boot and the synced developer switch changes what the next run keeps.
+- **D41, a fresh machine:** *"No notice then (Recommended)"* - when this machine's side was never changed
+  (`untouched()` in `sync-session.ts`), taking the account's settings is the promise the Account screen already
+  makes (*"So a second machine starts where you left off."*), so no notice and no Undo.
+
+**`site-signin-strings`, the writer's one NEEDS DECISION** (which returns show `signin.cancelled`) - decided in
+the main session rather than asked: both options keep every sentence true and neither changes what the product
+does, so it is a wording call. Taken: (a), the more specific one - the cancelled line shows **only for the exact
+parameters a real cancel returns** on the hosted project, recorded when TASK-007 is verified, and every other
+error on the redirect shows `db.error.unknown`. Option (b) would have claimed neither beat for a real cancel.
+
+**`site-signin-strings` gains `sitemap.blurb.privacy` (S-005) - a main-session scope decision, 2026-09-24.**
+The live Privacy blurb read *"What each of the three programs sends. A safety surface: no humour, no urgency,
+no promised switch."* - the identical register-naming shape the humor-emotion reviewer flagged on the Terms
+blurb, shipped on `/sitemap` since 2026-09-13. Same key family as `sitemap.blurb.signin`, same row-19 owner, same
+standing GATE 4 condition, so it joined this run rather than opening a fourth. *"No promised switch"* stays: it
+is a product fact, not a register word. The writer's reusable proposal - grep every shipping string for
+*humour*, *urgency* and *safety surface* in the humor-emotion reviewer's checklist - is the keeper's to record.
+
+## 2026-09-24 - GATE 4 for row 20 `site-terms`: APPROVED by the owner
+
+Shown the whole page as it ships (S-001 to S-009), with its head, sitemap blurb, footer label and `llms.txt`
+line (S-010 to S-013) and the dummy's screenshots at 1440 and 390 in both appearances
+(`../site-evidence/terms-gate4/shots/`). The owner, verbatim: *"Approve, ship it (Recommended)"*. The panel it
+passed: lean, with the humor-emotion reviewer mandatory - fact-check PASS (54 verified, no invented fact),
+safety review PASS (0 hard fails, one misfire fixed), finalizer READY with zero NEEDS DECISION. Applied dummy
+first (`windowsweep-web/design/AMENDMENTS-2.md` amendment 21), then the app key for key.
+
+**D42, `desktop-sync-strings` round 1's one NEEDS DECISION** - asked the turn it arrived, with the gate: when the
+account's settings win on date alone but every value matches this machine's (the same choice made on two
+machines separately - `reconcile` compares dates, never values), the owner, verbatim: *"No notice then
+(Recommended)"* - no Account notice and no Home line, the way D41 treats a fresh machine.
+
+**At publish, the date moved - by the owner's own rule.** The page deploys on 2026-09-25 (Pakistan time), so
+S-008 ships *"These terms apply from 25 September 2026."* - "the day it goes live", exactly as the finalizer's
+note instructed the applier. No other word moved.

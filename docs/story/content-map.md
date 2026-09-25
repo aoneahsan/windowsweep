@@ -1,7 +1,8 @@
 # Content map - windowsweep
 
-Status: **APPROVED at GATE 2, 2026-09-05** · Bible: approved 2026-09-05 · Last updated: **2026-09-13**
-(the keeper batch: every status cell carries its applying commit; row 12, row 19's schema and question row 7
+Status: **APPROVED at GATE 2, 2026-09-05** · Bible: approved 2026-09-05 · Last updated: **2026-09-24**
+(row 20, `site-terms`, added on the owner's request - the amendment at the end. Earlier 2026-09-13,
+the keeper batch: every status cell carries its applying commit; row 12, row 19's schema and question row 7
 corrected - each a map-accuracy correction forced by an owner decision or a release, recorded in
 `decision-log.md` 2026-09-13; earlier, three rows amended on the owner's answers - the amendment note at the end)
 
@@ -36,7 +37,8 @@ The tone bands are the Bible's: **P** precision-before-an-irreversible-act (60),
 | 16 | `site-home` (the marketing site's home bands and `/download`) | unaware to problem-aware, arriving cold | hero promise -> the gamble they already lost -> the guarantees as refusals -> proof -> the two install paths | P dominant, R strong, W once | a landing page, 12-15 bands | `npx windowsweep --scan` and the desktop download | SoftwareApplication, 🔴 **no `offers`, no `isAccessibleForFree`** | **recorded 2026-09-13** - GATE 4 2026-09-13, applied web `377a6f2`; band 10 "opt-out" -> "switch" `85752cc` |
 | 17 | `site-privacy` (`/privacy` and the footer notice line) | being told, not asked | the one line -> the four destinations -> the refusals -> the CLI's zero-network fact | **P and R only. 🔴 No humor at all** | one page | none | none | **recorded 2026-09-13** - GATE 4 2026-09-13, applied web `377a6f2` |
 | 18 | `site-app` (sign-in, `/contact`, `/account`, `/admin`, empty and error states, 404) | working | plain lines above dense tables; every action names what it does | P, W in the empty states | a screen each | varies per screen | none | **recorded 2026-09-13** - GATE 4 2026-09-13 (pre-authorised, #15 taken in), applied web `07aa763`, follow-ups `85752cc` |
-| 19 | `site-front` for the SITE (its `llms.txt`, per-route `<title>`/description, the JSON-LD text) | a machine, or a search result | answer-first | P only | short | none | WebSite + SoftwareApplication + Person (ND-2: schema mirrors visible content, and no page names an organisation) | **recorded 2026-09-13** - GATE 4 2026-09-13, applied web `377a6f2`; llms.txt "opt-out" -> "switch" `85752cc` |
+| 19 | `site-front` for the SITE (its `llms.txt`, per-route `<title>`/description, the JSON-LD text) | a machine, or a search result | answer-first | P only | short | none | WebSite + SoftwareApplication + Person (ND-2: schema mirrors visible content, and no page names an organisation) | **recorded 2026-09-13** - GATE 4 2026-09-13, applied web `377a6f2`; llms.txt "opt-out" -> "switch" `85752cc`
+| 20 | `site-terms` (`/terms`, its `seo.terms` title and description, its `/sitemap` blurb, its footer label and one `llms.txt` line) | being told the rules before an account or a download - a notice, like `/privacy`, never a persuasion | who runs it and how to reach him -> the site -> the account (Google only, the age, deletion) -> the contact form -> **the software deletes files** (dry-run first, as-is under MIT, no liability for data loss) -> analytics, as a pointer to `/privacy` -> changes and the effective date -> the governing law | **P and R only. 🔴 No humor at all** | one page | none | none | **opened 2026-09-24** on the owner's request - GATE 2 by that request and D31-D34; GATE 4 asked explicitly (a legal safety surface, outside the pre-authorisation's scope list) | |
 
 **Order of writing** (owner decision 2026-09-05, "story first, then the app"): rows **11, 12, 13** first,
 because RW-093 writes their approved words into the click dummy before any app code is built against them.
@@ -71,7 +73,7 @@ said the docs domain had never resolved.)*
 | 2 | how to delete node_modules from old projects on windows | Section 17 lists build artefacts in projects you have not touched for 100 days and removes only the ones you select. It never scans a whole drive - you name the folders. | delete node_modules, stale build artefacts | 5, 6 | stable |
 | 3 | how to clear the yarn / npm cache on windows safely | Sections 1 and 3 prune package-manager caches on an idle gate, keeping anything used in the last 100 days and the newest version of every versioned tool, so the next install is still fast. | clear yarn cache, clear npm cache windows | 5, 3 | stable |
 | 4 | is it safe to use a windows cleaner / will it delete my files | Every deletion passes through one function with a declared folder, and personal folders are refused unconditionally - no flag overrides it. Personal files you do select go to the Recycle Bin, not to nothing. | safe windows cleaner, cleaner deleted my files | 4, 1 | stable |
-| 5 | how to see what a cleanup tool will delete before it deletes it | `--scan` measures every target and deletes nothing; `--dry-run` performs the whole run and writes nothing. The rehearsal is the same command as the performance, minus one word. | dry run cleanup, preview before delete | 3, 4 | stable |
+| 5 | how to see what a cleanup tool will delete before it deletes it | `--scan` measures every target and deletes nothing; `--dry-run` performs the whole run and changes nothing in the tree it rehearses (it writes only its own log and report - corrected 2026-09-24 to Bible section 3's 2026-09-07 wording). The rehearsal is the same command as the performance, minus one word. | dry run cleanup, preview before delete | 3, 4 | stable |
 | 6 | windows update cache / SoftwareDistribution taking up space | Section 12 clears the Windows Update cache, Delivery Optimization and the servicing logs. It needs an elevated console, so it skips with the exact command when you are not elevated. | windows update cache, softwaredistribution folder | 5 | stable |
 | 7 | does this cleanup tool send my data anywhere | The command line sends nothing at all: it makes no network calls, and its own test suite fails the build if any appear. The desktop window and the website send analytics - usage events and crash reports, never a file path - and there is no switch. (Corrected 2026-09-13; the old answer said the app sends nothing until you accept.) | no telemetry cleaner, offline disk cleanup | 9, 4 | **re-check on every desktop release** |
 | 8 | how to run a disk cleanup on a schedule on windows | `--install-task` registers a weekly Scheduled Task that runs the safe batch and notifies you. It never runs an interactive section, and it refuses to install from an npx cache, which Windows evicts. | scheduled disk cleanup, weekly cleanup task | 5, 6 | stable |
@@ -193,3 +195,34 @@ number that was wrong when it was written would be the tail wagging the dog.
 
 Recorded in `run-state.json` `openDecisions` and in `docs/MANUAL-TASKS.md` the turn it arrived, so the owner
 can reverse it in one edit if he reads the budget differently.
+
+## Amendment - 2026-09-24: row 20, the Terms page
+
+The owner asked for it directly: *"i need 'terms & conditions' page as well on
+https://windowsweep.aoneahsan.com/, do that now first, so i can get google cloud console app in production and
+approved"*. Google sign-in went live on the backend the same morning, and Google's consent screen asks for a
+terms-of-service address beside the privacy policy's. **GATE 2 for row 20 is his request itself**, with the
+four facts he chose for it the same turn (D31-D34 in `docs/PROJECT-CONTEXT.md`):
+
+| Fact | His answer |
+|---|---|
+| Governing law | **Pakistan**, and its courts |
+| Minimum age | **The age Google requires for an account where the reader lives** - sign-in is Google only, so the product asks for nothing Google does not already ask. Worded on the page, by his later answer (D38), as the age Google requires **to manage your own Google Account** in that country, so a parent-supervised child's account does not qualify |
+| Operator | **Ahsan Mahmood**, an individual developer; contact `aoneahsan@gmail.com`, the address `/privacy` already prints |
+| Scope | **The site, the account, and the software** - the command line and the desktop app delete files, so the page says plainly that each has a dry-run and neither requires one, that both are provided as they are under the MIT licence, and that no liability is accepted for lost data. *(Corrected 2026-09-24: this row first said "a dry-run comes first", a safeguard nothing enforces; the developmental round removed it from the page)* |
+
+**Row 20 is a safety surface**, the second on the site after row 17, and for a harder reason: it is the page
+that says who carries the risk when a tool that deletes files deletes the wrong thing. Humor is off, the
+humor-emotion reviewer is mandatory, and no sentence may pressure, frighten or reassure beyond what the facts
+support. 🔴 **GATE 4 is NOT pre-authorised for this row.** The standing pre-authorisation names its surfaces
+one by one and `site-terms` is not among them, so the finished page is shown to the owner and approved by him
+before it ships. That is also the right order for legal words whatever the gate says.
+
+**Two homes are one too many.** What an account stores, what the analytics send and what deletion removes are
+already written, approved and true on `/privacy` (row 17). This page points there instead of restating them,
+because a second copy of those facts is the one that goes stale when the schema moves. What only this page
+can say is who runs the service, the rules for using it, the risk of the software, and the law.
+
+🔴 **No pricing claim, in either direction** - the same rule as rows 16 to 19. The page says nothing about
+price, free or otherwise; the MIT licence is a redistribution fact, not a price. And no claim of a security,
+privacy or legal property the product does not have (Bible section 10).

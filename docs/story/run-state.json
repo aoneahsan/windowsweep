@@ -3,16 +3,19 @@
   "slug": "windowsweep",
   "bibleApproved": true,
   "contentMapApproved": true,
-  "phase": "recorded",
-  "surface": "HANDOFF 2026-09-13, after the keeper batch. ALL 19 content-map surfaces are written, approved at GATE 4 (the desktop trio 2026-09-05 by the owner, the rest under the pre-authorisation) and applied, and every one is recorded with its applying commit in content-map.md and decision-log.md 2026-09-13 (later). Nothing is in flight. Two items stay open, neither blocking: the voice fingerprint is calibrated:false (it needs one to three samples the owner chooses; /voice-calibrate), and C-091's label waits for the 1.3.0 cascade because it is an engine string (RW-121). The next story work is triggered by a change, not by this run: any new or changed user-visible string goes dummy first and is recorded here; desktop sync (TASK-013) will let S-017/S-019 name their trigger; web TASK-007 needs one line for a cancelled Google sign-in, written through this pipeline once row 15 lands.",
-  "round": 0,
-  "gate": 4,
+  "surface": "site-terms",
+  "phase": "finalize",
+  "status": "approved",
+  "round": 1,
+  "gate": "GATE 4 approved by the owner 2026-09-24 (\"Approve, ship it (Recommended)\")",
   "openDecisions": [
-    "Open, not blocking: the voice fingerprint is still calibrated:false. It was built from repository evidence rather than from writing samples the owner supplied; /voice-calibrate would settle it.",
-    "Open, low, from the cli-strings fact-check 2026-09-08 - C-091's label 'Sections run / skipped:'. runner.ps1:189 folds refused AND failed into the same count, so the label names one of three outcomes. report-bodies F-6 routed the question here and C-091 does not address it. Recommended: keep the label - the sibling's S-013 deliberately aligned to it, and changing both surfaces to 'run / not run' costs more than it buys - and add ONE sentence to C-091 recording that the counter includes refused and failed. Not done yet only because the cascade has not opened C-091."
+    "Open, not blocking: the voice fingerprint is still calibrated:false. It was built from repository evidence rather than from writing samples the owner supplied; /voice-calibrate would settle it."
   ],
   "escalatedAt": null,
-  "lastUpdated": "2026-09-13",
+  "approvedAt": "2026-09-24",
+  "lastUpdated": "2026-09-24",
+  "currentRun": "site-terms (content-map row 20, /terms) opened 2026-09-24 on the owner request \"i need terms & conditions page ... do that now first, so i can get google cloud console app in production and approved\". GATE 2 by that request with D31-D34 (Pakistan law and courts; the Google account age where the reader lives; operator Ahsan Mahmood, aoneahsan@gmail.com; the site, the account and the software). A legal SAFETY surface, outside gate4PreAuthorised.scope, so GATE 4 is asked of the owner explicitly. Panel: lean, with humor-emotion mandatory.",
+  "handoff20260913": "HANDOFF 2026-09-13, after the keeper batch. ALL 19 content-map surfaces are written, approved at GATE 4 (the desktop trio 2026-09-05 by the owner, the rest under the pre-authorisation) and applied, and every one is recorded with its applying commit in content-map.md and decision-log.md 2026-09-13 (later). Nothing is in flight. Two items stay open, neither blocking: the voice fingerprint is calibrated:false (it needs one to three samples the owner chooses; /voice-calibrate), and C-091's label waits for the 1.3.0 cascade because it is an engine string (RW-121). The next story work is triggered by a change, not by this run: any new or changed user-visible string goes dummy first and is recorded here; desktop sync (TASK-013) will let S-017/S-019 name their trigger; web TASK-007 needs one line for a cancelled Google sign-in, written through this pipeline once row 15 lands.",
   "notes": "The completion run opened 2026-09-07 under the plan at ../completion-plan-2026-09-07.md. GATE 4 is pre-authorised for the eleven remaining surfaces on a stated condition (gate4PreAuthorised), so a session applies an approved surface without stopping - but a finalizer FAIL or a fresh NEEDS DECISION still pauses that one surface. RED Two defects were found in copy this system had already approved: splash.html promises that the updater checks for a newer build and NOTHING in the app ever called the updater, and tauri.conf.json carried a plugins.updater.dialog key the plugin does not accept. Both were found by grepping for the mechanism rather than for the words, which is the sharpened form of the 2026-09-05 clause about approved artefacts holding claims nobody re-reads. RED And the story lint hook is blind to copy inside a code fence, so on the slot-shaped surfaces - cli-strings, and any .tsx copy - the fact-checker and a human reader are the only real gate; a green hook there is not evidence. | 2026-09-07 later: the analytics opt-out was removed by the owner mid-run, which re-opened a recorded surface - the first time that has happened here. The handling worth repeating: the words were changed in the CLICK DUMMY first and the reason written into the design README beside them (section 10a), so the person who reads the dummy to approve it sees why it changed; only then did the app follow. The voice decision inside that change was to KEEP the \"Never sent\" list against an instruction to keep it to one line, because band R delivers reassurance as a specific refusal and a notice with nothing checkable in it is an announcement. 🔴 And the cli-strings writer PROVED the fenced-copy blindness on its own file rather than citing the precedent: two banned words inside a slot fence went undetected (exit 0), the same two words in the commentary were both named (exit 2). That is a reproducible two-command proof and it belongs in the global record.",
   "gate4PreAuthorised": {
     "grantedAt": "2026-09-07",
@@ -67,6 +70,32 @@
     "ANSWERED 2026-09-13 - site-front-site ND-1..ND-4 and HF-1: https (the docs certificate issued 2026-09-12); Person, not Organization (schema mirrors visible content); Licence: MIT kept (a licence is not a price); the SoftwareApplication node is the CLI, its version read from VERSION at build time. The site-home .msi question answered with the published byte count. The footer notice: site-privacy S-011 governs, because content-map row 17 owns the footer notice line by name. All in decision-log.md 2026-09-13.",
     "GATE 4 - site-home (row 16), site-privacy (row 17), site-front-site (row 19) and site-front (row 9) APPROVED 2026-09-13 under the standing pre-authorisation, each with fact-consistency PASS and zero unanswered NEEDS DECISION. The three site surfaces are applied, dummy first, and deployed; site-front is being applied to the docs site. site-app (row 18) is in the lean panel.",
     "GATE 4 - site-app (row 18) APPROVED 2026-09-13 under the standing pre-authorisation. Two rounds of the lean panel; the finalizer re-verified the seven round-2 fixes against the code, changed no shipping word (41 fences byte-identical to round 2) and returned READY with zero NEEDS DECISION, on one condition - the apply carries the code fixes that make its words true, #15 included. Taken in: the apply lands #4, #6, #11, #14, #15 and #16 with the words, dummy first. Recorded in decision-log.md 2026-09-13.",
-    "RECORDED 2026-09-13 - the keeper batch (plan v3 W6), in the main session after two keeper dispatches froze at start. Every surface on the content map is recorded with its applying commit; row 12 (three cells), row 19 schema, question row 7 and the question map honesty note corrected as map-accuracy corrections forced by owner decisions and releases; the glossary gains switch and three shipped site strings that said opt-out were corrected dummy first (windowsweep-web 85752cc); Bible section 3 and fingerprint sentence 9 verified as already corrected on 2026-09-07. Open items 1-12 resolved with their sources in decision-log.md 2026-09-13 (later); the desktop strings from GATE 4 round 7 and the Picker work (7e78de7) recorded by surface with no voice change."
+    "RECORDED 2026-09-13 - the keeper batch (plan v3 W6), in the main session after two keeper dispatches froze at start. Every surface on the content map is recorded with its applying commit; row 12 (three cells), row 19 schema, question row 7 and the question map honesty note corrected as map-accuracy corrections forced by owner decisions and releases; the glossary gains switch and three shipped site strings that said opt-out were corrected dummy first (windowsweep-web 85752cc); Bible section 3 and fingerprint sentence 9 verified as already corrected on 2026-09-07. Open items 1-12 resolved with their sources in decision-log.md 2026-09-13 (later); the desktop strings from GATE 4 round 7 and the Picker work (7e78de7) recorded by surface with no voice change.",
+    "RESOLVED 2026-09-24 (records correction) - C-091, the section tally label: settled as recommended. The qualification that skipped folds in refused and failed has sat beside the slot in drafts/cli-strings.md since 2026-09-08, and the 1.3.0 cascade (f86c762) confirmed the label is kept deliberately. The item stayed listed here only because nobody closed it.",
+    "ANSWERED 2026-09-24 - site-terms ND-1 (acceptance): one sentence, \"Using any of them means you accept these terms.\" ND-2 (misuse): one sentence, \"An account used to send abuse or spam through the contact form may be deleted.\" ND-3 (as-is scope): site + account too, \"This website and the account service are provided as they are, with no promise that either is available at any given time, and no liability is accepted for data lost from an account.\" All three the recommended option, recorded in decision-log.md 2026-09-24.",
+    "ANSWERED 2026-09-24 - site-terms fact-check ND-1 (the effective date, verifiable only at deploy): answered by the owner's standing rule \"The day it goes live\" - the applier re-checks the calendar at deploy. ND-2 (the /safety-model page S-006 links to still carried the pre-fix tier table, two duplicated H2s and two malformed rows although ece0ff2 was recorded as applying docs-safety S-015): not an owner call - the fix was approved 2026-09-08 - so the main session applies it, re-mirrors and re-reads the live page before /terms ships. ND-3 (the age wording): asked; D38 \"Manage own account (Recommended)\".",
+    "ANSWERED 2026-09-24 - desktop-sync-strings: D39 \"Manual retry (Recommended)\" (a failed Remove is not queued); D40 \"Account + a Home line (Recommended)\" (the conflict notice on the Sync band until the next settings change or sign-out, plus one line on Home above the run control while it stands); D41 \"No notice then (Recommended)\" (no notice when this machine was never changed). site-signin-strings ND-1 decided in the main session as option (a), a wording call that changes no behaviour. All in decision-log.md 2026-09-24 (later).",
+    "GATE 4 - site-terms (row 20) APPROVED by the owner 2026-09-24, verbatim \"Approve, ship it (Recommended)\", shown the full page, its head, blurb, footer label and llms.txt line with the dummy screenshots. D42 (desktop-sync-strings round 1): \"No notice then (Recommended)\" - no notice when a date-only win changes no value."
+  ],
+  "panel": "lean, named by the owner 2026-09-24 (\"Lean panel (Recommended)\"); humor-emotion mandatory (legal safety surface)",
+  "parallelRuns": [
+    {
+      "surface": "desktop-sync-strings (content-map rows 11 and 13 - TASK-013)",
+      "draft": "docs/story/drafts/desktop-sync-strings.md",
+      "phase": "review",
+      "status": "in-progress",
+      "round": 1,
+      "openedAt": "2026-09-24",
+      "gate4": "the owner, with row 20"
+    },
+    {
+      "surface": "site-signin-strings (content-map rows 18 and 19 - sign-in live, the error description, TASK-007)",
+      "draft": "docs/story/drafts/site-signin-strings.md",
+      "phase": "review",
+      "status": "in-progress",
+      "round": 1,
+      "openedAt": "2026-09-24",
+      "gate4": "standing pre-authorisation (site-app, site-front-site): lean panel, finalizer PASS, zero NEEDS DECISION"
+    }
   ]
 }

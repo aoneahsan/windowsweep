@@ -251,7 +251,7 @@ there binds until a later one replaces it. What each block covers:
 - **Dev ports:** 5972 (docs site start), 5973 (docs site serve), 5974 (desktop Vite dev URL), 5975 / 5976
   (the marketing site dev / preview), in `~/.dev-ports.json` - paths repointed to `windowsweep-root` on
   2026-09-12.
-- **Portfolio:** `apps/WINDOWSWEEP_portfolio-info_2026-09-12.md` in the notebook, with a byte-identical copy at
+- **Portfolio:** `apps/WINDOWSWEEP_portfolio-info_2026-09-25.md` in the notebook, with a byte-identical copy at
   this repository's root (outside the npm `files` allowlist). Refreshed to 1.2.0, both releases and the live
   site by the 2026-09-12 audit; the master links entry carries `links.web` = the site, `links.docs` over HTTP
   by decision, and `ownerReview` still empty (owner row 5).

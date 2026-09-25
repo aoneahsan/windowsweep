@@ -26,8 +26,8 @@
  *
  * 🔴 POLICIES POLICE ROWS, NEVER COLUMNS. Every column-level rule stated in the
  * comments here - `platform_role` writable by nobody, `email` written only by
- * the signup trigger, an admin able to touch only `status`/`handled_at`/
- * `handled_by` - is enforced by the GRANT, not by anything in this file. Read
+ * the signup trigger, an admin able to touch only `status` - is enforced by the
+ * GRANT, not by anything in this file. Read
  * the privilege-block migration beside it, and verify both from
  * `information_schema.column_privileges`, never from either file's text.
  */
@@ -138,6 +138,8 @@ export const contactRequests = pgTable(
     /** Out of the INSERT grant - a sender cannot file a request already handled. */
     status: text('status').notNull().default('new'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    /** Set by the `contact_requests_stamp_handled` trigger, never by a client (TASK-017): now() when the
+        status changes to anything but `new`, cleared when it returns to `new`, pinned otherwise. */
     handledAt: timestamp('handled_at', { withTimezone: true }),
     /* 🔴 No foreign key on `handled_by`, deliberately, and none on
        `admin_audit.actor` either. Who handled a request is an audit-adjacent
@@ -174,8 +176,8 @@ export const contactRequests = pgTable(
       to: authenticatedRole,
       using: isPlatformAdmin,
     }),
-    /* Triage. The GRANT narrows it to `status`, `handled_at`, `handled_by`; this
-       policy decides WHO, the grant decides WHAT. A non-admin has no UPDATE
+    /* Triage. The GRANT narrows it to `status` - the two stamps are the trigger's
+       (TASK-017); this policy decides WHO, the grant decides WHAT. A non-admin has no UPDATE
        policy that passes, so their update matches zero rows and returns
        200-with-0-rows rather than a refusal - assert the row count, never the
        status code. */

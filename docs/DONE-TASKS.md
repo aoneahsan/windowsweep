@@ -3,7 +3,7 @@
 Closed agent follow-ups, moved here from the root `PENDING-TASKS.md` with the date and the commit that closed
 them. Open work lives there; owner-only rows live in `docs/MANUAL-TASKS.md`.
 
-Last updated: 2026-09-25 (DONE-017 - TASK-018, History's zero-count total, closed without new words. Earlier: DONE-016 - TASK-013, the desktop sync, verified live. Earlier 2026-09-17: DONE-013, DONE-014 and DONE-015 - the design-record split, the Report export, and three of the four History and Report gaps)
+Last updated: 2026-09-25 (DONE-018 - TASK-017, the triage stamps moved to the server. Earlier: DONE-017 - TASK-018, History's zero-count total, closed without new words. Earlier: DONE-016 - TASK-013, the desktop sync, verified live. Earlier 2026-09-17: DONE-013, DONE-014 and DONE-015 - the design-record split, the Report export, and three of the four History and Report gaps)
 
 ### DONE-001 - Download and set up the desktop toolchain and dependency trees
 
@@ -496,3 +496,37 @@ exists - worded through the story pipeline: `desktop-cockpit` is a rows 11-13 su
 owner's own.
 
 **Why it was not fixed there.** It needs new approved words, and the verification run wrote no repository file.
+
+### DONE-018 - an admin's browser writes `handled_at` and `handled_by` on a contact request
+
+**Closed 2026-09-25** (owner decision D48). The site stopped sending the stamps first (windowsweep-web `486d650`,
+deployed), then migration `20260925154905_stamp_contact_request_handled.sql` went in with `supabase db push
+--linked`, then `site-evidence/task017/` proved it: the checks saw the old schema before the push and passed 10
+of 10 after it, and the live `/admin` triage stamped `handled_by` = the admin and `handled_at` = its audit row's
+`at` to the microsecond, with Undo clearing both. The identities were torn down to 0; the audit rows stay by design.
+The UI driver's one FAIL (`/admin/audit` expected exactly two rows) was the checks driver's own five rows on the
+same request - read back from the catalog, the UI's two are the newest and correct (`logs/admin-audit-verify.txt`).
+
+**Found while working on:** RW-116, the site verified as a person (2026-09-25), flow 3 as `t1+admin`.
+**Priority: low** - only a platform admin can write these fields, and the audit trail is sound; but the inbox's
+record of *when* and *by whom* is whatever the admin's client sent. **APPROVED by the owner on 2026-09-25 (D48,
+"Yes, apply it (Recommended)")**: the migration `20260925154905_stamp_contact_request_handled.sql` and its rollback
+are written; the site change deploys first, after site parity round 6, then the migration, then flow 3 again.
+
+**The defect.** `20260908065528_site_privileges_and_triggers.sql:109` grants
+`update (status, handled_at, handled_by)` on `public.contact_requests` to `authenticated`, and the site sends
+both handled fields itself. Measured: the stored `handled_at` was `2026-09-25T09:48:18.983Z` while the audit row
+for the same write reads `09:48:18.738Z` - the browser's clock, 245 ms apart - and nothing stops an admin
+sending any time, or another admin's id as `handled_by`. The audit trigger's `actor` and `at` are server-side,
+so `admin_audit` itself is right.
+
+**What to do.** A forward migration from the schema's home (`desktop/src/db/schema/site.ts`, `drizzle-kit
+generate --custom`): a `BEFORE UPDATE` trigger on `contact_requests` that sets `handled_at = now()` and
+`handled_by = auth.uid()` when `status` becomes `handled`, and nulls both when it goes back to `new`; then the
+grant narrowed to `update (status)`, with its rollback beside it in `supabase/rollbacks/`. Regenerate
+`windowsweep-web/src/db/types.ts`, drop the two fields from the site's triage write, and re-run RW-116 flow 3's
+Mark handled / Undo pair, reading `handled_at` against the audit row's `at` (equal to the millisecond, since
+both come from one transaction's `now()`).
+
+**Why it was not fixed there.** RW-116 was verification, run by an agent that writes no repository file; the
+fix is a production schema change, which needs the owner's approval first.

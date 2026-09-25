@@ -194,6 +194,16 @@ else's database. `GET /projects/windowsweep/vault` → the `supabase` block.
 Both migrations were applied with `supabase db push --linked` on 2026-09-07 and
 verified from the catalogs (below), not from these files.
 
+**`20260925154905_stamp_contact_request_handled.sql`** (TASK-017, owner decision D48) was applied on
+2026-09-25, a dry run first showing it as the only pending migration, and AFTER the site stopped sending the two
+stamps, so no admin write could meet the narrowed grant. `../../../site-evidence/task017/checks-source.txt`
+proved it both ways: before the push it saw the old schema (the trigger absent, `handled_at` and `handled_by`
+updatable, a forged stamp accepted); after it, 10 of 10 - the trigger BEFORE UPDATE and enabled, its function's
+`proacl` `{postgres=X/postgres}`, `authenticated` holding UPDATE on `status` alone, the stamp equal to its audit
+row's `at` to the microsecond, a forged stamp refused `42501`, the pin, the reopen, and a non-admin stopped by the
+policy and by the grant. The live `/admin` triage and its Undo then ran on top. The rollback is beside it, in
+`rollbacks/`, never auto-applied.
+
 ## Sign-in: Google is on, and the release builds carry the keys
 
 **Google is enabled** (MANUAL-TASKS row 15, the owner, 2026-09-24):

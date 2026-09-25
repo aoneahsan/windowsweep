@@ -455,9 +455,9 @@ whole `D:\work\windowsweep-root` folder, not cloning the three repositories.
 
 ## Open material unknowns
 
-- **No owner decision is open (2026-09-25).** TASK-017 was approved (D48) and is being applied - site change first,
-  then the migration, then RW-116's flow 3 again. TASK-018 closed without new words (DONE-017), so it needed no
-  GATE 4 of his.
+- **No owner decision is open (2026-09-25).** TASK-017 was approved (D48), applied and verified both ways (DONE-018):
+  the server stamps the triage and the admin's grant is `status` alone. TASK-018 closed without new words (DONE-017),
+  so it needed no GATE 4 of his.
 - **Still owed by the owner, polled at the start of every session:**
   - **Row 30** - publish the OAuth consent screen (D29), with the field values in the row.
   - **Row 31** - one real Google sign-in in the installed desktop app (D30): **ready** - 1.3.0 is installed here,

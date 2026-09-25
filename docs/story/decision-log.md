@@ -1040,3 +1040,20 @@ Shown the sixteen final strings as a table beside the desktop dummy's captures o
 History's rows, failure and empty states), with S-165's amended first sentence and `history.cloudPending`'s
 removal. The owner, verbatim: *"Approve, ship them (Recommended)"*. They ship in `desktop-v1.3.0` with TASK-013,
 exactly as the dummy draws them.
+
+## 2026-09-25 - run opened: `team-voice`, across rows 1, 7, 9, 13, 16 and 19 (GATE 2 by D44-D46)
+
+**Why.** The owner's fleet rule of 2026-09-25, verbatim: *"we market as {product} team and not as single person"* -
+no personal maker line, founder byline or first-person-singular maker voice on any product surface; public copy
+says "the {Product} team"; the owner's own portfolio voice is separate. Asked the same day and answered: **D44**
+*"Change first, then release (Recommended)"* (the desktop Settings wording lands before `desktop-v1.3.0`), **D45**
+*"All public surfaces, legal kept (Recommended)"* (author metadata included; the Terms operator of D33, the LICENSE
+copyright and the npm `author` field stay), **D46** *"Drop it from product rosters (Recommended)"* (the
+"Meet the Developer" portfolio entry leaves every product roster). Panel: *"Lean panel (Recommended)"*.
+
+**Supersedes** the resolved decision of 2026-09-07, *"docs-about 'independent software engineer': keep it,
+unchanged, one wording across every surface"* - that page becomes the team's.
+
+**Gates.** GATE 4 for row 13 (the desktop Settings strings) is the owner's own. Rows 1, 7, 9, 16 and 19 sit under
+`gate4PreAuthorised` (finalizer fact-consistency PASS and zero unanswered NEEDS DECISION); they are shown to him in
+the same batch regardless, because the rule is his and new. Draft: `docs/story/drafts/team-voice.md`.

@@ -3,7 +3,7 @@
 Open follow-ups the agent owes this project (fleet format: `### TASK-NNN`; done entries move to
 `docs/DONE-TASKS.md`). Owner-only rows live in `docs/MANUAL-TASKS.md`.
 
-Last updated: 2026-09-25 (latest: TASK-019 filed - the three `desktop/scripts/*.mjs` generators, found while preparing D37's desktop half. Earlier: TASK-013 closed to `docs/DONE-TASKS.md` as DONE-016 after its live verification; TASK-017 filed from RW-116: the admin's browser writes the handled fields; TASK-018 filed from TASK-013's run: the zero-count History header. Earlier 2026-09-17: TASK-014, TASK-015 and TASK-016 closed to `docs/DONE-TASKS.md` as DONE-013, DONE-014 and DONE-015 by the v4 run. TASK-013 is the only one left open, and it is blocked on owner row 15 - Google sign-in was re-probed on 2026-09-17 and still reads false)
+Last updated: 2026-09-25 (latest: TASK-018 closed to `docs/DONE-TASKS.md` as DONE-017 - no new words were needed. Earlier: TASK-019 filed - the three `desktop/scripts/*.mjs` generators, found while preparing D37's desktop half. Earlier: TASK-013 closed to `docs/DONE-TASKS.md` as DONE-016 after its live verification; TASK-017 filed from RW-116: the admin's browser writes the handled fields; TASK-018 filed from TASK-013's run: the zero-count History header. Earlier 2026-09-17: TASK-014, TASK-015 and TASK-016 closed to `docs/DONE-TASKS.md` as DONE-013, DONE-014 and DONE-015 by the v4 run. TASK-013 is the only one left open, and it is blocked on owner row 15 - Google sign-in was re-probed on 2026-09-17 and still reads false)
 
 ### TASK-017 - an admin's browser writes `handled_at` and `handled_by` on a contact request
 
@@ -29,22 +29,6 @@ both come from one transaction's `now()`).
 
 **Why it was not fixed there.** RW-116 was verification, run by an agent that writes no repository file; the
 fix is a production schema change, which needs the owner's approval first.
-
-### TASK-018 - History's header reads "freed in the last 0 runs" on an empty filter
-
-**Found while working on:** TASK-013's live verification (2026-09-25), the Dry-runs filter on an account with no
-dry-runs. **Priority: low** - the figure is true, the phrase is clumsy.
-
-**The defect.** `desktop/src/components/history/HistoryHeader.tsx:27` renders `history.freedLast` with
-`count={runs}`, and the catalogue has only `_one` and `_other`, so a count of 0 takes `_other`: *"0 B / freed in
-the last 0 runs"*.
-
-**What to do.** Dummy first (`desktop/design/windowsweep-click-dummy/`, the History header in its empty state),
-then a `history.freedLast_zero` key - i18next uses a `_zero` form for a count of 0 in every language when one
-exists - worded through the story pipeline: `desktop-cockpit` is a rows 11-13 surface, whose GATE 4 is the
-owner's own.
-
-**Why it was not fixed there.** It needs new approved words, and the verification run wrote no repository file.
 
 ### TASK-019 - three build-time generators live in `desktop/scripts/*.mjs`, which the house rules forbid
 

@@ -3,7 +3,7 @@
 Closed agent follow-ups, moved here from the root `PENDING-TASKS.md` with the date and the commit that closed
 them. Open work lives there; owner-only rows live in `docs/MANUAL-TASKS.md`.
 
-Last updated: 2026-09-25 (DONE-016 - TASK-013, the desktop sync, verified live. Earlier 2026-09-17: DONE-013, DONE-014 and DONE-015 - the design-record split, the Report export, and three of the four History and Report gaps)
+Last updated: 2026-09-25 (DONE-017 - TASK-018, History's zero-count total, closed without new words. Earlier: DONE-016 - TASK-013, the desktop sync, verified live. Earlier 2026-09-17: DONE-013, DONE-014 and DONE-015 - the design-record split, the Report export, and three of the four History and Report gaps)
 
 ### DONE-001 - Download and set up the desktop toolchain and dependency trees
 
@@ -475,3 +475,24 @@ finished run, `deleteRun` leaves 0 rows, and the rows hold no path (read them ov
 
 **Why it was not fixed there.** It is a feature, not a two-line fix; it needs the live sign-in to verify, which
 row 15 gates; and it was outside that dispatch's scope.
+
+### DONE-017 - History's header reads "freed in the last 0 runs" on an empty filter
+
+**Closed 2026-09-25**, commit `9e0a488`, and without new words: the total block hides while the view holds no
+real run - dummy first (`page-history.js`, `data-ws-hist-sum`), then `HistoryHeader.tsx` (`runs > 0`) - and the
+empty row's approved words speak. So it no longer waited on the owner's GATE 4 (`desktop/design/AMENDMENTS-3.md`).
+Gates green; the next desktop release's GATE 4 round checks it with History's empty states in scope.
+
+**Found while working on:** TASK-013's live verification (2026-09-25), the Dry-runs filter on an account with no
+dry-runs. **Priority: low** - the figure is true, the phrase is clumsy.
+
+**The defect.** `desktop/src/components/history/HistoryHeader.tsx:27` renders `history.freedLast` with
+`count={runs}`, and the catalogue has only `_one` and `_other`, so a count of 0 takes `_other`: *"0 B / freed in
+the last 0 runs"*.
+
+**What to do.** Dummy first (`desktop/design/windowsweep-click-dummy/`, the History header in its empty state),
+then a `history.freedLast_zero` key - i18next uses a `_zero` form for a count of 0 in every language when one
+exists - worded through the story pipeline: `desktop-cockpit` is a rows 11-13 surface, whose GATE 4 is the
+owner's own.
+
+**Why it was not fixed there.** It needs new approved words, and the verification run wrote no repository file.

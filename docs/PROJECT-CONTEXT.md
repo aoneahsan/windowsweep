@@ -165,6 +165,11 @@ in production and approved", then approved executing plan v5 with custom agents.
   three sentences and the **Source** / **Support this work** buttons are kept word for word and written into the
   dummy first; the answer is also that panel's GATE 4. D-66 (the Settings status note) was the main session's call by
   the round-8 amendment and arrives in the app. Both are checked by round 15 before the tag (D44).
+- **D48 - TASK-017 is applied** (asked 2026-09-25): **"Yes, apply it (Recommended)"**. The forward migration
+  `20260925154905_stamp_contact_request_handled.sql`: a trigger stamps `handled_at` and `handled_by` on the server when
+  the status changes (cleared on a return to `new`, pinned otherwise), and the admin's column grant narrows to
+  `status`. The site stops sending both first, and RW-116's flow 3 is re-run after. A production schema change, so his
+  yes came first (the D30/D36 pattern).
 
 ### How the frontend UI mandates map to this product - the declared exemptions
 
@@ -252,9 +257,9 @@ there binds until a later one replaces it. What each block covers:
   (the marketing site dev / preview), in `~/.dev-ports.json` - paths repointed to `windowsweep-root` on
   2026-09-12.
 - **Portfolio:** `apps/WINDOWSWEEP_portfolio-info_2026-09-25.md` in the notebook, with a byte-identical copy at
-  this repository's root (outside the npm `files` allowlist). Refreshed to 1.2.0, both releases and the live
-  site by the 2026-09-12 audit; the master links entry carries `links.web` = the site, `links.docs` over HTTP
-  by decision, and `ownerReview` still empty (owner row 5).
+  this repository's root (outside the npm `files` allowlist). Refreshed on 2026-09-25 to CLI 1.3.1, `desktop-v1.3.0`
+  with sign-in, `/terms` and the team voice (27 modules and 22 Rust tests counted at the tags); the master links
+  entry carries `links.web` = the site, `links.docs` over HTTPS, and `ownerReview` still empty (owner row 5).
 - **ORCID:** `windowsweep.bib` (`aoneahsan-windowsweep-2026`) in the notebook's ORCID folder and appended to
   `aoneahsan-all-works.bib`; the import and the work-type retype are owner rows in that folder's
   `MANUAL-TASKS.md` (row 24).
@@ -450,11 +455,9 @@ whole `D:\work\windowsweep-root` folder, not cloning the three repositories.
 
 ## Open material unknowns
 
-- **Two owner decisions are open (2026-09-25), and neither blocks a release.** **TASK-017** - whether to apply
-  the forward migration that stamps `handled_at` and `handled_by` on the server and narrows the admin's update
-  grant on `contact_requests` to `status` (a production schema change, so the D30/D36 pattern: his yes first).
-  **TASK-018** - the words for History's zero-count header (`desktop-cockpit`, a rows 11-13 surface whose GATE 4
-  is his own).
+- **No owner decision is open (2026-09-25).** TASK-017 was approved (D48) and is being applied - site change first,
+  then the migration, then RW-116's flow 3 again. TASK-018 closed without new words (DONE-017), so it needed no
+  GATE 4 of his.
 - **Still owed by the owner, polled at the start of every session:**
   - **Row 30** - publish the OAuth consent screen (D29), with the field values in the row.
   - **Row 31** - one real Google sign-in in the installed desktop app (D30): **ready** - 1.3.0 is installed here,

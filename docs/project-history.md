@@ -442,4 +442,23 @@ Derived from those decisions by the agent, under the standing rules:
   mark keeps its sky-blue gradient. Free treatments: `sky` (231) and `plum` (320).
 - Registered ports: 5972 (docs site start), 5973 (docs site serve), 5974 (desktop Vite dev URL).
 
-Last Updated: 2026-09-25 (RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim)
+### Session 14 decisions (2026-09-13/14) - the v3 run, taken from recorded rules, none from the owner
+
+No owner question arose in the run; each call below was answerable from a rule in force, an approved artefact
+or a measured fact, and each is reversible in one change. Recorded so nobody asks them again.
+
+| Question | Settled as | Because |
+|---|---|---|
+| A Permanent removal from the Picker asked no confirmation (GATE 4 round 8, D-48) | **Confirm first**: an alert dialog naming the count, *"They do not go to the Recycle Bin. Permanent has no undo."*, Cancel focused; Recycle Bin mode keeps one press | the Bible's core promise and its rule against implying a deletion is reversible; the engine's own final question exists so a permanent removal is never one keypress, and the window answers it on the reader's behalf. `docs/story/decision-log.md` 2026-09-13 |
+| Section 17's rows under a "Recycle Bin" bar (D-49) | the bar says 17's rows are deleted outright whichever mode is picked | `modules/projects.ps1:157` - the engine removes them through `Remove-PathSafe` in either mode |
+| The Report's *Export...* (D-42) | **declared `pending-wave`** on screen for 1.2.0; the build is TASK-015 | it needs `--export` on the Rust allowlist and a reveal permission on a release-gated build; the parity rules define the class for exactly this |
+| "opt-out" in three shipped site strings | **"switch"**, the family's word, now in the Bible's glossary | `/privacy`'s lede and `docs/desktop.md` already said *"There is no switch."* |
+| The site's home band 14, sitemap 404 card, installer links (site GATE 4 S-04, S-05, S-11) | the dummy gains band 14's sign-in-off state; the sitemap drops the 404 card and absorbs the machine-readable panel; the installer buttons link the files | design authority (`frontend-ui-standards.md` §8), dummy first |
+| Sign-out on `/account` and the desktop Account screen | **this browser / this machine only** (`scope: 'local'`) | the approved dummy's sign-out note; supabase-js's `global` default ended the other app's session in the shared auth pool |
+| May the site's build need the network? | **yes, for the release check** (`vite/release-strings.ts`) | a gate that skips itself offline is the decorative gate the rules forbid; CI and every deploy have the network |
+| The desktop catalogue crossed 500 lines | split into `locales/en/{shell,home,sections,account}.json`, locales discovered by glob | the site's precedent and the house cap; a second language is now one directory and no code |
+| The Reclaim button promised the measured total (GATE 4 round 9, **D-60**) | after a rehearsal with the CURRENT arguments the button carries **that rehearsal's own estimate**; before one, or once any argument changes, it is worded as the bound it is - *"Reclaim up to"* | round 9 measured *Reclaim 34.2 GB* beside the engine's own dry run of the same arguments estimating 2.0 GB: the engine's gates - the idle window, the temp window, a browser in use - cut the measured total down. The Bible: never state a gigabyte figure as a promise. `src/lib/rehearsal.ts` |
+| The same promise two bands lower (GATE 4 round 10, **D-61**) | the rule generalises: **every** figure that describes what a run WOULD FREE follows D-60 - Home's ladder rows and total, and the Run screen's at-rest rows. A figure that describes what **is there** - Home's hero, a section card's measured size - keeps its measured number | `SafeRunLadder.tsx`'s own header states the invariant it was breaking: the ladder total "is the same number the Reclaim button carries", so the two cannot print different figures. Decided 2026-09-14, dummy first; the dummy gains the gated state its seed cannot show. `docs/story/decision-log.md` |
+| A 53 px overflow at 760 on the longest engine title (**D-62**) | fixed in the same wave, **not** release-blocking | the dummy reproduces it exactly, so the rule is the dummy's; `tauri.conf.json` sets `minWidth: 760`, so 760 is the narrowest real width |
+
+Last Updated: 2026-09-25 (RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day session 14's decision table, moved the same way)

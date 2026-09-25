@@ -130,6 +130,28 @@ the Picker's Clear with them. What remains:
 
 ---
 
+## §updater — `desktop-v1.3.0`, released 2026-09-25 and proved end to end
+
+The release GATE 4 round 15 blessed: cut on `5934008`, published `--latest` (IRON rule 13), from
+`../release-kit-1.3.0/`. **The pre-flight** passed on every anchor and precondition first (O2': `VERSION`, the
+desktop manifests, `tauri.conf.json`, `Cargo.toml` and `Cargo.lock` all 1.3.0; O6': `SUPABASE_ENABLED` and both
+Supabase variables set; the installed app at 1.2.0). The `desktop-release` workflow built both installers with
+every step green and printed *"Supabase build variables exported for the rest of this job"* - sign-in live.
+
+**The in-app updater, 1.2.0 → 1.3.0, on this machine:**
+
+```
+HKCU before: {"DisplayVersion":"1.2.0", ...}
+launched C:\Users\PC\AppData\Local\windowsweep\windowsweep-desktop.exe pid 7680
+update band visible; line naming 1.3.0: "Version 1.3.0 is ready"
+press: clicked
+HKCU after:  {"DisplayVersion":"1.3.0", ...} after 3 s
+```
+
+**The first-boot beacons**, signed out: GA4 (via Tag Manager), Amplitude and Clarity only - `screen.view` on GA4 and
+Amplitude - with **0 undisclosed hosts** (no Supabase call from a signed-out window) and **0 personal-data
+matches**. Full numbers: `docs/runs-and-releases.md`, 2026-09-25. No engine run beyond startup's `--list --json`.
+
 ## §updater — `desktop-v1.2.0`, released 2026-09-17 and proved end to end
 
 The release GATE 4 round 12 blessed. Cut on `3c0c889`, published `--latest` (IRON rule 13), and the two

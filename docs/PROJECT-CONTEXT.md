@@ -1,22 +1,22 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-09-25 (later the same day: RW-116 and TASK-013 verified as a person and torn down, O6' set, the desktop cascaded to 1.3.0, the open-unknowns section brought to date - TASK-017 and TASK-018 are the two open owner decisions. Earlier: session 17: D25-D43 recorded - the Terms page, sign-in live on the site, the runs index, the desktop sync behaviour, up to four agents; RW-132: the dated session narratives moved verbatim to `docs/project-history.md` and the verified runs and release record to `docs/runs-and-releases.md`, nothing reworded; the stamp this replaces follows)
-Last Updated: 2026-09-17 (session 16, the v4 audit: D21-D24, the two unrecorded GATE 4 rounds, the unintended real run of 2026-09-14)
-Verified Against: commit 2e73921 on `main`, 2026-09-17 (session 16, every gate re-run today and all exit 0: self-test 156, version parity 1.2.0, `npm pack` 44 files, PSScriptAnalyzer 1.25.0 with 0 findings, the engine still diffing EMPTY against `v1.2.0`; desktop typecheck/lint/build/check:prepaint clean with no source maps; site typecheck/lint/build clean with all three build gates, the prerender assertions and 13 routes each carrying its own title; docs typecheck/build clean with no MANUAL or story file in `build/`; CI green on all three repos. Live: docs HTTPS 200, the site 200 with a real 404 on an unknown path, npm `latest` 1.2.0, `latest.json` still 1.1.0, `desktop-v1.2.0` still a draft, 1.1.0 installed here, release-kit pre-flight 23/23. Polled the same day: `external.google` still **false**)
+Last Updated: 2026-09-25 (latest: `desktop-v1.3.0` published as Latest and proved by the in-app updater 1.2.0 -> 1.3.0,
+CLI 1.3.1 on npm with the team's maker lines, rounds 14 and 15 with D47, session 14's decision table moved to
+`docs/project-history.md`. Earlier the same day: RW-116 and TASK-013 verified as a person and torn down, O6' set, the desktop cascaded to 1.3.0, the open-unknowns section brought to date - TASK-017 and TASK-018 are the two open owner decisions. Earlier: session 17: D25-D43 recorded - the Terms page, sign-in live on the site, the runs index, the desktop sync behaviour, up to four agents; RW-132: the dated session narratives moved verbatim to `docs/project-history.md` and the verified runs and release record to `docs/runs-and-releases.md`, nothing reworded; the stamp this replaces follows)
+Earlier: 2026-09-17 (session 16, the v4 audit: D21-D24, the two unrecorded GATE 4 rounds, the unintended real run of 2026-09-14)
+Verified Against: commit ffad0b6 on `main`, 2026-09-25 - self-test 160/160, version parity 1.3.1, `npm pack` 46 files
+(119.7 kB packed, 401.4 kB unpacked, byte-identical to the registry's 1.3.1), PSScriptAnalyzer 0 findings (a plant
+proved it catches one), the engine diffing EMPTY against `v1.3.1`, `desktop-ci` and `ci` green.
 
 ## Identity and outcome
 - Purpose: safe, developer-aware disk and cache cleanup CLI for Windows; the Windows member of the family with
   `linux-cleanup` (Bash) and `macleanup` (Bash).
 - Primary users: developers and power users on Windows 10/11 who want to see and control every deletion.
-- Current status: **1.2.0 released** (2026-09-08) and equal to `main`: sections 0-25, the scripted-selection
-  flags, the `--json` contract with `newest_write_utc`, `protected` and `excluded[]`, `--exclude-path` at the
-  chokepoint, 156 self-test checks. The documentation site is live over HTTP (HTTPS waits on GitHub's
-  certificate). The desktop app is **released** as `desktop-v1.1.0` and installed on this machine; wave 4b,
-  RW-105 and the analytics events are built and unreleased; `desktop-v1.2.0` and the updater proof are owed.
-  The marketing site is **live** at `windowsweep.aoneahsan.com` with its SEO, telemetry, person-shaped
-  verification and parity open. The storytelling retrofit has 14 of 19 surfaces recorded or applied.
-  `remaining-work.md` (at the **workspace root**, outside git) holds the specification, the v3 completion
-  plan of 2026-09-12 holds the method, and the tracker holds the status.
+- Current status (2026-09-25): **CLI 1.3.1** on npm and **`desktop-v1.3.0`**, the repository's Latest release, both
+  published 2026-09-25 - sections 0-25, 160 self-test checks, and sign-in with sync live in the desktop app; the
+  documentation site and the marketing site follow both. Each release's record: `docs/runs-and-releases.md`.
+  What is open: the tracker (the only status), `../remaining-work.md` (the specification) and
+  `../completion-plan-v5-2026-09-24.md` (the method), both at the **workspace root**, outside git.
 - Distribution: `npx windowsweep`, `npm install -g windowsweep`, or a clone run through `windowsweep.cmd`.
   No other channel (owner decision 2026-09-03).
 - What is open, with evidence and acceptance criteria: `../remaining-work.md` (the **workspace root**
@@ -166,25 +166,6 @@ in production and approved", then approved executing plan v5 with custom agents.
   dummy first; the answer is also that panel's GATE 4. D-66 (the Settings status note) was the main session's call by
   the round-8 amendment and arrives in the app. Both are checked by round 15 before the tag (D44).
 
-### Session 14 decisions (2026-09-13/14) - the v3 run, taken from recorded rules, none from the owner
-
-No owner question arose in the run; each call below was answerable from a rule in force, an approved artefact
-or a measured fact, and each is reversible in one change. Recorded so nobody asks them again.
-
-| Question | Settled as | Because |
-|---|---|---|
-| A Permanent removal from the Picker asked no confirmation (GATE 4 round 8, D-48) | **Confirm first**: an alert dialog naming the count, *"They do not go to the Recycle Bin. Permanent has no undo."*, Cancel focused; Recycle Bin mode keeps one press | the Bible's core promise and its rule against implying a deletion is reversible; the engine's own final question exists so a permanent removal is never one keypress, and the window answers it on the reader's behalf. `docs/story/decision-log.md` 2026-09-13 |
-| Section 17's rows under a "Recycle Bin" bar (D-49) | the bar says 17's rows are deleted outright whichever mode is picked | `modules/projects.ps1:157` - the engine removes them through `Remove-PathSafe` in either mode |
-| The Report's *Export...* (D-42) | **declared `pending-wave`** on screen for 1.2.0; the build is TASK-015 | it needs `--export` on the Rust allowlist and a reveal permission on a release-gated build; the parity rules define the class for exactly this |
-| "opt-out" in three shipped site strings | **"switch"**, the family's word, now in the Bible's glossary | `/privacy`'s lede and `docs/desktop.md` already said *"There is no switch."* |
-| The site's home band 14, sitemap 404 card, installer links (site GATE 4 S-04, S-05, S-11) | the dummy gains band 14's sign-in-off state; the sitemap drops the 404 card and absorbs the machine-readable panel; the installer buttons link the files | design authority (`frontend-ui-standards.md` §8), dummy first |
-| Sign-out on `/account` and the desktop Account screen | **this browser / this machine only** (`scope: 'local'`) | the approved dummy's sign-out note; supabase-js's `global` default ended the other app's session in the shared auth pool |
-| May the site's build need the network? | **yes, for the release check** (`vite/release-strings.ts`) | a gate that skips itself offline is the decorative gate the rules forbid; CI and every deploy have the network |
-| The desktop catalogue crossed 500 lines | split into `locales/en/{shell,home,sections,account}.json`, locales discovered by glob | the site's precedent and the house cap; a second language is now one directory and no code |
-| The Reclaim button promised the measured total (GATE 4 round 9, **D-60**) | after a rehearsal with the CURRENT arguments the button carries **that rehearsal's own estimate**; before one, or once any argument changes, it is worded as the bound it is - *"Reclaim up to"* | round 9 measured *Reclaim 34.2 GB* beside the engine's own dry run of the same arguments estimating 2.0 GB: the engine's gates - the idle window, the temp window, a browser in use - cut the measured total down. The Bible: never state a gigabyte figure as a promise. `src/lib/rehearsal.ts` |
-| The same promise two bands lower (GATE 4 round 10, **D-61**) | the rule generalises: **every** figure that describes what a run WOULD FREE follows D-60 - Home's ladder rows and total, and the Run screen's at-rest rows. A figure that describes what **is there** - Home's hero, a section card's measured size - keeps its measured number | `SafeRunLadder.tsx`'s own header states the invariant it was breaking: the ladder total "is the same number the Reclaim button carries", so the two cannot print different figures. Decided 2026-09-14, dummy first; the dummy gains the gated state its seed cannot show. `docs/story/decision-log.md` |
-| A 53 px overflow at 760 on the longest engine title (**D-62**) | fixed in the same wave, **not** release-blocking | the dummy reproduces it exactly, so the rule is the dummy's; `tauri.conf.json` sets `minWidth: 760`, so 760 is the narrowest real width |
-
 ### How the frontend UI mandates map to this product - the declared exemptions
 
 `~/.claude/rules/frontend-ui-standards.md` applies to the desktop app (the CLI has no UI at all). Recorded
@@ -255,6 +236,8 @@ there binds until a later one replaces it. What each block covers:
 - sessions 7, 6, 4, 5 and 3 (2026-09-03 to 2026-09-05) - the headline scope, the storytelling retrofit,
   gates 1-3, the download lift, verified-only target paths with `C:\Intel` rejected, direction 01 rejected,
   and the desktop account, telemetry and palette decisions
+- session 14 (2026-09-13/14) - the v3 run's decisions, taken from recorded rules and none from the owner (moved
+  later on 2026-09-25, when this file reached 495 lines)
 
 ## External records and registrations
 
@@ -449,7 +432,7 @@ migration it could express.
 
 Moved verbatim to `docs/runs-and-releases.md` on 2026-09-25 under RW-132: every real run with its numbers
 (the unintended one of 2026-09-14 included), the updater proof, the site's telemetry capture, what has not run
-for real yet, and every npm publish, tag and GitHub Release from 1.0.0 to `desktop-v1.2.0`. Record new ones
+for real yet, and every npm publish, tag and GitHub Release from 1.0.0 to `desktop-v1.3.0` and CLI 1.3.1. Record new ones
 there. Two rules in it bind the next run and publish: `Get-ProtectionReason` stays table-driven, and the
 publish diff uses `%SystemRoot%\System32\tar.exe`.
 
@@ -474,7 +457,8 @@ whole `D:\work\windowsweep-root` folder, not cloning the three repositories.
   is his own).
 - **Still owed by the owner, polled at the start of every session:**
   - **Row 30** - publish the OAuth consent screen (D29), with the field values in the row.
-  - **Row 31** - one real Google sign-in in the installed desktop app, once `desktop-v1.3.0` is out (D30).
+  - **Row 31** - one real Google sign-in in the installed desktop app (D30): **ready** - 1.3.0 is installed here,
+    moved from 1.2.0 by the updater proof on 2026-09-25.
   - **Web row 4** (`windowsweep-web/docs/MANUAL-TASKS.md`) - the real Google path on the site in his own browser:
     Google refuses an automated browser after the email step (RW-116, 2026-09-25).
   - **Rows 5 and 13** (the master-links review and the ORCID import) - unchanged.
@@ -491,5 +475,5 @@ whole `D:\work\windowsweep-root` folder, not cloning the three repositories.
   and the link write-back ran in one pass. No GitHub support step was needed.
 - **Moved to a second machine** (owner, 2026-09-07): row 20 (the candidate-path probe that settles RW-064,
   RW-065 and RW-066) and the P1 verification runs (rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21); then CLI 1.4.0 if
-  those verify. CLI 1.3.0 shipped here instead (D23), and `desktop-v1.3.0` is cut here (D26). The handoff is
+  those verify. CLI 1.3.0 shipped here instead (D23), and `desktop-v1.3.0` was cut, published and proved here (D26, 2026-09-25). The handoff is
   section B11 of `../completion-plan-v3-2026-09-12.md`.

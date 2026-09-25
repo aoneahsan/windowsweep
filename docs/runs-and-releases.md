@@ -50,6 +50,20 @@ its minisign signature and replaces itself. **No cleanup ran** - this is an upda
   segment - and every one returned **0**. The needle is fixed in `release-kit/updater-proof.mjs` and proved
   7/7 both ways. A matcher that flags everything is indistinguishable from one that works until someone reads
   what it matched.
+### 2026-09-25 - the in-app updater proved 1.2.0 -> 1.3.0 on this machine, and the first boot of the first release with sign-in
+
+`../release-kit-1.3.0/updater-proof-source.txt`, evidence in `../gate4-evidence/updater-1.3.0/`. The installed 1.2.0
+found `desktop-v1.3.0` by itself, drew *"Version 1.3.0 is ready"*, installed on the press and restarted; HKCU
+(`Get-ItemProperty`, never `reg query`) read 1.3.0 three seconds after the press, and the proof stopped only the
+instance it had started. (Its runtime probe ran on the window's first `about:blank` document and printed
+`no-tauri`; the band was read from the loaded page 3.5 s later - an instrument timing line, not a finding.)
+
+The first-boot requests, signed out, 60 s: `www.googletagmanager.com` 1, `www.google-analytics.com` 1
+(`screen.view`, 204), `api2.amplitude.com` 3 (`screen.view`, 200), `www.clarity.ms` and `scripts.clarity.ms` 1
+each. **Undisclosed hosts: 0 - no Supabase call from a signed-out window. Personal-data matches: 0.** Sentry sent
+nothing because nothing errored; the update check runs in the Rust updater, outside the page's network log, and
+is disclosed. No engine run beyond startup's `--list --json`.
+
 ### 2026-09-14 - 🔴 AN UNINTENDED REAL RUN, started by a GATE 4 guard that reported success and did nothing
 
 Found on 2026-09-17 while auditing, not on the day. **It was not authorised**: the owner's 2026-09-07 grant
@@ -146,4 +160,23 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
   was skipped because `external.google` still reads false, exactly as ordering rule O6 says it should.
   It bundles the **1.2.0** engine; CLI 1.3.0 follows the same day and the desktop moves to it next release.
 
-Last Updated: 2026-09-25 (RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim)
+- 2026-09-25T14:06Z: `windowsweep@1.3.1` published to npm by `aoneahsan` (46 files, 119.7 kB packed, 401.4 kB
+  unpacked, shasum `e32f50dc…dd31`; built from `25ee559`). The publish gate ran in full: a clean pushed tree, `ci`
+  green on that merge, the registry at 1.3.0, the README's anchors and links (npmjs.com answers 403 to any script;
+  the registry confirmed the page's package), the packed tarball grepped for `1.3.0` (five hits, every one history:
+  four source comments dating the 1.3.0 split and the README's "Before it" line), a content-regression diff against
+  1.3.0 (**no file lost or added**; the seven changed files are the cascade's), a secret sweep, a smoke-install of
+  the packed tarball (`--version`, `--list --json` 26 sections, `--self-test` 160), then from the registry: `latest`
+  = 1.3.1 and the installed package **byte-identical** to the candidate, `--self-test` 160 again. Annotated tag
+  `v1.3.1`; GitHub Release created `--latest=false`, with `desktop-v1.2.0` verified still Latest. `VERSION` ships LF
+  as 1.3.0's did (this checkout writes CRLF; the blob is unchanged).
+- 2026-09-25T14:12Z: **`desktop-v1.3.0`** published on GitHub Releases, created `--latest` (IRON rule 13), on
+  `5934008` - the commit GATE 4 round 15 blessed. The `desktop-release` workflow printed *"Google sign-in is enabled
+  on the project"* and *"Supabase build variables exported for the rest of this job"*: **the first build with sign-in
+  live**. Six assets plus `SHA256SUMS.txt`: `windowsweep_1.3.0_x64-setup.exe` (2,625,221 B, sha256 `c1c1c88b…b800`),
+  `windowsweep_1.3.0_x64_en-US.msi` (3,358,720 B, sha256 `5208dfcd…69ba`), a `.sig` for each, and `latest.json`
+  (1.3.0, its NSIS entry signed). The MSI's File table holds 42 rows: 41 engine files and the app. It bundles the
+  **1.3.0** engine byte-identical - CLI 1.3.1 was merged after the tag. The site's download page and the docs
+  followed within the hour (O3'), and the updater proof above ran the same afternoon.
+
+Last Updated: 2026-09-25 (RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)

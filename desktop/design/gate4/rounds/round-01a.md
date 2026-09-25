@@ -289,7 +289,7 @@ where the axes live — then write that decision into the dummy.
 
 ### D-9 · The ecosystem roster is absent from About, undeclared · **web layer**
 
-`CLICK-DUMMY-INVENTORY.md` §5 specifies **More from the same developer** with a two-layer self-exclusion and
+`CLICK-DUMMY-INVENTORY.md` §5 (since RW-132 in `CLICK-DUMMY-INVENTORY-ledger.md`) specifies **More from the same developer** with a two-layer self-exclusion and
 a `wsPromoAudit()` proof harness. The dummy's About tab lists `linux-cleanup`, `macleanup`, `native-update`
 and `strata-storage` with their one-line descriptions and the *"not an advertising network"* sentence. The
 app's About tab has **none of it**, and no `pending-wave` note. Also absent: the `Version` block

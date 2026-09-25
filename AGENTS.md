@@ -2,7 +2,8 @@
 
 **Mirror of `CLAUDE.md`** - byte-identical except the H1 names the guide. Change one, change both.
 
-Last Updated: 2026-09-25 (the v5 run: the desktop cascaded to 1.3.0, TASK-013 verified live and closed,
+Last Updated: 2026-09-25 (the releases: `desktop-v1.3.0` Latest with sign-in live and the updater proved 1.2.0 -> 1.3.0,
+CLI 1.3.1 with the team's maker lines, TASK-019 filed. Earlier the same day: the desktop cascaded to 1.3.0, TASK-013 verified live and closed,
 `SUPABASE_ENABLED` set, the 1.3.0 release kit; earlier the same day the invariants were brought to the v1.3.0 engine,
 `desktop-v1.2.0` Latest, round 12's guard method and the same-session round-report rule; plan v5 is the method.
 Earlier 2026-09-17: the v4 audit and a context pass). Durable decisions: `docs/PROJECT-CONTEXT.md`; what each session
@@ -25,10 +26,10 @@ launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macl
   cannot drift in two files), `../what-this-project-consists-of.md` (what exists today). **A `git clone` does
   not carry them** - another machine needs the whole `windowsweep-root` folder copied. 🔴 **The method is
   `../completion-plan-v5-2026-09-24.md`** (v4, v3 and the 2026-09-07 plans are history; every decision they record
-  still applies). Its ordering rules are hard - **O2**: the `desktop-v1.3.0` tag lands on a commit where
-  `desktop/package.json`, `tauri.conf.json` and `VERSION` all read 1.3.0; **O3**: no site deploy between that
-  release becoming Latest and `download.ts` moving; **O6**: `SUPABASE_ENABLED` only after TASK-013 is verified
-  live; **O7**: site parity round 6 runs on the FINAL site build, after the 1.3.0 download page.
+  still applies). Its ordering rules are hard for every desktop release - **O2**: the desktop tag lands on a commit where
+  `desktop/package.json`, `tauri.conf.json` and `VERSION` all agree; **O3**: no site deploy between that release
+  becoming Latest and `download.ts` moving; **O7**: site parity round 6 runs on the FINAL site build (running since
+  2026-09-25). **O6** (`SUPABASE_ENABLED` only after TASK-013 was verified live) was met on 2026-09-25.
 - Dependency and manifest record: `docs/PACKAGES.md` · follow-ups the agent owes: `PENDING-TASKS.md` (root)
 - Skill-listing scoping for this repo: `.claude/settings.json` (`skillOverrides`, `name-only`) - every skill
   stays invocable by name; only descriptions outside this stack leave the listing.
@@ -37,20 +38,20 @@ launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macl
 
 Everything else about where the work stands is in the tracker and `../remaining-work-summary.md`.
 
-1. 🔴 **The v1.3.0 engine invariant.** `git diff v1.3.0..HEAD -- lib modules windowsweep.ps1 bin windowsweep.cmd
-   VERSION package.json` is **empty** (verified 2026-09-25) and stays so until the next CLI cascade. CLI 1.3.0 is on
-   npm; its release was created `--latest=false` (IRON rule 13).
-2. 🔴 **`desktop-v1.2.0` is the repository's Latest release** and stays so until `desktop-v1.3.0` is published
-   `--latest` - the updater reads `releases/latest/download/latest.json`, so Latest is always a DESKTOP release.
-3. 🔴 **The desktop app reads 1.3.0, equal to `VERSION`** - `desktop/package.json`, `tauri.conf.json`, `Cargo.toml`
-   and `Cargo.lock`, cascaded 2026-09-25 - ahead of the published `desktop-v1.2.0` until `desktop-v1.3.0` is tagged
-   on THIS machine (owner decision D26) on a commit where all of them agree (O2'). The bundled engine is untracked
-   and copied by `yarn sync:cli` at build time: 41 files at 1.3.0.
+1. 🔴 **The v1.3.1 engine invariant.** `git diff v1.3.1..HEAD -- lib modules windowsweep.ps1 bin windowsweep.cmd
+   VERSION package.json` is **empty** (verified 2026-09-25) and stays so until the next CLI cascade. CLI 1.3.1 is on
+   npm (2026-09-25); its release was created `--latest=false` (IRON rule 13).
+2. 🔴 **`desktop-v1.3.0` is the repository's Latest release** (2026-09-25, sign-in live) and stays so until the next
+   desktop release is published `--latest` - the updater reads `releases/latest/download/latest.json`, so Latest is always a DESKTOP release.
+3. 🔴 **The desktop app reads 1.3.0 and `VERSION` reads 1.3.1** - `desktop-v1.3.0` was tagged on `5934008`, before
+   the CLI 1.3.1 cascade merged, so it bundles the 1.3.0 engine. The next desktop release first cascades
+   `desktop/package.json`, `tauri.conf.json`, `Cargo.toml` and `Cargo.lock` to `VERSION`, and its tag lands where all
+   of them agree (O2'). The bundled engine is untracked and copied by `yarn sync:cli` at build time: 41 files since 1.3.0.
 4. 🔴 **TASK-013 (cloud sync) is verified live and closed (DONE-016), and `SUPABASE_ENABLED` is `true`** (both
-   2026-09-25, O6'). The next release build carries the Supabase keys: `desktop-release.yml` exports them only after
+   2026-09-25, O6'). Every release build carries the Supabase keys: `desktop-release.yml` exports them only after
    probing that the project answers `external.google: true`, and refuses the build otherwise, because
-   `configuredFeatures()` turns sign-in on whenever both values are present. No published release carries them
-   until `desktop-v1.3.0`.
+   `configuredFeatures()` turns sign-in on whenever both values are present. `desktop-v1.3.0` is the first
+   published release that carries them (its log: *"Supabase build variables exported"*).
 5. 🔴 **Never install a GATE 4 IPC guard by assigning to `window.__TAURI_INTERNALS__.invoke`** - the property is
    non-writable and non-configurable, so the assignment is a silent no-op while the guard reports "installed" (on
    2026-09-14 the next press started an unintended real 1.8 GB run). The method is round 12's two-wire guard: FULFIL
@@ -65,8 +66,9 @@ Everything else about where the work stands is in the tracker and `../remaining-
 8. 🔴 **The cargo cache still holds the pre-rename folder names** - expect the recorded `os error 3` trap on the
    first local Rust build and `cargo clean -p` the affected packages per profile.
 9. 🔴 **P1 and the 1.1 residue are second-machine work** (owner, 2026-09-07) - not startable here.
-10. Release procedure when a GATE 4 round comes back CLEAN: the steps in `../release-kit-1.3.0/README.md`, in
-    order (preflight first, every time); `../release-kit/` is the spent 1.2.0 kit.
+10. Release procedure when a GATE 4 round comes back CLEAN: a new kit built from `../release-kit-1.3.0/` (spent
+    2026-09-25 - every step ran, and its drivers are the template; preflight first, every time); `../release-kit/`
+    is the spent 1.2.0 kit.
 
 ## Per-Project Stack Override (binding)
 
@@ -79,13 +81,13 @@ Everything else about where the work stands is in the tracker and `../remaining-
 | Typecheck / lint / build | no build output, so the fleet source-map rule is satisfied by construction; PSScriptAnalyzer is the lint |
 | UI rules | none apply to the CLI - it has no UI at all. They apply to the desktop app (P6), where nine mandates are met and **three are declared OUT with reasons**: 🔴 §13's admin panel and plan set are **not applicable** (no server, no plan, no limit, no second user - nothing to administer, and no surface makes a pricing claim), §2's upload popover has no upload field, and §16's outside-surface overlay does not arise. The marketing site (P8) meets §13 with a minimal `/admin` (D10) under the same plan-set exemption. The full mapping with its evidence: `docs/PROJECT-CONTEXT.md` |
 | Docs site | `aoneahsan/windowsweep-docs` at `D:\work\windowsweep-root\windowsweep-docs`: Docusaurus 3 + React 19 + TS ~6.0.3 + yarn 4, GitHub Pages only, ports 5972/5973. Its pages MIRROR `docs/` - fix a wording error here first, then re-mirror. `docs/MANUAL-TASKS.md` and `docs/story/**` are excluded from its build |
-| Backend | 🔴 **Supabase**, per the owner's standing directive of 2026-09-05 (`~/.claude/rules/services-integrations.md`): Supabase is the default backend for every new project, never Firebase. Hosted-only, owner-created, FilesHub-gated; the schema is **Drizzle** TypeScript at `desktop/src/db/schema/`, and `supabase db push` is the only applier. Project `nlmetjyytgwaxcliusuo` (FilesHub Supabase id 15, created 2026-09-07 under a new account because all seven existing ones were at the two-project free-tier limit). Google sign-in is ON since 2026-09-24 (D25) and the auth URLs are set (D28): the site's sign-in is live; the desktop's waits on TASK-013's live verification and `SUPABASE_ENABLED` |
+| Backend | 🔴 **Supabase**, per the owner's standing directive of 2026-09-05 (`~/.claude/rules/services-integrations.md`): Supabase is the default backend for every new project, never Firebase. Hosted-only, owner-created, FilesHub-gated; the schema is **Drizzle** TypeScript at `desktop/src/db/schema/`, and `supabase db push` is the only applier. Project `nlmetjyytgwaxcliusuo` (FilesHub Supabase id 15, created 2026-09-07 under a new account because all seven existing ones were at the two-project free-tier limit). Google sign-in is ON since 2026-09-24 (D25) and the auth URLs are set (D28): the site's sign-in is live, and the desktop's from `desktop-v1.3.0` (2026-09-25) |
 | Desktop app (P6) | `desktop/` in this repo: Tauri 2 + React 19 + Vite 8 + Tailwind v4 + React Aria + TanStack Router (hash history), port 5974, identifier `com.aoneahsan.windowsweep`. It runs the bundled script with `--json --no-color` and **reimplements no cleanup logic**. `desktop/design/` holds the approved click dummy and its inventory; `desktop/src` and `desktop/src-tauri` hold the app. 🔴 `tokens.css`, `shared.css` and `components.css` were promoted **once, in one direction** on 2026-09-05 - the app's copies are authoritative and are never synced back. Gates: `yarn typecheck && yarn lint && yarn build` plus `yarn check:prepaint`; the build stops on any literal i18n key the catalogue cannot resolve (`desktop/vite/catalogue-keys.ts`, 2026-09-25); `desktop-ci.yml` adds `cargo fmt --check`, `clippy -D warnings` and `cargo test`. External design-craft skills are vendored per-project in `.claude/skills/` |
 | Storytelling (P7) | `docs/story/` holds the approved Bible, the voice fingerprint (`calibrated: false`, open and not blocking, waiting on the owner's own samples), the approved content map, the decision log, `run-state.json` and `drafts/`. GATE 1 and GATE 2 are cleared. 🔴 **GATE 4 is pre-authorised for every remaining surface** (owner, 2026-09-07 and D12) **on a stated condition**: the finalizer's fact-consistency check PASSES and the surface carries zero unanswered `NEEDS DECISION`. Either one failing pauses **that surface only**. The dummy's words are amended before the app's (`~/.claude/rules/frontend-ui-standards.md` §10a) |
 | Marketing site (P8, **LIVE** since 2026-09-08) | `aoneahsan/windowsweep-web` (private, D9) at `D:\work\windowsweep-root\windowsweep-web`, deployed to Firebase Hosting at `https://windowsweep.aoneahsan.com`. A web **app**: Supabase for the backend (the **same** project as the desktop app - one auth pool), **Firebase for hosting and GA4 only**, Amplitude + Clarity + Sentry with no opt-out, Capacitor wired with **no Android folder** (P8-D3; Android is out of scope, D17). Thirteen routes incl. `/terms` (2026-09-25, the Google consent screen's terms address), `/contact`, `/account` and a minimal `/admin` (D10); sign-in live since 2026-09-25; its story surfaces live in this repo's `docs/story/`. Build gates under `vite/`: `catalogue-keys.ts`, `template-keys.ts`, `release-strings.ts`, `lastmod.ts` (sitemap dates from git), the prerender branch assertions, and a sign-in probe that fails closed once the keys are set. It is the product's **canonical homepage** |
 | Last optimized | 2026-09-17 |
 | Next routine optimization eligible | 2026-10-17 |
-| Guide bytes | 19,717 B (this file, post-edit) |
+| Guide bytes | 20,723 B (this file, post-edit) |
 | Covered subtree | this repo's root pair only; `desktop/` and `windowsweep-web/` keep their own nested guides |
 | Method | status moved to `00-tracker.json`; fleet-copy sections replaced by pointers to `~/.claude/rules/`; every binding mapping, IRON rule and 🔴 invariant kept auto-loaded |
 | Fleet record | `code/docs/tracking/project-context-budget-tracker.json` |

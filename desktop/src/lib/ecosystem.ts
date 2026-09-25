@@ -21,7 +21,7 @@
  * passed in both directions while proving nothing. A filter that cannot match is
  * indistinguishable from a filter that works. Physically deleting the row here
  * would reintroduce exactly that, which is why the drop is a filter and not an
- * edit. (`design/CLICK-DUMMY-INVENTORY.md` section 5.)
+ * edit. (`design/CLICK-DUMMY-INVENTORY-ledger.md` section 5.)
  *
  * 🔴 THESE ARE THE ONLY ADS, and there is no advertising network. Several of this
  * product's own surfaces promise none, so adding one would make them lies - it is

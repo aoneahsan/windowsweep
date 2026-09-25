@@ -1,8 +1,8 @@
 # windowsweep desktop - the amendment log, part 2 (2026-09-13 latest onwards)
 
 > Continues [`AMENDMENTS.md`](AMENDMENTS.md), which reached this repository's 500-line ceiling. Both were
-> moved **verbatim** out of [`README.md`](README.md) on 2026-09-17 (TASK-014). 🔴 **The next amendment goes
-> at the bottom of this file**, and a new `AMENDMENTS-3.md` starts when this one would pass 500 lines.
+> moved **verbatim** out of [`README.md`](README.md) on 2026-09-17 (TASK-014). This part is closed at 493 lines;
+> the log **continues in [`AMENDMENTS-3.md`](AMENDMENTS-3.md)**, which is where the next amendment goes.
 
 ## Amendment - 2026-09-13 (latest): History and Report with data (D-41, D-42, D-44's second half)
 

@@ -3,7 +3,7 @@
 > Moved **verbatim** out of [`README.md`](README.md) on 2026-09-17 (TASK-014), which had reached 1,039 lines
 > against this repository's 500-line rule. The design argument stayed there; every `## Amendment` section is
 > here. This part is closed - it is at the ceiling - and the log **continues in
-> [`AMENDMENTS-2.md`](AMENDMENTS-2.md)**, which is where the next amendment goes.
+> [`AMENDMENTS-2.md`](AMENDMENTS-2.md)** and then [`AMENDMENTS-3.md`](AMENDMENTS-3.md), where the next one goes.
 
 ## Amendment - 2026-09-07: the consent screen becomes a notice
 

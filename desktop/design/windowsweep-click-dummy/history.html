@@ -28,9 +28,10 @@
               <p class="t-sm ink-3">Every run made in this window, and a summary of runs from your other
                 machines if you are signed in.</p>
             </div>
-            <div style="margin-inline-start:auto;text-align:end">
+            <div style="margin-inline-start:auto;text-align:end" data-ws-hist-sum>
               <p class="num t-xl wide accent-ink" data-ws-text="histTotal">0 B</p>
-              <!-- page-history.js writes this line: "freed in the last run" for one -->
+              <!-- page-history.js writes this line: "freed in the last run" for one - and hides the whole
+                   block when the view holds no real run (TASK-018) -->
               <p class="t-sm ink-3" data-ws-hist-count>freed in the last <span class="num">0</span> runs</p>
             </div>
           </div>

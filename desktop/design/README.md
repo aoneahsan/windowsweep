@@ -341,7 +341,8 @@ the files it became.
 | Part | Covers | File |
 |---|---|---|
 | 1 | 2026-09-07 (the consent notice) .. 2026-09-13 (round 8: the removal path, and Home before a scan) | [`AMENDMENTS.md`](AMENDMENTS.md) |
-| 2 | 2026-09-13 (latest: History and Report with data) onwards, including GATE 4 rounds 9 and 10 | [`AMENDMENTS-2.md`](AMENDMENTS-2.md) |
+| 2 | 2026-09-13 (latest: History and Report with data) .. 2026-09-25 (the About panel, D-66 and D-67), including GATE 4 rounds 9-15 | [`AMENDMENTS-2.md`](AMENDMENTS-2.md) |
+| 3 | 2026-09-25, after the releases, onwards (TASK-018 first) | [`AMENDMENTS-3.md`](AMENDMENTS-3.md) |
 
 🔴 **A new amendment goes at the bottom of the LAST part**, and a new part starts when that file would pass
 500 lines. The rule this log exists for is unchanged: a divergence is written into the dummy first, with its

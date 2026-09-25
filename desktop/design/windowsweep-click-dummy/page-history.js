@@ -229,6 +229,10 @@
         line.appendChild(document.createTextNode(' runs'));
       }
     }
+    /* TASK-018: a view with no real run has nothing to total. "0 B, freed in the last 0 runs" said
+       nothing the empty row below does not say better, so the block steps aside. */
+    var sum = document.querySelector('[data-ws-hist-sum]');
+    if (sum) sum.hidden = real.length === 0;
   }
 
   /* Freed per run: real d3, the frame fixed at 900 x 90 while the domain moves, and

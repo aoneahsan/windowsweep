@@ -21,16 +21,21 @@ export function HistoryHeader({ freedBytes, runs }: { freedBytes: number; runs: 
             <h1 className="t-xl wide">{t('history.title')}</h1>
             <p className="t-sm ink-3">{t('history.lede')}</p>
           </div>
-          <div className="hist-total">
-            <p className="num t-xl wide accent-ink">{formatBytes(freedBytes)}</p>
-            <p className="t-sm ink-3">
-              <Trans
-                i18nKey="history.freedLast"
-                count={runs}
-                components={{ 1: <span className="num" /> }}
-              />
-            </p>
-          </div>
+          {/* TASK-018, as the dummy's `data-ws-hist-sum`: a view with no real run has
+              nothing to total - "0 B, freed in the last 0 runs" said nothing the empty
+              row below does not say better - so the block steps aside. */}
+          {runs > 0 ? (
+            <div className="hist-total">
+              <p className="num t-xl wide accent-ink">{formatBytes(freedBytes)}</p>
+              <p className="t-sm ink-3">
+                <Trans
+                  i18nKey="history.freedLast"
+                  count={runs}
+                  components={{ 1: <span className="num" /> }}
+                />
+              </p>
+            </div>
+          ) : null}
         </div>
       </div>
     </section>

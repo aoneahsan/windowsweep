@@ -1,6 +1,6 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-09-25 (session 17: D25-D43 recorded - the Terms page, sign-in live on the site, the runs index, the desktop sync behaviour, up to four agents; RW-132: the dated session narratives moved verbatim to `docs/project-history.md` and the verified runs and release record to `docs/runs-and-releases.md`, nothing reworded; the stamp this replaces follows)
+Last Updated: 2026-09-25 (later the same day: RW-116 and TASK-013 verified as a person and torn down, O6' set, the desktop cascaded to 1.3.0, the open-unknowns section brought to date - TASK-017 and TASK-018 are the two open owner decisions. Earlier: session 17: D25-D43 recorded - the Terms page, sign-in live on the site, the runs index, the desktop sync behaviour, up to four agents; RW-132: the dated session narratives moved verbatim to `docs/project-history.md` and the verified runs and release record to `docs/runs-and-releases.md`, nothing reworded; the stamp this replaces follows)
 Last Updated: 2026-09-17 (session 16, the v4 audit: D21-D24, the two unrecorded GATE 4 rounds, the unintended real run of 2026-09-14)
 Verified Against: commit 2e73921 on `main`, 2026-09-17 (session 16, every gate re-run today and all exit 0: self-test 156, version parity 1.2.0, `npm pack` 44 files, PSScriptAnalyzer 1.25.0 with 0 findings, the engine still diffing EMPTY against `v1.2.0`; desktop typecheck/lint/build/check:prepaint clean with no source maps; site typecheck/lint/build clean with all three build gates, the prerender assertions and 13 routes each carrying its own title; docs typecheck/build clean with no MANUAL or story file in `build/`; CI green on all three repos. Live: docs HTTPS 200, the site 200 with a real 404 on an unknown path, npm `latest` 1.2.0, `latest.json` still 1.1.0, `desktop-v1.2.0` still a draft, 1.1.0 installed here, release-kit pre-flight 23/23. Polled the same day: `external.google` still **false**)
 
@@ -382,6 +382,14 @@ migration it could express.
   `20260924160739`, pushed through the session pooler (the direct IPv6 host timed out mid-authentication) and
   read back from `pg_indexes` and `supabase_migrations.schema_migrations`; `runs` held 0 rows, and `auth.users`
   held 0 users before RW-116 created its three.
+- **Verified as a person, 2026-09-25 (RW-116, TASK-013):** two suites of throwaway identities, made and torn down
+  by the main session - `t1+1`, `t1+del` and `t1+admin` (promoted for its checks only, then demoted and read back,
+  O8) against the live site; `t1+desk1` and `t1+desk2` against a desktop dev build. Every result was re-read from
+  the catalog, and after both teardowns `auth.users` and every user table read 0 again; the triage's two
+  `admin_audit` rows stay, by design. The RLS probes held (another user's rows 200 `[]` to select, delete and
+  update; an insert in their name 403 `42501`). The real Google path cannot be automated - Google refuses the
+  browser after the email step - so it is the owner's (web MANUAL-TASKS row 4). Found on the way: TASK-017.
+  GATE 4 round 13 makes the `t1+desk1` / `t1+desk2` pair once more for its signed-in states and tears it down.
 
 ## Constraints and non-goals
 - Must: honour `--dry-run` in every destructive helper and external command; route every deletion through
@@ -444,21 +452,29 @@ whole `D:\work\windowsweep-root` folder, not cloning the three repositories.
 
 ## Open material unknowns
 
-- **None. Every question is settled** - the last eight (D13-D20) on 2026-09-12. What remains is owner *input*
-  and second-machine work, not owner *decisions*.
+- **Two owner decisions are open (2026-09-25), and neither blocks a release.** **TASK-017** - whether to apply
+  the forward migration that stamps `handled_at` and `handled_by` on the server and narrows the admin's update
+  grant on `contact_requests` to `status` (a production schema change, so the D30/D36 pattern: his yes first).
+  **TASK-018** - the words for History's zero-count header (`desktop-cockpit`, a rows 11-13 surface whose GATE 4
+  is his own).
 - **Still owed by the owner, polled at the start of every session:**
-  - **Row 15, Google sign-in** - a Google **Web** OAuth client with the Supabase callback, entered in the
-    project's Auth -> Providers form; he does it during the v3 run (D15). Until `external.google` reads
-    `true`, both apps report sign-in as unconfigured, honestly, and `VITE_SUPABASE_*` stay out of every build.
+  - **Row 30** - publish the OAuth consent screen (D29), with the field values in the row.
+  - **Row 31** - one real Google sign-in in the installed desktop app, once `desktop-v1.3.0` is out (D30).
+  - **Web row 4** (`windowsweep-web/docs/MANUAL-TASKS.md`) - the real Google path on the site in his own browser:
+    Google refuses an automated browser after the email step (RW-116, 2026-09-25).
   - **Rows 5 and 13** (the master-links review and the ORCID import) - unchanged.
-  - **Rows 26 and 28** (the weekly task seen in Task Scheduler; a cancelled real run's log compared) - after
-    `desktop-v1.2.0`.
-  - **Row 29, a glance at the four dashboards** once telemetry ships - the agent proves the beacons on the wire
-    and holds no dashboard login.
+  - **Rows 26 and 28** (the weekly task seen in Task Scheduler; a cancelled real run's log compared) - ready
+    since `desktop-v1.2.0` shipped.
+  - **Row 29, a glance at the four dashboards** - the agent proves the beacons on the wire and holds no
+    dashboard login.
+- ~~**Row 15, Google sign-in.**~~ **CLOSED 2026-09-24 (D25):** `external.google: true`. The site signs in since
+  2026-09-25; desktop release builds carry the keys from `desktop-v1.3.0` on (`SUPABASE_ENABLED`, set 2026-09-25
+  after TASK-013's live verification, O6').
 - ~~**GitHub, not the owner:** the docs certificate.~~ **CLOSED 2026-09-12.** The agent removed and re-added
   the domain under D18; GitHub issued a Let's Encrypt certificate naming the host within the hour
   (`https_certificate.state: approved`, `notBefore` 15:57 UTC), `https_enforced` is on, `http://` returns 301,
   and the link write-back ran in one pass. No GitHub support step was needed.
 - **Moved to a second machine** (owner, 2026-09-07): row 20 (the candidate-path probe that settles RW-064,
-  RW-065 and RW-066) and the P1 verification runs (rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21); then 1.3.0 with
-  RW-121 and `desktop-v1.3.0`. The handoff is section B11 of `../completion-plan-v3-2026-09-12.md`.
+  RW-065 and RW-066) and the P1 verification runs (rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21); then CLI 1.4.0 if
+  those verify. CLI 1.3.0 shipped here instead (D23), and `desktop-v1.3.0` is cut here (D26). The handoff is
+  section B11 of `../completion-plan-v3-2026-09-12.md`.

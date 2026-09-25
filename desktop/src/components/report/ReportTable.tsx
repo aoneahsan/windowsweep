@@ -37,7 +37,9 @@ export function ReportTable({
               <th className="rep-col-id">{t('report.colId')}</th>
               <th className="rep-col-section">{t('report.colSection')}</th>
               <th className="rep-col-status">{t('report.colStatus')}</th>
-              <th className="num-cell rep-col-freed">{t(dryRun ? 'report.colFreedDryRun' : 'report.colFreed')}</th>
+              <th className="num-cell rep-col-freed">
+                {t(dryRun ? 'report.colFreedDryRun' : 'report.colFreed')}
+              </th>
               <th>{t('report.colNote')}</th>
             </tr>
           </thead>
@@ -51,7 +53,11 @@ export function ReportTable({
                 <td>
                   <span className={statusBadge(step.status)}>{step.status}</span>
                 </td>
-                <td className={step.freedBytes > 0 && !dryRun ? 'num-cell t-sm accent-ink' : 'num-cell t-sm'}>
+                <td
+                  className={
+                    step.freedBytes > 0 && !dryRun ? 'num-cell t-sm accent-ink' : 'num-cell t-sm'
+                  }
+                >
                   {step.freedBytes > 0 ? formatBytes(step.freedBytes) : DASH}
                 </td>
                 <td className="t-sm ink-3">{step.note !== '' ? step.note : DASH}</td>

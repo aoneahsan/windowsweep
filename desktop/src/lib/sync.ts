@@ -116,10 +116,21 @@ function narrowRun(c: Readonly<Record<string, unknown>>): SyncedRun | null {
   if (typeof runId !== 'string' || !RUN_ID.test(runId)) return null;
   if (typeof startedAt !== 'string' || !ISO_INSTANT.test(startedAt)) return null;
   if (typeof mode !== 'string' || !CLEANUP_MODES.has(mode)) return null;
-  if (typeof dryRun !== 'boolean' || typeof elevated !== 'boolean' || sections === null) return null;
+  if (typeof dryRun !== 'boolean' || typeof elevated !== 'boolean' || sections === null)
+    return null;
   if (!isCount(freedBytes) || !isCount(estimatedBytes)) return null;
   if (!isCount(durationMs) || durationMs > MAX_DURATION_MS) return null;
-  return { runId, startedAt, mode, dryRun, elevated, sections, freedBytes, estimatedBytes, durationMs };
+  return {
+    runId,
+    startedAt,
+    mode,
+    dryRun,
+    elevated,
+    sections,
+    freedBytes,
+    estimatedBytes,
+    durationMs,
+  };
 }
 
 /**
@@ -131,7 +142,7 @@ export function stripRun(
   summary: RunSummary,
   runId: string,
   startedAt: string,
-  durationMs: number,
+  durationMs: number
 ): SyncedRun | null {
   return narrowRun({
     runId,
@@ -195,7 +206,7 @@ export async function pushSettings(
   userId: string,
   email: string,
   displayName: string | null,
-  settings: SyncedSettings,
+  settings: SyncedSettings
 ): Promise<SettingsWrite> {
   const sb = supabase();
   if (!sb) throw failure('settings write', NOT_CONFIGURED);
@@ -230,7 +241,7 @@ export async function pushSettings(
         settings_updated_at: settings.updatedAt,
         last_seen_at: now,
       },
-      { count: 'exact' },
+      { count: 'exact' }
     )
     .eq('user_id', userId)
     /* 🔴 NEVER OVER A NEWER ROW. Between this machine reading the account and writing
@@ -238,7 +249,8 @@ export async function pushSettings(
        row stands and the caller takes it instead. Nothing would SAY so: an update the
        filter excludes is a 200 with 0 rows, which is why the count is read. */
     .lte('settings_updated_at', settings.updatedAt);
-  if (update.error) throw failure('settings write', `settings could not be saved: ${update.error.message}`);
+  if (update.error)
+    throw failure('settings write', `settings could not be saved: ${update.error.message}`);
   return update.count === 1 ? 'saved' : 'stale';
 }
 
@@ -255,7 +267,7 @@ export async function pushSettings(
  */
 export function reconcileSettings(
   local: SyncedSettings,
-  remote: SyncedSettings | null,
+  remote: SyncedSettings | null
 ): { winner: SyncedSettings; replaced: SyncedSettings | null } {
   if (!remote) return { winner: local, replaced: null };
   if (Date.parse(remote.updatedAt) > Date.parse(local.updatedAt)) {
@@ -316,7 +328,11 @@ export interface RunsPage {
  * is bounded by History's own cap of 200 runs, which keeps the query string in the
  * low kilobytes.
  */
-export async function fetchRuns(userId: string, before?: string, filter: RunsFilter = {}): Promise<RunsPage> {
+export async function fetchRuns(
+  userId: string,
+  before?: string,
+  filter: RunsFilter = {}
+): Promise<RunsPage> {
   const sb = supabase();
   if (!sb) return { runs: [], nextCursor: null, total: 0 };
 
@@ -324,7 +340,7 @@ export async function fetchRuns(userId: string, before?: string, filter: RunsFil
     .from('runs')
     .select(
       'run_id, started_at, mode, dry_run, elevated, sections, freed_bytes, estimated_bytes, duration_ms',
-      before ? {} : { count: 'exact' },
+      before ? {} : { count: 'exact' }
     )
     .eq('user_id', userId)
     .order('started_at', { ascending: false })

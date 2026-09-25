@@ -49,7 +49,9 @@ export function SectionSelbar({
   const warn = [
     needsAdmin > 0 ? t('sections.selNeedsAdmin', { count: needsAdmin }) : '',
     needsPick > 0 ? t('sections.selNeedsPick', { count: needsPick }) : '',
-  ].filter(Boolean).join(' · ');
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
     /* 🔴 Always rendered and `hidden` while nothing is selected, as the dummy's

@@ -28,7 +28,15 @@ import type { Candidate } from '../lib/cli';
 /** Which body the section in view gets - see the list above. */
 export type PickerBody = 'rows' | 'skipped' | 'not-asked' | 'no-match' | 'nothing';
 
-function EmptyRow({ title, body, children }: { title: string; body: string; children?: React.ReactNode }) {
+function EmptyRow({
+  title,
+  body,
+  children,
+}: {
+  title: string;
+  body: string;
+  children?: React.ReactNode;
+}) {
   return (
     <tr>
       <td colSpan={5}>
@@ -74,7 +82,9 @@ export function PickerTable({
           <th>{t('picker.colPath')}</th>
           <th style={{ width: '9rem' }}>{t('picker.colProject')}</th>
           <th style={{ width: '5rem' }}>{t('picker.colIdle')}</th>
-          <th style={{ width: '6.5rem' }} className="num-cell">{t('picker.colSize')}</th>
+          <th style={{ width: '6.5rem' }} className="num-cell">
+            {t('picker.colSize')}
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -113,7 +123,9 @@ export function PickerTable({
                       aria-checked={on}
                       aria-label={t('picker.chooseRow', { path: r.path })}
                       style={{ ['--sw-w' as string]: 'calc(1.9rem * var(--density))' }}
-                      onClick={() => { onToggle(r.path); }}
+                      onClick={() => {
+                        onToggle(r.path);
+                      }}
                     />
                   </td>
                   <td>
@@ -123,14 +135,21 @@ export function PickerTable({
                     <div
                       className="mono t-sm"
                       title={r.path}
-                      style={{ maxWidth: '38rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                      style={{
+                        maxWidth: '38rem',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
                     >
                       {r.path}
                     </div>
                   </td>
                   {/* The engine sends an empty string, not null, for a row with no project -
                       section 23's folders - so both read as the dummy's dash. */}
-                  <td className="t-sm ink-3">{r.project !== null && r.project !== '' ? r.project : '—'}</td>
+                  <td className="t-sm ink-3">
+                    {r.project !== null && r.project !== '' ? r.project : '—'}
+                  </td>
                   <td className="num t-sm ink-3">
                     {r.idle_days === null ? '—' : t('picker.idleShort', { count: r.idle_days })}
                   </td>

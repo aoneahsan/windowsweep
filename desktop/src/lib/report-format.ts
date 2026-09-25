@@ -10,7 +10,9 @@ import { FORMAT_LOCALE } from './format';
 export function durationWords(totalSeconds: number): string {
   const whole = Math.max(0, Math.round(totalSeconds));
   const unit = (value: number, name: 'second' | 'minute' | 'hour') =>
-    new Intl.NumberFormat(FORMAT_LOCALE, { style: 'unit', unit: name, unitDisplay: 'long' }).format(value);
+    new Intl.NumberFormat(FORMAT_LOCALE, { style: 'unit', unit: name, unitDisplay: 'long' }).format(
+      value
+    );
   if (whole < 60) return unit(whole, 'second');
   const hours = Math.floor(whole / 3600);
   const minutes = Math.floor((whole % 3600) / 60);

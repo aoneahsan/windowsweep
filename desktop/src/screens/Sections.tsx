@@ -76,19 +76,18 @@ export function Sections() {
       if (targets.length === 0) return null;
       return targets.reduce((sum, x) => sum + x.bytes, 0);
     },
-    [scanTargets],
+    [scanTargets]
   );
 
-  const total = useMemo(
-    () => scanTargets.reduce((sum, x) => sum + x.bytes, 0),
-    [scanTargets],
-  );
+  const total = useMemo(() => scanTargets.reduce((sum, x) => sum + x.bytes, 0), [scanTargets]);
 
   /* One place starts a run, so the two buttons cannot disagree about the flags. */
   const go = useCallback(
     (dryRun: boolean) => {
       if (!dryRun) {
-        const interactive = all.filter((s) => selection.includes(s.id) && s.batch === 'interactive');
+        const interactive = all.filter(
+          (s) => selection.includes(s.id) && s.batch === 'interactive'
+        );
         if (interactive.length > 0) {
           setBlocked(t('sections.selBlocked', { ids: interactive.map((s) => s.id).join(', ') }));
           return;
@@ -110,25 +109,48 @@ export function Sections() {
           });
         },
       })
-        .then((r) => { finishRun(r.summary, r.exitCode > 1); })
+        .then((r) => {
+          finishRun(r.summary, r.exitCode > 1);
+        })
         .catch((e: unknown) => {
           appendLog(e instanceof Error ? e.message : String(e));
           finishRun(null, true);
         })
-        .finally(() => { setBusy(null); });
+        .finally(() => {
+          setBusy(null);
+        });
     },
     /* The two setState functions are stable, so listing them costs nothing and
        is what the React Compiler infers - a mismatch there disables optimisation
        for the whole component. */
-    [all, selection, t, startRun, navigate, prefs, excludedPaths, appendLog, applyProgress,
-      finishRun, setBusy, setBlocked],
+    [
+      all,
+      selection,
+      t,
+      startRun,
+      navigate,
+      prefs,
+      excludedPaths,
+      appendLog,
+      applyProgress,
+      finishRun,
+      setBusy,
+      setBlocked,
+    ]
   );
 
   return (
     <>
       <section className="band band-app band-tight">
         <div className="wrap">
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--sp-4)', alignItems: 'flex-end' }}>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 'var(--sp-4)',
+              alignItems: 'flex-end',
+            }}
+          >
             {/* No eyebrow: the dummy has none here (`sections.html:27-31`), and
                 "The catalogue" the app had printed was its own word (D-34). */}
             <div>
@@ -145,7 +167,10 @@ export function Sections() {
         </div>
       </section>
 
-      <section className="band band-well band-tight" style={{ position: 'sticky', top: 0, zIndex: 4 }}>
+      <section
+        className="band band-well band-tight"
+        style={{ position: 'sticky', top: 0, zIndex: 4 }}
+      >
         <div className="wrap">
           {/* 🔴 `fchip` inside `filters`, which is what the dummy uses here.
               `chip`/`chipfield` is its protected-PATH token: it has NO pressed
@@ -162,9 +187,13 @@ export function Sections() {
                 type="button"
                 key={f}
                 aria-pressed={filter === f}
-                onClick={() => { void navigate({ to: '/sections', search: { filter: f, q: search.q } }); }}
+                onClick={() => {
+                  void navigate({ to: '/sections', search: { filter: f, q: search.q } });
+                }}
               >
-                {f === 'all' ? t('sections.filter.all', { count: all.length }) : t(`sections.filter.${f}`)}
+                {f === 'all'
+                  ? t('sections.filter.all', { count: all.length })
+                  : t(`sections.filter.${f}`)}
               </button>
             ))}
             <input
@@ -234,9 +263,16 @@ export function Sections() {
         bytesOf={bytesOf}
         busy={busy}
         blocked={blocked}
-        onClear={() => { setSectionSelection([]); setBlocked(null); }}
-        onDryRun={() => { go(true); }}
-        onRun={() => { go(false); }}
+        onClear={() => {
+          setSectionSelection([]);
+          setBlocked(null);
+        }}
+        onDryRun={() => {
+          go(true);
+        }}
+        onRun={() => {
+          go(false);
+        }}
       />
 
       <div style={{ height: 'var(--sp-16)' }} />

@@ -103,7 +103,9 @@ export function Account() {
         setError(e instanceof Error ? e.message : String(e));
         if (who) void startSync(who);
       })
-      .finally(() => { setDeleting(false); });
+      .finally(() => {
+        setDeleting(false);
+      });
   }
 
   function onSignIn() {
@@ -114,8 +116,12 @@ export function Account() {
         setUser(signedIn);
         void startSync(signedIn);
       })
-      .catch((e: unknown) => { setError(e instanceof Error ? e.message : String(e)); })
-      .finally(() => { setBusy(false); });
+      .catch((e: unknown) => {
+        setError(e instanceof Error ? e.message : String(e));
+      })
+      .finally(() => {
+        setBusy(false);
+      });
   }
 
   /* 🔴 Sign-in opens a browser and waits for a redirect - the slowest thing on
@@ -156,7 +162,14 @@ export function Account() {
               <div className="panel pad">
                 {user ? (
                   <>
-                    <div style={{ display: 'flex', gap: 'var(--sp-4)', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: 'var(--sp-4)',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                      }}
+                    >
                       <span className="ava ava-lg" aria-hidden="true">
                         {initials(user.displayName, user.email)}
                       </span>
@@ -165,7 +178,14 @@ export function Account() {
                         <p className="t-sm ink-3">{user.email}</p>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', gap: 'var(--sp-2)', marginTop: 'var(--sp-5)', flexWrap: 'wrap' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: 'var(--sp-2)',
+                        marginTop: 'var(--sp-5)',
+                        flexWrap: 'wrap',
+                      }}
+                    >
                       <button
                         className="btn"
                         type="button"
@@ -187,7 +207,11 @@ export function Account() {
                         there is. It must reach a screen reader too, and politely -
                         the action has already finished, so nothing is interrupted. */}
                     {deleted ? (
-                      <div className="note note-info" style={{ marginBottom: 'var(--sp-4)' }} role="status">
+                      <div
+                        className="note note-info"
+                        style={{ marginBottom: 'var(--sp-4)' }}
+                        role="status"
+                      >
                         <span aria-hidden="true">i</span>
                         <span className="t-sm">{t('account.deleteDone')}</span>
                       </div>
@@ -214,7 +238,11 @@ export function Account() {
                     {/* 🔴 `role="alert"`: a failed sign-in must interrupt, because the
                         person is about to act on the belief that it worked. */}
                     {error ? (
-                      <div className="note note-warn" style={{ marginTop: 'var(--sp-3)' }} role="alert">
+                      <div
+                        className="note note-warn"
+                        style={{ marginTop: 'var(--sp-3)' }}
+                        role="alert"
+                      >
                         <span aria-hidden="true">⚠</span>
                         <span className="t-sm">{error}</span>
                       </div>
@@ -299,7 +327,9 @@ export function Account() {
                 spellCheck={false}
                 style={{ maxWidth: '16rem', marginTop: 'var(--sp-2)' }}
                 value={confirmWord}
-                onChange={(e) => { setConfirmWord(e.currentTarget.value); }}
+                onChange={(e) => {
+                  setConfirmWord(e.currentTarget.value);
+                }}
               />
               <div style={{ marginTop: 'var(--sp-4)' }}>
                 <button

@@ -33,7 +33,10 @@ export interface EngineRunResult {
  * registered and before the engine is invoked - the moment to navigate to the Run
  * screen, so its first frame already shows this run.
  */
-export function useEngineRun(): (args: string[], onStarted?: () => void) => Promise<EngineRunResult | null> {
+export function useEngineRun(): (
+  args: string[],
+  onStarted?: () => void
+) => Promise<EngineRunResult | null> {
   const startRun = useStore((s) => s.startRun);
   const appendLog = useStore((s) => s.appendLog);
   const applyProgress = useStore((s) => s.applyProgress);
@@ -64,6 +67,6 @@ export function useEngineRun(): (args: string[], onStarted?: () => void) => Prom
         return null;
       }
     },
-    [startRun, appendLog, applyProgress, finishRun],
+    [startRun, appendLog, applyProgress, finishRun]
   );
 }

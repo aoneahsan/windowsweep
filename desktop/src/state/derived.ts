@@ -100,7 +100,7 @@ export function useHeldBackBySection(): Map<number, number> | null {
     includedTargets,
     catalogue,
     prefs.developer,
-    scannedAt !== null,
+    scannedAt !== null
   );
 }
 
@@ -160,7 +160,7 @@ export function useRunFigures(): RunFigures {
   const heldBack = useHeldBackBySection();
   const sections = useMemo(
     () => (catalogue ? safeRunSections(catalogue).map((s) => s.id) : []),
-    [catalogue],
+    [catalogue]
   );
   const measured = useMemo(() => measuredBySection(includedTargets), [includedTargets]);
   return runFigures({

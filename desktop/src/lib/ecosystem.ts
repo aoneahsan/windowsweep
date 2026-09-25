@@ -40,22 +40,59 @@ export const SELF_ID = 'windowsweep';
 
 /** The roster exactly as vendored - every product, this one included. */
 export const ROSTER_SOURCE: readonly EcosystemProduct[] = [
-  { id: 'video-controls-plus', name: 'Video Controls Plus', tagline: 'Take complete control of any HTML5 video.' },
-  { id: 'ztools', name: 'ZTools', tagline: 'A toolbox of developer and creator utilities, one click away.' },
+  {
+    id: 'video-controls-plus',
+    name: 'Video Controls Plus',
+    tagline: 'Take complete control of any HTML5 video.',
+  },
+  {
+    id: 'ztools',
+    name: 'ZTools',
+    tagline: 'A toolbox of developer and creator utilities, one click away.',
+  },
   { id: 'clearhire', name: 'ClearHire', tagline: 'Build a sharper resume and get discovered.' },
   { id: 'lifewell', name: 'LifeWell', tagline: 'Track your health, your way.' },
   { id: 'labflow', name: 'LabFlow', tagline: 'Run your diagnostic lab end to end.' },
   { id: 'pregnancy-pal', name: 'PregnancyPal', tagline: 'A calm companion through every week.' },
-  { id: 'sms-mobile-app', name: 'SMS App', tagline: 'Send SMS at scale from your own Android device.' },
-  { id: 'native-update', name: 'Native Update', tagline: 'Ship Capacitor app updates without the store wait.' },
-  { id: 'aoneahsan-portfolio', name: 'Meet the Developer', tagline: 'The developer behind these tools.' },
-  { id: 'files-hub', name: 'FilesHub', tagline: 'File storage and 70+ developer utilities behind one API key.' },
+  {
+    id: 'sms-mobile-app',
+    name: 'SMS App',
+    tagline: 'Send SMS at scale from your own Android device.',
+  },
+  {
+    id: 'native-update',
+    name: 'Native Update',
+    tagline: 'Ship Capacitor app updates without the store wait.',
+  },
+  {
+    id: 'aoneahsan-portfolio',
+    name: 'Meet the Developer',
+    tagline: 'The developer behind these tools.',
+  },
+  {
+    id: 'files-hub',
+    name: 'FilesHub',
+    tagline: 'File storage and 70+ developer utilities behind one API key.',
+  },
   { id: 'habitforge', name: 'HabitForge', tagline: 'Turns consistency into a rope you can see.' },
   { id: 'trizlink', name: 'TrizLink', tagline: 'Short links, link-in-bio and click analytics.' },
-  { id: 'windowsweep', name: 'windowsweep', tagline: 'Developer-aware Windows cleanup CLI: dry-run first, personal folders refused, zero install via npx.' },
-  { id: 'linux-cleanup', name: 'linux-cleanup', tagline: 'Safe, developer-aware Linux disk and cache cleanup.' },
+  {
+    id: 'windowsweep',
+    name: 'windowsweep',
+    tagline:
+      'Developer-aware Windows cleanup CLI: dry-run first, personal folders refused, zero install via npx.',
+  },
+  {
+    id: 'linux-cleanup',
+    name: 'linux-cleanup',
+    tagline: 'Safe, developer-aware Linux disk and cache cleanup.',
+  },
   { id: 'macleanup', name: 'macleanup', tagline: 'Safe-by-default macOS cleanup and maintenance.' },
-  { id: 'strata-storage', name: 'Strata Storage', tagline: 'One storage API over localStorage, IndexedDB, cookies and native.' },
+  {
+    id: 'strata-storage',
+    name: 'Strata Storage',
+    tagline: 'One storage API over localStorage, IndexedDB, cookies and native.',
+  },
 ];
 
 /**

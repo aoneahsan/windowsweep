@@ -83,7 +83,7 @@ function RootLayout() {
     if (!configuredFeatures().sync) return;
     void import('./lib/sync-session').then(
       (sync) => sync.restoreSync(),
-      () => undefined,
+      () => undefined
     );
   }, []);
 
@@ -94,8 +94,16 @@ const rootRoute = createRootRoute({ component: RootLayout });
 
 /** The consent screen deliberately renders WITHOUT the rail: it is answered before
     the app is navigable, and offering navigation would let it be skipped silently. */
-const consentRoute = createRoute({ getParentRoute: () => rootRoute, path: '/consent', component: Consent });
-const splashRoute = createRoute({ getParentRoute: () => rootRoute, path: '/splash', component: Splash });
+const consentRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/consent',
+  component: Consent,
+});
+const splashRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/splash',
+  component: Splash,
+});
 
 /**
  * 🔴 THE NINE SHELL SCREENS ARE SPLIT BY ROUTE (TASK-016 item 4). All eleven were
@@ -153,13 +161,25 @@ const routes = [
   splashRoute,
   createRoute({ getParentRoute: () => rootRoute, path: '/', component: withShell(Home) }),
   createRoute({ getParentRoute: () => rootRoute, path: '/run', component: withShell(RunScreen) }),
-  createRoute({ getParentRoute: () => rootRoute, path: '/sections', component: withShell(Sections) }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/sections',
+    component: withShell(Sections),
+  }),
   createRoute({ getParentRoute: () => rootRoute, path: '/picker', component: withShell(Picker) }),
   createRoute({ getParentRoute: () => rootRoute, path: '/history', component: withShell(History) }),
   createRoute({ getParentRoute: () => rootRoute, path: '/report', component: withShell(Report) }),
   createRoute({ getParentRoute: () => rootRoute, path: '/account', component: withShell(Account) }),
-  createRoute({ getParentRoute: () => rootRoute, path: '/settings', component: withShell(Settings) }),
-  createRoute({ getParentRoute: () => rootRoute, path: '/elevation', component: withShell(Elevation) }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/settings',
+    component: withShell(Settings),
+  }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/elevation',
+    component: withShell(Elevation),
+  }),
 ];
 
 const router = createRouter({

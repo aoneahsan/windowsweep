@@ -24,7 +24,11 @@ export function HistoryHeader({ freedBytes, runs }: { freedBytes: number; runs: 
           <div className="hist-total">
             <p className="num t-xl wide accent-ink">{formatBytes(freedBytes)}</p>
             <p className="t-sm ink-3">
-              <Trans i18nKey="history.freedLast" count={runs} components={{ 1: <span className="num" /> }} />
+              <Trans
+                i18nKey="history.freedLast"
+                count={runs}
+                components={{ 1: <span className="num" /> }}
+              />
             </p>
           </div>
         </div>

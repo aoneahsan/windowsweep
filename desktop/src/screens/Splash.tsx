@@ -125,7 +125,9 @@ export function Splash() {
       setUpdateOutcome('skipped');
       setGate({ kind: 'skipped', retried: attempt > 0, settled: false });
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [engineError, catalogue, gate.kind, attempt, setUpdateOutcome]);
 
   /* The one effect that leaves for another route, and the one that lets the "no
@@ -139,7 +141,9 @@ export function Splash() {
       const settle = window.setTimeout(() => {
         setGate({ kind: 'skipped', retried: gate.retried, settled: true });
       }, NO_ANSWER_MS);
-      return () => { window.clearTimeout(settle); };
+      return () => {
+        window.clearTimeout(settle);
+      };
     }
     if (gate.kind !== 'none' && gate.kind !== 'later' && gate.kind !== 'skipped') return;
     const ms =
@@ -150,7 +154,9 @@ export function Splash() {
       // First run shows the notice; after it has been seen, straight to Home.
       void navigate({ to: readNotice().seen ? '/' : '/consent' });
     }, ms);
-    return () => { window.clearTimeout(to); };
+    return () => {
+      window.clearTimeout(to);
+    };
   }, [gate, navigate]);
 
   const onLater = useCallback(() => {
@@ -186,11 +192,14 @@ export function Splash() {
     })();
   }, []);
 
-  const stepKey = noAnswer ? 'splash.step.updateNoAnswer' : (STEPS[step]?.[0] ?? 'splash.step.engine');
+  const stepKey = noAnswer
+    ? 'splash.step.updateNoAnswer'
+    : (STEPS[step]?.[0] ?? 'splash.step.engine');
   const width = STEPS[step]?.[1] ?? STEPS[0]?.[1] ?? 8;
 
   const busy = gate.kind === 'downloading' || gate.kind === 'installed';
-  const percent = gate.kind === 'downloading' ? gate.percent : gate.kind === 'installed' ? 100 : null;
+  const percent =
+    gate.kind === 'downloading' ? gate.percent : gate.kind === 'installed' ? 100 : null;
   const bandVersion =
     gate.kind === 'available' || gate.kind === 'downloading' || gate.kind === 'installed'
       ? gate.version
@@ -204,137 +213,156 @@ export function Splash() {
        navigable yet, so offering navigation would be a lie about what is ready. */
     <Shell rail={false} statusNote={t('splash.statusNote')}>
       <>
-          <section
-            className="band band-app"
-            style={{ minHeight: '70vh', display: 'grid', placeItems: 'center' }}
-          >
-            <div className="wrap wrap-narrow" style={{ textAlign: 'center' }}>
-              <div className="hero-ring" aria-hidden="true" />
-              <p className="caps ink-3">{t('app.name')}</p>
-              <h1 className="t-2xl wide" style={{ marginBlock: 'var(--sp-2) var(--sp-4)' }}>
-                {t('splash.wordmark')}
-              </h1>
+        <section
+          className="band band-app"
+          style={{ minHeight: '70vh', display: 'grid', placeItems: 'center' }}
+        >
+          <div className="wrap wrap-narrow" style={{ textAlign: 'center' }}>
+            <div className="hero-ring" aria-hidden="true" />
+            <p className="caps ink-3">{t('app.name')}</p>
+            <h1 className="t-2xl wide" style={{ marginBlock: 'var(--sp-2) var(--sp-4)' }}>
+              {t('splash.wordmark')}
+            </h1>
 
-              <div className="prog" style={{ maxWidth: '22rem', marginInline: 'auto' }}>
-                <i className="prog-fill" style={{ width: `${String(width)}%` }} />
-              </div>
-              <p
-                className="t-sm ink-3"
-                style={{ marginTop: 'var(--sp-3)' }}
-                role="status"
-                aria-live="polite"
-              >
-                {t(stepKey)}
-              </p>
-
-              <details className="disclose" style={{ marginTop: 'var(--sp-8)', textAlign: 'start' }}>
-                <summary>
-                  <span className="disclose-line">{t('splash.detailsSummary')}</span>
-                  <span className="disclose-more">{t('consent.detailsMore')}</span>
-                </summary>
-                <div className="disclose-body">
-                  {/* `--list --json` is set in code, as `splash.html` sets it - the value
-                      used to carry literal backticks, printed as they were (D-51). */}
-                  <p><Trans i18nKey="splash.detailsWhat" components={{ 1: <code className="mono" /> }} /></p>
-                  <p>{t('splash.detailsNothing')}</p>
-                </div>
-              </details>
+            <div className="prog" style={{ maxWidth: '22rem', marginInline: 'auto' }}>
+              <i className="prog-fill" style={{ width: `${String(width)}%` }} />
             </div>
-          </section>
+            <p
+              className="t-sm ink-3"
+              style={{ marginTop: 'var(--sp-3)' }}
+              role="status"
+              aria-live="polite"
+            >
+              {t(stepKey)}
+            </p>
 
-          {/* 🔴 The band appears only once the engine is ready, never before, and
+            <details className="disclose" style={{ marginTop: 'var(--sp-8)', textAlign: 'start' }}>
+              <summary>
+                <span className="disclose-line">{t('splash.detailsSummary')}</span>
+                <span className="disclose-more">{t('consent.detailsMore')}</span>
+              </summary>
+              <div className="disclose-body">
+                {/* `--list --json` is set in code, as `splash.html` sets it - the value
+                      used to carry literal backticks, printed as they were (D-51). */}
+                <p>
+                  <Trans
+                    i18nKey="splash.detailsWhat"
+                    components={{ 1: <code className="mono" /> }}
+                  />
+                </p>
+                <p>{t('splash.detailsNothing')}</p>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        {/* 🔴 The band appears only once the engine is ready, never before, and
               never at all if the check did not complete - `page-splash.js`. */}
-          {bandVersion !== null ? (
-            <section className="band band-well band-tight">
-              <div className="wrap wrap-narrow">
-                <div className="panel pad">
-                  <div style={{ display: 'flex', gap: 'var(--sp-4)', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                    <div className="dlg-icon" aria-hidden="true">↑</div>
-                    <div style={{ flex: 1, minWidth: '14rem' }}>
-                      <h2 className="t-md wide" id={UPDATE_HEADING_ID}>
-                        {t('splash.update.ready', { version: bandVersion })}
-                      </h2>
-                      {/* 🔴 The dummy's approved sentence, verbatim. Its first half
+        {bandVersion !== null ? (
+          <section className="band band-well band-tight">
+            <div className="wrap wrap-narrow">
+              <div className="panel pad">
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: 'var(--sp-4)',
+                    alignItems: 'flex-start',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <div className="dlg-icon" aria-hidden="true">
+                    ↑
+                  </div>
+                  <div style={{ flex: 1, minWidth: '14rem' }}>
+                    <h2 className="t-md wide" id={UPDATE_HEADING_ID}>
+                      {t('splash.update.ready', { version: bandVersion })}
+                    </h2>
+                    {/* 🔴 The dummy's approved sentence, verbatim. Its first half
                           describes install-on-close, which this build does not do -
                           reported for the dummy's owner to settle, never silently
                           reworded here. */}
-                      <p className="t-sm ink-3">{t('splash.update.body')}</p>
-                      {/* Determinate only when the server said how big it is. A bar
+                    <p className="t-sm ink-3">{t('splash.update.body')}</p>
+                    {/* Determinate only when the server said how big it is. A bar
                           drawn from a guess is worse than the pending spinner on the
                           button, which is what carries an unknown length. */}
-                      {percent !== null ? (
-                        <div
-                          className="prog"
-                          style={{ marginTop: 'var(--sp-3)' }}
-                          role="progressbar"
-                          aria-labelledby={UPDATE_HEADING_ID}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          aria-valuenow={Math.round(percent)}
-                        >
-                          <i className="prog-fill" style={{ width: `${String(Math.round(percent))}%` }} />
-                        </div>
-                      ) : null}
-                      {gate.kind === 'installed' ? (
-                        <p className="t-sm" style={{ marginTop: 'var(--sp-2)' }} role="status">
-                          {t('splash.update.downloaded')}
-                        </p>
-                      ) : null}
-                    </div>
-                    <div style={{ display: 'flex', gap: 'var(--sp-2)', flexWrap: 'wrap' }}>
-                      <button className="btn" type="button" onClick={onLater} disabled={busy}>
-                        <span className="btn-label">{t('splash.update.later')}</span>
-                      </button>
-                      {/* Pending, then done, ON the control that was pressed - the
+                    {percent !== null ? (
+                      <div
+                        className="prog"
+                        style={{ marginTop: 'var(--sp-3)' }}
+                        role="progressbar"
+                        aria-labelledby={UPDATE_HEADING_ID}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={Math.round(percent)}
+                      >
+                        <i
+                          className="prog-fill"
+                          style={{ width: `${String(Math.round(percent))}%` }}
+                        />
+                      </div>
+                    ) : null}
+                    {gate.kind === 'installed' ? (
+                      <p className="t-sm" style={{ marginTop: 'var(--sp-2)' }} role="status">
+                        {t('splash.update.downloaded')}
+                      </p>
+                    ) : null}
+                  </div>
+                  <div style={{ display: 'flex', gap: 'var(--sp-2)', flexWrap: 'wrap' }}>
+                    <button className="btn" type="button" onClick={onLater} disabled={busy}>
+                      <span className="btn-label">{t('splash.update.later')}</span>
+                    </button>
+                    {/* Pending, then done, ON the control that was pressed - the
                           dummy's own vocabulary (`wire.js` busy(), widgets.js pending()).
                           Through the shared primitive, so the press is reported from
                           one place rather than from this screen. */}
-                      <PrimaryButton
-                        control="splash.updateNow"
-                        onPress={onInstall}
-                        disabled={busy}
-                        state={stateOf(gate.kind === 'downloading', gate.kind === 'installed')}
-                        label={t('splash.update.now')}
-                      />
-                    </div>
+                    <PrimaryButton
+                      control="splash.updateNow"
+                      onPress={onInstall}
+                      disabled={busy}
+                      state={stateOf(gate.kind === 'downloading', gate.kind === 'installed')}
+                      label={t('splash.update.now')}
+                    />
                   </div>
                 </div>
               </div>
-            </section>
-          ) : null}
+            </div>
+          </section>
+        ) : null}
 
-          {gate.kind === 'skipped' ? (
-            <section className="band band-app band-tight">
-              <div className="wrap wrap-narrow">
-                {/* Polite, not assertive: nothing is at risk and the sentence says
+        {gate.kind === 'skipped' ? (
+          <section className="band band-app band-tight">
+            <div className="wrap wrap-narrow">
+              {/* Polite, not assertive: nothing is at risk and the sentence says
                     so. An alert would interrupt to report that an optional courtesy
                     did not happen. */}
-                <div className="note note-warn" role="status">
-                  <span aria-hidden="true">⚠</span>
-                  <span>
-                    <strong>{t('splash.update.offlineTitle')}</strong>{' '}
-                    {gate.retried ? t('splash.update.retriedOffline') : t('splash.update.offlineBody')}{' '}
-                    {gate.retried ? null : (
-                      <button className="btn btn-sm" type="button" onClick={onRetry}>
-                        <span className="btn-label">{t('splash.update.retry')}</span>
-                      </button>
-                    )}
-                  </span>
-                </div>
+              <div className="note note-warn" role="status">
+                <span aria-hidden="true">⚠</span>
+                <span>
+                  <strong>{t('splash.update.offlineTitle')}</strong>{' '}
+                  {gate.retried
+                    ? t('splash.update.retriedOffline')
+                    : t('splash.update.offlineBody')}{' '}
+                  {gate.retried ? null : (
+                    <button className="btn btn-sm" type="button" onClick={onRetry}>
+                      <span className="btn-label">{t('splash.update.retry')}</span>
+                    </button>
+                  )}
+                </span>
               </div>
-            </section>
-          ) : null}
+            </div>
+          </section>
+        ) : null}
 
-          {engineError ? (
-            <section className="band band-app band-tight">
-              <div className="wrap wrap-narrow">
-                <div className="note note-warn" role="alert">
-                  <span aria-hidden="true">⚠</span>
-                  <span>{t('error.engineMissing')}</span>
-                </div>
+        {engineError ? (
+          <section className="band band-app band-tight">
+            <div className="wrap wrap-narrow">
+              <div className="note note-warn" role="alert">
+                <span aria-hidden="true">⚠</span>
+                <span>{t('error.engineMissing')}</span>
               </div>
-            </section>
-          ) : null}
+            </div>
+          </section>
+        ) : null}
       </>
     </Shell>
   );

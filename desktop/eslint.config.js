@@ -90,14 +90,12 @@ export default defineConfig(
           // A hard-coded string in an attribute a person actually reads or hears.
           selector:
             'JSXAttribute[name.name=/^(title|placeholder|alt|aria-label|aria-description|aria-placeholder|aria-roledescription|aria-valuetext)$/] > Literal[value=/[A-Za-z]{2,}/]',
-          message:
-            'This attribute is read aloud or shown. Use t() rather than a literal string.',
+          message: 'This attribute is read aloud or shown. Use t() rather than a literal string.',
         },
         {
           selector:
             'JSXAttribute[name.name=/^(title|placeholder|alt|aria-label)$/] > JSXExpressionContainer > Literal[value=/[A-Za-z]{2,}/]',
-          message:
-            'This attribute is read aloud or shown. Use t() rather than a literal string.',
+          message: 'This attribute is read aloud or shown. Use t() rather than a literal string.',
         },
       ],
     },
@@ -107,5 +105,5 @@ export default defineConfig(
     extends: [tseslint.configs.disableTypeChecked],
     languageOptions: { globals: globals.node },
     rules: { 'no-console': 'off' },
-  },
+  }
 );

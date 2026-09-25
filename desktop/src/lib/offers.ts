@@ -43,7 +43,9 @@ export interface Offers {
 /** The interactive sections, from the catalogue's own `batch` - never a list kept here. */
 export function interactiveSectionIds(catalogue: Catalogue | null): Set<number> {
   return new Set(
-    (catalogue?.sections ?? []).filter((section) => section.batch === 'interactive').map((section) => section.id),
+    (catalogue?.sections ?? [])
+      .filter((section) => section.batch === 'interactive')
+      .map((section) => section.id)
   );
 }
 
@@ -58,7 +60,11 @@ export function interactiveSectionIds(catalogue: Catalogue | null): Set<number> 
  * Returns `previous` itself when the run touched no interactive section, so a
  * scan does not hand every subscriber a new array to re-render over.
  */
-export function mergeOffers(previous: Offers, summary: RunSummary, interactive: ReadonlySet<number>): Offers {
+export function mergeOffers(
+  previous: Offers,
+  summary: RunSummary,
+  interactive: ReadonlySet<number>
+): Offers {
   const established = new Set<number>();
   const spent = new Set<number>();
   for (const step of summary.sections) {

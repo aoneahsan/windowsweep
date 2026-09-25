@@ -113,7 +113,7 @@ export function perSectionRows({
     return {
       id,
       key: catalogue?.sections.find((s) => s.id === id)?.key ?? String(id),
-      status: ended ? (event.status ?? labels.done) : result?.status ?? labels[state],
+      status: ended ? (event.status ?? labels.done) : (result?.status ?? labels[state]),
       freedBytes: ended ? (event.freedBytes ?? null) : (result?.freed_bytes ?? null),
       expectedBytes: expected,
       state,

@@ -32,7 +32,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
-import { useIncludedScanTargets, useReclaimOffer, useRunFigures, useRunPreferences } from '../state/derived';
+import {
+  useIncludedScanTargets,
+  useReclaimOffer,
+  useRunFigures,
+  useRunPreferences,
+} from '../state/derived';
 import { useElapsedMs } from '../state/use-elapsed';
 import { formatBytes } from '../lib/format';
 import { isCleanupRun } from '../lib/cli';
@@ -95,7 +100,9 @@ export function RunScreen() {
   const notRunYet = !isCleanupRun(summary);
 
   const done = Object.values(progress).filter((p) => p.event === 'end').length;
-  const running = Object.values(progress).find((p) => p.event === 'start' && progress[p.section]?.event !== 'end');
+  const running = Object.values(progress).find(
+    (p) => p.event === 'start' && progress[p.section]?.event !== 'end'
+  );
 
   /* 🔴 D-22: THE HERO AND ITS PROGRESS LINE, and the dummy's real value for them.
      The GATE 4 report recorded the dummy's idle hero as `0 B`, which is what
@@ -123,7 +130,7 @@ export function RunScreen() {
      hero counts what the engine reported freed, which is no bound. */
   const freedSoFar = Object.values(progress).reduce(
     (total, p) => total + (p.event === 'end' ? (p.freedBytes ?? 0) : 0),
-    0,
+    0
   );
   const offer = useReclaimOffer();
   /* 🔴 D-61: the waiting rows below carry the same figure this hero does, per
@@ -150,13 +157,18 @@ export function RunScreen() {
      `0 B` - which asserts nothing was reclaimed, and the engine's own log in the
      run folder may say otherwise - it is that this window did not measure it. */
   const heroBytes = cancelled
-    ? (freedSoFar > 0 ? freedSoFar : null)
+    ? freedSoFar > 0
+      ? freedSoFar
+      : null
     : isCleanupRun(summary) && summary
-      ? (summary.dry_run ? summary.estimated_bytes : summary.freed_bytes)
+      ? summary.dry_run
+        ? summary.estimated_bytes
+        : summary.freed_bytes
       : phase === 'running'
         ? freedSoFar
         : (offer?.amount ?? null);
-  const heroUpTo = !cancelled && !isCleanupRun(summary) && phase !== 'running' && offer?.upTo === true;
+  const heroUpTo =
+    !cancelled && !isCleanupRun(summary) && phase !== 'running' && offer?.upTo === true;
 
   /* Elapsed from the engine's own log rather than a stopwatch this screen keeps -
      `state/use-elapsed.ts`, where the reasoning moved with it. */
@@ -167,7 +179,7 @@ export function RunScreen() {
      engine runs it whole (`lib/catalogue.ts` -> `safeRunSections`). */
   const queue = useMemo(
     () => (catalogue ? safeRunSections(catalogue).map((s) => s.id) : []),
-    [catalogue],
+    [catalogue]
   );
 
   const rows = useMemo(
@@ -185,7 +197,7 @@ export function RunScreen() {
           done: t('run.statusDone'),
         },
       }),
-    [catalogue, queue, progress, summary, scanTargets, figures, t],
+    [catalogue, queue, progress, summary, scanTargets, figures, t]
   );
 
   /* The draining map's tiles: the targets of the sections the band below lists,
@@ -200,8 +212,15 @@ export function RunScreen() {
      before a run, the sections the engine reported once one has run. */
   const rowIds = useMemo(() => new Set(rows.map((row) => row.id)), [rows]);
   const drainTargets = useMemo(
-    () => drainMapTargets(toMapTargets(catalogue, scanTargets.filter((x) => rowIds.has(x.section))), progress),
-    [catalogue, scanTargets, rowIds, progress],
+    () =>
+      drainMapTargets(
+        toMapTargets(
+          catalogue,
+          scanTargets.filter((x) => rowIds.has(x.section))
+        ),
+        progress
+      ),
+    [catalogue, scanTargets, rowIds, progress]
   );
 
   const onStart = useCallback(() => {
@@ -240,8 +259,19 @@ export function RunScreen() {
         appendLog(e instanceof Error ? e.message : String(e));
         finishRun(null, true);
       })
-      .finally(() => { setStarting(false); });
-  }, [queue.length, startRun, prefs, excludedPaths, appendLog, applyProgress, finishRun, spendScanTargets]);
+      .finally(() => {
+        setStarting(false);
+      });
+  }, [
+    queue.length,
+    startRun,
+    prefs,
+    excludedPaths,
+    appendLog,
+    applyProgress,
+    finishRun,
+    spendScanTargets,
+  ]);
 
   const inFlight = starting || phase === 'running';
 
@@ -385,7 +415,9 @@ export function RunScreen() {
           <div className="wrap rise">
             <div className="zone-label">
               <span className="caps">{t('run.drainTitle')}</span>
-              <span className="t-sm ink-3" style={{ flex: 'none' }}>{t('run.drainHint')}</span>
+              <span className="t-sm ink-3" style={{ flex: 'none' }}>
+                {t('run.drainHint')}
+              </span>
             </div>
             <ReclaimMap targets={drainTargets} measured />
           </div>

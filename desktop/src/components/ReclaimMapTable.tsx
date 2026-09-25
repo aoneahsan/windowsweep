@@ -87,7 +87,9 @@ export function ReclaimMapTable({
                     amount: formatBytes(row.bytes),
                   })}
                   style={{ ['--sw-w' as string]: 'calc(1.9rem * var(--density))' }}
-                  onClick={() => { onToggle(row.path); }}
+                  onClick={() => {
+                    onToggle(row.path);
+                  }}
                 />
               </td>
             ) : null}

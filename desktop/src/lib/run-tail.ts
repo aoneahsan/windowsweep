@@ -62,7 +62,7 @@ function isLog(name: string): boolean {
 async function sweep(
   runId: string,
   state: TailState,
-  onLine: (line: string) => void,
+  onLine: (line: string) => void
 ): Promise<void> {
   let names: string[];
   try {
@@ -148,7 +148,7 @@ async function quoteReport(
   runId: string,
   state: TailState,
   onLine: (line: string) => void,
-  format: (totals: { amount: string; ran: number; skipped: number }) => string,
+  format: (totals: { amount: string; ran: number; skipped: number }) => string
 ): Promise<number[]> {
   let names: string[];
   try {
@@ -188,14 +188,15 @@ async function quoteReport(
      an object prints `[object Object]` into the log pane, and `Number(x)` on one
      prints `NaN` - both of which would be this window inventing a fact about
      somebody's elevated run rather than declining to state one. */
-  const amount = typeof totals.total_reclaimed_human === 'string' ? totals.total_reclaimed_human : '';
+  const amount =
+    typeof totals.total_reclaimed_human === 'string' ? totals.total_reclaimed_human : '';
   if (amount === '') return spent;
   onLine(
     format({
       amount,
       ran: typeof totals.steps_run === 'number' ? totals.steps_run : 0,
       skipped: typeof totals.steps_skipped === 'number' ? totals.steps_skipped : 0,
-    }),
+    })
   );
   return spent;
 }
@@ -208,7 +209,7 @@ async function quoteReport(
 export function tailElevatedRun(
   runId: string,
   onLine: (line: string) => void,
-  reportLine: (totals: { amount: string; ran: number; skipped: number }) => string,
+  reportLine: (totals: { amount: string; ran: number; skipped: number }) => string
 ): RunTail {
   const state: TailState = { emitted: new Map(), parentLog: null, running: true };
 

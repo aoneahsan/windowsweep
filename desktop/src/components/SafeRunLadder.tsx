@@ -57,7 +57,9 @@ function Rung({ row, max }: { row: LadderRow; max: number }) {
       <div>
         <div className="t-sm">{row.key}</div>
         <div className="t-xs ink-3">
-          {row.count === null ? t('home.ladderUnmeasured') : t('home.ladderTargets', { count: row.count })}
+          {row.count === null
+            ? t('home.ladderUnmeasured')
+            : t('home.ladderTargets', { count: row.count })}
         </div>
       </div>
       <div className="num t-sm">

@@ -43,7 +43,9 @@ function flag(name: string): string | null {
 }
 
 function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => { window.setTimeout(resolve, ms); });
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
 }
 
 function devHandle(): UpdateHandle {

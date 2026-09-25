@@ -69,9 +69,7 @@ function Card({
         <span className="badge badge-warn">{section.id}</span>
         <span className="t-sm">{section.key}</span>
       </div>
-      <p className="num t-md wide">
-        {offered ? formatBytes(bytes) : t('home.needsUnmeasured')}
-      </p>
+      <p className="num t-md wide">{offered ? formatBytes(bytes) : t('home.needsUnmeasured')}</p>
       <p className="t-xs ink-3">{t('home.needsWaiting', { count: rows.length })}</p>
       <span className={`tier tier-${section.tier}`}>
         <span className="t-xs ink-3">{section.tier}</span>
@@ -115,15 +113,19 @@ export function NeedsAPerson({
         else void navigate({ to: '/run' });
       });
     },
-    [offeredSections, navigate, ask],
+    [offeredSections, navigate, ask]
   );
 
   return (
     <section className="band band-well band-tight">
       <div className="wrap rise">
         <div className="zone-label">
-          <span className="caps" style={{ color: 'var(--c-warn-ink)' }}>{t('home.needsTitle')}</span>
-          <span className="t-xs ink-3" style={{ flex: 'none' }}>{t('home.needsHint')}</span>
+          <span className="caps" style={{ color: 'var(--c-warn-ink)' }}>
+            {t('home.needsTitle')}
+          </span>
+          <span className="t-xs ink-3" style={{ flex: 'none' }}>
+            {t('home.needsHint')}
+          </span>
         </div>
         <div className="g12">
           {sections.map((section) => {
@@ -137,7 +139,9 @@ export function NeedsAPerson({
                 /* An asked section only navigates, so a run elsewhere does not
                    block it; one still to be asked needs the engine to itself. */
                 disabled={asking !== null || (!offered && phase === 'running')}
-                onChoose={() => { choose(section.id); }}
+                onChoose={() => {
+                  choose(section.id);
+                }}
                 key={section.id}
               />
             );

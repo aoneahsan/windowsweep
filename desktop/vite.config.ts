@@ -10,7 +10,11 @@ import { catalogueKeysPlugin } from './vite/catalogue-keys.js';
 export default defineConfig({
   /* The catalogue-key gate runs first: a missing key stops the build before anything is
      bundled, naming the file, the line and the key (vite/catalogue-keys.ts). */
-  plugins: [catalogueKeysPlugin(fileURLToPath(new URL('.', import.meta.url))), react(), tailwindcss()],
+  plugins: [
+    catalogueKeysPlugin(fileURLToPath(new URL('.', import.meta.url))),
+    react(),
+    tailwindcss(),
+  ],
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },

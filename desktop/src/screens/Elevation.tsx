@@ -91,10 +91,7 @@ export function Elevation() {
   /** Bytes the last measurement found across the chosen sections; null until one finishes. */
   const [measured, setMeasured] = useState<number | null>(null);
 
-  const admin = useMemo(
-    () => (catalogue?.sections ?? []).filter((s) => s.admin),
-    [catalogue],
-  );
+  const admin = useMemo(() => (catalogue?.sections ?? []).filter((s) => s.admin), [catalogue]);
 
   /* 🔴 TWO LISTS, BECAUSE THE TWO KINDS HAVE OPPOSITE DEFAULTS. The three ordinary
      admin sections start chosen - that is what this screen has always done for them
@@ -151,7 +148,9 @@ export function Elevation() {
   const command = commandLine(buildArgs());
   useLayoutEffect(() => {
     setElevationCommand(command);
-    return () => { setElevationCommand(null); };
+    return () => {
+      setElevationCommand(null);
+    };
   }, [command, setElevationCommand]);
 
   /**
@@ -200,7 +199,9 @@ export function Elevation() {
         appendLog(e instanceof Error ? e.message : String(e));
         finishRun(null, true);
       })
-      .finally(() => { setBusy(null); });
+      .finally(() => {
+        setBusy(null);
+      });
   }
 
   function go() {
@@ -214,11 +215,7 @@ export function Elevation() {
        writing the moment the UAC prompt is answered, and a tail attached afterwards
        would miss everything up to that point - the same reason `run()` attaches its
        listeners before it invokes. */
-    const tail = tailElevatedRun(
-      id,
-      appendLog,
-      (totals) => t('elevation.childReport', totals),
-    );
+    const tail = tailElevatedRun(id, appendLog, (totals) => t('elevation.childReport', totals));
 
     void run(buildArgs(), id, {
       onLog: appendLog,
@@ -231,7 +228,9 @@ export function Elevation() {
         });
       },
     })
-      .then((r) => { finishRun(r.summary, r.exitCode > 1); })
+      .then((r) => {
+        finishRun(r.summary, r.exitCode > 1);
+      })
       .catch((e: unknown) => {
         /* 🔴 Without this the screen hung for ever. The elevated parent hands the
            work to a new window and exits before printing a summary, so run()
@@ -259,7 +258,10 @@ export function Elevation() {
       <section className="band band-app band-tight">
         <div className="wrap">
           <p className="caps ink-3">
-            {t('elevation.eyebrow', { count: admin.length, ids: formatIdRanges(admin.map((s) => s.id)) })}
+            {t('elevation.eyebrow', {
+              count: admin.length,
+              ids: formatIdRanges(admin.map((s) => s.id)),
+            })}
           </p>
           <h1 className="t-xl wide">{t('elevation.title', { count: admin.length })}</h1>
           <p className="lede">
@@ -275,7 +277,12 @@ export function Elevation() {
               <div className="card" key={s.id}>
                 <div className="card-bd">
                   <div
-                    style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', flexWrap: 'wrap' }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 'var(--sp-2)',
+                      flexWrap: 'wrap',
+                    }}
                   >
                     <span className="num t-sm ink-3">{s.id}</span>
                     <span className="t-base" style={{ fontWeight: 600 }}>
@@ -302,7 +309,9 @@ export function Elevation() {
                             name="elevation-hiberfil"
                             value={option}
                             checked={hiberfil === option}
-                            onChange={() => { setHiberfil(option); }}
+                            onChange={() => {
+                              setHiberfil(option);
+                            }}
                           />
                           <span>{t(`elevation.hiberfil.${option}`)}</span>
                         </label>
@@ -324,7 +333,9 @@ export function Elevation() {
                         role="switch"
                         aria-checked={isChosen(s)}
                         aria-label={t('elevation.chooseAria', { id: s.id, key: s.key })}
-                        onClick={() => { toggle(s); }}
+                        onClick={() => {
+                          toggle(s);
+                        }}
                       />
                       <span>{t('elevation.chooseThis')}</span>
                     </label>
@@ -380,7 +391,9 @@ export function Elevation() {
                     role="switch"
                     aria-checked={deepOk}
                     aria-label={t('elevation.deepConfirmAria')}
-                    onClick={() => { setDeepOk((x) => !x); }}
+                    onClick={() => {
+                      setDeepOk((x) => !x);
+                    }}
                   />
                   <span>{t('elevation.deepConfirm')}</span>
                 </label>
@@ -410,11 +423,18 @@ export function Elevation() {
           </div>
 
           <div
-            style={{ marginTop: 'var(--sp-5)', display: 'flex', gap: 'var(--sp-2)', flexWrap: 'wrap' }}
+            style={{
+              marginTop: 'var(--sp-5)',
+              display: 'flex',
+              gap: 'var(--sp-2)',
+              flexWrap: 'wrap',
+            }}
           >
             <PrimaryButton
               control="elevation.askAndRun"
-              onPress={() => { go(); }}
+              onPress={() => {
+                go();
+              }}
               disabled={busy !== null || blocked !== null}
               state={stateOf(busy === 'run')}
               label={t('elevation.askAndRun')}
@@ -423,7 +443,9 @@ export function Elevation() {
               className="btn"
               type="button"
               disabled={busy !== null || chosen.length === 0}
-              onClick={() => { measure(); }}
+              onClick={() => {
+                measure();
+              }}
               {...controlState(stateOf(busy === 'measure'))}
             >
               <span className="btn-label">{t('elevation.measureOnly')}</span>

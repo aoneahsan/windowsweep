@@ -80,7 +80,9 @@ async function readPages(uid: string, pages: number): Promise<Loaded> {
   } catch {
     /* logged by `fetchRuns`; what was read stands */
   }
-  return total === null ? { status: 'failed' } : { status: 'ready', rows, total, cursor, pages: read };
+  return total === null
+    ? { status: 'failed' }
+    : { status: 'ready', rows, total, cursor, pages: read };
 }
 
 /** The line under a row whose Remove the account did not confirm (SY-02d). */
@@ -175,15 +177,22 @@ export function CloudRuns({ user, onEmptied }: { user: AuthUser; onEmptied: () =
       .then((page) => {
         setLoaded((prev) =>
           prev?.status === 'ready'
-            ? { ...prev, rows: [...prev.rows, ...page.runs], cursor: page.nextCursor, pages: prev.pages + 1 }
-            : prev,
+            ? {
+                ...prev,
+                rows: [...prev.rows, ...page.runs],
+                cursor: page.nextCursor,
+                pages: prev.pages + 1,
+              }
+            : prev
         );
         setMore('idle');
         void navigate({ to: '/account', search: { page: drawn + 1 }, replace: true });
       })
       /* logged by `fetchRuns`: the rows stay as they were, the line says so, and the
          next press reads again */
-      .catch(() => { setMore('failed'); });
+      .catch(() => {
+        setMore('failed');
+      });
   }
 
   function forget(set: ReadonlySet<string>, runId: string): ReadonlySet<string> {
@@ -204,13 +213,21 @@ export function CloudRuns({ user, onEmptied }: { user: AuthUser; onEmptied: () =
         if (button && button === document.activeElement) focusAtRef.current = index;
         setLoaded((prev) =>
           prev?.status === 'ready'
-            ? { ...prev, rows: prev.rows.filter((r) => r.runId !== run.runId), total: Math.max(0, prev.total - 1) }
-            : prev,
+            ? {
+                ...prev,
+                rows: prev.rows.filter((r) => r.runId !== run.runId),
+                total: Math.max(0, prev.total - 1),
+              }
+            : prev
         );
       })
       /* still stored, so the row stays exactly where it is - and says so under it */
-      .catch(() => { setUnconfirmed((prev) => new Set(prev).add(run.runId)); })
-      .finally(() => { setRemoving((prev) => forget(prev, run.runId)); });
+      .catch(() => {
+        setUnconfirmed((prev) => new Set(prev).add(run.runId));
+      })
+      .finally(() => {
+        setRemoving((prev) => forget(prev, run.runId));
+      });
   }
 
   return (
@@ -247,16 +264,27 @@ export function CloudRuns({ user, onEmptied }: { user: AuthUser; onEmptied: () =
                         <div className="t-xs ink-3">{exactStamp(run.startedAt)}</div>
                       </td>
                       <td>
-                        <span className={run.dryRun ? 'badge badge-outline' : 'badge badge-neutral'}>
+                        <span
+                          className={run.dryRun ? 'badge badge-outline' : 'badge badge-neutral'}
+                        >
                           {t(run.dryRun ? 'history.dryRun' : 'history.realRun')}
                         </span>
                       </td>
                       <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', flexWrap: 'wrap' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 'var(--sp-2)',
+                            flexWrap: 'wrap',
+                          }}
+                        >
                           <span className="t-sm ink-3">
                             {t('history.sections', { count: sectionCountOf(run.sections) })}
                           </span>
-                          <span className="badge badge-outline">{t('account.runs.summaryOnly')}</span>
+                          <span className="badge badge-outline">
+                            {t('account.runs.summaryOnly')}
+                          </span>
                         </div>
                       </td>
                       {/* A dry-run's figure is its estimate, without the accent - History's rule. */}
@@ -271,7 +299,9 @@ export function CloudRuns({ user, onEmptied }: { user: AuthUser; onEmptied: () =
                           type="button"
                           data-run={run.runId}
                           aria-describedby={`${whenId} ${noteId}`}
-                          onClick={() => { onRemove(run, i); }}
+                          onClick={() => {
+                            onRemove(run, i);
+                          }}
                           {...controlState(stateOf(removing.has(run.runId)))}
                         >
                           <span className="btn-label">{t('account.runs.remove')}</span>

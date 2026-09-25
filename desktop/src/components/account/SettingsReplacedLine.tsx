@@ -28,7 +28,10 @@ export function SettingsReplacedLine() {
         <div className="note note-info" style={{ marginTop: 'var(--sp-4)' }}>
           <span aria-hidden="true">i</span>
           <span className="t-sm">
-            <Trans i18nKey="home.settingsReplaced" components={{ 1: <Link to="/account" className="lnk" /> }} />
+            <Trans
+              i18nKey="home.settingsReplaced"
+              components={{ 1: <Link to="/account" className="lnk" /> }}
+            />
           </span>
         </div>
       ) : null}

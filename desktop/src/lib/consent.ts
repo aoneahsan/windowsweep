@@ -65,9 +65,9 @@ export function readNotice(): NoticeState {
     if (!raw) return { ...NOTICE_UNSEEN };
     const parsed: unknown = JSON.parse(raw);
     const wrapped = parsed as { v?: unknown };
-    const value = (typeof wrapped === 'object' && wrapped !== null && 'v' in wrapped ? wrapped.v : parsed) as
-      | Partial<NoticeState>
-      | undefined;
+    const value = (
+      typeof wrapped === 'object' && wrapped !== null && 'v' in wrapped ? wrapped.v : parsed
+    ) as Partial<NoticeState> | undefined;
     if (typeof value !== 'object' || value === null) return { ...NOTICE_UNSEEN };
     return {
       seen: value.seen === true,

@@ -100,7 +100,7 @@ function walk(value, node, path) {
       // Tauri's deserializer denies unknown fields, so an absent
       // additionalProperties is as strict as an explicit false.
       problems.push(
-        `${path}${key}: unknown field. The schema allows: ${Object.keys(props).sort().join(', ')}`,
+        `${path}${key}: unknown field. The schema allows: ${Object.keys(props).sort().join(', ')}`
       );
       continue;
     }
@@ -151,19 +151,21 @@ function checkResourceGlobs(resources, reportTo) {
     const abs = join(root, 'src-tauri', prefix);
     if (!existsSync(abs)) {
       reportTo.push(
-        `bundle.resources["${key}"]: a glob key whose source tree "${prefix}" does not exist - run \`yarn sync:cli\` first, or the bundler will fail late with a message about a glob`,
+        `bundle.resources["${key}"]: a glob key whose source tree "${prefix}" does not exist - run \`yarn sync:cli\` first, or the bundler will fail late with a message about a glob`
       );
       continue;
     }
     let subdirs = [];
     try {
-      subdirs = readdirSync(abs, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
+      subdirs = readdirSync(abs, { withFileTypes: true })
+        .filter((d) => d.isDirectory())
+        .map((d) => d.name);
     } catch {
       continue;
     }
     if (subdirs.length > 0) {
       reportTo.push(
-        `bundle.resources["${key}"]: a GLOB key FLATTENS the tree. "${prefix}" has subdirectories (${subdirs.sort().join(', ')}) and the bundler's Glob branch joins only each file's NAME onto the destination, so all of them land in one folder and any script that loads a sibling by relative path breaks at runtime. Use the DIRECTORY as the key instead - {"${prefix}": "<dest>"} - which takes the Walk branch and preserves the structure.`,
+        `bundle.resources["${key}"]: a GLOB key FLATTENS the tree. "${prefix}" has subdirectories (${subdirs.sort().join(', ')}) and the bundler's Glob branch joins only each file's NAME onto the destination, so all of them land in one folder and any script that loads a sibling by relative path breaks at runtime. Use the DIRECTORY as the key instead - {"${prefix}": "<dest>"} - which takes the Walk branch and preserves the structure.`
       );
     }
   }
@@ -179,7 +181,9 @@ if (process.argv.includes('--self-check')) {
   const before = problems.length;
   walk(planted, schema, '');
   const caught = problems.length > before;
-  console.log(caught ? 'self-check: a planted unknown field WAS caught' : 'self-check: *** BLIND ***');
+  console.log(
+    caught ? 'self-check: a planted unknown field WAS caught' : 'self-check: *** BLIND ***'
+  );
   process.exit(caught ? 0 : 1);
 }
 
@@ -188,4 +192,6 @@ if (problems.length > 0) {
   for (const p of problems) console.error(`  ${p}`);
   process.exit(1);
 }
-console.log(`tauri.conf.json validates against @tauri-apps/cli ${String(JSON.parse(readFileSync(join(root, 'node_modules', '@tauri-apps', 'cli', 'package.json'), 'utf8')).version)}`);
+console.log(
+  `tauri.conf.json validates against @tauri-apps/cli ${String(JSON.parse(readFileSync(join(root, 'node_modules', '@tauri-apps', 'cli', 'package.json'), 'utf8')).version)}`
+);

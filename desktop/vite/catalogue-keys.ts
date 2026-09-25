@@ -91,7 +91,9 @@ export function catalogueKeysPlugin(root: string): Plugin {
       const missing = missingLiteralKeys(root);
       if (missing.length === 0) return;
       const lines = missing.map((m) => `  ${m.file}:${String(m.line)}  ${m.key}`).join('\n');
-      this.error(`[catalogue-keys] ${String(missing.length)} key(s) the English catalogue cannot resolve - each would draw as its raw key:\n${lines}`);
+      this.error(
+        `[catalogue-keys] ${String(missing.length)} key(s) the English catalogue cannot resolve - each would draw as its raw key:\n${lines}`
+      );
     },
   };
 }

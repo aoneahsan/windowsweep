@@ -55,7 +55,9 @@ function ReportUnreadable({ id, load }: { id: string; load: ReportLoad }) {
           <span aria-hidden="true">!</span>
           <span className="t-sm">
             {t(load.status === 'missing' ? 'report.fileMissing' : 'report.fileFailed')}
-            {load.status === 'failed' ? <span className="t-xs ink-3 rep-reason">{load.reason}</span> : null}
+            {load.status === 'failed' ? (
+              <span className="t-xs ink-3 rep-reason">{load.reason}</span>
+            ) : null}
           </span>
         </div>
       </div>
@@ -108,7 +110,9 @@ export function Report() {
         reasonId={unreadable ? reasonId : null}
         onToggleJson={toggleJson}
       />
-      {ready && jsonOpen ? <ReportJson id={jsonId} fileName={ready.fileName} raw={ready.raw} /> : null}
+      {ready && jsonOpen ? (
+        <ReportJson id={jsonId} fileName={ready.fileName} raw={ready.raw} />
+      ) : null}
       {unreadable ? <ReportUnreadable id={reasonId} load={load} /> : null}
 
       {ready ? (
@@ -121,7 +125,11 @@ export function Report() {
                     <span className="caps ink-3">
                       {t(ready.report.dryRun ? 'report.barsTitleDryRun' : 'report.barsTitle')}
                     </span>
-                    <SectionBars steps={ready.report.steps} dryRun={ready.report.dryRun} nameOf={nameOf} />
+                    <SectionBars
+                      steps={ready.report.steps}
+                      dryRun={ready.report.dryRun}
+                      nameOf={nameOf}
+                    />
                   </div>
                 </div>
                 <div className="c3">
@@ -136,7 +144,11 @@ export function Report() {
 
           <section className="band band-app band-tight">
             <div className="wrap">
-              <ReportTable steps={ready.report.steps} dryRun={ready.report.dryRun} nameOf={nameOf} />
+              <ReportTable
+                steps={ready.report.steps}
+                dryRun={ready.report.dryRun}
+                nameOf={nameOf}
+              />
             </div>
           </section>
 

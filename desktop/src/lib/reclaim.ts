@@ -29,7 +29,13 @@
  * measures what the hero claims, so until one has, every figure here says so.
  */
 
-import { idleDaysOf, isCleanupRun, type ProgressEvent, type RunSummary, type ScanTarget } from './cli';
+import {
+  idleDaysOf,
+  isCleanupRun,
+  type ProgressEvent,
+  type RunSummary,
+  type ScanTarget,
+} from './cli';
 import { type Catalogue, safeRunSections, sectionById } from './catalogue';
 import { isExcluded } from './exclusions';
 import type { MapTarget } from '../components/ReclaimMap';
@@ -52,7 +58,7 @@ export function reclaimableBytes(
    * after a real measurement. Reading emptiness as "nothing measured" would print
    * `not measured` over a measurement whose true answer is 0.
    */
-  measured: boolean,
+  measured: boolean
 ): number | null {
   if (!measured) return null;
   return scanTargets.reduce((total, target) => total + target.bytes, 0);
@@ -84,7 +90,7 @@ export function safeRunBytes(
   catalogue: Catalogue | null,
   scanTargets: ScanTarget[],
   /** `scannedAt !== null` - the same separate fact every other figure here reads. */
-  measured: boolean,
+  measured: boolean
 ): number | null {
   if (!measured || !catalogue) return null;
   const safe = new Set(safeRunSections(catalogue).map((section) => section.id));
@@ -110,7 +116,7 @@ export function reclaimableTargetCount(scanTargets: ScanTarget[], measured: bool
  * not a step that frees anything.
  */
 export function measuredBySection(
-  scanTargets: readonly ScanTarget[],
+  scanTargets: readonly ScanTarget[]
 ): Map<number, { bytes: number; count: number }> {
   const out = new Map<number, { bytes: number; count: number }>();
   for (const target of scanTargets) {
@@ -146,7 +152,7 @@ export function toMapTargets(
    */
   excludedPaths: readonly string[] = [],
   /** Fixed once per call, so 665 tiles cannot straddle a midnight and disagree. */
-  now: number = Date.now(),
+  now: number = Date.now()
 ): MapTarget[] {
   if (!catalogue) return [];
   return scanTargets.map((target) => {
@@ -170,13 +176,20 @@ export function toMapTargets(
  * the tile leaves when the work is done, not when it starts, because a tile that
  * vanished at `start` would claim the space back before it was freed.
  */
-export function drainMapTargets(all: MapTarget[], progress: Record<number, ProgressEvent>): MapTarget[] {
+export function drainMapTargets(
+  all: MapTarget[],
+  progress: Record<number, ProgressEvent>
+): MapTarget[] {
   return all.filter((target) => progress[target.section]?.event !== 'end');
 }
 
 /** The safe batch's developer sections - the only place developer mode's gate applies. */
 function developerSafeSections(catalogue: Catalogue): Set<number> {
-  return new Set(safeRunSections(catalogue).filter((section) => section.dev).map((section) => section.id));
+  return new Set(
+    safeRunSections(catalogue)
+      .filter((section) => section.dev)
+      .map((section) => section.id)
+  );
 }
 
 /**
@@ -227,7 +240,7 @@ export function heldBackBySection(
   catalogue: Catalogue | null,
   developer: boolean,
   /** `scannedAt !== null` - the same separate fact every other figure here reads. */
-  measured: boolean,
+  measured: boolean
 ): Map<number, number> | null {
   /* 🔴 OFF HOLDS NOTHING BACK, and that is a definition rather than a
      measurement: with developer mode off the engine clears every dev cache
@@ -250,7 +263,9 @@ export function heldBackBySection(
         section it did not run - the engine skipped it - has no estimate, and a
         partial figure would read as the whole of it. */
   const estimate = new Map(
-    summary.sections.filter((step) => step.status === 'dry-run').map((step) => [step.section, step.freed_bytes]),
+    summary.sections
+      .filter((step) => step.status === 'dry-run')
+      .map((step) => [step.section, step.freed_bytes])
   );
   const developerSections = [...developerSafeSections(catalogue)];
   if (developerSections.some((id) => !estimate.has(id))) return null;
@@ -285,7 +300,7 @@ export function recentDeveloperCaches(
   idleDays: number,
   measured: boolean,
   /** Fixed once per call, so the count cannot straddle a midnight. */
-  now: number = Date.now(),
+  now: number = Date.now()
 ): number | null {
   if (!measured || !catalogue) return null;
   if (!developer) return 0;

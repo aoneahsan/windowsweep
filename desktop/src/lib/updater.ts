@@ -76,7 +76,9 @@ const TIMED_OUT = Symbol('windowsweep:update-check-deadline');
 async function withDeadline<T>(work: Promise<T>, ms: number): Promise<T | typeof TIMED_OUT> {
   let timer = 0;
   const deadline = new Promise<typeof TIMED_OUT>((resolve) => {
-    timer = window.setTimeout(() => { resolve(TIMED_OUT); }, ms);
+    timer = window.setTimeout(() => {
+      resolve(TIMED_OUT);
+    }, ms);
   });
   try {
     return await Promise.race([work, deadline]);
@@ -108,7 +110,9 @@ function handleFor(update: Update): UpdateHandle {
       } catch (error) {
         // Reported here so the screen never names a destination, and rethrown so
         // the screen still owns what the person sees.
-        track('update.install.failed', { reason: error instanceof Error ? error.message : String(error) });
+        track('update.install.failed', {
+          reason: error instanceof Error ? error.message : String(error),
+        });
         throw error;
       }
     },
@@ -122,7 +126,9 @@ function handleFor(update: Update): UpdateHandle {
  * does not verify, a deadline - resolves as `skipped`, because the one thing this
  * must not do is stop the app from starting.
  */
-export async function checkForUpdate(timeoutMs: number = UPDATE_CHECK_TIMEOUT_MS): Promise<UpdateOutcome> {
+export async function checkForUpdate(
+  timeoutMs: number = UPDATE_CHECK_TIMEOUT_MS
+): Promise<UpdateOutcome> {
   const dev = await devUpdater();
   if (dev) return dev.devCheckForUpdate();
 

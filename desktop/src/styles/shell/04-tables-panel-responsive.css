@@ -1,50 +1,109 @@
 /* ---------------------------------------------------------------------------
    DENSE TABLE (the cockpit regime - sections, picker, history)
    --------------------------------------------------------------------------- */
-.tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--fs-sm); }
+.tbl {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--fs-sm);
+}
 .tbl thead th {
-  position: sticky; top: 0; z-index: 2;
+  position: sticky;
+  top: 0;
+  z-index: 2;
   background: var(--c-well);
   border-bottom: 1px solid var(--c-line-strong);
   padding: var(--sp-2) var(--sp-3);
-  text-align: start; font-size: var(--fs-2xs); font-weight: 600;
-  letter-spacing: .08em; text-transform: uppercase; color: var(--c-ink-3);
+  text-align: start;
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-ink-3);
   white-space: nowrap;
 }
-.tbl tbody td { padding: var(--sp-2) var(--sp-3); border-bottom: 1px solid color-mix(in oklab, var(--c-line) 65%, transparent); vertical-align: middle; }
-.tbl tbody tr { transition: background var(--d-instant) var(--ease-mech); }
-.tbl tbody tr:hover { background: color-mix(in oklab, var(--c-ink) 5%, transparent); }
+.tbl tbody td {
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: 1px solid color-mix(in oklab, var(--c-line) 65%, transparent);
+  vertical-align: middle;
+}
+.tbl tbody tr {
+  transition: background var(--d-instant) var(--ease-mech);
+}
+.tbl tbody tr:hover {
+  background: color-mix(in oklab, var(--c-ink) 5%, transparent);
+}
 /* A selected row is its own surface: it paints --c-accent-soft, so the faint tone
    measured 4.46:1 inside it against a 4.5 bar. Rebinding one token on the subtree
    raises every descendant at once - the same technique as the bleed band, and the
    same reason. Found only because a flow test left two rows selected; the unselected
    table had passed cleanly all along. */
-.tbl tbody tr[data-selected='true'] { background: var(--c-accent-soft); --c-ink-3: var(--c-ink-2); }
-.tbl tbody tr[data-selected='true'] td:first-child { box-shadow: inset 3px 0 0 0 var(--c-accent); }
-.tbl td.mono { font-size: var(--fs-xs); }
-.tbl .num-cell { text-align: end; font-family: var(--ff-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.tbl tr.detail-row > td { background: var(--c-well); padding: var(--sp-4); }
-
-.filters { display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center; }
-.fchip {
-  padding: var(--sp-1) var(--sp-3); border-radius: var(--r-pill);
-  border: 1px solid var(--c-line-strong); font-size: var(--fs-xs);
-  color: var(--c-ink-2);
-  transition: background var(--d-instant) var(--ease-mech), color var(--d-instant) var(--ease-mech), border-color var(--d-instant) var(--ease-mech);
+.tbl tbody tr[data-selected='true'] {
+  background: var(--c-accent-soft);
+  --c-ink-3: var(--c-ink-2);
 }
-.fchip:hover { border-color: var(--c-ink-3); color: var(--c-ink); }
-.fchip[aria-pressed='true'] { background: var(--c-accent); border-color: transparent; color: var(--c-on-accent); font-weight: 600; }
+.tbl tbody tr[data-selected='true'] td:first-child {
+  box-shadow: inset 3px 0 0 0 var(--c-accent);
+}
+.tbl td.mono {
+  font-size: var(--fs-xs);
+}
+.tbl .num-cell {
+  text-align: end;
+  font-family: var(--ff-display);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.tbl tr.detail-row > td {
+  background: var(--c-well);
+  padding: var(--sp-4);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  align-items: center;
+}
+.fchip {
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--r-pill);
+  border: 1px solid var(--c-line-strong);
+  font-size: var(--fs-xs);
+  color: var(--c-ink-2);
+  transition:
+    background var(--d-instant) var(--ease-mech),
+    color var(--d-instant) var(--ease-mech),
+    border-color var(--d-instant) var(--ease-mech);
+}
+.fchip:hover {
+  border-color: var(--c-ink-3);
+  color: var(--c-ink);
+}
+.fchip[aria-pressed='true'] {
+  background: var(--c-accent);
+  border-color: transparent;
+  color: var(--c-on-accent);
+  font-weight: 600;
+}
 
 /* 🔴 fixed, not sticky. As a direct child of the .app grid it claimed a row even
    when empty - translate moved it visually but the row stayed, so the status bar was
    pushed out of the window and a slice of the empty bar sat on screen. */
 .selbar {
-  position: fixed; inset-inline: 0; bottom: calc(1.75rem * var(--density)); z-index: 20;
-  display: flex; align-items: center; gap: var(--sp-4);
+  position: fixed;
+  inset-inline: 0;
+  bottom: calc(1.75rem * var(--density));
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
   padding: var(--sp-3) var(--sp-5);
-  background: var(--c-bleed); border-top: 1px solid var(--c-line-strong);
+  background: var(--c-bleed);
+  border-top: 1px solid var(--c-line-strong);
   box-shadow: var(--wm-raise-shadow);
-  translate: 0 0; transition: translate var(--d-mod) var(--ease-mech);
+  translate: 0 0;
+  transition: translate var(--d-mod) var(--ease-mech);
 }
 /* 🔴 The bar slides out rather than vanishing, so it cannot use the global [hidden] reset - but
    "display: flex" alone left it VISIBLE to everything except the mouse: measured 2026-09-05 with
@@ -53,9 +112,13 @@
    not see. visibility:hidden takes it out of the tab order and the accessibility tree; the delayed
    transition means it is only applied once the slide has finished, so the animation still reads. */
 .selbar[hidden] {
-  display: flex !important; translate: 0 110%; pointer-events: none;
+  display: flex !important;
+  translate: 0 110%;
+  pointer-events: none;
   visibility: hidden;
-  transition: translate var(--d-mod) var(--ease-mech), visibility 0s linear var(--d-mod);
+  transition:
+    translate var(--d-mod) var(--ease-mech),
+    visibility 0s linear var(--d-mod);
 }
 /* 🔴 D-40 (GATE 4 round 8): in the WINDOW the rule above lost its first declaration.
    Tailwind v4's preflight hides `[hidden]` with `display: none !important` inside
@@ -66,96 +129,269 @@
    (0,2,0) beats `[hidden]:where(…)` (0,1,0). Preflight itself is untouched, and so is
    every other `[hidden]` in the app. The dummy has no preflight and needs neither. */
 @layer base {
-  .selbar[hidden] { display: flex !important; }
+  .selbar[hidden] {
+    display: flex !important;
+  }
 }
 
 /* ---------------------------------------------------------------------------
    PROGRESS - determinate, always. "How far along" is the question being asked.
    --------------------------------------------------------------------------- */
-.prog { height: 6px; border-radius: var(--r-pill); background: color-mix(in oklab, var(--c-ink) 12%, transparent); overflow: hidden; }
-.prog-fill { height: 100%; width: 0; border-radius: inherit; background: var(--c-accent); transition: width var(--d-quick) linear; }
-.prog-fill[data-tone='ok'] { background: var(--c-ok); }
-.prog-fill[data-tone='warn'] { background: var(--c-warn); }
+.prog {
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: color-mix(in oklab, var(--c-ink) 12%, transparent);
+  overflow: hidden;
+}
+.prog-fill {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: var(--c-accent);
+  transition: width var(--d-quick) linear;
+}
+.prog-fill[data-tone='ok'] {
+  background: var(--c-ok);
+}
+.prog-fill[data-tone='warn'] {
+  background: var(--c-warn);
+}
 
 /* 🔴 The run log NEVER animates - it is the one surface watched while something
    irreversible happens. */
 .logview {
-  font-family: var(--ff-mono); font-size: var(--fs-xs); line-height: 1.55;
-  background: var(--c-well); border: 1px solid var(--c-line); border-radius: var(--r-md);
-  padding: var(--sp-3); height: 18rem; overflow-y: auto; white-space: pre-wrap; word-break: break-all;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-xs);
+  line-height: 1.55;
+  background: var(--c-well);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+  padding: var(--sp-3);
+  height: 18rem;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
-.logview .l-ok   { color: var(--c-ok-ink); }
-.logview .l-warn { color: var(--c-warn-ink); }
-.logview .l-err  { color: var(--c-danger-ink); }
-.logview .l-dim  { color: var(--c-ink-3); }
+.logview .l-ok {
+  color: var(--c-ok-ink);
+}
+.logview .l-warn {
+  color: var(--c-warn-ink);
+}
+.logview .l-err {
+  color: var(--c-danger-ink);
+}
+.logview .l-dim {
+  color: var(--c-ink-3);
+}
 
 /* ---------------------------------------------------------------------------
    ENTRANCE - staggered on FIRST PAINT of a screen only, never on a list
    --------------------------------------------------------------------------- */
-.rise { opacity: 0; translate: 0 10px; animation: rise var(--d-enter) var(--ease-enter) forwards; }
-.rise:nth-child(1) { animation-delay: 0ms; }   .rise:nth-child(2) { animation-delay: 55ms; }
-.rise:nth-child(3) { animation-delay: 110ms; } .rise:nth-child(4) { animation-delay: 165ms; }
-.rise:nth-child(n+5) { animation-delay: 210ms; }
-@keyframes rise { to { opacity: 1; translate: 0 0; } }
+.rise {
+  opacity: 0;
+  translate: 0 10px;
+  animation: rise var(--d-enter) var(--ease-enter) forwards;
+}
+.rise:nth-child(1) {
+  animation-delay: 0ms;
+}
+.rise:nth-child(2) {
+  animation-delay: 55ms;
+}
+.rise:nth-child(3) {
+  animation-delay: 110ms;
+}
+.rise:nth-child(4) {
+  animation-delay: 165ms;
+}
+.rise:nth-child(n + 5) {
+  animation-delay: 210ms;
+}
+@keyframes rise {
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
 /* neutralise MOVEMENT, keep opacity - never a global off-switch */
-[data-motion='reduced'] .rise { animation-duration: 1ms; translate: 0 0; }
+[data-motion='reduced'] .rise {
+  animation-duration: 1ms;
+  translate: 0 0;
+}
 @media (prefers-reduced-motion: reduce) {
-  :root:not([data-motion='full']) .rise { animation-duration: 1ms; translate: 0 0; }
+  :root:not([data-motion='full']) .rise {
+    animation-duration: 1ms;
+    translate: 0 0;
+  }
 }
 
 /* ---------------------------------------------------------------------------
    THE ONE THEME PANEL - anchored popover >=640px, full-height sheet below
    --------------------------------------------------------------------------- */
-.sheet-scrim { position: fixed; inset: 0; z-index: 40; background: oklch(0 0 0 / .45); }
+.sheet-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: oklch(0 0 0 / 0.45);
+}
 .sheet {
-  position: fixed; z-index: 41; inset-block: 0; inset-inline-end: 0;
+  position: fixed;
+  z-index: 41;
+  inset-block: 0;
+  inset-inline-end: 0;
   width: min(24rem, 100vw);
-  display: flex; flex-direction: column;
-  background: var(--c-panel); border-inline-start: 1px solid var(--c-line);
+  display: flex;
+  flex-direction: column;
+  background: var(--c-panel);
+  border-inline-start: 1px solid var(--c-line);
   box-shadow: var(--wm-raise-shadow);
   animation: sheetIn var(--d-mod) var(--ease-mech);
 }
-@keyframes sheetIn { from { translate: 100% 0; } to { translate: 0 0; } }
-.sheet-hd { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-4); border-bottom: 1px solid var(--c-line); }
-.sheet-bd { overflow-y: auto; padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-5); }
-.axis-name { display: block; margin-bottom: var(--sp-2); color: var(--c-ink-2); }
-.cards { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+@keyframes sheetIn {
+  from {
+    translate: 100% 0;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+.sheet-hd {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  border-bottom: 1px solid var(--c-line);
+}
+.sheet-bd {
+  overflow-y: auto;
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+.axis-name {
+  display: block;
+  margin-bottom: var(--sp-2);
+  color: var(--c-ink-2);
+}
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
 
 /* 🔴 Card selectors, never dropdowns - and each card PREVIEWS its own value */
 .card-sel {
   min-width: calc(4.2rem * var(--density));
-  padding: var(--sp-2); border: 1px solid var(--c-line-strong);
-  border-radius: var(--r-md); background: var(--c-well);
-  font-size: var(--fs-2xs); text-align: center; color: var(--c-ink-2);
-  display: flex; flex-direction: column; align-items: center; gap: var(--sp-2);
-  transition: border-color var(--d-instant) var(--ease-mech), background var(--d-instant) var(--ease-mech);
+  padding: var(--sp-2);
+  border: 1px solid var(--c-line-strong);
+  border-radius: var(--r-md);
+  background: var(--c-well);
+  font-size: var(--fs-2xs);
+  text-align: center;
+  color: var(--c-ink-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  transition:
+    border-color var(--d-instant) var(--ease-mech),
+    background var(--d-instant) var(--ease-mech);
 }
-.card-sel:hover { border-color: var(--c-ink-3); }
-.card-sel[aria-checked='true'] { border-color: var(--c-accent); background: var(--c-accent-soft); color: var(--c-accent-ink); font-weight: 600; }
-.prev { width: 100%; height: 22px; display: grid; place-items: center; overflow: hidden; }
-.prev-radius { width: 26px; height: 18px; border: 2px solid currentColor; }
-.prev-swatch { display: flex; gap: 3px; }
-.prev-swatch i { width: 10px; height: 16px; border-radius: 2px; display: block; }
-.prev-density { display: flex; flex-direction: column; width: 24px; }
-.prev-density i { display: block; height: 2px; background: currentColor; border-radius: 1px; }
-.prev-appearance { width: 26px; height: 18px; border: 1px solid currentColor; border-radius: 2px; display: flex; overflow: hidden; }
-.prev-appearance i { flex: 1; }
+.card-sel:hover {
+  border-color: var(--c-ink-3);
+}
+.card-sel[aria-checked='true'] {
+  border-color: var(--c-accent);
+  background: var(--c-accent-soft);
+  color: var(--c-accent-ink);
+  font-weight: 600;
+}
+.prev {
+  width: 100%;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.prev-radius {
+  width: 26px;
+  height: 18px;
+  border: 2px solid currentColor;
+}
+.prev-swatch {
+  display: flex;
+  gap: 3px;
+}
+.prev-swatch i {
+  width: 10px;
+  height: 16px;
+  border-radius: 2px;
+  display: block;
+}
+.prev-density {
+  display: flex;
+  flex-direction: column;
+  width: 24px;
+}
+.prev-density i {
+  display: block;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+}
+.prev-appearance {
+  width: 26px;
+  height: 18px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  display: flex;
+  overflow: hidden;
+}
+.prev-appearance i {
+  flex: 1;
+}
 
 /* ---------------------------------------------------------------------------
    TOASTS - the FALLBACK channel, for what happens elsewhere. Never the default.
    --------------------------------------------------------------------------- */
-.toasts { position: fixed; z-index: 50; inset-block-end: var(--sp-6); inset-inline-end: var(--sp-6); display: flex; flex-direction: column; gap: var(--sp-2); }
+.toasts {
+  position: fixed;
+  z-index: 50;
+  inset-block-end: var(--sp-6);
+  inset-inline-end: var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
 .toast {
-  display: flex; align-items: center; gap: var(--sp-3);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
   padding: var(--sp-3) var(--sp-4);
-  background: var(--c-bleed); color: var(--c-ink);
-  border: 1px solid var(--c-line-strong); border-radius: var(--r-md);
-  box-shadow: var(--wm-raise-shadow); font-size: var(--fs-sm);
+  background: var(--c-bleed);
+  color: var(--c-ink);
+  border: 1px solid var(--c-line-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--wm-raise-shadow);
+  font-size: var(--fs-sm);
   animation: toastIn var(--d-mod) var(--ease-mech);
   max-width: 26rem;
 }
-@keyframes toastIn { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
-.toast .undo { margin-inline-start: auto; }
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+.toast .undo {
+  margin-inline-start: auto;
+}
 
 /* ---------------------------------------------------------------------------
    THE CUSTOM CURSOR - a theme axis with an off switch (§1a / OD-18)
@@ -165,27 +401,55 @@
    independent rules, a page missing the layer has no pointer at all.
    --------------------------------------------------------------------------- */
 @media (hover: hover) and (pointer: fine) {
-  :root[data-cursor='custom']:has(.cursor) { cursor: none; }
+  :root[data-cursor='custom']:has(.cursor) {
+    cursor: none;
+  }
   :root[data-cursor='custom']:has(.cursor) a,
   :root[data-cursor='custom']:has(.cursor) button,
-  :root[data-cursor='custom']:has(.cursor) [role='button'] { cursor: none; }
+  :root[data-cursor='custom']:has(.cursor) [role='button'] {
+    cursor: none;
+  }
 }
 .cursor {
-  position: fixed; z-index: 60; top: 0; left: 0; pointer-events: none;
-  width: 26px; height: 26px; margin: -13px 0 0 -13px;
+  position: fixed;
+  z-index: 60;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
   border-radius: var(--r-pill);
   border: 1.5px solid var(--cur-ink, var(--c-ink));
-  transition: width var(--d-quick) var(--ease-mech), height var(--d-quick) var(--ease-mech),
-              margin var(--d-quick) var(--ease-mech), border-color var(--d-instant) var(--ease-mech),
-              opacity var(--d-quick) var(--ease-mech);
+  transition:
+    width var(--d-quick) var(--ease-mech),
+    height var(--d-quick) var(--ease-mech),
+    margin var(--d-quick) var(--ease-mech),
+    border-color var(--d-instant) var(--ease-mech),
+    opacity var(--d-quick) var(--ease-mech);
 }
 .cursor-dot {
-  position: fixed; z-index: 61; top: 0; left: 0; pointer-events: none;
-  width: 4px; height: 4px; margin: -2px 0 0 -2px;
-  border-radius: var(--r-pill); background: var(--cur-ink, var(--c-ink));
+  position: fixed;
+  z-index: 61;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  border-radius: var(--r-pill);
+  background: var(--cur-ink, var(--c-ink));
 }
-.cursor[data-over='interactive'] { width: 40px; height: 40px; margin: -20px 0 0 -20px; border-color: var(--c-accent); }
-:root[data-cursor='off'] .cursor, :root[data-cursor='off'] .cursor-dot { display: none; }
+.cursor[data-over='interactive'] {
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border-color: var(--c-accent);
+}
+:root[data-cursor='off'] .cursor,
+:root[data-cursor='off'] .cursor-dot {
+  display: none;
+}
 
 /* 🔴 THE OVERLAY-CONTRAST RULE (§16). The cursor is position:fixed on <body>, a
    SIBLING of the bands - so no custom property set on a band can ever reach it by
@@ -193,42 +457,99 @@
    resolved on a BOUNDARY event and stamped here, and each rule takes that
    surface's OWN on-surface ink token rather than a hand-picked colour.
    Every class that PAINTS a background needs a row. app.js gates that. */
-.cursor[data-surface='app'],    .cursor-dot[data-surface='app']    { --cur-ink: var(--c-ink); }
-.cursor[data-surface='panel'],  .cursor-dot[data-surface='panel']  { --cur-ink: var(--c-ink); }
-.cursor[data-surface='well'],   .cursor-dot[data-surface='well']   { --cur-ink: var(--c-ink-2); }
-.cursor[data-surface='bleed'],  .cursor-dot[data-surface='bleed']  { --cur-ink: var(--c-accent); }
-.cursor[data-surface='accent'], .cursor-dot[data-surface='accent'] { --cur-ink: var(--c-on-accent); }
+.cursor[data-surface='app'],
+.cursor-dot[data-surface='app'] {
+  --cur-ink: var(--c-ink);
+}
+.cursor[data-surface='panel'],
+.cursor-dot[data-surface='panel'] {
+  --cur-ink: var(--c-ink);
+}
+.cursor[data-surface='well'],
+.cursor-dot[data-surface='well'] {
+  --cur-ink: var(--c-ink-2);
+}
+.cursor[data-surface='bleed'],
+.cursor-dot[data-surface='bleed'] {
+  --cur-ink: var(--c-accent);
+}
+.cursor[data-surface='accent'],
+.cursor-dot[data-surface='accent'] {
+  --cur-ink: var(--c-on-accent);
+}
 
 /* under reduced motion the cursor loses its LAG, not its existence - removing the
    layer would leave the native pointer hidden by the guard's other half */
-[data-motion='reduced'] .cursor { transition-duration: 1ms; }
+[data-motion='reduced'] .cursor {
+  transition-duration: 1ms;
+}
 
 /* ---------------------------------------------------------------------------
    RESPONSIVE - 320 first. One navigation method per viewport (§4).
    --------------------------------------------------------------------------- */
-.only-wide { display: none; }
-@media (min-width: 900px) { .only-wide { display: initial; } }
+.only-wide {
+  display: none;
+}
+@media (min-width: 900px) {
+  .only-wide {
+    display: initial;
+  }
+}
 
 @media (max-width: 640px) {
-  .titlebar .badge { display: none; }
-  .wc { width: calc(2.2rem * var(--density)); }
+  .titlebar .badge {
+    display: none;
+  }
+  .wc {
+    width: calc(2.2rem * var(--density));
+  }
 }
 
 @media (max-width: 899px) {
-  .rail { position: fixed; z-index: 42; inset-block: 0; inset-inline-start: 0; translate: -100% 0; transition: translate var(--d-mod) var(--ease-mech); }
-  :root[data-drawer='open'] .rail { translate: 0 0; box-shadow: var(--wm-raise-shadow); }
-  .shell { grid-template-columns: 1fr; }
-  .band { padding-inline: var(--sp-4); }
-  .g12 > [class*='c'] { grid-column: span 12; }
-  .c6-m { grid-column: span 6; }
-  .readout { gap: var(--sp-5); }
-  :root { --fs-hero: calc(3.25rem * var(--type-scale)); }
-  .sheet { width: 100vw; }
+  .rail {
+    position: fixed;
+    z-index: 42;
+    inset-block: 0;
+    inset-inline-start: 0;
+    translate: -100% 0;
+    transition: translate var(--d-mod) var(--ease-mech);
+  }
+  :root[data-drawer='open'] .rail {
+    translate: 0 0;
+    box-shadow: var(--wm-raise-shadow);
+  }
+  .shell {
+    grid-template-columns: 1fr;
+  }
+  .band {
+    padding-inline: var(--sp-4);
+  }
+  .g12 > [class*='c'] {
+    grid-column: span 12;
+  }
+  .c6-m {
+    grid-column: span 6;
+  }
+  .readout {
+    gap: var(--sp-5);
+  }
+  :root {
+    --fs-hero: calc(3.25rem * var(--type-scale));
+  }
+  .sheet {
+    width: 100vw;
+  }
 }
-@media (min-width: 900px) { .drawer-btn { display: none; } }
+@media (min-width: 900px) {
+  .drawer-btn {
+    display: none;
+  }
+}
 
 /* wide content scrolls inside its own container, never the page body */
-.xscroll { overflow-x: auto; }
+.xscroll {
+  overflow-x: auto;
+}
 
 /* ---------------------------------------------------------------------------
    🔴 THE BLEED BAND'S OWN INK SET.
@@ -244,11 +565,15 @@
    rather than patching elements one at a time - and unlike the fixed cursor
    layer (§16), inheritance genuinely reaches here, because these ARE ancestors.
    --------------------------------------------------------------------------- */
-.band-bleed, .titlebar, .statusbar, .selbar, .toast, .tm-tip {
+.band-bleed,
+.titlebar,
+.statusbar,
+.selbar,
+.toast,
+.tm-tip {
   --c-ink: var(--c-bleed-ink);
   --c-ink-2: var(--c-bleed-ink-2);
   --c-ink-3: var(--c-bleed-ink-3);
   --c-accent-ink: var(--c-bleed-accent-ink);
   color: var(--c-ink);
 }
-

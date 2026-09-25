@@ -44,14 +44,18 @@ export function useAskSection(): AskSection {
   const mountedRef = useRef(true);
   useEffect(() => {
     mountedRef.current = true;
-    return () => { mountedRef.current = false; };
+    return () => {
+      mountedRef.current = false;
+    };
   }, []);
 
   const ask = useCallback(
     async (section: number) => {
       setAsking(section);
       try {
-        await runEngine(safeBatchArgs({ dryRun: true, sections: [section], ...prefs, excludedPaths }));
+        await runEngine(
+          safeBatchArgs({ dryRun: true, sections: [section], ...prefs, excludedPaths })
+        );
       } finally {
         setAsking(null);
       }
@@ -60,7 +64,7 @@ export function useAskSection(): AskSection {
          engine search this section" has a single answer. */
       return useStore.getState().offeredSections.includes(section);
     },
-    [runEngine, prefs, excludedPaths],
+    [runEngine, prefs, excludedPaths]
   );
 
   return { asking, ask };

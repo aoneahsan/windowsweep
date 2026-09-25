@@ -38,14 +38,19 @@ export function DiskBeforeAfter({ disk, dryRun }: { disk: RunReport['disk']; dry
           <div className="drive" key={before.drive}>
             <span className="drive-name">{before.drive}</span>
             <div className="cap" aria-hidden="true">
-              <i className="cap-seg cap-used" style={{ width: usedWidth(before.sizeBytes, free) }} />
+              <i
+                className="cap-seg cap-used"
+                style={{ width: usedWidth(before.sizeBytes, free) }}
+              />
             </div>
             <div className="t-xs rep-drive-fig">
               <div className={gained ? 'num state-ok' : 'num'}>
                 {t('report.driveFree', { amount: formatBytes(free) })}
               </div>
               {after !== null ? (
-                <div className="num t-2xs ink-3">{t('report.driveWas', { amount: formatBytes(before.freeBytes) })}</div>
+                <div className="num t-2xs ink-3">
+                  {t('report.driveWas', { amount: formatBytes(before.freeBytes) })}
+                </div>
               ) : null}
             </div>
           </div>

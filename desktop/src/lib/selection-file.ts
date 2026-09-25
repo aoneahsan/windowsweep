@@ -28,8 +28,7 @@ export const SELECTION_FILE_TYPES: readonly string[] = ['.txt', '.list'];
 
 /** Why a file was refused before a line of it was read. */
 export type SelectionFileRefusal =
-  | { reason: 'type'; name: string }
-  | { reason: 'size'; bytes: number };
+  { reason: 'type'; name: string } | { reason: 'size'; bytes: number };
 
 /** What one file, read against one section's candidates, found. */
 export interface SelectionFileMatch {
@@ -47,9 +46,13 @@ export interface SelectionFileMatch {
  * Refuse a file by its name and size alone, before reading a byte of it.
  * Returns `null` for a file the field accepts.
  */
-export function refuseSelectionFile(file: { name: string; size: number }): SelectionFileRefusal | null {
+export function refuseSelectionFile(file: {
+  name: string;
+  size: number;
+}): SelectionFileRefusal | null {
   const name = file.name.toLowerCase();
-  if (!SELECTION_FILE_TYPES.some((ext) => name.endsWith(ext))) return { reason: 'type', name: file.name };
+  if (!SELECTION_FILE_TYPES.some((ext) => name.endsWith(ext)))
+    return { reason: 'type', name: file.name };
   if (file.size > SELECTION_FILE_MAX_BYTES) return { reason: 'size', bytes: file.size };
   return null;
 }
@@ -75,7 +78,7 @@ export function selectionLines(text: string): string[] {
  */
 export function matchSelection(
   lines: readonly string[],
-  candidatePaths: readonly string[],
+  candidatePaths: readonly string[]
 ): SelectionFileMatch {
   const byKey = new Map<string, string[]>();
   for (const path of candidatePaths) {

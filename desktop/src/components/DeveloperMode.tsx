@@ -76,10 +76,14 @@ export function DeveloperMode({
           role="switch"
           aria-checked={developer}
           aria-label={t('home.developerTitle')}
-          onClick={() => { onDeveloper(!developer); }}
+          onClick={() => {
+            onDeveloper(!developer);
+          }}
         />
         <div>
-          <p className="t-sm">{developer ? t('home.developerOn', { days: idleDays }) : t('home.developerOff')}</p>
+          <p className="t-sm">
+            {developer ? t('home.developerOn', { days: idleDays }) : t('home.developerOff')}
+          </p>
           <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-1)' }}>
             {developer ? t('home.developerNote') : t('home.developerNoteOff')}
           </p>
@@ -117,13 +121,17 @@ export function DeveloperMode({
           {/* `index.html`'s `devHeldN` line. Absent before a scan: there is no count
               to state until something has read the timestamps. */}
           {recent === null ? null : (
-            <p className="t-xs ink-3">{t('home.heldBackCount', { count: recent, days: idleDays })}</p>
+            <p className="t-xs ink-3">
+              {t('home.heldBackCount', { count: recent, days: idleDays })}
+            </p>
           )}
         </div>
 
         <div style={{ flex: 1, minWidth: '11rem' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--sp-2)' }}>
-            <label className="caps ink-3" htmlFor="idle-window">{t('home.idleWindow')}</label>
+            <label className="caps ink-3" htmlFor="idle-window">
+              {t('home.idleWindow')}
+            </label>
             {/* The value the slider is at. The dummy prints this number inside the
                 count sentence beside it, which this app declines (see the header),
                 so the control carries its own reading rather than moving in
@@ -138,7 +146,9 @@ export function DeveloperMode({
             max={MAX_IDLE_DAYS}
             step={1}
             value={idleDays}
-            onChange={(e) => { onIdleDays(Number(e.target.value)); }}
+            onChange={(e) => {
+              onIdleDays(Number(e.target.value));
+            }}
           />
           <p className="t-sm ink-3">{t('home.idleWindowHint')}</p>
         </div>

@@ -73,7 +73,13 @@ export { ReclaimMapTable } from './ReclaimMapTable';
 function Defs() {
   return (
     <defs>
-      <pattern id="wsHatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <pattern
+        id="wsHatch"
+        width="6"
+        height="6"
+        patternUnits="userSpaceOnUse"
+        patternTransform="rotate(45)"
+      >
         <rect width="2" height="6" fill="oklch(0 0 0 / .34)" />
       </pattern>
       <linearGradient id="wsSheen" x1="0" y1="0" x2="0" y2="1">
@@ -127,7 +133,9 @@ export function ReclaimMap({
       if (entry) setWidth(entry.contentRect.width);
     });
     observer.observe(node);
-    return () => { observer.disconnect(); };
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   const frame = frameFor(width);
@@ -171,7 +179,7 @@ export function ReclaimMap({
      domain can change. */
   const idleScale = useMemo(
     () => idleScaleFor((laid?.leaves() ?? []).map((node) => node.data as Leaf)),
-    [laid],
+    [laid]
   );
 
   /* What the drawn tiles hold that a run will NOT take, so the label can subtract
@@ -182,7 +190,7 @@ export function ReclaimMap({
       (laid?.leaves() ?? [])
         .map((node) => node.data as Leaf)
         .reduce((total, leaf) => (leaf.excluded ? total + leaf.value : total), 0),
-    [laid],
+    [laid]
   );
 
   /* 🔴 ONE `tm-frame` node for every state, not one per branch. Two sibling
@@ -212,228 +220,253 @@ export function ReclaimMap({
         measured ? (
           <div className="panel pad">
             <p className="t-lg wide">{t('home.mapZeroTitle')}</p>
-            <p className="t-sm ink-2" style={{ maxWidth: '30rem' }}>{t('home.mapZeroBody')}</p>
+            <p className="t-sm ink-2" style={{ maxWidth: '30rem' }}>
+              {t('home.mapZeroBody')}
+            </p>
           </div>
         ) : (
           <div className="panel pad">
-            <p><strong>{t('home.mapUnmeasuredTitle')}</strong></p>
+            <p>
+              <strong>{t('home.mapUnmeasuredTitle')}</strong>
+            </p>
             <p className="t-sm ink-3">{t('home.mapUnmeasuredBody')}</p>
           </div>
         )
       ) : null}
-    <div className="tm-frame" ref={rootRef} hidden={!laid} onMouseLeave={() => { setTip(null); }}>
-      {!laid ? null : (
-      <svg
-        className="tm-svg"
-        viewBox={`0 0 ${String(frame.w)} ${String(frame.h)}`}
-        preserveAspectRatio="xMidYMid slice"
-        role="img"
-        /* 🔴 ONE stop for the whole map, carrying the summary below. Before
+      <div
+        className="tm-frame"
+        ref={rootRef}
+        hidden={!laid}
+        onMouseLeave={() => {
+          setTip(null);
+        }}
+      >
+        {!laid ? null : (
+          <svg
+            className="tm-svg"
+            viewBox={`0 0 ${String(frame.w)} ${String(frame.h)}`}
+            preserveAspectRatio="xMidYMid slice"
+            role="img"
+            /* 🔴 ONE stop for the whole map, carrying the summary below. Before
            TASK-009 this element was not focusable and its 28 tiles each were, so
            the page had 28 nameless stops and the one thing with a name was
            unreachable. */
-        tabIndex={0}
-        /* 🔴 The dummy's sentence, verbatim, whenever nothing is excluded - which
+            tabIndex={0}
+            /* 🔴 The dummy's sentence, verbatim, whenever nothing is excluded - which
            is every state the dummy specifies. The second form is app-side copy for
            a state it has no equivalent for, and it exists because the map draws
            the excluded tiles too: `laid.value` therefore includes bytes the run
            will refuse, and a reader who only gets this label would be told a total
            the hero above contradicts. Sighted readers see the dimming; this is the
            same fact, said. */
-        aria-label={
-          excludedBytes > 0
-            ? t('home.mapAriaExcluded', {
-                targets: leaves.length,
-                sections: groups.length,
-                amount: formatBytes((laid.value ?? 0) - excludedBytes),
-                excludedAmount: formatBytes(excludedBytes),
-              })
-            : t('home.mapAria', {
-                targets: leaves.length,
-                sections: groups.length,
-                amount: formatBytes(laid.value ?? 0),
-              })
-        }
-      >
-        <Defs />
+            aria-label={
+              excludedBytes > 0
+                ? t('home.mapAriaExcluded', {
+                    targets: leaves.length,
+                    sections: groups.length,
+                    amount: formatBytes((laid.value ?? 0) - excludedBytes),
+                    excludedAmount: formatBytes(excludedBytes),
+                  })
+                : t('home.mapAria', {
+                    targets: leaves.length,
+                    sections: groups.length,
+                    amount: formatBytes(laid.value ?? 0),
+                  })
+            }
+          >
+            <Defs />
 
-        {/* the section frames and their label strips */}
-        {groups.map((group) => {
-          const w = group.x1 - group.x0;
-          const h = group.y1 - group.y0;
-          if (w < 4 || h < 4) return null;
-          const label = fitText(
-            `${group.data.name}  ·  ${formatBytes(group.value ?? 0)}`,
-            w,
-            10.5,
-          );
-          const labelled = w > 62 && h > PAD_TOP + 6;
-          return (
-            <g key={`g${String(group.data.section ?? group.data.name)}`}>
-              <rect
-                x={group.x0}
-                y={group.y0}
-                width={w}
-                height={h}
-                rx={3}
-                fill="none"
-                stroke="var(--c-line)"
-                strokeWidth={1}
-              />
-              {labelled ? (
-                <>
+            {/* the section frames and their label strips */}
+            {groups.map((group) => {
+              const w = group.x1 - group.x0;
+              const h = group.y1 - group.y0;
+              if (w < 4 || h < 4) return null;
+              const label = fitText(
+                `${group.data.name}  ·  ${formatBytes(group.value ?? 0)}`,
+                w,
+                10.5
+              );
+              const labelled = w > 62 && h > PAD_TOP + 6;
+              return (
+                <g key={`g${String(group.data.section ?? group.data.name)}`}>
                   <rect
-                    className="tm-group-chip"
-                    x={group.x0 + 3}
-                    y={group.y0 + 2.5}
-                    width={Math.min(w - 6, 168)}
-                    height={14}
+                    x={group.x0}
+                    y={group.y0}
+                    width={w}
+                    height={h}
                     rx={3}
-                    fill="color-mix(in oklab, var(--c-ink) 7%, transparent)"
+                    fill="none"
+                    stroke="var(--c-line)"
+                    strokeWidth={1}
                   />
-                  <text
-                    x={group.x0 + 6}
-                    y={group.y0 + 13}
-                    className="tm-label"
-                    fontSize="10.5"
-                    fill="var(--c-ink-3)"
-                  >
-                    {label}
-                  </text>
-                </>
-              ) : null}
-            </g>
-          );
-        })}
+                  {labelled ? (
+                    <>
+                      <rect
+                        className="tm-group-chip"
+                        x={group.x0 + 3}
+                        y={group.y0 + 2.5}
+                        width={Math.min(w - 6, 168)}
+                        height={14}
+                        rx={3}
+                        fill="color-mix(in oklab, var(--c-ink) 7%, transparent)"
+                      />
+                      <text
+                        x={group.x0 + 6}
+                        y={group.y0 + 13}
+                        className="tm-label"
+                        fontSize="10.5"
+                        fill="var(--c-ink-3)"
+                      >
+                        {label}
+                      </text>
+                    </>
+                  ) : null}
+                </g>
+              );
+            })}
 
-        {/* the tiles */}
-        {leaves.map((node) => {
-          const leaf = node.data as Leaf;
-          const w = node.x1 - node.x0;
-          const h = node.y1 - node.y0;
-          if (w < 2 || h < 2) return null;
+            {/* the tiles */}
+            {leaves.map((node) => {
+              const leaf = node.data as Leaf;
+              const w = node.x1 - node.x0;
+              const h = node.y1 - node.y0;
+              if (w < 2 || h < 2) return null;
 
-          const name = w > 54 && h > 26 ? fitText(leaf.name, w, 11) : '';
-          /* `reclaim-map.js:262-266` - size and age when both fit, size alone
+              const name = w > 54 && h > 26 ? fitText(leaf.name, w, 11) : '';
+              /* `reclaim-map.js:262-266` - size and age when both fit, size alone
              when they do not. A target with no stamp keeps the size-only form
              rather than printing an invented age. */
-          const full =
-            leaf.idleDays === null
-              ? formatBytes(leaf.value)
-              : t('home.mapTileMeta', { amount: formatBytes(leaf.value), days: leaf.idleDays });
-          const short = formatBytes(leaf.value);
-          const sub =
-            w > 54 && h > 42 ? (fitText(full, w, 10) === full ? full : fitText(short, w, 10)) : '';
+              const full =
+                leaf.idleDays === null
+                  ? formatBytes(leaf.value)
+                  : t('home.mapTileMeta', { amount: formatBytes(leaf.value), days: leaf.idleDays });
+              const short = formatBytes(leaf.value);
+              const sub =
+                w > 54 && h > 42
+                  ? fitText(full, w, 10) === full
+                    ? full
+                    : fitText(short, w, 10)
+                  : '';
 
-          const toggle = onToggle ? () => { onToggle(leaf.path); } : undefined;
+              const toggle = onToggle
+                ? () => {
+                    onToggle(leaf.path);
+                  }
+                : undefined;
 
-          return (
-            <g
-              className="tm-tile"
-              key={leaf.path}
-              data-excluded={leaf.excluded ? 'true' : 'false'}
-              /* 🔴 -1, never 0, and no `role="button"` or `aria-label` with it.
+              return (
+                <g
+                  className="tm-tile"
+                  key={leaf.path}
+                  data-excluded={leaf.excluded ? 'true' : 'false'}
+                  /* 🔴 -1, never 0, and no `role="button"` or `aria-label` with it.
                  Those three together inside `role="img"` are what produced 28
                  nameless tab stops: the names were computed and discarded by the
                  presentational subtree while the stops survived. -1 rather than
                  omitted so a tile can still be focused programmatically without
                  ever entering the tab order. The keyboard equivalent of this
                  control is the switch on the matching table row. */
-              tabIndex={-1}
-              onMouseMove={(e) => { onMove(e, leaf); }}
-              onMouseLeave={() => { setTip(null); }}
-              /* The pointer path only. A key handler here would be code that can
+                  tabIndex={-1}
+                  onMouseMove={(e) => {
+                    onMove(e, leaf);
+                  }}
+                  onMouseLeave={() => {
+                    setTip(null);
+                  }}
+                  /* The pointer path only. A key handler here would be code that can
                  never run, because nothing can focus a tile from the keyboard. */
-              onClick={toggle}
-            >
-              {/* The second channel: the tier's own two ends, interpolated by how
+                  onClick={toggle}
+                >
+                  {/* The second channel: the tier's own two ends, interpolated by how
                   long this target has sat unused. `reclaim-map.js:224-225`. */}
-              <rect
-                className="fill"
-                x={node.x0}
-                y={node.y0}
-                width={w}
-                height={h}
-                rx={2}
-                fill={tierColour(leaf.tier, idleScale(leaf.idleDays))}
-              />
-              {h > 14 ? (
-                <rect
-                  className="sheen"
-                  x={node.x0}
-                  y={node.y0}
-                  width={w}
-                  height={Math.min(h * 0.55, 34)}
-                  rx={4}
-                  fill="url(#wsSheen)"
-                  pointerEvents="none"
-                />
-              ) : null}
-              {leaf.tier === 'permanent' ? (
-                <rect
-                  x={node.x0}
-                  y={node.y0}
-                  width={w}
-                  height={h}
-                  rx={2}
-                  fill="url(#wsHatch)"
-                  pointerEvents="none"
-                />
-              ) : null}
-              {name ? (
-                <text
-                  x={node.x0 + 6}
-                  y={node.y0 + 15}
-                  className="tm-label"
-                  fontSize="11"
-                  fill="var(--c-ink)"
-                >
-                  {name}
-                </text>
-              ) : null}
-              {sub ? (
-                <text
-                  x={node.x0 + 6}
-                  y={node.y0 + 29}
-                  className="tm-sub"
-                  fontSize="10"
-                  fill="var(--c-ink)"
-                  opacity=".74"
-                >
-                  {sub}
-                </text>
-              ) : null}
-            </g>
-          );
-        })}
-      </svg>
-      )}
+                  <rect
+                    className="fill"
+                    x={node.x0}
+                    y={node.y0}
+                    width={w}
+                    height={h}
+                    rx={2}
+                    fill={tierColour(leaf.tier, idleScale(leaf.idleDays))}
+                  />
+                  {h > 14 ? (
+                    <rect
+                      className="sheen"
+                      x={node.x0}
+                      y={node.y0}
+                      width={w}
+                      height={Math.min(h * 0.55, 34)}
+                      rx={4}
+                      fill="url(#wsSheen)"
+                      pointerEvents="none"
+                    />
+                  ) : null}
+                  {leaf.tier === 'permanent' ? (
+                    <rect
+                      x={node.x0}
+                      y={node.y0}
+                      width={w}
+                      height={h}
+                      rx={2}
+                      fill="url(#wsHatch)"
+                      pointerEvents="none"
+                    />
+                  ) : null}
+                  {name ? (
+                    <text
+                      x={node.x0 + 6}
+                      y={node.y0 + 15}
+                      className="tm-label"
+                      fontSize="11"
+                      fill="var(--c-ink)"
+                    >
+                      {name}
+                    </text>
+                  ) : null}
+                  {sub ? (
+                    <text
+                      x={node.x0 + 6}
+                      y={node.y0 + 29}
+                      className="tm-sub"
+                      fontSize="10"
+                      fill="var(--c-ink)"
+                      opacity=".74"
+                    >
+                      {sub}
+                    </text>
+                  ) : null}
+                </g>
+              );
+            })}
+          </svg>
+        )}
 
-      {tip ? (
-        <div className="tm-tip" style={{ left: `${String(tip.x)}px`, top: `${String(tip.y)}px` }}>
-          <div className="mono" style={{ wordBreak: 'break-all' }}>{tip.path}</div>
-          <div className="t-xs ink-3" style={{ marginTop: '2px' }}>
-            {/* `reclaim-map.js:115-117`, whole: size, idle, section, tier, and the
+        {tip ? (
+          <div className="tm-tip" style={{ left: `${String(tip.x)}px`, top: `${String(tip.y)}px` }}>
+            <div className="mono" style={{ wordBreak: 'break-all' }}>
+              {tip.path}
+            </div>
+            <div className="t-xs ink-3" style={{ marginTop: '2px' }}>
+              {/* `reclaim-map.js:115-117`, whole: size, idle, section, tier, and the
                 EXCLUDED clause when this tile has been clicked out of the run. The
                 idle clause is dropped rather than guessed for a target the engine
                 gave no timestamp for. */}
-            {tip.idleDays === null
-              ? t('home.mapTipMeta', {
-                  amount: formatBytes(tip.bytes),
-                  section: tip.section,
-                  tier: tip.tier,
-                })
-              : t('home.mapTipMetaIdle', {
-                  amount: formatBytes(tip.bytes),
-                  days: tip.idleDays,
-                  section: tip.section,
-                  tier: tip.tier,
-                })}
-            {tip.excluded ? t('home.mapTipExcluded') : ''}
+              {tip.idleDays === null
+                ? t('home.mapTipMeta', {
+                    amount: formatBytes(tip.bytes),
+                    section: tip.section,
+                    tier: tip.tier,
+                  })
+                : t('home.mapTipMetaIdle', {
+                    amount: formatBytes(tip.bytes),
+                    days: tip.idleDays,
+                    section: tip.section,
+                    tier: tip.tier,
+                  })}
+              {tip.excluded ? t('home.mapTipExcluded') : ''}
+            </div>
           </div>
-        </div>
-      ) : null}
-    </div>
+        ) : null}
+      </div>
     </>
   );
 }

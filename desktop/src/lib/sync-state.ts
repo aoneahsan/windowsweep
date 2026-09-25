@@ -48,7 +48,10 @@ interface SyncStatus {
   end: () => void;
 }
 
-type Status = Pick<SyncStatus, 'active' | 'settingsSyncedAt' | 'settingsFailed' | 'uploaded' | 'pending' | 'replaced'>;
+type Status = Pick<
+  SyncStatus,
+  'active' | 'settingsSyncedAt' | 'settingsFailed' | 'uploaded' | 'pending' | 'replaced'
+>;
 
 /** Nothing running, nothing failed, nothing waiting, nothing replaced - before sign-in and after sign-out. */
 const IDLE: Status = {
@@ -62,16 +65,32 @@ const IDLE: Status = {
 
 export const useSyncStatus = create<SyncStatus>()((set, get) => ({
   ...IDLE,
-  begin: (uploaded, pending) => { set({ ...IDLE, active: true, uploaded, pending }); },
+  begin: (uploaded, pending) => {
+    set({ ...IDLE, active: true, uploaded, pending });
+  },
   /* A round-trip that moves the "Synced ..." time clears either failure line. */
-  settingsSynced: (at) => { set({ settingsSyncedAt: at, settingsFailed: null }); },
-  failSettings: (step) => { set({ settingsFailed: step }); },
-  setUploaded: (uploaded) => { set({ uploaded }); },
-  setRuns: (uploaded, pending) => { set({ uploaded, pending }); },
+  settingsSynced: (at) => {
+    set({ settingsSyncedAt: at, settingsFailed: null });
+  },
+  failSettings: (step) => {
+    set({ settingsFailed: step });
+  },
+  setUploaded: (uploaded) => {
+    set({ uploaded });
+  },
+  setRuns: (uploaded, pending) => {
+    set({ uploaded, pending });
+  },
   /* 🔴 A second replacement while one stands never overwrites the first, so Undo still
      puts this machine's OWN settings back - not the account's older row that a stale
      write-back applied in between. */
-  captureReplaced: (replaced) => { if (get().replaced === null) set({ replaced }); },
-  endReplacement: () => { if (get().replaced !== null) set({ replaced: null }); },
-  end: () => { set(IDLE); },
+  captureReplaced: (replaced) => {
+    if (get().replaced === null) set({ replaced });
+  },
+  endReplacement: () => {
+    if (get().replaced !== null) set({ replaced: null });
+  },
+  end: () => {
+    set(IDLE);
+  },
 }));

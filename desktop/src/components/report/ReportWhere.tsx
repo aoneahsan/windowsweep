@@ -25,7 +25,11 @@ export function ReportWhere({ path }: { path: string }) {
           </summary>
           <div className="disclose-body">
             <p>
-              <Trans i18nKey="report.whereBody" values={{ path }} components={{ 1: <code className="mono rep-path" /> }} />
+              <Trans
+                i18nKey="report.whereBody"
+                values={{ path }}
+                components={{ 1: <code className="mono rep-path" /> }}
+              />
             </p>
             <p>
               <Trans

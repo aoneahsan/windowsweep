@@ -51,7 +51,12 @@ interface LogLine {
 
 export interface RunHandlers {
   onLog: (line: string) => void;
-  onProgress: (section: number, event: 'start' | 'end', status?: string, freedBytes?: number) => void;
+  onProgress: (
+    section: number,
+    event: 'start' | 'end',
+    status?: string,
+    freedBytes?: number
+  ) => void;
 }
 
 /**
@@ -111,7 +116,7 @@ export async function loadCatalogue(): Promise<Catalogue> {
 export async function run(
   args: string[],
   runId: string,
-  handlers: RunHandlers,
+  handlers: RunHandlers
 ): Promise<{ summary: RunSummary | null; exitCode: number; cancelled: boolean }> {
   const dev = await devEngine();
   if (dev) {
@@ -119,7 +124,8 @@ export async function run(
       if (channel === 'clean:log') handlers.onLog(line);
       else {
         const parsed = parseProgressLine(line);
-        if (parsed) handlers.onProgress(parsed.section, parsed.event, parsed.status, parsed.freedBytes);
+        if (parsed)
+          handlers.onProgress(parsed.section, parsed.event, parsed.status, parsed.freedBytes);
       }
     });
     return {
@@ -133,14 +139,15 @@ export async function run(
   unlisten.push(
     await listen<LogLine>('clean:log', (e) => {
       if (e.payload.run_id === runId) handlers.onLog(e.payload.line);
-    }),
+    })
   );
   unlisten.push(
     await listen<LogLine>('clean:progress', (e) => {
       if (e.payload.run_id !== runId) return;
       const parsed = parseProgressLine(e.payload.line);
-      if (parsed) handlers.onProgress(parsed.section, parsed.event, parsed.status, parsed.freedBytes);
-    }),
+      if (parsed)
+        handlers.onProgress(parsed.section, parsed.event, parsed.status, parsed.freedBytes);
+    })
   );
 
   try {

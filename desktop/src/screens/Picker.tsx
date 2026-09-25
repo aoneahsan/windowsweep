@@ -54,7 +54,7 @@ import { PickerConfirm } from '../components/PickerConfirm';
    chunk pushed it past the project's own 900 kB warning line (958.9 kB, from
    806.5 kB) - a build that warns is a build this project does not ship. */
 const SelectionFileField = lazy(() =>
-  import('../components/SelectionFileField').then((m) => ({ default: m.SelectionFileField })),
+  import('../components/SelectionFileField').then((m) => ({ default: m.SelectionFileField }))
 );
 
 /** The markup `picker.note` carries: the lead sentence bold, the three flags as code. */
@@ -116,7 +116,7 @@ export function Picker() {
   /* The chips are the catalogue's own interactive sections, never a list kept here. */
   const sections = useMemo(
     () => (catalogue?.sections ?? []).filter((s) => s.batch === 'interactive'),
-    [catalogue],
+    [catalogue]
   );
   const current = sections.find((s) => s.id === Number(search.section)) ?? sections[0] ?? null;
   const q = typeof search.q === 'string' ? search.q : '';
@@ -130,30 +130,40 @@ export function Picker() {
 
   const available = useMemo(
     () => candidates.filter((c) => prefs.developer || !DEV_GATED_SECTIONS.has(c.section)),
-    [candidates, prefs.developer],
+    [candidates, prefs.developer]
   );
-  const chosen = useMemo(() => available.filter((c) => selectedPaths.has(c.path)), [available, selectedPaths]);
+  const chosen = useMemo(
+    () => available.filter((c) => selectedPaths.has(c.path)),
+    [available, selectedPaths]
+  );
   const sectionRows = useMemo(
     () => (current === null ? [] : available.filter((c) => c.section === current.id)),
-    [available, current],
+    [available, current]
   );
   const needle = q.trim().toLowerCase();
-  const visibleRows = needle === ''
-    ? sectionRows
-    : sectionRows.filter((c) => `${c.path} ${c.project ?? ''}`.toLowerCase().includes(needle));
+  const visibleRows =
+    needle === ''
+      ? sectionRows
+      : sectionRows.filter((c) => `${c.path} ${c.project ?? ''}`.toLowerCase().includes(needle));
 
   const go = useCallback(
     (next: Partial<PickerQuery>, replace: boolean) => {
       if (current === null) return;
-      void navigate({ to: '/picker', search: toSearch({ section: current.id, q, mode, ...next }), replace });
+      void navigate({
+        to: '/picker',
+        search: toSearch({ section: current.id, q, mode, ...next }),
+        replace,
+      });
     },
-    [current, q, mode, navigate],
+    [current, q, mode, navigate]
   );
 
   /** A file's matches are ADDED to the selection - it never unticks a person's choice. */
   const onMatch = useCallback(
-    (paths: string[]) => { setSelection([...new Set([...selectedPaths, ...paths])]); },
-    [selectedPaths, setSelection],
+    (paths: string[]) => {
+      setSelection([...new Set([...selectedPaths, ...paths])]);
+    },
+    [selectedPaths, setSelection]
   );
 
   /**
@@ -182,7 +192,13 @@ export function Picker() {
         startRun(id);
         void navigate({ to: '/run' });
         return run(
-          selectionArgs({ selectFilePath, sections: runSections, ...prefs, permanent, excludedPaths }),
+          selectionArgs({
+            selectFilePath,
+            sections: runSections,
+            ...prefs,
+            permanent,
+            excludedPaths,
+          }),
           id,
           {
             onLog: appendLog,
@@ -194,10 +210,12 @@ export function Picker() {
                 ...(freedBytes !== undefined ? { freedBytes } : {}),
               });
             },
-          },
+          }
         );
       })
-      .then((r) => { finishRun(r.summary, r.exitCode > 1 && !r.cancelled); })
+      .then((r) => {
+        finishRun(r.summary, r.exitCode > 1 && !r.cancelled);
+      })
       .catch((e: unknown) => {
         /* 🔴 Two different failures land here and they are shown differently. The
            selection file is written BEFORE the run starts, so a refusal from
@@ -219,7 +237,9 @@ export function Picker() {
         appendLog(reason);
         finishRun(null, true);
       })
-      .finally(() => { setBusy(false); });
+      .finally(() => {
+        setBusy(false);
+      });
   }, [chosen, mode, prefs, excludedPaths, navigate, startRun, appendLog, applyProgress, finishRun]);
 
   /* The catalogue arrives at boot; until it does there is no section to draw, and a
@@ -234,7 +254,9 @@ export function Picker() {
       ? 'not-asked'
       : visibleRows.length > 0
         ? 'rows'
-        : needle === '' ? 'nothing' : 'no-match';
+        : needle === ''
+          ? 'nothing'
+          : 'no-match';
   const here = chosen.filter((c) => c.section === current.id);
   const chosenSections = [...new Set(chosen.map((c) => c.section))].sort((a, b) => a - b);
 
@@ -250,18 +272,29 @@ export function Picker() {
     <>
       <section className="band band-app band-tight">
         <div className="wrap">
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--sp-4)', alignItems: 'flex-end' }}>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 'var(--sp-4)',
+              alignItems: 'flex-end',
+            }}
+          >
             <div>
               <p className="caps ink-3">{t('picker.eyebrow', { id: current.id })}</p>
               <h1 className="t-xl wide">
                 {t(`picker.section.${String(current.id)}.title`, { defaultValue: current.title })}
               </h1>
-              <p className="t-sm ink-3">{t(`picker.section.${String(current.id)}.lede`, { defaultValue: '' })}</p>
+              <p className="t-sm ink-3">
+                {t(`picker.section.${String(current.id)}.lede`, { defaultValue: '' })}
+              </p>
             </div>
             {/* The header speaks for the section in view; the bar below, for the
                 whole selection. */}
             <div style={{ marginInlineStart: 'auto', textAlign: 'end' }}>
-              <p className="num t-xl wide accent-ink">{formatBytes(here.reduce((sum, c) => sum + c.bytes, 0))}</p>
+              <p className="num t-xl wide accent-ink">
+                {formatBytes(here.reduce((sum, c) => sum + c.bytes, 0))}
+              </p>
               <p className="t-sm ink-3">
                 <Trans
                   i18nKey="picker.chosenOf"
@@ -274,17 +307,24 @@ export function Picker() {
         </div>
       </section>
 
-      <section className="band band-well band-tight" style={{ position: 'sticky', top: 0, zIndex: 4 }}>
+      <section
+        className="band band-well band-tight"
+        style={{ position: 'sticky', top: 0, zIndex: 4 }}
+      >
         <div className="wrap">
           <div className="filters">
-            <span className="caps ink-3" style={{ marginInlineEnd: 'var(--sp-2)' }}>{t('picker.sectionFilter')}</span>
+            <span className="caps ink-3" style={{ marginInlineEnd: 'var(--sp-2)' }}>
+              {t('picker.sectionFilter')}
+            </span>
             {sections.map((s) => (
               <button
                 className="fchip"
                 type="button"
                 key={s.id}
                 aria-pressed={s.id === current.id}
-                onClick={() => { go({ section: s.id }, false); }}
+                onClick={() => {
+                  go({ section: s.id }, false);
+                }}
               >
                 {t('picker.chipLabel', {
                   id: s.id,
@@ -300,7 +340,9 @@ export function Picker() {
               style={{ maxWidth: '16rem', marginInlineStart: 'auto' }}
               /* 🔴 `replace`, or every keystroke becomes a history entry and Back
                  walks the filter backwards one character at a time. */
-              onChange={(e) => { go({ q: e.target.value }, true); }}
+              onChange={(e) => {
+                go({ q: e.target.value }, true);
+              }}
             />
           </div>
         </div>
@@ -324,7 +366,9 @@ export function Picker() {
 
           <div className="note note-info" style={{ marginTop: 'var(--sp-4)' }}>
             <span aria-hidden="true">i</span>
-            <span><Trans i18nKey="picker.note" components={NOTE_MARKUP} /></span>
+            <span>
+              <Trans i18nKey="picker.note" components={NOTE_MARKUP} />
+            </span>
           </div>
 
           <details className="disclose" style={{ marginTop: 'var(--sp-4)' }}>
@@ -352,20 +396,33 @@ export function Picker() {
         bytes={chosen.reduce((sum, c) => sum + c.bytes, 0)}
         sections={chosenSections}
         mode={mode}
-        onMode={(next) => { go({ mode: next }, true); }}
+        onMode={(next) => {
+          go({ mode: next }, true);
+        }}
         busy={busy}
         failed={failed}
-        onClear={() => { setSelection([]); setFailed(null); }}
+        onClear={() => {
+          setSelection([]);
+          setFailed(null);
+        }}
         /* 🔴 D-48 (GATE 4 round 8, decided): Permanent asks first. Recycle Bin keeps
            its single press - it is recoverable. */
-        onRemove={() => { if (mode === 'permanent') setConfirming(true); else onRemove(); }}
+        onRemove={() => {
+          if (mode === 'permanent') setConfirming(true);
+          else onRemove();
+        }}
         outright={chosenSections.includes(OUTRIGHT_SECTION)}
       />
       <PickerConfirm
         isOpen={confirming}
         count={chosen.length}
-        onCancel={() => { setConfirming(false); }}
-        onConfirm={() => { setConfirming(false); onRemove(); }}
+        onCancel={() => {
+          setConfirming(false);
+        }}
+        onConfirm={() => {
+          setConfirming(false);
+          onRemove();
+        }}
       />
     </>
   );

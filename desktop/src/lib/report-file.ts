@@ -63,10 +63,12 @@ function list(value: unknown): unknown[] {
 }
 
 function drives(value: unknown): DriveSnapshot[] {
-  return list(value).map((raw) => {
-    const d = record(raw);
-    return { drive: str(d.drive), sizeBytes: num(d.size_bytes), freeBytes: num(d.free_bytes) };
-  }).filter((d) => d.drive !== '');
+  return list(value)
+    .map((raw) => {
+      const d = record(raw);
+      return { drive: str(d.drive), sizeBytes: num(d.size_bytes), freeBytes: num(d.free_bytes) };
+    })
+    .filter((d) => d.drive !== '');
 }
 
 /** The engine writes UTF-8 without a BOM; a copy edited by hand may carry one. */

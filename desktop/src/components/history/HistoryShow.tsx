@@ -13,21 +13,31 @@ import { useTranslation } from 'react-i18next';
 
 import { HISTORY_FILTERS, type HistoryFilter } from '../../lib/history-rows';
 
-export function HistoryShow({ filter, onChoose }: { filter: HistoryFilter; onChoose: (next: HistoryFilter) => void }) {
+export function HistoryShow({
+  filter,
+  onChoose,
+}: {
+  filter: HistoryFilter;
+  onChoose: (next: HistoryFilter) => void;
+}) {
   const { t } = useTranslation();
   const labelId = useId();
   return (
     <section className="band band-well band-tight hist-show">
       <div className="wrap">
         <div className="filters" role="group" aria-labelledby={labelId}>
-          <span className="caps ink-3 hist-show-label" id={labelId}>{t('history.show')}</span>
+          <span className="caps ink-3 hist-show-label" id={labelId}>
+            {t('history.show')}
+          </span>
           {HISTORY_FILTERS.map((f) => (
             <button
               className="fchip"
               type="button"
               key={f}
               aria-pressed={filter === f}
-              onClick={() => { onChoose(f); }}
+              onClick={() => {
+                onChoose(f);
+              }}
             >
               {t(`history.filter.${f}`)}
             </button>

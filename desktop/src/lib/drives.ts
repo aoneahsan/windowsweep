@@ -104,7 +104,7 @@ export function driveLetterOf(path: string): string | null {
 export function driveRows(
   drives: DriveInfo[],
   scanTargets: ScanTarget[],
-  measured: boolean,
+  measured: boolean
 ): DriveRow[] {
   const byLetter = new Map<string, number>();
   if (measured) {
@@ -176,23 +176,29 @@ export function totalBytesOf(rows: DriveRow[]): number {
  */
 export function useDriveRows(
   scanTargets: ScanTarget[],
-  measured: boolean,
+  measured: boolean
 ): { rows: DriveRow[]; loading: boolean } {
   const [drives, setDrives] = useState<DriveInfo[] | null>(null);
 
   useEffect(() => {
     let live = true;
     listDrives()
-      .then((list) => { if (live) setDrives(list); })
+      .then((list) => {
+        if (live) setDrives(list);
+      })
       /* A drive list that cannot be read is an empty band, never a thrown error
          that takes the screen down. The rest of Home does not depend on it. */
-      .catch(() => { if (live) setDrives([]); });
-    return () => { live = false; };
+      .catch(() => {
+        if (live) setDrives([]);
+      });
+    return () => {
+      live = false;
+    };
   }, []);
 
   const rows = useMemo(
     () => (drives === null ? [] : driveRows(drives, scanTargets, measured)),
-    [drives, scanTargets, measured],
+    [drives, scanTargets, measured]
   );
   return { rows, loading: drives === null };
 }

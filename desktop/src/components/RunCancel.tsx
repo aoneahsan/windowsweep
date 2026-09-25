@@ -52,13 +52,7 @@ import { useTranslation } from 'react-i18next';
 import { cancelRun, type CancelOutcome } from '../lib/engine';
 import { controlState, stateOf } from '../lib/control-state';
 
-export function RunCancel({
-  runId,
-  running,
-}: {
-  runId: string | null;
-  running: boolean;
-}) {
+export function RunCancel({ runId, running }: { runId: string | null; running: boolean }) {
   const { t } = useTranslation();
   const [busy, setBusy] = useState(false);
   const [outcome, setOutcome] = useState<CancelOutcome | null>(null);
@@ -74,8 +68,12 @@ export function RunCancel({
     setFailed(null);
     cancelRun(runId)
       .then(setOutcome)
-      .catch((e: unknown) => { setFailed(e instanceof Error ? e.message : String(e)); })
-      .finally(() => { setBusy(false); });
+      .catch((e: unknown) => {
+        setFailed(e instanceof Error ? e.message : String(e));
+      })
+      .finally(() => {
+        setBusy(false);
+      });
   }, [runId]);
 
   return (

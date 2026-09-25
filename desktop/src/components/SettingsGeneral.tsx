@@ -45,7 +45,15 @@
 
 import { useTranslation } from 'react-i18next';
 
-import { useStore, MIN_IDLE_DAYS, MAX_IDLE_DAYS, MIN_TEMP_DAYS, MAX_TEMP_DAYS, MIN_LARGE_FILE_MB, MAX_LARGE_FILE_MB } from '../state/store';
+import {
+  useStore,
+  MIN_IDLE_DAYS,
+  MAX_IDLE_DAYS,
+  MIN_TEMP_DAYS,
+  MAX_TEMP_DAYS,
+  MIN_LARGE_FILE_MB,
+  MAX_LARGE_FILE_MB,
+} from '../state/store';
 import { useHeldBackBytes } from '../state/derived';
 import { formatBytes } from '../lib/format';
 import { ScheduleSwitch } from './ScheduleSwitch';
@@ -146,7 +154,9 @@ export function SettingsGeneral() {
             role="switch"
             aria-checked={developer}
             aria-label={t('home.developerTitle')}
-            onClick={() => { setDeveloper(!developer); }}
+            onClick={() => {
+              setDeveloper(!developer);
+            }}
           />
         }
       />

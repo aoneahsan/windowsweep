@@ -26,7 +26,14 @@
 
 import { useCallback, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Button, DropZone, FileTrigger, Text, Tooltip, TooltipTrigger } from 'react-aria-components';
+import {
+  Button,
+  DropZone,
+  FileTrigger,
+  Text,
+  Tooltip,
+  TooltipTrigger,
+} from 'react-aria-components';
 
 import { formatBytes } from '../lib/format';
 import {
@@ -65,9 +72,11 @@ export function SelectionFileField({
     async (file: File) => {
       const refusal = refuseSelectionFile(file);
       if (refusal) {
-        setVerdict(refusal.reason === 'type'
-          ? { state: 'rejected', why: 'type', name: refusal.name }
-          : { state: 'rejected', why: 'size', bytes: refusal.bytes });
+        setVerdict(
+          refusal.reason === 'type'
+            ? { state: 'rejected', why: 'type', name: refusal.name }
+            : { state: 'rejected', why: 'size', bytes: refusal.bytes }
+        );
         return;
       }
       let text: string;
@@ -77,11 +86,19 @@ export function SelectionFileField({
         setVerdict({ state: 'rejected', why: 'unreadable' });
         return;
       }
-      const found = matchSelection(selectionLines(text), candidates.map((c) => c.path));
+      const found = matchSelection(
+        selectionLines(text),
+        candidates.map((c) => c.path)
+      );
       if (found.paths.length > 0) onMatch(found.paths);
-      setVerdict({ state: 'done', lines: found.lines, matched: found.matchedLines, unmatched: found.unmatched });
+      setVerdict({
+        state: 'done',
+        lines: found.lines,
+        matched: found.matchedLines,
+        unmatched: found.unmatched,
+      });
     },
-    [candidates, onMatch],
+    [candidates, onMatch]
   );
 
   const said = (() => {
@@ -93,7 +110,8 @@ export function SelectionFileField({
         return t('picker.fileDone', { count: verdict.lines, matched: verdict.matched });
       case 'rejected':
         if (verdict.why === 'type') return t('picker.fileWrongType', { name: verdict.name });
-        if (verdict.why === 'size') return t('picker.fileTooBig', { size: formatBytes(verdict.bytes) });
+        if (verdict.why === 'size')
+          return t('picker.fileTooBig', { size: formatBytes(verdict.bytes) });
         return t('picker.fileUnreadable');
     }
   })();
@@ -104,14 +122,26 @@ export function SelectionFileField({
       <div className="fw-lbl">
         {t('picker.fileLabel')}
         <TooltipTrigger delay={0} closeDelay={0}>
-          <Button className="fx-btn" style={{ position: 'static' }} aria-label={t('picker.fileTipLabel')}>
+          <Button
+            className="fx-btn"
+            style={{ position: 'static' }}
+            aria-label={t('picker.fileTipLabel')}
+          >
             ?
           </Button>
           <Tooltip className="pop" placement="bottom start" offset={4}>
-            <div><Trans i18nKey="picker.fileTipPurpose" components={{ 1: <b /> }} /></div>
-            <div><Trans i18nKey="picker.fileTipTypes" components={{ 1: <b /> }} /></div>
-            <div><Trans i18nKey="picker.fileTipSize" components={{ 1: <b /> }} /></div>
-            <div><Trans i18nKey="picker.fileTipExample" components={{ 1: <b /> }} /></div>
+            <div>
+              <Trans i18nKey="picker.fileTipPurpose" components={{ 1: <b /> }} />
+            </div>
+            <div>
+              <Trans i18nKey="picker.fileTipTypes" components={{ 1: <b /> }} />
+            </div>
+            <div>
+              <Trans i18nKey="picker.fileTipSize" components={{ 1: <b /> }} />
+            </div>
+            <div>
+              <Trans i18nKey="picker.fileTipExample" components={{ 1: <b /> }} />
+            </div>
           </Tooltip>
         </TooltipTrigger>
       </div>
@@ -125,8 +155,12 @@ export function SelectionFileField({
         data-state={dragging ? 'dragging' : verdict.state}
         style={{ marginTop: 'var(--sp-2)' }}
         getDropOperation={() => 'copy'}
-        onDropEnter={() => { setDragging(true); }}
-        onDropExit={() => { setDragging(false); }}
+        onDropEnter={() => {
+          setDragging(true);
+        }}
+        onDropExit={() => {
+          setDragging(false);
+        }}
         onDrop={(e) => {
           setDragging(false);
           const item = e.items.find((i) => i.kind === 'file');
@@ -152,14 +186,18 @@ export function SelectionFileField({
       {unmatched.length === 0 ? null : (
         <div className="note note-warn" style={{ marginTop: 'var(--sp-3)' }}>
           <span aria-hidden="true">⚠</span>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-1)', minWidth: 0 }}>
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-1)', minWidth: 0 }}
+          >
             {unmatched.slice(0, UNMATCHED_SHOWN).map((line) => (
               <div className="t-xs" key={line} style={{ overflowWrap: 'anywhere' }}>
                 {t('picker.fileUnmatched', { line })}
               </div>
             ))}
             {unmatched.length > UNMATCHED_SHOWN ? (
-              <div className="t-xs ink-3">{t('picker.fileMore', { count: unmatched.length - UNMATCHED_SHOWN })}</div>
+              <div className="t-xs ink-3">
+                {t('picker.fileMore', { count: unmatched.length - UNMATCHED_SHOWN })}
+              </div>
             ) : null}
           </div>
         </div>

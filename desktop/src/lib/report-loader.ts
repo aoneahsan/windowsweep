@@ -71,7 +71,10 @@ async function load(runId: string, knownFile: string | null): Promise<void> {
     const raw = stripBom(await readReport(runId, fileName));
     remember(runId, { status: 'ready', report: parseReport(raw), raw, fileName });
   } catch (error: unknown) {
-    remember(runId, { status: 'failed', reason: error instanceof Error ? error.message : String(error) });
+    remember(runId, {
+      status: 'failed',
+      reason: error instanceof Error ? error.message : String(error),
+    });
   } finally {
     inflight.delete(runId);
   }

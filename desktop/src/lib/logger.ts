@@ -41,8 +41,16 @@ export function errorText(error: unknown): string {
 
 /** The project logger. `logger.warn('sync: settings read failed', { error: errorText(e) })`. */
 export const logger = {
-  debug: (message: string, context?: LogContext): void => { write('debug', message, context); },
-  info: (message: string, context?: LogContext): void => { write('info', message, context); },
-  warn: (message: string, context?: LogContext): void => { write('warn', message, context); },
-  error: (message: string, context?: LogContext): void => { write('error', message, context); },
+  debug: (message: string, context?: LogContext): void => {
+    write('debug', message, context);
+  },
+  info: (message: string, context?: LogContext): void => {
+    write('info', message, context);
+  },
+  warn: (message: string, context?: LogContext): void => {
+    write('warn', message, context);
+  },
+  error: (message: string, context?: LogContext): void => {
+    write('error', message, context);
+  },
 };

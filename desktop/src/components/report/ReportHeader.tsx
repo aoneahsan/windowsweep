@@ -45,7 +45,9 @@ export function ReportCrumbs({ current }: { current?: string }) {
     <nav aria-label={t('report.crumbsLabel')}>
       <ol className="crumbs rep-crumbs">
         <li>
-          <Link to="/history" className="lnk">{t('history.title')}</Link>
+          <Link to="/history" className="lnk">
+            {t('history.title')}
+          </Link>
         </li>
         {current === undefined ? null : (
           <li>
@@ -67,7 +69,14 @@ interface ReportHeaderProps {
   onToggleJson: () => void;
 }
 
-export function ReportHeader({ entry, load, jsonOpen, jsonId, reasonId, onToggleJson }: ReportHeaderProps) {
+export function ReportHeader({
+  entry,
+  load,
+  jsonOpen,
+  jsonId,
+  reasonId,
+  onToggleJson,
+}: ReportHeaderProps) {
   const { t } = useTranslation();
   const report = load.status === 'ready' ? load.report : null;
 
@@ -86,9 +95,15 @@ export function ReportHeader({ entry, load, jsonOpen, jsonId, reasonId, onToggle
     setExported(false);
     setExportFailed(null);
     exportRunReports(entry.runId)
-      .then(() => { setExported(true); })
-      .catch((e: unknown) => { setExportFailed(e instanceof Error ? e.message : String(e)); })
-      .finally(() => { setExporting(false); });
+      .then(() => {
+        setExported(true);
+      })
+      .catch((e: unknown) => {
+        setExportFailed(e instanceof Error ? e.message : String(e));
+      })
+      .finally(() => {
+        setExporting(false);
+      });
   }, [report, exporting, entry.runId]);
 
   /* The report's own total once the file is read, the History record's until then.
@@ -98,7 +113,9 @@ export function ReportHeader({ entry, load, jsonOpen, jsonId, reasonId, onToggle
   const bytes = dryRun
     ? (report?.estimatedBytes ?? entry.estimatedBytes)
     : (report?.reclaimedBytes ?? entry.freedBytes);
-  const title = t(dryRun ? 'report.titleDryRun' : 'report.titleFreed', { amount: formatBytes(bytes) });
+  const title = t(dryRun ? 'report.titleDryRun' : 'report.titleFreed', {
+    amount: formatBytes(bytes),
+  });
 
   return (
     <section className="band band-app band-tight">
@@ -150,7 +167,11 @@ export function ReportHeader({ entry, load, jsonOpen, jsonId, reasonId, onToggle
               {exported ? t('report.exportDone') : ''}
             </p>
             {exportFailed === null ? null : (
-              <p role="alert" className="t-xs rep-export-note" style={{ color: 'var(--c-warn-ink)' }}>
+              <p
+                role="alert"
+                className="t-xs rep-export-note"
+                style={{ color: 'var(--c-warn-ink)' }}
+              >
                 {exportFailed}
               </p>
             )}

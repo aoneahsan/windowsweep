@@ -66,14 +66,19 @@ function DetailRow({
               const idle = idleDaysOf(target.newest_write_utc);
               return (
                 <span key={`${String(section.id)}-${target.path}`} style={{ display: 'contents' }}>
-                  <span className="mono t-xs" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <span
+                    className="mono t-xs"
+                    style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
+                  >
                     {target.path}
                   </span>
                   <span className="num t-xs ink-3">{formatBytes(target.bytes)}</span>
                   {/* A target with no stamp says so rather than printing `idle 0d`,
                       which would read as "used today". */}
                   <span className="t-xs ink-3">
-                    {idle === null ? t('sections.detailIdleUnknown') : t('sections.detailIdle', { days: idle })}
+                    {idle === null
+                      ? t('sections.detailIdleUnknown')
+                      : t('sections.detailIdle', { days: idle })}
                   </span>
                 </span>
               );
@@ -111,7 +116,9 @@ export function SectionsTable({
           <th style={{ width: '7.5rem' }}>{t('sections.colTier')}</th>
           <th style={{ width: '6rem' }}>{t('sections.colBatch')}</th>
           <th style={{ width: '5rem' }}>{t('sections.colNeeds')}</th>
-          <th style={{ width: '6rem' }} className="num-cell">{t('sections.colReclaimable')}</th>
+          <th style={{ width: '6rem' }} className="num-cell">
+            {t('sections.colReclaimable')}
+          </th>
           <th style={{ width: '2.5rem' }}>
             <span className="visually-hidden">{t('sections.colExpand')}</span>
           </th>
@@ -129,7 +136,9 @@ export function SectionsTable({
             <tr key={section.id} data-selected={selected ? 'true' : 'false'}>
               <td>
                 {reportOnly ? (
-                  <span className="t-xs ink-3" title={t('sections.reportOnlyTitle')}>—</span>
+                  <span className="t-xs ink-3" title={t('sections.reportOnlyTitle')}>
+                    —
+                  </span>
                 ) : (
                   <button
                     className="switch"
@@ -138,14 +147,18 @@ export function SectionsTable({
                     aria-checked={selected}
                     aria-label={t('sections.selectAria', { id: section.id, key: section.key })}
                     style={{ ['--sw-w' as string]: 'calc(1.9rem * var(--density))' }}
-                    onClick={() => { onToggleSelect(section.id); }}
+                    onClick={() => {
+                      onToggleSelect(section.id);
+                    }}
                   />
                 )}
               </td>
               <td className="num t-sm ink-3">{section.id}</td>
               <td>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
-                  <span className="t-sm" style={{ fontWeight: 600 }}>{section.key}</span>
+                  <span className="t-sm" style={{ fontWeight: 600 }}>
+                    {section.key}
+                  </span>
                   {section.dev ? (
                     <span className="badge badge-outline">{t('sections.badgeDev')}</span>
                   ) : null}
@@ -180,7 +193,11 @@ export function SectionsTable({
                 )}
               </td>
               <td className={`num-cell t-sm${!reportOnly && bytes > 0 ? ' accent-ink' : ''}`}>
-                {reportOnly ? '—' : targets.length === 0 ? t('sections.totalUnmeasured') : formatBytes(bytes)}
+                {reportOnly
+                  ? '—'
+                  : targets.length === 0
+                    ? t('sections.totalUnmeasured')
+                    : formatBytes(bytes)}
               </td>
               <td>
                 <button
@@ -192,7 +209,7 @@ export function SectionsTable({
                     setOpen((current) =>
                       current.includes(section.id)
                         ? current.filter((x) => x !== section.id)
-                        : [...current, section.id],
+                        : [...current, section.id]
                     );
                   }}
                 >

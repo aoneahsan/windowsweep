@@ -79,7 +79,10 @@ export const profiles = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
-    check('profiles_platform_role_check', sql`${t.platformRole} in ('superadmin', 'admin', 'user')`),
+    check(
+      'profiles_platform_role_check',
+      sql`${t.platformRole} in ('superadmin', 'admin', 'user')`
+    ),
 
     pgPolicy('profiles_select_own', {
       for: 'select',
@@ -104,7 +107,7 @@ export const profiles = pgTable(
        writer, so a client cannot mint a profile row under an id it chose.
        No DELETE policy either - a profile dies with its `auth.users` row, by
        cascade, which is what account deletion already does. */
-  ],
+  ]
 ).enableRLS();
 
 /**
@@ -145,10 +148,7 @@ export const contactRequests = pgTable(
   },
   (t) => [
     check('contact_requests_subject_len_check', sql`char_length(${t.subject}) <= 120`),
-    check(
-      'contact_requests_message_len_check',
-      sql`char_length(${t.message}) between 10 and 4000`,
-    ),
+    check('contact_requests_message_len_check', sql`char_length(${t.message}) between 10 and 4000`),
     check('contact_requests_status_check', sql`${t.status} in ('new', 'handled', 'archived')`),
 
     /* Serves the sender's own list AND the rate-limit trigger's count. Plain
@@ -187,7 +187,7 @@ export const contactRequests = pgTable(
     }),
     /* No DELETE policy and no DELETE grant: nobody deletes a contact request
        through the API. A sender's rows go when their account does, by cascade. */
-  ],
+  ]
 ).enableRLS();
 
 /**
@@ -228,5 +228,5 @@ export const adminAudit = pgTable(
       to: authenticatedRole,
       using: isPlatformAdmin,
     }),
-  ],
+  ]
 ).enableRLS();

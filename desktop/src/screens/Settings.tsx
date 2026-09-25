@@ -69,7 +69,9 @@ export function Settings() {
                   type="button"
                   key={x}
                   aria-selected={tab === x}
-                  onClick={() => { void navigate({ to: '/settings', search: { tab: x } }); }}
+                  onClick={() => {
+                    void navigate({ to: '/settings', search: { tab: x } });
+                  }}
                 >
                   {t(`settings.tab.${x}`)}
                 </button>

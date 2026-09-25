@@ -41,7 +41,9 @@ export function isOwnedUrl(href: string): boolean {
     return false;
   }
   if (OWNED_HOSTS.has(url.hostname)) return true;
-  return OWNED_PATHS.some(([host, prefix]) => url.hostname === host && url.pathname.startsWith(prefix));
+  return OWNED_PATHS.some(
+    ([host, prefix]) => url.hostname === host && url.pathname.startsWith(prefix)
+  );
 }
 
 /**

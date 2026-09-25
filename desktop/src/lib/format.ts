@@ -83,7 +83,12 @@ export function formatRelative(from: Date, to: Date = new Date()): string {
   const seconds = Math.round((from.getTime() - to.getTime()) / 1000);
   const rtf = new Intl.RelativeTimeFormat(FORMAT_LOCALE, { numeric: 'auto' });
   const steps: [Intl.RelativeTimeFormatUnit, number][] = [
-    ['second', 60], ['minute', 60], ['hour', 24], ['day', 7], ['week', 4.35], ['month', 12],
+    ['second', 60],
+    ['minute', 60],
+    ['hour', 24],
+    ['day', 7],
+    ['week', 4.35],
+    ['month', 12],
   ];
   let value = seconds;
   for (const [unit, size] of steps) {

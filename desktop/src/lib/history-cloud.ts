@@ -65,9 +65,17 @@ export function listsAccountRows(filter: HistoryFilter): boolean {
  * @param cloud - the account's rows read so far for the chip.
  * @param more - whether the account holds rows not read yet.
  */
-export function coveredRows(local: readonly HistoryEntry[], cloud: readonly SyncedRun[], more: boolean): HistoryRow[] {
+export function coveredRows(
+  local: readonly HistoryEntry[],
+  cloud: readonly SyncedRun[],
+  more: boolean
+): HistoryRow[] {
   const merged: HistoryRow[] = [
-    ...local.map((entry): HistoryRow => ({ kind: 'local', entry, at: Date.parse(entry.startedAt) })),
+    ...local.map((entry): HistoryRow => ({
+      kind: 'local',
+      entry,
+      at: Date.parse(entry.startedAt),
+    })),
     ...cloud.map((run): HistoryRow => ({ kind: 'cloud', run, at: Date.parse(run.startedAt) })),
   ].sort((a, b) => b.at - a.at);
   if (!more || cloud.length === 0) return merged;
@@ -85,7 +93,7 @@ export function coveredRows(local: readonly HistoryEntry[], cloud: readonly Sync
 export function useCloudRows(
   uid: string | null,
   filter: HistoryFilter,
-  localIds: readonly string[],
+  localIds: readonly string[]
 ): CloudRows & { loadMore: () => Promise<void> } {
   /* 🔴 THE RESULT IS KEYED BY ITS REQUEST, so a result for another chip, account or local
      list is never used - and the effect sets state only when a read answers, never as a
@@ -97,9 +105,20 @@ export function useCloudRows(
   useEffect(() => {
     if (key === null || uid === null) return;
     let cancelled = false;
-    fetchRuns(uid, undefined, { excluding: idsKey ? idsKey.split(',') : [], dryRunsOnly: filter === 'dryRuns' })
+    fetchRuns(uid, undefined, {
+      excluding: idsKey ? idsKey.split(',') : [],
+      dryRunsOnly: filter === 'dryRuns',
+    })
       .then((page) => {
-        if (!cancelled) setStored({ key, rows: page.runs, cursor: page.nextCursor, total: page.total, failed: null, loading: false });
+        if (!cancelled)
+          setStored({
+            key,
+            rows: page.runs,
+            cursor: page.nextCursor,
+            total: page.total,
+            failed: null,
+            loading: false,
+          });
       })
       .catch(() => {
         /* logged by `fetchRuns`; the table says it in words */
@@ -113,13 +132,27 @@ export function useCloudRows(
   const current = key !== null && stored?.key === key ? stored : null;
 
   const loadMore = useCallback(async () => {
-    if (uid === null || key === null || current === null || current.cursor === null || current.loading) return;
+    if (
+      uid === null ||
+      key === null ||
+      current === null ||
+      current.cursor === null ||
+      current.loading
+    )
+      return;
     const cursor = current.cursor;
     const mine = (s: typeof stored) => s !== null && s.key === key;
     setStored((s) => (mine(s) && s ? { ...s, loading: true, failed: null } : s));
     try {
-      const page = await fetchRuns(uid, cursor, { excluding: idsKey ? idsKey.split(',') : [], dryRunsOnly: filter === 'dryRuns' });
-      setStored((s) => (mine(s) && s ? { ...s, rows: [...s.rows, ...page.runs], cursor: page.nextCursor, loading: false } : s));
+      const page = await fetchRuns(uid, cursor, {
+        excluding: idsKey ? idsKey.split(',') : [],
+        dryRunsOnly: filter === 'dryRuns',
+      });
+      setStored((s) =>
+        mine(s) && s
+          ? { ...s, rows: [...s.rows, ...page.runs], cursor: page.nextCursor, loading: false }
+          : s
+      );
     } catch {
       /* logged by `fetchRuns`: the rows read stand, and the pager's line says so */
       setStored((s) => (mine(s) && s ? { ...s, loading: false, failed: 'listMore' } : s));
@@ -128,5 +161,12 @@ export function useCloudRows(
 
   if (key === null) return { ...NONE, loadMore };
   if (current === null) return { ...NONE, loading: true, loadMore };
-  return { rows: current.rows, cursor: current.cursor, total: current.total, failed: current.failed, loading: current.loading, loadMore };
+  return {
+    rows: current.rows,
+    cursor: current.cursor,
+    total: current.total,
+    failed: current.failed,
+    loading: current.loading,
+    loadMore,
+  };
 }

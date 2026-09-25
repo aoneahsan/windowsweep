@@ -105,7 +105,7 @@ export function isCurrentRehearsal(
   prefs: RunPreferences,
   excludedPaths: readonly string[],
   /** `scannedAt` from the store - when the live measurements were taken. */
-  scannedAt: number | null,
+  scannedAt: number | null
 ): rehearsal is Rehearsal {
   if (!rehearsal) return false;
   if (scannedAt !== null && rehearsal.finishedAt < scannedAt) return false;
@@ -152,7 +152,7 @@ export function heldBackApplies(
   prefs: RunPreferences,
   excludedPaths: readonly string[],
   /** `scannedAt` from the store - when the live measurements were taken. */
-  scannedAt: number | null,
+  scannedAt: number | null
 ): rehearsal is Rehearsal {
   if (!rehearsal) return false;
   if (scannedAt !== null && rehearsal.finishedAt < scannedAt) return false;
@@ -284,7 +284,7 @@ export function runFigures(input: {
     ? new Map(
         input.current.summary.sections
           .filter((step) => step.status === 'dry-run')
-          .map((step) => [step.section, step.freed_bytes]),
+          .map((step) => [step.section, step.freed_bytes])
       )
     : null;
 

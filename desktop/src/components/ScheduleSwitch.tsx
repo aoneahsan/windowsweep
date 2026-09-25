@@ -80,15 +80,21 @@ export function ScheduleSwitch({
     return next;
   }, []);
 
-  useEffect(() => { refresh(); }, [refresh]);
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
 
   /* The acknowledgement says "that happened" and then gets out of the way, in the
      700 ms shape Home's scan tick already uses. The switch itself is the lasting
      answer. */
   useEffect(() => {
     if (done === null) return;
-    const to = window.setTimeout(() => { setDone(null); }, 4000);
-    return () => { window.clearTimeout(to); };
+    const to = window.setTimeout(() => {
+      setDone(null);
+    }, 4000);
+    return () => {
+      window.clearTimeout(to);
+    };
   }, [done]);
 
   const on = isScheduled(status);
@@ -123,8 +129,12 @@ export function ScheduleSwitch({
         const nowOn = isScheduled(next);
         if (nowOn === install) setDone(install ? 'installed' : 'removed');
       })
-      .catch((e: unknown) => { setFailed(e instanceof Error ? e.message : String(e)); })
-      .finally(() => { setBusy(false); });
+      .catch((e: unknown) => {
+        setFailed(e instanceof Error ? e.message : String(e));
+      })
+      .finally(() => {
+        setBusy(false);
+      });
   }, [status, unreadable, busy, reread]);
 
   return (

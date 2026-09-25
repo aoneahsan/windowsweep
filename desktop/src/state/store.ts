@@ -18,7 +18,13 @@ import { toggleExclusion, usableExclusions } from '../lib/exclusions';
 import { interactiveSectionIds, mergeOffers } from '../lib/offers';
 import type { Catalogue } from '../lib/catalogue';
 import type { Rehearsal } from '../lib/rehearsal';
-import { isCleanupRun, type Candidate, type RunSummary, type ProgressEvent, type ScanTarget } from '../lib/cli';
+import {
+  isCleanupRun,
+  type Candidate,
+  type RunSummary,
+  type ProgressEvent,
+  type ScanTarget,
+} from '../lib/cli';
 /* 🔴 The value import is one-way at runtime: `run-mode.ts` only type-imports
    `HistoryEntry` back from here, and a type import is erased, so there is no cycle
    to resolve. Taken rather than inlining `mode !== 'scan'` a fourth time - one
@@ -261,8 +267,12 @@ export const useStore = create<StoreState>()((set, get) => ({
   catalogue: null,
   engineVersion: '',
   engineError: null,
-  setCatalogue: (c) => { set({ catalogue: c, engineVersion: c.version, engineError: null }); },
-  setEngineError: (message) => { set({ engineError: message }); },
+  setCatalogue: (c) => {
+    set({ catalogue: c, engineVersion: c.version, engineError: null });
+  },
+  setEngineError: (message) => {
+    set({ engineError: message });
+  },
 
   phase: 'idle',
   runId: null,
@@ -279,7 +289,9 @@ export const useStore = create<StoreState>()((set, get) => ({
     const log = [...get().log, { line, at: Date.now() }];
     set({ log: log.length > 2000 ? log.slice(-2000) : log });
   },
-  applyProgress: (event) => { set({ progress: { ...get().progress, [event.section]: event } }); },
+  applyProgress: (event) => {
+    set({ progress: { ...get().progress, [event.section]: event } });
+  },
   /**
    * 🔴 A finished run is RECORDED here, and until now no caller ever reached
    * `addHistory`: the History screen and Home's last-eight-runs band both read a
@@ -300,13 +312,18 @@ export const useStore = create<StoreState>()((set, get) => ({
     const offers = mergeOffers(before, summary, interactiveSectionIds(get().catalogue));
     if (offers !== before) {
       const onOffer = new Set(offers.candidates.map((row) => row.path));
-      set({ ...offers, selectedPaths: new Set([...get().selectedPaths].filter((path) => onOffer.has(path))) });
+      set({
+        ...offers,
+        selectedPaths: new Set([...get().selectedPaths].filter((path) => onOffer.has(path))),
+      });
     }
     /* A real run has deleted inside every section that ran or failed part-way;
        a refused or skipped section never started, and a dry-run deleted nothing. */
     if (!summary.dry_run && isCleanupRun(summary)) {
       get().spendScanTargets(
-        summary.sections.filter((step) => step.status === 'ran' || step.status === 'failed').map((step) => step.section),
+        summary.sections
+          .filter((step) => step.status === 'ran' || step.status === 'failed')
+          .map((step) => step.section)
       );
     }
     /* 🔴 A SCAN IS NOT A HISTORY ROW (TASK-016 item 2). Every summary landed here,
@@ -339,7 +356,9 @@ export const useStore = create<StoreState>()((set, get) => ({
 
   scanTargets: [],
   scannedAt: null,
-  setScanTargets: (rows) => { set({ scanTargets: rows, scannedAt: rows.length > 0 ? Date.now() : null }); },
+  setScanTargets: (rows) => {
+    set({ scanTargets: rows, scannedAt: rows.length > 0 ? Date.now() : null });
+  },
   spendScanTargets: (sections) => {
     if (sections.length === 0) return;
     const spent = new Set(sections);
@@ -347,7 +366,8 @@ export const useStore = create<StoreState>()((set, get) => ({
        estimate too (D-60) - the button must not go on offering bytes that are gone.
        Every real run reaches here, finished or cancelled; a section it never
        started deleted nothing, and a run elsewhere leaves the estimate standing. */
-    if (get().rehearsal?.summary.sections.some((step) => spent.has(step.section))) set({ rehearsal: null });
+    if (get().rehearsal?.summary.sections.some((step) => spent.has(step.section)))
+      set({ rehearsal: null });
     const rows = get().scanTargets.filter((row) => !spent.has(row.section));
     if (rows.length === get().scanTargets.length) return;
     /* The rows that remain keep their measurement time: they were not touched. */
@@ -355,7 +375,9 @@ export const useStore = create<StoreState>()((set, get) => ({
   },
 
   rehearsal: null,
-  recordRehearsal: (rehearsal) => { set({ rehearsal }); },
+  recordRehearsal: (rehearsal) => {
+    set({ rehearsal });
+  },
 
   candidates: [],
   offeredSections: [],
@@ -366,7 +388,9 @@ export const useStore = create<StoreState>()((set, get) => ({
     else next.add(path);
     set({ selectedPaths: next });
   },
-  setSelection: (paths) => { set({ selectedPaths: new Set(paths) }); },
+  setSelection: (paths) => {
+    set({ selectedPaths: new Set(paths) });
+  },
 
   /* 🔴 Read back through `usableExclusions`, which is where a stored value is made
      safe to pass - the same contract `clampIdleDays` has. A path that no longer
@@ -396,7 +420,9 @@ export const useStore = create<StoreState>()((set, get) => ({
         : [...current, id].sort((a, b) => a - b),
     });
   },
-  setSectionSelection: (ids) => { set({ sectionSelection: [...ids].sort((a, b) => a - b) }); },
+  setSectionSelection: (ids) => {
+    set({ sectionSelection: [...ids].sort((a, b) => a - b) });
+  },
 
   /* 🔴 Scan rows an earlier build wrote are dropped on the way in, or the cap stays
      spent for the next 200 runs on every machine that has already used this window
@@ -465,11 +491,17 @@ export const useStore = create<StoreState>()((set, get) => ({
   },
 
   updateOutcome: 'unknown',
-  setUpdateOutcome: (outcome) => { set({ updateOutcome: outcome }); },
+  setUpdateOutcome: (outcome) => {
+    set({ updateOutcome: outcome });
+  },
 
   user: null,
-  setUser: (user) => { set({ user }); },
+  setUser: (user) => {
+    set({ user });
+  },
 
   elevationCommand: null,
-  setElevationCommand: (line) => { set({ elevationCommand: line }); },
+  setElevationCommand: (line) => {
+    set({ elevationCommand: line });
+  },
 }));

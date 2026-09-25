@@ -51,7 +51,9 @@ function HistoryRow({ entry, now, whenId }: { entry: HistoryEntry; now: number; 
       </td>
       <td>
         <div className="t-sm">{runModeLabel(entry, t)}</div>
-        <div className="t-xs ink-3">{t('history.sections', { count: sectionCountOf(entry.sections) })}</div>
+        <div className="t-xs ink-3">
+          {t('history.sections', { count: sectionCountOf(entry.sections) })}
+        </div>
       </td>
       <td className="t-sm ink-3">{t('history.whereThisMachine')}</td>
       {/* A dry-run's figure is its estimate, drawn without the accent - the badge
@@ -89,8 +91,12 @@ function CloudRow({ run, now, whenId }: { run: SyncedRun; now: number; whenId: s
         </span>
       </td>
       <td>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', flexWrap: 'wrap' }}>
-          <span className="t-sm ink-3">{t('history.sections', { count: sectionCountOf(run.sections) })}</span>
+        <div
+          style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', flexWrap: 'wrap' }}
+        >
+          <span className="t-sm ink-3">
+            {t('history.sections', { count: sectionCountOf(run.sections) })}
+          </span>
           <span className="badge badge-outline">{t('account.runs.summaryOnly')}</span>
         </div>
       </td>
@@ -124,7 +130,15 @@ function UnreadRow() {
 }
 
 /** The table's one empty row, in the words of whichever list is empty. */
-function EmptyRow({ filter, hasRuns, signedIn }: { filter: HistoryFilter; hasRuns: boolean; signedIn: boolean }) {
+function EmptyRow({
+  filter,
+  hasRuns,
+  signedIn,
+}: {
+  filter: HistoryFilter;
+  hasRuns: boolean;
+  signedIn: boolean;
+}) {
   const { t } = useTranslation();
   let title = t('history.emptyTitle');
   let body = t('history.emptyBody');
@@ -197,8 +211,13 @@ export function HistoryTable({
                   whenId={`${baseId}-when-${String(i)}`}
                 />
               ) : (
-                <CloudRow key={`c-${row.run.runId}`} run={row.run} now={now} whenId={`${baseId}-when-${String(i)}`} />
-              ),
+                <CloudRow
+                  key={`c-${row.run.runId}`}
+                  run={row.run}
+                  now={now}
+                  whenId={`${baseId}-when-${String(i)}`}
+                />
+              )
             )}
           </tbody>
         </table>

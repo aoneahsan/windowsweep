@@ -69,7 +69,6 @@ export function History() {
   const visible = rows.slice(0, page * HISTORY_PAGE_SIZE);
   const total = local.length + (cloud.total ?? cloud.rows.length);
 
-
   const go = (next: { filter: HistoryFilter; page: number }) => {
     void navigate({
       to: '/history',
@@ -92,7 +91,12 @@ export function History() {
     <>
       <HistoryHeader freedBytes={totals.bytes} runs={totals.runs} />
       <FreedPerRun runs={runs} />
-      <HistoryShow filter={filter} onChoose={(f) => { go({ filter: f, page: 1 }); }} />
+      <HistoryShow
+        filter={filter}
+        onChoose={(f) => {
+          go({ filter: f, page: 1 });
+        }}
+      />
 
       <section className="band band-app band-tight">
         <div className="wrap">

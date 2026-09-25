@@ -42,7 +42,9 @@ export function PickerConfirm({
       className="scrim"
       isOpen={isOpen}
       /* Escape and the Cancel button both close through here: closing IS cancelling. */
-      onOpenChange={(open) => { if (!open) onCancel(); }}
+      onOpenChange={(open) => {
+        if (!open) onCancel();
+      }}
       /* An alert dialog is answered, never dismissed by a stray click beside it. */
       isDismissable={false}
     >
@@ -51,7 +53,9 @@ export function PickerConfirm({
       <Modal style={{ display: 'contents' }}>
         <Dialog role="alertdialog" className="dlg dlg-sm dlg-danger" aria-describedby={bodyId}>
           <div className="dlg-hd">
-            <div className="dlg-icon" aria-hidden="true">!</div>
+            <div className="dlg-icon" aria-hidden="true">
+              !
+            </div>
             <div>
               <Heading slot="title" className="t-md wide">
                 {t('picker.confirmTitle', { count })}
@@ -59,7 +63,9 @@ export function PickerConfirm({
             </div>
           </div>
           <div className="dlg-bd">
-            <p className="t-sm" id={bodyId}>{t('picker.confirmBody')}</p>
+            <p className="t-sm" id={bodyId}>
+              {t('picker.confirmBody')}
+            </p>
           </div>
           <div className="dlg-ft">
             <Button slot="close" className="btn" autoFocus>

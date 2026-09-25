@@ -35,7 +35,9 @@ export function metaLine(report: RunReport, t: TFunction): string {
     t('report.attempted', { count: counts.attempted }),
     t('report.ran', { count: counts.ran }),
     t('report.skipped', { count: counts.skipped }),
-    counts.refused > 0 ? t('report.refused', { count: counts.refused }) : t('report.nothingRefused'),
+    counts.refused > 0
+      ? t('report.refused', { count: counts.refused })
+      : t('report.nothingRefused'),
   ];
   if (counts.failed > 0) parts.push(t('report.failed', { count: counts.failed }));
   if (report.durationSeconds !== null) parts.push(durationWords(report.durationSeconds));

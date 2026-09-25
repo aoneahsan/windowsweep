@@ -154,18 +154,44 @@ function Titlebar({
           number a person can check against the command-line tool. */}
       <span className="badge badge-outline mono">{version || '-'}</span>
       <div className="wincontrols tb-interactive">
-        <button className="btn btn-ghost btn-sm" type="button" onClick={onOpenTheme} aria-label={t('theme.title')}>
+        <button
+          className="btn btn-ghost btn-sm"
+          type="button"
+          onClick={onOpenTheme}
+          aria-label={t('theme.title')}
+        >
           <Icon name="sun" />
         </button>
       </div>
       <div className="wincontrols tb-interactive">
-        <button className="wc" type="button" onClick={() => { void windowAction('minimize'); }} aria-label={t('window.minimise')}>
+        <button
+          className="wc"
+          type="button"
+          onClick={() => {
+            void windowAction('minimize');
+          }}
+          aria-label={t('window.minimise')}
+        >
           <Icon name="min" size={13} />
         </button>
-        <button className="wc" type="button" onClick={() => { void windowAction('toggleMaximize'); }} aria-label={t('window.maximise')}>
+        <button
+          className="wc"
+          type="button"
+          onClick={() => {
+            void windowAction('toggleMaximize');
+          }}
+          aria-label={t('window.maximise')}
+        >
           <Icon name="max" size={13} />
         </button>
-        <button className="wc wc-close" type="button" onClick={() => { void windowAction('close'); }} aria-label={t('window.close')}>
+        <button
+          className="wc wc-close"
+          type="button"
+          onClick={() => {
+            void windowAction('close');
+          }}
+          aria-label={t('window.close')}
+        >
           <Icon name="close" size={13} />
         </button>
       </div>
@@ -215,7 +241,7 @@ function Rail() {
               </span>
             ) : null}
           </Link>
-        ),
+        )
       )}
 
       {/* The rail had ~500px of dead space below the nav; this readout uses it and
@@ -371,19 +397,36 @@ export function Shell({
   const [drawerOpen, setDrawerOpen] = useState(false);
   useLayoutEffect(() => {
     document.documentElement.setAttribute('data-drawer', drawerOpen ? 'open' : 'closed');
-    return () => { document.documentElement.setAttribute('data-drawer', 'closed'); };
+    return () => {
+      document.documentElement.setAttribute('data-drawer', 'closed');
+    };
   }, [drawerOpen]);
   useEffect(() => {
     if (!drawerOpen) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setDrawerOpen(false); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setDrawerOpen(false);
+    };
     window.addEventListener('keydown', onKey);
-    return () => { window.removeEventListener('keydown', onKey); };
+    return () => {
+      window.removeEventListener('keydown', onKey);
+    };
   }, [drawerOpen]);
   return (
     <div className="app">
       <Titlebar
-        onOpenTheme={() => { setThemeOpen(true); }}
-        {...(rail ? { drawer: { open: drawerOpen, onToggle: () => { setDrawerOpen((x) => !x); } } } : {})}
+        onOpenTheme={() => {
+          setThemeOpen(true);
+        }}
+        {...(rail
+          ? {
+              drawer: {
+                open: drawerOpen,
+                onToggle: () => {
+                  setDrawerOpen((x) => !x);
+                },
+              },
+            }
+          : {})}
       />
       {/* 🔴 `shell-bare` is load-bearing, not cosmetic. `.shell` is a two-column
           grid whose first column is `auto`, which sizes to MAX-CONTENT - with the
@@ -395,7 +438,12 @@ export function Shell({
         <main className="content">{children}</main>
       </div>
       <StatusBar {...(statusNote ? { note: statusNote } : {})} />
-      <ThemePanel open={themeOpen} onClose={() => { setThemeOpen(false); }} />
+      <ThemePanel
+        open={themeOpen}
+        onClose={() => {
+          setThemeOpen(false);
+        }}
+      />
     </div>
   );
 }

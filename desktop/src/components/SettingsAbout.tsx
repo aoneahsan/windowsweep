@@ -48,9 +48,15 @@ export function SettingsAbout() {
   useEffect(() => {
     let cancelled = false;
     void appVersion()
-      .then((v) => { if (!cancelled) setVersion(v); })
-      .catch(() => { /* no Tauri window - the fallback already reads correctly */ });
-    return () => { cancelled = true; };
+      .then((v) => {
+        if (!cancelled) setVersion(v);
+      })
+      .catch(() => {
+        /* no Tauri window - the fallback already reads correctly */
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const [opening, setOpening] = useState<Link | null>(null);
@@ -59,21 +65,29 @@ export function SettingsAbout() {
   const openLink = (which: Link, href: string) => {
     setOpening(which);
     void openExternal(href)
-      .then(() => { setOpened(which); })
+      .then(() => {
+        setOpened(which);
+      })
       .catch(() => {
         /* 🔴 Caught rather than dropped: `void promise.finally()` still leaves an
            unhandled rejection, and outside a Tauri window there is no opener at
            all. The control returns to idle and claims nothing, because the dummy
            carries no sentence for a browser that would not open - reported. */
       })
-      .finally(() => { setOpening(null); });
+      .finally(() => {
+        setOpening(null);
+      });
   };
 
   /* The tick says "handed to your browser" and then gets out of the way. */
   useEffect(() => {
     if (opened === null) return;
-    const to = window.setTimeout(() => { setOpened(null); }, 900);
-    return () => { window.clearTimeout(to); };
+    const to = window.setTimeout(() => {
+      setOpened(null);
+    }, 900);
+    return () => {
+      window.clearTimeout(to);
+    };
   }, [opened]);
 
   return (
@@ -99,14 +113,23 @@ export function SettingsAbout() {
 
       <div className="panel pad">
         <p className="t-sm">{t('settings.about')}</p>
-        <div style={{ display: 'flex', gap: 'var(--sp-2)', flexWrap: 'wrap', marginTop: 'var(--sp-3)' }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: 'var(--sp-2)',
+            flexWrap: 'wrap',
+            marginTop: 'var(--sp-3)',
+          }}
+        >
           {/* 🔴 Handing a URL to the system browser takes a moment and the app
               window does not change, so without a state on the control the press
               is invisible. */}
           <button
             className="btn btn-sm"
             type="button"
-            onClick={() => { openLink('source', REPO_URL); }}
+            onClick={() => {
+              openLink('source', REPO_URL);
+            }}
             disabled={opening !== null}
             {...controlState(stateOf(opening === 'source', opened === 'source'))}
           >
@@ -115,7 +138,9 @@ export function SettingsAbout() {
           <button
             className="btn btn-sm"
             type="button"
-            onClick={() => { openLink('support', SUPPORT_URL); }}
+            onClick={() => {
+              openLink('support', SUPPORT_URL);
+            }}
             disabled={opening !== null}
             {...controlState(stateOf(opening === 'support', opened === 'support'))}
           >

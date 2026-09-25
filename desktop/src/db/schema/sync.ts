@@ -44,7 +44,9 @@ export const userSettings = pgTable(
     email: text('email'),
     displayName: text('display_name'),
     /** The ten appearance axes, as the client stores them. Opaque to the server. */
-    prefs: jsonb('prefs').notNull().default(sql`'{}'::jsonb`),
+    prefs: jsonb('prefs')
+      .notNull()
+      .default(sql`'{}'::jsonb`),
     developer: boolean('developer').notNull().default(false),
     /** Newest-wins reconciliation compares this, and the loser is offered back. */
     settingsUpdatedAt: timestamp('settings_updated_at', { withTimezone: true })
@@ -76,7 +78,7 @@ export const userSettings = pgTable(
       to: authenticatedRole,
       using: sql`(select auth.uid()) = user_id`,
     }),
-  ],
+  ]
 ).enableRLS();
 
 /**
@@ -131,5 +133,5 @@ export const runs = pgTable(
       to: authenticatedRole,
       using: sql`(select auth.uid()) = user_id`,
     }),
-  ],
+  ]
 ).enableRLS();

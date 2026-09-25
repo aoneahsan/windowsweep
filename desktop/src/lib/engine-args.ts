@@ -44,9 +44,7 @@ function excludeArgs(excludedPaths: readonly string[]): string[] {
  * while the Settings screen showed 100. The status-bar command line is the whole
  * invocation for the same reason.
  */
-export function scanArgs(
-  options: { excludedPaths: readonly string[] } & RunPreferences,
-): string[] {
+export function scanArgs(options: { excludedPaths: readonly string[] } & RunPreferences): string[] {
   return [
     '--scan',
     options.developer ? '--developer' : '--not-developer',
@@ -92,20 +90,23 @@ export interface RunPreferences {
  * `--yes` never auto-answers - so on a safe batch it is inert rather than wrong,
  * and it is still passed so the command line on screen is the whole invocation.
  */
-export function safeBatchArgs(options: {
-  dryRun: boolean;
-  sections?: number[];
-  /**
-   * 🔴 REQUIRED, for the same reason the three preferences above are: a call site
-   * that could omit the exclusions is a call site that will, and the result is a
-   * person watching a folder they marked kept get deleted. TypeScript refusing the
-   * call is the only reliable guard - nothing at runtime can tell an empty set
-   * from a forgotten one.
-   */
-  excludedPaths: readonly string[];
-} & RunPreferences): string[] {
+export function safeBatchArgs(
+  options: {
+    dryRun: boolean;
+    sections?: number[];
+    /**
+     * 🔴 REQUIRED, for the same reason the three preferences above are: a call site
+     * that could omit the exclusions is a call site that will, and the result is a
+     * person watching a folder they marked kept get deleted. TypeScript refusing the
+     * call is the only reliable guard - nothing at runtime can tell an empty set
+     * from a forgotten one.
+     */
+    excludedPaths: readonly string[];
+  } & RunPreferences
+): string[] {
   const args: string[] = [];
-  if (options.sections && options.sections.length > 0) args.push('--only', options.sections.join(','));
+  if (options.sections && options.sections.length > 0)
+    args.push('--only', options.sections.join(','));
   else args.push('--all');
   args.push('--yes');
   if (options.dryRun) args.push('--dry-run');
@@ -155,22 +156,24 @@ export function commandLine(args: string[]): string {
  * `-ScriptedOk` answers. So the person's own selection is what confirms the
  * deletion, which is exactly the claim the Picker screen makes.
  */
-export function selectionArgs(options: {
-  selectFilePath: string;
-  sections: number[];
-  /**
-   * The segmented control on the Picker: `false` sends what it can to the Recycle
-   * Bin, `true` passes `--permanent`.
-   *
-   * ⚠️ It governs the `recycle`-tier sections only - 18, 19 and 23. Section 17 is
-   * tier `rebuilds` and removes build artefacts through the chokepoint outright,
-   * with or without this flag (`modules/projects.ps1:157` calls `Remove-PathSafe`
-   * directly, never `Send-ToRecycleBin`). The engine's own help was corrected to
-   * "18, 19 and 23" for the same reason.
-   */
-  permanent: boolean;
-  excludedPaths: readonly string[];
-} & RunPreferences): string[] {
+export function selectionArgs(
+  options: {
+    selectFilePath: string;
+    sections: number[];
+    /**
+     * The segmented control on the Picker: `false` sends what it can to the Recycle
+     * Bin, `true` passes `--permanent`.
+     *
+     * ⚠️ It governs the `recycle`-tier sections only - 18, 19 and 23. Section 17 is
+     * tier `rebuilds` and removes build artefacts through the chokepoint outright,
+     * with or without this flag (`modules/projects.ps1:157` calls `Remove-PathSafe`
+     * directly, never `Send-ToRecycleBin`). The engine's own help was corrected to
+     * "18, 19 and 23" for the same reason.
+     */
+    permanent: boolean;
+    excludedPaths: readonly string[];
+  } & RunPreferences
+): string[] {
   const args = [
     '--only',
     options.sections.join(','),
@@ -263,7 +266,7 @@ export function elevatedArgs(
      */
     hiberfil: 'off' | 'reduced' | null;
     excludedPaths: readonly string[];
-  } & RunPreferences,
+  } & RunPreferences
 ): string[] {
   const args = ['--only', options.sections.join(','), '--elevate'];
   const { developer, excludedPaths } = options;
@@ -300,4 +303,3 @@ export function elevatedArgs(
   args.push(...excludeArgs(excludedPaths));
   return args;
 }
-

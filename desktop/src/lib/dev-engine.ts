@@ -54,8 +54,17 @@ const SAFE = [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 21];
 
 /** Plausible sizes, so a treemap and a table have real proportions to lay out. */
 const BYTES: Record<number, number> = {
-  0: 0, 1: 4.21e9, 2: 1.13e9, 3: 8.4e8, 5: 6.9e9, 6: 3.02e8,
-  7: 7.4e9, 8: 3.73e8, 9: 8.1e7, 10: 9.4e8, 21: 0,
+  0: 0,
+  1: 4.21e9,
+  2: 1.13e9,
+  3: 8.4e8,
+  5: 6.9e9,
+  6: 3.02e8,
+  7: 7.4e9,
+  8: 3.73e8,
+  9: 8.1e7,
+  10: 9.4e8,
+  21: 0,
 };
 
 /**
@@ -80,7 +89,9 @@ const SPLIT: readonly number[][] = [
 const PART_NAMES = ['cache', 'metadata', 'downloads', 'index', 'logs'] as const;
 
 function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => { window.setTimeout(resolve, ms); });
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
 }
 
 /**
@@ -117,7 +128,7 @@ function excludedFrom(args: string[]): string[] {
 export async function devRun(
   args: string[],
   runId: string,
-  emit: (channel: 'clean:log' | 'clean:progress', line: string) => void,
+  emit: (channel: 'clean:log' | 'clean:progress', line: string) => void
 ): Promise<RunFinished> {
   if (args.includes('--list')) {
     /* The browser stand-in has no child process, so nothing can kill one:
@@ -149,7 +160,7 @@ export async function devRun(
     emit('clean:log', `> section ${String(id)}: ${status}`);
     emit(
       'clean:progress',
-      `##windowsweep section=${String(id)} event=end status=${status} freed_bytes=${String(bytes)}`,
+      `##windowsweep section=${String(id)} event=end status=${status} freed_bytes=${String(bytes)}`
     );
   }
 
@@ -171,9 +182,30 @@ export async function devRun(
     candidates:
       only && sections.some((s) => [17, 18, 19, 23].includes(s))
         ? [
-            { section: 17, index: 1, path: 'C:\\dev\\old-api\\node_modules', bytes: 1.9e9, idle_days: 214, project: 'old-api' },
-            { section: 17, index: 2, path: 'C:\\dev\\prototype\\node_modules', bytes: 8.2e8, idle_days: 402, project: 'prototype' },
-            { section: 18, index: 1, path: 'C:\\Users\\example\\Downloads\\installer.part', bytes: 4.1e8, idle_days: 61, project: null },
+            {
+              section: 17,
+              index: 1,
+              path: 'C:\\dev\\old-api\\node_modules',
+              bytes: 1.9e9,
+              idle_days: 214,
+              project: 'old-api',
+            },
+            {
+              section: 17,
+              index: 2,
+              path: 'C:\\dev\\prototype\\node_modules',
+              bytes: 8.2e8,
+              idle_days: 402,
+              project: 'prototype',
+            },
+            {
+              section: 18,
+              index: 1,
+              path: 'C:\\Users\\example\\Downloads\\installer.part',
+              bytes: 4.1e8,
+              idle_days: 61,
+              project: null,
+            },
           ]
         : [],
     /* Deterministic, and each section's parts sum back to its own total, so
@@ -234,9 +266,24 @@ export async function devRun(
 export function devDrives(): DriveInfo[] {
   const gb = 1024 ** 3;
   return [
-    { letter: 'C', label: 'Windows', total_bytes: Math.round(272.9 * gb), free_bytes: Math.round(21.0 * gb) },
-    { letter: 'D', label: 'Data', total_bytes: Math.round(203.4 * gb), free_bytes: Math.round(55.8 * gb) },
-    { letter: 'E', label: '', total_bytes: Math.round(476.4 * gb), free_bytes: Math.round(188.8 * gb) },
+    {
+      letter: 'C',
+      label: 'Windows',
+      total_bytes: Math.round(272.9 * gb),
+      free_bytes: Math.round(21.0 * gb),
+    },
+    {
+      letter: 'D',
+      label: 'Data',
+      total_bytes: Math.round(203.4 * gb),
+      free_bytes: Math.round(55.8 * gb),
+    },
+    {
+      letter: 'E',
+      label: '',
+      total_bytes: Math.round(476.4 * gb),
+      free_bytes: Math.round(188.8 * gb),
+    },
   ];
 }
 

@@ -112,13 +112,21 @@ export function sectionById(catalogue: Catalogue, id: number): Section | undefin
 export type SectionFilter = 'all' | 'safe' | 'interactive' | 'admin' | 'deep' | 'report' | 'dev';
 
 export const SECTION_FILTERS: readonly SectionFilter[] = [
-  'all', 'safe', 'interactive', 'admin', 'deep', 'report', 'dev',
+  'all',
+  'safe',
+  'interactive',
+  'admin',
+  'deep',
+  'report',
+  'dev',
 ] as const;
 
 function matchesFilter(section: Section, filter: SectionFilter, catalogue: Catalogue): boolean {
   switch (filter) {
     case 'safe':
-      return catalogue.safe_batch.includes(section.id) || catalogue.safe_batch_admin.includes(section.id);
+      return (
+        catalogue.safe_batch.includes(section.id) || catalogue.safe_batch_admin.includes(section.id)
+      );
     case 'interactive':
       return section.batch === 'interactive';
     case 'admin':
@@ -145,7 +153,7 @@ function matchesFilter(section: Section, filter: SectionFilter, catalogue: Catal
 export function filterSections(
   catalogue: Catalogue | null,
   filter: SectionFilter,
-  query: string,
+  query: string
 ): Section[] {
   if (!catalogue) return [];
   const needle = query.trim().toLowerCase();

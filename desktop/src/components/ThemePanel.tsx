@@ -32,13 +32,21 @@ import { AXES, axisValue, resolveAppearance, type Axis, type AxisPrefs } from '.
 import { useStore } from '../state/store';
 
 const RADIUS_PREVIEW: Record<string, string> = {
-  none: '0', small: '2px', medium: '4px', large: '7px', full: '9px',
+  none: '0',
+  small: '2px',
+  medium: '4px',
+  large: '7px',
+  full: '9px',
 };
 const DENSITY_PREVIEW: Record<string, string> = {
-  compact: '2px', comfortable: '4px', spacious: '6px',
+  compact: '2px',
+  comfortable: '4px',
+  spacious: '6px',
 };
 const TYPE_SCALE_PREVIEW: Record<string, string> = {
-  small: '10px', medium: '13px', large: '17px',
+  small: '10px',
+  medium: '13px',
+  large: '17px',
 };
 const NATIVE_STACK = "'Segoe UI Variable Display','Segoe UI',system-ui,sans-serif";
 const DISPLAY_STACK = "'Archivo','Segoe UI',system-ui,sans-serif";
@@ -70,7 +78,11 @@ function AxisPreview({ axis, value, prefs }: { axis: Axis; value: string; prefs:
     return (
       <span className="prev" aria-hidden="true">
         {/* both attributes, so the tokens resolve from THAT treatment */}
-        <span className="prev-swatch" data-palette={value} data-appearance={resolveAppearance(prefs)}>
+        <span
+          className="prev-swatch"
+          data-palette={value}
+          data-appearance={resolveAppearance(prefs)}
+        >
           <i style={{ background: 'var(--c-panel)' }} />
           <i style={{ background: 'var(--c-ink-2)' }} />
           <i style={{ background: 'var(--c-accent)' }} />
@@ -92,7 +104,9 @@ function AxisPreview({ axis, value, prefs }: { axis: Axis; value: string; prefs:
   if (axis.preview === 'typescale') {
     return (
       <span className="prev" aria-hidden="true">
-        <span style={{ fontSize: TYPE_SCALE_PREVIEW[value] ?? '13px', fontFamily: 'var(--ff-display)' }}>
+        <span
+          style={{ fontSize: TYPE_SCALE_PREVIEW[value] ?? '13px', fontFamily: 'var(--ff-display)' }}
+        >
           {SPECIMEN}
         </span>
       </span>
@@ -101,7 +115,12 @@ function AxisPreview({ axis, value, prefs }: { axis: Axis; value: string; prefs:
   if (axis.preview === 'font') {
     return (
       <span className="prev" aria-hidden="true">
-        <span style={{ fontSize: '14px', fontFamily: value === 'native' ? NATIVE_STACK : DISPLAY_STACK }}>
+        <span
+          style={{
+            fontSize: '14px',
+            fontFamily: value === 'native' ? NATIVE_STACK : DISPLAY_STACK,
+          }}
+        >
           {SPECIMEN}
         </span>
       </span>
@@ -139,7 +158,12 @@ function AxisPreview({ axis, value, prefs }: { axis: Axis; value: string; prefs:
       <span className="prev" aria-hidden="true">
         <span
           className="prev-radius"
-          style={{ borderRadius: '999px', width: '14px', height: '14px', opacity: value === 'off' ? 0.3 : 1 }}
+          style={{
+            borderRadius: '999px',
+            width: '14px',
+            height: '14px',
+            opacity: value === 'off' ? 0.3 : 1,
+          }}
         />
       </span>
     );
@@ -164,7 +188,14 @@ export function ThemePanel({ open, onClose }: { open: boolean; onClose: () => vo
   const setAxis = useStore((s) => s.setAxis);
 
   return (
-    <ModalOverlay className="sheet-scrim" isOpen={open} onOpenChange={(o) => { if (!o) onClose(); }} isDismissable>
+    <ModalOverlay
+      className="sheet-scrim"
+      isOpen={open}
+      onOpenChange={(o) => {
+        if (!o) onClose();
+      }}
+      isDismissable
+    >
       <Modal className="sheet">
         <Dialog className="sheet-dlg" aria-label={t('theme.title')}>
           <div className="sheet-hd">
@@ -185,7 +216,9 @@ export function ThemePanel({ open, onClose }: { open: boolean; onClose: () => vo
                 className="axis"
                 key={axis.key}
                 value={axisValue(prefs, axis.key)}
-                onChange={(value) => { setAxis(axis.key, value); }}
+                onChange={(value) => {
+                  setAxis(axis.key, value);
+                }}
               >
                 <Label className="axis-name caps">{t(axis.labelKey)}</Label>
                 <div className="cards">

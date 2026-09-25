@@ -43,9 +43,13 @@ function Sparkline({ runs }: { runs: HistoryEntry[] }) {
 
   const paths = useMemo(() => {
     const peak = Math.max(...runs.map((r) => r.freedBytes), 1);
-    const x = scaleLinear().domain([0, Math.max(1, runs.length - 1)]).range([P, W - P]);
+    const x = scaleLinear()
+      .domain([0, Math.max(1, runs.length - 1)])
+      .range([P, W - P]);
     // 🔴 constant RANGE, the domain moves.
-    const y = scaleLinear().domain([0, peak]).range([H - P, P]);
+    const y = scaleLinear()
+      .domain([0, peak])
+      .range([H - P, P]);
     const stroke = line<HistoryEntry>()
       .x((_d, i) => x(i))
       .y((d) => y(d.freedBytes))
@@ -113,8 +117,12 @@ export function LastRuns({ history }: { history: HistoryEntry[] }) {
   const lastAt = last?.startedAt ?? null;
   useEffect(() => {
     if (lastAt === null) return;
-    const tick = window.setInterval(() => { setNow(Date.now()); }, 30_000);
-    return () => { window.clearInterval(tick); };
+    const tick = window.setInterval(() => {
+      setNow(Date.now());
+    }, 30_000);
+    return () => {
+      window.clearInterval(tick);
+    };
   }, [lastAt]);
 
   return (
@@ -143,7 +151,10 @@ export function LastRuns({ history }: { history: HistoryEntry[] }) {
                     {t('home.lastWhen', {
                       /* Clamped: a run that lands between ticks is "just now", not
                          in the future. */
-                      when: formatRelative(new Date(last.startedAt), new Date(Math.max(now, Date.parse(last.startedAt)))),
+                      when: formatRelative(
+                        new Date(last.startedAt),
+                        new Date(Math.max(now, Date.parse(last.startedAt)))
+                      ),
                       count: last.sections.length,
                       /* The dummy's words for what ran (`safe batch`,
                          `sections 1, 2, 3`), not the engine's flag (D-44). */
@@ -158,7 +169,9 @@ export function LastRuns({ history }: { history: HistoryEntry[] }) {
                 <button
                   className="btn btn-sm"
                   type="button"
-                  onClick={() => { void navigate({ to: '/report' }); }}
+                  onClick={() => {
+                    void navigate({ to: '/report' });
+                  }}
                 >
                   <span className="btn-label">{t('home.openReport')}</span>
                 </button>
@@ -174,7 +187,9 @@ export function LastRuns({ history }: { history: HistoryEntry[] }) {
           <div className="well pad">
             {/* `index.html:239-244` - the switch, then its state, then the note. */}
             <ScheduleSwitch label={t('home.scheduleSwitch')} />
-            <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-3)' }}>{t('home.scheduleNote')}</p>
+            <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-3)' }}>
+              {t('home.scheduleNote')}
+            </p>
           </div>
         </div>
       </div>

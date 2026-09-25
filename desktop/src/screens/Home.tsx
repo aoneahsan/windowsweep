@@ -198,17 +198,24 @@ export function Home() {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     if (scannedAt === null) return;
-    const tick = window.setInterval(() => { setNow(Date.now()); }, 30_000);
-    return () => { window.clearInterval(tick); };
+    const tick = window.setInterval(() => {
+      setNow(Date.now());
+    }, 30_000);
+    return () => {
+      window.clearInterval(tick);
+    };
   }, [scannedAt]);
-  const minutesAgo = scannedAt === null ? null : Math.max(0, Math.floor((now - scannedAt) / 60_000));
+  const minutesAgo =
+    scannedAt === null ? null : Math.max(0, Math.floor((now - scannedAt) / 60_000));
 
   /* The run itself - start, stream, record, and the failure path - is the shared
      `useEngineRun`; what is Home's own is where it goes and what it does to the
      map. The candidates a run offered reach the Picker through `finishRun`. */
   const drive = useCallback(
     async (args: string[], goToRun: boolean) => {
-      const result = await runEngine(args, () => { if (goToRun) void navigate({ to: '/run' }); });
+      const result = await runEngine(args, () => {
+        if (goToRun) void navigate({ to: '/run' });
+      });
       /* 🔴 `targets[]` is filled by `--scan` and empty in every other mode, so
          this only ever ADDS measurements - a dry-run must not blank the map. A real
          run spends the rows of the sections it ran, and `finishRun` does that for
@@ -218,7 +225,7 @@ export function Home() {
       }
       return result;
     },
-    [runEngine, navigate, setScanTargets],
+    [runEngine, navigate, setScanTargets]
   );
 
   /* 🔴 The scan carries the SAME preferences the run does (D-8). It used to take
@@ -238,8 +245,12 @@ export function Home() {
      hero number changing is the primary answer; this is the one at the control. */
   useEffect(() => {
     if (!scanDone) return;
-    const to = window.setTimeout(() => { setScanDone(false); }, 700);
-    return () => { window.clearTimeout(to); };
+    const to = window.setTimeout(() => {
+      setScanDone(false);
+    }, 700);
+    return () => {
+      window.clearTimeout(to);
+    };
   }, [scanDone]);
 
   /* Putting every target back is one press with no confirmation, because it can
@@ -254,8 +265,12 @@ export function Home() {
 
   useEffect(() => {
     if (!cleared) return;
-    const to = window.setTimeout(() => { setCleared(false); }, 700);
-    return () => { window.clearTimeout(to); };
+    const to = window.setTimeout(() => {
+      setCleared(false);
+    }, 700);
+    return () => {
+      window.clearTimeout(to);
+    };
   }, [cleared]);
 
   /* 🔴 THIS PRESS IS THE REHEARSAL (D-60). What it returns is recorded with the
@@ -268,12 +283,16 @@ export function Home() {
         const rehearsal = result ? rehearsalFrom({ prefs, excludedPaths, ...result }) : null;
         if (rehearsal) recordRehearsal(rehearsal);
       })
-      .finally(() => { setBusy(null); });
+      .finally(() => {
+        setBusy(null);
+      });
   }, [drive, prefs, excludedPaths, recordRehearsal]);
 
   const onReclaim = useCallback(() => {
     setBusy('reclaim');
-    void drive(safeBatchArgs({ dryRun: false, ...prefs, excludedPaths }), true).finally(() => { setBusy(null); });
+    void drive(safeBatchArgs({ dryRun: false, ...prefs, excludedPaths }), true).finally(() => {
+      setBusy(null);
+    });
   }, [drive, prefs, excludedPaths]);
 
   /* The map's tiles: one per scanned target, coloured by its section's tier and
@@ -285,7 +304,7 @@ export function Home() {
        (`reclaim-map.js` -> `mapDataAll`). Every figure around it reads
        `includedTargets`. */
     () => toMapTargets(catalogue, scanTargets, excludedPaths),
-    [catalogue, scanTargets, excludedPaths],
+    [catalogue, scanTargets, excludedPaths]
   );
 
   /* How many of the drawn tiles are kept out, counted from the tiles themselves so
@@ -294,7 +313,7 @@ export function Home() {
      instead would undercount whenever one root covers several targets. */
   const excludedCount = useMemo(
     () => mapTargets.filter((target) => target.excluded && target.bytes > 0).length,
-    [mapTargets],
+    [mapTargets]
   );
 
   /* The ladder's rungs: the engine's own safe batch, each carrying what a run
@@ -384,7 +403,9 @@ export function Home() {
             >
               {/* The word follows the measurement, not the last run (D-55): the
                   dummy's before-a-scan Home reads "Scan". */}
-              <span className="btn-label">{measured ? t('home.scanAgain') : t('home.scanFirst')}</span>
+              <span className="btn-label">
+                {measured ? t('home.scanAgain') : t('home.scanFirst')}
+              </span>
             </button>
             <button
               className="btn"
@@ -458,7 +479,11 @@ export function Home() {
               <span className="caps">{t('home.safeRunTitle')}</span>
             </div>
             {catalogue ? (
-              <SafeRunLadder rows={ladderRows} total={offer?.amount ?? null} upTo={offer?.upTo ?? true} />
+              <SafeRunLadder
+                rows={ladderRows}
+                total={offer?.amount ?? null}
+                upTo={offer?.upTo ?? true}
+              />
             ) : (
               /* Reading the catalogue and having an empty safe batch are two
                  different facts, and the ladder must not report the second while
@@ -472,7 +497,11 @@ export function Home() {
       </section>
 
       {/* ZONE 6 */}
-      <NeedsAPerson sections={interactive} candidates={candidates} offeredSections={offeredSections} />
+      <NeedsAPerson
+        sections={interactive}
+        candidates={candidates}
+        offeredSections={offeredSections}
+      />
 
       {/* ZONES 7 + 8 */}
       <HomeSafety />

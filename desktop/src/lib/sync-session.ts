@@ -83,7 +83,8 @@ function narrowPrefs(prefs: Readonly<Record<string, unknown>>): AxisPrefs {
   const out: AxisPrefs = {};
   for (const axis of AXES) {
     const value = prefs[axis.key];
-    if (typeof value === 'string' && axis.values.some((v) => v.value === value)) out[axis.key] = value;
+    if (typeof value === 'string' && axis.values.some((v) => v.value === value))
+      out[axis.key] = value;
   }
   return out;
 }
@@ -104,7 +105,8 @@ function untouched(settings: SyncedSettings): boolean {
 /** Whether two sides differ in any value that syncs - an axis, or developer mode. */
 function differs(a: SyncedSettings, b: SyncedSettings): boolean {
   return (
-    a.developer !== b.developer || AXES.some((axis) => axisValue(a.prefs, axis.key) !== axisValue(b.prefs, axis.key))
+    a.developer !== b.developer ||
+    AXES.some((axis) => axisValue(a.prefs, axis.key) !== axisValue(b.prefs, axis.key))
   );
 }
 
@@ -134,7 +136,9 @@ function putSettings(settings: SyncedSettings): void {
 
 /** Make the account's settings this machine's, quietly: they are not a change made here. */
 function applySettings(settings: SyncedSettings): void {
-  applyQuietly(() => { putSettings(settings); });
+  applyQuietly(() => {
+    putSettings(settings);
+  });
   writeSettingsStamp(settings.updatedAt);
 }
 
@@ -217,13 +221,19 @@ async function reconcile(user: AuthUser): Promise<void> {
 
 /** The stripped runs a ledger keeps waiting, each re-admitted by the gate, in the order they wait. */
 function waitingRuns(ledger: RunLedger): SyncedRun[] {
-  return ledger.pending.map((kept) => readStrippedRun(kept)).filter((run): run is SyncedRun => run !== null);
+  return ledger.pending
+    .map((kept) => readStrippedRun(kept))
+    .filter((run): run is SyncedRun => run !== null);
 }
 
 /** How many summaries the ledger still owes the account - the count SY-02b states. */
 function pendingCount(ledger: RunLedger): number {
   const stored = new Set(ledger.uploaded);
-  return new Set(waitingRuns(ledger).map((run) => run.runId).filter((id) => !stored.has(id))).size;
+  return new Set(
+    waitingRuns(ledger)
+      .map((run) => run.runId)
+      .filter((id) => !stored.has(id))
+  ).size;
 }
 
 /** Upload what waits, then what just finished - oldest first, stopping at the first failure. */
@@ -306,7 +316,10 @@ export async function restoreSync(): Promise<AuthUser | null> {
   let user = useStore.getState().user;
   if (!user) {
     const restored = await currentUser().catch((error: unknown) => {
-      logger.warn('sync: the saved session could not be read', { step: 'session', error: errorText(error) });
+      logger.warn('sync: the saved session could not be read', {
+        step: 'session',
+        error: errorText(error),
+      });
       return null;
     });
     if (!restored) return null;

@@ -105,8 +105,12 @@ export function SyncBand({ user }: { user: AuthUser | null }) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     if (!live) return;
-    const tick = window.setInterval(() => { setNow(Date.now()); }, TICK_MS);
-    return () => { window.clearInterval(tick); };
+    const tick = window.setInterval(() => {
+      setNow(Date.now());
+    }, TICK_MS);
+    return () => {
+      window.clearInterval(tick);
+    };
   }, [live]);
 
   const localOnly = t('account.sync.localOnly');
@@ -147,7 +151,12 @@ export function SyncBand({ user }: { user: AuthUser | null }) {
             secondId={noticeId}
             action={
               live && replaced ? (
-                <button className="btn btn-sm" type="button" aria-describedby={noticeId} onClick={onUndo}>
+                <button
+                  className="btn btn-sm"
+                  type="button"
+                  aria-describedby={noticeId}
+                  onClick={onUndo}
+                >
                   <span className="btn-label">{t('account.sync.conflict.undo')}</span>
                 </button>
               ) : null
@@ -164,11 +173,20 @@ export function SyncBand({ user }: { user: AuthUser | null }) {
                 : localOnly
             }
             on={live}
-            second={live && pending > 0 ? t('account.sync.failed.upload', { count: pending }) : null}
+            second={
+              live && pending > 0 ? t('account.sync.failed.upload', { count: pending }) : null
+            }
           />
-          <SyncRow title={t('account.sync.paths')} line={t('account.sync.never')} on={false} second={null} />
+          <SyncRow
+            title={t('account.sync.paths')}
+            line={t('account.sync.never')}
+            on={false}
+            second={null}
+          />
         </div>
-        {live && user ? <CloudRuns user={user} onEmptied={() => headingRef.current?.focus()} /> : null}
+        {live && user ? (
+          <CloudRuns user={user} onEmptied={() => headingRef.current?.focus()} />
+        ) : null}
         <details className="disclose" style={{ marginTop: 'var(--sp-4)' }}>
           <summary>
             <span className="disclose-line">{t('account.disagree.summary')}</span>

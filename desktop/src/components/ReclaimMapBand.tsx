@@ -58,7 +58,9 @@ export function ReclaimMapBand({
       <div className="wrap rise">
         <div className="zone-label">
           <span className="caps">{t('home.mapTitle')}</span>
-          <span className="t-xs ink-3" style={{ flex: 'none' }}>{t('home.mapHint')}</span>
+          <span className="t-xs ink-3" style={{ flex: 'none' }}>
+            {t('home.mapHint')}
+          </span>
         </div>
 
         <ReclaimMap targets={targets} measured={measured} onToggle={onToggleExcluded} />

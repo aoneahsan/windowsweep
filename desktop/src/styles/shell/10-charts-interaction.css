@@ -4,44 +4,118 @@
       range: a chart that resizes as values arrive is layout shift in costume.
    ============================================================================ */
 
-.chart { position: relative; }
-.chart svg { display: block; overflow: visible; }
-.chart-empty, .chart-load {
-  display: grid; place-items: center; text-align: center;
-  color: var(--c-ink-3); font-size: var(--fs-xs);
+.chart {
+  position: relative;
+}
+.chart svg {
+  display: block;
+  overflow: visible;
+}
+.chart-empty,
+.chart-load {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: var(--c-ink-3);
+  font-size: var(--fs-xs);
 }
 .chart-tip {
-  position: absolute; pointer-events: none; z-index: 5;
-  padding: var(--sp-1) var(--sp-2); border-radius: var(--r-sm);
-  background: var(--c-bleed); color: var(--c-bleed-ink);
-  font-size: var(--fs-2xs); font-family: var(--ff-mono); white-space: nowrap; box-shadow: var(--wm-raise-shadow);
+  position: absolute;
+  pointer-events: none;
+  z-index: 5;
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--r-sm);
+  background: var(--c-bleed);
+  color: var(--c-bleed-ink);
+  font-size: var(--fs-2xs);
+  font-family: var(--ff-mono);
+  white-space: nowrap;
+  box-shadow: var(--wm-raise-shadow);
 }
-.chart-lg { display: flex; flex-wrap: wrap; gap: var(--sp-3); font-size: var(--fs-2xs); color: var(--c-ink-2); }
-.chart-lg > span { display: inline-flex; align-items: center; gap: var(--sp-1); }
+.chart-lg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  font-size: var(--fs-2xs);
+  color: var(--c-ink-2);
+}
+.chart-lg > span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
 /* Never colour alone: every legend swatch carries a shape glyph too. */
-.chart-sw { width: .7em; height: .7em; border-radius: 2px; flex: none; }
-.chart-ax { font-size: var(--fs-2xs); fill: var(--c-ink-3); }
-.chart-grid line { stroke: var(--c-line); stroke-width: 1; }
+.chart-sw {
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: 2px;
+  flex: none;
+}
+.chart-ax {
+  font-size: var(--fs-2xs);
+  fill: var(--c-ink-3);
+}
+.chart-grid line {
+  stroke: var(--c-line);
+  stroke-width: 1;
+}
 
 /* tab panels - the shell the settings screen composes into */
-.tabpanel { padding-block: var(--sp-4); }
-.tabpanel:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 4px; }
-.set-grp { display: flex; flex-direction: column; gap: var(--sp-5); max-width: 46rem; }
-.set-row {
-  display: flex; gap: var(--sp-4); align-items: flex-start;
-  padding-bottom: var(--sp-4); border-bottom: 1px solid var(--c-line);
+.tabpanel {
+  padding-block: var(--sp-4);
 }
-.set-row:last-child { border-bottom: 0; padding-bottom: 0; }
-.set-row > .set-txt { flex: 1; min-width: 0; }
-.set-row > .set-ctl { flex: none; display: flex; align-items: center; gap: var(--sp-3); }
-.set-txt h3 { font-size: var(--fs-base); font-weight: 600; }
-.set-txt p { font-size: var(--fs-sm); color: var(--c-ink-3); margin-top: 2px; }
+.tabpanel:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 4px;
+}
+.set-grp {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  max-width: 46rem;
+}
+.set-row {
+  display: flex;
+  gap: var(--sp-4);
+  align-items: flex-start;
+  padding-bottom: var(--sp-4);
+  border-bottom: 1px solid var(--c-line);
+}
+.set-row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.set-row > .set-txt {
+  flex: 1;
+  min-width: 0;
+}
+.set-row > .set-ctl {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+.set-txt h3 {
+  font-size: var(--fs-base);
+  font-weight: 600;
+}
+.set-txt p {
+  font-size: var(--fs-sm);
+  color: var(--c-ink-3);
+  margin-top: 2px;
+}
 .set-conseq {
-  margin-top: var(--sp-2); font-size: var(--fs-sm);
-  color: var(--c-accent-ink); font-weight: 500;
+  margin-top: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--c-accent-ink);
+  font-weight: 500;
 }
 /* the house-promotion panel - the ecosystem roster, self-excluded */
-.promo { display: grid; gap: var(--sp-3); grid-template-columns: repeat(auto-fit, minmax(min(14rem,100%),1fr)); }
+.promo {
+  display: grid;
+  gap: var(--sp-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
+}
 
 /* ---------------------------------------------------------------------------
    §12 - THE INTERACTION FLOOR, the part no gate can see
@@ -53,50 +127,85 @@
 
 /* The window controls answered hover only, so a click on Minimise looked exactly
    like a miss until the window moved. */
-.wc:active { background: color-mix(in oklab, var(--c-ink) 20%, transparent); }
-.wc-close:active { background: color-mix(in oklab, var(--c-danger) 82%, var(--c-ink)); color: var(--c-on-semantic); }
+.wc:active {
+  background: color-mix(in oklab, var(--c-ink) 20%, transparent);
+}
+.wc-close:active {
+  background: color-mix(in oklab, var(--c-danger) 82%, var(--c-ink));
+  color: var(--c-on-semantic);
+}
 
 /* A rail item is a link, and a link that only answers hover reads as dead on the
    press that matters - the one that changes route. */
-.rail-item:active { background: color-mix(in oklab, var(--c-ink) 12%, transparent); }
+.rail-item:active {
+  background: color-mix(in oklab, var(--c-ink) 12%, transparent);
+}
 
 /* The filter chips answer press as well as pressed-ness. */
-.fchip:active { background: color-mix(in oklab, var(--c-ink) 12%, transparent); }
-.fchip[aria-pressed='true']:active { background: color-mix(in oklab, var(--c-accent) 84%, var(--c-ink)); }
+.fchip:active {
+  background: color-mix(in oklab, var(--c-ink) 12%, transparent);
+}
+.fchip[aria-pressed='true']:active {
+  background: color-mix(in oklab, var(--c-accent) 84%, var(--c-ink));
+}
 
 /* The switch: `aria-checked` was the only state it had, so pressing one and
    changing nothing (a re-press of the same value) was silent. */
-.switch:active::after { scale: .92; }
+.switch:active::after {
+  scale: 0.92;
+}
 
 /* A chosen row in a `.lst`. The dummy marks a chosen table row `data-selected`
    and paints `--c-accent-soft`; the picker renders a list rather than a table, so
    the same attribute and the same token carry it here.
    🔴 `data-selected`, not `aria-selected`: `aria-selected` is invalid on a plain
    div and would be a worse defect than the missing paint. */
-.lst-i[data-selected='true'] { background: var(--c-accent-soft); --c-ink-3: var(--c-ink-2); }
+.lst-i[data-selected='true'] {
+  background: var(--c-accent-soft);
+  --c-ink-3: var(--c-ink-2);
+}
 
 /* The theme panel is a React Aria Modal, so one element sits between `.sheet` and
    its header and body. It is a pass-through: the sheet keeps its own column
    layout and the body keeps its own scroll. */
 .sheet > .sheet-dlg {
-  display: flex; flex-direction: column; min-height: 0; height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
   outline: none;
 }
-.sheet > .sheet-dlg > .sheet-bd { flex: 1 1 auto; min-height: 0; }
+.sheet > .sheet-dlg > .sheet-bd {
+  flex: 1 1 auto;
+  min-height: 0;
+}
 
 /* The theme panel's axis block and its cards. `.card-sel` is a React Aria Radio
    here, so the selected state arrives as `data-selected` rather than
    `aria-checked` - both are listed, because the dummy's button anatomy is what
    the gallery shows and the app's is what ships. */
-.axis { display: block; }
-.card-sel { cursor: pointer; }
-.card-sel[data-selected] {
-  border-color: var(--c-accent); background: var(--c-accent-soft);
-  color: var(--c-accent-ink); font-weight: 600;
+.axis {
+  display: block;
 }
-.card-sel[data-hovered] { border-color: var(--c-ink-3); }
-.card-sel[data-pressed] { background: color-mix(in oklab, var(--c-ink) 10%, var(--c-well)); }
-.card-sel[data-focus-visible] { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+.card-sel {
+  cursor: pointer;
+}
+.card-sel[data-selected] {
+  border-color: var(--c-accent);
+  background: var(--c-accent-soft);
+  color: var(--c-accent-ink);
+  font-weight: 600;
+}
+.card-sel[data-hovered] {
+  border-color: var(--c-ink-3);
+}
+.card-sel[data-pressed] {
+  background: color-mix(in oklab, var(--c-ink) 10%, var(--c-well));
+}
+.card-sel[data-focus-visible] {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
 
 /* 🔴 `.t-2xl` is used by `splash.html` AND by `Splash.tsx`, and is defined in
    NEITHER stylesheet. That is invisible in the dummy, which has no CSS reset and
@@ -110,14 +219,18 @@
    moves it. ⚠️ `--fs-2xl` (2.75rem = 44px) exists and nothing consumes it, so the
    intended size may be that instead - but that is a change to what was approved
    on screen, and it belongs in the dummy first. */
-.t-2xl { font-size: var(--fs-xl); }
+.t-2xl {
+  font-size: var(--fs-xl);
+}
 
 /* `.t-base` - the dummy's own pin (TASK-012, `shared.css:61`), missing here. It
    matters where a parent sets a smaller size: `.lst-i` is `--fs-sm`, so the
    Account screen's Sync rows drew their titles a step smaller than the dummy's,
    which name them `t-base` (`page-account.js`). Elsewhere it equals the body
    size and moves nothing. (GATE 4 round 7, D-38.) */
-.t-base { font-size: var(--fs-base); }
+.t-base {
+  font-size: var(--fs-base);
+}
 
 /* 🔴 The rail-less shell. `.shell` is `grid-template-columns: auto minmax(0,1fr)`,
    and an `auto` column sizes to MAX-CONTENT - so with no rail the single content
@@ -125,4 +238,6 @@
    mid-window. Splash and Consent are the two routes with no rail. The same thing
    is visible in the dummy's splash.html and consent.html, where the band edge
    lands around 880px in a 1440px window; this is the app's half of that fix. */
-.shell-bare { grid-template-columns: minmax(0, 1fr); }
+.shell-bare {
+  grid-template-columns: minmax(0, 1fr);
+}

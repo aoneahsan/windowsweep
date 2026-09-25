@@ -67,7 +67,10 @@ export function rowsFor(runs: readonly HistoryEntry[], filter: HistoryFilter): H
  * were. A dry-run deleted nothing, so it adds to neither - the dummy computes the
  * same two numbers over the same filtered list (`page-history.js` -> `paint`).
  */
-export function freedTotal(rows: readonly { dryRun: boolean; freedBytes: number }[]): { bytes: number; runs: number } {
+export function freedTotal(rows: readonly { dryRun: boolean; freedBytes: number }[]): {
+  bytes: number;
+  runs: number;
+} {
   let bytes = 0;
   let runs = 0;
   for (const r of rows) {

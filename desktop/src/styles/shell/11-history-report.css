@@ -8,65 +8,161 @@
    ============================================================================ */
 
 /* The heading row: title and plain line, the figure pushed to the far side. */
-.hist-head, .rep-head { display: flex; flex-wrap: wrap; gap: var(--sp-4); align-items: flex-end; }
-.hist-total { margin-inline-start: auto; text-align: end; }
+.hist-head,
+.rep-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  align-items: flex-end;
+}
+.hist-total {
+  margin-inline-start: auto;
+  text-align: end;
+}
 
 /* Freed per run: a fixed 90px frame, drawn or empty, so the page never reflows. */
-.hist-chart-head { margin-bottom: var(--sp-3); }
-.hist-chart-note { margin-inline-start: auto; }
-.hist-spark { width: 100%; height: 90px; }
-svg.hist-spark { display: block; }
-.hist-spark.chart-empty { padding-inline: var(--sp-4); }
+.hist-chart-head {
+  margin-bottom: var(--sp-3);
+}
+.hist-chart-note {
+  margin-inline-start: auto;
+}
+.hist-spark {
+  width: 100%;
+  height: 90px;
+}
+svg.hist-spark {
+  display: block;
+}
+.hist-spark.chart-empty {
+  padding-inline: var(--sp-4);
+}
 
 /* The Show band stays in reach while the table scrolls beneath it. */
-.hist-show { position: sticky; top: 0; z-index: 4; }
-.hist-show-label { margin-inline-end: var(--sp-2); }
+.hist-show {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+.hist-show-label {
+  margin-inline-end: var(--sp-2);
+}
 
 /* The tables sit in a panel that must not clip their focus rings. */
-.hist-table, .rep-table { overflow: visible; }
-.hist-col-when { width: 11rem; }
-.hist-col-mode { width: 6rem; }
-.hist-col-where, .hist-col-freed { width: 7rem; }
-.hist-col-open { width: 2.5rem; }
+.hist-table,
+.rep-table {
+  overflow: visible;
+}
+.hist-col-when {
+  width: 11rem;
+}
+.hist-col-mode {
+  width: 6rem;
+}
+.hist-col-where,
+.hist-col-freed {
+  width: 7rem;
+}
+.hist-col-open {
+  width: 2.5rem;
+}
 /* The empty state's heading is an h2 here (the page has one h1 and nothing between);
    it keeps the size `.empty h3` gives the dummy's. */
-.hist-table .empty h2 { font-size: var(--fs-md); font-weight: 700; }
+.hist-table .empty h2 {
+  font-size: var(--fs-md);
+  font-weight: 700;
+}
 
-.hist-pager { margin-top: var(--sp-4); }
-.hist-budget { margin-top: var(--sp-2); }
+.hist-pager {
+  margin-top: var(--sp-4);
+}
+.hist-budget {
+  margin-top: var(--sp-2);
+}
 
 /* Report */
-.rep-crumbs { margin-bottom: var(--sp-3); }
+.rep-crumbs {
+  margin-bottom: var(--sp-3);
+}
 /* The two buttons, and under them the declaration Export carries while it is not
    built (`pending-wave`): end-aligned under the pair, wrapping inside its own measure. */
-.rep-actions { margin-inline-start: auto; display: flex; flex-direction: column; align-items: flex-end; gap: var(--sp-2); }
-.rep-buttons { display: flex; gap: var(--sp-2); flex-wrap: wrap; justify-content: flex-end; }
-.rep-export-note { max-width: 22rem; }
-.rep-bars { display: block; margin-top: var(--sp-3); }
-.rep-disk { height: 100%; }
-.rep-drives { margin-top: var(--sp-3); }
-.rep-drive-fig { text-align: end; white-space: nowrap; }
-.rep-col-id { width: 3rem; }
+.rep-actions {
+  margin-inline-start: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sp-2);
+}
+.rep-buttons {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.rep-export-note {
+  max-width: 22rem;
+}
+.rep-bars {
+  display: block;
+  margin-top: var(--sp-3);
+}
+.rep-disk {
+  height: 100%;
+}
+.rep-drives {
+  margin-top: var(--sp-3);
+}
+.rep-drive-fig {
+  text-align: end;
+  white-space: nowrap;
+}
+.rep-col-id {
+  width: 3rem;
+}
 /* Set, not automatic: the engine leaves most steps' note empty, and automatic layout
    then hands Section the Note column's room. 11rem is what the dummy's own data gave it. */
-.rep-col-section { width: 11rem; }
-.rep-col-status, .rep-col-freed { width: 7rem; }
-.rep-key { font-weight: 600; }
-.rep-reason { display: block; margin-top: var(--sp-1); }
+.rep-col-section {
+  width: 11rem;
+}
+.rep-col-status,
+.rep-col-freed {
+  width: 7rem;
+}
+.rep-key {
+  font-weight: 600;
+}
+.rep-reason {
+  display: block;
+  margin-top: var(--sp-1);
+}
 
 /* A path is one long word; it breaks anywhere rather than widening the page. */
-.rep-path { overflow-wrap: anywhere; }
+.rep-path {
+  overflow-wrap: anywhere;
+}
 
 /* Show the JSON: the file as written. Its own indentation is the structure, so it
    scrolls sideways inside its box rather than wrapping - and never moves the page. */
-.rep-json-head { margin-bottom: var(--sp-3); }
+.rep-json-head {
+  margin-bottom: var(--sp-3);
+}
 .rep-json {
-  max-height: 24rem; overflow: auto;
-  background: var(--c-well); border: 1px solid var(--c-line); border-radius: var(--r-md);
+  max-height: 24rem;
+  overflow: auto;
+  background: var(--c-well);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
   padding: var(--sp-3);
 }
-.rep-json:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+.rep-json:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
 .rep-json pre {
-  margin: 0; white-space: pre;
-  font-family: var(--ff-mono); font-size: var(--fs-xs); line-height: 1.55; color: var(--c-ink-2);
+  margin: 0;
+  white-space: pre;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-xs);
+  line-height: 1.55;
+  color: var(--c-ink-2);
 }

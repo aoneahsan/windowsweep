@@ -63,15 +63,28 @@ export function PickerSelbar({
     /* The consequence line takes a full-width line of its own under the controls, as
        `picker.html` now draws it: with section 17's sentence the one-row bar squeezed
        its own controls ("Remove these" broke onto two lines). */
-    <div className="selbar" hidden={count === 0} style={{ flexWrap: 'wrap', rowGap: 'var(--sp-1)' }}>
+    <div
+      className="selbar"
+      hidden={count === 0}
+      style={{ flexWrap: 'wrap', rowGap: 'var(--sp-1)' }}
+    >
       <span className="num t-md wide">{count}</span>
       <span className="t-sm ink-2">{t('picker.chosenWord')}</span>
       <span className="tb-sep" />
       <span className="num t-md wide accent-ink">{formatBytes(bytes)}</span>
       <span className="t-xs ink-3 only-wide">
-        {sections.length > 0 ? t('picker.where', { count: sections.length, list: sections.join(', ') }) : ''}
+        {sections.length > 0
+          ? t('picker.where', { count: sections.length, list: sections.join(', ') })
+          : ''}
       </span>
-      <div style={{ marginInlineStart: 'auto', display: 'flex', gap: 'var(--sp-2)', alignItems: 'center' }}>
+      <div
+        style={{
+          marginInlineStart: 'auto',
+          display: 'flex',
+          gap: 'var(--sp-2)',
+          alignItems: 'center',
+        }}
+      >
         {/* 🔴 A label wrapping a real radio, which is what `.seg-opt` is styled for:
             the selected paint is `.seg-opt:has(input:checked)`. Native radios in
             one group also bring arrow-key traversal with them. */}
@@ -82,7 +95,9 @@ export function PickerSelbar({
               name="pick-mode"
               value="recycle"
               checked={mode === 'recycle'}
-              onChange={() => { onMode('recycle'); }}
+              onChange={() => {
+                onMode('recycle');
+              }}
             />
             <span>{t('picker.recycleBin')}</span>
           </label>
@@ -92,7 +107,9 @@ export function PickerSelbar({
               name="pick-mode"
               value="permanent"
               checked={mode === 'permanent'}
-              onChange={() => { onMode('permanent'); }}
+              onChange={() => {
+                onMode('permanent');
+              }}
             />
             <span>{t('picker.permanent')}</span>
           </label>

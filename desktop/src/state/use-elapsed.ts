@@ -22,8 +22,12 @@ export function useElapsedMs(log: RunLogLine[], phase: RunPhase): number | null 
   const [clock, setClock] = useState(() => Date.now());
   useEffect(() => {
     if (phase !== 'running') return;
-    const tick = window.setInterval(() => { setClock(Date.now()); }, 1000);
-    return () => { window.clearInterval(tick); };
+    const tick = window.setInterval(() => {
+      setClock(Date.now());
+    }, 1000);
+    return () => {
+      window.clearInterval(tick);
+    };
   }, [phase]);
   return firstAt === null ? null : (phase === 'running' ? clock : (lastAt ?? firstAt)) - firstAt;
 }

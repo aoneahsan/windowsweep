@@ -28,5 +28,5 @@ if (!host) throw new Error('the application root is missing from index.html');
 createRoot(host).render(
   <StrictMode>
     <App />
-  </StrictMode>,
+  </StrictMode>
 );

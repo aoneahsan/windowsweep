@@ -41,15 +41,22 @@ export function FreedPerRun({ runs }: { runs: readonly HistoryEntry[] }) {
   const drawn = useMemo(() => {
     const real = realRunsOldestFirst(runs);
     const peak = Math.max(1, ...real.map((r) => r.freedBytes));
-    const x = scaleLinear().domain([0, Math.max(1, real.length - 1)]).range([PAD, W - PAD]);
-    const y = scaleLinear().domain([0, peak]).range([H - PAD, PAD]);
+    const x = scaleLinear()
+      .domain([0, Math.max(1, real.length - 1)])
+      .range([PAD, W - PAD]);
+    const y = scaleLinear()
+      .domain([0, peak])
+      .range([H - PAD, PAD]);
     /* One run has no "across": it sits in the middle of the frame rather than on its edge. */
     const points: Point[] = real.map((r, i) => ({
       key: `${r.runId}-${String(i)}`,
       cx: real.length === 1 ? W / 2 : x(i),
       cy: y(Math.max(0, r.freedBytes)),
     }));
-    const path = line<Point>().x((p) => p.cx).y((p) => p.cy)(points) ?? '';
+    const path =
+      line<Point>()
+        .x((p) => p.cx)
+        .y((p) => p.cy)(points) ?? '';
     return { points, path };
   }, [runs]);
 
@@ -72,7 +79,13 @@ export function FreedPerRun({ runs }: { runs: readonly HistoryEntry[] }) {
               role="img"
               aria-label={t('history.chartAria', { count: drawn.points.length })}
             >
-              <path d={drawn.path} fill="none" stroke="var(--c-accent)" strokeWidth="2" strokeLinejoin="round" />
+              <path
+                d={drawn.path}
+                fill="none"
+                stroke="var(--c-accent)"
+                strokeWidth="2"
+                strokeLinejoin="round"
+              />
               {drawn.points.map((p) => (
                 <circle key={p.key} cx={p.cx} cy={p.cy} r="3" fill="var(--c-accent)" />
               ))}

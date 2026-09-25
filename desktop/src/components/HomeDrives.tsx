@@ -83,7 +83,9 @@ export function HomeDrives({
             </div>
 
             <div className="t-xs" style={{ textAlign: 'end', whiteSpace: 'nowrap' }}>
-              <div className="num">{t('home.driveFree', { amount: formatBytes(row.freeBytes) })}</div>
+              <div className="num">
+                {t('home.driveFree', { amount: formatBytes(row.freeBytes) })}
+              </div>
               {/* 🔴 `not measured`, never `+0 B`. A drive nobody has scanned and a
                   drive with nothing on it are different facts, and `+0 B` asserts
                   the second one. It is the word the hero and the ladder already use

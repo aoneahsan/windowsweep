@@ -138,7 +138,8 @@ export interface ProgressEvent {
   freedBytes?: number;
 }
 
-const PROGRESS = /^##windowsweep section=(\d+) event=(start|end)(?: status=(\S+) freed_bytes=(\d+))?$/;
+const PROGRESS =
+  /^##windowsweep section=(\d+) event=(start|end)(?: status=(\S+) freed_bytes=(\d+))?$/;
 
 /**
  * Parse one line of the engine's stderr. Returns null for anything that is not a
@@ -177,9 +178,11 @@ export function parseRunSummary(stdout: string): RunSummary {
   if (!line) throw new Error('the engine produced no JSON summary line');
 
   const raw: unknown = JSON.parse(line);
-  if (typeof raw !== 'object' || raw === null) throw new Error('the JSON summary was not an object');
+  if (typeof raw !== 'object' || raw === null)
+    throw new Error('the JSON summary was not an object');
   const doc = raw as Partial<RunSummary>;
-  if (doc.tool !== 'windowsweep') throw new Error(`unexpected tool in summary: ${String(doc.tool)}`);
+  if (doc.tool !== 'windowsweep')
+    throw new Error(`unexpected tool in summary: ${String(doc.tool)}`);
 
   return {
     tool: doc.tool,
@@ -271,7 +274,7 @@ export function candidatesBySection(candidates: Candidate[]): Map<number, Candid
  * silently selecting the wrong row.
  */
 export function buildSelectFile(selected: Candidate[]): string {
-  const eol = String.fromCharCode(13, 10);  // the engine reads the file on Windows PowerShell 5.1
+  const eol = String.fromCharCode(13, 10); // the engine reads the file on Windows PowerShell 5.1
   const seen = new Set<string>();
   const lines: string[] = [];
   for (const c of selected) {

@@ -103,7 +103,12 @@ export function CapacityRing({ rows }: { rows: DriveRow[] }) {
               />
               <path
                 className="ring-recl"
-                d={arcPath(inner, outer, GAP + sweep * usedFrac, GAP + sweep * (usedFrac + reclFrac))}
+                d={arcPath(
+                  inner,
+                  outer,
+                  GAP + sweep * usedFrac,
+                  GAP + sweep * (usedFrac + reclFrac)
+                )}
                 transform={`translate(${String(CENTRE)},${String(CENTRE)})`}
                 fill="var(--c-accent)"
               />

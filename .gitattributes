@@ -17,3 +17,9 @@
 *.yml text eol=lf
 *.svg text eol=lf
 .env* text eol=lf
+
+# The desktop app's husky hook is a shell script run by sh, and .nvmrc is read line-exact: a CRLF
+# checkout breaks both (sh would run "yarn lint-staged" followed by a carriage return).
+# Extensionless, so no rule above reaches them.
+desktop/.husky/* text eol=lf
+.nvmrc text eol=lf

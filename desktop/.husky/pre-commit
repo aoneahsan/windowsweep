@@ -1,0 +1,6 @@
+# Git runs this from the repository root. The desktop app is its own yarn project, and its
+# lint-staged config reaches only files under desktop/, so a commit that stages none is a no-op.
+# --no-stash: lint-staged backs up through git stash create/store, and the house rule bans any git stash, for
+# any reason - the stack is shared by every checkout and session. Files are always staged whole, by path, so the
+# partial-staging protection the backup buys is never used here.
+cd desktop && yarn lint-staged --no-stash

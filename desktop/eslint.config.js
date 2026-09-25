@@ -1,15 +1,20 @@
 // @ts-check
+import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
 import react from '@eslint-react/eslint-plugin';
 import globals from 'globals';
 
 /**
- * 🔴 `eslint-plugin-react` never gained an ESLint 10 peer range, so this project
- * uses `@eslint-react/eslint-plugin` instead and pins eslint to ~9.39.5. That is
- * one plugin's problem, not a blanket block on ESLint 10.
+ * 🔴 ESLint 10 since 2026-09-25 (D37). `eslint-plugin-react` never gained an ESLint 10
+ * peer range, which is why this project has always used `@eslint-react/eslint-plugin`
+ * instead - so the ~9.39.5 pin it once carried is gone, and the gate was watched failing
+ * on planted defects after the move.
+ *
+ * `defineConfig` is ESLint core's own helper. typescript-eslint deprecated its
+ * `tseslint.config()` in its favour, and `extends` inside a config object keeps working.
  */
-export default tseslint.config(
+export default defineConfig(
   { ignores: ['dist', 'src-tauri/target', 'design/**', 'public/prepaint.js'] },
   {
     // 🔴 Type-checked linting covers `src` ONLY. `eslint.config.js` and the build
@@ -98,7 +103,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['scripts/**/*.mjs', 'eslint.config.js', 'vite.config.ts'],
+    files: ['scripts/**/*.mjs', 'eslint.config.js', 'vite.config.ts', 'vitest.config.ts'],
     extends: [tseslint.configs.disableTypeChecked],
     languageOptions: { globals: globals.node },
     rules: { 'no-console': 'off' },

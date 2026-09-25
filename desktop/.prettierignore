@@ -1,0 +1,16 @@
+# Built, generated or fetched - never hand-formatted.
+dist
+node_modules
+public/prepaint.js
+supabase/migrations/meta
+
+# The Rust side is formatted by `cargo fmt`, and its gen/, resources/ and target/ folders are
+# build output (resources/ is the engine `yarn sync:cli` copies in).
+src-tauri
+
+# The approved click dummy and its inventory are the specification the app is judged against,
+# byte for byte, by the GATE 4 parity rounds - they are never reformatted.
+design
+
+# Prose is wrapped by hand - a formatter pass would rewrap every paragraph and realign every table.
+*.md

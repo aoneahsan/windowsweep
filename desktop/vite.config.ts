@@ -21,6 +21,8 @@ export default defineConfig({
     // 🔴 Source maps stay off by default, every project (build-test-quality.md).
     sourcemap: false,
     target: 'chrome120',
-    chunkSizeWarningLimit: 900,
+    /* No `chunkSizeWarningLimit`: a chunk over Vite's 500 kB default is split, never
+       allowed to grow past the warning (the fleet baseline). The largest chunk was
+       416 kB when the raised limit of 900 was removed on 2026-09-25. */
   },
 });

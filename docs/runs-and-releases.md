@@ -64,6 +64,15 @@ each. **Undisclosed hosts: 0 - no Supabase call from a signed-out window. Person
 nothing because nothing errored; the update check runs in the Rust updater, outside the page's network log, and
 is disclosed. No engine run beyond startup's `--list --json`.
 
+### 2026-09-25 - the desktop app's account deletion, exercised live once (RW-134)
+
+`../site-evidence/rw134/`. A throwaway plain user (desk3), seeded with one row each in `user_settings`, `runs` and
+`contact_requests`, was signed in to the desktop frontend (Vite with the Supabase pair, its own Chrome profile, the
+guard proved fail-closed on both wires) and took ONE real press on *Delete my account* after typing `delete`:
+`POST /rest/v1/rpc/delete_my_account` 204, every table 1 -> 0 read twice over the Management API, and the window back
+to its signed-out Account state. The feature built in 1.2.0 and reachable since 1.3.0 had never run against the real
+project before. No engine run.
+
 ### 2026-09-14 - 🔴 AN UNINTENDED REAL RUN, started by a GATE 4 guard that reported success and did nothing
 
 Found on 2026-09-17 while auditing, not on the day. **It was not authorised**: the owner's 2026-09-07 grant

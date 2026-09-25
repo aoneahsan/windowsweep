@@ -1102,3 +1102,9 @@ Settings build (`8593cd3`, 2026-09-05), shipped in `desktop-v1.1.0` and `desktop
 kept unchanged and written into the dummy first (`desktop/design/AMENDMENTS-2.md`, the D-66/D-67 amendment).
 Checked in the main session before asking: each claim matches approved copy (the docs index's opening, the safety
 model's refusals) and the product's own behaviour; no first person, no maker named (D45). Round 15 checks the pair.
+
+## 2026-09-25 (recorded) - C-091 is resolved
+
+The entry of 2026-09-13 above says C-091's label "stays open" until the 1.3.0 cascade. It was resolved on
+2026-09-24: the approved engine label is kept, and `modules/runner.ps1:190` records why beside the slot it is
+about. `run-state.json` has carried the resolution since then; this line brings the log into agreement with it.

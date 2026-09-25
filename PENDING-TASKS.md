@@ -9,8 +9,9 @@ Last updated: 2026-09-25 (latest: TASK-018 closed to `docs/DONE-TASKS.md` as DON
 
 **Found while working on:** RW-116, the site verified as a person (2026-09-25), flow 3 as `t1+admin`.
 **Priority: low** - only a platform admin can write these fields, and the audit trail is sound; but the inbox's
-record of *when* and *by whom* is whatever the admin's client sent. **Needs the owner:** it is a change to the
-production database (D30/D36 pattern), so it is applied only on his yes.
+record of *when* and *by whom* is whatever the admin's client sent. **APPROVED by the owner on 2026-09-25 (D48,
+"Yes, apply it (Recommended)")**: the migration `20260925154905_stamp_contact_request_handled.sql` and its rollback
+are written; the site change deploys first, after site parity round 6, then the migration, then flow 3 again.
 
 **The defect.** `20260908065528_site_privileges_and_triggers.sql:109` grants
 `update (status, handled_at, handled_by)` on `public.contact_requests` to `authenticated`, and the site sends

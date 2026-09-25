@@ -21,7 +21,7 @@ proved it catches one), the engine diffing EMPTY against `v1.3.1`, `desktop-ci` 
   No other channel (owner decision 2026-09-03).
 - What is open, with evidence and acceptance criteria: `../remaining-work.md` (the **workspace root**
   `D:\work\windowsweep-root\`, outside this repository since 2026-09-07 - copy the folder, not the clone);
-  how it gets done: `../completion-plan-v3-2026-09-12.md`; status:
+  how it gets done: `../completion-plan-v5-2026-09-24.md`; status:
   `docs/features/windowsweep-completion/00-tracker.json`.
 
 ## Chosen architecture

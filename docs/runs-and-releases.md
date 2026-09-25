@@ -160,6 +160,14 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
   was skipped because `external.google` still reads false, exactly as ordering rule O6 says it should.
   It bundles the **1.2.0** engine; CLI 1.3.0 follows the same day and the desktop moves to it next release.
 
+- 2026-09-17T15:14Z: `windowsweep@1.3.0` published to npm by `aoneahsan` (46 files, 119.2 kB packed, 399.8 kB
+  unpacked, shasum `14ca2a12…7620`; built from `f86c762`), cut AFTER the `desktop-v1.2.0` tag (ordering rule O2).
+  `WS_DOCS` names the docs site; `lib/external.ps1` and `modules/self_test_contract.ps1` bring `lib/safety.ps1` and
+  `modules/self_test_extra.ps1` back under the 500-line ceiling, each move watched failing on a plant first; the
+  self-test reads 160 because groups [3] and [4] check every engine file by name - no check added, changed or
+  removed. Annotated tag `v1.3.0`; GitHub Release created `--latest=false`, with `desktop-v1.2.0` verified still
+  Latest and `latest.json` resolving. (Recorded here on 2026-09-25 from the tracker's `P5.cascade-1.3.0`, where the
+  run of 2026-09-17 wrote it; the README row it shipped miscounted the files - 44 for 46 - which 1.3.1 corrects.)
 - 2026-09-25T14:06Z: `windowsweep@1.3.1` published to npm by `aoneahsan` (46 files, 119.7 kB packed, 401.4 kB
   unpacked, shasum `e32f50dc…dd31`; built from `25ee559`). The publish gate ran in full: a clean pushed tree, `ci`
   green on that merge, the registry at 1.3.0, the README's anchors and links (npmjs.com answers 403 to any script;

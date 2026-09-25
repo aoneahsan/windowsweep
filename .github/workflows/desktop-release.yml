@@ -110,22 +110,42 @@ jobs:
           fi
           echo "updater public key present"
 
-      # 🔴 Supabase is behind a switch because it is not wired yet. The shared
-      # project has no Google OAuth client today, so `SUPABASE_ENABLED` is absent,
-      # and an absent variable is not `'true'` - this step is skipped and the two
-      # names never enter the environment.
+      # 🔴 Sign-in and sync ship only when `SUPABASE_ENABLED` is `'true'`, which is
+      # set after TASK-013 was verified live (ordering rule O6'). Absent, or any
+      # other value, and this step is skipped: the two names never enter the
+      # environment and the build ships signed-out, saying so on the Account screen.
+      #
+      # 🔴 FAIL CLOSED. The app turns sign-in on whenever both values are present -
+      # `configuredFeatures()` asks no provider - so this step refuses a build whose
+      # values are empty, or whose project does not answer `external.google: true`.
+      # Otherwise a release could offer a button that fails on press. The site's own
+      # build asks the same question (`windowsweep-web/vite.config.ts`).
       #
       # The guard sits on this small export step rather than on the build, because
       # `if:` on the build step would not produce a Supabase-less release; it would
       # produce no release at all. `$GITHUB_ENV` is what carries the values to
       # `tauri-action`, since a step's own `env:` block reaches only that step.
-      - name: Supabase build variables (only once the shared project is wired)
+      - name: Supabase build variables, checked against the live project
         if: vars.SUPABASE_ENABLED == 'true'
         shell: bash
         env:
           SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
         run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo "SUPABASE_ENABLED is true, but VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY is empty."
+            exit 1
+          fi
+          node -e '
+            const url = process.env.SUPABASE_URL.replace(/\/+$/, "") + "/auth/v1/settings";
+            fetch(url, { headers: { apikey: process.env.SUPABASE_PUBLISHABLE_KEY } })
+              .then((r) => { if (!r.ok) throw new Error("GET /auth/v1/settings answered " + r.status); return r.json(); })
+              .then((b) => {
+                if (!b.external || b.external.google !== true) throw new Error("external.google is not true on the project");
+                console.log("Google sign-in is enabled on the project");
+              })
+              .catch((e) => { console.error("Refusing to build a sign-in that fails on press: " + e.message); process.exitCode = 1; });
+          '
           echo "VITE_SUPABASE_URL=$SUPABASE_URL" >> "$GITHUB_ENV"
           echo "VITE_SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY" >> "$GITHUB_ENV"
           echo "Supabase build variables exported for the rest of this job"

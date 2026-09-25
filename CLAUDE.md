@@ -2,8 +2,9 @@
 
 **Mirror of `AGENTS.md`** - byte-identical except the H1 names the guide. Change one, change both.
 
-Last Updated: 2026-09-25 (the v5 run: invariants brought to the v1.3.0 engine, `desktop-v1.2.0` Latest, TASK-013
-done in code and dormant, round 12's guard method and the same-session round-report rule; plan v5 is the method.
+Last Updated: 2026-09-25 (the v5 run: the desktop cascaded to 1.3.0, TASK-013 verified live and closed,
+`SUPABASE_ENABLED` set, the 1.3.0 release kit; earlier the same day the invariants were brought to the v1.3.0 engine,
+`desktop-v1.2.0` Latest, round 12's guard method and the same-session round-report rule; plan v5 is the method.
 Earlier 2026-09-17: the v4 audit and a context pass). Durable decisions: `docs/PROJECT-CONTEXT.md`; what each session
 did: `docs/project-history.md`; verified runs and releases: `docs/runs-and-releases.md`.
 
@@ -41,12 +42,15 @@ Everything else about where the work stands is in the tracker and `../remaining-
    npm; its release was created `--latest=false` (IRON rule 13).
 2. 🔴 **`desktop-v1.2.0` is the repository's Latest release** and stays so until `desktop-v1.3.0` is published
    `--latest` - the updater reads `releases/latest/download/latest.json`, so Latest is always a DESKTOP release.
-3. 🔴 **The desktop app is at 1.2.0 while `VERSION` reads 1.3.0.** The bundled engine is untracked and copied by
-   `yarn sync:cli` at build time, so a dev build today carries a 1.3.0 engine under a 1.2.0 app until
-   `desktop-v1.3.0` (owner decision D26: cut on THIS machine) closes the gap in one cascade.
-4. 🔴 **TASK-013 (cloud sync) is DONE in code and dormant for every user.** No build carries the Supabase keys:
-   `desktop-release.yml` injects them only when the repository variable `SUPABASE_ENABLED` is `true`, and that is
-   set only after a live verification with an injected non-admin session - dry-runs only (O6).
+3. 🔴 **The desktop app reads 1.3.0, equal to `VERSION`** - `desktop/package.json`, `tauri.conf.json`, `Cargo.toml`
+   and `Cargo.lock`, cascaded 2026-09-25 - ahead of the published `desktop-v1.2.0` until `desktop-v1.3.0` is tagged
+   on THIS machine (owner decision D26) on a commit where all of them agree (O2'). The bundled engine is untracked
+   and copied by `yarn sync:cli` at build time: 41 files at 1.3.0.
+4. 🔴 **TASK-013 (cloud sync) is verified live and closed (DONE-016), and `SUPABASE_ENABLED` is `true`** (both
+   2026-09-25, O6'). The next release build carries the Supabase keys: `desktop-release.yml` exports them only after
+   probing that the project answers `external.google: true`, and refuses the build otherwise, because
+   `configuredFeatures()` turns sign-in on whenever both values are present. No published release carries them
+   until `desktop-v1.3.0`.
 5. 🔴 **Never install a GATE 4 IPC guard by assigning to `window.__TAURI_INTERNALS__.invoke`** - the property is
    non-writable and non-configurable, so the assignment is a silent no-op while the guard reports "installed" (on
    2026-09-14 the next press started an unintended real 1.8 GB run). The method is round 12's two-wire guard: FULFIL
@@ -61,8 +65,8 @@ Everything else about where the work stands is in the tracker and `../remaining-
 8. 🔴 **The cargo cache still holds the pre-rename folder names** - expect the recorded `os error 3` trap on the
    first local Rust build and `cargo clean -p` the affected packages per profile.
 9. 🔴 **P1 and the 1.1 residue are second-machine work** (owner, 2026-09-07) - not startable here.
-10. Release procedure when a GATE 4 round comes back CLEAN: the steps in `../release-kit/README.md`, in order
-    (preflight first, every time).
+10. Release procedure when a GATE 4 round comes back CLEAN: the steps in `../release-kit-1.3.0/README.md`, in
+    order (preflight first, every time); `../release-kit/` is the spent 1.2.0 kit.
 
 ## Per-Project Stack Override (binding)
 

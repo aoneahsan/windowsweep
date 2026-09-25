@@ -194,21 +194,28 @@ else's database. `GET /projects/windowsweep/vault` → the `supabase` block.
 Both migrations were applied with `supabase db push --linked` on 2026-09-07 and
 verified from the catalogs (below), not from these files.
 
-## Row 15 is what still blocks sign-in
+## Sign-in: Google is on, and the release builds carry the keys
 
-🔴 **Google is not enabled** — `GET /auth/v1/settings` reports
-`external.google: false`. Supabase owns the OAuth redirect, so it needs a **Web**
-client whose authorised redirect URI is
-`https://nlmetjyytgwaxcliusuo.supabase.co/auth/v1/callback`, with its id and
-secret entered in Supabase's own Auth → Providers form. The app never sees
-either — it asks Supabase for a provider URL and gets a code back on its loopback
-listener.
+**Google is enabled** (MANUAL-TASKS row 15, the owner, 2026-09-24):
+`GET /auth/v1/settings` reports `external.google: true`. Supabase owns the OAuth
+redirect, through a **Web** client whose authorised redirect URI is
+`https://nlmetjyytgwaxcliusuo.supabase.co/auth/v1/callback`, its id and secret
+entered in Supabase's own Auth → Providers form. The app never sees either — it
+asks Supabase for a provider URL and gets a code back on its loopback listener.
+The auth URL configuration (owner decision D28, 2026-09-24): `site_url` is
+`https://windowsweep.aoneahsan.com`, and the allow-list holds
+`https://windowsweep.aoneahsan.com/**` and `http://127.0.0.1:*` for the desktop
+loopback.
 
-So `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` stay **empty** even
-though the database is ready: filling them would make `configuredFeatures()`
-advertise sign-in that cannot complete. Sign-in and sync remain compiled and
-dormant, the Account screen says so instead of failing on press, and every
-cleanup feature works exactly as it does now.
+**The keys reach a build only through the release workflow**, and only because
+the repository variable `SUPABASE_ENABLED` is `true` - set on 2026-09-25, after
+TASK-013's sync was verified live (ordering rule O6'), beside
+`VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. That step refuses to
+build when either value is empty or the project stops answering
+`external.google: true`, because `configuredFeatures()` turns sign-in on
+whenever both values are present and asks no provider. The first release
+carrying them is `desktop-v1.3.0`; a clone without them still builds, with
+sign-in and sync off and the Account screen saying so.
 
 ## Verify against the database, never against these files
 

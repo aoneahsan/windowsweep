@@ -3,7 +3,7 @@
 Closed agent follow-ups, moved here from the root `PENDING-TASKS.md` with the date and the commit that closed
 them. Open work lives there; owner-only rows live in `docs/MANUAL-TASKS.md`.
 
-Last updated: 2026-09-17 (DONE-013, DONE-014 and DONE-015 - the design-record split, the Report export, and three of the four History and Report gaps)
+Last updated: 2026-09-25 (DONE-016 - TASK-013, the desktop sync, verified live. Earlier 2026-09-17: DONE-013, DONE-014 and DONE-015 - the design-record split, the Report export, and three of the four History and Report gaps)
 
 ### DONE-001 - Download and set up the desktop toolchain and dependency trees
 
@@ -438,3 +438,40 @@ truthfully). (2) `state/store.ts` keeps scans in its 200-record history, so scan
 only runs, or cap them separately. (3) `list_run_files` and `read_run_report` recreate a missing run folder
 (`run_dir` calls `create_dir_all`): a read must not create. (4) `App.tsx` loads every screen eagerly, so the entry
 chunk is 850 kB; split the screens by route.
+
+### DONE-016 - the desktop app's cloud sync is written and never called
+
+**Closed 2026-09-25**, verified live - the code landed dummy first in `d0977c1`, `1edd900` and `0eb2b68`. A dev
+build with the Supabase keys, driven in its own browser profile with an injected NON-admin session (the real
+system-browser sign-in cannot run there), passed all seven checks: sign-in and the settings round trip; the
+account's run list, newest first, with Remove answering 204 on an owner-filtered delete; History's other-machine
+rows ("summary only", "another machine", no report link); the conflict notice with Undo on Account and Home's
+line; the three failure lines, each where the dummy draws it; and the two-user RLS probe - another user's rows
+answered 200 `[]` to select, delete and update, and an insert in their name 403 `42501`. The two-wire guard
+refused every IPC call before the first press, so no engine command ran. Every row was then read back over the
+Management API with no path in it, and both identities were torn down to 0 rows (`../site-evidence/task013-live/`,
+outside git). `SUPABASE_ENABLED` and the two repository variables follow (O6'); `desktop-v1.3.0` ships it.
+
+**Found while working on:** the v3 run's desktop round-7 fixes (2026-09-13), reading `desktop/src/lib` for the
+sign-out scope. **Priority: high, and it blocks one thing** - setting the `SUPABASE_ENABLED` repository
+variable (row 15 / RW-116). Until then no build carries the Supabase keys (`desktop-release.yml` injects them
+only when that variable is `true`), so nothing a user runs today is wrong.
+
+**The defect.** `desktop/src/lib/sync.ts` exports `fetchSettings`, `pushSettings`, `reconcileSettings`,
+`fetchRuns`, `pushRun` and `deleteRun`, and not one of them has a caller anywhere in `desktop/src` (grep each
+name outside `lib/sync.ts` -> 0 files). Yet `configuredFeatures()` reports `sync: supabaseReady`, and the Home
+screen says *"Signing in is optional. It syncs your settings and a summary of each run, and nothing else."*
+(`home.privacySignIn`). The first Supabase-enabled build would sign a person in and sync nothing, under a
+sentence saying it does.
+
+**What to do.** Wire the module the schema was written for (`desktop/src/db/schema/sync.ts`): on sign-in,
+`fetchSettings` then `reconcileSettings` against the local store, and `pushSettings` on every later settings
+change; `pushRun(stripRun(...))` after each finished run; the Account screen's run list from `fetchRuns`
+(keyset, `RUNS_PAGE_SIZE` 20); `deleteRun` behind its control. Every read paginated, every write owner-filtered
+(`~/.claude/rules/data-fetch-budget.md`), and `stripRun` is the only path a run takes to the network - no path,
+drive label or machine name leaves the machine. Dummy first for any visible change (IRON rule 12). Verify as
+`aoneahsan.apps.t1+1` once row 15 lands: settings round-trip across a sign-out and sign-in, one run row per
+finished run, `deleteRun` leaves 0 rows, and the rows hold no path (read them over the Management API).
+
+**Why it was not fixed there.** It is a feature, not a two-line fix; it needs the live sign-in to verify, which
+row 15 gates; and it was outside that dispatch's scope.

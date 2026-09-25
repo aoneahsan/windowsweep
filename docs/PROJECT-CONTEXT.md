@@ -115,7 +115,7 @@ tree, estimate what is left, then finish it and deploy. Fable 5.1 audited read-o
 - **D24 - "Straight through".** Records, then every unblocked item to the release and the deploys, then the
   records again. No review in between; he reviews at the end, himself.
 
-### Session 17 decisions (2026-09-24/25) - the v5 audit and its execution, nineteen from the owner
+### Session 17 decisions (2026-09-24/25) - the v5 audit and its execution, twenty-two from the owner
 
 He re-ran his audit prompt, then asked mid-turn for a Terms page "first, so i can get google cloud console app
 in production and approved", then approved executing plan v5 with custom agents. Each line is his verbatim option.
@@ -150,6 +150,14 @@ in production and approved", then approved executing plan v5 with custom agents.
 - **D43 - up to four custom agents** ("re-run the custom subagents up to 4 custom subagents", 2026-09-25),
   superseding D35: scopes pairwise disjoint and verified before each dispatch, hot files main-only, agents never
   commit, push, deploy or publish, and the account-creating and deleting steps of RW-116 stay in the main session.
+- **D44-D46 - the team voice** (asked 2026-09-25, after the owner's fleet rule of the same day: products speak as
+  "the {Product} team", never one person). **D44 "Change first, then release (Recommended)"** - the desktop
+  Settings wording changes, through the story pipeline with his GATE 4 and dummy first, BEFORE `desktop-v1.3.0`
+  is tagged. **D45 "All public surfaces, legal kept (Recommended)"** - the team voice on the site, the docs site,
+  the README and the desktop app, author metadata included; the Terms operator (D33), the LICENSE copyright and
+  the npm `author` field stay, as legal and registry facts. **D46 "Drop it from product rosters
+  (Recommended)"** - the personal-portfolio entry ("Meet the Developer") leaves every product roster; the
+  portfolio keeps its own voice where it lives.
 
 ### Session 14 decisions (2026-09-13/14) - the v3 run, taken from recorded rules, none from the owner
 

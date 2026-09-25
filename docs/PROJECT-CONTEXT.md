@@ -1,6 +1,6 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-09-25 (RW-132: the dated session narratives moved verbatim to `docs/project-history.md` and the verified runs and release record to `docs/runs-and-releases.md`, nothing reworded; the stamp this replaces follows)
+Last Updated: 2026-09-25 (session 17: D25-D43 recorded - the Terms page, sign-in live on the site, the runs index, the desktop sync behaviour, up to four agents; RW-132: the dated session narratives moved verbatim to `docs/project-history.md` and the verified runs and release record to `docs/runs-and-releases.md`, nothing reworded; the stamp this replaces follows)
 Last Updated: 2026-09-17 (session 16, the v4 audit: D21-D24, the two unrecorded GATE 4 rounds, the unintended real run of 2026-09-14)
 Verified Against: commit 2e73921 on `main`, 2026-09-17 (session 16, every gate re-run today and all exit 0: self-test 156, version parity 1.2.0, `npm pack` 44 files, PSScriptAnalyzer 1.25.0 with 0 findings, the engine still diffing EMPTY against `v1.2.0`; desktop typecheck/lint/build/check:prepaint clean with no source maps; site typecheck/lint/build clean with all three build gates, the prerender assertions and 13 routes each carrying its own title; docs typecheck/build clean with no MANUAL or story file in `build/`; CI green on all three repos. Live: docs HTTPS 200, the site 200 with a real 404 on an unknown path, npm `latest` 1.2.0, `latest.json` still 1.1.0, `desktop-v1.2.0` still a draft, 1.1.0 installed here, release-kit pre-flight 23/23. Polled the same day: `external.google` still **false**)
 
@@ -114,6 +114,42 @@ tree, estimate what is left, then finish it and deploy. Fable 5.1 audited read-o
   release catches up. That consequence is stated in the release notes, not left to be discovered.
 - **D24 - "Straight through".** Records, then every unblocked item to the release and the deploys, then the
   records again. No review in between; he reviews at the end, himself.
+
+### Session 17 decisions (2026-09-24/25) - the v5 audit and its execution, nineteen from the owner
+
+He re-ran his audit prompt, then asked mid-turn for a Terms page "first, so i can get google cloud console app
+in production and approved", then approved executing plan v5 with custom agents. Each line is his verbatim option.
+
+- **D25 - Google sign-in: "enabled just now, continue"** - probed `external.google: true` 2026-09-24T10:15Z.
+- **D26 - `desktop-v1.3.0`: "Here, once Google is on (Recommended)"** - cut on THIS machine with the 1.3.0
+  engine, TASK-013 and sign-in live, a GATE 4 round and the updater proof 1.2.0 -> 1.3.0. Supersedes D23's
+  second-machine placement for the desktop.
+- **D27 - "Yes, finish on Opus 5.5 (Recommended)"** - the audit prompt's Fable-plans role waived for this run.
+- **D28 - "This session sets them (Recommended)"** - Supabase Auth `site_url` = `https://windowsweep.aoneahsan.com`,
+  `uri_allow_list` = `https://windowsweep.aoneahsan.com/**,http://127.0.0.1:*`; set and read back 2026-09-24.
+- **D29 - "I'll make sure it's published (Recommended)"** - the owner publishes the OAuth consent screen
+  (MANUAL-TASKS row 30).
+- **D30 - "Also a t1+admin identity"** - RW-116 runs as `t1+1` and `t1+del` (admin-API users, sessions injected),
+  `t1+admin` promoted by out-of-band SQL then demoted and deleted in the same wave (O8), the real Google path once
+  as the base automation identity, and one real desktop sign-in by the owner (row 31).
+- **D31-D34 - the Terms facts:** "Pakistan (Recommended)" (law and courts) · "Google's age where you live
+  (Recommended)" · "Ahsan Mahmood (Recommended)" (operator, `aoneahsan@gmail.com`) · "Site, account and software
+  (Recommended)". The panel was his "Lean panel (Recommended)"; its three answers (acceptance, misuse, as-is) and
+  the effective date ("The day it goes live") are in `docs/story/decision-log.md`. GATE 4: "Approve, ship it".
+- **D35 - up to three custom agents** ("i approve, if needed run up to 3 custom subagents"), superseding D21 for
+  this run; raised by D43.
+- **D36 - "Yes, apply it (Recommended)"** - `runs_user_id_started_at_idx` on `runs (user_id, started_at desc)`,
+  applied 2026-09-25 through the session pooler and verified from `pg_indexes` (migration `20260924160739`).
+- **D37 - "After the releases, this run (Recommended)"** - the fleet package baseline (ESLint 10, the script
+  contract, prettier, husky + lint-staged, vitest) runs after `desktop-v1.3.0`, in this run.
+- **D38 - "Manage own account (Recommended)"** - the Terms age is the one Google requires to manage your own
+  Google Account, so a parent-supervised child's account does not qualify.
+- **D39-D42 - the desktop sync behaviour:** a failed Remove keeps manual retry ("Manual retry") · the settings
+  notice sits on Account plus one Home line, in memory only ("Account + a Home line") · no notice on a fresh
+  machine ("No notice then") · no notice when a date-only win changes no value ("No notice then").
+- **D43 - up to four custom agents** ("re-run the custom subagents up to 4 custom subagents", 2026-09-25),
+  superseding D35: scopes pairwise disjoint and verified before each dispatch, hot files main-only, agents never
+  commit, push, deploy or publish, and the account-creating and deleting steps of RW-116 stay in the main session.
 
 ### Session 14 decisions (2026-09-13/14) - the v3 run, taken from recorded rules, none from the owner
 
@@ -331,12 +367,21 @@ migration it could express.
   sign-in and 0 after the delete, so the session the password grant created was never counted while it
   existed. The sessions claim rests on the catalogue (`sessions_user_id_fkey` is `confdeltype='c'`), not on a
   measured row going away.
-- ⚠️ **Known consistency gap, not a live hole:** `is_platform_admin()` retains `service_role` EXECUTE, because
-  its migration revoked only `from public, anon` and Supabase's default ACL names `service_role` explicitly,
-  so revoking PUBLIC never removed it. Impact today is nil (no argument; with a secret key `auth.uid()` is
-  null, so it returns false). Migrations are forward-only, so it closes in a future forward migration with one
-  `revoke execute ... from service_role` - it is also the cleanest live demonstration of why the newer
-  migration names all four roles.
+- ✅ **Closed 2026-09-13 - was a known consistency gap, never a live hole:** `is_platform_admin()` kept
+  `service_role` EXECUTE, because its migration revoked only `from public, anon` and Supabase's default ACL names
+  `service_role` explicitly, so revoking PUBLIC never removed it. The forward migration
+  `20260912202759_revoke_is_platform_admin_service_role.sql` removed it, and `pg_proc` read back
+  `authenticated=X/postgres` and nothing else beside the owner (`desktop/supabase/README.md`). It stays the
+  cleanest demonstration of why a migration names all four roles. *(Corrected in place 2026-09-25: this line
+  said the gap was still open.)*
+- **Auth URLs, 2026-09-24 (D28):** `site_url` was `http://localhost:3000` and `uri_allow_list` was empty; set
+  over the Management API (`PATCH /v1/projects/nlmetjyytgwaxcliusuo/config/auth`, the two fields only) to
+  `https://windowsweep.aoneahsan.com` and `https://windowsweep.aoneahsan.com/**,http://127.0.0.1:*`, and read
+  back. The desktop's loopback return is the `127.0.0.1:*` entry.
+- **Index, 2026-09-25 (D36):** `runs_user_id_started_at_idx` on `runs (user_id, started_at desc)`, migration
+  `20260924160739`, pushed through the session pooler (the direct IPv6 host timed out mid-authentication) and
+  read back from `pg_indexes` and `supabase_migrations.schema_migrations`; `runs` held 0 rows, and `auth.users`
+  held 0 users before RW-116 created its three.
 
 ## Constraints and non-goals
 - Must: honour `--dry-run` in every destructive helper and external command; route every deletion through

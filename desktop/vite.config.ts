@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath, URL } from 'node:url';
 import { catalogueKeysPlugin } from './vite/catalogue-keys.js';
 import { engineBundlePlugin } from './vite/engine-bundle.js';
@@ -8,6 +9,11 @@ import { prepaintPlugin } from './vite/prepaint.js';
 import { tauriConfigPlugin } from './vite/tauri-config.js';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
+
+/* The version this build is cut at, read from the one manifest the version cascade moves. The app
+   sees it as `__APP_VERSION__` (`buildVersion` in src/lib/config.ts): the version analytics and
+   Sentry report, which a literal once left at 1.2.0 for every installed 1.3.0. */
+const { version } = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
 
 /* The dev port is registered in ~/.dev-ports.json; never a default (3000/5173/8080).
    `strictPort` matters here because Tauri's devUrl is a fixed string - a silent
@@ -29,6 +35,7 @@ export default defineConfig({
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
+  define: { __APP_VERSION__: JSON.stringify(version) },
   server: { port: 5974, strictPort: true },
   preview: { port: 5974, strictPort: true },
   clearScreen: false,

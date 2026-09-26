@@ -37,8 +37,14 @@ export const supabaseConfig = {
   publishableKey: env.VITE_SUPABASE_PUBLISHABLE_KEY,
 };
 
-/** Used until the Rust side reports the real one. */
-export const appVersionFallback = '1.2.0';
+/**
+ * The version this build was cut at (`desktop/package.json`, injected at build time), so it moves
+ * with the version cascade and never goes stale on its own. Analytics and Sentry report it, and the
+ * About panel shows it until the Rust side answers. 🔴 It was the literal '1.2.0' until 2026-09-26:
+ * the 1.3.0 cascade did not reach it, so every installed 1.3.0 reported app_version 1.2.0 and the
+ * Sentry release `windowsweep-desktop@1.2.0`.
+ */
+export const buildVersion = __APP_VERSION__;
 
 /**
  * The house support link. `project-id` is the npm package name and

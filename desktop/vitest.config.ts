@@ -11,13 +11,18 @@
  * surface only for someone in Europe or North America. The test asserts the zone really has
  * DST before it trusts any answer.
  */
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
+
+// The app's build-time version global, from the same manifest `vite.config.ts` reads.
+const { version } = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
 
 export default defineConfig({
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
+  define: { __APP_VERSION__: JSON.stringify(version) },
   test: {
     include: ['src/**/*.test.ts'],
     environment: 'node',

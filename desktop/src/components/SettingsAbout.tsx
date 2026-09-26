@@ -27,7 +27,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
 import { appVersion } from '../lib/engine';
-import { appVersionFallback, REPO_URL, SUPPORT_URL } from '../lib/config';
+import { buildVersion, REPO_URL, SUPPORT_URL } from '../lib/config';
 import { promotedProducts } from '../lib/ecosystem';
 import { openExternal } from '../lib/links';
 import { controlState, stateOf } from '../lib/control-state';
@@ -42,9 +42,9 @@ export function SettingsAbout() {
 
   /* 🔴 Read live from the Rust side, never printed from a constant: a hardcoded
      version is a number that goes stale the first time one of them moves. The
-     fallback is only for a development build outside a Tauri window, where there
-     is no command to ask. */
-  const [version, setVersion] = useState(appVersionFallback);
+     build's own version stands in only for a development build outside a Tauri
+     window, where there is no command to ask. */
+  const [version, setVersion] = useState(buildVersion);
   useEffect(() => {
     let cancelled = false;
     void appVersion()
@@ -106,7 +106,7 @@ export function SettingsAbout() {
 
       <div>
         <p className="t-sm">
-          {t('settings.versionLine', { app: version, engine: engineVersion || appVersionFallback })}
+          {t('settings.versionLine', { app: version, engine: engineVersion || buildVersion })}
         </p>
         <p className="t-sm ink-3">{t('settings.versionNote')}</p>
       </div>

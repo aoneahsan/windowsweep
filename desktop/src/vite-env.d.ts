@@ -12,3 +12,9 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+/**
+ * The version this build was cut at - `desktop/package.json`'s, injected by the `define` in
+ * `vite.config.ts` (and `vitest.config.ts`), so the version cascade moves it with the manifest.
+ */
+declare const __APP_VERSION__: string;

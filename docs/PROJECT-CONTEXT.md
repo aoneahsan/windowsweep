@@ -1,6 +1,6 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-09-26 (latest: `desktop-v1.3.1` released and proved under D50 - the current-status line; TASK-020 open for the owner's choice. Earlier the same day: D50 - `desktop-v1.3.1` this session - and D51 - the stray `runs$RUNID` folder deleted; TASK-019's generators became Vite plugins. Earlier the same day: D49 - the workspace root backed up on the private site repo's `project-root`
+Last Updated: 2026-09-26 (latest: D52 - TASK-020 widens the desktop CSP for Clarity. Earlier the same day: `desktop-v1.3.1` released and proved under D50 - the current-status line. Earlier the same day: D50 - `desktop-v1.3.1` this session - and D51 - the stray `runs$RUNID` folder deleted; TASK-019's generators became Vite plugins. Earlier the same day: D49 - the workspace root backed up on the private site repo's `project-root`
 branch. Earlier 2026-09-25: `desktop-v1.3.0` published as Latest and proved by the in-app updater 1.2.0 -> 1.3.0,
 CLI 1.3.1 on npm with the team's maker lines, rounds 14 and 15 with D47, session 14's decision table moved to
 `docs/project-history.md`. Earlier the same day: RW-116 and TASK-013 verified as a person and torn down, O6' set, the desktop cascaded to 1.3.0, the open-unknowns section brought to date - TASK-017 and TASK-018 are the two open owner decisions. Earlier: session 17: D25-D43 recorded - the Terms page, sign-in live on the site, the runs index, the desktop sync behaviour, up to four agents; RW-132: the dated session narratives moved verbatim to `docs/project-history.md` and the verified runs and release record to `docs/runs-and-releases.md`, nothing reworded; the stamp this replaces follows)
@@ -185,6 +185,8 @@ in production and approved", then approved executing plan v5 with custom agents.
   publish `--latest`, the updater proof 1.3.0 -> 1.3.1, then the site's download page and the docs (O3').
 - **D51 - the stray `runs$RUNID` app-data folder is deleted** (asked 2026-09-26): **"Delete it (Recommended)"** -
   its three files were listed with their SHA-256 in `../gate4-evidence/stray-runs-RUNID/listing.txt` first.
+- **D52 - TASK-020 widens the desktop CSP for Clarity** (asked 2026-09-26): **"Widen the CSP (Recommended)"** - its
+  documented hosts and Tag Manager's pixel, the replay proved masked on the wire; it ships in the next desktop release.
 
 ### How the frontend UI mandates map to this product - the declared exemptions
 
@@ -471,9 +473,8 @@ means running `../RESTORE.md`, whose first line clones the root's own `project-r
 
 ## Open material unknowns
 
-- **One owner decision is open (2026-09-26): TASK-020** (`PENDING-TASKS.md`) - the desktop window's CSP blocks
-  Clarity, so session replay has never run in a desktop release though its disclosures list it: widen the CSP (and
-  prove the replay masked) or drop Clarity and its rows. TASK-017 (D48, DONE-018) and TASK-018 (DONE-017) are closed.
+- **No owner decision is open (2026-09-26).** TASK-020's fix is chosen (D52) and waits for the next desktop release;
+  TASK-017 (D48, DONE-018) and TASK-018 (DONE-017) are closed.
 - **Still owed by the owner, polled at the start of every session:**
   - **Row 30** - publish the OAuth consent screen (D29), with the field values in the row.
   - **Row 31** - one real Google sign-in in the installed desktop app (D30): **ready** - 1.3.1 is installed here,

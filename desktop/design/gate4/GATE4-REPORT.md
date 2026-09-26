@@ -166,7 +166,7 @@ one `download_and_install`, and nothing that could delete.
 **`app_version 1.3.1`** and none carries 1.2.0 - the manifest-version fix proved in the released build; **0
 undisclosed hosts** (no Supabase call from a signed-out window) and **0 personal-data matches**. 🔴 **Clarity's script
 (`scripts.clarity.ms`) and pixel (`c.clarity.ms`) were refused by the window's CSP** - session replay has never run in
-a desktop release, while Settings › Privacy lists it (TASK-020, the owner's choice). The owner's `EBWebView` read 1,354
+a desktop release, while Settings › Privacy lists it (TASK-020; the owner chose to widen the CSP, D52). The owner's `EBWebView` read 1,354
 files, the same newest write, before and after every mode. Full numbers: `docs/runs-and-releases.md`, 2026-09-26.
 
 ## §updater — `desktop-v1.3.0`, released 2026-09-25 and proved end to end

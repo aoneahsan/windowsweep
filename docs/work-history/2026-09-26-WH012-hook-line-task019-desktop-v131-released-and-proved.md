@@ -5,7 +5,7 @@
 | Date | 2026-09-26 |
 | Task id | WH012 (session 18: WH011's continuation prompt, items 1-4) |
 | Duration | one session across two compactions; one custom agent at a time (`aoneahsan-ccca-test-engineer` for GATE 4 rounds 16 and 17, then the updater proof) - the owner allowed up to four, a ceiling, and every dispatch followed a CPU, RAM and swap check |
-| Status | **complete for this session** - items 1-3 done, D51 done; item 4 (row 31's read-back) waits for the owner's word; TASK-020 waits for the owner's choice |
+| Status | **complete for this session** - items 1-3 done, D51 done; item 4 (row 31's read-back) waits for the owner's word; TASK-020's fix was chosen at the end (D52: widen the CSP) and ships in the next desktop release |
 | Project | windowsweep (`D:\work\windowsweep-root\` - the product repo, the docs site, the marketing site, and the root's own repository) |
 | Developer | Ahsan Mahmood (owner) |
 
@@ -26,9 +26,11 @@ The updater proof produced two findings for the records:
 - Round 12's two-wire IPC guard **sees nothing on an installed build**. It holds under `tauri dev`, where every round
   runs.
 - The desktop window's CSP **blocks Clarity**, so session replay has never run in a desktop release, although Settings
-  › Privacy lists it. This is **TASK-020**, the owner's choice.
+  › Privacy lists it. This is **TASK-020**; the owner chose its fix (D52, below).
 
-The stray `runs$RUNID` folder was listed and deleted (**D51**). Fifty-one owner decisions are recorded (D1-D51).
+The stray `runs$RUNID` folder was listed and deleted (**D51**). Asked at the end, the owner chose TASK-020's fix
+(**D52**): widen the CSP, with the replay proved masked, in the next desktop release. Fifty-two owner decisions are
+recorded (D1-D52).
 
 ## Starting point
 
@@ -188,8 +190,9 @@ Eight plants were each watched. An unsigned local `tauri build` produced an MSI 
    - read his `user_settings` and `runs` rows over the Management API (the FilesHub vault's token, Supabase id 15);
    - read-only SELECTs, counts and verdicts only, into `../site-evidence/row31/`;
    - confirm no path, drive label, host, user name or machine name.
-2. **TASK-020**, once the owner chooses: widen the desktop CSP for Clarity and prove the replay masked, or drop Clarity
-   and its rows, dummy first. Then the next desktop release from a kit built on `../release-kit-1.3.1/`.
+2. **TASK-020, D52:** widen the desktop CSP for Clarity and Tag Manager's pixel, and prove the replay masked on the
+   wire under `tauri dev`, isolated. Then ask the owner when to cut the next desktop release, from a kit built on
+   `../release-kit-1.3.1/`.
 3. **RW-055**, the portfolio refresh, on or after 2026-10-02: it records `desktop-v1.3.1`.
 4. **The second machine:** row 20, RW-064/065/066, the P1 rows, then CLI 1.4.0.
 
@@ -216,7 +219,7 @@ repository (earlier the same day belong to the sessions before this one: product
 `09547e2`, root `51cbdc9` and `2917de4`). Totals:
 - 1 release (`desktop-v1.3.1`) and 3 site deploys;
 - GATE 4 rounds 16 and 17, and 1 updater proof;
-- owner decisions D50 and D51;
+- owner decisions D50, D51 and D52;
 - 1 new task (TASK-020).
 
 ## Continuation prompt
@@ -229,7 +232,7 @@ or publish.
 
 Read first, by section: windowsweep/docs/work-history/2026-09-26-WH012-hook-line-task019-desktop-v131-released-and-proved.md
 (this record), the tracker's resumeInstructions (windowsweep/docs/features/windowsweep-completion/00-tracker.json),
-../remaining-work-summary.md, and windowsweep/PENDING-TASKS.md (TASK-020). D1-D51 are in
+../remaining-work-summary.md, and windowsweep/PENDING-TASKS.md (TASK-020). D1-D52 are in
 windowsweep/docs/PROJECT-CONTEXT.md - apply them, never re-ask.
 
 Verify the state before acting: the three repos clean and in sync (product remote `o`, web and docs `origin`); CI
@@ -239,8 +242,9 @@ green at each head; releases/latest/download/latest.json = 1.3.1; npm windowswee
 Then, in order:
 (1) When I say row 31 is done, read my synced rows back over the Management API (read-only; counts and verdicts only)
     and confirm they hold no path, drive label, host, user name or machine name.
-(2) TASK-020 - apply my choice about Clarity in the desktop window (widen the CSP and prove the replay masked, or drop
-    Clarity and its rows, dummy first); then ask me whether to cut the next desktop release, and if yes run it from a
+(2) TASK-020 - D52: widen the desktop CSP for Clarity (and Tag Manager's image pixel) and prove on the wire, under
+    tauri dev on an isolated profile, that a replay starts with every text node masked; then ask me whether to cut
+    the next desktop release, and if yes run it from a
     new kit built on ../release-kit-1.3.1/ (its README's three notes; preflight first; O2'; a GATE 4 round under
     tauri dev until CLEAN; publish --latest; the updater proof with the watch-only recorder; the site and the docs
     under O3'; a render-checked build before every hosting deploy).

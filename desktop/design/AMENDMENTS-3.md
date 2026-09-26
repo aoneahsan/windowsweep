@@ -27,3 +27,13 @@ dummy showed eight. **The dummy was wrong and the app was right**: `seed.js` now
 fix with no new words (the round-7 D-37 class). Round 16's other five findings (D-68 to D-71, D-73) are the app
 brought to the dummy, which is unchanged for them - the Privacy tab's words, the status bar's mono face, Run's hero
 band, Home's schedule column and the URL axis layer are all the dummy's as drawn.
+
+## Amendment - 2026-09-26 (GATE 4 round 17, R17.9(3)): the no-keys build's sentence joins the dummy
+
+The app has drawn one sentence the dummy never did, since its first Privacy tab: *"No destination is configured in
+this build, so nothing is actually sent from it."* (`settings.noKeys`), under the rows, only when EVERY analytics and
+crash destination is unconfigured. Round 1 recommended adding it to the dummy (round-01a.md:230); round 17 found it
+still app-only. It is written into the dummy now, in the app's exact words and placement - `page-settings.js` ->
+`privacy()`, drawn by `settings.html?nokeys=1` - so the dummy owns it as it owns every other word on the tab. No app
+change: release builds carry all four keys and never show it, and a build with one key set draws no sentence on either
+side. A GATE 4 round can pair it only against a build made without keys, which no round has run.

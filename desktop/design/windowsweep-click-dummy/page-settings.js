@@ -274,6 +274,16 @@
     g.appendChild(row('Never sent',
       'A file path, a folder name, a drive label, your machine name, your Windows user name, or the ' +
       'contents of anything.', el('span', 'badge badge-ok', 'refused'), ''));
+
+    /* A BUILD fact, not a setting (GATE 4 round 17): a build with NO destination configured says so under the
+       rows. Every release carries all four keys and never shows it; `?nokeys=1` draws that build. A build with
+       one key set still sends to that one, so no sentence is drawn for it. */
+    if (new URLSearchParams(location.search).get('nokeys') === '1') {
+      var noKeys = el('p', 't-sm ink-3',
+        'No destination is configured in this build, so nothing is actually sent from it.');
+      noKeys.style.marginTop = 'var(--sp-2)';
+      g.appendChild(noKeys);
+    }
     host.appendChild(g);
     window.wsWidgets.boot(host);
   }

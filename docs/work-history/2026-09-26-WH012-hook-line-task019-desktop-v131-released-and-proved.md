@@ -213,8 +213,9 @@ Eight plants were each watched. An unsigned local `tauri build` produced an MSI 
 
 ## Session metrics
 
-19 commits this session: product 6 (this record's included), web 6, docs 2, root 3 (the last one closes the session),
-notebook 2 (the baseline line and its merge). Regenerate with `git log --oneline --since=2026-09-26T12:00` in each
+Commits this session: product - five for the code and the release (`d593b43` to `9a17266`), then this record's own
+(`4f147f8`, `8b04d71` for D52, and the one carrying this line); web 6; docs 2; root - `209c7fa`, `fedf7dc`, `522fd08`,
+then the D52 close; notebook 2 (the baseline line and its merge). Regenerate with `git log --oneline --since=2026-09-26T12:00` in each
 repository (earlier the same day belong to the sessions before this one: product `0f52955` and `56249d4`, web
 `09547e2`, root `51cbdc9` and `2917de4`). Totals:
 - 1 release (`desktop-v1.3.1`) and 3 site deploys;

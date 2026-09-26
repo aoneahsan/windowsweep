@@ -2,7 +2,7 @@
 
 **Mirror of `AGENTS.md`** - byte-identical except the H1 names the guide. Change one, change both.
 
-Last Updated: 2026-09-25 (the releases: `desktop-v1.3.0` Latest with sign-in live and the updater proved 1.2.0 -> 1.3.0,
+Last Updated: 2026-09-26 (the pause: site parity round 7 CLEAN, RW-117 closed, WH011. Earlier 2026-09-25, the releases: `desktop-v1.3.0` Latest with sign-in live and the updater proved 1.2.0 -> 1.3.0,
 CLI 1.3.1 with the team's maker lines, TASK-019 filed. Earlier the same day: the desktop cascaded to 1.3.0, TASK-013 verified live and closed,
 `SUPABASE_ENABLED` set, the 1.3.0 release kit; earlier the same day the invariants were brought to the v1.3.0 engine,
 `desktop-v1.2.0` Latest, round 12's guard method and the same-session round-report rule; plan v5 is the method.
@@ -28,8 +28,8 @@ launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macl
   `../completion-plan-v5-2026-09-24.md`** (v4, v3 and the 2026-09-07 plans are history; every decision they record
   still applies). Its ordering rules are hard for every desktop release - **O2**: the desktop tag lands on a commit where
   `desktop/package.json`, `tauri.conf.json` and `VERSION` all agree; **O3**: no site deploy between that release
-  becoming Latest and `download.ts` moving; **O7**: site parity round 6 runs on the FINAL site build (running since
-  2026-09-25). **O6** (`SUPABASE_ENABLED` only after TASK-013 was verified live) was met on 2026-09-25.
+  becoming Latest and `download.ts` moving; **O7**: site parity runs on the FINAL site build (round 6 found S-29, fixed;
+  round 7 CLEAN on 2026-09-25). **O6** (`SUPABASE_ENABLED` only after TASK-013 was verified live) was met on 2026-09-25.
 - Dependency and manifest record: `docs/PACKAGES.md` · follow-ups the agent owes: `PENDING-TASKS.md` (root)
 - Skill-listing scoping for this repo: `.claude/settings.json` (`skillOverrides`, `name-only`) - every skill
   stays invocable by name; only descriptions outside this stack leave the listing.
@@ -87,7 +87,7 @@ Everything else about where the work stands is in the tracker and `../remaining-
 | Marketing site (P8, **LIVE** since 2026-09-08) | `aoneahsan/windowsweep-web` (private, D9) at `D:\work\windowsweep-root\windowsweep-web`, deployed to Firebase Hosting at `https://windowsweep.aoneahsan.com`. A web **app**: Supabase for the backend (the **same** project as the desktop app - one auth pool), **Firebase for hosting and GA4 only**, Amplitude + Clarity + Sentry with no opt-out, Capacitor wired with **no Android folder** (P8-D3; Android is out of scope, D17). Thirteen routes incl. `/terms` (2026-09-25, the Google consent screen's terms address), `/contact`, `/account` and a minimal `/admin` (D10); sign-in live since 2026-09-25; its story surfaces live in this repo's `docs/story/`. Build gates under `vite/`: `catalogue-keys.ts`, `template-keys.ts`, `release-strings.ts`, `lastmod.ts` (sitemap dates from git), the prerender branch assertions, and a sign-in probe that fails closed once the keys are set. It is the product's **canonical homepage** |
 | Last optimized | 2026-09-17 |
 | Next routine optimization eligible | 2026-10-17 |
-| Guide bytes | 21,303 B (this file, post-edit) |
+| Guide bytes | 21,405 B (this file, post-edit) |
 | Covered subtree | this repo's root pair only; `desktop/` and `windowsweep-web/` keep their own nested guides |
 | Method | status moved to `00-tracker.json`; fleet-copy sections replaced by pointers to `~/.claude/rules/`; every binding mapping, IRON rule and 🔴 invariant kept auto-loaded |
 | Fleet record | `code/docs/tracking/project-context-budget-tracker.json` |

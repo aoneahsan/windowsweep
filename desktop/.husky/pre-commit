@@ -4,4 +4,7 @@
 # any reason - the stack is shared by every checkout and session. Without it lint-staged still hides a partially
 # staged file's unstaged changes, through a patch file of its own (17.5.1 gitWorkflow.js, prepare); what goes is only
 # the backup, and with it the undo when a task fails.
-cd desktop && yarn lint-staged --no-stash
+# --relative --max-arg-length 8000: Windows caps a command line at 8,191 characters, and lint-staged splits a
+# long file list only when --max-arg-length is set (17.5.1 getSpawnedTasks.js; unset, it never chunks). Relative
+# paths keep each chunk short. A 91-file commit failed without them on 2026-09-25 (the fleet baseline).
+cd desktop && yarn lint-staged --no-stash --relative --max-arg-length 8000

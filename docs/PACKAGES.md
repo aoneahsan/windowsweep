@@ -2,8 +2,9 @@
 
 The dependency and manifest record for this package. Keep it accurate on every add, removal or upgrade.
 
-Last Updated: 2026-09-25 (D37: the desktop manifest at latest stable and on the fleet package baseline. Earlier
-2026-09-05: the desktop app added a SECOND manifest, deliberately isolated from this one)
+Last Updated: 2026-09-26 (the hook line gains `--relative --max-arg-length 8000`, the fleet baseline. Earlier
+2026-09-25, D37: the desktop manifest at latest stable and on the fleet package baseline. Earlier 2026-09-05: the
+desktop app added a SECOND manifest, deliberately isolated from this one)
 
 ## Manifest units
 
@@ -229,8 +230,11 @@ the crate 2.11.0 -> 2.12.0: one package, version and checksum only, no new depen
 `postinstall` would run on every user's `npm i windowsweep`. So `desktop/package.json` carries
 `"postinstall": "cd .. && husky desktop/.husky"`: Yarn 4 never runs a project's `prepare`, and husky refuses a `..`
 in its argument, hence the `cd`. It sets the repository's `core.hooksPath` to `desktop/.husky/_`. The hook runs
-`cd desktop && yarn lint-staged`, and lint-staged reaches only files under `desktop/`, so a commit that stages only
-CLI files runs nothing. A fresh clone gets the hook on its first `yarn install` in `desktop/`; an existing checkout
+`cd desktop && yarn lint-staged --no-stash --relative --max-arg-length 8000`, and lint-staged reaches only files under
+`desktop/`, so a commit that stages only CLI files runs nothing. `--no-stash` because lint-staged's default backup is
+`git stash`, which the house rule bans; `--relative --max-arg-length 8000` because Windows caps a command line at 8,191
+characters and lint-staged 17 splits a long file list only when that length is set (the fleet baseline since
+2026-09-25). A fresh clone gets the hook on its first `yarn install` in `desktop/`; an existing checkout
 runs `yarn postinstall` once. `.gitattributes` keeps the hook and `.nvmrc` LF.
 
 `yarn test` covers two of the pre-approved classes, 11 cases, each watched failing on a planted defect:

@@ -277,7 +277,9 @@ export function RunScreen() {
 
   return (
     <>
-      <section className="band band-app band-tight">
+      {/* `band band-app`, as `run.html` draws it: the hero carried `band-tight` from the
+          first build, which set everything below it 8 px higher (D-70, GATE 4 round 16). */}
+      <section className="band band-app">
         <div className="wrap readout">
           <div>
             {/* 🔴 The never-run state said `Finished` and `The run finished.` on a

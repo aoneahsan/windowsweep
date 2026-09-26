@@ -47,7 +47,7 @@
     { id:19, key:'large',     tier:'recycle',   batch:'interactive', admin:false, dev:false, title:'Large stale personal files (Downloads) -> Recycle Bin' },
     { id:20, key:'vhdx',      tier:'config',    batch:'deep',        admin:true,  dev:true,  title:'Docker Desktop / WSL disk image compaction (stops Docker + WSL)' },
     { id:21, key:'diskusage', tier:'report',    batch:'safe',        admin:false, dev:false, title:'Disk usage report (largest entries, drives, disk images)' },
-    { id:22, key:'globals',   tier:'report',    batch:'safe',        admin:false, dev:true,  title:'Globally installed packages audit (npm, pnpm, yarn, bun, deno) - report only' },
+    { id:22, key:'globals',   tier:'report',    batch:'safe',        admin:false, dev:false, title:'Globally installed packages audit (npm, pnpm, yarn, bun, deno) - report only' },
     { id:23, key:'orphaned',  tier:'recycle',   batch:'interactive', admin:false, dev:false, title:'Orphaned application data under AppData -> Recycle Bin' },
     { id:24, key:'programs',  tier:'report',    batch:'safe',        admin:false, dev:false, title:'Installed programs not modified for N+ days - report only' },
     { id:25, key:'startup',   tier:'report',    batch:'safe',        admin:false, dev:false, title:'Startup items audit (Run keys, Startup folders, logon tasks) - report only' }

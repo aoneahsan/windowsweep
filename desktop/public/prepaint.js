@@ -15,7 +15,7 @@
   try {
     var q = new URLSearchParams(location.search);
     R.axes.forEach(function (a) {
-      var v = q.get(a.key);
+      var v = q.get(a.key) || q.get(a.attr.replace(/^data-/, ''));   // the key or the attribute, as the dummy
       if (v && a.values.indexOf(v) !== -1) url[a.key] = v;   // shown, never persisted
     });
   } catch (e) { /* ignore */ }

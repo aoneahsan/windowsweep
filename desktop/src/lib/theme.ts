@@ -51,6 +51,47 @@ export function axisValue(prefs: AxisPrefs, key: string): string {
   return axis.values.some((v) => v.value === current) ? (current as string) : axis.def;
 }
 
+/**
+ * URL overrides are SHOWN, never persisted - the dummy's own contract (`app.js`): a reviewer who links
+ * `?palette=plum&theme=light` must not have it follow them. `prepaint.js` applies the same layer before first
+ * paint; this is the React side's copy, read once at load, so the boot pass in `main.tsx` no longer takes the
+ * URL's value away again (D-73, GATE 4 round 16). An axis is named by its key (`typeScale`) or its attribute
+ * (`type-scale`), as the dummy accepts both.
+ *
+ * 🔴 It is layered only where an axis is APPLIED or SHOWN - `applyAllAxes` and the theme panel - and never into
+ * `axisValue` itself: sync compares STORED preferences through `axisValue`, and a link must not make a setting
+ * look changed and travel to the account.
+ */
+const urlOverride: AxisPrefs = readUrlOverride();
+
+function readUrlOverride(): AxisPrefs {
+  const out: AxisPrefs = {};
+  try {
+    const q = new URLSearchParams(window.location.search);
+    for (const axis of AXES) {
+      const raw = q.get(axis.key) || q.get(axis.attr.replace(/^data-/, ''));
+      if (raw && axis.values.some((v) => v.value === raw)) out[axis.key] = raw;
+    }
+  } catch {
+    /* no window, or a URL that will not parse - there is nothing to layer */
+  }
+  return out;
+}
+
+/** The preferences as the window shows them: the URL's overrides over the stored ones. */
+export function shownPrefs(prefs: AxisPrefs): AxisPrefs {
+  return { ...prefs, ...urlOverride };
+}
+
+/**
+ * An explicit choice ends the URL's override for that axis, as the dummy's `setAxis` does. The key is DELETED,
+ * never blanked: a blank value spread over the stored preferences would make `axisValue` answer the default and
+ * hide the choice just made.
+ */
+export function dropUrlOverride(key: string): void {
+  delete urlOverride[key];
+}
+
 /** `system` resolves through the OS query; everything else is itself. */
 export function resolveAppearance(prefs: AxisPrefs): 'light' | 'dark' {
   const t = axisValue(prefs, 'theme');
@@ -68,8 +109,9 @@ export function resolveAppearance(prefs: AxisPrefs): 'light' | 'dark' {
  * actually selects on.
  */
 export function applyAllAxes(prefs: AxisPrefs, root: HTMLElement = document.documentElement): void {
-  for (const axis of AXES) root.setAttribute(axis.attr, axisValue(prefs, axis.key));
-  const appearance = resolveAppearance(prefs);
+  const shown = shownPrefs(prefs);
+  for (const axis of AXES) root.setAttribute(axis.attr, axisValue(shown, axis.key));
+  const appearance = resolveAppearance(shown);
   root.setAttribute('data-appearance', appearance);
   root.style.colorScheme = appearance;
 }

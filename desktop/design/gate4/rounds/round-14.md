@@ -98,6 +98,10 @@ list.") — **never rendered on either side**; my first roster check compared th
   `plugin:opener|*` outright; their words are judged, their behaviour is not. **Blocked, not failing.**
 - **The other four Settings tabs** — untouched by `8f3a03f`; round 8 judged them *match + declared*. D-66's status bar
   is the same on every tab.
+  🔴 **Corrected 2026-09-26 by round 16 (R16.3), kept here rather than rewritten:** round 8 judged the General tab
+  only - its check lists 28 dummy texts and three ABSENT lines, none from Privacy
+  (`round8/logs/words-populated-1440.txt:322-341`) - so this line did not hold for Privacy, whose words had differed
+  from the dummy's since 2026-09-07. Round 16 filed that as D-69.
 - **Signed-in Settings** — not needed (the block renders signed out); no identity was created.
 - **The packaged build** — `tauri dev` only.
 

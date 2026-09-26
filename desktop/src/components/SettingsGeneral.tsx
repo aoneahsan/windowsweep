@@ -57,30 +57,7 @@ import {
 import { useHeldBackBytes } from '../state/derived';
 import { formatBytes } from '../lib/format';
 import { ScheduleSwitch } from './ScheduleSwitch';
-
-/** The dummy's `row()` - text on the left, one control on the right. */
-function SettingRow({
-  title,
-  description,
-  consequence,
-  control,
-}: {
-  title: string;
-  description: string;
-  consequence?: string;
-  control: React.ReactNode;
-}) {
-  return (
-    <div className="set-row">
-      <div className="set-txt">
-        <h3>{title}</h3>
-        <p>{description}</p>
-        {consequence !== undefined ? <p className="set-conseq">{consequence}</p> : null}
-      </div>
-      <div className="set-ctl">{control}</div>
-    </div>
-  );
-}
+import { SettingRow } from './SettingRow';
 
 /** The dummy's `num()` - a number field with its unit beside it. */
 function NumberField({

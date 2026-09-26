@@ -185,11 +185,13 @@ export function LastRuns({ history }: { history: HistoryEntry[] }) {
             <span className="caps">{t('home.scheduleTitle')}</span>
           </div>
           <div className="well pad">
-            {/* `index.html:239-244` - the switch, then its state, then the note. */}
-            <ScheduleSwitch label={t('home.scheduleSwitch')} />
-            <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-3)' }}>
-              {t('home.scheduleNote')}
-            </p>
+            {/* `index.html` `.well.pad` is a flex row: the switch, then ONE column holding its
+                state, the acknowledgement and the note. The note sat under the switch in its own
+                block until D-71 (GATE 4 round 16) - the order had been transcribed, not the column. */}
+            <ScheduleSwitch
+              label={t('home.scheduleSwitch')}
+              note={<p className="t-sm ink-3">{t('home.scheduleNote')}</p>}
+            />
           </div>
         </div>
       </div>

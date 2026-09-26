@@ -12,7 +12,8 @@ import { keys, buildVersion } from './lib/config';
 /* The pre-paint script already wrote every axis to <html>. This second pass is
    the React-side handover: it re-reads the same preferences through the same one
    apply path, so nothing can drift between the two, and it costs nothing because
-   the attributes are already correct. */
+   the attributes are already correct - the URL's axis overrides included, which
+   the apply path layers as pre-paint does (D-73, GATE 4 round 16). */
 applyAllAxes(readPrefs());
 applyDocumentLanguage();
 

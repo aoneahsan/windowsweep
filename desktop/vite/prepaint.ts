@@ -9,7 +9,9 @@
  *
  * It moved here from `scripts/gen-prepaint.mjs` (TASK-019, 2026-09-26: the house rules forbid a
  * scripts folder), in the site's own shape (`windowsweep-web/vite.config.ts`, `prepaintPlugin`).
- * The output is byte-identical to that script's except the header line naming this file.
+ * Its first output was byte-identical to that script's except the header line naming this file;
+ * since GATE 4 round 16 (D-73) a URL axis is also read by its attribute name (`type-scale`) as well
+ * as its key (`typeScale`), as the dummy's `app.js` reads it and as `src/lib/theme.ts` now does.
  *
  * 🔴 The committed copy is still a gate. The build rewrites `public/prepaint.js` before anything
  * reads it, so the shipped file cannot drift; `desktop-ci.yml` then runs
@@ -77,7 +79,7 @@ export function renderPrepaint(root: string): RenderedPrepaint {
   try {
     var q = new URLSearchParams(location.search);
     R.axes.forEach(function (a) {
-      var v = q.get(a.key);
+      var v = q.get(a.key) || q.get(a.attr.replace(/^data-/, ''));   // the key or the attribute, as the dummy
       if (v && a.values.indexOf(v) !== -1) url[a.key] = v;   // shown, never persisted
     });
   } catch (e) { /* ignore */ }

@@ -32,7 +32,7 @@ import {
 import { isRunRecord } from '../lib/run-mode';
 import type { AuthUser } from '../lib/auth';
 import { noteLocalSettingChanged, noteRunFinished, noteSettingsChanged } from '../lib/sync-hooks';
-import { readPrefs, writePrefs, applyAllAxes, type AxisPrefs } from '../lib/theme';
+import { readPrefs, writePrefs, applyAllAxes, dropUrlOverride, type AxisPrefs } from '../lib/theme';
 import {
   DEFAULT_IDLE_DAYS,
   DEFAULT_LARGE_FILE_MB,
@@ -444,6 +444,8 @@ export const useStore = create<StoreState>()((set, get) => ({
   setAxis: (key, value) => {
     const prefs = { ...get().prefs, [key]: value };
     writePrefs(prefs);
+    // An explicit choice ends a URL override on that axis, so the choice shows (D-73).
+    dropUrlOverride(key);
     applyAllAxes(prefs);
     set({ prefs });
     noteSettingsChanged();

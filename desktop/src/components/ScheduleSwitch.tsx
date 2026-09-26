@@ -44,6 +44,7 @@ import { isScheduled, scheduleStatus, type ScheduleStatus } from '../lib/schedul
 export function ScheduleSwitch({
   label,
   stateWord = true,
+  note,
 }: {
   label: string;
   /**
@@ -52,6 +53,12 @@ export function ScheduleSwitch({
    * own sentences carry the meaning - so Settings passes `false`.
    */
   stateWord?: boolean;
+  /**
+   * A closing line in the SAME column as the state and the acknowledgement, beside the
+   * switch rather than under it: Home's dummy puts its "Runs the safe batch once a
+   * week..." there (`index.html` `.well.pad`, a flex row; D-71, GATE 4 round 16).
+   */
+  note?: React.ReactNode;
 }) {
   const { t } = useTranslation();
   const [status, setStatus] = useState<ScheduleStatus | null>(null);
@@ -172,6 +179,7 @@ export function ScheduleSwitch({
             {failed}
           </p>
         )}
+        {note}
       </div>
     </div>
   );

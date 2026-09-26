@@ -28,7 +28,14 @@
 import { Dialog, Label, Modal, ModalOverlay, Radio, RadioGroup } from 'react-aria-components';
 import { useTranslation } from 'react-i18next';
 
-import { AXES, axisValue, resolveAppearance, type Axis, type AxisPrefs } from '../lib/theme';
+import {
+  AXES,
+  axisValue,
+  resolveAppearance,
+  shownPrefs,
+  type Axis,
+  type AxisPrefs,
+} from '../lib/theme';
 import { useStore } from '../state/store';
 
 const RADIUS_PREVIEW: Record<string, string> = {
@@ -81,7 +88,7 @@ function AxisPreview({ axis, value, prefs }: { axis: Axis; value: string; prefs:
         <span
           className="prev-swatch"
           data-palette={value}
-          data-appearance={resolveAppearance(prefs)}
+          data-appearance={resolveAppearance(shownPrefs(prefs))}
         >
           <i style={{ background: 'var(--c-panel)' }} />
           <i style={{ background: 'var(--c-ink-2)' }} />
@@ -215,7 +222,7 @@ export function ThemePanel({ open, onClose }: { open: boolean; onClose: () => vo
               <RadioGroup
                 className="axis"
                 key={axis.key}
-                value={axisValue(prefs, axis.key)}
+                value={axisValue(shownPrefs(prefs), axis.key)}
                 onChange={(value) => {
                   setAxis(axis.key, value);
                 }}

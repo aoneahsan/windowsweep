@@ -10,7 +10,7 @@
 
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { Link, useRouterState, useSearch } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 /* 🔴 `getCurrentWindow` is imported lazily, inside the handler. Calling it during
    render reads `window.__TAURI_INTERNALS__`, which does not exist outside a Tauri
    window - so every screen that renders this title bar threw, while Splash and
@@ -316,9 +316,10 @@ function useRouteStatusNote(): StatusNote | null {
        `run_clean` passes `--logs-dir` per run (`src-tauri/src/engine.rs`), so this
        window's logs are NOT under `~\.windowsweep\logs` and printing that would be
        a path the reader could not find anything at. Before the first run there is
-       nothing to point at, and it says so. */
+       nothing to point at, and it says so - in the machine face at 80 %, as the
+       dummy sets it (`index.html` `only-wide mono`, opacity .8; D-68, GATE 4 round 16). */
     const dir = logDirectory(summary);
-    return dir ? { text: dir, machine: true } : { text: t('app.logsPending') };
+    return dir ? { text: dir, machine: true } : { text: t('app.logsPending'), machine: true };
   }
 
   if (path === '/sections') {
@@ -350,14 +351,21 @@ function useRouteStatusNote(): StatusNote | null {
 }
 
 function StatusBar({ note }: { note?: string }) {
-  const { t } = useTranslation();
   const version = useStore((s) => s.engineVersion);
   const derived = useRouteStatusNote();
   const shown: StatusNote | null = note ? { text: note } : derived;
   return (
     <footer className="statusbar">
       <span className="dot" aria-hidden="true" />
-      <span>{t('app.engine', { version: version || '-' })}</span>
+      {/* The version is machine text, in the mono face, as the dummy's
+          `engine <span class="mono">` sets it on every screen (D-68, GATE 4 round 16). */}
+      <span>
+        <Trans
+          i18nKey="app.engine"
+          values={{ version: version || '-' }}
+          components={{ 1: <span className="mono" /> }}
+        />
+      </span>
       {shown ? (
         <span
           className={shown.machine ? 'only-wide sb-note mono' : 'only-wide sb-note'}

@@ -1,7 +1,7 @@
 {
   "_comment": "The English catalogue. Every string is transcribed from the approved click dummy, which owns the words as well as the layout, EXCEPT the pending.* block - that declares an unbuilt screen and is new app-side copy - and the run.excluded* block, which names an engine fact (summary.excluded[]) the dummy has no equivalent for. GATE 4 was granted on 2026-09-05 and the 38 approved changes are in the dummy; the ones that touch a screen this app has built are reflected here. A change is written into the dummy first and copied here second, never the other way round.",
   "app.name": "windowsweep",
-  "app.engine": "engine {{version}}",
+  "app.engine": "engine <1>{{version}}</1>",
   "app.logsPending": "the log path appears once a run has written one",
   "status.history": "local runs are complete - cloud rows are summaries",
   "status.report": "schema 1 - the same file the CLI writes",

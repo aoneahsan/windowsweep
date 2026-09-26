@@ -2,7 +2,8 @@
 
 **Mirror of `AGENTS.md`** - byte-identical except the H1 names the guide. Change one, change both.
 
-Last Updated: 2026-09-26 (the workspace root backed up on the private site repo's `project-root` branch, D49.
+Last Updated: 2026-09-26 (session 18: `desktop-v1.3.1` released and proved - invariants 2, 3, 5 and 10; TASK-020
+filed. Earlier the same day: the workspace root backed up on the private site repo's `project-root` branch, D49.
 Earlier the same day, the pause: site parity round 7 CLEAN, RW-117 closed, WH011. Earlier 2026-09-25, the releases: `desktop-v1.3.0` Latest with sign-in live and the updater proved 1.2.0 -> 1.3.0,
 CLI 1.3.1 with the team's maker lines, TASK-019 filed. Earlier the same day: the desktop cascaded to 1.3.0, TASK-013 verified live and closed,
 `SUPABASE_ENABLED` set, the 1.3.0 release kit; earlier the same day the invariants were brought to the v1.3.0 engine,
@@ -43,12 +44,12 @@ Everything else about where the work stands is in the tracker and `../remaining-
 1. 🔴 **The v1.3.1 engine invariant.** `git diff v1.3.1..HEAD -- lib modules windowsweep.ps1 bin windowsweep.cmd
    VERSION package.json` is **empty** (verified 2026-09-25) and stays so until the next CLI cascade. CLI 1.3.1 is on
    npm (2026-09-25); its release was created `--latest=false` (IRON rule 13).
-2. 🔴 **`desktop-v1.3.0` is the repository's Latest release** (2026-09-25, sign-in live) and stays so until the next
+2. 🔴 **`desktop-v1.3.1` is the repository's Latest release** (2026-09-26, on `5dde309`) and stays so until the next
    desktop release is published `--latest` - the updater reads `releases/latest/download/latest.json`, so Latest is always a DESKTOP release.
-3. 🔴 **The desktop app reads 1.3.0 and `VERSION` reads 1.3.1** - `desktop-v1.3.0` was tagged on `5934008`, before
-   the CLI 1.3.1 cascade merged, so it bundles the 1.3.0 engine. The next desktop release first cascades
-   `desktop/package.json`, `tauri.conf.json`, `Cargo.toml` and `Cargo.lock` to `VERSION`, and its tag lands where all
-   of them agree (O2'). The bundled engine is untracked and mirrored by the build's engine plugin (`desktop/vite/engine-bundle.ts`, TASK-019) on every `yarn dev` and `yarn build`: 41 files since 1.3.0.
+3. 🔴 **The desktop app and `VERSION` both read 1.3.1** - the cascade (`2c5d98e`) moved `desktop/package.json`,
+   `tauri.conf.json`, `Cargo.toml` and `Cargo.lock` to `VERSION`, `desktop-v1.3.1` was tagged where all of them agree
+   (O2'), and the app reports the version in its manifest (1.3.0 reported 1.2.0). Every later desktop release cascades
+   the same way before its tag. The bundled engine is untracked and mirrored by the build's engine plugin (`desktop/vite/engine-bundle.ts`, TASK-019) on every `yarn dev` and `yarn build`, the release build's `beforeBuildCommand` included: 41 files since 1.3.0.
 4. 🔴 **TASK-013 (cloud sync) is verified live and closed (DONE-016), and `SUPABASE_ENABLED` is `true`** (both
    2026-09-25, O6'). Every release build carries the Supabase keys: `desktop-release.yml` exports them only after
    probing that the project answers `external.google: true`, and refuses the build otherwise, because
@@ -59,7 +60,10 @@ Everything else about where the work stands is in the tracker and `../remaining-
    2026-09-14 the next press started an unintended real 1.8 GB run). The method is round 12's two-wire guard: FULFIL
    (never fail) the CDP Fetch on `http://ipc.localhost/*` with `Tauri-Response: error`, wrap
    `window.chrome.webview.postMessage`, take the predicate from `args.rs`, and prove it fail-closed and selective
-   before the first press (`../gate4-evidence/round12/drivers/`).
+   before the first press (`../gate4-evidence/round12/drivers/`). 🔴 **It guards `tauri dev` only:** on an INSTALLED
+   build WebView2 answers `http://ipc.localhost` before the DevTools Fetch domain sees it, so the guard observes and
+   refuses nothing (found 2026-09-26, the tracker's `knownRisks`) - a proof on an installed build presses only its one
+   named control and records the IPC with the Network domain.
 6. 🔴 **A GATE 4 round's report is written and committed in the SAME session as the round**, with every driver's
    stdout teed to its `logs` folder. A round with a driver that did not finish is INCOMPLETE and re-run, never
    judged. Desktop round 11 and site rounds 3 and 5 ran and went unrecorded; round 11 had to be re-run as round 12.
@@ -68,9 +72,9 @@ Everything else about where the work stands is in the tracker and `../remaining-
 8. 🔴 **The cargo cache still holds the pre-rename folder names** - expect the recorded `os error 3` trap on the
    first local Rust build and `cargo clean -p` the affected packages per profile.
 9. 🔴 **P1 and the 1.1 residue are second-machine work** (owner, 2026-09-07) - not startable here.
-10. Release procedure when a GATE 4 round comes back CLEAN: a new kit built from `../release-kit-1.3.0/` (spent
-    2026-09-25 - every step ran, and its drivers are the template; preflight first, every time); `../release-kit/`
-    is the spent 1.2.0 kit.
+10. Release procedure when a GATE 4 round comes back CLEAN: a new kit built from `../release-kit-1.3.1/` (spent
+    2026-09-26 - every step ran; its drivers are the template and its README's three notes bind the next kit;
+    preflight first, every time); `../release-kit-1.3.0/` and `../release-kit/` are the spent 1.3.0 and 1.2.0 kits.
 
 ## Per-Project Stack Override (binding)
 
@@ -89,7 +93,7 @@ Everything else about where the work stands is in the tracker and `../remaining-
 | Marketing site (P8, **LIVE** since 2026-09-08) | `aoneahsan/windowsweep-web` (private, D9) at `D:\work\windowsweep-root\windowsweep-web`, deployed to Firebase Hosting at `https://windowsweep.aoneahsan.com`. A web **app**: Supabase for the backend (the **same** project as the desktop app - one auth pool), **Firebase for hosting and GA4 only**, Amplitude + Clarity + Sentry with no opt-out, Capacitor wired with **no Android folder** (P8-D3; Android is out of scope, D17). Thirteen routes incl. `/terms` (2026-09-25, the Google consent screen's terms address), `/contact`, `/account` and a minimal `/admin` (D10); sign-in live since 2026-09-25; its story surfaces live in this repo's `docs/story/`. Build gates under `vite/`: `catalogue-keys.ts`, `template-keys.ts`, `release-strings.ts`, `lastmod.ts` (sitemap dates from git), the prerender branch assertions, and a sign-in probe that fails closed once the keys are set. It is the product's **canonical homepage** |
 | Last optimized | 2026-09-17 |
 | Next routine optimization eligible | 2026-10-17 |
-| Guide bytes | 21,626 B (this file, post-edit) |
+| Guide bytes | 22,773 B (this file, post-edit) |
 | Covered subtree | this repo's root pair only; `desktop/` and `windowsweep-web/` keep their own nested guides |
 | Method | status moved to `00-tracker.json`; fleet-copy sections replaced by pointers to `~/.claude/rules/`; every binding mapping, IRON rule and 🔴 invariant kept auto-loaded |
 | Fleet record | `code/docs/tracking/project-context-budget-tracker.json` |

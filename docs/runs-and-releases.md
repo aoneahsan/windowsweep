@@ -64,6 +64,31 @@ each. **Undisclosed hosts: 0 - no Supabase call from a signed-out window. Person
 nothing because nothing errored; the update check runs in the Rust updater, outside the page's network log, and
 is disclosed. No engine run beyond startup's `--list --json`.
 
+### 2026-09-26 - the in-app updater proved 1.3.0 -> 1.3.1 on this machine, isolated, and the telemetry's own version
+
+`../release-kit-1.3.1/updater-proof-source.txt`, evidence in `../gate4-evidence/updater-1.3.1/`. For the first time
+the proof ran on an **isolated** `WEBVIEW2_USER_DATA_FOLDER`, proved from the process table, so the owner's own
+profile - where row 31 puts his signed-in session - was never driven (1,354 files, the same newest write, before and
+after every mode). Its no-press rehearse found that round 12's two-wire guard sees no IPC on an installed build
+(the tracker's `knownRisks`), so `update` and `beacons` ran with a watch-only recorder that classified every IPC
+request afterwards, as the 1.2.0 and 1.3.0 proofs ran unguarded.
+
+The installed 1.3.0 found `desktop-v1.3.1` by itself and drew *"Version 1.3.1 is ready"*; one press of *"Install and
+restart"* at 11:37:31.814Z; the NSIS installer (`/P /UPDATE /R`) ran as the app's child, the app exited itself, and
+the installer relaunched it - on the isolated profile, every WebView2 process checked 7.3 s after. HKCU
+(`Get-ItemProperty`, never `reg query`) read 1.3.1 at +6.5 s; the installed exe's `ProductVersion` is 1.3.1 and its
+engine holds VERSION 1.3.1 in 41 files with `WS_TEAM = 'The windowsweep team'`. Every engine vector recorded was
+`--list --json`; none could delete.
+
+The first-boot requests, signed out, 60 s: `www.google-analytics.com` 1 (`screen.view`, 204), `api2.amplitude.com`
+2 (`screen.view`, 200), `www.googletagmanager.com` and `www.clarity.ms` 1 each (200). **Undisclosed hosts: 0.
+Personal-data matches: 0.** Both analytics payloads carry **`app_version 1.3.1`** (Amplitude `events[].app_version`,
+GA4 `ep.app_version`) and none carries 1.2.0 - the version fix, proved in the released build. 🔴 **And
+`scripts.clarity.ms` and `c.clarity.ms` failed**: the window's CSP refuses Clarity's script and pixel, so session
+replay has never run in a desktop release - the 1.3.0 run above saw the same two requests and did not read their
+outcome (TASK-020). The beacons' first run failed on its own instrument (it read `version_name`, a field amplitude-ts
+does not send); it is kept, and the corrected run passed.
+
 ### 2026-09-25 - the desktop app's account deletion, exercised live once (RW-134)
 
 `../site-evidence/rw134/`. A throwaway plain user (desk3), seeded with one row each in `user_settings`, `runs` and
@@ -195,5 +220,16 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
   (1.3.0, its NSIS entry signed). The MSI's File table holds 42 rows: 41 engine files and the app. It bundles the
   **1.3.0** engine byte-identical - CLI 1.3.1 was merged after the tag. The site's download page and the docs
   followed within the hour (O3'), and the updater proof above ran the same afternoon.
+- 2026-09-26T10:59:33Z: **`desktop-v1.3.1`** published on GitHub Releases, created `--latest` (IRON rule 13), on
+  `5dde309` - the commit GATE 4 round 17 blessed, after the O2' cascade (`2c5d98e`) and round 16's six fixes. The
+  kit's pre-flight passed against that commit first. The `desktop-release` workflow (run 36236930943) printed *"Google
+  sign-in is enabled on the project"* and *"Supabase build variables exported for the rest of this job"*, and TASK-019's
+  plugins bundled the engine inside `beforeBuildCommand` (`[engine-bundle] the 1.3.1 engine: 41 files`). Six assets
+  plus `SHA256SUMS.txt`: `windowsweep_1.3.1_x64-setup.exe` (2,631,743 B, sha256 `34cd2582…7b8b`),
+  `windowsweep_1.3.1_x64_en-US.msi` (3,362,816 B, sha256 `f568b7bb…e7c1`) - both recomputed locally and equal - a
+  `.sig` for each, and `latest.json` (1.3.1, its NSIS entry signed). The MSI's File table holds 42 rows, name for
+  name the 1.3.0 MSI's. It bundles the **1.3.1** engine, TASK-018, TASK-019, D37's desktop half, round 16's fixes, and
+  the version from the manifest. The site and the docs followed before any other site deploy (O3'), and the updater
+  proof above ran the same day.
 
-Last Updated: 2026-09-25 (RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)
+Last Updated: 2026-09-26 (`desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)

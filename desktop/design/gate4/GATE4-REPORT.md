@@ -133,6 +133,42 @@ the Picker's Clear with them. What remains:
 
 ---
 
+## §updater — `desktop-v1.3.1`, released 2026-09-26 and proved end to end
+
+The release GATE 4 round 17 blessed: cut on `5dde309`, published `--latest` at 10:59:33Z (IRON rule 13), from
+`../release-kit-1.3.1/`, after its pre-flight passed against that commit (O2': `VERSION`, `desktop/package.json`,
+`tauri.conf.json`, `Cargo.toml` and `Cargo.lock` all 1.3.1; O6' held; round 17 CLEAN and naming the commit;
+`desktop-ci` green on it). The `desktop-release` workflow exported the Supabase pair and bundled the 1.3.1 engine
+through TASK-019's plugins (`[engine-bundle] the 1.3.1 engine: 41 files`).
+
+**The in-app updater, 1.3.0 → 1.3.1, on this machine - isolated.** `../gate4-evidence/updater-1.3.1/`:
+
+```
+HKCU before: {"DisplayVersion":"1.3.0", ...}                       11:37:23.184Z
+band on #/splash: "Version 1.3.1 is ready"                         (update-band.png)
+PRESSED "Install and restart" at 11:37:31.814Z - the one press of this proof
+installer: windowsweep-1.3.1-installer.exe /P /UPDATE /R, a child of the app, which exited itself at +5.6 s
+HKCU after:  {"DisplayVersion":"1.3.1", ...} at +6.5 s             relaunched on the isolated profile (+7.3 s check)
+installed:   ProductVersion 1.3.1; engine VERSION 1.3.1, 41 files, WS_TEAM = 'The windowsweep team'
+RESULT update: PASS
+```
+
+🔴 **The run found that the two-wire guard of rounds 12-17 sees nothing on an installed build.** On the packaged app
+every IPC call is a `fetch` to `http://ipc.localhost/<command>`, which WebView2 answers from its own
+`WebResourceRequested` handler before the DevTools Fetch domain can pause it; Tauri falls back to `postMessage` only
+after a failed fetch, so neither wire sees traffic. The rehearse proved it without a press - the deny token, the
+latch probe and the opener probe all reached Rust (`rehearse.log`, `diag-ipc-transport.log`). Under `tauri dev`, where
+every round runs, Fetch intercepts the IPC and the guard holds. The proof therefore ran watch-only: a Network recorder
+attached before the press, every IPC request classified afterwards - `--list --json` three times, `plugin:updater|check`,
+one `download_and_install`, and nothing that could delete.
+
+**The first-boot beacons**, signed out, isolated: GA4 (`screen.view`, 204) and Amplitude (`screen.view`, 200) both carry
+**`app_version 1.3.1`** and none carries 1.2.0 - the manifest-version fix proved in the released build; **0
+undisclosed hosts** (no Supabase call from a signed-out window) and **0 personal-data matches**. 🔴 **Clarity's script
+(`scripts.clarity.ms`) and pixel (`c.clarity.ms`) were refused by the window's CSP** - session replay has never run in
+a desktop release, while Settings › Privacy lists it (TASK-020, the owner's choice). The owner's `EBWebView` read 1,354
+files, the same newest write, before and after every mode. Full numbers: `docs/runs-and-releases.md`, 2026-09-26.
+
 ## §updater — `desktop-v1.3.0`, released 2026-09-25 and proved end to end
 
 The release GATE 4 round 15 blessed: cut on `5934008`, published `--latest` (IRON rule 13), from

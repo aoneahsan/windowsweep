@@ -1,6 +1,6 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-09-26 (latest: D50 - `desktop-v1.3.1` this session - and D51 - the stray `runs$RUNID` folder deleted; TASK-019's generators became Vite plugins. Earlier the same day: D49 - the workspace root backed up on the private site repo's `project-root`
+Last Updated: 2026-09-26 (latest: `desktop-v1.3.1` released and proved under D50 - the current-status line; TASK-020 open for the owner's choice. Earlier the same day: D50 - `desktop-v1.3.1` this session - and D51 - the stray `runs$RUNID` folder deleted; TASK-019's generators became Vite plugins. Earlier the same day: D49 - the workspace root backed up on the private site repo's `project-root`
 branch. Earlier 2026-09-25: `desktop-v1.3.0` published as Latest and proved by the in-app updater 1.2.0 -> 1.3.0,
 CLI 1.3.1 on npm with the team's maker lines, rounds 14 and 15 with D47, session 14's decision table moved to
 `docs/project-history.md`. Earlier the same day: RW-116 and TASK-013 verified as a person and torn down, O6' set, the desktop cascaded to 1.3.0, the open-unknowns section brought to date - TASK-017 and TASK-018 are the two open owner decisions. Earlier: session 17: D25-D43 recorded - the Terms page, sign-in live on the site, the runs index, the desktop sync behaviour, up to four agents; RW-132: the dated session narratives moved verbatim to `docs/project-history.md` and the verified runs and release record to `docs/runs-and-releases.md`, nothing reworded; the stamp this replaces follows)
@@ -13,8 +13,8 @@ proved it catches one), the engine diffing EMPTY against `v1.3.1`, `desktop-ci` 
 - Purpose: safe, developer-aware disk and cache cleanup CLI for Windows; the Windows member of the family with
   `linux-cleanup` (Bash) and `macleanup` (Bash).
 - Primary users: developers and power users on Windows 10/11 who want to see and control every deletion.
-- Current status (2026-09-25): **CLI 1.3.1** on npm and **`desktop-v1.3.0`**, the repository's Latest release, both
-  published 2026-09-25 - sections 0-25, 160 self-test checks, and sign-in with sync live in the desktop app; the
+- Current status (2026-09-26): **CLI 1.3.1** on npm (2026-09-25) and **`desktop-v1.3.1`**, the repository's Latest
+  release (2026-09-26) - sections 0-25, 160 self-test checks, and sign-in with sync live in the desktop app; the
   documentation site and the marketing site follow both. Each release's record: `docs/runs-and-releases.md`.
   What is open: the tracker (the only status), `../remaining-work.md` (the specification) and
   `../completion-plan-v5-2026-09-24.md` (the method), both at the **workspace root**, outside this repository
@@ -452,7 +452,7 @@ migration it could express.
 
 Moved verbatim to `docs/runs-and-releases.md` on 2026-09-25 under RW-132: every real run with its numbers
 (the unintended one of 2026-09-14 included), the updater proof, the site's telemetry capture, what has not run
-for real yet, and every npm publish, tag and GitHub Release from 1.0.0 to `desktop-v1.3.0` and CLI 1.3.1. Record new ones
+for real yet, and every npm publish, tag and GitHub Release from 1.0.0 to `desktop-v1.3.1` and CLI 1.3.1. Record new ones
 there. Two rules in it bind the next run and publish: `Get-ProtectionReason` stays table-driven, and the
 publish diff uses `%SystemRoot%\System32\tar.exe`.
 
@@ -471,13 +471,13 @@ means running `../RESTORE.md`, whose first line clones the root's own `project-r
 
 ## Open material unknowns
 
-- **No owner decision is open (2026-09-25).** TASK-017 was approved (D48), applied and verified both ways (DONE-018):
-  the server stamps the triage and the admin's grant is `status` alone. TASK-018 closed without new words (DONE-017),
-  so it needed no GATE 4 of his.
+- **One owner decision is open (2026-09-26): TASK-020** (`PENDING-TASKS.md`) - the desktop window's CSP blocks
+  Clarity, so session replay has never run in a desktop release though its disclosures list it: widen the CSP (and
+  prove the replay masked) or drop Clarity and its rows. TASK-017 (D48, DONE-018) and TASK-018 (DONE-017) are closed.
 - **Still owed by the owner, polled at the start of every session:**
   - **Row 30** - publish the OAuth consent screen (D29), with the field values in the row.
-  - **Row 31** - one real Google sign-in in the installed desktop app (D30): **ready** - 1.3.0 is installed here,
-    moved from 1.2.0 by the updater proof on 2026-09-25.
+  - **Row 31** - one real Google sign-in in the installed desktop app (D30): **ready** - 1.3.1 is installed here,
+    moved from 1.3.0 by the updater proof on 2026-09-26.
   - **Web row 4** (`windowsweep-web/docs/MANUAL-TASKS.md`) - the real Google path on the site in his own browser:
     Google refuses an automated browser after the email step (RW-116, 2026-09-25).
   - **Rows 5 and 13** (the master-links review and the ORCID import) - unchanged.

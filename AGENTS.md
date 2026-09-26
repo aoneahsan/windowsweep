@@ -2,7 +2,8 @@
 
 **Mirror of `CLAUDE.md`** - byte-identical except the H1 names the guide. Change one, change both.
 
-Last Updated: 2026-09-26 (the pause: site parity round 7 CLEAN, RW-117 closed, WH011. Earlier 2026-09-25, the releases: `desktop-v1.3.0` Latest with sign-in live and the updater proved 1.2.0 -> 1.3.0,
+Last Updated: 2026-09-26 (the workspace root backed up on the private site repo's `project-root` branch, D49.
+Earlier the same day, the pause: site parity round 7 CLEAN, RW-117 closed, WH011. Earlier 2026-09-25, the releases: `desktop-v1.3.0` Latest with sign-in live and the updater proved 1.2.0 -> 1.3.0,
 CLI 1.3.1 with the team's maker lines, TASK-019 filed. Earlier the same day: the desktop cascaded to 1.3.0, TASK-013 verified live and closed,
 `SUPABASE_ENABLED` set, the 1.3.0 release kit; earlier the same day the invariants were brought to the v1.3.0 engine,
 `desktop-v1.2.0` Latest, round 12's guard method and the same-session round-report rule; plan v5 is the method.
@@ -20,11 +21,12 @@ launcher. The Windows member of the family with `linux-cleanup` (Bash) and `macl
   the 1.0.0 tracker `docs/features/windowsweep-v1/00-tracker.json` is closed). **Never restate a phase's
   progress here** - a second copy is what this file was trimmed to remove.
 - 🔴 **The planning files live at the WORKSPACE ROOT `D:\work\windowsweep-root\`, one level up, and are
-  OUTSIDE git** (owner decision 2026-09-07; the root was renamed from `windows-cleanup-root` and confirmed
-  final on 2026-09-12): `../remaining-work.md` (the specification of every open item),
+  OUTSIDE this public repo** (owner decision 2026-09-07; the root was renamed from `windows-cleanup-root` and
+  confirmed final on 2026-09-12): `../remaining-work.md` (the specification of every open item),
   `../remaining-work-summary.md` (the one-page view with the percentage - **read the number there**, so it
-  cannot drift in two files), `../what-this-project-consists-of.md` (what exists today). **A `git clone` does
-  not carry them** - another machine needs the whole `windowsweep-root` folder copied. 🔴 **The method is
+  cannot drift in two files), `../what-this-project-consists-of.md` (what exists today). **A `git clone` of this
+  repo does not carry them**: the root is its own repository on the private `windowsweep-web`'s `project-root`
+  branch (D49, 2026-09-26), and `../RESTORE.md` rebuilds the whole folder. 🔴 **The method is
   `../completion-plan-v5-2026-09-24.md`** (v4, v3 and the 2026-09-07 plans are history; every decision they record
   still applies). Its ordering rules are hard for every desktop release - **O2**: the desktop tag lands on a commit where
   `desktop/package.json`, `tauri.conf.json` and `VERSION` all agree; **O3**: no site deploy between that release
@@ -87,7 +89,7 @@ Everything else about where the work stands is in the tracker and `../remaining-
 | Marketing site (P8, **LIVE** since 2026-09-08) | `aoneahsan/windowsweep-web` (private, D9) at `D:\work\windowsweep-root\windowsweep-web`, deployed to Firebase Hosting at `https://windowsweep.aoneahsan.com`. A web **app**: Supabase for the backend (the **same** project as the desktop app - one auth pool), **Firebase for hosting and GA4 only**, Amplitude + Clarity + Sentry with no opt-out, Capacitor wired with **no Android folder** (P8-D3; Android is out of scope, D17). Thirteen routes incl. `/terms` (2026-09-25, the Google consent screen's terms address), `/contact`, `/account` and a minimal `/admin` (D10); sign-in live since 2026-09-25; its story surfaces live in this repo's `docs/story/`. Build gates under `vite/`: `catalogue-keys.ts`, `template-keys.ts`, `release-strings.ts`, `lastmod.ts` (sitemap dates from git), the prerender branch assertions, and a sign-in probe that fails closed once the keys are set. It is the product's **canonical homepage** |
 | Last optimized | 2026-09-17 |
 | Next routine optimization eligible | 2026-10-17 |
-| Guide bytes | 21,405 B (this file, post-edit) |
+| Guide bytes | 21,626 B (this file, post-edit) |
 | Covered subtree | this repo's root pair only; `desktop/` and `windowsweep-web/` keep their own nested guides |
 | Method | status moved to `00-tracker.json`; fleet-copy sections replaced by pointers to `~/.claude/rules/`; every binding mapping, IRON rule and 🔴 invariant kept auto-loaded |
 | Fleet record | `code/docs/tracking/project-context-budget-tracker.json` |

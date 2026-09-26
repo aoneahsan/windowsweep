@@ -1,6 +1,7 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-09-25 (latest: `desktop-v1.3.0` published as Latest and proved by the in-app updater 1.2.0 -> 1.3.0,
+Last Updated: 2026-09-26 (latest: D49 - the workspace root backed up on the private site repo's `project-root`
+branch. Earlier 2026-09-25: `desktop-v1.3.0` published as Latest and proved by the in-app updater 1.2.0 -> 1.3.0,
 CLI 1.3.1 on npm with the team's maker lines, rounds 14 and 15 with D47, session 14's decision table moved to
 `docs/project-history.md`. Earlier the same day: RW-116 and TASK-013 verified as a person and torn down, O6' set, the desktop cascaded to 1.3.0, the open-unknowns section brought to date - TASK-017 and TASK-018 are the two open owner decisions. Earlier: session 17: D25-D43 recorded - the Terms page, sign-in live on the site, the runs index, the desktop sync behaviour, up to four agents; RW-132: the dated session narratives moved verbatim to `docs/project-history.md` and the verified runs and release record to `docs/runs-and-releases.md`, nothing reworded; the stamp this replaces follows)
 Earlier: 2026-09-17 (session 16, the v4 audit: D21-D24, the two unrecorded GATE 4 rounds, the unintended real run of 2026-09-14)
@@ -16,11 +17,12 @@ proved it catches one), the engine diffing EMPTY against `v1.3.1`, `desktop-ci` 
   published 2026-09-25 - sections 0-25, 160 self-test checks, and sign-in with sync live in the desktop app; the
   documentation site and the marketing site follow both. Each release's record: `docs/runs-and-releases.md`.
   What is open: the tracker (the only status), `../remaining-work.md` (the specification) and
-  `../completion-plan-v5-2026-09-24.md` (the method), both at the **workspace root**, outside git.
+  `../completion-plan-v5-2026-09-24.md` (the method), both at the **workspace root**, outside this repository
+  (backed up on the private site repo's `project-root` branch, D49).
 - Distribution: `npx windowsweep`, `npm install -g windowsweep`, or a clone run through `windowsweep.cmd`.
   No other channel (owner decision 2026-09-03).
 - What is open, with evidence and acceptance criteria: `../remaining-work.md` (the **workspace root**
-  `D:\work\windowsweep-root\`, outside this repository since 2026-09-07 - copy the folder, not the clone);
+  `D:\work\windowsweep-root\`, outside this repository since 2026-09-07 - `../RESTORE.md` rebuilds it, D49);
   how it gets done: `../completion-plan-v5-2026-09-24.md`; status:
   `docs/features/windowsweep-completion/00-tracker.json`.
 
@@ -170,6 +172,14 @@ in production and approved", then approved executing plan v5 with custom agents.
   the status changes (cleared on a return to `new`, pinned otherwise), and the admin's column grant narrows to
   `status`. The site stops sending both first, and RW-116's flow 3 is re-run after. A production schema change, so his
   yes came first (the D30/D36 pattern).
+- **D49 - the workspace root is backed up in git** (asked 2026-09-26): **"get this root folder backed up in git
+  properly in existing project repo, in project-root branch or whatever branch we have decided for this purpose in
+  global rules, make sure to initialize claude properly in this root folder and put readme etc, so our context
+  management will be as best and optimized as possible"**. The fleet rule for a root container whose product
+  repository is public puts it on the private `windowsweep-web`: branch `project-root`, remote `o` fetching that
+  branch only, unrelated history, never merged. The `webview2-profile/` caches stay out; `../RESTORE.md` rebuilds
+  the workspace. It supersedes D1's consequence that the root is not a repository; the planning files still never
+  enter this public repository.
 
 ### How the frontend UI mandates map to this product - the declared exemptions
 
@@ -444,14 +454,15 @@ publish diff uses `%SystemRoot%\System32\tar.exe`.
 ## Two traps in this workspace's own layout
 
 🔴 **`remaining-work-summary.md`, `remaining-work.md`, `what-this-project-consists-of.md` and both completion
-plans live at the WORKSPACE ROOT and are outside git** (owner decision, 2026-09-07). Two independent story
+plans live at the WORKSPACE ROOT, outside this repository** (owner decision, 2026-09-07; backed up since 2026-09-26
+on the private site repo's `project-root` branch, D49). Two independent story
 slots reached for a GitHub blob URL to `remaining-work-summary.md` while drafting the README, and every one
 of those URLs **404s for every reader**: `git ls-files` does not list the file, so there is nothing at that
 path on github.com. A link is a promise. When a document needs to point at project status, point at
 `docs/features/windowsweep-completion/00-tracker.json`, which IS tracked.
 
-🔴 **A `git clone` does not carry any of them.** Moving this project to another machine means copying the
-whole `D:\work\windowsweep-root` folder, not cloning the three repositories.
+🔴 **A `git clone` of the three repositories does not carry any of them.** Moving this project to another machine
+means running `../RESTORE.md`, whose first line clones the root's own `project-root` branch (D49).
 
 ## Open material unknowns
 

@@ -2,7 +2,8 @@
 
 The dependency and manifest record for this package. Keep it accurate on every add, removal or upgrade.
 
-Last Updated: 2026-09-26 (the hook line gains `--relative --max-arg-length 8000`, the fleet baseline. Earlier
+Last Updated: 2026-09-26 (TASK-019: the build-time generators became Vite plugins in `desktop/vite/` and their four
+`package.json` scripts left; earlier the same day the hook line gained `--relative --max-arg-length 8000`. Earlier
 2026-09-25, D37: the desktop manifest at latest stable and on the fleet package baseline. Earlier 2026-09-05: the
 desktop app added a SECOND manifest, deliberately isolated from this one)
 
@@ -225,6 +226,7 @@ the crate 2.11.0 -> 2.12.0: one package, version and checksum only, no new depen
 | `desktop/.prettierrc`, `.prettierignore` | The fleet format. Ignored: `design/` (GATE 4 compares the dummy byte for byte), `*.md`, `dist`, `src-tauri`, `public/prepaint.js`, drizzle's `supabase/migrations/meta`. 🔴 The tree was **not** reformatted in one sweep: `yarn format:check` lists 99 files, and the hook formats each the first time a commit touches it |
 | `desktop/.husky/pre-commit`, `desktop/.lintstagedrc.json` | `eslint --fix` + `prettier --write` on staged `src/**/*.{ts,tsx}`; `prettier --write` on `*.{json,md,css}` |
 | `desktop/vitest.config.ts` | Node environment, `src/**/*.test.ts`, and `TZ=America/New_York` - a zone with daylight saving, so the 23- and 25-hour days run |
+| `desktop/vite/*.ts` | The build-time generators and gates, as Vite plugins - never a `scripts/` folder (TASK-019, 2026-09-26; the three `scripts/*.mjs` and the `sync:cli`, `gen:prepaint`, `check:prepaint` and `check:tauri-config` scripts are gone). `prepaint.ts` writes `public/prepaint.js` from `src/lib/axes.json` on every dev start and build; `tauri-config.ts` checks `tauri.conf.json` against `@tauri-apps/cli`'s own schema when a build starts, and stops as BLIND if a planted field goes unreported; `engine-bundle.ts` mirrors the engine into `src-tauri/resources/windowsweep/` and checks the copy; `catalogue-keys.ts` resolves every literal i18n key. Type-checked through `tsconfig.node.json` and linted with the app's rules, `no-console` included |
 
 🔴 **Husky lives in `desktop/`, never in the root `package.json`.** The root is the published npm package, and a root
 `postinstall` would run on every user's `npm i windowsweep`. So `desktop/package.json` carries

@@ -3,7 +3,8 @@ dist/
 .yarn/cache/
 .yarn/install-state.gz
 
-# The bundled engine is COPIED from the CLI by `yarn sync:cli` at build time.
+# The bundled engine is COPIED from the CLI at build time, by the build's engine plugin
+# (vite/engine-bundle.ts).
 # Committing it would create a second copy of the engine that drifts from the one
 # published to npm - the exact thing the one-directional copy exists to prevent.
 src-tauri/resources/

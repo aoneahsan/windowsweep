@@ -67,13 +67,19 @@ jobs:
 
       - run: corepack enable
 
+      # HUSKY=0: desktop/package.json installs the pre-commit hook from its postinstall (D37);
+      # a release runner commits nothing, so the hook would only write git config it never
+      # uses. desktop-ci.yml's install carries the same line.
       - name: Install
         working-directory: desktop
+        env:
+          HUSKY: '0'
         run: yarn install --immutable
 
-      - name: Bundle the engine
-        working-directory: desktop
-        run: yarn sync:cli
+      # No separate step bundles the engine (TASK-019): `tauri-action` runs
+      # `beforeBuildCommand` (`yarn build`) before cargo, and the build's engine plugin
+      # (`desktop/vite/engine-bundle.ts`) mirrors the engine into src-tauri/resources and
+      # stops the build unless the bundle holds the script, the same VERSION and every file.
 
       # 🔴 The app version and the bundled engine version must agree. They are the
       # same product to a person reading an About box, and a mismatch means the

@@ -8,8 +8,8 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "node scripts/gen-prepaint.mjs && vite",
-    "build": "node scripts/gen-prepaint.mjs && node scripts/check-tauri-config.mjs && tsc -b && vite build --logLevel info",
+    "dev": "vite",
+    "build": "tsc -b && vite build --logLevel info",
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "typecheck:clean": "tsc -b --force",
@@ -19,15 +19,11 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "gates": "yarn check:prepaint && yarn typecheck && yarn lint && yarn build && yarn test",
+    "gates": "yarn typecheck && yarn lint && yarn build && yarn test",
     "deps:outdated": "npx -y npm-check-updates",
     "deps:update": "npx -y npm-check-updates -u --reject typescript && yarn install",
     "postinstall": "cd .. && husky desktop/.husky",
-    "sync:cli": "node scripts/sync-cli.mjs",
     "tauri": "tauri",
-    "gen:prepaint": "node scripts/gen-prepaint.mjs",
-    "check:prepaint": "node scripts/gen-prepaint.mjs --check",
-    "check:tauri-config": "node scripts/check-tauri-config.mjs",
     "db:generate": "drizzle-kit generate",
     "db:custom": "drizzle-kit generate --custom",
     "db:check": "drizzle-kit check"

@@ -14,12 +14,38 @@ import globals from 'globals';
  * `defineConfig` is ESLint core's own helper. typescript-eslint deprecated its
  * `tseslint.config()` in its favour, and `extends` inside a config object keeps working.
  */
+
+/* 🔴 `@eslint/js` is BANNED fleet-wide for broken versioning, so the core
+   recommendations are not spread in from it. These are the ones this codebase
+   actually needs; typescript-eslint's type-checked set covers the rest and
+   supersedes several core rules outright. Shared by the app and the build plugins. */
+/** @type {import('eslint').Linter.RulesRecord} */
+const houseRules = {
+  eqeqeq: ['error', 'always', { null: 'ignore' }],
+  'no-var': 'error',
+  'prefer-const': 'error',
+  'no-implicit-coercion': 'error',
+  'no-throw-literal': 'off',
+  '@typescript-eslint/only-throw-error': 'error',
+
+  // 🔴 The house floor: one central logger, never console.
+  'no-console': 'error',
+
+  // Unused code is deleted, not renamed with an underscore. The three
+  // exceptions the rule allows are the argsIgnorePattern below.
+  '@typescript-eslint/no-unused-vars': [
+    'error',
+    { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrors: 'none' },
+  ],
+};
+
 export default defineConfig(
   { ignores: ['dist', 'src-tauri/target', 'design/**', 'public/prepaint.js'] },
   {
-    // 🔴 Type-checked linting covers `src` ONLY. `eslint.config.js` and the build
-    // scripts are not in a tsconfig project, and a type-aware rule loaded against
-    // them fails ESLint outright rather than skipping the file.
+    // 🔴 Type-checked linting covers `src` and the build plugins in `vite/` (both in a
+    // tsconfig project). `eslint.config.js` and the two config files are not type-aware
+    // here: a type-aware rule loaded against a file outside a project fails ESLint
+    // outright rather than skipping the file.
     files: ['src/**/*.{ts,tsx}'],
     extends: [...tseslint.configs.recommendedTypeChecked],
     languageOptions: {
@@ -30,28 +56,21 @@ export default defineConfig(
     plugins: { 'react-hooks': reactHooks },
     rules: {
       ...reactHooks.configs.recommended.rules,
-
-      /* 🔴 `@eslint/js` is BANNED fleet-wide for broken versioning, so the core
-         recommendations are not spread in from it. These are the ones this
-         codebase actually needs; typescript-eslint's type-checked set covers the
-         rest and supersedes several core rules outright. */
-      eqeqeq: ['error', 'always', { null: 'ignore' }],
-      'no-var': 'error',
-      'prefer-const': 'error',
-      'no-implicit-coercion': 'error',
-      'no-throw-literal': 'off',
-      '@typescript-eslint/only-throw-error': 'error',
-
-      // 🔴 The house floor: one central logger, never console.
-      'no-console': 'error',
-
-      // Unused code is deleted, not renamed with an underscore. The three
-      // exceptions the rule allows are the argsIgnorePattern below.
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrors: 'none' },
-      ],
+      ...houseRules,
     },
+  },
+  {
+    // The build-time generators and gates (TASK-019): Node-side, in `tsconfig.node.json`,
+    // so they take the same type-checked set and the same floor - they log through Vite's
+    // logger, never console.
+    files: ['vite/**/*.ts'],
+    extends: [...tseslint.configs.recommendedTypeChecked],
+    languageOptions: {
+      ecmaVersion: 2023,
+      globals: globals.node,
+      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
+    },
+    rules: houseRules,
   },
   {
     // 🔴 The ONE exemption from `no-console`: the project logger itself. Everything
@@ -101,7 +120,7 @@ export default defineConfig(
     },
   },
   {
-    files: ['scripts/**/*.mjs', 'eslint.config.js', 'vite.config.ts', 'vitest.config.ts'],
+    files: ['eslint.config.js', 'vite.config.ts', 'vitest.config.ts'],
     extends: [tseslint.configs.disableTypeChecked],
     languageOptions: { globals: globals.node },
     rules: { 'no-console': 'off' },

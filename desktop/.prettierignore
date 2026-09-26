@@ -5,7 +5,7 @@ public/prepaint.js
 supabase/migrations/meta
 
 # The Rust side is formatted by `cargo fmt`, and its gen/, resources/ and target/ folders are
-# build output (resources/ is the engine `yarn sync:cli` copies in).
+# build output (resources/ is the engine the build's plugin, vite/engine-bundle.ts, mirrors in).
 src-tauri
 
 # The approved click dummy and its inventory are the specification the app is judged against,

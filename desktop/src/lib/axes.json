@@ -1,5 +1,5 @@
 {
-  "_comment": "THE axis registry. One row per appearance axis. Read by src/lib/theme.ts at runtime and by scripts/gen-prepaint.mjs at build time, so the pre-paint script and the theme panel can never disagree about what exists or what its default is. Adding an axis is one row here and nothing else.",
+  "_comment": "THE axis registry. One row per appearance axis. Read by src/lib/theme.ts at runtime and by vite/prepaint.ts at build time, so the pre-paint script and the theme panel can never disagree about what exists or what its default is. Adding an axis is one row here and nothing else.",
   "storageKey": "windowsweep:prefs",
   "axes": [
     {

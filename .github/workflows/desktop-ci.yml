@@ -104,28 +104,29 @@ jobs:
           echo "VITE_SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY" >> "$GITHUB_ENV"
           echo "Supabase build variables exported for the rest of this job"
 
-      # The pre-paint script is GENERATED from src/lib/axes.json. If the two have
-      # drifted, the window would apply a different set of axes before first paint
-      # than the theme panel offers - so this fails the build rather than warning.
-      - name: The pre-paint script matches the axis registry
-        run: yarn check:prepaint
-
-      # tauri.conf.json denies unknown fields, and the rejection happens inside
-      # tauri-build - which needs the MSVC linker, absent on the development
-      # machine. So this file's mistakes were only findable in CI, ten minutes at
-      # a time; three cycles went that way on 2026-09-05. This validates it
-      # against the schema the installed CLI ships, before anything compiles.
-      - name: The Tauri config validates against the installed CLI schema
-        run: yarn check:tauri-config
-
       - name: Typecheck
         run: yarn typecheck
 
       - name: Lint
         run: yarn lint
 
+      # `yarn build` runs the build-time generators and gates as Vite plugins, never a scripts
+      # folder (TASK-019, `desktop/vite/`): public/prepaint.js written from src/lib/axes.json;
+      # tauri.conf.json checked against the installed CLI's schema - still before anything
+      # compiles in Rust, where a config mistake used to surface ten minutes at a time (three
+      # cycles on 2026-09-05); the engine mirrored into the bundle and checked; every literal
+      # catalogue key resolved. Any of them failing stops the build.
       - name: Build the web layer
         run: yarn build
+
+      # The build rewrites public/prepaint.js before anything reads it, so the shipped file
+      # cannot drift from the axis registry. The COMMITTED copy can: an axes.json change
+      # committed without the file it generates. This checkout was clean, so any difference
+      # the build left is exactly that - and the window would otherwise have run a different
+      # set of axes before first paint than the committed file shows a reviewer.
+      - name: The committed pre-paint script matches what the build wrote
+        shell: bash
+        run: git diff --exit-code -- public/prepaint.js
 
       # vitest, the pre-approved classes only (D37): the settings newest-wins rule and
       # calendar days across a clock change. Built first, so a test never judges stale output.
@@ -140,13 +141,10 @@ jobs:
           if [ -n "$hits" ]; then echo "source maps found:"; echo "$hits"; exit 1; fi
           echo "no source maps in dist/"
 
-      - name: Bundle the engine
-        run: yarn sync:cli
-
-      # The bundle step's own success only proves the script ran. tauri-build
-      # resolves `bundle.resources` as a glob and fails LATE, three steps later,
-      # with a message about a glob rather than about a missing tree - so this
-      # asserts the tree has real FILES in it while the cause is still obvious.
+      # The build's engine plugin checks its own copy; this asserts on the ARTEFACT, from
+      # outside the generator. tauri-build resolves `bundle.resources` and fails LATE,
+      # several steps later, with a message about a glob rather than about a missing tree -
+      # so this asserts the tree has real FILES in it while the cause is still obvious.
       - name: The bundled engine has files in it
         shell: bash
         run: |

@@ -3,7 +3,7 @@
 Closed agent follow-ups, moved here from the root `PENDING-TASKS.md` with the date and the commit that closed
 them. Open work lives there; owner-only rows live in `docs/MANUAL-TASKS.md`.
 
-Last updated: 2026-09-25 (DONE-018 - TASK-017, the triage stamps moved to the server. Earlier: DONE-017 - TASK-018, History's zero-count total, closed without new words. Earlier: DONE-016 - TASK-013, the desktop sync, verified live. Earlier 2026-09-17: DONE-013, DONE-014 and DONE-015 - the design-record split, the Report export, and three of the four History and Report gaps)
+Last updated: 2026-09-26 (DONE-019 - TASK-019, the build-time generators became Vite plugins. Earlier 2026-09-25: DONE-018 - TASK-017, the triage stamps moved to the server. Earlier: DONE-017 - TASK-018, History's zero-count total, closed without new words. Earlier: DONE-016 - TASK-013, the desktop sync, verified live. Earlier 2026-09-17: DONE-013, DONE-014 and DONE-015 - the design-record split, the Report export, and three of the four History and Report gaps)
 
 ### DONE-001 - Download and set up the desktop toolchain and dependency trees
 
@@ -530,3 +530,39 @@ both come from one transaction's `now()`).
 
 **Why it was not fixed there.** RW-116 was verification, run by an agent that writes no repository file; the
 fix is a production schema change, which needs the owner's approval first.
+
+### DONE-019 - three build-time generators live in `desktop/scripts/*.mjs`, which the house rules forbid
+
+**Closed 2026-09-26** in the commit that carries this entry, `chore(desktop): TASK-019 - the build-time generators
+become Vite plugins`. The three generators are Vite plugins in `desktop/vite/` beside `catalogue-keys.ts`:
+`prepaint.ts` writes `public/prepaint.js` once the config resolves (the site's own shape), `tauri-config.ts` runs the
+schema walk and the glob rule when a build starts and stops as BLIND unless a planted field is reported, and
+`engine-bundle.ts` mirrors the engine on every dev start and build, then checks the copy. `desktop/scripts/` is gone
+with its four `package.json` scripts, and every caller moved in the same change: `dev`, `build`, `gates`, both
+desktop workflows (CI's three steps now run inside `yarn build`, plus `git diff --exit-code -- public/prepaint.js`;
+the release workflow's "Bundle the engine" step is gone, because `beforeBuildCommand` runs the build before cargo),
+ESLint (which now lints `vite/`), `docs/PACKAGES.md`, the guide pair and `PROJECT-CONTEXT.md`. Parity was measured
+before the old files went - the bundle byte-identical to `sync-cli.mjs`'s (41 files, every SHA-256), `prepaint.js`
+different only in the header line naming its generator, the same two config plants refused with identical messages -
+and eight plants were each watched (the tracker's `P6.task-019`). An unsigned local `tauri build` then produced an
+MSI whose File table matches the published `desktop-v1.3.0` MSI's name for name (41 engine files and the app).
+Evidence: `../gate4-evidence/task019/`. The tag build of `desktop-v1.3.1` (D50) runs the release half on GitHub.
+
+**Found while working on:** D37's desktop half (2026-09-25), measuring `desktop/` for the package baseline.
+**Priority: medium** - nothing is broken, but the folder breaks the fleet's zero-tolerance rule against script
+files (`~/.claude/rules/00-house-rules.md`, "NO SCRIPTS") and has since 2026-09-05 (`5f2bc84`, `4c031d7`).
+
+**The defect.** `desktop/scripts/sync-cli.mjs` copies the engine into the bundle (`yarn sync:cli`, which
+`desktop-release.yml`'s "Bundle the engine" step and every local build call); `gen-prepaint.mjs` writes
+`public/prepaint.js` from `axes.json` (`yarn gen:prepaint`, `yarn check:prepaint`, and the `dev` and `build`
+scripts); `check-tauri-config.mjs` is the config schema check in `build`. No exception is recorded for any of them.
+
+**What to do.** The web repo's answer to the same class: build-time generators are Vite plugins under `vite/`
+(`windowsweep-web` IRON rule 9; the desktop already has `desktop/vite/catalogue-keys.ts`). Move the prepaint
+generator and the config check into `desktop/vite/`, and make the engine sync reachable by the workflow and the
+local build without a script file (a Vite plugin at build start, or a plain `package.json` command). Every caller
+moves in the same change: the `package.json` scripts, both desktop workflows and `docs/PACKAGES.md`. Watch each
+generator fail on a plant before trusting it, as `catalogue-keys.ts` was.
+
+**Why it was not fixed there.** It changes the release workflow's "Bundle the engine" step, which only a tag
+exercises, and D37 was scoped to packages. It belongs with the next desktop release, whose workflow run proves it.

@@ -29,7 +29,7 @@ export interface Axis {
 }
 
 /**
- * 🔴 The rows come from `axes.json`, which `scripts/gen-prepaint.mjs` also reads to
+ * 🔴 The rows come from `axes.json`, which the build's `vite/prepaint.ts` also reads to
  * emit the pre-paint script. One file, two consumers - so the script that runs
  * before React exists and the panel the user opens can never disagree about which
  * axes exist or what each one defaults to.

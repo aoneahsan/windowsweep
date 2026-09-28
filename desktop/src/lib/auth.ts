@@ -14,10 +14,13 @@
  * key whose whole security model is RLS - it is meant to ship in a bundle. The
  * secret key never touches this process.
  *
- * The Rust loopback listener (`oauth_listen_start` / `oauth_listen_await`) is
- * unchanged from the Firebase version: a browser page cannot bind a port, the
- * `state` check happens on the Rust side, and Supabase's PKCE flow needs exactly
- * the same redirect. Only the exchange changed.
+ * The Rust loopback listener (`oauth_listen_start` / `oauth_listen_await`) came
+ * over from the Firebase version: a browser page cannot bind a port, and the
+ * `state` check happens on the Rust side. 🔴 What did NOT carry over is how the
+ * state travels. Firebase's flow put it on Google's own address and Google echoed
+ * it; Supabase keeps its own state with Google and forwards none, so the state has
+ * to ride inside the redirect address itself (`loopbackRedirect`). 1.3.0 and 1.3.1
+ * sent it nowhere, and the listener refused every sign-in at its last step.
  */
 
 import { createClient, type Session, type SupabaseClient } from '@supabase/supabase-js';
@@ -25,6 +28,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { openUrl } from '@tauri-apps/plugin-opener';
 
 import { supabaseConfig } from './config';
+import { loopbackRedirect } from './oauth-redirect';
 import { clearRunLedger } from './sync-local';
 
 export interface AuthUser {
@@ -81,10 +85,11 @@ export async function signIn(): Promise<AuthUser> {
   if (!sb) throw new Error('sign-in is not configured in this build');
 
   // Rust binds 127.0.0.1 on a free port and reports which one, so the redirect
-  // URI is exact rather than a guess at a port that might be taken.
+  // URI is exact rather than a guess at a port that might be taken. The state
+  // goes in the address, the only thing Supabase brings back to the listener.
   const state = crypto.randomUUID();
   const port = await invoke<number>('oauth_listen_start', { state });
-  const redirectTo = `http://127.0.0.1:${String(port)}`;
+  const redirectTo = loopbackRedirect(port, state);
 
   const { data, error } = await sb.auth.signInWithOAuth({
     provider: 'google',

@@ -9,6 +9,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-09-28
+
+No change to what is cleaned, how it is decided, or what is refused: the engine is 1.3.1's, file for file.
+The version moves so the desktop app and the engine it bundles keep one number, and `desktop-v1.3.2` fixes
+the app's Google sign-in.
+
+### Changed
+
+- **The version is 1.3.2** wherever the tool prints it. No section, target, flag or protection changed.
+
 ## [1.3.1] - 2026-09-25
 
 No change to what is cleaned, how it is decided, or what is refused. This release names the team as the

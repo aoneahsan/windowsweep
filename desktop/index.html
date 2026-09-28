@@ -13,17 +13,19 @@
      Generated from src/lib/axes.json - never edited by hand. -->
     <script src="/prepaint.js"></script>
   </head>
-  <body>
-    <!-- 🔴 data-clarity-mask masks this element and every descendant, which is the whole
-     app. The consent notice promises "a recording of this window with every piece of
-     text masked", and Clarity does NOT do that by default - a project ships in
-     Balanced mode, which masks only text it judges sensitive. Nothing in
-     startClarity() configured it either: it loads the tag and nothing else. So the
-     promise lived in the copy and in no code. This attribute keeps it regardless of
-     the dashboard setting, and it is here rather than in the loader because a replay
-     can begin before any module has run. No Clarity project id is in this build yet;
-     the masking is in place before the key arrives, not after. -->
-    <div id="root" data-clarity-mask="true"></div>
+  <!-- 🔴 data-clarity-mask masks this element and every descendant, which is the whole
+   window. The consent notice promises "a recording of this window with every piece of
+   text masked", and Clarity does NOT do that by default - a project ships in Balanced
+   mode, which masks only text it judges sensitive. Nothing in startClarity()
+   configures it either: it loads the tag and nothing else. This attribute keeps the
+   promise regardless of the dashboard setting, and it is here rather than in the
+   loader because a replay can begin before any module has run.
+   🔴 ON <body>, NEVER ON #root. React Aria renders every dialog, popover and tooltip
+   into a portal appended to <body>, outside #root - the Theme panel, the removal
+   confirmation, the file-field help. Until 1.3.2 the attribute sat on #root, so those
+   words reached a replay unmasked. -->
+  <body data-clarity-mask="true">
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

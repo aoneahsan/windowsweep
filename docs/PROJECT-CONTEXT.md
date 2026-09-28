@@ -1,6 +1,6 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-09-26 (latest: D52 - TASK-020 widens the desktop CSP for Clarity. Earlier the same day: `desktop-v1.3.1` released and proved under D50 - the current-status line. Earlier the same day: D50 - `desktop-v1.3.1` this session - and D51 - the stray `runs$RUNID` folder deleted; TASK-019's generators became Vite plugins. Earlier the same day: D49 - the workspace root backed up on the private site repo's `project-root`
+Last Updated: 2026-09-28 (latest: D53 - desktop-v1.3.2 and CLI 1.3.2: the desktop sign-in fixed (DONE-021), TASK-020 (DONE-020), TASK-022 (DONE-022), TASK-023 filed; the D28 line corrected. Earlier 2026-09-26: D52 - TASK-020 widens the desktop CSP for Clarity. Earlier the same day: `desktop-v1.3.1` released and proved under D50 - the current-status line. Earlier the same day: D50 - `desktop-v1.3.1` this session - and D51 - the stray `runs$RUNID` folder deleted; TASK-019's generators became Vite plugins. Earlier the same day: D49 - the workspace root backed up on the private site repo's `project-root`
 branch. Earlier 2026-09-25: `desktop-v1.3.0` published as Latest and proved by the in-app updater 1.2.0 -> 1.3.0,
 CLI 1.3.1 on npm with the team's maker lines, rounds 14 and 15 with D47, session 14's decision table moved to
 `docs/project-history.md`. Earlier the same day: RW-116 and TASK-013 verified as a person and torn down, O6' set, the desktop cascaded to 1.3.0, the open-unknowns section brought to date - TASK-017 and TASK-018 are the two open owner decisions. Earlier: session 17: D25-D43 recorded - the Terms page, sign-in live on the site, the runs index, the desktop sync behaviour, up to four agents; RW-132: the dated session narratives moved verbatim to `docs/project-history.md` and the verified runs and release record to `docs/runs-and-releases.md`, nothing reworded; the stamp this replaces follows)
@@ -187,6 +187,16 @@ in production and approved", then approved executing plan v5 with custom agents.
   its three files were listed with their SHA-256 in `../gate4-evidence/stray-runs-RUNID/listing.txt` first.
 - **D52 - TASK-020 widens the desktop CSP for Clarity** (asked 2026-09-26): **"Widen the CSP (Recommended)"** - its
   documented hosts and Tag Manager's pixel, the replay proved masked on the wire; it ships in the next desktop release.
+
+### Session 19 decision (2026-09-28) - the sign-in fix and 1.3.2
+
+- **D53 - "release new version now"** (2026-09-28, after row 31 failed on the installed 1.3.1), verbatim: *"i tested,
+  "the sign-in reply did not match the request that started it" still getting this on sign, release new version now
+  ... plan and fix the auth issue in desktop app, and install up to date app in this system once done so i can test
+  again, and plan and finish all remaining work fully and properly now please"*. He approved the plan that followed:
+  `desktop-v1.3.2` with the sign-in fix (DONE-021), TASK-020 (DONE-020) and the run-folder fix (DONE-022), installed
+  here by the updater. Because `desktop-release.yml` refuses a desktop version that differs from `VERSION` (one number
+  in the About box), the engine went out as **CLI 1.3.2** too - 1.3.1's engine, file for file.
 
 ### How the frontend UI mandates map to this product - the declared exemptions
 
@@ -397,7 +407,11 @@ migration it could express.
 - **Auth URLs, 2026-09-24 (D28):** `site_url` was `http://localhost:3000` and `uri_allow_list` was empty; set
   over the Management API (`PATCH /v1/projects/nlmetjyytgwaxcliusuo/config/auth`, the two fields only) to
   `https://windowsweep.aoneahsan.com` and `https://windowsweep.aoneahsan.com/**,http://127.0.0.1:*`, and read
-  back. The desktop's loopback return is the `127.0.0.1:*` entry.
+  back. The desktop's loopback return is the `127.0.0.1:*` entry. *(Corrected 2026-09-28: Supabase Auth v2.197.0
+  accepts ANY loopback redirect by itself - `IsRedirectURLValid` returns `ip.IsLoopback()` for an IP host (RFC 8252) -
+  so the entry is a fallback, not the gate; read from its source and proved on `auth.flow_state.referrer`, where a
+  planted foreign host fell back to the site URL. The same source shows why the desktop needs its state INSIDE
+  `redirect_to`: the final redirect keeps that address's query and adds only `code` or `error` (DONE-021).)*
 - **Index, 2026-09-25 (D36):** `runs_user_id_started_at_idx` on `runs (user_id, started_at desc)`, migration
   `20260924160739`, pushed through the session pooler (the direct IPv6 host timed out mid-authentication) and
   read back from `pg_indexes` and `supabase_migrations.schema_migrations`; `runs` held 0 rows, and `auth.users`
@@ -454,7 +468,7 @@ migration it could express.
 
 Moved verbatim to `docs/runs-and-releases.md` on 2026-09-25 under RW-132: every real run with its numbers
 (the unintended one of 2026-09-14 included), the updater proof, the site's telemetry capture, what has not run
-for real yet, and every npm publish, tag and GitHub Release from 1.0.0 to `desktop-v1.3.1` and CLI 1.3.1. Record new ones
+for real yet, and every npm publish, tag and GitHub Release from 1.0.0 to `desktop-v1.3.2` and CLI 1.3.2. Record new ones
 there. Two rules in it bind the next run and publish: `Get-ProtectionReason` stays table-driven, and the
 publish diff uses `%SystemRoot%\System32\tar.exe`.
 
@@ -473,12 +487,13 @@ means running `../RESTORE.md`, whose first line clones the root's own `project-r
 
 ## Open material unknowns
 
-- **No owner decision is open (2026-09-26).** TASK-020's fix is chosen (D52) and waits for the next desktop release;
-  TASK-017 (D48, DONE-018) and TASK-018 (DONE-017) are closed.
+- **No owner decision is open (2026-09-28).** D53 is carried out: `desktop-v1.3.2` with TASK-020 (DONE-020), the
+  sign-in fix (DONE-021) and the run-folder fix (DONE-022). TASK-023 (a development build reports its analytics too)
+  is filed, low, with a recommended shape and no decision needed to keep it open.
 - **Still owed by the owner, polled at the start of every session:**
   - **Row 30** - publish the OAuth consent screen (D29), with the field values in the row.
-  - **Row 31** - one real Google sign-in in the installed desktop app (D30): **ready** - 1.3.1 is installed here,
-    moved from 1.3.0 by the updater proof on 2026-09-26.
+  - **Row 31** - one real Google sign-in in the installed desktop app (D30): **ready on 1.3.2** - the first version
+    whose sign-in can complete (1.3.0 and 1.3.1 refused every one at the last step, DONE-021).
   - **Web row 4** (`windowsweep-web/docs/MANUAL-TASKS.md`) - the real Google path on the site in his own browser:
     Google refuses an automated browser after the email step (RW-116, 2026-09-25).
   - **Rows 5 and 13** (the master-links review and the ORCID import) - unchanged.

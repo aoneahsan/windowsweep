@@ -3,7 +3,7 @@
 Closed agent follow-ups, moved here from the root `PENDING-TASKS.md` with the date and the commit that closed
 them. Open work lives there; owner-only rows live in `docs/MANUAL-TASKS.md`.
 
-Last updated: 2026-09-26 (latest: DONE-001 to DONE-012 moved verbatim to `DONE-TASKS-001-012.md` at this file's 500-line ceiling, and DONE-019 gained its tag-run proof. Earlier the same day: DONE-019 - TASK-019, the build-time generators became Vite plugins. Earlier 2026-09-25: DONE-018 - TASK-017, the triage stamps moved to the server. Earlier: DONE-017 - TASK-018, History's zero-count total, closed without new words. Earlier: DONE-016 - TASK-013, the desktop sync, verified live. Earlier 2026-09-17: DONE-013, DONE-014 and DONE-015 - the design-record split, the Report export, and three of the four History and Report gaps)
+Last updated: 2026-09-28 (latest: DONE-020 (TASK-020, the window's CSP), DONE-021 (the desktop sign-in) and DONE-022 (empty run folders), all closed with desktop-v1.3.2. Earlier 2026-09-26: DONE-001 to DONE-012 moved verbatim to `DONE-TASKS-001-012.md` at this file's 500-line ceiling, and DONE-019 gained its tag-run proof. Earlier the same day: DONE-019 - TASK-019, the build-time generators became Vite plugins. Earlier 2026-09-25: DONE-018 - TASK-017, the triage stamps moved to the server. Earlier: DONE-017 - TASK-018, History's zero-count total, closed without new words. Earlier: DONE-016 - TASK-013, the desktop sync, verified live. Earlier 2026-09-17: DONE-013, DONE-014 and DONE-015 - the design-record split, the Report export, and three of the four History and Report gaps)
 
 **DONE-001 to DONE-012** moved verbatim to [`DONE-TASKS-001-012.md`](DONE-TASKS-001-012.md) on 2026-09-26, when
 this file passed its 500-line ceiling (573 lines). Their IDs, order and words are unchanged; a new entry is still
@@ -183,3 +183,81 @@ generator fail on a plant before trusting it, as `catalogue-keys.ts` was.
 
 **Why it was not fixed there.** It changes the release workflow's "Bundle the engine" step, which only a tag
 exercises, and D37 was scoped to packages. It belongs with the next desktop release, whose workflow run proves it.
+
+### DONE-020 - the desktop window's CSP blocks Clarity, so session replay has never run in a desktop release
+
+**Closed 2026-09-28** with `desktop-v1.3.2` (D53), in `6d232e5` and `c530312`. The window's CSP now admits the
+disclosed services' documented hosts, mirroring the live site's proven set: `script-src` `https://*.clarity.ms`;
+`img-src` the GA4, Tag Manager and Clarity hosts and `c.bing.com`; `connect-src` the regional GA4 hosts, Tag Manager,
+`c.bing.com` and `https://*.ingest.us.sentry.io` - the desktop DSN's own host, which `*.ingest.sentry.io` never
+matched, so **every crash report was refused too** (proved on the installed 1.3.1: `connect-src` blocked each envelope,
+0 delivered). Two gaps closed with it: `data-clarity-mask` moved from `#root` to `<body>`, because React Aria portals
+every dialog, popover and tooltip outside `#root`; and Amplitude's remote-config fetch (six refusals a boot in every
+release) is turned off in code, not admitted, because that dashboard config can switch autocapture on. Proved, all in
+`../gate4-evidence/`: `task020/` (the replay under `tauri dev` with both portals open - 0 readable text nodes, two plants
+failing; the CSP on a production-protocol debug build - `tauri dev` applies none - 0 violations, Clarity collect 204,
+Sentry 200), round 18, and `updater-1.3.2/` (the installed 1.3.2's first boot: Clarity's script 200 and collect 204 ×3
+with 0 readable text nodes, GA4 and Amplitude `app_version 1.3.2`, Sentry 200, 0 violations, 0 personal data). One edge
+is left, recorded rather than admitted: when the window unloads while a GA4 hit is in flight, `gtag` re-sends it to
+`www.google.com`, which neither this policy nor the site's allows - at most one lost event on close.
+
+**Found while working on:** the `desktop-v1.3.1` release (D50, tracker `P6.release-1.3.1`) - its first-boot beacons
+(`../gate4-evidence/updater-1.3.1/beacons.log`, 2026-09-26). **Priority: high** - a disclosure the window does not keep.
+**The owner chose (a) - D52, 2026-09-26: "Widen the CSP (Recommended)".** It ships in the next desktop release;
+when to cut that release is asked separately.
+
+**The defect.** `desktop/src-tauri/tauri.conf.json`'s CSP has `script-src 'self' https://www.googletagmanager.com
+https://www.clarity.ms` and `img-src 'self' data: blob:`. Clarity's loader (`www.clarity.ms/tag/...`) answers 200, but
+the script it loads (`scripts.clarity.ms/0.8.70/clarity.js`) and its pixel (`c.clarity.ms/c.gif`) are refused, so
+Clarity never starts - while Settings › Privacy (and the first-run notice) list *Session replay: This window, with all
+text masked* as on. The 1.3.0 beacons (2026-09-25) saw the same two requests and did not read their outcome, so every
+release since the telemetry ids landed (`desktop-v1.2.0`) is affected. The same `img-src` would also refuse Tag
+Manager's sampled `/td` image pixel, which the site's policy refused until web `e01bf4f`.
+
+**What to do - (a), chosen by D52.** (a) Widen the CSP to Clarity's documented hosts (`script-src
+https://*.clarity.ms`; `img-src https://*.clarity.ms https://*.googletagmanager.com`), then prove on the wire that a
+replay starts and that every text node reaches it masked - the tab's own promise; or (b) remove Clarity from the
+desktop build and its row from Settings › Privacy and the first-run notice - dummy first, the words through the story
+pipeline. Either way the disclosures describe what the window does, and the change ships in the next desktop release
+with its GATE 4 round (the Privacy tab in scope) and the watch-only beacons.
+
+**Why it was not fixed there.** The CSP is compiled into the binary, so either fix is a new desktop release; and (a)
+starts a session recording that no desktop user has yet been subject to, while (b) changes an owner decision
+(2026-09-07: Clarity with text masked, no opt-out) - both are the owner's to choose.
+
+### DONE-021 - the desktop app's Google sign-in never completed: its state travelled nowhere
+
+**Found while working on:** row 31 - the owner's first real desktop sign-in, on the installed 1.3.1 (2026-09-26 and
+again 2026-09-28): *"the sign-in reply did not match the request that started it"*. **Closed 2026-09-28** with
+`desktop-v1.3.2` (D53), in `6d232e5`.
+
+**The defect.** `desktop/src/lib/auth.ts` made a `state` and gave it to the Rust loopback listener, but sent it nowhere:
+the redirect was `http://127.0.0.1:<port>` alone. Supabase keeps its own `state` with Google and forwards none, so every
+reply reached the listener without one and `oauth.rs` refused it - in every release since the move from Firebase
+(`62a3c5b`, 2026-09-05), whose flow had carried the state on Google's own address. `auth.flow_state` held the owner's
+three attempts (1.3.0 twice, 1.3.1 once): each PKCE, each with a code issued and none exchanged - Google and Supabase
+had both succeeded. No earlier check could see it: the signed-in rounds injected sessions, and Google refuses an
+automated browser after the email step.
+
+**The fix.** The state rides inside the redirect address (`desktop/src/lib/oauth-redirect.ts`,
+`http://127.0.0.1:<port>?state=<uuid>`): Supabase Auth v2.197.0 accepts any loopback redirect and keeps `redirect_to`'s
+query when it adds `code` or `error` (read from its source; a probe's `flow_state.referrer` stored intact, a planted
+foreign host fell back to the site URL). `oauth.rs` gained a pure `classify()`: a request without this sign-in's state
+is answered 404 and the wait goes on, so a stray request (a favicon, a stale tab) can neither pass the check nor end the
+sign-in; the wait moved to the blocking pool; "Signed in." shows only beside a code. Tests watched failing on the 1.3.1
+form and on two listener plants. Proved live under `tauri dev` twice (`../gate4-evidence/signin-1.3.2/`, round 18): the
+app's own redirect stored as the referrer, strays 404, a forged matching reply reaching the PKCE exchange, a refusal
+named. **The last proof is the owner's:** row 31 on the installed 1.3.2.
+
+### DONE-022 - every launch left one or two empty run folders
+
+**Found while working on:** the 1.3.2 proofs (`../gate4-evidence/task020/`), 2026-09-28. **Closed 2026-09-28** with
+`desktop-v1.3.2`, in `c530312`.
+
+**The defect.** `run_clean` creates a run folder for every engine call, and the catalogue load at every boot
+(`--list --json`) writes nothing into it: 273 of 375 run folders on the build machine were empty. **The fix.** A
+non-elevated call that left its folder empty removes it (`remove_dir`, which refuses anything holding a file; an
+elevated run is exempt, because its parent exits before the elevated window writes into that folder), and empty folders
+a day old are swept once at startup, off the startup path. The `rundir.rs` test was watched failing on a `remove_dir_all`
+plant. Proved on the owner's own app data in round 18: the 271 empty day-old folders went, all 102 non-empty ones stayed
+byte-identical, and no catalogue load left a folder.

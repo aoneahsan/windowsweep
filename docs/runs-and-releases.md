@@ -89,6 +89,26 @@ replay has never run in a desktop release - the 1.3.0 run above saw the same two
 outcome (TASK-020). The beacons' first run failed on its own instrument (it read `version_name`, a field amplitude-ts
 does not send); it is kept, and the corrected run passed.
 
+### 2026-09-28 - the in-app updater proved 1.3.1 -> 1.3.2 on this machine, and the first boot with the replay running
+
+Evidence in `../gate4-evidence/updater-1.3.2/`, the 1.3.1 proof's method (isolated `WEBVIEW2_USER_DATA_FOLDER`, the
+watch-only IPC recorder, one press by exact text). The installed 1.3.1 drew *"Version 1.3.2 is ready"*; one press of
+*"Install and restart"* at 12:19:18.937Z; the app handed over to `windowsweep-1.3.2-installer.exe /P /UPDATE /R` at
++5.7 s, HKCU (`Get-ItemProperty`) read **1.3.2 at +6.7 s**, and the relaunched window was up on the isolated profile at
++7.4 s. The installed exe's `ProductVersion` is 1.3.2, its engine VERSION 1.3.2 in 41 files with the team line; every
+engine vector recorded was `--list --json`. **This is the install the owner's row 31 runs on.**
+
+The first boot of the installed 1.3.2, signed out, nothing pressed: `www.google-analytics.com` 1 (`screen.view`, 204,
+`ep.app_version=1.3.2`), `api2.amplitude.com` 3 (200, `app_version 1.3.2`), `www.googletagmanager.com` 1 (200),
+`www.clarity.ms` 1 and **`scripts.clarity.ms` 1 (200) and `i.clarity.ms/collect` 3 (204)** - the first desktop replay
+ever, with 39 text-node values under `<body>` (36 masked, 3 blank) and **0 readable** - and the DSN's Sentry host 1
+(200, release 1.3.2). **CSP violations 0; undisclosed hosts 0; personal-data matches 0; no `sr-client-cfg` request.**
+The owner's `EBWebView` read 1,373 files and the same newest write before and after every mode. The run folders held
+at 129: the one new folder is the 1.3.1 boot's catalogue load before the update (the fix is new in 1.3.2), and the
+relaunched 1.3.2 added none. The same session's proofs before the tag - the sign-in leg, the replay mask with portals,
+the CSP on a production-protocol build and the 1.3.1 baseline where every crash report was refused - are in
+`../gate4-evidence/signin-1.3.2/` and `../gate4-evidence/task020/` (DONE-020, DONE-021).
+
 ### 2026-09-25 - the desktop app's account deletion, exercised live once (RW-134)
 
 `../site-evidence/rw134/`. A throwaway plain user (desk3), seeded with one row each in `user_settings`, `runs` and
@@ -231,5 +251,26 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
   name the 1.3.0 MSI's. It bundles the **1.3.1** engine, TASK-018, TASK-019, D37's desktop half, round 16's fixes, and
   the version from the manifest. The site and the docs followed before any other site deploy (O3'), and the updater
   proof above ran the same day.
+- 2026-09-28T11:45:07Z: `windowsweep@1.3.2` published to npm by `aoneahsan` (46 files, 119.8 kB packed, 401.7 kB
+  unpacked, shasum `24f4c2df…1d6a`), packed from a clean worktree of `c530312` with `VERSION` written LF. The
+  gate ran in full: the registry at 1.3.1; the content-regression diff against the published 1.3.1 tarball
+  (`%SystemRoot%\System32\tar.exe`) - 46 files, none lost or added, the five cascade files changed and
+  `modules/runner.ps1` by four line endings only (the 1.3.1 tarball had carried four LF-only lines from its working
+  copy; the fresh checkout is CRLF throughout, per `.gitattributes`); a secret sweep with a caught plant; a
+  smoke-install (`--version` 1.3.2, `--list --json` 26 sections, `--self-test` 160); then the registry's tarball
+  **byte-identical** to the candidate and `--self-test` 160 again. **The engine is 1.3.1's, file for file** - the
+  version moves only so the desktop and `VERSION` keep one number (D53). Annotated tag `v1.3.2` on `c530312`;
+  GitHub Release created `--latest=false` at 11:45:56Z, with `desktop-v1.3.1` read back as still Latest.
+- 2026-09-28T12:06:59Z: **`desktop-v1.3.2`** published on GitHub Releases, created `--latest` (IRON rule 13), on
+  `c530312` - the commit GATE 4 round 18 blessed. The kit's preflight passed against it twice (71 checks). The
+  `desktop-release` workflow (run 36418772799) printed `app=1.3.2 engine=1.3.2 tauri=1.3.2`, *"Google sign-in is
+  enabled on the project"*, *"Supabase build variables exported for the rest of this job"* and `[engine-bundle] the
+  1.3.2 engine: 41 files`. Six assets plus `SHA256SUMS.txt`: `windowsweep_1.3.2_x64-setup.exe` (2,633,642 B, sha256
+  `82a32ee0…ce61`), `windowsweep_1.3.2_x64_en-US.msi` (3,366,912 B, sha256 `2635d6c7…366f`) - both recomputed
+  locally and equal - a `.sig` for each, and `latest.json` (1.3.2, its NSIS entry signed). The MSI's 42 files name
+  for name the 1.3.1 MSI's. It carries the sign-in fix (DONE-021), TASK-020 (DONE-020), no Amplitude remote config and
+  TASK-022 (DONE-022). The updater proof above ran within the quarter hour; the site (web `197cbeb`, `b38ed14`,
+  render-checked, deployed, 76 of 76 served files equal to the build) and the docs (`4aafc01`, Pages run
+  36421121161, the live site equal to its artifact, 209 of 209 files) followed with no other site deploy between (O3').
 
-Last Updated: 2026-09-26 (`desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)
+Last Updated: 2026-09-28 (CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)

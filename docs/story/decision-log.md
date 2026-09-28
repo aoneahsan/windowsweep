@@ -1108,3 +1108,22 @@ model's refusals) and the product's own behaviour; no first person, no maker nam
 The entry of 2026-09-13 above says C-091's label "stays open" until the 1.3.0 cascade. It was resolved on
 2026-09-24: the approved engine label is kept, and `modules/runner.ps1:190` records why beside the slot it is
 about. `run-state.json` has carried the resolution since then; this line brings the log into agreement with it.
+
+## 2026-09-28 - two approved claims falsified by the 1.3.2 proofs, corrected in place
+
+The desktop proofs for `desktop-v1.3.2` (`../gate4-evidence/task020/`, `signin-1.3.2/`) falsified two shipped release
+facts, so every surface carrying them was corrected the same day - the Bible's rule that an approved claim holds only
+until it is falsified:
+
+- **`docs/desktop.md`** (and its docs-site mirror): *"From 1.2.0 all four are, and the reports are sent from the first
+  launch"* now adds that until 1.3.2 the window's own security policy refused the session replay and the crash
+  reports (DONE-020); *"from 1.3.0 it is on"* now adds that 1.3.0 and 1.3.1 refused every sign-in at its last step, and
+  that it completes from 1.3.2 (DONE-021).
+- **The site's feed entry `desktop130`**: *"The first desktop release you can sign in to"* became *"The first desktop
+  release with sign-in"* plus *"Its sign-in never completed; 1.3.2 fixes that."* - dummy first (`windowsweep-web`
+  amendment 29), then the app.
+- **Still owed:** the portfolio file repeats *"the first release you can sign in to"*; RW-055's refresh (on or after
+  2026-10-02, the file's own rule) corrects it.
+
+No new voice and no new claim: each sentence states a proven fact in the page's existing register, so the condition D12
+sets for a pre-authorised GATE 4 holds (the fact check is the proof itself; no NEEDS DECISION).

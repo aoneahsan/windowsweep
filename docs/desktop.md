@@ -24,7 +24,7 @@ Three answers, because three different things are running.
 
 **The engine sends nothing, ever.** No network calls at all, and a self-test check fails the build if one appears.
 
-**The window sends usage and crash reports, to improve the product for everyone.** There is no switch. The first-run screen is a notice with one **Continue**. Four destinations - product analytics, behaviour analytics, session replay with every piece of text masked, and crash reports with file paths stripped out. In 1.1.0 no destination was configured in the build, so nothing left the machine. From 1.2.0 all four are, and the reports are sent from the first launch.
+**The window sends usage and crash reports, to improve the product for everyone.** There is no switch. The first-run screen is a notice with one **Continue**. Four destinations - product analytics, behaviour analytics, session replay with every piece of text masked, and crash reports with file paths stripped out. In 1.1.0 no destination was configured in the build, so nothing left the machine. From 1.2.0 all four are, and the reports are sent from the first launch - though until 1.3.2 the window's own security policy refused two of them, the session replay and the crash reports, so only the two analytics destinations received anything.
 
 **Two requests run without asking, and neither carries anything this app knows about you.** On every start the app fetches `latest.json` from this repository's releases; on a machine with no WebView2, the installer downloads it from Microsoft.
 
@@ -41,7 +41,7 @@ Optional, Google, and it opens your normal browser rather than a window inside t
 | your email address and display name | the section numbers it ran |
 | a last-seen timestamp | bytes reclaimed, bytes estimated, and an id |
 
-In 1.1.0 and 1.2.0 this was dormant, because Google was not enabled on the backend project; from 1.3.0 it is on.
+In 1.1.0 and 1.2.0 this was dormant, because Google was not enabled on the backend project. From 1.3.0 it is on, but 1.3.0 and 1.3.1 refused every sign-in at its last step; from 1.3.2 it completes.
 
 ## Install it
 
@@ -65,4 +65,4 @@ Each run gets its own folder under `%LOCALAPPDATA%\com.aoneahsan.windowsweep\run
 
 See also: [Safety model](./safety-model.md) · [Admin sections and elevation](./admin-and-elevation.md) · [Sections 0-25](./sections.md)
 
-Last Updated: 2026-09-08
+Last Updated: 2026-09-28

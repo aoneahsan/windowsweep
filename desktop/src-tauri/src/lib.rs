@@ -26,6 +26,13 @@ pub fn run() {
         // The live-run map. `run_clean` puts a run in it and takes it out again;
         // `cancel_run` is the only other thing that touches it.
         .manage(cancel::RunRegistry::default())
+        // The empty run folders earlier versions left, one or two a launch
+        // (TASK-022), swept off the startup path: empty and a day old only.
+        .setup(|app| {
+            let handle = app.handle().clone();
+            tauri::async_runtime::spawn_blocking(move || rundir::prune_stale_runs(&handle));
+            Ok(())
+        })
         // 🔴 ONE `generate_handler!`, holding every command. A second
         // `invoke_handler` call does not merge and does not warn - the later call
         // silently replaces the earlier one, so every command in the first list

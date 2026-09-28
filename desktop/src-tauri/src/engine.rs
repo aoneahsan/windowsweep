@@ -22,7 +22,7 @@ use tauri::{AppHandle, Emitter, Manager, State};
 
 use crate::args::{validate, wants_summary};
 use crate::cancel::{ChildHandle, RunRegistry};
-use crate::rundir::{existing_run_dir, run_dir};
+use crate::rundir::{existing_run_dir, remove_if_empty, run_dir};
 
 /// 🔴 `rename_all = "camelCase"` is LOAD-BEARING, and its absence made every
 /// `run_clean` call fail — the app could not run a cleanup at all.
@@ -252,6 +252,15 @@ pub async fn run_clean(
 
     let _ = pump.join();
     let stdout_bytes = collector.join().unwrap_or_default();
+
+    // 🔴 A call that wrote nothing leaves nothing (TASK-022). The boot's catalogue
+    // load (`--list --json`) writes neither a report nor a log, so every launch left
+    // empty folders behind. Never for an elevated run: its parent exits before the
+    // elevated window writes into this folder, so an empty one there is still
+    // waiting for its report.
+    if !elevated {
+        remove_if_empty(&dir);
+    }
 
     let exit_code = status.code().unwrap_or(-1);
     let stdout = String::from_utf8_lossy(&stdout_bytes).into_owned();

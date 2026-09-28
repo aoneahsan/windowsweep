@@ -12,6 +12,7 @@
 //! name check cannot see.
 
 use std::path::{Path, PathBuf};
+use std::time::{Duration, SystemTime};
 
 use tauri::{AppHandle, Manager};
 
@@ -69,9 +70,100 @@ fn require_existing(dir: PathBuf) -> Result<PathBuf, String> {
     Ok(dir)
 }
 
+/// Remove a run folder if - and only if - it is empty (TASK-022).
+///
+/// `remove_dir` refuses a folder holding anything, so this can never take a report,
+/// a log or a selection file with it: the worst it does is nothing.
+pub fn remove_if_empty(dir: &Path) {
+    let _ = std::fs::remove_dir(dir);
+}
+
+/// 🔴 Clear the empty run folders earlier versions left behind (TASK-022).
+///
+/// Every engine call gets a run folder, and the catalogue load at every boot is one:
+/// `--list --json` writes nothing, so each launch up to 1.3.2 left one or two empty
+/// folders - 273 of 375 on the build machine by 2026-09-28. Only folders untouched for
+/// `older_than` are considered, so one an elevated window is about to write into is
+/// left alone; links are skipped, never followed; and `remove_dir` refuses any folder
+/// that holds anything. Returns how many went.
+pub fn prune_empty_run_dirs(runs: &Path, older_than: Duration) -> usize {
+    let Ok(entries) = std::fs::read_dir(runs) else {
+        return 0;
+    };
+    let now = SystemTime::now();
+    let mut removed = 0;
+    for entry in entries.flatten() {
+        // DirEntry metadata does not traverse a link, so a junction reads as a link
+        // here and is skipped rather than followed.
+        let Ok(meta) = entry.metadata() else {
+            continue;
+        };
+        if !meta.is_dir() {
+            continue;
+        }
+        let old_enough = meta
+            .modified()
+            .ok()
+            .and_then(|m| now.duration_since(m).ok())
+            .is_some_and(|age| age >= older_than);
+        if old_enough && std::fs::remove_dir(entry.path()).is_ok() {
+            removed += 1;
+        }
+    }
+    removed
+}
+
+/// The boot-time sweep over this installation's own run folders: anything empty and
+/// a day old.
+pub fn prune_stale_runs(app: &AppHandle) {
+    if let Ok(base) = local_data_dir(app) {
+        prune_empty_run_dirs(&base.join("runs"), Duration::from_secs(24 * 60 * 60));
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// 🔴 THE CLEANUP TAKES ONLY WHAT IS EMPTY (TASK-022). A folder holding a report,
+    /// a log or a selection file is never removed, however old; an empty one goes
+    /// only once it is old enough. Asserted on a real temporary directory, because
+    /// "removes nothing else" is a claim about the filesystem.
+    #[test]
+    fn the_cleanup_removes_empty_run_folders_and_nothing_else() {
+        let runs = std::env::temp_dir()
+            .join("windowsweep-test-prune")
+            .join("runs");
+        let _ = std::fs::remove_dir_all(runs.parent().expect("a parent"));
+        for d in ["empty-1", "empty-2", "has-report"] {
+            std::fs::create_dir_all(runs.join(d)).expect("test fixture");
+        }
+        std::fs::write(runs.join("has-report").join("report.json"), "{}").expect("test fixture");
+
+        // A threshold nothing has reached yet keeps everything, empty or not.
+        assert_eq!(prune_empty_run_dirs(&runs, Duration::from_secs(3600)), 0);
+        assert!(
+            runs.join("empty-1").is_dir(),
+            "a fresh empty folder is kept"
+        );
+
+        // Old enough: the two empty folders go, the one with a report stays.
+        assert_eq!(prune_empty_run_dirs(&runs, Duration::ZERO), 2);
+        assert!(!runs.join("empty-1").exists() && !runs.join("empty-2").exists());
+        assert!(
+            runs.join("has-report").join("report.json").is_file(),
+            "a folder holding anything is never removed"
+        );
+
+        // The single-folder form: a folder with a file is refused, an empty one goes.
+        remove_if_empty(&runs.join("has-report"));
+        assert!(runs.join("has-report").is_dir());
+        std::fs::create_dir_all(runs.join("empty-3")).expect("test fixture");
+        remove_if_empty(&runs.join("empty-3"));
+        assert!(!runs.join("empty-3").exists());
+
+        let _ = std::fs::remove_dir_all(runs.parent().expect("a parent"));
+    }
 
     /// 🔴 A READ MUST NOT CREATE WHAT IT IS READING (TASK-016 item 3).
     ///

@@ -17,7 +17,8 @@ the app's Google sign-in.
 
 ### Changed
 
-- **The version is 1.3.2** wherever the tool prints it. No section, target, flag or protection changed.
+- **The version is 1.3.2, the desktop app's number.** The app bundles this engine and the two keep one number;
+  the app's 1.3.2 fixes its Google sign-in. No section, target, flag or protection changed.
 
 ## [1.3.1] - 2026-09-25
 

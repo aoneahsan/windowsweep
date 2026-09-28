@@ -180,7 +180,16 @@ async function startAmplitude(apiKey: string): Promise<void> {
   const amplitude = await import('@amplitude/analytics-browser');
   // 🔴 awaited on `.promise`, not on the call - init resolves before its
   // destination plugins attach, and events fired in that window are dropped.
-  await amplitude.init(apiKey, undefined, { appVersion, autocapture: false }).promise;
+  // 🔴 No remote config. The SDK otherwise fetches settings from Amplitude's
+  // dashboard (sr-client-cfg.amplitude.com), which can switch autocapture on - so
+  // what this window collects would change without a release, past the notice.
+  // The window's CSP refused that fetch in every release up to 1.3.2 (six console
+  // errors a boot), so turning it off keeps exactly the behaviour that shipped.
+  await amplitude.init(apiKey, undefined, {
+    appVersion,
+    autocapture: false,
+    remoteConfig: { fetchRemoteConfig: false },
+  }).promise;
   register({
     name: 'amplitude',
     ready: true,

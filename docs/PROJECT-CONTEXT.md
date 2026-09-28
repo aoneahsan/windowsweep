@@ -1,6 +1,6 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-09-28 (latest: D54 - a development build reports no analytics (DONE-023); row 31 closed by the owner's own sign-in and dry-run on 1.3.2; the site's tables and the eighth migration moved verbatim to `PROJECT-CONTEXT-supabase.md` at the 500-line ceiling. Earlier the same day: D53 - desktop-v1.3.2 and CLI 1.3.2: the desktop sign-in fixed (DONE-021), TASK-020 (DONE-020), TASK-022 (DONE-022), TASK-023 filed; the D28 line corrected. Earlier 2026-09-26: D52 - TASK-020 widens the desktop CSP for Clarity. Earlier the same day: `desktop-v1.3.1` released and proved under D50 - the current-status line. Earlier the same day: D50 - `desktop-v1.3.1` this session - and D51 - the stray `runs$RUNID` folder deleted; TASK-019's generators became Vite plugins. Earlier the same day: D49 - the workspace root backed up on the private site repo's `project-root`
+Last Updated: 2026-09-28 (latest: row 30 closed on the owner's word - the consent screen published; web row 4's sign-in proved from the server. Earlier the same day: D54 - a development build reports no analytics (DONE-023); row 31 closed by the owner's own sign-in and dry-run on 1.3.2; the site's tables and the eighth migration moved verbatim to `PROJECT-CONTEXT-supabase.md` at the 500-line ceiling. Earlier the same day: D53 - desktop-v1.3.2 and CLI 1.3.2: the desktop sign-in fixed (DONE-021), TASK-020 (DONE-020), TASK-022 (DONE-022), TASK-023 filed; the D28 line corrected. Earlier 2026-09-26: D52 - TASK-020 widens the desktop CSP for Clarity. Earlier the same day: `desktop-v1.3.1` released and proved under D50 - the current-status line. Earlier the same day: D50 - `desktop-v1.3.1` this session - and D51 - the stray `runs$RUNID` folder deleted; TASK-019's generators became Vite plugins. Earlier the same day: D49 - the workspace root backed up on the private site repo's `project-root`
 branch. Earlier 2026-09-25: `desktop-v1.3.0` published as Latest and proved by the in-app updater 1.2.0 -> 1.3.0,
 CLI 1.3.1 on npm with the team's maker lines, rounds 14 and 15 with D47, session 14's decision table moved to
 `docs/project-history.md`. Earlier the same day: RW-116 and TASK-013 verified as a person and torn down, O6' set, the desktop cascaded to 1.3.0, the open-unknowns section brought to date - TASK-017 and TASK-018 are the two open owner decisions. Earlier: session 17: D25-D43 recorded - the Terms page, sign-in live on the site, the runs index, the desktop sync behaviour, up to four agents; RW-132: the dated session narratives moved verbatim to `docs/project-history.md` and the verified runs and release record to `docs/runs-and-releases.md`, nothing reworded; the stamp this replaces follows)
@@ -408,9 +408,10 @@ means running `../RESTORE.md`, whose first line clones the root's own `project-r
   sign-in fix (DONE-021) and the run-folder fix (DONE-022). D54 is carried out too: a development build reports no
   analytics (DONE-023), and no task is open.
 - **Still owed by the owner, polled at the start of every session:**
-  - **Row 30** - publish the OAuth consent screen (D29), with the field values in the row.
-  - **Web row 4** (`windowsweep-web/docs/MANUAL-TASKS.md`) - the real Google path on the site in his own browser:
-    Google refuses an automated browser after the email step (RW-116, 2026-09-25).
+  - **Web row 4** (`windowsweep-web/docs/MANUAL-TASKS.md`) - the rest of the real Google path on the site, in his own
+    browser (Google refuses an automated one, RW-116). Its sign-in is proved from the server (2026-09-28,
+    `../site-evidence/web-row4/`). The cancelled attempt and the deletion remain, and they need a throwaway account:
+    his own is the site's superadmin and holds the desktop's synced rows.
   - **Rows 5 and 13** (the master-links review and the ORCID import) - unchanged.
   - **Rows 26 and 28** (the weekly task seen in Task Scheduler; a cancelled real run's log compared) - ready
     since `desktop-v1.2.0` shipped.
@@ -422,6 +423,8 @@ means running `../RESTORE.md`, whose first line clones the root's own `project-r
 - ~~**Row 31, one real desktop sign-in (D30).**~~ **CLOSED 2026-09-28**, by the owner on the installed 1.3.2: his
   Google sign-in and one dry-run, read back from the server with no path, drive label, machine name or user name
   in either synced row (`docs/MANUAL-TASKS.md` row 31, `../site-evidence/row31/`).
+- ~~**Row 30, the OAuth consent screen (D29).**~~ **CLOSED 2026-09-28** on the owner's word ("google consent screen
+  is published"). No API reads the publishing status, so no agent probe backs it.
 - ~~**GitHub, not the owner:** the docs certificate.~~ **CLOSED 2026-09-12.** The agent removed and re-added
   the domain under D18; GitHub issued a Let's Encrypt certificate naming the host within the hour
   (`https_certificate.state: approved`, `notBefore` 15:57 UTC), `https_enforced` is on, `http://` returns 301,

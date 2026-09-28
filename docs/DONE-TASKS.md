@@ -3,7 +3,7 @@
 Closed agent follow-ups, moved here from the root `PENDING-TASKS.md` with the date and the commit that closed
 them. Open work lives there; owner-only rows live in `docs/MANUAL-TASKS.md`.
 
-Last updated: 2026-09-28 (latest: DONE-020 (TASK-020, the window's CSP), DONE-021 (the desktop sign-in) and DONE-022 (empty run folders), all closed with desktop-v1.3.2. Earlier 2026-09-26: DONE-001 to DONE-012 moved verbatim to `DONE-TASKS-001-012.md` at this file's 500-line ceiling, and DONE-019 gained its tag-run proof. Earlier the same day: DONE-019 - TASK-019, the build-time generators became Vite plugins. Earlier 2026-09-25: DONE-018 - TASK-017, the triage stamps moved to the server. Earlier: DONE-017 - TASK-018, History's zero-count total, closed without new words. Earlier: DONE-016 - TASK-013, the desktop sync, verified live. Earlier 2026-09-17: DONE-013, DONE-014 and DONE-015 - the design-record split, the Report export, and three of the four History and Report gaps)
+Last updated: 2026-09-28 (latest: DONE-023 - TASK-023, a development build reports no analytics (D54), with no release needed. Earlier the same day: DONE-020 (TASK-020, the window's CSP), DONE-021 (the desktop sign-in) and DONE-022 (empty run folders), all closed with desktop-v1.3.2. Earlier 2026-09-26: DONE-001 to DONE-012 moved verbatim to `DONE-TASKS-001-012.md` at this file's 500-line ceiling, and DONE-019 gained its tag-run proof. Earlier the same day: DONE-019 - TASK-019, the build-time generators became Vite plugins. Earlier 2026-09-25: DONE-018 - TASK-017, the triage stamps moved to the server. Earlier: DONE-017 - TASK-018, History's zero-count total, closed without new words. Earlier: DONE-016 - TASK-013, the desktop sync, verified live. Earlier 2026-09-17: DONE-013, DONE-014 and DONE-015 - the design-record split, the Report export, and three of the four History and Report gaps)
 
 **DONE-001 to DONE-012** moved verbatim to [`DONE-TASKS-001-012.md`](DONE-TASKS-001-012.md) on 2026-09-26, when
 this file passed its 500-line ceiling (573 lines). Their IDs, order and words are unchanged; a new entry is still
@@ -261,3 +261,41 @@ elevated run is exempt, because its parent exits before the elevated window writ
 a day old are swept once at startup, off the startup path. The `rundir.rs` test was watched failing on a `remove_dir_all`
 plant. Proved on the owner's own app data in round 18: the 271 empty day-old folders went, all 102 non-empty ones stayed
 byte-identical, and no catalogue load left a folder.
+
+### DONE-023 - a development build sends its analytics too, and Clarity records one local path there
+
+**Found while working on:** the 1.3.2 proofs (D53, tracker `P6.release-1.3.2`) - proof B under `tauri dev`
+(`../gate4-evidence/task020/`, 2026-09-28). **Priority: low** - development builds only; no installed build is
+affected. **Closed 2026-09-28** (session 20) with option (a), the owner's choice (D54), in the product commit that
+carries this entry.
+
+**The defect.** `startAnalytics` starts every destination whose key is present, with no development gate
+(`desktop/src/lib/analytics.ts`), and the local `desktop/.env` carries the keys - so every `yarn tauri dev` session,
+every GATE 4 round included, reports to the production GA4, Amplitude, Clarity and Sentry projects. Under Vite's dev
+server the page carries `<style data-vite-dev-id="D:/.../app.css">`, and Clarity records that attribute: a local
+path, the developer's, in a replay. A production build has no such attribute, and every text node stays masked in
+both.
+
+**What to do.** Decide how a development build reports: (a) skip `startAnalytics` when `import.meta.env.DEV`, and
+move the GATE 4 steps that watch analytics (a round's isolation check reads Amplitude's storage keys) onto a
+production-protocol build; or (b) keep development reporting and strip the Vite attributes before Clarity starts.
+(a) is the fleet's usual shape. Either way a round's evidence must say which build it watched.
+
+**Why it was not fixed there.** Proof B, the replay-mask proof for TASK-020, ran under `tauri dev` precisely because
+analytics run there (the window's CSP does not apply in development). Changing that mid-release would have moved the
+GATE 4 method for round 18; the data concerned is the developer's own, on the developer's machine.
+
+**The fix.** `startAnalytics` returns before any destination starts when `import.meta.env.DEV` is true, and drops
+its replay queue, so `yarn dev` and every `tauri dev` session report nothing. A production build replaces the flag
+with `false` and drops the branch. **Proved** in `../gate4-evidence/task023/`:
+- The production bundle is byte-identical before and after: 38 files, one digest. The comparison was first seen failing
+  twice, on a doctored hash and on a real one-character code change, and it matched again once that change was
+  restored. So the installed 1.3.2 already runs this code, and no release is needed.
+- Under the Vite dev server, one page load made 8 analytics attempts before the fix: gtag.js, Clarity's tag, one
+  Sentry envelope and five Amplitude batches. The driver paused and failed each one, so none reached a dashboard.
+  After the fix the same load made 0, and `#root` rendered both times.
+- `yarn gates` passed.
+
+Round 18's axis-parity driver already leaves `AMP_*` keys out, so no round driver breaks. From now on a round watches
+analytics only on a production-protocol build or the installed first boot (`../release-kit-1.3.2/README.md` binds the
+next kit).

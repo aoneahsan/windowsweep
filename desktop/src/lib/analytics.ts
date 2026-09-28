@@ -9,7 +9,8 @@
  * 🔴 THERE IS NO CONSENT GATE, since 2026-09-07. The owner removed the opt-out:
  * the product is free, it collects usage data to improve itself, and the first-run
  * screen is a notice rather than a decision. A provider is therefore constructed
- * whenever its KEY is present, and nothing here reads a stored flag.
+ * whenever its KEY is present in a production build (a development build reports
+ * nothing - `startAnalytics`, TASK-023), and nothing here reads a stored flag.
  *
  * 🔴 A missing key still skips its provider silently and never blocks boot. That
  * is a BUILD fact, not a user choice - no key is configured in this build, so
@@ -303,13 +304,27 @@ async function startSentry(dsn: string): Promise<void> {
 /**
  * Start every provider this build has a key for. Safe to call more than once.
  *
- * 🔴 The only condition is the KEY. There is no consent parameter and no stored
- * flag to read - the notice tells the person what is collected and there is no
- * switch, so a gate here would be a control nobody can reach.
+ * 🔴 The KEY and the kind of build are the only conditions. There is no consent
+ * parameter and no stored flag to read - the notice tells the person what is
+ * collected and there is no switch, so a gate here would be a control nobody can
+ * reach.
+ *
+ * 🔴 A DEVELOPMENT BUILD REPORTS NOTHING (TASK-023, D54). `yarn dev` and every
+ * `tauri dev` session - each GATE 4 round included - carry the production keys
+ * from `.env`, so they reported to the production projects, and Clarity recorded
+ * Vite's `data-vite-dev-id` attribute, a local path, in its replay. A production
+ * build replaces `import.meta.env.DEV` with `false` and drops the branch, so the
+ * shipped window is unchanged. Analytics are watched on a production-protocol
+ * build (`yarn tauri build --debug --no-bundle`) and on the installed first boot.
  */
 export async function startAnalytics(keys: AnalyticsKeys, version: string): Promise<void> {
   if (started) return;
   started = true;
+  if (import.meta.env.DEV) {
+    // Nothing will register, so nothing is held for a replay either.
+    queueing = false;
+    return;
+  }
   appVersion = version;
 
   const jobs: Promise<void>[] = [];

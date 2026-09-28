@@ -109,6 +109,18 @@ relaunched 1.3.2 added none. The same session's proofs before the tag - the sign
 the CSP on a production-protocol build and the 1.3.1 baseline where every crash report was refused - are in
 `../gate4-evidence/signin-1.3.2/` and `../gate4-evidence/task020/` (DONE-020, DONE-021).
 
+### 2026-09-28 - the owner's own Google sign-in and one dry-run, on the installed 1.3.2 (row 31)
+
+The first real desktop sign-in to complete. The owner did it in his own browser, on the install the proof above put
+here. Read back from the server afterwards (`../site-evidence/row31/`, read-only, 27 of 27 checks):
+- The sign-in at 13:22:29 UTC completed its exchange: no `auth.flow_state` row was left and one session was made.
+- The window created his `user_settings` row at 13:22:31, holding only the `palette` and `theme` axes.
+- His dry-run at 13:40:20 UTC reached the account with a `newRunId`-shaped id, and its run folder is here. It ran in
+  mode `all`, 11 sections, not elevated, estimated about 2.47 GB, deleted nothing, and took 126.6 s.
+- Neither row holds a path, drive label, machine name or user name: 9 needles, each first seen matching a planted
+  string.
+- The launch and the dry-run left no empty run folder (DONE-022).
+
 ### 2026-09-25 - the desktop app's account deletion, exercised live once (RW-134)
 
 `../site-evidence/rw134/`. A throwaway plain user (desk3), seeded with one row each in `user_settings`, `runs` and
@@ -273,4 +285,4 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
   render-checked, deployed, 76 of 76 served files equal to the build) and the docs (`4aafc01`, Pages run
   36421121161, the live site equal to its artifact, 209 of 209 files) followed with no other site deploy between (O3').
 
-Last Updated: 2026-09-28 (CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)
+Last Updated: 2026-09-28 (the owner's own sign-in and dry-run on the installed 1.3.2, read back from the server - row 31. Earlier the same day: CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)

@@ -1,6 +1,6 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-09-28 (latest: D53 - desktop-v1.3.2 and CLI 1.3.2: the desktop sign-in fixed (DONE-021), TASK-020 (DONE-020), TASK-022 (DONE-022), TASK-023 filed; the D28 line corrected. Earlier 2026-09-26: D52 - TASK-020 widens the desktop CSP for Clarity. Earlier the same day: `desktop-v1.3.1` released and proved under D50 - the current-status line. Earlier the same day: D50 - `desktop-v1.3.1` this session - and D51 - the stray `runs$RUNID` folder deleted; TASK-019's generators became Vite plugins. Earlier the same day: D49 - the workspace root backed up on the private site repo's `project-root`
+Last Updated: 2026-09-28 (latest: D54 - a development build reports no analytics (DONE-023); row 31 closed by the owner's own sign-in and dry-run on 1.3.2; the site's tables and the eighth migration moved verbatim to `PROJECT-CONTEXT-supabase.md` at the 500-line ceiling. Earlier the same day: D53 - desktop-v1.3.2 and CLI 1.3.2: the desktop sign-in fixed (DONE-021), TASK-020 (DONE-020), TASK-022 (DONE-022), TASK-023 filed; the D28 line corrected. Earlier 2026-09-26: D52 - TASK-020 widens the desktop CSP for Clarity. Earlier the same day: `desktop-v1.3.1` released and proved under D50 - the current-status line. Earlier the same day: D50 - `desktop-v1.3.1` this session - and D51 - the stray `runs$RUNID` folder deleted; TASK-019's generators became Vite plugins. Earlier the same day: D49 - the workspace root backed up on the private site repo's `project-root`
 branch. Earlier 2026-09-25: `desktop-v1.3.0` published as Latest and proved by the in-app updater 1.2.0 -> 1.3.0,
 CLI 1.3.1 on npm with the team's maker lines, rounds 14 and 15 with D47, session 14's decision table moved to
 `docs/project-history.md`. Earlier the same day: RW-116 and TASK-013 verified as a person and torn down, O6' set, the desktop cascaded to 1.3.0, the open-unknowns section brought to date - TASK-017 and TASK-018 are the two open owner decisions. Earlier: session 17: D25-D43 recorded - the Terms page, sign-in live on the site, the runs index, the desktop sync behaviour, up to four agents; RW-132: the dated session narratives moved verbatim to `docs/project-history.md` and the verified runs and release record to `docs/runs-and-releases.md`, nothing reworded; the stamp this replaces follows)
@@ -198,6 +198,13 @@ in production and approved", then approved executing plan v5 with custom agents.
   here by the updater. Because `desktop-release.yml` refuses a desktop version that differs from `VERSION` (one number
   in the About box), the engine went out as **CLI 1.3.2** too - 1.3.1's engine, file for file.
 
+### Session 20 decision (2026-09-28) - what a development build reports
+
+- **D54 - TASK-023, option (a)** (asked 2026-09-28): **"Yes, option (a) (Recommended)"**.
+  - A development build starts no analytics: `yarn dev`, every `tauri dev` session and each GATE 4 round.
+  - GA4, Amplitude, Clarity and Sentry are watched on a production-protocol build or on the installed first boot.
+  - The production bundle is byte-identical, so no release carries the change (DONE-023).
+
 ### How the frontend UI mandates map to this product - the declared exemptions
 
 `~/.claude/rules/frontend-ui-standards.md` applies to the desktop app (the CLI has no UI at all). Recorded
@@ -328,102 +335,12 @@ all seven existing ones were at the two-project free-tier limit):
   confirmed throwaway user through the admin API while Google stayed off - email sign-up is not a product
   feature here, it is a test-account mechanism
 
-### The marketing site's tables, applied 2026-09-08
+### The site's tables and the eighth migration - moved to `PROJECT-CONTEXT-supabase.md`
 
-Five forward-only migrations, authored in Drizzle at `desktop/src/db/schema/site.ts` and applied with
-`supabase db push`. The schema's ONE home stays the **desktop** repo (owner decision P8-D2); the site reads
-generated types at `windowsweep-web/src/db/types.ts`, which is **generated, never authored** -
-re-run after every migration by the procedure in `windowsweep-web/docs/runbooks/regenerate-db-types.md`
-(`--project-id` with the account PAT in the environment, into a temporary file first - never `--linked`,
-which the CLI refuses under its cached login, and never a redirect straight into the real file).
-
-- `profiles`, `contact_requests`, `admin_audit`. RLS on all three, 8 policies, 4 triggers, column-scoped
-  grants. `supabase/rollbacks/` exists beside the migrations and is **never applied automatically**.
-- 🔴 **`platform_role` is in NO grant, for any role.** It changes only out of band, by rule. The two fixed
-  admin emails are stamped `superadmin` by the `auth.users` trigger, not by a migration touching the table.
-- 🔴 **The generated types are wider than the grants**, because they come from the *schema*. `Insert`/`Update`
-  expose `platform_role` and `email` as writable; a write to either typechecks and then fails `403 42501`,
-  and the message names the **table** rather than the column, so it reads like a broken policy when the
-  policy is right. The narrowing lives in the site's data layer (`windowsweep-web/PENDING-TASKS.md`
-  TASK-001), and **`.upsert()` is banned on these tables** - PostgREST builds `ON CONFLICT DO UPDATE SET`
-  from every payload key and Postgres checks the privilege at plan time, so a column-scoped UPDATE grant
-  refuses the write even when nothing conflicts.
-- Live constraints the UI must mirror rather than discover: contact requests are rate-limited to **5 per hour
-  per user**, raised as `429` with SQLSTATE `PT429`; `message` is 10-4000 characters and `subject` <= 120,
-  and `NOT NULL` is what makes those CHECKs bite, because a CHECK evaluating to NULL passes.
-- 🔴 **`ALTER DEFAULT PRIVILEGES ... REVOKE EXECUTE ON FUNCTIONS FROM public, anon, authenticated,
-  service_role` has NO EFFECT on this project.** A `pg_default_acl` row granted by `supabase_admin` covers
-  the same `(schema, objtype)` and outranks ours, so functions created afterwards are born with
-  `proacl = NULL`, which is EXECUTE to PUBLIC. Confirmed three ways. The only control that holds is an
-  explicit **per-function** `revoke`, in the same migration that creates the function, and the only proof is
-  that function's own `proacl`. Recorded fleet-wide in `~/.claude/rules-detail/data-fetch-budget.md`.
-- Verified from the catalogues and by live `anon` probes rather than from migration text: `pg_policies` shows
-  all 8 policies with `USING`/`WITH CHECK` intact and none naming `anon`; `has_table_privilege` shows
-  TRUNCATE and MAINTAIN false for all three roles on all five tables; five `anon` calls over PostgREST return
-  `401 42501`, a refusal rather than an empty result that would have passed vacuously against empty tables.
-  Row counts are 0/0/0/0 - the probe run left nothing behind.
-
-### The eighth migration: `delete_my_account()`, applied and proved 2026-09-12
-
-Owner decision D14. `20260912170206_delete_my_account_function.sql`, generated by `yarn db:custom` so the
-`supabase` prefix and the `_journal.json` entry come from drizzle-kit rather than by hand. Drizzle models no
-functions, grants or comments, so `site.ts` was deliberately NOT edited - there is nothing about this
-migration it could express.
-
-- The function is **one statement**: `delete from auth.users where id = auth.uid()`, preceded by a null-uid
-  guard that raises `42501`. 🔴 The guard is the authentication step and it must be inside the body, because
-  the bare delete with a null uid matches zero rows and **succeeds** - PostgREST would answer `204` and a
-  caller who was never signed in would be told their account was deleted.
-- 🔴 Why one statement is enough, read from `pg_constraint` rather than from the schema files: every FK
-  referencing `auth.users` is `confdeltype = 'c'`. In `public` that is `profiles`, `user_settings`, `runs` and
-  `contact_requests`; in `auth` it is all eight internal tables, so the delete takes the sessions with it,
-  which is what makes the account gone rather than merely unreachable.
-- 🔴 What does NOT go, and that is correct: `admin_audit` is not user-owned - it records what an ADMIN did,
-  and its `actor` column deliberately carries no foreign key, as does `contact_requests.handled_by`. An audit
-  trail a person can erase by deleting their own account is not an audit trail.
-- Verified from `pg_proc`, never from the file: `prosecdef` true, `proconfig` = `search_path=""`, owner
-  `postgres`, no argument, returns void, and `proacl = {postgres=X/postgres,authenticated=X/postgres}` -
-  EXECUTE to `authenticated` and nobody else. 🔴 This is the first **reachable** function on the project to
-  carry the per-function revoke: the four earlier ones return `trigger`, which Postgres refuses to invoke
-  directly and PostgREST leaves out of the schema cache, so their hole was latent. This one is exposed at
-  `POST /rest/v1/rpc/delete_my_account` the moment it exists.
-- Proved live on a seeded throwaway user (`aoneahsan.apps.t1+2@gmail.com`, created confirmed through the
-  admin API): the publishable key alone -> `401 42501`; the secret key (`service_role`) -> `403 42501`; the
-  user's own JWT -> **204**, after which `auth.users`, `profiles`, `user_settings`, `runs`,
-  `contact_requests` and `auth.identities` all went **1 -> 0** for that id. The null-uid branch was exercised
-  separately as `postgres`, the only caller that reaches the body. The probe left nothing behind: the RPC
-  under test deleted its own test data.
-- ⚠️ **Stated rather than rounded up:** the `auth.sessions` transition was NOT measured - it read 0 before the
-  sign-in and 0 after the delete, so the session the password grant created was never counted while it
-  existed. The sessions claim rests on the catalogue (`sessions_user_id_fkey` is `confdeltype='c'`), not on a
-  measured row going away.
-- ✅ **Closed 2026-09-13 - was a known consistency gap, never a live hole:** `is_platform_admin()` kept
-  `service_role` EXECUTE, because its migration revoked only `from public, anon` and Supabase's default ACL names
-  `service_role` explicitly, so revoking PUBLIC never removed it. The forward migration
-  `20260912202759_revoke_is_platform_admin_service_role.sql` removed it, and `pg_proc` read back
-  `authenticated=X/postgres` and nothing else beside the owner (`desktop/supabase/README.md`). It stays the
-  cleanest demonstration of why a migration names all four roles. *(Corrected in place 2026-09-25: this line
-  said the gap was still open.)*
-- **Auth URLs, 2026-09-24 (D28):** `site_url` was `http://localhost:3000` and `uri_allow_list` was empty; set
-  over the Management API (`PATCH /v1/projects/nlmetjyytgwaxcliusuo/config/auth`, the two fields only) to
-  `https://windowsweep.aoneahsan.com` and `https://windowsweep.aoneahsan.com/**,http://127.0.0.1:*`, and read
-  back. The desktop's loopback return is the `127.0.0.1:*` entry. *(Corrected 2026-09-28: Supabase Auth v2.197.0
-  accepts ANY loopback redirect by itself - `IsRedirectURLValid` returns `ip.IsLoopback()` for an IP host (RFC 8252) -
-  so the entry is a fallback, not the gate; read from its source and proved on `auth.flow_state.referrer`, where a
-  planted foreign host fell back to the site URL. The same source shows why the desktop needs its state INSIDE
-  `redirect_to`: the final redirect keeps that address's query and adds only `code` or `error` (DONE-021).)*
-- **Index, 2026-09-25 (D36):** `runs_user_id_started_at_idx` on `runs (user_id, started_at desc)`, migration
-  `20260924160739`, pushed through the session pooler (the direct IPv6 host timed out mid-authentication) and
-  read back from `pg_indexes` and `supabase_migrations.schema_migrations`; `runs` held 0 rows, and `auth.users`
-  held 0 users before RW-116 created its three.
-- **Verified as a person, 2026-09-25 (RW-116, TASK-013):** two suites of throwaway identities, made and torn down
-  by the main session - `t1+1`, `t1+del` and `t1+admin` (promoted for its checks only, then demoted and read back,
-  O8) against the live site; `t1+desk1` and `t1+desk2` against a desktop dev build. Every result was re-read from
-  the catalog, and after both teardowns `auth.users` and every user table read 0 again; the triage's two
-  `admin_audit` rows stay, by design. The RLS probes held (another user's rows 200 `[]` to select, delete and
-  update; an insert in their name 403 `42501`). The real Google path cannot be automated - Google refuses the
-  browser after the email step - so it is the owner's (web MANUAL-TASKS row 4). Found on the way: TASK-017.
-  GATE 4 round 13 makes the `t1+desk1` / `t1+desk2` pair once more for its signed-in states and tears it down.
+The five forward-only migrations behind the marketing site's tables (applied 2026-09-08) and the eighth,
+`delete_my_account()` (D14, applied and proved 2026-09-12), with their grants, probes and live checks, are in
+[`PROJECT-CONTEXT-supabase.md`](PROJECT-CONTEXT-supabase.md) - moved there verbatim on 2026-09-28, when this file
+passed its 500-line ceiling (514 lines).
 
 ## Constraints and non-goals
 - Must: honour `--dry-run` in every destructive helper and external command; route every deletion through
@@ -488,12 +405,10 @@ means running `../RESTORE.md`, whose first line clones the root's own `project-r
 ## Open material unknowns
 
 - **No owner decision is open (2026-09-28).** D53 is carried out: `desktop-v1.3.2` with TASK-020 (DONE-020), the
-  sign-in fix (DONE-021) and the run-folder fix (DONE-022). TASK-023 (a development build reports its analytics too)
-  is filed, low, with a recommended shape and no decision needed to keep it open.
+  sign-in fix (DONE-021) and the run-folder fix (DONE-022). D54 is carried out too: a development build reports no
+  analytics (DONE-023), and no task is open.
 - **Still owed by the owner, polled at the start of every session:**
   - **Row 30** - publish the OAuth consent screen (D29), with the field values in the row.
-  - **Row 31** - one real Google sign-in in the installed desktop app (D30): **ready on 1.3.2** - the first version
-    whose sign-in can complete (1.3.0 and 1.3.1 refused every one at the last step, DONE-021).
   - **Web row 4** (`windowsweep-web/docs/MANUAL-TASKS.md`) - the real Google path on the site in his own browser:
     Google refuses an automated browser after the email step (RW-116, 2026-09-25).
   - **Rows 5 and 13** (the master-links review and the ORCID import) - unchanged.
@@ -504,6 +419,9 @@ means running `../RESTORE.md`, whose first line clones the root's own `project-r
 - ~~**Row 15, Google sign-in.**~~ **CLOSED 2026-09-24 (D25):** `external.google: true`. The site signs in since
   2026-09-25; desktop release builds carry the keys from `desktop-v1.3.0` on (`SUPABASE_ENABLED`, set 2026-09-25
   after TASK-013's live verification, O6').
+- ~~**Row 31, one real desktop sign-in (D30).**~~ **CLOSED 2026-09-28**, by the owner on the installed 1.3.2: his
+  Google sign-in and one dry-run, read back from the server with no path, drive label, machine name or user name
+  in either synced row (`docs/MANUAL-TASKS.md` row 31, `../site-evidence/row31/`).
 - ~~**GitHub, not the owner:** the docs certificate.~~ **CLOSED 2026-09-12.** The agent removed and re-added
   the domain under D18; GitHub issued a Let's Encrypt certificate naming the host within the hour
   (`https_certificate.state: approved`, `notBefore` 15:57 UTC), `https_enforced` is on, `http://` returns 301,

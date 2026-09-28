@@ -2,7 +2,9 @@
 
 **Mirror of `CLAUDE.md`** - byte-identical except the H1 names the guide. Change one, change both.
 
-Last Updated: 2026-09-28 (session 19, D53: `desktop-v1.3.2` and CLI 1.3.2 - the desktop sign-in fixed (DONE-021),
+Last Updated: 2026-09-28 (session 20: row 31 closed by the owner's own sign-in and dry-run on the installed 1.3.2;
+TASK-023 closed under D54 - a development build reports no analytics - invariant 5. Earlier the same day, session 19,
+D53: `desktop-v1.3.2` and CLI 1.3.2 - the desktop sign-in fixed (DONE-021),
 TASK-020 and TASK-022 closed, invariants 1, 2, 3, 5 and 10. Earlier 2026-09-26, session 18: `desktop-v1.3.1` released
 and proved; TASK-020 filed. Earlier the same day: the workspace root backed up on the private site repo's `project-root` branch, D49.
 Earlier the same day, the pause: site parity round 7 CLEAN, RW-117 closed, WH011. Earlier 2026-09-25, the releases: `desktop-v1.3.0` Latest with sign-in live and the updater proved 1.2.0 -> 1.3.0,
@@ -68,7 +70,9 @@ Everything else about where the work stands is in the tracker and `../remaining-
    refuses nothing (found 2026-09-26, the tracker's `knownRisks`) - a proof on an installed build presses only its one
    named control and records the IPC with the Network domain. 🔴 **And `tauri dev` applies NO CSP** (Tauri loads
    `devUrl` directly; the header exists only on tauri-protocol assets - found 2026-09-28): a round cannot judge the
-   window's CSP, which is proved on `yarn tauri build --debug --no-bundle` and on the installed first boot.
+   window's CSP, which is proved on `yarn tauri build --debug --no-bundle` and on the installed first boot. 🔴 **Nor
+   does a development build send analytics** (D54, DONE-023): a round that watches GA4, Amplitude, Clarity or Sentry
+   runs on that same build or the installed first boot, and names the build it watched.
 6. 🔴 **A GATE 4 round's report is written and committed in the SAME session as the round**, with every driver's
    stdout teed to its `logs` folder. A round with a driver that did not finish is INCOMPLETE and re-run, never
    judged. Desktop round 11 and site rounds 3 and 5 ran and went unrecorded; round 11 had to be re-run as round 12.
@@ -99,7 +103,7 @@ Everything else about where the work stands is in the tracker and `../remaining-
 | Marketing site (P8, **LIVE** since 2026-09-08) | `aoneahsan/windowsweep-web` (private, D9) at `D:\work\windowsweep-root\windowsweep-web`, deployed to Firebase Hosting at `https://windowsweep.aoneahsan.com`. A web **app**: Supabase for the backend (the **same** project as the desktop app - one auth pool), **Firebase for hosting and GA4 only**, Amplitude + Clarity + Sentry with no opt-out, Capacitor wired with **no Android folder** (P8-D3; Android is out of scope, D17). Thirteen routes incl. `/terms` (2026-09-25, the Google consent screen's terms address), `/contact`, `/account` and a minimal `/admin` (D10); sign-in live since 2026-09-25; its story surfaces live in this repo's `docs/story/`. Build gates under `vite/`: `catalogue-keys.ts`, `template-keys.ts`, `release-strings.ts`, `lastmod.ts` (sitemap dates from git), the prerender branch assertions, and a sign-in probe that fails closed once the keys are set. It is the product's **canonical homepage** |
 | Last optimized | 2026-09-17 |
 | Next routine optimization eligible | 2026-10-17 |
-| Guide bytes | 23,398 B (this file, post-edit) |
+| Guide bytes | 23,809 B (this file, post-edit) |
 | Covered subtree | this repo's root pair only; `desktop/` and `windowsweep-web/` keep their own nested guides |
 | Method | status moved to `00-tracker.json`; fleet-copy sections replaced by pointers to `~/.claude/rules/`; every binding mapping, IRON rule and 🔴 invariant kept auto-loaded |
 | Fleet record | `code/docs/tracking/project-context-budget-tracker.json` |

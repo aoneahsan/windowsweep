@@ -1,6 +1,6 @@
 # WindowSweep product — active guide
 
-**Last Updated:** 2026-10-14
+**Last Updated:** 2026-10-20
 **Context pass:** 2026-10-14; next routine optimization eligible 2026-11-13.
 
 This public repository is the Windows PowerShell cleanup CLI, Node launcher, Tauri desktop app, shared schema, product docs and story records. It is nested inside `../windowsweep-root/`, an independent private Git checkout on `project-root`. The full September guide is preserved at `docs/context/product-guide-2026-09-28.md`; search it for a named invariant rather than loading it in full. The current state and every phase/subtask live in `docs/features/windowsweep-completion/00-tracker.json`. Start with the parent `../remaining-work-summary.md`; read exact rows of `../remaining-work.md` and `../completion-plan-v5-2026-09-24.md` only when working on them. The parent root and website use separate Git histories.
@@ -22,3 +22,9 @@ The click dummy owns desktop layout and words; amend it first and compare at 144
 ## Git and context
 
 This repo's owner primary is `main` and remote `o`. Fetch and merge before editing and immediately before commit/push; never force-push or merge parent `project-root` here. Public docs and private website push to their own `main` branches. Keep root plans and evidence in the private parent checkout. The root's `RESTORE.md` recreates all four repositories. The 30-day context cadence is recorded in the workspace tracker; a feature/release work item may still be due before the next context pass.
+
+## Stop-work Git gate
+
+<!-- RULE:stop-work-git-gate v2026-10-20 -->
+
+Before stopping, commit every legitimate change and work-progress checkpoint in this repository and each independent nested repository, fetch and merge the designated upstream, push the documented working branch, then verify an empty worktree and `0 0` ahead/behind. Never stash, discard, reset, rebase, or force-push. If synchronization is blocked, report the exact repository, branch, blocker, and next action instead of calling the work complete. The full workflow remains authoritative in `~/.claude/rules/git-workflow.md`.

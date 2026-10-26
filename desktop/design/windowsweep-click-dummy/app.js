@@ -6,7 +6,7 @@
    late is a REFLOW.
 
    🔴 This file OWNS every piece of shared chrome it drives - the rail, the theme
-   panel and its toggle, the toast stack, the cursor layer. Nothing is hand-copied
+   panel and its toggle, the toast stack. Nothing is hand-copied
    into a page (click-dummy pitfall 4: four silent defects in one dummy, of which
    the owner saw one). Zero innerHTML; createElement + textContent only.
    ============================================================================ */
@@ -84,8 +84,6 @@
       values: [ {v:'grotesque',t:'Archivo'}, {v:'native',t:'Segoe'} ], preview: 'font' },
     { key: 'surfaceStyle', attr: 'data-surface-style', label: 'Panel background', def: 'solid',
       values: [ {v:'solid',t:'Solid'}, {v:'translucent',t:'Translucent'} ], preview: 'surface' },
-    { key: 'cursor',       attr: 'data-cursor',        label: 'Custom cursor',   def: 'custom',
-      values: [ {v:'custom',t:'On'}, {v:'off',t:'Off'} ], preview: 'cursor' },
     { key: 'motion',       attr: 'data-motion',        label: 'Motion',          def: 'system',
       values: [ {v:'system',t:'System'}, {v:'full',t:'Full'}, {v:'reduced',t:'Reduced'} ], preview: 'motion' },
     // 🔴 the ONE axis that defaults off - a product that beeps unasked gets muted
@@ -404,12 +402,6 @@
         : 'var(--c-ink-3)';
       s2.style.borderColor = 'transparent';
       p.appendChild(s2);
-    } else if (axis.preview === 'cursor') {
-      var c = el('span', 'prev-radius');
-      c.style.borderRadius = '999px';
-      c.style.width = '14px'; c.style.height = '14px';
-      c.style.opacity = v === 'off' ? '.3' : '1';
-      p.appendChild(c);
     } else if (axis.preview === 'motion') {
       p.appendChild(el('span', null, v === 'reduced' ? '||' : (v === 'full' ? '>>>' : '>>')));
     } else if (axis.preview === 'sound') {
@@ -470,119 +462,10 @@
   }
 
   /* -------------------------------------------------------------------------
-     THE CURSOR LAYER, and §16's overlay-contrast rule.
-     ------------------------------------------------------------------------- */
-  var SURFACES = [
-    { name: 'accent', sel: '.btn-primary, .cap-recl, .fchip[aria-pressed="true"]' },
-    // .selbar and .card-sel each paint their OWN background and were both missed by
-    // the first version of this registry - found by the gate, not by reading the CSS
-    { name: 'bleed',  sel: '.band-bleed, .titlebar, .statusbar, .toast, .tm-tip, .selbar' },
-    { name: 'panel',  sel: '.panel, .sheet' },
-    { name: 'well',   sel: '.band-well, .well, .rail, .tm-frame, .logview, .field, .card-sel, .disclose, .tbl tbody tr[data-selected="true"]' },
-    { name: 'app',    sel: '.band-app, body' }
-  ];
-
-  function buildCursor() {
-    if (document.querySelector('.cursor')) return;
-    var ring = el('div', 'cursor');
-    var dot = el('div', 'cursor-dot');
-    ring.setAttribute('aria-hidden', 'true');
-    dot.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(ring);
-    document.body.appendChild(dot);
-
-    var x = -100, y = -100, rx = -100, ry = -100, raf = 0;
-
-    document.addEventListener('mousemove', function (e) {
-      x = e.clientX; y = e.clientY;
-      dot.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-      if (!raf) raf = requestAnimationFrame(tick);
-    });
-
-    function tick() {
-      raf = 0;
-      var lag = prefersReducedMotion() ? 1 : 0.22;
-      rx += (x - rx) * lag; ry += (y - ry) * lag;
-      ring.style.transform = 'translate(' + rx + 'px,' + ry + 'px)';
-      if (Math.abs(x - rx) > 0.4 || Math.abs(y - ry) > 0.4) raf = requestAnimationFrame(tick);
-    }
-
-    /* 🔴 Resolved on a BOUNDARY event, never in the animation frame. A band change
-       happens tens of times a session; a frame runs 60 times a second, and writing
-       a dataset attribute there invalidates style every frame. */
-    document.addEventListener('mouseover', function (e) {
-      var t = e.target;
-      if (!(t instanceof Element)) return;
-      var name = 'app';
-      for (var i = 0; i < SURFACES.length; i++) {
-        if (t.closest(SURFACES[i].sel)) { name = SURFACES[i].name; break; }
-      }
-      ring.setAttribute('data-surface', name);
-      dot.setAttribute('data-surface', name);
-      ring.setAttribute('data-over',
-        t.closest('button, a, [role="button"], input, .tm-tile') ? 'interactive' : 'plain');
-    });
-  }
-
-  /* -------------------------------------------------------------------------
      GATES. §12f: none of this class of defect has a gate unless one is built, so
      these run on demand from demo.js and each is designed to be watched failing.
      ------------------------------------------------------------------------- */
   var gates = {
-    /* 🔴 Asserts on the CONSEQUENCE - what actually paints - not on the
-       stylesheet source. A source-shaped check cannot see whether a rule applied,
-       and a manifest cross-checked against itself cannot fail. Every element that
-       paints its own background must be claimed by the cursor's surface registry,
-       or the pointer can be drawn in that surface's own colour and vanish. */
-    overlayContrast: function () {
-      /* 🔴 Only a surface the pointer can sit INSIDE needs a mapping. The cursor
-         ring is 26px and grows to 40px over anything interactive, so an element
-         smaller than that is always overlapped by the surface around it too - and
-         that surface's mapping already governs the colour. Flagging every 1px
-         divider and 9px swatch made the gate report 22 "failures" that could not
-         hide a pointer, which is the too-permissive/too-strict pair a new gate
-         arrives with. Opaque, and at least cursor-sized: that is the claim set. */
-      var CUR = 40;
-      var unclaimed = [], seen = {}, painted = 0;
-
-      /* 🔴 Normalise through a canvas, never by parsing the string. Chrome returns
-         `oklch(...)` from getComputedStyle for every colour in this project, so an
-         `rgba(...)` regex matches NOTHING - which made this gate count 0 painted
-         surfaces and report PASS. A gate that measures nothing and says PASS is
-         worse than no gate: it reports safety it cannot observe. The planted
-         unmapped band is what exposed it, by failing to turn it red. */
-      var cv = document.createElement('canvas'); cv.width = cv.height = 1;
-      var cx = cv.getContext('2d', { willReadFrequently: true });
-      function alphaOf(col) {
-        cx.clearRect(0, 0, 1, 1);
-        cx.globalCompositeOperation = 'copy';
-        cx.fillStyle = 'rgba(0,0,0,0)';
-        cx.fillStyle = col;
-        cx.fillRect(0, 0, 1, 1);
-        return cx.getImageData(0, 0, 1, 1).data[3] / 255;
-      }
-
-      var all = document.querySelectorAll('body *');
-      for (var i = 0; i < all.length; i++) {
-        var n = all[i];
-        if (n.closest('.cursor, .cursor-dot, .toasts')) continue;
-        var bg = getComputedStyle(n).backgroundColor;
-        if (!bg) continue;
-        var alpha = alphaOf(bg);
-        if (alpha < 0.9) continue;                       // see-through: the layer below governs
-        var r = n.getBoundingClientRect();
-        if (r.width < CUR || r.height < CUR) continue;   // smaller than the pointer
-        painted++;
-        if (SURFACES.some(function (s) { return n.matches(s.sel); })) continue;
-        var sig = n.tagName.toLowerCase() + '.' +
-          (typeof n.className === 'string' && n.className ? n.className.split(' ').slice(0, 2).join('.') : '(none)');
-        if (seen[sig]) continue;
-        seen[sig] = 1;
-        unclaimed.push(sig);
-      }
-      return { pass: unclaimed.length === 0, painted: painted, unclaimed: unclaimed };
-    },
-
     /* The table, the rendered panel and the DOM must agree on the SAME count.
        Asserting an axis is "declared" is what passed while five of nine were
        never written - so this reads the live attribute off <html>. */
@@ -735,7 +618,6 @@
     buildTitlebar(document.querySelector('[data-ws-titlebar]'));
     buildRail(document.querySelector('[data-ws-rail]'));
     buildPanel();
-    buildCursor();
 
     // the theme toggle is injected by the SAME owner that builds the panel and the
     // bar it lands in, so the three cannot disagree
@@ -755,7 +637,7 @@
   else boot();
 
   window.ws = {
-    AXES: AXES, NAV: NAV, SURFACES: SURFACES,
+    AXES: AXES, NAV: NAV,
     store: store, axisValue: axisValue, setAxis: setAxis,
     prefersReducedMotion: prefersReducedMotion,
     openPanel: openPanel, toast: toast, icon: svgIcon, el: el,

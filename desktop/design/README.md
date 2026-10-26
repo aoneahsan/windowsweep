@@ -262,8 +262,8 @@ a motion axis in the panel, consulted through one helper that reads both.
 
 ## 7. The one theme control - ten axes
 
-appearance · colour treatment · corner radius · density · text size · typeface · panel background · custom
-cursor · motion · sound. One header icon, one panel, card selectors that **preview their own value**.
+appearance · colour treatment · corner radius · density · text size · typeface · panel background · motion ·
+sound (no cursor axis: the browser's default pointer only, owner 2026-10-26). One header icon, one panel, card selectors that **preview their own value**.
 🔴 Stamped on `<html>` **pre-paint from one table iterated once** - appearance applied late is a flash,
 density or text size applied late is a reflow. `sound` is the only axis defaulting off.
 

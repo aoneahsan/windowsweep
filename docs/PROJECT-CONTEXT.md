@@ -238,9 +238,9 @@ There is nothing an administrator could administer and no limit to raise. Consis
 ⚠️ **§2, the upload-field info popover:** there is no upload field anywhere in the app. Nothing to declare
 beyond its absence.
 
-⚠️ **§16, a decorative overlay painted outside its surface:** the custom cursor is an axis and is drawn
-inside the app shell rather than `position: fixed` on `<body>`, so the band-colour resolution the rule
-requires does not arise. If a floating badge or scroll indicator is added later, that mandate applies to it.
+⚠️ **§16, a decorative overlay painted outside its surface:** none ships. The custom cursor axis was removed
+on 2026-10-26 (owner: browser default pointer only, every project). If a floating badge or scroll indicator is
+added later, that mandate applies to it.
 
 **Open, and honestly so:** §10's GATE 4 parity - screenshot pairs of the dummy beside the app, judged by eye
 in the app's own WebView2 - is not done, and needs owner row 22. §12's interaction floor has no automated

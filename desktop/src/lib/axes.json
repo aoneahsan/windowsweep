@@ -87,17 +87,6 @@
       ]
     },
     {
-      "key": "cursor",
-      "attr": "data-cursor",
-      "labelKey": "theme.axis.cursor",
-      "def": "custom",
-      "preview": "cursor",
-      "values": [
-        { "value": "custom", "label": "On" },
-        { "value": "off", "label": "Off" }
-      ]
-    },
-    {
       "key": "motion",
       "attr": "data-motion",
       "labelKey": "theme.axis.motion",

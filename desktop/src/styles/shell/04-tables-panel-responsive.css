@@ -394,97 +394,6 @@
 }
 
 /* ---------------------------------------------------------------------------
-   THE CUSTOM CURSOR - a theme axis with an off switch (§1a / OD-18)
-
-   🔴 Showing the replacement and suppressing the native one are ONE decision, so
-   they are gated together on the layer ACTUALLY BEING PRESENT. Written as two
-   independent rules, a page missing the layer has no pointer at all.
-   --------------------------------------------------------------------------- */
-@media (hover: hover) and (pointer: fine) {
-  :root[data-cursor='custom']:has(.cursor) {
-    cursor: none;
-  }
-  :root[data-cursor='custom']:has(.cursor) a,
-  :root[data-cursor='custom']:has(.cursor) button,
-  :root[data-cursor='custom']:has(.cursor) [role='button'] {
-    cursor: none;
-  }
-}
-.cursor {
-  position: fixed;
-  z-index: 60;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  width: 26px;
-  height: 26px;
-  margin: -13px 0 0 -13px;
-  border-radius: var(--r-pill);
-  border: 1.5px solid var(--cur-ink, var(--c-ink));
-  transition:
-    width var(--d-quick) var(--ease-mech),
-    height var(--d-quick) var(--ease-mech),
-    margin var(--d-quick) var(--ease-mech),
-    border-color var(--d-instant) var(--ease-mech),
-    opacity var(--d-quick) var(--ease-mech);
-}
-.cursor-dot {
-  position: fixed;
-  z-index: 61;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  width: 4px;
-  height: 4px;
-  margin: -2px 0 0 -2px;
-  border-radius: var(--r-pill);
-  background: var(--cur-ink, var(--c-ink));
-}
-.cursor[data-over='interactive'] {
-  width: 40px;
-  height: 40px;
-  margin: -20px 0 0 -20px;
-  border-color: var(--c-accent);
-}
-:root[data-cursor='off'] .cursor,
-:root[data-cursor='off'] .cursor-dot {
-  display: none;
-}
-
-/* 🔴 THE OVERLAY-CONTRAST RULE (§16). The cursor is position:fixed on <body>, a
-   SIBLING of the bands - so no custom property set on a band can ever reach it by
-   inheritance, and the obvious fix cannot work. The surface under the pointer is
-   resolved on a BOUNDARY event and stamped here, and each rule takes that
-   surface's OWN on-surface ink token rather than a hand-picked colour.
-   Every class that PAINTS a background needs a row. app.js gates that. */
-.cursor[data-surface='app'],
-.cursor-dot[data-surface='app'] {
-  --cur-ink: var(--c-ink);
-}
-.cursor[data-surface='panel'],
-.cursor-dot[data-surface='panel'] {
-  --cur-ink: var(--c-ink);
-}
-.cursor[data-surface='well'],
-.cursor-dot[data-surface='well'] {
-  --cur-ink: var(--c-ink-2);
-}
-.cursor[data-surface='bleed'],
-.cursor-dot[data-surface='bleed'] {
-  --cur-ink: var(--c-accent);
-}
-.cursor[data-surface='accent'],
-.cursor-dot[data-surface='accent'] {
-  --cur-ink: var(--c-on-accent);
-}
-
-/* under reduced motion the cursor loses its LAG, not its existence - removing the
-   layer would leave the native pointer hidden by the guard's other half */
-[data-motion='reduced'] .cursor {
-  transition-duration: 1ms;
-}
-
-/* ---------------------------------------------------------------------------
    RESPONSIVE - 320 first. One navigation method per viewport (§4).
    --------------------------------------------------------------------------- */
 .only-wide {
@@ -562,8 +471,8 @@
    treatment, it is an unfinished one".
 
    Rebinding the semantic tokens on the subtree fixes every descendant at once
-   rather than patching elements one at a time - and unlike the fixed cursor
-   layer (§16), inheritance genuinely reaches here, because these ARE ancestors.
+   rather than patching elements one at a time - inheritance genuinely reaches
+   here, because these ARE ancestors.
    --------------------------------------------------------------------------- */
 .band-bleed,
 .titlebar,

@@ -15,7 +15,6 @@
   function runGates() {
     return {
       axes: ws.gates.axes(),
-      overlayContrast: ws.gates.overlayContrast(),
       storageNamespace: ws.gates.storageNamespace(),
       overflow: ws.gates.overflow()
     };
@@ -36,9 +35,6 @@
       detail = r.declared + ' declared, ' + r.written + ' written to <html>, ' + r.inPanel + ' in the panel'
         + (r.missing.length ? ' | MISSING: ' + r.missing.join(',') : '')
         + (r.mismatched.length ? ' | MISMATCH: ' + r.mismatched.join(',') : '');
-    } else if (name === 'overlay contrast') {
-      detail = r.painted + ' painted surfaces seen, ' + r.unclaimed.length + ' unclaimed'
-        + (r.unclaimed.length ? ' | ' + r.unclaimed.slice(0, 4).join(' , ') : '');
     } else if (name === 'storage namespace') {
       detail = 'physical key ' + (r.physicalKey || '(none)') + ' , expected ' + r.expected + ' , backend ' + r.backend;
     } else if (name === 'overflow at this width') {
@@ -90,7 +86,6 @@
       out.textContent = '';
       var g = runGates();
       out.appendChild(line('axes', g.axes));
-      out.appendChild(line('overlay contrast', g.overlayContrast));
       out.appendChild(line('storage namespace', g.storageNamespace));
       out.appendChild(line('overflow at this width', g.overflow));
     }
@@ -104,22 +99,8 @@
 
     /* 🔴 PLANT A DEFECT ON PURPOSE. A gate nobody has watched fail is
        indistinguishable from one that asserts nothing, and every defect these
-       four catch is silent by construction. Each plant reproduces the REAL bug,
+       three catch is silent by construction. Each plant reproduces the REAL bug,
        not merely a changed value. */
-    var plantSurface = el('button', 'btn btn-sm', 'Plant: unclaimed surface');
-    plantSurface.title = 'Adds an element that paints its own background and is in no cursor-surface mapping - ' +
-                         'the exact shape that made a custom pointer invisible on a coloured band.';
-    plantSurface.addEventListener('click', function () {
-      var bad = el('div');
-      bad.className = 'ws-planted-band';
-      bad.style.cssText = 'background:oklch(.62 .19 128);padding:10px;border-radius:6px;margin:8px 0';
-      bad.textContent = 'planted band - paints a background, claimed by no surface mapping';
-      var host = document.querySelector('.content') || document.body;
-      host.insertBefore(bad, host.firstChild);
-      paint();
-    });
-    row.appendChild(plantSurface);
-
     var plantAxis = el('button', 'btn btn-sm', 'Plant: drop an axis');
     plantAxis.title = 'Removes data-density from <html>, reproducing the five-axes-lost bug rather than ' +
                       'merely changing a value.';
@@ -131,7 +112,6 @@
 
     var restore = el('button', 'btn btn-sm btn-ghost', 'Restore');
     restore.addEventListener('click', function () {
-      document.querySelectorAll('.ws-planted-band').forEach(function (n) { n.remove(); });
       document.documentElement.setAttribute('data-density', ws.axisValue('density'));
       paint();
     });

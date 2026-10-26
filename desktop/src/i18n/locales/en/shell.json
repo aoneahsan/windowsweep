@@ -34,7 +34,6 @@
   "theme.axis.typeScale": "Text size",
   "theme.axis.font": "Typeface",
   "theme.axis.surface": "Panel background",
-  "theme.axis.cursor": "Custom cursor",
   "theme.axis.motion": "Motion",
   "theme.axis.sound": "Sound",
   "theme.value.light": "Light",

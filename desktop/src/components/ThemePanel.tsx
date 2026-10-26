@@ -160,21 +160,6 @@ function AxisPreview({ axis, value, prefs }: { axis: Axis; value: string; prefs:
       </span>
     );
   }
-  if (axis.preview === 'cursor') {
-    return (
-      <span className="prev" aria-hidden="true">
-        <span
-          className="prev-radius"
-          style={{
-            borderRadius: '999px',
-            width: '14px',
-            height: '14px',
-            opacity: value === 'off' ? 0.3 : 1,
-          }}
-        />
-      </span>
-    );
-  }
   if (axis.preview === 'motion') {
     return (
       <span className="prev" aria-hidden="true">

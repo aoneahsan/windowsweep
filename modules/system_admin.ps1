@@ -27,11 +27,19 @@ function Set-ServiceState {
   if ($Action -eq 'stop') {
     if ($svc.Status -ne 'Running') { return $false }
     if ($Script:WS.DryRun) { Write-DryRun "would stop service $Name"; return $true }
-    try { Stop-Service -Name $Name -Force -ErrorAction Stop; Write-Note "stopped $Name" } catch { Write-Warn "could not stop $Name : $($_.Exception.Message)" }
+    try {
+      Stop-Service -Name $Name -Force -ErrorAction Stop -WarningAction SilentlyContinue -WarningVariable serviceWarnings
+      foreach ($warning in $serviceWarnings) { Write-Warn ([string]$warning) }
+      Write-Note "stopped $Name"
+    } catch { Write-Warn "could not stop $Name : $($_.Exception.Message)" }
     return $true
   }
   if ($Script:WS.DryRun) { Write-DryRun "would start service $Name"; return $true }
-  try { Start-Service -Name $Name -ErrorAction Stop; Write-Note "started $Name" } catch { Write-Warn "could not start $Name : $($_.Exception.Message)" }
+  try {
+    Start-Service -Name $Name -ErrorAction Stop -WarningAction SilentlyContinue -WarningVariable serviceWarnings
+    foreach ($warning in $serviceWarnings) { Write-Warn ([string]$warning) }
+    Write-Note "started $Name"
+  } catch { Write-Warn "could not start $Name : $($_.Exception.Message)" }
   return $true
 }
 

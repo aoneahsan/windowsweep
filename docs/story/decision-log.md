@@ -1260,3 +1260,10 @@ desktop. The server relay and count tables were never deployed and have been rem
 draft removes P-12 and the two deletion-count claims, and updates P-11's factual note. T-01 to T-04, P-01 to
 P-10 and the approved misuse clause remain. The main session asked for a fresh legal GATE 4 on this exact
 revision; publication and the row 23 record still wait for that answer.
+
+**Revised legal GATE 4, 2026-10-31:** the owner answered "Approve revised draft including T-04 (Recommended)"
+for `drafts/legal-payments.md` after D75 removed the GA4 relay and daily-count disclosures. The approval
+covers this exact revised draft, including the payment and cancellation clauses, required-update rule T-04,
+P-08 deletion and anonymous referral-void counters, and D73 deliberate-misuse clause. Publication remains
+subject to applying the approved words to the website and verifying the live pages. No new motif, glossary
+term, palette or voice change is needed.

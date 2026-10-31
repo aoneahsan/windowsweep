@@ -9,7 +9,6 @@
 [![npm version](https://img.shields.io/npm/v/windowsweep.svg)](https://www.npmjs.com/package/windowsweep)
 [![downloads](https://img.shields.io/npm/dm/windowsweep.svg)](https://www.npmjs.com/package/windowsweep)
 [![license](https://img.shields.io/npm/l/windowsweep.svg)](https://github.com/aoneahsan/windowsweep/blob/main/LICENSE)
-[![ci](https://github.com/aoneahsan/windowsweep/actions/workflows/ci.yml/badge.svg)](https://github.com/aoneahsan/windowsweep/actions/workflows/ci.yml)
 [![node](https://img.shields.io/node/v/windowsweep.svg)](https://nodejs.org)
 [![platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0078d4?logo=windows&logoColor=white)](https://github.com/aoneahsan/windowsweep#platform-support)
 
@@ -138,7 +137,7 @@ reclaims disk space, nothing else.
 |---|---|---|
 | Windows 11 | ✅ | Same engine and PowerShell hosts; a real run on Windows 11 is on the verification list ([project status](https://github.com/aoneahsan/windowsweep/blob/main/docs/features/windowsweep-completion/00-tracker.json)) |
 | Windows 10 (1809 and later) | ✅ | The primary development target; every real run so far |
-| Windows Server 2019+ | ⚠️ | Uses nothing newer than 1809; CI runs the self-test and a dry-run on Windows Server (`windows-latest`) on every push to `main` and every pull request, but no real cleanup has been run on Server |
+| Windows Server 2019+ | ⚠️ | Uses nothing newer than 1809; no real cleanup has been verified on Server |
 | Linux | ❌ | `os: ["win32"]` makes npm refuse to install; use [linux-cleanup](https://github.com/aoneahsan/linux-cleanup) |
 | macOS | ❌ | Use [macleanup](https://github.com/aoneahsan/macleanup) |
 

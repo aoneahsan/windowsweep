@@ -40,9 +40,8 @@ personal files, no deep sections. Review the first run's report before schedulin
 Every Windows machine has PowerShell 5.1, so there is no runtime to install and no binary to trust. The engine is about 5,700 lines of readable script across `windowsweep.ps1`, `lib/` and `modules/`, and `--self-test` runs 160 checks of it on your machine.
 
 **Does it run on Windows Server?**
-The engine uses nothing newer than Windows 10 1809 / Server 2019. CI runs the self-test and a dry-run of
-the safe batch on Windows Server (GitHub's `windows-latest`) on every push to `main` and on every pull request. Real cleanups have been verified
-on Windows 10 so far; a Windows 11 run is on the verification list.
+The engine uses nothing newer than Windows 10 1809 / Server 2019. Real cleanups have been verified
+on Windows 10 so far; a Windows 11 run is on the verification list. No real cleanup has been verified on Server.
 
 **Where are the logs?**
 `%USERPROFILE%\.windowsweep\logs\`. Reports are beside them; `windowsweep --reports` browses them, and `--stats` prints the run history and the total reclaimed.

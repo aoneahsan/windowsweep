@@ -35,6 +35,7 @@
 import { sql } from 'drizzle-orm';
 import { check, index, jsonb, pgPolicy, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { authUsers, authenticatedRole } from 'drizzle-orm/supabase';
+import { ownedBy, signedIn } from './rls';
 
 /** `(select ...)` so the planner evaluates the definer call ONCE per statement
  *  rather than once per candidate row. Unwrapped, an admin listing the inbox
@@ -54,9 +55,12 @@ const isPlatformAdmin = sql`(select public.is_platform_admin())`;
  * table-wide UPDATE exists "your own row" includes your own role. That exact
  * shape shipped a live escalation on a sibling project.
  *
- * 🔴 `email` is written only by the signup trigger, from `auth.users.email`.
- * It is a mirror with exactly ONE writer, which is what keeps it from disagreeing
- * with the identity it copies. It exists because PostgREST cannot read the `auth`
+ * 🔴 `email` is written only by the `auth.users` triggers, from `auth.users.email`:
+ * the signup trigger and, from 1.4.0, the update trigger that runs when Google is
+ * linked onto a device session (whose row was created with no email). It is a mirror
+ * with exactly ONE writer - the auth triggers - which is what keeps it from
+ * disagreeing with the identity it copies. From 1.4.0 a row with a null `email` is a
+ * device session, and every account list filters `email is not null`. It exists because PostgREST cannot read the `auth`
  * schema, so this is the only way the account page shows an address and the only
  * way the admin users list shows one at all.
  */
@@ -77,12 +81,29 @@ export const profiles = pgTable(
     /** Trigger-maintained by `set_updated_at`, and out of the UPDATE grant.
      *  Both halves are required: either one alone leaves it client-writable. */
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    /* 1.4.0. All four are out of every client grant: the auth triggers and the definer
+       functions are their only writers, and the person reads them on their own row. */
+    /** The person's share code (`?ref=`), made by the signup trigger or on first read. */
+    referralCode: text('referral_code').unique(),
+    /** An admin's per-person limits (`users.override_limits`). Null = the plan's limits. */
+    limitsOverride: jsonb('limits_override'),
+    /** The welcome email went out (`account-welcome`, once). */
+    welcomeSentAt: timestamp('welcome_sent_at', { withTimezone: true }),
+    /** When this became a verified, non-anonymous (Google) account; the referral window counts from it. */
+    verifiedAt: timestamp('verified_at', { withTimezone: true }),
   },
   (t) => [
     check(
       'profiles_platform_role_check',
       sql`${t.platformRole} in ('superadmin', 'admin', 'user')`
     ),
+    check('profiles_referral_code_format', sql`${t.referralCode} ~ '^[A-Z0-9]{10}$'`),
+    check(
+      'profiles_limits_override_object',
+      sql`${t.limitsOverride} is null or jsonb_typeof(${t.limitsOverride}) = 'object'`
+    ),
+    /* The admin account list: newest first, keyset on (created_at, user_id). */
+    index('profiles_created_idx').on(t.createdAt, t.userId),
 
     pgPolicy('profiles_select_own', {
       for: 'select',
@@ -161,10 +182,13 @@ export const contactRequests = pgTable(
     /* The admin inbox, filtered by status. */
     index('contact_requests_status_created_idx').on(t.status, t.createdAt),
 
+    /* 1.4.0: a signed-in account only. With anonymous sign-ins on, a device session is
+       `authenticated` too, and anonymous identities are free to mint - the per-person
+       rate limit below would be no limit at all. */
     pgPolicy('contact_requests_insert_own', {
       for: 'insert',
       to: authenticatedRole,
-      withCheck: sql`(select auth.uid()) = ${t.userId}`,
+      withCheck: sql`${ownedBy(t.userId)} and ${signedIn}`,
     }),
     pgPolicy('contact_requests_select_own', {
       for: 'select',

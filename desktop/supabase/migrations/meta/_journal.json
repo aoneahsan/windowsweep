@@ -78,6 +78,27 @@
       "when": 1790351345265,
       "tag": "20260925154905_stamp_contact_request_handled",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1793430010835,
+      "tag": "20261031070010_v140_private_helpers",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1793430034980,
+      "tag": "20261031070034_v140_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793430074696,
+      "tag": "20261031070114_v140_privileges",
+      "breakpoints": true
     }
   ]
 }

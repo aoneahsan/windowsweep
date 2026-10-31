@@ -32,8 +32,18 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { authUsers, authenticatedRole } from 'drizzle-orm/supabase';
+import { devices } from './devices';
+import { ownedBy, signedIn } from './rls';
 
-/** One row per person. The primary key IS their auth id, so there is no join. */
+/**
+ * One row per person. The primary key IS their auth id, so there is no join.
+ *
+ * 1.4.0: writes need a signed-in account (a device session syncs nothing), and
+ * `legal_notice_seen_at` is the account half of the legal notice flag. That column is
+ * in NO client grant: `mark_legal_notice_seen()` is its one writer, it stamps the
+ * server's time once and never clears it, and when it must create the row it sets
+ * `settings_updated_at` to the epoch so that row never wins the newest-wins merge.
+ */
 export const userSettings = pgTable(
   'user_settings',
   {
@@ -55,8 +65,10 @@ export const userSettings = pgTable(
     /** Refreshed when this window syncs, so a machine no longer used reads as such. */
     lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull().defaultNow(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    /** The legal notice was shown to this account (one-way; see the note above). */
+    legalNoticeSeenAt: timestamp('legal_notice_seen_at', { withTimezone: true }),
   },
-  () => [
+  (t) => [
     pgPolicy('user_settings_select_own', {
       for: 'select',
       to: authenticatedRole,
@@ -65,13 +77,13 @@ export const userSettings = pgTable(
     pgPolicy('user_settings_insert_own', {
       for: 'insert',
       to: authenticatedRole,
-      withCheck: sql`(select auth.uid()) = user_id`,
+      withCheck: sql`${ownedBy(t.userId)} and ${signedIn}`,
     }),
     pgPolicy('user_settings_update_own', {
       for: 'update',
       to: authenticatedRole,
-      using: sql`(select auth.uid()) = user_id`,
-      withCheck: sql`(select auth.uid()) = user_id`,
+      using: sql`${ownedBy(t.userId)} and ${signedIn}`,
+      withCheck: sql`${ownedBy(t.userId)} and ${signedIn}`,
     }),
     pgPolicy('user_settings_delete_own', {
       for: 'delete',
@@ -111,21 +123,28 @@ export const runs = pgTable(
     freedBytes: bigint('freed_bytes', { mode: 'number' }).notNull().default(0),
     estimatedBytes: bigint('estimated_bytes', { mode: 'number' }).notNull().default(0),
     durationMs: integer('duration_ms').notNull().default(0),
+    /** 1.4.0: which of the person's PCs ran it - the random install id, never a name.
+        Null for runs synced before 1.4.0 and when the PC is forgotten. */
+    deviceId: uuid('device_id').references(() => devices.id, { onDelete: 'set null' }),
   },
   (t) => [
     /* The Account screen's run list (TASK-013): `eq(user_id)`, newest first, keyset on `started_at`,
        20 a page, plus its count. Without this every read and count scanned the table. Additive; approved
        by the owner for the shared production project on 2026-09-24 (D36). */
     index('runs_user_id_started_at_idx').on(t.userId, t.startedAt.desc()),
+    /* The foreign key's own index: forgetting a PC clears `device_id` on its runs. */
+    index('runs_device_id_idx').on(t.deviceId),
     pgPolicy('runs_select_own', {
       for: 'select',
       to: authenticatedRole,
       using: sql`(select auth.uid()) = user_id`,
     }),
+    /* 1.4.0: a signed-in account, and a `device_id` (when sent) must be one of the
+       caller's own PCs - the sub-select runs under `devices_select_own`. */
     pgPolicy('runs_insert_own', {
       for: 'insert',
       to: authenticatedRole,
-      withCheck: sql`(select auth.uid()) = user_id`,
+      withCheck: sql`${ownedBy(t.userId)} and ${signedIn} and (${t.deviceId} is null or exists (select 1 from public.devices d where d.id = ${t.deviceId} and d.user_id = (select auth.uid())))`,
     }),
     /* No update policy, deliberately. A run row is append-only. */
     pgPolicy('runs_delete_own', {

@@ -45,7 +45,7 @@ erDiagram
   RUN_CLAIMS { uuid id PK uuid device_id uuid user_id FK text month run_pool pool }
   PLANS { text id PK smallint rank boolean is_active }
   APP_CONFIG { text key PK jsonb value boolean is_public }
-  PLAN_GRANTS { uuid id PK uuid user_id FK text plan_id FK timestamptz ends_at }
+  PLAN_GRANTS { uuid id PK uuid user_id FK text plan_id FK timestamptz ends_at bigint referral_remaining_us timestamptz referral_accounted_at tstzmultirange referral_blocked_ranges }
   PLAN_REQUESTS { uuid id PK uuid user_id FK text plan_id FK plan_request_status status }
   SUBSCRIPTIONS { uuid id PK uuid user_id FK text plan_id FK text polar_order_id }
   CHECKOUT_QUOTES { text polar_checkout_id PK uuid user_id FK text plan_id FK }
@@ -82,7 +82,7 @@ Welcome, referral, team-invite and plan-request emails use claim tokens with no 
 | `run_claims` | Monthly real-run ledger; nullable `user_id`. | No client policy or grant; allowance RPCs only. One per real run. Indexed by device/month and user/month. |
 | `plans` | Plan registry; no row owner. | Public active read; admin definer writes. Few rows, unique rank. |
 | `app_config` | Public bounded limit and referral settings; no row owner. | Public read; admin definer writes. Eleven seeded rows, including the badge key and separate referral signup/confirmation windows. |
-| `plan_grants` | Non-payment entitlements and provenance; `user_id`. | Definer only. A few per rewarded or administered account. |
+| `plan_grants` | Non-payment entitlements and provenance; `user_id`. Referral rows also hold remaining microseconds, last accounting time and the previous blocker projection. | Definer only. A few per rewarded or administered account; no new client grants. |
 | `plan_requests` | Request for a paid plan; `user_id`. | Own signed-in insert/read; admin definer transition. One pending per person. Pay-link mail has a token-checked send lease and indexed uncertain state. |
 | `subscriptions` | One paid period per Polar order; `user_id`. | Definer only. Grows with renewals; indexed by user, team and Polar subscription. |
 | `checkout_quotes` | Immutable checkout price, tied to buyer; `user_id`. | Definer only. One per opened checkout; user/time index. |
@@ -105,6 +105,7 @@ All 1.4.0 changes are generated from Drizzle into `20261031082151_v140_schema.sq
 
 | Date and change | Need, existing home checked, decision | Access, index and deletion |
 |---|---|---|
+| 2026-10-31 · referral grant balance columns and reflow triggers | A later paid renewal or Team change can overlap a banked month. Three nullable columns on the existing grant row preserve its remaining time and prior blocker snapshot; a second table would split one grant's state. The projector unions overlapping blockers, accounts only uncovered elapsed time, and serializes subsequent referral rewards. | Definer only, existing grant indexes and account cascade. Paid and grant changes reflow the owner and Team members with live referral rewards; membership changes reflow that member. Window changes are system-audited; `my_referral_status.rewards[].paused` reports current overlap separately from `banked`. Admin rank or fleet toggles that would change a live reward's blocker fail with `referral_rewards_block_plan_shape_change` (409); names, prices and limits remain editable. A manual rollback refuses once referral grants exist, since consumed time cannot be discarded. |
 | 2026-10-31 · `profiles` adds referral, limits, welcome, verification and legal stamps | The referral clock starts at first email-bearing, non-anonymous conversion, not anonymous installation. Existing signed-in accounts are backfilled with their historical age; device sessions stay null until conversion. `user_settings` cannot hold the one-way legal stamp because its newest-wins merge rewrites settings. | Own/admin read; definer or auth-trigger write. Existing primary key; account cascade. |
 | 2026-10-31 · `runs.device_id` | Attribute a synced run to a random install id. A new table would split one run across two rows. | Own insert grant gains this column; owner policy verifies the device. Device deletion sets null. |
 | 2026-10-31 · `devices` | Register a PC without a machine name. `profiles` cannot hold a list of PCs. | Own read/delete; definer register/handoff; `(user_id,last_seen_at)`. Account cascade. |

@@ -197,6 +197,20 @@
       "when": 1793441947817,
       "tag": "20261031101907_v140_analytics_budget",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1793444613359,
+      "tag": "20261031110333_v140_referral_balance_columns",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1793444687264,
+      "tag": "20261031110447_v140_referral_reflow",
+      "breakpoints": true
     }
   ]
 }

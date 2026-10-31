@@ -292,8 +292,9 @@ stacking award of the active `referral_badge_key`; an unresolved badge key fails
 confirmation. Every `referral_reward_threshold` confirmations add
 `referral_reward_months` of `referral_reward_plan`, at most `referral_reward_months_cap_per_year` months in a
 rolling year. Over the cap, points and the badge still land. The reward starts after the referrer's currently recorded
-time on that plan or a higher one, including an active Team seat. A later renewal may change the overlap before the
-reward starts. `referral_enabled = false` stops new confirmations, points and rewards. Clearing the rolling cap alone
+time on that plan or a higher one, including an active Team seat. Later paid or Team coverage moves a fully banked
+reward, or pauses an already-started reward so only uncovered time uses it. `referral_enabled = false` stops new
+confirmations, points and rewards. Clearing the rolling cap alone
 does not award a month: a later confirmation must complete another threshold.
 
 `my_referral_status()` (signed-in) gives the settings beside the counts, and never who joined:
@@ -306,10 +307,14 @@ does not award a month: a later confirmation must complete another threshold.
           claim_window_days, signup_window_minutes, badge: { key, name } },
   months_granted_last_year, months_earned_total,  -- active, nonvoid referral grant months across all years
   next_reward_in,            -- confirmations still needed; null when off or capped
-  rewards: [ { starts_at, ends_at, banked } ] }   -- newest 10; banked = starts in the future
+  rewards: [ { starts_at, ends_at, banked, paused } ] }   -- newest 10; banked = future start; paused = started but currently covered by paid/Team time
 ```
 
 The share link is `https://windowsweep.aoneahsan.com/?ref=<code>`. The website keeps the code until sign-in.
+Fully banked referral grants move with later paid or Team coverage and retain their full calendar-month duration.
+Once a grant starts, only elapsed time outside that coverage consumes its remaining balance; a renewal pauses it
+and moves the unspent portion after the covered time. `months_earned_total` and the rolling yearly cap use the
+original earned `months` and `created_at`, regardless of shifts or pauses.
 
 ## 10. Update flow, layer 2: the release record
 
@@ -355,7 +360,7 @@ block every installed build. Refusals: 401, 403 `forbidden`, 422
 | `users.set_plan` | `{ user_id, plan_id, ends_at?, reason }` | `{ plan_id }` after the change. A grant from now to `ends_at` (required unless `free`); `free` ends the person's active admin and plan-request grants, while paid periods and referral rewards stay |
 | `users.override_limits` | `{ user_id, overrides: { real_runs_unlimited?, device_real_runs_per_month?, account_extra_real_runs_per_month?, report_machines? } \| null, reason }` | `{ limits_override }`; `null` clears it |
 | `plans.list` | `{ limit?: 1..50, page?: 0..1000 }` | `{ items, page, limit, total, next_page }`: inactive plans included; 20 per page by default |
-| `plans.upsert` | `{ plan: { id, ...columns }, reason }` | `{ plan }`. A new id creates (`name`, `rank` required); an existing id changes only the keys sent, and `null` clears a nullable limit; `free` cannot be deactivated |
+| `plans.upsert` | `{ plan: { id, ...columns }, reason }` | `{ plan }`. A new id creates (`name`, `rank` required); an existing id changes only the keys sent, and `null` clears a nullable limit; `free` cannot be deactivated. `rank` and `fleet_reports` are locked when changing them would move active or banked referral time; create a new tier or wait until that time is used |
 | `badges.list` | `{ limit?: 1..50, page?: 0..1000 }` | `{ items: [ { key, name, family, is_active } ], page, limit, total, next_page }`; referral catalogue, 20 per page by default |
 | `badges.create` | `{ key, name, reason }` | `{ key, name, family: 'referral' }`; audited, duplicate key refused |
 | `grants.list` | `{ user_id?, active_only?, cursor?, limit? }` | provenance: `{ id, user_id, user_email, plan_id, source, seats, granted_by, reason, starts_at, ends_at, revoked_at, revoked_by, created_at }`; `granted_by` is an admin's email or `system` |
@@ -376,7 +381,8 @@ block every installed build. Refusals: 401, 403 `forbidden`, 422
 | `releases.publish` | as section 10 | as section 10 |
 | `audit.list` | `{ filter_action?, cursor?, limit? }` | `admin_audit` rows, newest first, `actor` as an email or `system` |
 
-Refusals: 401; 403 `forbidden`; 404 `not_found`; 409 `free_plan_required`; 422 `invalid_request`, `invalid_plan`,
+Refusals: 401; 403 `forbidden`; 404 `not_found`; 409 `free_plan_required`,
+`referral_rewards_block_plan_shape_change`; 422 `invalid_request`, `invalid_plan`,
 `invalid_override`, `invalid_value`, `out_of_bounds`.
 
 The five plan-administration capabilities: create a plan and edit its limits (`plans.upsert`), change a person's
@@ -460,6 +466,7 @@ Dates are `en-GB` long dates in UTC ("1 December 2026"); amounts read `$4.00`. T
 | `subscription_active` | 409 | direct account deletion must wait for server-side Polar cancellation |
 | `price_changed` | 409 | checkout price changed before payment; no grant is made |
 | `already_in_team`, `already_member`, `no_seats`, `owner_cannot_leave`, `free_plan_required`, `badge_exists` | 409 | |
+| `referral_rewards_block_plan_shape_change` | 409 | tier rank or Team status is locked while it would move active or banked referral rewards; create a new tier or wait |
 | `invalid_plan`, `invalid_badge`, `not_purchasable`, `seats_below_minimum`, `invalid_override`, `invalid_value`, `out_of_bounds` | 422 | business validity |
 | `billing_unavailable` | 503 | checkout is not open |
 | `referral_badge_unresolved`, `referral_window_unconfigured` | 503 | referral award configuration needs an admin correction; no partial award is saved |

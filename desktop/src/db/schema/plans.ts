@@ -15,8 +15,10 @@
 
 import { sql } from 'drizzle-orm';
 import {
+  bigint,
   boolean,
   check,
+  customType,
   index,
   integer,
   jsonb,
@@ -32,6 +34,11 @@ import {
 import { anonRole, authenticatedRole, authUsers } from 'drizzle-orm/supabase';
 import { billingInterval, grantSource, planRequestStatus } from './enums';
 import { ownedBySignedIn } from './rls';
+
+/** PostgreSQL's native union of timestamp ranges records already projected blockers. */
+const timestampMultiRange = customType<{ data: string }>({
+  dataType: () => 'tstzmultirange',
+});
 
 /**
  * The registry. A null run limit means "the app_config default"; `real_runs_unlimited`
@@ -153,6 +160,12 @@ export const planGrants = pgTable(
     reason: text('reason').notNull(),
     startsAt: timestamp('starts_at', { withTimezone: true }).notNull().defaultNow(),
     endsAt: timestamp('ends_at', { withTimezone: true }).notNull(),
+    /** Unspent referral time in microseconds; a later entitlement pauses this budget. */
+    referralRemainingUs: bigint('referral_remaining_us', { mode: 'number' }),
+    /** Last instant at which the referral time budget was accounted. */
+    referralAccountedAt: timestamp('referral_accounted_at', { withTimezone: true }),
+    /** The blocker projection used to account elapsed time on the next transition. */
+    referralBlockedRanges: timestampMultiRange('referral_blocked_ranges'),
     revokedAt: timestamp('revoked_at', { withTimezone: true }),
     revokedBy: uuid('revoked_by'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
@@ -162,6 +175,10 @@ export const planGrants = pgTable(
     check('plan_grants_reason_len', sql`char_length(${t.reason}) between 1 and 500`),
     check('plan_grants_seats_range', sql`${t.seats} between 1 and 1000`),
     check('plan_grants_months_range', sql`${t.months} is null or ${t.months} between 1 and 12`),
+    check(
+      'plan_grants_referral_remaining_nonneg',
+      sql`${t.referralRemainingUs} is null or ${t.referralRemainingUs} >= 0`
+    ),
     index('plan_grants_user_ends_idx').on(t.userId, t.endsAt),
     index('plan_grants_created_idx').on(t.createdAt, t.id),
     index('plan_grants_plan_idx').on(t.planId),

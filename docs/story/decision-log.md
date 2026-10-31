@@ -1180,3 +1180,20 @@ Bible's palette, safety spine, glossary, motifs and voice are unchanged; no owne
 **Implementation state:** Plans and Team tour steps wait for their approved screens and visible targets. The proposed
 `/walkthrough`, anchors, focus behavior, 760/1440 captures and persistence still need app and browser proof before
 publication is marked applied.
+
+## 2026-10-31 - `docs-1.4.0` (row 27), GATE 4 approved and recorded
+
+**Gate:** D59 pre-authorised GATE 4 for the non-legal docs copy on a lean panel, finalizer fact-consistency PASS
+and zero unanswered NEEDS DECISION. The bounded panel and targeted fact and SEO rechecks passed; the finalizer
+returned READY. This approves the words in `drafts/docs-1.4.0.md` for implementation, not the pages as live.
+
+**Panel and reconciliation:** the developmental, line and copy passes resolved the draft's structure and rhythm.
+The fact recheck passed the plan and update claims, and the SEO/AEO recheck passed the internal links and nine
+question headings after the second revision. Hook and humor/emotion passed. The docs keep the Bible's
+precision-before-action and refusal-as-reassurance bands; payment, legal and update consequences carry no joke.
+No motif, glossary, palette or fingerprint change is needed, and no owner decision remains.
+
+**Publication state:** the proposed `plans.md`, `updates.md`, `legal-notice.md`, `desktop-tours.md`, 1.4.0
+changelog entry and `llms.txt` additions require implementation, a real release date and app/docs live proof.
+The draft and content-map row remain recorded, while the docs must not be marked applied or published until those
+checks pass.

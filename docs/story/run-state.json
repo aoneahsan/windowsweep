@@ -137,18 +137,21 @@
       "draft": "docs/story/drafts/emails-1.4.0.md",
       "phase": "review",
       "status": "in-progress",
-      "round": 1,
+      "round": 2,
       "openedAt": "2026-10-31",
       "gate4": "D59 standing pre-authorisation for transactional copy; every marketing [TEST] needs the owner's own approval before any send"
     },
     {
       "surface": "docs-1.4.0 (content-map row 27 - plans, updates, tours and changelog)",
       "draft": "docs/story/drafts/docs-1.4.0.md",
-      "phase": "review",
-      "status": "in-progress",
-      "round": 1,
+      "phase": "record",
+      "status": "recorded",
+      "round": 2,
       "openedAt": "2026-10-31",
-      "gate4": "D59 standing pre-authorisation, conditional on panel PASS and zero unanswered NEEDS DECISION"
+      "approvedAt": "2026-10-31T12:46:45Z",
+      "registryUpdatedAt": "2026-10-31T12:46:45Z",
+      "gate4": "D59 standing pre-authorisation: bounded panel, targeted fact and SEO rechecks, finalizer READY, zero NEEDS DECISION; production and live docs proof pending",
+      "registryUpdate": "Entry updated and index date remains 2026-10-31; no new motif, glossary term, palette or voice change"
     }
   ],
   "previousRun": "site-terms (content-map row 20, /terms) opened 2026-09-24 on the owner request \"i need terms & conditions page ... do that now first, so i can get google cloud console app in production and approved\". GATE 2 by that request with D31-D34 (Pakistan law and courts; the Google account age where the reader lives; operator Ahsan Mahmood, aoneahsan@gmail.com; the site, the account and the software). A legal SAFETY surface, outside gate4PreAuthorised.scope, so GATE 4 is asked of the owner explicitly. Panel: lean, with humor-emotion mandatory."

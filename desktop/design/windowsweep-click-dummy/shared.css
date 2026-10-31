@@ -922,3 +922,27 @@ body::after {
   --c-accent-ink: var(--c-base-accent-ink);
   color: var(--c-ink);
 }
+
+/* 1.4.0 shared notices. The legal bar never prevents a task. The release gate
+   occupies the window until its required version is installed. */
+.ws-legal {
+  position:fixed; inset-inline:var(--sp-4); bottom:calc(var(--sp-4) + 1.75rem * var(--density)); z-index:70;
+  display:flex; align-items:center; justify-content:space-between; gap:var(--sp-4);
+  max-width:66rem; margin-inline:auto; padding:var(--sp-3) var(--sp-4);
+  background:var(--c-panel); color:var(--c-ink); border:1px solid var(--c-line-strong);
+  border-radius:var(--r-lg); box-shadow:var(--wm-raise-shadow);
+}
+.ws-legal-copy { display:flex; flex-direction:column; gap:var(--sp-1); }
+.ws-legal .btn { flex:none; }
+.ws-release-notice {
+  position:fixed; inset-inline-end:var(--sp-4); bottom:calc(var(--sp-4) + 1.75rem * var(--density)); z-index:75;
+  width:min(31rem, calc(100% - var(--sp-8)));
+}
+.ws-release-block {
+  position:fixed; inset:0; z-index:80; display:grid; place-items:center;
+  padding:var(--sp-4); overflow-y:auto; background:var(--c-app);
+}
+.ws-release-box { display:flex; flex-direction:column; align-items:start; gap:var(--sp-3); width:min(100%, 35rem); }
+.ws-release-reason { padding:var(--sp-3) var(--sp-4); border-inline-start:2px solid var(--c-accent); background:var(--c-well); border-radius:var(--r-sm); }
+.ws-release-actions { display:flex; flex-wrap:wrap; gap:var(--sp-2); margin-block:var(--sp-2); }
+@media(max-width:600px) { .ws-legal { align-items:start; flex-direction:column; } .ws-legal .btn { align-self:end; } }

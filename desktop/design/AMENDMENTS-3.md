@@ -37,3 +37,32 @@ still app-only. It is written into the dummy now, in the app's exact words and p
 `privacy()`, drawn by `settings.html?nokeys=1` - so the dummy owns it as it owns every other word on the tab. No app
 change: release builds carry all four keys and never show it, and a build with one key set draws no sentence on either
 side. A GATE 4 round can pair it only against a build made without keys, which no round has run.
+
+## Amendment - 2026-10-31 (1.4.0): Plans and the two notices
+
+D56 supersedes this design's older no-plan statement in `README.md` sections 8 and 10. The 1.4.0 screen is
+`windowsweep-click-dummy/plans.html`; it uses Reclaim's existing lime, sky and plum treatments, typefaces and nine
+appearance axes. The new UI is a **ledger**: current plan, count left and reset date occupy the first band; the
+device and account pools sit beside it. The person sees the month's state before any price or request button.
+
+The screen keeps the cockpit regime (variance 5, motion 4, density 7). Its asymmetry comes from a 7/5 count
+and allowance pair, then two equal plan choices, then 4/8 referral and Team panels. Equal plan cards make their
+prices and limits comparable; the rest of the screen avoids the repeated-card rhythm that lost direction 01.
+The meter is a fixed track with a changing fill. At zero it remains the same object, empty and labelled with
+the next reset date. The limit panel names what still runs, and its primary action follows the account state.
+
+The single theme control stays in the title bar. The Plans CSS reads semantic tokens for colour, type,
+spacing and motion; it introduces no new hue or cursor. A new React Aria plan picker is not drawn because
+checkout is closed under D61: the buttons record requests, charge nothing and grant nothing. The one pay
+line stays immediately beneath each request button.
+
+The legal notice and release gate are created by the shared shell script on every applicable page. The legal
+bar stays above the status bar and never appears on a task page. Release notices take priority when both
+could appear. The normal release is a small anchored notice; urgent or next-start records use a full-window
+block with one Update action and the published reason as a data slot. The fallback release and support links
+appear only in the failed-update state. The site-only `draftKept` line is absent pending browser proof.
+
+Rejected: a pricing-first screen, because it would bury the count someone came to check; a circular allowance
+gauge, because its zero state would look like an empty decoration; and a blocking legal dialog, because the
+notice law requires a quiet bar. The owner still needs to review this 1.4.0 extension in writing. App parity
+is a separate Gate 4 after implementation.

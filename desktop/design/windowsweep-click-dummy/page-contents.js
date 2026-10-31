@@ -10,13 +10,14 @@
     ['2', 'Sections', 'sections.html', 'All 26, filterable, selectable, expandable.', 'cockpit'],
     ['3', 'Run', 'run.html', 'Determinate progress from the engine\u2019s own ##windowsweep lines.', 'moment'],
     ['4', 'Splash', 'splash.html', 'Boot and the update gate.', 'moment'],
-    ['5', 'Consent', 'consent.html', 'Four providers, all off until answered.', 'moment'],
+    ['5', 'Legacy consent', 'consent.html', '1.3.2 reference; the 1.4.0 legal bar replaces this screen.', 'retired'],
     ['6', 'Picker', 'picker.html', 'Sections 17, 18, 19 and 23 \u2013 nothing pre-selected.', 'cockpit'],
     ['7', 'History', 'history.html', 'Local runs in full, cloud runs as summaries.', 'cockpit'],
     ['8', 'Report', 'report.html', 'One run, rendered from its JSON.', 'cockpit'],
     ['9', 'Account', 'account.html', 'Optional sign-in, for sync only.', 'moment'],
     ['10', 'Settings', 'settings.html', 'Five tabs, every control a real engine flag.', 'cockpit'],
-    ['11', 'Elevation', 'elevation.html', 'What needs a UAC click, and the SmartScreen note.', 'moment']
+    ['11', 'Elevation', 'elevation.html', 'What needs a UAC click, and the SmartScreen note.', 'moment'],
+    ['12', 'Plans', 'plans.html', 'Run allowance, Pro and Team requests, referrals and Team status.', 'cockpit']
   ];
 
   window.wsPage = {
@@ -66,7 +67,7 @@
       var tot = el('div', 'note note-info');
       tot.appendChild(el('span', null, 'i'));
       tot.appendChild(el('span', null,
-        SCREENS.length + ' screens and 8 gallery files \u2013 19 reviewable pages. The archived rejected ' +
+        '11 current screens, 1 legacy consent reference and 8 gallery files \u2013 20 reviewable pages. The archived rejected ' +
         'direction under _rejected/ is not counted, and neither is this page.'));
       host.appendChild(tot);
     }

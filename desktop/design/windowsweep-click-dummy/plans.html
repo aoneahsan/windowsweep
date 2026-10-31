@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>windowsweep - Plans</title>
+<meta name="description" content="windowsweep desktop click dummy - plans, run allowance, referrals and Team.">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="components.css">
+<link rel="stylesheet" href="plans.css">
+<script src="vendor/strata-storage.iife.js"></script>
+<script src="app.js"></script>
+</head>
+<body>
+<div class="app">
+  <header class="titlebar" data-ws-titlebar></header>
+  <div class="shell">
+    <nav class="rail" data-ws-rail aria-label="Main"></nav>
+    <main class="content" id="plans-main">
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <p class="caps ink-3">Your plan</p>
+          <h1 class="t-xl wide" data-plan-heading>Free</h1>
+          <div class="plan-state-row">
+            <div><p class="lede" data-plan-summary></p><p class="t-sm ink-3" data-plan-portal hidden>Receipts and cancellation are in Polar’s customer portal; Polar emails you its link.</p></div>
+            <a class="lnk t-sm" href="account.html">Account</a>
+          </div>
+        </div>
+      </section>
+      <section class="band band-app" aria-labelledby="plan-count-title">
+        <div class="wrap">
+          <div class="plan-count-grid">
+            <div class="panel pad plan-meter">
+              <p class="caps ink-3" id="plan-count-title">This month</p>
+              <p class="plan-meter-number num wide" data-plan-number></p>
+              <div class="plan-loading-skeleton" data-plan-skeleton aria-hidden="true" hidden></div>
+              <p class="t-base" data-plan-left role="status"></p>
+              <a class="btn btn-sm" data-plan-retry href="plans.html?state=free" hidden>Try again</a>
+              <div class="plan-meter-track" role="meter" aria-label="Real runs left this month" aria-valuemin="0" aria-valuemax="30" aria-valuenow="30" data-plan-track><span data-plan-fill></span></div>
+              <p class="t-sm ink-3" data-plan-reset></p>
+            </div>
+            <div class="well pad plan-pools">
+              <p class="caps ink-3">Allowance</p>
+              <p class="t-base" data-plan-device></p>
+              <p class="t-base" data-plan-account></p>
+              <p class="t-sm ink-3">Dry-runs, scans and reports are never counted.</p>
+            </div>
+          </div>
+          <div class="note note-warn plan-limit" data-plan-limit hidden>
+            <span aria-hidden="true">!</span>
+            <div>
+              <h2 class="t-md wide" data-limit-title></h2>
+              <p class="t-sm" data-limit-body></p>
+              <div class="plan-actions" data-limit-actions></div>
+              <details class="disclose plan-command"><summary><span class="disclose-line">The command line runs the same engine and is never counted.</span><span class="disclose-more">Command</span></summary>
+                <div class="disclose-body"><p>Rehearse first. Then run the same command without --dry-run:</p><code class="mono">npx windowsweep --dry-run --all --yes</code><button class="btn btn-sm" type="button" data-plan-copy-command>Copy the command</button></div>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="band band-well" aria-labelledby="plan-choose-title">
+        <div class="wrap">
+          <div class="plan-section-head"><div><p class="caps ink-3">Billing</p><h2 class="t-lg wide" id="plan-choose-title">Pro and Team</h2></div>
+            <fieldset class="plan-billing"><legend class="visually-hidden">Billing</legend><label><input type="radio" name="billing" value="monthly" checked> Monthly</label><label><input type="radio" name="billing" value="yearly"> Yearly</label></fieldset>
+          </div>
+          <div class="plan-cards">
+            <article class="panel pad plan-card" aria-labelledby="pro-title"><p class="caps ink-3">One person</p><h3 class="t-lg wide" id="pro-title">Pro</h3><p class="plan-price num" data-pro-price></p><p class="t-sm ink-3" data-pro-year-note></p><p class="t-sm">No limit on real runs, plus schedules, reports across up to 5 machines and a history export.</p><div class="plan-card-bottom"><button class="btn btn-primary" type="button" data-request="pro">Request Pro</button><p class="t-xs ink-3 plan-pay-line" data-pay-line="pro">By continuing, you agree to our <a href="https://windowsweep.aoneahsan.com/terms" target="_blank" rel="noopener">Terms of Service<span class="visually-hidden"> (opens in a new tab)</span></a> and <a href="https://windowsweep.aoneahsan.com/privacy" target="_blank" rel="noopener">Privacy Policy<span class="visually-hidden"> (opens in a new tab)</span></a>.</p></div></article>
+            <article class="panel pad plan-card" aria-labelledby="team-title"><p class="caps ink-3">From 3 seats</p><h3 class="t-lg wide" id="team-title">Team</h3><p class="plan-price num" data-team-price></p><p class="t-sm ink-3" data-team-year-note></p><p class="t-sm">Pro for every seat, from 3 seats, and one fleet report across the team’s machines.</p><div class="fw"><label class="fw-lbl" for="team-seats">Seats</label><input class="field" id="team-seats" type="number" min="3" value="3" inputmode="numeric" aria-describedby="team-seats-hint"><span class="fw-desc" id="team-seats-hint">From 3.</span></div><div class="plan-card-bottom"><button class="btn" type="button" data-request="team">Request Team</button><p class="t-xs ink-3 plan-pay-line" data-pay-line="team">By continuing, you agree to our <a href="https://windowsweep.aoneahsan.com/terms" target="_blank" rel="noopener">Terms of Service<span class="visually-hidden"> (opens in a new tab)</span></a> and <a href="https://windowsweep.aoneahsan.com/privacy" target="_blank" rel="noopener">Privacy Policy<span class="visually-hidden"> (opens in a new tab)</span></a>.</p></div></article>
+          </div>
+          <div class="plan-request-note" role="status"><p class="t-sm">Checkout is not open yet. A request records the plan you want on your account. Nothing is charged.</p><p class="t-sm ink-3">A request grants nothing. When checkout opens, the windowsweep team emails you a link to pay and marks the request notified. The team closes it separately.</p><p class="t-sm" data-request-status hidden></p></div>
+        </div>
+      </section>
+      <section class="band band-app" aria-labelledby="referral-title">
+        <div class="wrap plan-secondary-grid"><div><p class="caps ink-3">Invite</p><h2 class="t-lg wide" id="referral-title">Your referrals</h2><p class="t-sm ink-3">A friend counts when their email is verified before the referral window closes.</p></div>
+          <div class="panel pad"><div class="plan-referral-stats"><p><span class="num t-lg" data-ref-confirmed>0</span><span class="t-sm ink-3"> friends confirmed</span></p><p><span class="num t-lg" data-ref-points>0</span><span class="t-sm ink-3"> points</span></p><p><span class="num t-lg" data-ref-months>0</span><span class="t-sm ink-3"> months of Pro earned</span></p></div><p class="t-sm ink-3">Each confirmed friend earns you 10 points. For every 3 confirmed friends, you get 1 month of Pro, up to 4 months in any 12 months.</p><p class="t-sm" data-ref-empty>No friend has joined with your code yet.</p><div class="plan-invite-row"><div class="fw"><label class="fw-lbl" for="invite-code">Your invite code</label><input class="field field-mono" id="invite-code" value="" readonly></div><button class="btn" type="button" data-ref-copy>Copy the invite link</button></div><p class="t-sm" role="status" data-ref-status></p></div>
+        </div>
+      </section>
+      <section class="band band-app" id="team" aria-labelledby="team-status-title"><div class="wrap plan-secondary-grid"><div><p class="caps ink-3">Team</p><h2 class="t-lg wide" id="team-status-title">Team status</h2><p class="t-sm ink-3">Team gives every seat Pro. The fleet report shows each member’s runs by machine: date, mode, sections run and bytes reclaimed. Never a path, file name, machine name or user name.</p></div><div class="well pad" data-team-content></div></div></section>
+      <section class="band band-well plan-review" aria-labelledby="plan-review-title"><div class="wrap"><p class="caps ink-3">Design dummy</p><h2 class="t-md wide" id="plan-review-title">Review states</h2><div class="plan-review-links"><a href="plans.html?state=free">Free</a><a href="plans.html?state=signedOut">Signed out</a><a href="plans.html?state=deviceLimit">Machine limit</a><a href="plans.html?state=allLimit">Monthly limit</a><a href="plans.html?state=pro">Pro</a><a href="plans.html?state=team">Team member</a><a href="plans.html?state=teamOwner">Team owner</a><a href="plans.html?state=loading">Loading</a><a href="plans.html?state=error">Read failed</a><a href="plans.html?release=notice">Update notice</a><a href="plans.html?release=urgent">Urgent block</a><a href="plans.html?release=next">Next-start block</a><a href="plans.html?release=offline">Offline block</a><a href="plans.html?release=failed">Failed update</a><a href="plans.html?release=clear">Clear update demo</a><a href="plans.html?legal=1">Legal bar</a></div></div></section>
+    </main>
+  </div>
+  <footer class="statusbar"><span class="dot" aria-hidden="true"></span><span>engine <span class="mono" data-ws-text="engineVersion">1.4.0</span></span><span class="only-wide">real runs are counted - dry-runs never are</span><span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span></footer>
+</div>
+<script src="seed.js"></script><script src="db.js"></script><script src="page-plans.js"></script><script src="wire.js"></script>
+</body>
+</html>

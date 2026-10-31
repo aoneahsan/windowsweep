@@ -1,0 +1,49 @@
+/* 1.4.0 Plans: a ledger first, choices second. All paint and sizing use the
+   existing Reclaim tokens so the nine appearance axes carry through. */
+.plan-state-row { display:flex; align-items:end; justify-content:space-between; gap:var(--sp-4); margin-top:var(--sp-3); }
+.plan-count-grid { display:grid; grid-template-columns:minmax(0, 7fr) minmax(0, 5fr); gap:var(--sp-4); }
+.plan-meter { display:flex; flex-direction:column; gap:var(--sp-2); min-width:0; }
+.plan-meter-number { font-size:clamp(var(--fs-xl), 7vw, var(--fs-hero)); line-height:1; color:var(--c-accent-ink); }
+.plan-loading-skeleton { width:7rem; height:var(--fs-hero); border-radius:var(--r-md); background:var(--c-well); }
+.plan-meter > [data-plan-retry] { align-self:start; }
+.plan-meter-track { height:var(--sp-2); width:100%; overflow:hidden; border-radius:var(--r-pill); background:var(--c-well); margin-block:var(--sp-2); }
+.plan-meter-track span { display:block; height:100%; background:var(--c-accent); border-radius:inherit; transition:width var(--d-quick) var(--ease-mech); }
+.plan-pools { display:flex; flex-direction:column; gap:var(--sp-3); }
+.plan-pools .caps { margin-bottom:var(--sp-2); }
+.plan-limit { margin-top:var(--sp-4); align-items:start; }
+.plan-limit h2 { margin-bottom:var(--sp-2); }
+.plan-actions { display:flex; align-items:center; flex-wrap:wrap; gap:var(--sp-3); margin-block:var(--sp-4); }
+.plan-command { margin-top:var(--sp-3); }
+.plan-command code { display:block; max-width:100%; overflow-wrap:anywhere; }
+.plan-section-head { display:flex; align-items:end; justify-content:space-between; gap:var(--sp-4); margin-bottom:var(--sp-4); }
+.plan-billing { display:flex; flex-wrap:wrap; gap:var(--sp-2); padding:0; margin:0; border:0; }
+.plan-billing label { display:flex; align-items:center; gap:var(--sp-2); min-height:calc(2.75rem * var(--density)); padding:var(--sp-2) var(--sp-3); border:1px solid var(--c-line-strong); border-radius:var(--r-md); background:var(--c-panel); }
+.plan-billing label:has(input:checked) { border-color:var(--c-accent); background:var(--c-accent-soft); color:var(--c-accent-ink); }
+.plan-billing input { accent-color:var(--c-accent); }
+.plan-cards { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:var(--sp-4); }
+.plan-card { display:flex; flex-direction:column; align-items:start; gap:var(--sp-3); min-width:0; }
+.plan-card > .fw { margin-block:var(--sp-2); }
+.plan-card > .fw .field { max-width:8rem; }
+.plan-price { font-size:var(--fs-lg); color:var(--c-accent-ink); }
+.plan-card-bottom { width:100%; display:flex; flex-direction:column; align-items:start; gap:var(--sp-2); margin-top:auto; padding-top:var(--sp-4); }
+.plan-pay-line { max-width:42ch; }
+.plan-pay-line a { color:inherit; text-underline-offset:2px; }
+.plan-pay-line a:hover { color:var(--c-accent-ink); }
+.plan-request-note { display:flex; flex-direction:column; gap:var(--sp-2); margin-top:var(--sp-4); padding-inline-start:var(--sp-4); border-inline-start:2px solid var(--c-line-strong); }
+.plan-secondary-grid { display:grid; grid-template-columns:minmax(0, 4fr) minmax(0, 8fr); gap:var(--sp-5); }
+.plan-secondary-grid > div:first-child { display:flex; flex-direction:column; gap:var(--sp-3); }
+.plan-referral-stats { display:flex; justify-content:space-between; flex-wrap:wrap; gap:var(--sp-4); border-bottom:1px solid var(--c-line); padding-bottom:var(--sp-3); margin-bottom:var(--sp-3); }
+.plan-referral-stats p { display:flex; flex-direction:column; }
+.plan-invite-row { display:flex; align-items:end; flex-wrap:wrap; gap:var(--sp-3); margin-block:var(--sp-4); }
+.plan-invite-row .fw { flex:1; min-width:12rem; }
+.plan-secondary-grid .well { display:flex; flex-direction:column; align-items:start; gap:var(--sp-3); }
+.plan-secondary-grid .well .fw { width:100%; }
+.plan-secondary-grid .well .field { max-width:24rem; }
+.plan-review { opacity:.82; }
+.plan-review-links { display:flex; gap:var(--sp-2); flex-wrap:wrap; margin-top:var(--sp-3); }
+.plan-review-links a { padding:var(--sp-1) var(--sp-2); border:1px solid var(--c-line); border-radius:var(--r-sm); color:var(--c-ink-2); font-size:var(--fs-xs); text-decoration:none; }
+.plan-review-links a:hover { border-color:var(--c-accent); color:var(--c-accent-ink); }
+@media(max-width:900px) { .plan-count-grid,.plan-secondary-grid { grid-template-columns:1fr; } }
+@media(max-width:760px) { .plan-cards { grid-template-columns:1fr; } .plan-section-head,.plan-state-row { align-items:start; flex-direction:column; } }
+@media(prefers-reduced-motion:reduce) { .plan-meter-track span { transition:opacity var(--d-quick) var(--ease-mech); } }
+:root[data-motion='reduced'] .plan-meter-track span { transition:opacity var(--d-quick) var(--ease-mech); }

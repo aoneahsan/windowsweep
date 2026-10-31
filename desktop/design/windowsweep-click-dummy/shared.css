@@ -13,6 +13,7 @@
    all shipped VISIBLE on first paint while their JS believed they were hidden.
    Nothing errors; it is only visible by looking at the render. */
 [hidden] { display: none !important; }
+.allowance-actions { display:flex; align-items:center; flex-wrap:wrap; gap:var(--sp-3); margin-block:var(--sp-4); }
 html, body { height: 100%; }
 body {
   margin: 0;

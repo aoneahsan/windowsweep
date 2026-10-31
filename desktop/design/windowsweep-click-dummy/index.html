@@ -80,10 +80,20 @@
             </button>
           </div>
 
+          <p class="t-sm state-warn" data-allowance-inline role="status" hidden>No real runs left this month. A dry-run still works.</p>
+
           <!-- the page's only circle, and the one thing that made the hero's right
                half stop being dead space -->
           <div class="hero-ring" data-ws-ring aria-hidden="false"></div>
         </div>
+      </section>
+
+      <section class="band band-app band-tight" data-allowance-notice hidden aria-labelledby="home-allowance-title">
+        <div class="wrap"><div class="note note-warn"><span aria-hidden="true">!</span><div>
+          <h2 class="t-md wide" id="home-allowance-title" data-allowance-title></h2>
+          <p class="t-sm" data-allowance-body></p>
+          <div class="allowance-actions" data-allowance-actions></div>
+        </div></div></div>
       </section>
 
       <!-- ============ ZONE 3 - THE RECLAIM MAP (signature) ============ -->
@@ -411,6 +421,7 @@
 })();
 </script>
 <script src="wire.js"></script>
+<script src="allowance-review.js"></script>
 <script src="demo.js"></script>
 </body>
 </html>

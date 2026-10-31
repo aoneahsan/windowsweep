@@ -19,21 +19,32 @@
     "pointer": "browser default"
   },
   "pages": [
-    { "dummy": "index.html", "route": "/", "sections": 7, "zones": 14, "bands": ["band-app", "band-well", "band-app", "band-well", "band-bleed", "band-well", "band-app"] },
+    { "dummy": "index.html", "route": "/", "sections": 8, "zones": 14, "bands": ["band-app", "band-app", "band-well", "band-app", "band-well", "band-bleed", "band-well", "band-app"] },
     { "dummy": "sections.html", "route": "/sections", "sections": 3, "bands": ["band-app", "band-well", "band-app"] },
-    { "dummy": "run.html", "route": "/run", "sections": 5, "bands": ["band-app", "band-app", "band-well", "band-app", "band-well"] },
+    { "dummy": "run.html", "route": "/run", "sections": 6, "bands": ["band-app", "band-app", "band-app", "band-well", "band-app", "band-well"] },
     { "dummy": "splash.html", "route": "/splash", "sections": 3, "bands": ["band-app", "band-well", "band-app"] },
     { "dummy": "consent.html", "route": "/consent", "sections": 3, "bands": ["band-app", "band-app", "band-bleed"], "status": "legacy 1.3.2; retired in 1.4.0" },
     { "dummy": "picker.html", "route": "/picker", "sections": 3, "bands": ["band-app", "band-well", "band-app"] },
     { "dummy": "history.html", "route": "/history", "sections": 4, "bands": ["band-app", "band-app", "band-well", "band-app"] },
     { "dummy": "report.html", "route": "/report", "sections": 7, "bands": ["band-app", "band-app", "band-app", "band-app", "band-app", "band-app", "band-well"] },
-    { "dummy": "account.html", "route": "/account", "sections": 4, "bands": ["band-app", "band-app", "band-well", "band-app"] },
+    { "dummy": "account.html", "route": "/account", "sections": 5, "bands": ["band-app", "band-app", "band-app", "band-well", "band-app"] },
     { "dummy": "settings.html", "route": "/settings", "sections": 2, "bands": ["band-app", "band-app"] },
     { "dummy": "elevation.html", "route": "/elevation", "sections": 5, "bands": ["band-app", "band-app", "band-app", "band-well", "band-app"] },
     { "dummy": "plans.html", "route": "/plans", "sections": 6, "bands": ["band-app", "band-app", "band-well", "band-app", "band-app", "band-well"], "status": "in review" }
   ],
   "archetypes": [
     { "dummy": "plans.html?tab=team", "routes": ["/team"], "status": "in review" }
+  ],
+  "reviewStates": [
+    { "dummy": "index.html?allowance=deviceLimit", "state": "machine's Free pool spent; dry-run enabled" },
+    { "dummy": "index.html?allowance=allLimit", "state": "both Free pools spent; dry-run enabled" },
+    { "dummy": "index.html?allowance=offline", "state": "account server unavailable; real run disabled" },
+    { "dummy": "run.html?allowance=deviceLimit", "state": "machine's Free pool spent; start disabled" },
+    { "dummy": "run.html?allowance=allLimit", "state": "both Free pools spent; start disabled" },
+    { "dummy": "run.html?allowance=offline", "state": "account server unavailable; start disabled" },
+    { "dummy": "account.html?device=owned", "state": "sign in to owner account or use this PC as new" },
+    { "dummy": "plans.html?state=deviceOwned", "state": "device recovery choice" },
+    { "dummy": "plans.html?state=offline", "state": "allowance read unavailable" }
   ],
   "sharedSurfaces": [
     { "source": "app.js:609", "name": "legal bar", "preview": "plans.html?legal=1", "status": "in review" },
@@ -47,12 +58,10 @@
     "bundle": "vendor/strata-storage.iife.js",
     "physicalKeyVerified": "strata:wsdummy:physicalProbe"
   },
-  "noDummy": [
-    { "surface": "1.4.0 emails", "plannedDummy": "emails.html", "reason": "Story map row 26 final copy pending" }
-  ],
+  "noDummy": [],
   "evidence": {
     "widths": [760, 1440],
-    "captures": "../gate4/plans-*-dummy-1.4.0.png",
+    "captures": ["../gate4/plans-*-dummy-1.4.0.png", "../gate4/allowance-*.png", "../gate4/device-owned-*.png"],
     "appParityStatus": "not run for 1.4.0"
   }
 }

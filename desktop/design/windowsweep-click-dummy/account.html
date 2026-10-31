@@ -21,12 +21,20 @@
 
     <main class="content">
 
+      <section class="band band-app band-tight" data-device-owned hidden aria-labelledby="account-device-owned-title">
+        <div class="wrap"><div class="note note-warn"><span aria-hidden="true">!</span><div>
+          <h2 class="t-md wide" id="account-device-owned-title">This PC is registered to another account.</h2>
+          <div class="allowance-actions"><button class="btn btn-primary" type="button" data-device-signin>Sign in to that account</button><button class="btn" type="button" data-device-new>Use this PC as new</button></div>
+          <p class="t-sm" role="status" data-device-status></p>
+        </div></div></div>
+      </section>
+
       <section class="band band-app band-tight">
         <div class="wrap">
-          <p class="caps ink-3">Optional</p>
-          <h1 class="t-xl wide">Sign in only if you want your settings on another machine.</h1>
-          <p class="lede">Reclaiming space is <strong>never gated</strong>. Signing in moves your settings and a summary of
-            each run between your own machines, and that is all it does.</p>
+          <p class="caps ink-3">Account</p>
+          <h1 class="t-xl wide">Your account on this PC.</h1>
+          <p class="lede">A Free account has 15 extra runs a month across machines. Sign in to see what remains.
+            Your settings and a summary of each run can follow you between your own machines.</p>
         </div>
       </section>
 
@@ -194,7 +202,7 @@
   <footer class="statusbar">
     <span class="dot" aria-hidden="true"></span>
     <span>engine <span class="mono" data-ws-text="engineVersion">1.1.0</span></span>
-    <span class="only-wide">sync is optional - runs are never gated</span>
+    <span class="only-wide">dry-runs, scans and reports are never counted</span>
     <span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span>
   </footer>
 </div>
@@ -215,6 +223,7 @@
 <script src="widgets.js"></script>
 <script src="page-account.js"></script>
 <script src="wire.js"></script>
+<script src="allowance-review.js"></script>
 <script src="demo.js"></script>
 </body>
 </html>

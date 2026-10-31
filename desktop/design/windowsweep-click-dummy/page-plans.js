@@ -5,7 +5,7 @@
   var ws = window.ws;
   var q = new URLSearchParams(location.search);
   var state = q.get('state') || 'free';
-  var signedOut = state === 'signedOut' || state === 'deviceLimit';
+  var signedOut = state === 'signedOut' || state === 'deviceLimit' || state === 'deviceOwned';
   var used = state === 'deviceLimit' ? 15 : state === 'allLimit' ? 30 : 5;
   var total = signedOut ? 15 : 30;
   var paid = state === 'pro' || state === 'team' || state === 'teamOwner';
@@ -21,16 +21,19 @@
   }
 
   function renderMeter() {
-    if (state === 'loading' || state === 'error') {
+    if (state === 'loading' || state === 'error' || state === 'offline' || state === 'timeout' || state === 'serverError' || state === 'deviceOwned') {
       set('[data-plan-heading]', 'Free');
-      set('[data-plan-left]', state === 'loading' ? 'Reading this month’s count' : 'This month’s count could not be read. Dry-runs and scans never need it.');
+      set('[data-plan-summary]', state === 'deviceOwned' ? 'Choose how this PC should be used.' : 'Dry-runs, scans and reports are never counted.');
+      set('[data-plan-left]', state === 'loading' ? 'Reading this month’s count' : state === 'deviceOwned' ? 'This PC is registered to another account.' : state === 'error' ? 'This month’s count could not be read. Dry-runs and scans never need it.' : 'The account server did not answer. Try again when you are online; dry runs stay free.');
       $('[data-plan-number]').hidden = true;
       $('[data-plan-skeleton]').hidden = state !== 'loading';
-      $('[data-plan-retry]').hidden = state !== 'error';
+      $('[data-plan-retry]').hidden = state !== 'error' && state !== 'offline' && state !== 'timeout' && state !== 'serverError';
       $('[data-plan-track]').hidden = true;
       $('[data-plan-reset]').hidden = true;
       $('[data-plan-device]').hidden = true;
       $('[data-plan-account]').hidden = true;
+      var owned = $('[data-device-owned]');
+      if (owned) owned.hidden = state !== 'deviceOwned';
       return;
     }
     set('[data-plan-heading]', state === 'team' || state === 'teamOwner' ? 'Team' : state === 'pro' ? 'Pro' : 'Free');

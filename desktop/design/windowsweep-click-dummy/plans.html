@@ -58,6 +58,13 @@
               </details>
             </div>
           </div>
+          <div class="note note-warn plan-limit" data-device-owned hidden aria-labelledby="device-owned-title">
+            <span aria-hidden="true">!</span><div>
+              <h2 class="t-md wide" id="device-owned-title">This PC is registered to another account.</h2>
+              <div class="plan-actions"><a class="btn btn-primary" href="account.html?device=owned">Sign in to that account</a><button class="btn" type="button" data-device-new>Use this PC as new</button></div>
+              <p class="t-sm" role="status" data-device-status></p>
+            </div>
+          </div>
         </div>
       </section>
       <section class="band band-well" aria-labelledby="plan-choose-title">
@@ -78,11 +85,11 @@
         </div>
       </section>
       <section class="band band-app" id="team" aria-labelledby="team-status-title"><div class="wrap plan-secondary-grid"><div><p class="caps ink-3">Team</p><h2 class="t-lg wide" id="team-status-title">Team status</h2><p class="t-sm ink-3">Team gives every seat Pro. The fleet report shows each member’s runs by machine: date, mode, sections run and bytes reclaimed. Never a path, file name, machine name or user name.</p></div><div class="well pad" data-team-content></div></div></section>
-      <section class="band band-well plan-review" aria-labelledby="plan-review-title"><div class="wrap"><p class="caps ink-3">Design dummy</p><h2 class="t-md wide" id="plan-review-title">Review states</h2><div class="plan-review-links"><a href="plans.html?state=free">Free</a><a href="plans.html?state=signedOut">Signed out</a><a href="plans.html?state=deviceLimit">Machine limit</a><a href="plans.html?state=allLimit">Monthly limit</a><a href="plans.html?state=pro">Pro</a><a href="plans.html?state=team">Team member</a><a href="plans.html?state=teamOwner">Team owner</a><a href="plans.html?state=loading">Loading</a><a href="plans.html?state=error">Read failed</a><a href="plans.html?release=notice">Update notice</a><a href="plans.html?release=urgent">Urgent block</a><a href="plans.html?release=next">Next-start block</a><a href="plans.html?release=offline">Offline block</a><a href="plans.html?release=failed">Failed update</a><a href="plans.html?release=clear">Clear update demo</a><a href="plans.html?legal=1">Legal bar</a></div></div></section>
+      <section class="band band-well plan-review" aria-labelledby="plan-review-title"><div class="wrap"><p class="caps ink-3">Design dummy</p><h2 class="t-md wide" id="plan-review-title">Review states</h2><div class="plan-review-links"><a href="plans.html?state=free">Free</a><a href="plans.html?state=signedOut">Signed out</a><a href="plans.html?state=deviceLimit">Machine limit</a><a href="plans.html?state=allLimit">Monthly limit</a><a href="plans.html?state=deviceOwned">PC registered elsewhere</a><a href="plans.html?state=offline">Account server unavailable</a><a href="plans.html?state=pro">Pro</a><a href="plans.html?state=team">Team member</a><a href="plans.html?state=teamOwner">Team owner</a><a href="plans.html?state=loading">Loading</a><a href="plans.html?state=error">Read failed</a><a href="plans.html?release=notice">Update notice</a><a href="plans.html?release=urgent">Urgent block</a><a href="plans.html?release=next">Next-start block</a><a href="plans.html?release=offline">Offline block</a><a href="plans.html?release=failed">Failed update</a><a href="plans.html?release=clear">Clear update demo</a><a href="plans.html?legal=1">Legal bar</a></div></div></section>
     </main>
   </div>
   <footer class="statusbar"><span class="dot" aria-hidden="true"></span><span>engine <span class="mono" data-ws-text="engineVersion">1.4.0</span></span><span class="only-wide">real runs are counted - dry-runs never are</span><span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span></footer>
 </div>
-<script src="seed.js"></script><script src="db.js"></script><script src="page-plans.js"></script><script src="wire.js"></script>
+<script src="seed.js"></script><script src="db.js"></script><script src="page-plans.js"></script><script src="wire.js"></script><script src="allowance-review.js"></script>
 </body>
 </html>

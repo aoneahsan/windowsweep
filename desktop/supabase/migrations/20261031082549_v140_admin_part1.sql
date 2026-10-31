@@ -75,7 +75,7 @@ grant execute on function public.admin_set_plan(uuid, text, timestamptz, integer
 
 create or replace function public.admin_override_limits(p_user uuid, p_overrides jsonb, p_reason text)
 returns jsonb language plpgsql security definer set search_path = '' as $$
-declare v_admin uuid; v_before jsonb; v_key text; v_value jsonb;
+declare v_admin uuid; v_before jsonb; v_key text; v_value jsonb; v_limit integer;
 begin
   if p_user is null then raise exception 'invalid_request' using errcode = 'PT422'; end if;
   perform private.admin_reason(p_reason);
@@ -88,9 +88,13 @@ begin
         if jsonb_typeof(v_value) <> 'boolean' then
           raise exception 'invalid_override' using errcode = 'PT422'; end if;
       elsif v_key in ('device_real_runs_per_month', 'account_extra_real_runs_per_month', 'report_machines') then
-        if jsonb_typeof(v_value) <> 'number' or (v_value #>> '{}') !~ '^[0-9]+$'
-           or (v_value #>> '{}')::numeric > case when v_key = 'report_machines' then 1000 else 100000 end
-          then raise exception 'invalid_override' using errcode = 'PT422'; end if;
+        if jsonb_typeof(v_value) <> 'number' or (v_value #>> '{}') !~ '^[0-9]+$' then
+          raise exception 'invalid_override' using errcode = 'PT422';
+        end if;
+        if v_key = 'report_machines' then v_limit := 1000; else v_limit := 100000; end if;
+        if (v_value #>> '{}')::numeric > v_limit then
+          raise exception 'invalid_override' using errcode = 'PT422';
+        end if;
       else raise exception 'invalid_override' using errcode = 'PT422'; end if;
     end loop;
   end if;

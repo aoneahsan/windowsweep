@@ -96,14 +96,32 @@ function Write-Separator {
   Write-UiLine ([string]::new([char]($Script:WS.Glyph.hline), 78)) 'DarkGray'
 }
 
+function Split-WrappedText {
+  <# .SYNOPSIS Word-wrap text into lines of at most -Width characters; a single longer word stands alone. #>
+  param([string] $Text, [int] $Width)
+  $lines = New-Object System.Collections.Generic.List[string]
+  $current = ''
+  foreach ($word in ($Text -split '\s+')) {
+    if (-not $word) { continue }
+    if (-not $current) { $current = $word; continue }
+    if (($current.Length + 1 + $word.Length) -le $Width) { $current = "$current $word" }
+    else { $lines.Add($current); $current = $word }
+  }
+  if ($current) { $lines.Add($current) }
+  return , $lines.ToArray()
+}
+
 function Write-Box {
-  <# .SYNOPSIS Double-lined title box with an optional dim subtitle. #>
+  <# .SYNOPSIS Double-lined title box with an optional dim subtitle, wrapped inside the 78-glyph rule. #>
   param([string] $Title, [string] $Subtitle = '')
   $line = [string]::new([char]($Script:WS.Glyph.dline), 78)
   Write-UiLine '' 'Gray'
   Write-UiLine $line 'Blue'
   Write-UiLine ("   $Title") 'Blue'
-  if ($Subtitle) { Write-UiLine ("   $Subtitle") 'DarkGray' }
+  if ($Subtitle) {
+    # The rule is 78 glyphs and the subtitle is indented by three, so each line holds 75.
+    foreach ($part in (Split-WrappedText -Text $Subtitle -Width 75)) { Write-UiLine ("   $part") 'DarkGray' }
+  }
   Write-UiLine $line 'Blue'
 }
 

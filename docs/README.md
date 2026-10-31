@@ -67,7 +67,7 @@ them; the whole `windowsweep-root` folder has to be copied. The status record ab
 
 ## Quick contact
 
-| | |
+| Channel | Where |
 |---|---|
 | **Issues** | https://github.com/aoneahsan/windowsweep/issues |
 | **Author** | [The windowsweep team](./author.md) - [contact form](https://windowsweep.aoneahsan.com/contact), after signing in |

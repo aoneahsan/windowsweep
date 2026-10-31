@@ -37,7 +37,7 @@ personal files, no deep sections. Review the first run's report before schedulin
 (`npm install -g windowsweep`); from `npx` the installer refuses because that cache is evicted.
 
 **Why PowerShell rather than an .exe?**
-Every Windows machine has PowerShell 5.1, so there is no runtime to install and no binary to trust. The engine is 5,588 lines of readable script across `windowsweep.ps1`, `lib/` and `modules/`, and `--self-test` runs 155 checks of it on your machine.
+Every Windows machine has PowerShell 5.1, so there is no runtime to install and no binary to trust. The engine is about 5,700 lines of readable script across `windowsweep.ps1`, `lib/` and `modules/`, and `--self-test` runs 160 checks of it on your machine.
 
 **Does it run on Windows Server?**
 The engine uses nothing newer than Windows 10 1809 / Server 2019. CI runs the self-test and a dry-run of
@@ -47,4 +47,4 @@ on Windows 10 so far; a Windows 11 run is on the verification list.
 **Where are the logs?**
 `%USERPROFILE%\.windowsweep\logs\`. Reports are beside them; `windowsweep --reports` browses them, and `--stats` prints the run history and the total reclaimed.
 
-Last Updated: 2026-09-05
+Last Updated: 2026-10-31

@@ -61,6 +61,21 @@ begin
     select g.ends_at from public.plan_grants g
       join public.plans p on p.id = g.plan_id and p.rank >= v_plan_rank
       where g.user_id = v_ref.referrer_id and g.revoked_at is null and g.ends_at > now()
+    union all
+    select s.period_end from public.team_members tm
+      join public.teams t on t.id = tm.team_id
+      join public.subscriptions s on s.user_id = t.owner_id
+      join public.plans p on p.id = s.plan_id and p.rank >= v_plan_rank and p.fleet_reports
+      where tm.user_id = v_ref.referrer_id and tm.user_id <> t.owner_id
+        and s.status = 'active' and s.returned_at is null
+        and s.period_start <= now() and s.period_end > now()
+    union all
+    select g.ends_at from public.team_members tm
+      join public.teams t on t.id = tm.team_id
+      join public.plan_grants g on g.user_id = t.owner_id
+      join public.plans p on p.id = g.plan_id and p.rank >= v_plan_rank and p.fleet_reports
+      where tm.user_id = v_ref.referrer_id and tm.user_id <> t.owner_id
+        and g.revoked_at is null and g.starts_at <= now() and g.ends_at > now()
   ) x;
   insert into public.plan_grants (user_id, plan_id, source, seats, months, reason, starts_at, ends_at)
     values (v_ref.referrer_id, v_plan, 'referral', 1, v_months,
@@ -191,6 +206,9 @@ begin
         where a.user_id = v_uid and a.voided_at is null
         order by a.awarded_at desc, a.id desc limit 20) x),
     'rule', v_rule, 'months_granted_last_year', v_months_used,
+    'months_earned_total', (select coalesce(sum(g.months), 0)::integer
+      from public.plan_grants g where g.user_id = v_uid and g.source = 'referral'
+        and g.revoked_at is null),
     'next_reward_in', case when not v_enabled or v_threshold is null or v_cap <= v_months_used
       then null else v_threshold - (v_confirmed % v_threshold) end,
     'rewards', (select coalesce(jsonb_agg(x.item order by x.starts_at desc), '[]'::jsonb) from (

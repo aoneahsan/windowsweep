@@ -217,8 +217,8 @@ Asked in one batch at the start of the run; each answer is his verbatim option. 
   runs per PC a month + 15 more signed in) · Pro $4 a month or $36 a year (unlimited real runs, synced history on
   up to 5 PCs, schedules, exports) · Team $3 a seat a month or $30 a year, minimum 3 seats (+ shared fleet
   reports) · referral 10 points per confirmed friend, one Pro month per 3, at most 4 a year. Every figure is an admin
-  field. The npm CLI stays free, MIT and unlimited. **Supersedes the 2026-09-05 "no surface makes a pricing claim"
-  decision and the §13 "NOT APPLICABLE" declaration below**, which no owner-typed exception ever backed.
+  field. The npm CLI stays free, MIT and unlimited. **Supersedes the 2026-09-05 no-pricing
+  decision and its old §13 admin declaration.** The current scope is recorded below.
 - **D57 - agents "Up to 4 (Recommended)"**: at most four custom agents at once, resource-checked before each dispatch.
 - **D58 - Supabase "Approve the set (Recommended)"**: on `nlmetjyytgwaxcliusuo`, each rehearsed in
   `BEGIN ... ROLLBACK` first - additive Drizzle migrations (release records + public latest view + admin publish RPC;
@@ -235,16 +235,13 @@ Asked in one batch at the start of the run; each answer is his verbatim option. 
   request replaces the pay button until his windowsweep Polar organization exists as a FilesHub payment account.
 - Mid-run, the same day: he asked for the "What is windowsweep" and LinkedIn company page documents so he can create
   the Polar organization; they live in the notebook's `linkedin-social-content/windowsweep/`.
-- **D62 - "Free keeps them (Recommended)"** (2026-10-31), a NEEDS DECISION from the brief's writer: 1.3.2 already syncs run
-  summaries for a signed-in account (History lists other machines' runs too) and exports a run's report to Markdown
-  and HTML, both free. **Free keeps both.** Pro's "synced history" and "exports" become the multi-machine parts:
-  multi-machine reports across up to 5 machines (5 per seat on Team) and a history export, beside schedules and
-  unlimited real runs. Only what D56 already moved changes for 1.3.2 users: the weekly schedule in the desktop app
-  and the monthly real-run numbers. The command line keeps `--install-task` and `--export`.
-- **D63 - "Yes, ship them early (Recommended)"** (2026-10-31): so Polar's review sees them, the website gets its pricing page
-  (plans arriving with desktop 1.4.0; checkout dormant, a plan request instead of a pay button) and the Terms and
-  Privacy payment clauses ahead of the 1.4.0 release, each shown to him for GATE 4 first. One extra site deploy
-  before the release deploy.
+- **D62 - "Free keeps them (Recommended)"** (2026-10-31): Free keeps 1.3.2's signed-in run-summary sync,
+  cross-machine History and Markdown/HTML per-run export. Pro adds reports across 5 machines (5 per Team seat),
+  history export, schedules and unlimited real runs. D56 changes the desktop weekly schedule and monthly real-run
+  limits; the CLI keeps `--install-task` and `--export`.
+- **D63 - "Yes, ship them early (Recommended)"** (2026-10-31): ahead of 1.4.0, deploy `/pricing` for Polar review
+  (plans arriving with 1.4.0; checkout dormant, plan requests instead of pay buttons) and the Terms/Privacy payment
+  clauses after his GATE 4. This requires an extra site deploy before the release deploy.
 - **D64 - desktop analytics "Bundled analytics only (Recommended)"** (2026-10-31, from the security lane's F-SEC-003):
   Amplitude and Sentry stay bundled; GA4 events leave through the Measurement Protocol as plain requests; `gtag.js`
   and Clarity leave the desktop window (Clarity stays on the website); the window's CSP returns to `script-src 'self'`.
@@ -265,17 +262,24 @@ Asked in one batch at the start of the run; each answer is his verbatim option. 
   install id, the month, the pool and the section numbers; the Privacy Policy says so.
 - **D72 - "Approve it (Recommended)"**: `security_manual_linking_enabled` turned on in the same Auth update as D58's
   hook and anonymous sign-ins, so "Sign in with Google" links onto the device session.
+- **D73 - "Keep the clause (recommended)"** (2026-10-31): the Terms may state that deliberate run-limit evasion or
+  referral-account farming can lead to account deletion and referral voiding. Legal GATE 4 remains pending.
+- **D74 - GA4 secret stays server-side** (2026-10-31, implementation correction to D64): the desktop sends its
+  closed, scrubbed event vocabulary through the authenticated `analytics-ingest` Edge Function. That function alone
+  holds the GA4 Measurement Protocol API secret and submits to Google. Its SQL budget atomically caps 200 events per
+  account and 10,000 in total per UTC day; old count rows are pruned after 30 days. Anonymous device sessions may
+  send only after D72 is live. The client flag stays off until the server secret and function are verified.
 - Settled in the main session the same day, not owner questions: the release form warns when a version is ABOVE the
   deployed build (a record above every build would block everyone; the update-flow skill's wording is corrected);
   `devices` stores no machine name, host name or Windows version (the product's "never a machine name" promise); the
   plan record, invite code, referrals and team seat are deleted with the account; an admin's plan change is audited
   without any of the person's words.
 
-### How the frontend UI mandates map to this product - the declared exemptions
+### How the frontend UI mandates map to this product
 
 `~/.claude/rules/frontend-ui-standards.md` applies to the desktop app (the CLI has no UI at all). Recorded
-here because the rule says anything a product declines to ship is **declared with a reason, never quietly
-dropped** - and three of its mandates genuinely do not apply to a local disk utility.
+here as evidence of the checks. D56 supersedes the old plan and admin decision; the 1.4.0
+work must meet those requirements and the update-flow gate before completion.
 
 **Met, and verified by measurement on 2026-09-05:**
 
@@ -291,22 +295,9 @@ dropped** - and three of its mandates genuinely do not apply to a local disk uti
 | 14 | Every string through `t()` from day one | enforced by `no-restricted-syntax` AST selectors at `error`, watched failing on two different plants |
 | 15 | External links leave the origin, and the do-follow policy | `lib/links.ts` is the one policy module; a raw `href="http…"` appears nowhere in a component |
 
-**Declared out, with reasons:**
-
-🔴 **§13, the admin panel and the five plan-administration capabilities: NOT APPLICABLE, and this is the
-reason.** The rule exists so a product's limits are admin fields rather than code changes. This product has
-**no server, no plan, no limit and no second user**: the engine runs locally with no network calls at all, and
-the desktop window's only account feature is syncing one person's own settings between their own machines.
-There is nothing an administrator could administer and no limit to raise. Consistent with the owner's
-2026-09-05 decision that **no surface makes a pricing claim** - which is why the app says what signing in
-*does* rather than what it costs.
-
-⚠️ **§2, the upload-field info popover:** there is no upload field anywhere in the app. Nothing to declare
-beyond its absence.
-
-⚠️ **§16, a decorative overlay painted outside its surface:** none ships. The custom cursor axis was removed
-on 2026-10-26 (owner: browser default pointer only, every project). If a floating badge or scroll indicator is
-added later, that mandate applies to it.
+**Current scope:** §13's admin panel and plan controls are part of 1.4.0 under D56.
+The app currently has no upload field (§2) or decorative overlay (§16). The custom
+cursor axis was removed on 2026-10-26; the browser's default pointer applies.
 
 **Open, and honestly so:** §10's GATE 4 parity - screenshot pairs of the dummy beside the app, judged by eye
 in the app's own WebView2 - is not done, and needs owner row 22. §12's interaction floor has no automated
@@ -315,11 +306,9 @@ acknowledges within 100 ms. That is a look-at-it check and it is owed.
 
 ### Two durable constraints found on 2026-09-05, worth not rediscovering
 
-🔴 **`Write-Box` draws a 78-glyph rule, so the tagline has a de-facto 75-character
-budget.** `lib/ui.ps1` draws a 78-character rule and indents the subtitle by three, so anything longer
-overruns it in the terminal. The current tagline is 91 characters and already does. Cosmetic and accepted,
-recorded so the next session does not treat it as a new defect - and so a tagline rewrite knows the real
-constraint is 75, not the 110 the content map states for the npm and docs-site copies.
+🔴 **`Write-Box` draws a 78-glyph rule and indents the subtitle by three.** The 1.4.0
+CLI now wraps the tagline inside that rule; the 160-check self-test covers it. Keep
+that wrapping when the sentence changes.
 
 🔴 **The tagline lives in FIVE places, not the three the records used to name**, and they do not all agree
 today. `package.json` `description`, `WS_TAGLINE` in `lib/constants.ps1`, the docs site's

@@ -52,7 +52,7 @@ serve(async (request) => {
       : await sendTemplate(welcome.email, "windowsweep-welcome", {
         device_runs: String(values.device_real_runs_per_month ?? ""),
         account_runs: String(values.account_extra_real_runs_per_month ?? ""),
-        app_url: website("/download"),
+        app_url: website("/account"),
       });
     if (outcome === "accepted") {
       welcomeSent = await rpc<boolean>(service, "email_mark_welcome_sent", {

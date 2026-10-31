@@ -442,7 +442,7 @@ and nothing falls back to a raw email. Mail failure does not reverse the busines
 |---|---|---|---|
 | `windowsweep-welcome` | the account | its first `account-welcome` | `device_runs`, `account_runs`, `app_url` |
 | `windowsweep-referral-confirmed` | the referrer | the friend is confirmed (once) | `points`, `total_points`, `confirmed`, `threshold`, `reward_plan`, `reward_months`, `rewarded` (`yes` or `no`), `reward_line` (server-derived, outcome-specific sentence), `account_url` |
-| `windowsweep-plan-confirmed` | the buyer | `order.paid` granted | `plan_name`, `interval_label`, `amount`, `seats`, `period_start`, `period_end`, `account_url` |
+| `windowsweep-plan-confirmed` | the buyer | `order.paid` granted | `plan_name`, `interval_label`, `amount` (Polar plan subtotal before discounts and tax, not the total charged), `seats`, `period_start`, `period_end`, `account_url` |
 | `windowsweep-payment-returned` | the buyer | `order.refunded` | `plan_name`, `amount_returned`, `plan_now`, `pricing_url` |
 | `windowsweep-plan-granted` | the person | `grants.create` | `plan_name`, `seats`, `ends_at`, `account_url` |
 | `windowsweep-plan-request-open` | the requester | `requests.notify_open`, only after checkout is live | `plan_name`, `interval_label`, `pay_url`, `pricing_url` |

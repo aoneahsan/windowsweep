@@ -2,7 +2,7 @@
 
 The dependency and manifest record for this package. Keep it accurate on every add, removal or upgrade.
 
-Last Updated: 2026-10-31 (the self-test count under Verification is 160, the count since 1.3.0). Earlier 2026-09-26 (TASK-019: the build-time generators became Vite plugins in `desktop/vite/` and their four
+Last Updated: 2026-10-31 (`seroval` resolved to 1.7.5 after the security audit; `yarn npm audit --recursive --environment production` has no suggestions in `desktop/`. The self-test count under Verification is 160, the count since 1.3.0). Earlier 2026-09-26 (TASK-019: the build-time generators became Vite plugins in `desktop/vite/` and their four
 `package.json` scripts left; earlier the same day the hook line gained `--relative --max-arg-length 8000`. Earlier
 2026-09-25, D37: the desktop manifest at latest stable and on the fleet package baseline. Earlier 2026-09-05: the
 desktop app added a SECOND manifest, deliberately isolated from this one)

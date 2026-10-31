@@ -7,7 +7,7 @@
  *
  * 🔴 THE DUMMY'S ROWS, NOT THE CONSENT NOTICE'S LIST (D-69, GATE 4 round 16). From 2026-09-07 this tab reused the
  * Consent screen's keys - the vendor badges, the longer lines, "Never sent:" and a closing paragraph - which the dummy
- * never drew here: it draws a note and five `row()`s, each an `h3` and one short line. The Consent screen keeps its own
+ * never drew here: it draws a note and four `row()`s, each an `h3` and one short line. The Consent screen keeps its own
  * words (`consent.*`); this tab has its own (`settings.privacy.*`), each transcribed from the dummy.
  *
  * The "Never sent" row stays and is the point of the tab - a notice with nothing checkable in it is an announcement.
@@ -39,11 +39,6 @@ export function SettingsPrivacy() {
         control={on}
       />
       <SettingRow
-        title={t('settings.privacy.sessionReplay')}
-        description={t('settings.privacy.sessionReplayDesc')}
-        control={on}
-      />
-      <SettingRow
         title={t('settings.privacy.crashReports')}
         description={t('settings.privacy.crashReportsDesc')}
         control={on}
@@ -53,9 +48,9 @@ export function SettingsPrivacy() {
         description={t('settings.privacy.neverSentDesc')}
         control={<span className="badge badge-ok">{t('settings.refused')}</span>}
       />
-      {/* A BUILD fact, not a setting, and only when EVERY destination is unconfigured: a build with one key set
-          still sends to that one, so the sentence would be false. The dummy draws no sentence for a partially
-          configured build, so none is invented here. Release builds carry all four keys and never show it. */}
+      {/* A BUILD fact, not a setting, and only when EVERY destination is unconfigured: a build with one
+          destination set still sends to it, so the sentence would be false. The dummy draws no sentence
+          for a partially configured build, so none is invented here. */}
       {noDestinationConfigured(configuredFeatures().telemetry) ? (
         <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-2)' }}>
           {t('settings.noKeys')}

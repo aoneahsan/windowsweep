@@ -65,8 +65,6 @@
   "consent.provider.ga4.what": "Which screens you opened and which buttons you pressed.",
   "consent.provider.amplitude.name": "Behaviour analytics",
   "consent.provider.amplitude.what": "The same events, in a second analytics tool.",
-  "consent.provider.clarity.name": "Session replay",
-  "consent.provider.clarity.what": "A recording of this window with every piece of text masked.",
   "consent.provider.sentry.name": "Crash reports",
   "consent.provider.sentry.what": "A stack trace when something breaks, with file paths stripped out.",
   "consent.detailsSummary": "What the window sends, in plain terms",

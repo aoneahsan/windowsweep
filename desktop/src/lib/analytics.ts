@@ -1,40 +1,19 @@
 /**
- * One reporting surface. Call `track()`; never call a provider.
+ * One reporting surface. Call track(); never call a provider at a feature site.
+ * GA4 uses the authenticated analytics-ingest broker, so its Measurement Protocol
+ * secret stays on the server. Amplitude and Sentry stay bundled in the window.
  *
- * 🔴 The fan-out happens INSIDE this module's report function, not at the call
- * sites. A call site that names a provider is a call site that will one day name
- * three of the four - the recorded failure is a product where two destinations
- * silently received a different set of events from the third.
- *
- * 🔴 THERE IS NO CONSENT GATE, since 2026-09-07. The owner removed the opt-out:
- * the product is free, it collects usage data to improve itself, and the first-run
- * screen is a notice rather than a decision. A provider is therefore constructed
- * whenever its KEY is present in a production build (a development build reports
- * nothing - `startAnalytics`, TASK-023), and nothing here reads a stored flag.
- *
- * 🔴 A missing key still skips its provider silently and never blocks boot. That
- * is a BUILD fact, not a user choice - no key is configured in this build, so
- * nothing is actually sent from it - and it is the one thing that must not be
- * confused with the setting that no longer exists.
- *
- * 🔴 Amplitude's ready flag is set on the init PROMISE, never on the init call.
- * `init()` returns before its destination plugins attach, so every event fired in
- * that window is dropped. The failure is INTERMITTENT - a clean run proves nothing,
- * so this is asserted by reading the code, not by watching one session.
- *
- * 🔴 A hand-rolled gtag shim pushes `arguments`, never a spread array.
- * `dataLayer.push(args)` pushes one array object; `config` then never registers
- * and GA4 sends nothing while every visitor still downloads gtag.js. The check
- * that catches it: `dataLayer.push === Array.prototype.push` being true means
- * gtag.js never took over.
+ * A development build reports nothing. A production build with no destination
+ * configured still opens, and an event failure never blocks the user's action.
  */
 
 import type { EventName } from './events';
+import { supabaseConfig } from './config';
+import { readStored, writeStored } from './storage';
 
 export interface AnalyticsKeys {
-  ga4MeasurementId?: string | undefined;
+  ga4IngestEnabled?: boolean | undefined;
   amplitudeApiKey?: string | undefined;
-  clarityProjectId?: string | undefined;
   sentryDsn?: string | undefined;
 }
 
@@ -84,17 +63,6 @@ function register(provider: Provider): void {
   }
 }
 
-/** Microsoft Clarity's global: a function that also carries its own call queue. */
-type ClarityFn = ((...args: unknown[]) => void) & { q?: unknown[] };
-
-declare global {
-  interface Window {
-    dataLayer?: unknown[];
-    gtag?: (...args: unknown[]) => void;
-    clarity?: ClarityFn;
-  }
-}
-
 /**
  * 🔴 Every path this app might report is scrubbed here before it can reach a
  * destination. The consent screen promises that no file path, folder name, drive
@@ -136,47 +104,82 @@ function scrubProps(props: EventProps): EventProps {
   return out;
 }
 
-function loadScript(src: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const el = document.createElement('script');
-    el.async = true;
-    el.src = src;
-    el.onload = () => {
-      resolve();
-    };
-    el.onerror = () => {
-      reject(new Error(`could not load ${src}`));
-    };
-    document.head.appendChild(el);
+const CLIENT_ID_KEY = 'windowsweep:analytics-client-id';
+const SESSION_KEY = 'windowsweep:analytics-session';
+const SESSION_IDLE_MS = 30 * 60 * 1000;
+const PARAM_KEYS = ['route', 'control', 'version', 'reason'] as const;
+
+interface AnalyticsSession {
+  id: string;
+  lastEventMs: number;
+}
+
+function eventContext(): { clientId: string; sessionId: string; engagementMs: number } {
+  let clientId = readStored(CLIENT_ID_KEY, '');
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clientId)) {
+    clientId = crypto.randomUUID();
+    writeStored(CLIENT_ID_KEY, clientId);
+  }
+  const now = Date.now();
+  const prior = readStored<AnalyticsSession>(SESSION_KEY, { id: '', lastEventMs: 0 });
+  const lastEventMs = Number.isFinite(prior.lastEventMs) ? prior.lastEventMs : 0;
+  const active =
+    /^[1-9][0-9]{0,15}$/.test(prior.id) &&
+    now >= lastEventMs &&
+    now - lastEventMs < SESSION_IDLE_MS;
+  const sessionId = active ? prior.id : String(Math.floor(now / 1000));
+  const engagementMs = active ? Math.min(Math.max(now - lastEventMs, 1), 60_000) : 1;
+  writeStored(SESSION_KEY, { id: sessionId, lastEventMs: now });
+  return { clientId, sessionId, engagementMs };
+}
+
+async function sendGa4(event: string, props: EventProps): Promise<void> {
+  if (!supabaseConfig.url || !supabaseConfig.publishableKey) return;
+  const { supabase } = await import('./auth');
+  const client = supabase();
+  if (!client) return;
+  const { data, error } = await client.auth.getSession();
+  // The D72 device-session wave supplies an anonymous JWT for signed-out use.
+  // Analytics never creates an account as a side effect of tracking an event.
+  if (error || !data.session) return;
+  const params: Record<string, string> = {};
+  for (const key of PARAM_KEYS) {
+    const value = props[key];
+    if (typeof value === 'string') {
+      params[key] = key === 'reason' ? (value === 'deadline' ? 'deadline' : 'other') : value;
+    }
+  }
+  const { clientId, sessionId, engagementMs } = eventContext();
+  await fetch(`${supabaseConfig.url.replace(/\/$/, '')}/functions/v1/analytics-ingest`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      apikey: supabaseConfig.publishableKey,
+      Authorization: `Bearer ${data.session.access_token}`,
+    },
+    body: JSON.stringify({
+      event: event.replaceAll('.', '_'),
+      client_id: clientId,
+      session_id: sessionId,
+      engagement_time_msec: engagementMs,
+      app_version: appVersion,
+      params,
+    }),
+    signal: AbortSignal.timeout(5000),
   });
 }
 
-async function startGa4(measurementId: string): Promise<void> {
-  window.dataLayer = window.dataLayer ?? [];
-  /* 🔴 It pushes `arguments`, NOT the rest array. `dataLayer.push(args)` pushes one
-     array object; gtag.js reads an arguments object, so `config` never registers
-     and GA4 sends nothing while every visitor still downloads the tag. The rest
-     parameter exists only to type the call sites - it is deliberately unused. */
-  function gtag(..._args: unknown[]): void {
-    // eslint-disable-next-line prefer-rest-params
-    window.dataLayer?.push(arguments);
-  }
-  window.gtag = gtag;
-  gtag('js', new Date());
-  await loadScript(
-    `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`
-  );
-  gtag('config', measurementId, { send_page_view: false, app_version: appVersion });
-
+function startGa4(): void {
   register({
     name: 'ga4',
     ready: true,
     send: (event, props) => {
-      window.gtag?.('event', event, props);
+      void sendGa4(event, props).catch(() => {
+        // Telemetry failure does not change the user's action or block the window.
+      });
     },
   });
 }
-
 async function startAmplitude(apiKey: string): Promise<void> {
   const amplitude = await import('@amplitude/analytics-browser');
   // 🔴 awaited on `.promise`, not on the call - init resolves before its
@@ -196,32 +199,6 @@ async function startAmplitude(apiKey: string): Promise<void> {
     ready: true,
     send: (event, props) => {
       amplitude.track(event, props);
-    },
-  });
-}
-
-async function startClarity(projectId: string): Promise<void> {
-  /* 🔴 THE QUEUE STUB FIRST, exactly as Microsoft's own snippet defines it. The
-     tag's first statement reads `window.clarity.v`; with no `window.clarity` it
-     throws, the tag never starts, and `ready` below read false for ever - so
-     Clarity received nothing while every window still downloaded it. It pushes
-     `arguments`, not a rest array, for the reason the gtag shim above records. */
-  if (!window.clarity) {
-    const queue: unknown[] = [];
-    window.clarity = Object.assign(
-      function clarity(..._args: unknown[]): void {
-        // eslint-disable-next-line prefer-rest-params
-        queue.push(arguments);
-      },
-      { q: queue }
-    );
-  }
-  await loadScript(`https://www.clarity.ms/tag/${encodeURIComponent(projectId)}`);
-  register({
-    name: 'clarity',
-    ready: typeof window.clarity === 'function',
-    send: (event) => {
-      window.clarity?.('event', event);
     },
   });
 }
@@ -328,9 +305,8 @@ export async function startAnalytics(keys: AnalyticsKeys, version: string): Prom
   appVersion = version;
 
   const jobs: Promise<void>[] = [];
-  if (keys.ga4MeasurementId) jobs.push(startGa4(keys.ga4MeasurementId));
+  if (keys.ga4IngestEnabled && supabaseConfig.url && supabaseConfig.publishableKey) startGa4();
   if (keys.amplitudeApiKey) jobs.push(startAmplitude(keys.amplitudeApiKey));
-  if (keys.clarityProjectId) jobs.push(startClarity(keys.clarityProjectId));
   if (keys.sentryDsn) jobs.push(startSentry(keys.sentryDsn));
 
   // A destination that fails to start must never take the app down with it.

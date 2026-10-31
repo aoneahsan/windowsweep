@@ -19,7 +19,6 @@ import { DESTINATIONS, type Destination } from '../lib/consent';
 const VENDOR: Record<Destination, string> = {
   ga4: 'Google Analytics 4',
   amplitude: 'Amplitude',
-  clarity: 'Microsoft Clarity',
   sentry: 'Sentry',
 };
 

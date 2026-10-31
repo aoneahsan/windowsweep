@@ -43,19 +43,19 @@ export const NOTICE_UNSEEN: NoticeState = { seen: false, seenAt: null, collected
  * present in the build - that is a BUILD fact and never a user choice, which is
  * why `analytics.ts` checks keys and no longer checks a flag.
  */
-export const DESTINATIONS = ['ga4', 'amplitude', 'clarity', 'sentry'] as const;
+export const DESTINATIONS = ['ga4', 'amplitude', 'sentry'] as const;
 
 export type Destination = (typeof DESTINATIONS)[number];
 
 /**
  * The three sentences the notice's disclosure spells out. They are the same
- * sentences the destination ledger uses for analytics, replay and crashes, read
+ * sentences the destination ledger uses for analytics and crashes, read
  * from one place so the two surfaces cannot drift - which is exactly what
  * `page-consent.js` says its own copy of the list is for.
  */
 export const COLLECTED_KEYS: readonly string[] = [
   'consent.provider.ga4.what',
-  'consent.provider.clarity.what',
+  'consent.provider.amplitude.what',
   'consent.provider.sentry.what',
 ];
 

@@ -1,17 +1,7 @@
 /**
- * Build-time configuration.
- *
- * 🔴 Every value is optional and an absent one disables its feature quietly. The
- * app has to install and open on a machine where none of these were ever set -
- * telemetry keys and the OAuth client are owner-supplied and may not exist yet,
- * and a window that refuses to open because an analytics key is missing is a
- * worse outcome than no analytics.
- *
- * 🔴 No SERVER secret is ever read here. Everything below is a public client
- * identifier: a GA4 measurement id, a Clarity project id, a Sentry DSN, a Supabase URL
- * and its publishable key. A desktop client is a public client by definition,
- * which is why the sign-in flow uses PKCE and why the publishable key's whole
- * security model is RLS rather than secrecy.
+ * Build-time public configuration. The GA4 enable flag contains no secret:
+ * analytics-ingest holds the Measurement Protocol credentials server-side.
+ * Missing optional destinations never block the app.
  */
 
 import type { AnalyticsKeys } from './analytics';
@@ -19,9 +9,8 @@ import type { AnalyticsKeys } from './analytics';
 const env = import.meta.env;
 
 export const keys: AnalyticsKeys = {
-  ga4MeasurementId: env.VITE_GA4_MEASUREMENT_ID,
+  ga4IngestEnabled: env.VITE_GA4_INGEST_ENABLED === 'true',
   amplitudeApiKey: env.VITE_AMPLITUDE_API_KEY,
-  clarityProjectId: env.VITE_CLARITY_PROJECT_ID,
   sentryDsn: env.VITE_SENTRY_DSN,
 };
 
@@ -55,29 +44,16 @@ export const SUPPORT_URL =
 
 export const REPO_URL = 'https://github.com/aoneahsan/windowsweep';
 
-/**
- * Which destinations this build actually has a key for.
- *
- * 🔴 FOUR BOOLEANS, NOT ONE. A single `telemetry` flag was `ga4 ?? amplitude ??
- * clarity ?? sentry`, so a build with a Sentry DSN and nothing else reported
- * "telemetry: configured" while three of the four destinations received nothing -
- * and the Privacy tab, which reads this to decide whether to say so, would have
- * stayed silent about the gap. A partially-configured build must never read as
- * configured, and the only way to state that honestly is to answer per
- * destination. The four ids are build-time repository variables on
- * `aoneahsan/windowsweep`; a clone without them still builds and simply reports
- * every one of these as false.
- */
+/** Each configured destination is reported separately; no provider is inferred from another. */
 export interface TelemetryConfigured {
   ga4: boolean;
   amplitude: boolean;
-  clarity: boolean;
   sentry: boolean;
 }
 
 /** True only when NO destination is configured - the one claim `settings.noKeys` makes. */
 export function noDestinationConfigured(t: TelemetryConfigured): boolean {
-  return !t.ga4 && !t.amplitude && !t.clarity && !t.sentry;
+  return !t.ga4 && !t.amplitude && !t.sentry;
 }
 
 /** Which of these are configured, for the settings screen to state honestly. */
@@ -94,9 +70,8 @@ export function configuredFeatures(): {
     signIn: supabaseReady,
     sync: supabaseReady,
     telemetry: {
-      ga4: Boolean(keys.ga4MeasurementId),
+      ga4: Boolean(keys.ga4IngestEnabled && supabaseReady),
       amplitude: Boolean(keys.amplitudeApiKey),
-      clarity: Boolean(keys.clarityProjectId),
       sentry: Boolean(keys.sentryDsn),
     },
   };

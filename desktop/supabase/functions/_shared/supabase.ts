@@ -1,7 +1,7 @@
 import {
   createClient,
   type SupabaseClient,
-} from "npm:@supabase/supabase-js@2.117.2";
+} from "@supabase/supabase-js";
 import { ApiError, logEvent } from "./http.ts";
 
 function environment(name: string): string {

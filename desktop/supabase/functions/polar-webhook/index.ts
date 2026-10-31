@@ -1,4 +1,4 @@
-import { webhooks } from "npm:@polar-sh/sdk@1.0.2/2026-10";
+import { webhooks } from "@polar-sh/sdk/2026-10";
 import { answer, ApiError, requireMethod, serve } from "../_shared/http.ts";
 import { sendBillingEmail } from "../_shared/billing-email.ts";
 import { isPlanEvent } from "../_shared/polar-event.ts";

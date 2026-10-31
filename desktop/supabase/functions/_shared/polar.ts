@@ -1,4 +1,4 @@
-import { createPolar } from "npm:@polar-sh/sdk@1.0.2/2026-10";
+import { createPolar } from "@polar-sh/sdk/2026-10";
 import { ApiError } from "./http.ts";
 
 export function polarAvailable(): boolean {

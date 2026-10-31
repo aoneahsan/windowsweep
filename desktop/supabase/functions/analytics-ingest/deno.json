@@ -1,0 +1,8 @@
+{
+  "imports": {
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@2.117.2",
+    "@polar-sh/sdk/2026-10": "npm:@polar-sh/sdk@1.0.2/2026-10"
+  },
+  "lock": { "path": "../deno.lock" },
+  "nodeModulesDir": "none"
+}

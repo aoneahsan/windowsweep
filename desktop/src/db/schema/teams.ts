@@ -13,7 +13,6 @@ import {
   index,
   pgTable,
   primaryKey,
-  smallint,
   text,
   timestamp,
   uniqueIndex,
@@ -22,7 +21,7 @@ import {
 import { authUsers } from 'drizzle-orm/supabase';
 import { teamRole } from './enums';
 
-/** One team per owner. `seats` comes from the paid order or the grant (minimum on the plan row). */
+/** One team per owner. Seat capacity derives from the active paid period or grant. */
 export const teams = pgTable(
   'teams',
   {
@@ -32,13 +31,9 @@ export const teams = pgTable(
       .notNull()
       .unique()
       .references(() => authUsers.id, { onDelete: 'cascade' }),
-    seats: smallint('seats').notNull().default(3),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [
-    check('teams_name_len', sql`char_length(${t.name}) between 1 and 80`),
-    check('teams_seats_range', sql`${t.seats} between 1 and 1000`),
-  ]
+  (t) => [check('teams_name_len', sql`char_length(${t.name}) between 1 and 80`)]
 ).enableRLS();
 
 /** Seats in use. One team per account (unique `user_id`) keeps the fleet scope unambiguous. */

@@ -84,7 +84,6 @@ CREATE TABLE "run_claims" (
 	"month" text NOT NULL,
 	"pool" "run_pool" NOT NULL,
 	"sections" smallint[] NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "run_claims_month_format" CHECK ("run_claims"."month" ~ '^[0-9]{4}-(0[1-9]|1[0-2])$'),
 	CONSTRAINT "run_claims_sections_valid" CHECK (cardinality("run_claims"."sections") between 1 and 64 and array_position("run_claims"."sections", null) is null and 0 <= all ("run_claims"."sections") and 99 >= all ("run_claims"."sections"))
 );
@@ -235,11 +234,9 @@ CREATE TABLE "teams" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
 	"owner_id" uuid NOT NULL,
-	"seats" smallint DEFAULT 3 NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "teams_owner_id_unique" UNIQUE("owner_id"),
-	CONSTRAINT "teams_name_len" CHECK (char_length("teams"."name") between 1 and 80),
-	CONSTRAINT "teams_seats_range" CHECK ("teams"."seats" between 1 and 1000)
+	CONSTRAINT "teams_name_len" CHECK (char_length("teams"."name") between 1 and 80)
 );
 --> statement-breakpoint
 ALTER TABLE "teams" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
@@ -247,8 +244,8 @@ ALTER TABLE "profiles" ADD COLUMN "referral_code" text;--> statement-breakpoint
 ALTER TABLE "profiles" ADD COLUMN "limits_override" jsonb;--> statement-breakpoint
 ALTER TABLE "profiles" ADD COLUMN "welcome_sent_at" timestamp with time zone;--> statement-breakpoint
 ALTER TABLE "profiles" ADD COLUMN "verified_at" timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "profiles" ADD COLUMN "legal_notice_seen_at" timestamp with time zone;--> statement-breakpoint
 ALTER TABLE "runs" ADD COLUMN "device_id" uuid;--> statement-breakpoint
-ALTER TABLE "user_settings" ADD COLUMN "legal_notice_seen_at" timestamp with time zone;--> statement-breakpoint
 ALTER TABLE "checkout_quotes" ADD CONSTRAINT "checkout_quotes_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "checkout_quotes" ADD CONSTRAINT "checkout_quotes_plan_id_plans_id_fk" FOREIGN KEY ("plan_id") REFERENCES "public"."plans"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

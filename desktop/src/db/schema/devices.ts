@@ -92,7 +92,6 @@ export const runClaims = pgTable(
     pool: runPool('pool').notNull(),
     /** Section NUMBERS, a frozen add-only public contract; generous bound so a new section needs no migration. */
     sections: smallint('sections').array().notNull(),
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
     check('run_claims_month_format', sql`${t.month} ~ '^[0-9]{4}-(0[1-9]|1[0-2])$'`),

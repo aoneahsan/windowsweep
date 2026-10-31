@@ -91,6 +91,8 @@ export const profiles = pgTable(
     welcomeSentAt: timestamp('welcome_sent_at', { withTimezone: true }),
     /** When this became a verified, non-anonymous (Google) account; the referral window counts from it. */
     verifiedAt: timestamp('verified_at', { withTimezone: true }),
+    /** Server-stamped once after this account has seen the current legal notice. */
+    legalNoticeSeenAt: timestamp('legal_notice_seen_at', { withTimezone: true }),
   },
   (t) => [
     check(

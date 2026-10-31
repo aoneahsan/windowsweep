@@ -89,15 +89,99 @@
     {
       "idx": 12,
       "version": "7",
-      "when": 1793430034980,
-      "tag": "20261031070034_v140_schema",
+      "when": 1793434911547,
+      "tag": "20261031082151_v140_schema",
       "breakpoints": true
     },
     {
       "idx": 13,
       "version": "7",
-      "when": 1793430074696,
-      "tag": "20261031070114_v140_privileges",
+      "when": 1793434912600,
+      "tag": "20261031082152_v140_privileges",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1793434913634,
+      "tag": "20261031082153_v140_core_functions",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1793434914656,
+      "tag": "20261031082154_v140_referrals",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1793434915819,
+      "tag": "20261031082155_v140_auth_triggers",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1793434916890,
+      "tag": "20261031082156_v140_allowance",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1793434917977,
+      "tag": "20261031082157_v140_billing",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1793434919094,
+      "tag": "20261031082159_v140_team",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1793435060788,
+      "tag": "20261031082420_v140_account_reads",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1793435149838,
+      "tag": "20261031082549_v140_admin_part1",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1793435326905,
+      "tag": "20261031082846_v140_admin_part2",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1793435467503,
+      "tag": "20261031083107_v140_signup_hook",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1793435497793,
+      "tag": "20261031083137_v140_seed_rows",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1793435582631,
+      "tag": "20261031083302_v140_f_sec_009_revokes",
       "breakpoints": true
     }
   ]

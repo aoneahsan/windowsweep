@@ -38,11 +38,8 @@ import { ownedBy, signedIn } from './rls';
 /**
  * One row per person. The primary key IS their auth id, so there is no join.
  *
- * 1.4.0: writes need a signed-in account (a device session syncs nothing), and
- * `legal_notice_seen_at` is the account half of the legal notice flag. That column is
- * in NO client grant: `mark_legal_notice_seen()` is its one writer, it stamps the
- * server's time once and never clears it, and when it must create the row it sets
- * `settings_updated_at` to the epoch so that row never wins the newest-wins merge.
+ * 1.4.0: writes need a signed-in account (a device session syncs nothing).
+ * The legal notice flag belongs to profiles, not synchronized settings.
  */
 export const userSettings = pgTable(
   'user_settings',
@@ -65,8 +62,6 @@ export const userSettings = pgTable(
     /** Refreshed when this window syncs, so a machine no longer used reads as such. */
     lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull().defaultNow(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    /** The legal notice was shown to this account (one-way; see the note above). */
-    legalNoticeSeenAt: timestamp('legal_notice_seen_at', { withTimezone: true }),
   },
   (t) => [
     pgPolicy('user_settings_select_own', {

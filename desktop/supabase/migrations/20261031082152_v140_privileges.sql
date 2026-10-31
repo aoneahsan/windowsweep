@@ -88,7 +88,7 @@ grant insert (device_id) on table public.runs to authenticated;
 --> statement-breakpoint
 
 -- Deliberately NOT granted, each with its reason:
---   user_settings.legal_notice_seen_at  - written only by mark_legal_notice_seen() (one-way, server time)
+--   profiles.legal_notice_seen_at - written only by mark_legal_notice_seen() (one-way, server time)
 --   profiles.referral_code, limits_override, welcome_sent_at, verified_at - auth triggers and definers only
 --   run_claims, subscriptions, checkout_quotes, webhook_events, plan_grants, teams, team_members, team_invites,
 --   referrals, app_releases - definer functions only; the person reads their own through my_plan(),

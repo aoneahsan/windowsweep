@@ -1,6 +1,6 @@
 {
-  "id": "a8f81c13-569c-4030-b206-747d73642b96",
-  "prevId": "61e82186-f239-47d4-84df-74a785da0af5",
+  "id": "7d11249c-bd13-44c1-a2f1-efbb223f4d74",
+  "prevId": "646c34db-a10d-4f81-9a14-02bedc925c79",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -691,13 +691,6 @@
           "type": "smallint[]",
           "primaryKey": false,
           "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
         }
       },
       "indexes": {
@@ -2136,6 +2129,12 @@
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
+        },
+        "legal_notice_seen_at": {
+          "name": "legal_notice_seen_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
@@ -2464,12 +2463,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
-        },
-        "legal_notice_seen_at": {
-          "name": "legal_notice_seen_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {},
@@ -2767,13 +2760,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "seats": {
-          "name": "seats",
-          "type": "smallint",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 3
-        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -2814,10 +2800,6 @@
         "teams_name_len": {
           "name": "teams_name_len",
           "value": "char_length(\"teams\".\"name\") between 1 and 80"
-        },
-        "teams_seats_range": {
-          "name": "teams_seats_range",
-          "value": "\"teams\".\"seats\" between 1 and 1000"
         }
       },
       "isRLSEnabled": true

@@ -364,7 +364,7 @@ block every installed build. Refusals: 401, 403 `forbidden`, 422
 | `badges.list` | `{ limit?: 1..50, page?: 0..1000 }` | `{ items: [ { key, name, family, is_active } ], page, limit, total, next_page }`; referral catalogue, 20 per page by default |
 | `badges.create` | `{ key, name, reason }` | `{ key, name, family: 'referral' }`; audited, duplicate key refused |
 | `grants.list` | `{ user_id?, active_only?, cursor?, limit? }` | provenance: `{ id, user_id, user_email, plan_id, source, seats, granted_by, reason, starts_at, ends_at, revoked_at, revoked_by, created_at }`; `granted_by` is an admin's email or `system` |
-| `grants.create` | `{ user_id, plan_id, starts_at?, ends_at, seats?, reason }` | `{ id }`; a per-seat plan creates or resizes the person's team |
+| `grants.create` | `{ user_id, plan_id, starts_at?, ends_at, seats?, reason }` | `{ id, email_outcome: 'accepted' \| 'refused' \| 'uncertain' \| 'pending' \| 'not_pending' }`; a per-seat plan creates or resizes the person's team. Mail failure does not undo the grant |
 | `grants.revoke` | `{ grant_id, reason }` | `{ id, revoked_at }` |
 | `config.get` | `{ limit?: 1..50, page?: 0..1000 }` | `{ items: [ { key, value, is_public, min_value, max_value, description, updated_at, updated_by } ], page, limit, total, next_page }`; 20 per page by default |
 | `config.set` | `{ key, value, reason }` | `{ key, value }`. Existing keys only; the value keeps its JSON type; bounds and plan ids are checked in SQL |
@@ -372,8 +372,9 @@ block every installed build. Refusals: 401, 403 `forbidden`, 422
 | `requests.notify_open` | `{ cursor?, limit? }` | `{ sent, failed, next_cursor }`; after checkout opens, send the pay link to pending requesters through the approved FilesHub template, with a bounded page of 20 |
 | `requests.close` | `{ request_id, reason }` | `{ id, status: 'closed' }`; closes a notified request, with no plan grant |
 | `referrals.void` | `{ referral_id, reason }` | `{ id, status: 'void' }`; revokes that referral's points, badge and any surplus referral reward grants, newest/future first; never a paid or admin grant |
-| `emails.uncertain` | `{ kind: 'welcome' \| 'referral' \| 'team_invite' \| 'plan_request', limit?, page? }` | `{ items, page, limit, total, next_page }`; claims whose send outcome is unknown |
-| `emails.reconcile` | `{ kind, id, outcome: 'sent' \| 'retry', reason }` | an audited resolution; `retry` releases a claim for one deliberate resend |
+| `emails.uncertain` | `{ kind: 'welcome' \| 'referral' \| 'team_invite' \| 'plan_request' \| 'grant', limit?, page? }` | `{ items, page, limit, total, next_page }`; for `grant`, includes pending, uncertain and stale claimed rows with recipient email, plan name, seats and end date |
+| `emails.reconcile` | `{ kind, id, outcome: 'sent' \| 'retry', reason }` | an audited resolution of an uncertain or stale claim; `retry` releases it for one deliberate send |
+| `emails.grant_send` | `{ id, reason }` | `{ outcome: 'accepted' \| 'refused' \| 'uncertain' \| 'pending' \| 'not_pending' }`; audited send of a pending grant, with a fresh token checked claim |
 | `emails.billing_list` | `{ limit?: 1..50, page?: 0..1000 }` | `{ items: [ { event_id, template, created_at, claimed_at, uncertain_at, sent_at, email, state } ], page, limit, total, next_page }` |
 | `emails.billing_reconcile` | `{ event_id, template, outcome: 'sent' \| 'retry', reason }` | `{ event_id, template, outcome }`; audited |
 | `emails.billing_send` | `{ event_id, template, reason }` | `{ outcome: 'accepted' \| 'refused' \| 'uncertain' \| 'not_pending' }`; audited retry of pending mail, without replaying billing |
@@ -389,7 +390,7 @@ The five plan-administration capabilities: create a plan and edit its limits (`p
 plan (`users.set_plan`), override one person's limits (`users.override_limits`), show a grant's provenance
 (`grants.list`, `users.view`). The site's existing direct reads stay (`profiles`, `contact_requests`,
 `admin_audit`). New `admin_audit.action` values: `plan.create`, `plan.update`, `user.plan`, `user.limits`,
-`grant.create`, `grant.revoke`, `config.update`, `badges.create`, `plan_request.notify_open`,
+`grant.create`, `grant.revoke`, `email.grant_send`, `email.reconcile`, `config.update`, `badges.create`, `plan_request.notify_open`,
 `plan_request.close`, `release.publish`, `billing.paid`,
 `billing.returned`, `billing.mismatch`, `billing.unknown_user`, `billing.team_conflict`, `referral.reward`,
 `referral.reward_unresolved`, `device.handoff`. A null `actor` means the system (a payment, a referral).
@@ -444,7 +445,7 @@ and nothing falls back to a raw email. Mail failure does not reverse the busines
 | `windowsweep-referral-confirmed` | the referrer | the friend is confirmed (once) | `points`, `total_points`, `confirmed`, `threshold`, `reward_plan`, `reward_months`, `rewarded` (`yes` or `no`), `reward_line` (server-derived, outcome-specific sentence), `account_url` |
 | `windowsweep-plan-confirmed` | the buyer | `order.paid` granted | `plan_name`, `interval_label`, `amount` (Polar plan subtotal before discounts and tax, not the total charged), `seats`, `period_start`, `period_end`, `account_url` |
 | `windowsweep-payment-returned` | the buyer | `order.refunded` | `plan_name`, `amount_returned`, `plan_now`, `pricing_url` |
-| `windowsweep-plan-granted` | the person | `grants.create` | `plan_name`, `seats`, `ends_at`, `account_url` |
+| `windowsweep-plan-granted` | the person | `grants.create` or an audited `emails.grant_send` | `plan_name`, `seats`, `ends_at`, `account_url`, all resolved from the committed grant and plan rows |
 | `windowsweep-plan-request-open` | the requester | `requests.notify_open`, only after checkout is live | `plan_name`, `interval_label`, `pay_url`, `pricing_url` |
 | `windowsweep-team-invite` | the invitee | `team invite` | `team_name`, `invited_by`, `accept_url` (`/account?team_invite=<id>`) |
 

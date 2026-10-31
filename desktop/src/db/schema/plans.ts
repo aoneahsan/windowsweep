@@ -169,6 +169,11 @@ export const planGrants = pgTable(
     revokedAt: timestamp('revoked_at', { withTimezone: true }),
     revokedBy: uuid('revoked_by'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    /** A grant is recorded before its separate, at-most-once email attempt. */
+    emailClaimedAt: timestamp('email_claimed_at', { withTimezone: true }),
+    emailClaimToken: uuid('email_claim_token'),
+    emailUncertainAt: timestamp('email_uncertain_at', { withTimezone: true }),
+    emailSentAt: timestamp('email_sent_at', { withTimezone: true }),
   },
   (t) => [
     check('plan_grants_window', sql`${t.endsAt} > ${t.startsAt}`),
@@ -176,12 +181,23 @@ export const planGrants = pgTable(
     check('plan_grants_seats_range', sql`${t.seats} between 1 and 1000`),
     check('plan_grants_months_range', sql`${t.months} is null or ${t.months} between 1 and 12`),
     check(
+      'plan_grants_email_claim_pair',
+      sql`(${t.emailClaimedAt} is null) = (${t.emailClaimToken} is null)`
+    ),
+    check(
+      'plan_grants_email_not_sent_uncertain',
+      sql`${t.emailSentAt} is null or ${t.emailUncertainAt} is null`
+    ),
+    check(
       'plan_grants_referral_remaining_nonneg',
       sql`${t.referralRemainingUs} is null or ${t.referralRemainingUs} >= 0`
     ),
     index('plan_grants_user_ends_idx').on(t.userId, t.endsAt),
     index('plan_grants_created_idx').on(t.createdAt, t.id),
     index('plan_grants_plan_idx').on(t.planId),
+    index('plan_grants_email_review_idx')
+      .on(t.createdAt, t.id)
+      .where(sql`${t.source} = 'admin' and ${t.emailSentAt} is null and ${t.revokedAt} is null`),
   ]
 ).enableRLS();
 

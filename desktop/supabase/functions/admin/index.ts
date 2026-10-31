@@ -10,13 +10,14 @@ import {
   textField,
   uuid,
 } from "../_shared/http.ts";
-import { dateLabel, sendTemplate, website } from "../_shared/email.ts";
+import { sendTemplate, website } from "../_shared/email.ts";
 import {
   type BillingTemplate,
   sendBillingEmail,
 } from "../_shared/billing-email.ts";
 import { polarAvailable, polarProduct } from "../_shared/polar.ts";
 import { caller, rpc, serviceClient } from "../_shared/supabase.ts";
+import { sendGrantEmail } from "./grant-email.ts";
 
 type Body = Record<string, unknown>;
 
@@ -154,6 +155,7 @@ serve(async (request) => {
     "requests.close",
     "emails.uncertain",
     "emails.reconcile",
+    "emails.grant_send",
     "emails.billing_list",
     "emails.billing_reconcile",
     "emails.billing_send",
@@ -292,17 +294,39 @@ serve(async (request) => {
       };
       break;
     case "emails.uncertain":
-      functionName = "admin_email_uncertain_list";
-      args = { p_kind: textField(body, "kind", 4, 20), ...paged(body) };
+      {
+        const kind = textField(body, "kind", 4, 20);
+        functionName = kind === "grant"
+          ? "admin_grant_email_list"
+          : "admin_email_uncertain_list";
+        args = kind === "grant"
+          ? paged(body)
+          : { p_kind: kind, ...paged(body) };
+      }
       break;
     case "emails.reconcile":
-      functionName = "admin_email_reconcile";
-      args = {
-        p_kind: textField(body, "kind", 4, 20),
-        p_id: uuid(body.id, "id"),
-        p_outcome: textField(body, "outcome", 4, 5),
-        p_reason: reason(body),
-      };
+      {
+        const kind = textField(body, "kind", 4, 20);
+        functionName = kind === "grant"
+          ? "admin_grant_email_reconcile"
+          : "admin_email_reconcile";
+        args = kind === "grant"
+          ? {
+            p_grant: uuid(body.id, "id"),
+            p_outcome: textField(body, "outcome", 4, 5),
+            p_reason: reason(body),
+          }
+          : {
+            p_kind: kind,
+            p_id: uuid(body.id, "id"),
+            p_outcome: textField(body, "outcome", 4, 5),
+            p_reason: reason(body),
+          };
+      }
+      break;
+    case "emails.grant_send":
+      functionName = "admin_grant_email_send_request";
+      args = { p_grant: uuid(body.id, "id"), p_reason: reason(body) };
       break;
     case "emails.billing_list":
       functionName = "admin_billing_email_list";
@@ -383,20 +407,17 @@ serve(async (request) => {
     );
     return answer({ ok: true, outcome });
   }
+  if (action === "emails.grant_send") {
+    await rpc(client, functionName, args);
+    return answer({
+      ok: true,
+      outcome: await sendGrantEmail(args.p_grant as string),
+    });
+  }
   const result = await rpc<Record<string, unknown>>(client, functionName, args);
   if (action === "grants.create") {
-    const service = serviceClient();
-    const [{ data: profile }, { data: plan }] = await Promise.all([
-      service.from("profiles").select("email").eq("user_id", args.p_user)
-        .maybeSingle(),
-      service.from("plans").select("name").eq("id", args.p_plan).maybeSingle(),
-    ]);
-    await sendTemplate(profile?.email, "windowsweep-plan-granted", {
-      plan_name: plan?.name ?? String(args.p_plan),
-      seats: String(args.p_seats ?? 1),
-      ends_at: dateLabel(String(args.p_ends_at)),
-      account_url: website("/account"),
-    });
+    const outcome = await sendGrantEmail(result.id as string);
+    return answer({ ok: true, ...result, email_outcome: outcome });
   }
   return answer({ ok: true, ...result });
 });

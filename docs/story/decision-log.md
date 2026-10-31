@@ -1127,3 +1127,56 @@ until it is falsified:
 
 No new voice and no new claim: each sentence states a proven fact in the page's existing register, so the condition D12
 sets for a pre-authorised GATE 4 holds (the fact check is the proof itself; no NEEDS DECISION).
+
+## 2026-10-31 - `plans-site` (row 21), GATE 4 approved and recorded
+
+**Gate:** D59 pre-authorised GATE 4 for this non-legal row on a lean panel, a finalizer fact-consistency PASS and
+zero unanswered NEEDS DECISION. All three conditions are met. This approves the words in
+`drafts/plans-site.md`, not an unfinished page or a live price claim. The website dummy, source build and
+deployment have their own gates.
+
+**Panel:** developmental review, a writer revision, line edit, copy edit, indexed-page SEO/AEO review,
+a bounded second writer revision, Bible reconciliation and finalizer READY. The second revision made
+the major headings answer reader questions, linked the safety model and the 26-section reference, and
+showed when the plan details last changed. The timestamp comes from the plan rows' `updated_at`; the
+wording does not imply that every edit changed a price. Fact consistency was re-checked against D56,
+D61-D63, D68-D69 and `docs/CONTRACTS.md`. No voice, palette, motif or glossary change was needed.
+
+**Publication state:** row 21 is approved for implementation. Checkout remains a plan request until
+Polar is configured; the Terms and Privacy additions in row 23 still await the owner's legal GATE 4.
+The website must not mark this row applied or live until its production and origin checks pass.
+
+## 2026-10-31 - `notices-1.4.0` (row 24), GATE 4 approved and recorded
+
+**Gate:** D59 extended the standing pre-authorisation to this non-legal surface on a lean panel, conditional on
+the finalizer's fact-consistency PASS and zero unanswered NEEDS DECISION. Both conditions are met. The
+finalizer returned READY for the unconditional strings in `drafts/notices-1.4.0.md`. This approves those
+words for implementation; it does not claim that any page, release gate or email action is live.
+
+**Panel and reconciliation:** the developmental, writer, line, copy, fact and humor/emotion passes resolved
+D68's plan-request path and the release-form warning. A fact recheck corrected the account-pool hint, which
+cannot promise an unused balance on sign-in, and the plan-request email result, where an uncertain send is
+not a confirmed failure. The legal bar's words remain true with D74's server-side GA4 relay. The Bible's
+precision and refusal bands, glossary, voice and motifs are unchanged.
+
+**Conditional line:** the site's `release.draftKept` remains **PROPOSED, NOT READY TO PUBLISH**. It may be
+applied only after a real-browser proof shows an unfinished draft persisted before the block and surviving
+the block, Update and reload. The unconditional row 24 strings may proceed without that line. The legal
+Terms and Privacy additions in row 23 remain at the owner's separate GATE 4.
+
+## 2026-10-31 - `tours-desktop` (row 25), GATE 4 approved and recorded
+
+**Gate:** D59 pre-authorised GATE 4 for the non-legal page tours and desktop walkthrough, conditional on the full
+panel, finalizer fact-consistency PASS and zero unanswered NEEDS DECISION. The finalizer returned READY and all
+conditions are met. This approves the words in `drafts/tours-desktop.md` for implementation. It does not claim a live
+tour or a verified walkthrough.
+
+**Panel and reconciliation:** the developmental review added the protected-path beat before the dry-run. The line and
+copy passes resolved rhythm and Markdown form. The fact pass corrected the distinction between points and earned Pro
+months, added the jump-to-step list and one-time hint persistence per browser and account, and required fixture or
+concealed paths in captures. The targeted fact recheck, humor/emotion, hook and in-app SEO/AEO reviews passed. The
+Bible's palette, safety spine, glossary, motifs and voice are unchanged; no owner decision remains.
+
+**Implementation state:** Plans and Team tour steps wait for their approved screens and visible targets. The proposed
+`/walkthrough`, anchors, focus behavior, 760/1440 captures and persistence still need app and browser proof before
+publication is marked applied.

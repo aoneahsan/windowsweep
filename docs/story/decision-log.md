@@ -1267,3 +1267,15 @@ covers this exact revised draft, including the payment and cancellation clauses,
 P-08 deletion and anonymous referral-void counters, and D73 deliberate-misuse clause. Publication remains
 subject to applying the approved words to the website and verifying the live pages. No new motif, glossary
 term, palette or voice change is needed.
+
+## 2026-10-31 - `legal-payments` (row 23), revised copy recorded
+
+**Gate and record:** the owner's revised GATE 4 answer above approves the D75 version of
+`drafts/legal-payments.md`. The keeper recorded row 23 and the existing windowsweep registry entry. The Bible's
+precision and refusal bands govern this legal notice; humour remains off. No new motif, glossary term, palette
+or fingerprint change is needed.
+
+**Publication state:** the website must apply the approved Terms and Privacy clauses in their early and 1.4.0
+waves, update each page's effective date on the day it goes live, and verify the live pages. This record
+approves the words; it does not claim publication or a working checkout. The Polar organisation and FilesHub
+payment account remain owner work, so checkout still follows the plan-request path.

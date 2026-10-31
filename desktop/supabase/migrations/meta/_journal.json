@@ -190,6 +190,13 @@
       "when": 1793435582631,
       "tag": "20261031083302_v140_f_sec_009_revokes",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1793441947817,
+      "tag": "20261031101907_v140_analytics_budget",
+      "breakpoints": true
     }
   ]
 }

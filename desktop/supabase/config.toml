@@ -1,0 +1,23 @@
+[functions.allowance]
+verify_jwt = false
+
+[functions.account-welcome]
+verify_jwt = false
+
+[functions.polar-checkout]
+verify_jwt = false
+
+[functions.polar-webhook]
+verify_jwt = false
+
+[functions.admin]
+verify_jwt = false
+
+[functions.team]
+verify_jwt = false
+
+[functions.delete-account]
+verify_jwt = false
+
+[functions.analytics-ingest]
+verify_jwt = false

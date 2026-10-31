@@ -115,7 +115,7 @@ function handleFor(update: Update): UpdateHandle {
         // Downloading is harmless during a cleanup. Installing is not: on
         // Windows the installer exits the app, so wait until the run settles.
         await waitForQuietMoment();
-        await update.install({ restartAfterInstall: false });
+        await update.install({ restartAfterInstall: true });
         onProgress(100);
       } catch (error) {
         // Reported here so the screen never names a destination, and rethrown so

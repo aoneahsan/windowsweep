@@ -81,7 +81,7 @@ it('downloads during a run but waits until the cleanup finishes before installin
 
   state.setPhase('idle');
   await installing;
-  expect(install).toHaveBeenCalledWith({ restartAfterInstall: false });
+  expect(install).toHaveBeenCalledWith({ restartAfterInstall: true });
   expect(progress).toEqual([0, 99, 100]);
 });
 

@@ -120,27 +120,37 @@ revoke all on function public.team_invite_mark_sent(uuid) from public, anon, aut
 grant execute on function public.team_invite_mark_sent(uuid) to service_role;
 --> statement-breakpoint
 
-create or replace function public.team_my_invites()
+create or replace function public.team_my_invites(p_limit integer default 20,
+  p_page integer default 0)
 returns jsonb language plpgsql stable security definer set search_path = '' as $$
-declare v_uid uuid; v_email text;
+declare v_uid uuid; v_email text; v_total integer;
 begin
+  if p_limit is null or p_limit not between 1 and 50
+     or p_page is null or p_page not between 0 and 1000 then
+    raise exception 'invalid_request' using errcode = 'PT422'; end if;
   v_uid := private.require_account();
   select lower(email) into v_email from auth.users
     where id = v_uid and email_confirmed_at is not null;
-  if v_email is null then return jsonb_build_object('items', '[]'::jsonb); end if;
-  return jsonb_build_object('items', (select coalesce(jsonb_agg(x.item), '[]'::jsonb) from (
-    select jsonb_build_object('invite_id', i.id, 'team_name', t.name,
+  if v_email is null then return jsonb_build_object('items', '[]'::jsonb,
+    'page', p_page, 'limit', p_limit, 'next_page', null); end if;
+  select count(*)::integer into v_total from public.team_invites
+    where email = v_email and accepted_at is null and expires_at > now();
+  return jsonb_build_object('items', (select coalesce(jsonb_agg(x.item
+    order by x.created_at desc), '[]'::jsonb) from (
+    select i.created_at, jsonb_build_object('invite_id', i.id, 'team_name', t.name,
       'invited_by', p.email, 'expires_at', i.expires_at) as item
       from public.team_invites i join public.teams t on t.id = i.team_id
       left join public.profiles p on p.user_id = i.invited_by
       where i.email = v_email and i.accepted_at is null and i.expires_at > now()
-      order by i.created_at desc limit 50) x));
+      order by i.created_at desc, i.id desc limit p_limit offset p_limit * p_page) x),
+    'page', p_page, 'limit', p_limit,
+    'next_page', case when (p_page + 1) * p_limit < v_total then p_page + 1 else null end);
 end;
 $$;
 --> statement-breakpoint
-revoke all on function public.team_my_invites() from public, anon, authenticated, service_role;
+revoke all on function public.team_my_invites(integer, integer) from public, anon, authenticated, service_role;
 --> statement-breakpoint
-grant execute on function public.team_my_invites() to authenticated;
+grant execute on function public.team_my_invites(integer, integer) to authenticated;
 --> statement-breakpoint
 
 create or replace function public.team_accept(p_invite_id uuid)
@@ -268,7 +278,7 @@ begin
       into v_invites from (
         select i.id, i.email, i.created_at, i.expires_at from public.team_invites i
         where i.team_id = v_team.id and i.accepted_at is null and i.expires_at > now()
-        order by i.created_at desc limit 50) x;
+        order by i.created_at desc, i.id desc limit p_limit offset p_limit * p_page) x;
   else v_invites := '[]'::jsonb; end if;
   select jsonb_build_object(
     'members', (select count(*) from public.team_members where team_id = v_team.id),
@@ -292,6 +302,9 @@ begin
          join public.team_members tm on tm.user_id = r.user_id
          where tm.team_id = v_team.id and r.started_at >= now() - interval '30 days')
          > (p_page + 1) * p_limit
+       or (v_team.owner_id = v_uid and (select count(*) from public.team_invites i
+         where i.team_id = v_team.id and i.accepted_at is null and i.expires_at > now())
+         > (p_page + 1) * p_limit)
        then p_page + 1 else null end);
 end;
 $$;

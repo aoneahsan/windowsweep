@@ -13,7 +13,7 @@ $$;
 revoke all on function public.delete_my_account() from public, anon, authenticated, service_role;
 grant execute on function public.delete_my_account() to authenticated;
 drop function if exists public.billing_mark_cancelled(uuid, text);
-drop function if exists public.my_active_polar_subscription_ids();
+drop function if exists public.my_active_polar_subscription_ids(integer);
 drop function if exists public.billing_record_returned(text, text, integer);
 drop function if exists public.billing_record_paid(text, text, text, text, text, integer, text);
 drop function if exists public.billing_record_quote(text, uuid, text, text, integer, integer, integer);

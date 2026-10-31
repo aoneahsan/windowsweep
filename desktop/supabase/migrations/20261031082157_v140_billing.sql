@@ -207,20 +207,27 @@ grant execute on function public.billing_record_returned(text, text, integer) to
 
 -- The delete-account Edge Function reads these under the caller's JWT, cancels each
 -- one with Polar, then marks only successfully cancelled ids through the server key.
-create or replace function public.my_active_polar_subscription_ids()
-returns text[] language plpgsql stable security definer set search_path = '' as $$
+create or replace function public.my_active_polar_subscription_ids(p_limit integer default 20)
+returns jsonb language plpgsql stable security definer set search_path = '' as $$
 declare v_uid uuid;
 begin
+  if p_limit is null or p_limit not between 1 and 50 then
+    raise exception 'invalid_request' using errcode = 'PT422'; end if;
   v_uid := private.require_account();
-  return array(select distinct s.polar_subscription_id from public.subscriptions s
-    where s.user_id = v_uid and s.polar_subscription_id is not null
-      and s.cancelled_at is null and s.status = 'active' and s.period_end > now());
+  -- Delete-account repeatedly reads page one AFTER each successful cancellation
+  -- marks its id, so mutations cannot skip a later id.
+  return jsonb_build_object('items', (select coalesce(jsonb_agg(x.polar_subscription_id
+      order by x.polar_subscription_id), '[]'::jsonb) from (
+    select distinct s.polar_subscription_id from public.subscriptions s
+      where s.user_id = v_uid and s.polar_subscription_id is not null
+        and s.cancelled_at is null and s.status = 'active' and s.period_end > now()
+      order by s.polar_subscription_id limit p_limit) x));
 end;
 $$;
 --> statement-breakpoint
-revoke all on function public.my_active_polar_subscription_ids() from public, anon, authenticated, service_role;
+revoke all on function public.my_active_polar_subscription_ids(integer) from public, anon, authenticated, service_role;
 --> statement-breakpoint
-grant execute on function public.my_active_polar_subscription_ids() to authenticated;
+grant execute on function public.my_active_polar_subscription_ids(integer) to authenticated;
 --> statement-breakpoint
 
 create or replace function public.billing_mark_cancelled(p_user uuid, p_subscription_id text)

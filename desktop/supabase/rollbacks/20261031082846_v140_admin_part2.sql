@@ -10,4 +10,4 @@ drop function if exists public.admin_request_mark_notified(uuid, text);
 drop function if exists public.admin_requests_claim(text, integer);
 drop function if exists public.admin_requests_list(text, text, integer);
 drop function if exists public.admin_config_set(text, jsonb, text);
-drop function if exists public.admin_config_get();
+drop function if exists public.admin_config_get(integer, integer);

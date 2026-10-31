@@ -1,16 +1,25 @@
 -- Custom SQL migration file, put your code below! --
-create or replace function public.admin_config_get()
+create or replace function public.admin_config_get(p_limit integer default 20,
+  p_page integer default 0)
 returns jsonb language plpgsql stable security definer set search_path = '' as $$
+declare v_total integer;
 begin
+  if p_limit is null or p_limit not between 1 and 50 or
+     p_page is null or p_page not between 0 and 1000 then
+    raise exception 'invalid_request' using errcode = 'PT422'; end if;
   perform private.require_admin();
+  select count(*)::integer into v_total from public.app_config;
   return jsonb_build_object('items', (select coalesce(jsonb_agg(to_jsonb(c) order by c.key), '[]'::jsonb)
-    from public.app_config c));
+    from (select * from public.app_config order by key
+      limit p_limit offset p_limit * p_page) c),
+    'page', p_page, 'limit', p_limit, 'total', v_total,
+    'next_page', case when (p_page + 1) * p_limit < v_total then p_page + 1 else null end);
 end;
 $$;
 --> statement-breakpoint
-revoke all on function public.admin_config_get() from public, anon, authenticated, service_role;
+revoke all on function public.admin_config_get(integer, integer) from public, anon, authenticated, service_role;
 --> statement-breakpoint
-grant execute on function public.admin_config_get() to authenticated;
+grant execute on function public.admin_config_get(integer, integer) to authenticated;
 --> statement-breakpoint
 
 create or replace function public.admin_config_set(p_key text, p_value jsonb, p_reason text)

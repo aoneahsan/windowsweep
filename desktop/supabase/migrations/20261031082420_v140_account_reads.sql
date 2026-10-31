@@ -1,11 +1,15 @@
 -- Custom SQL migration file, put your code below! --
 -- The multi-PC report is a bounded server aggregation of the person's run rows.
-create or replace function public.my_machines_report(p_days integer default 30)
+create or replace function public.my_machines_report(p_days integer default 30,
+  p_limit integer default 20, p_page integer default 0)
 returns jsonb language plpgsql stable security definer set search_path = '' as $$
 declare v_uid uuid; v_plan_id text; v_limit integer; v_since timestamptz;
-  v_machines jsonb; v_other integer; v_unattributed jsonb; v_totals jsonb;
+  v_machines jsonb; v_other integer; v_total integer;
+  v_unattributed jsonb; v_totals jsonb;
 begin
-  if p_days is null or p_days not between 1 and 365 then
+  if p_days is null or p_days not between 1 and 365
+     or p_limit is null or p_limit not between 1 and 50
+     or p_page is null or p_page not between 0 and 1000 then
     raise exception 'invalid_request' using errcode = 'PT422';
   end if;
   v_uid := private.require_account();
@@ -34,10 +38,13 @@ begin
         (select max(r.started_at) from public.runs r where r.user_id = v_uid
           and r.device_id = d.id and r.started_at >= v_since) as last_run_at
         from public.devices d where d.user_id = v_uid
-        order by d.last_seen_at desc, d.id limit v_limit
+        order by d.last_seen_at desc, d.id
+        limit least(p_limit, greatest(0, v_limit - p_page * p_limit))
+        offset p_page * p_limit
     ) x;
-  select greatest(0, count(*)::integer - v_limit) into v_other
+  select count(*)::integer into v_total
     from public.devices where user_id = v_uid;
+  v_other := greatest(0, v_total - v_limit);
   select jsonb_build_object('runs', count(*),
       'real_runs', count(*) filter (where not dry_run
         and exists (select 1 from unnest(sections) s where s not in (0,24,25))),
@@ -51,24 +58,27 @@ begin
       'estimated_bytes', coalesce(sum(estimated_bytes), 0)) into v_totals
     from public.runs where user_id = v_uid and started_at >= v_since;
   return jsonb_build_object('days', p_days, 'since', v_since, 'machine_limit', v_limit,
-    'machines', v_machines, 'other_machines', v_other,
+    'machines', v_machines, 'total_machines', v_total, 'other_machines', v_other,
+    'page', p_page, 'limit', p_limit,
+    'next_page', case when (p_page + 1) * p_limit < least(v_total, v_limit)
+      then p_page + 1 else null end,
     'unattributed', v_unattributed, 'totals', v_totals);
 end;
 $$;
 --> statement-breakpoint
-revoke all on function public.my_machines_report(integer) from public, anon, authenticated, service_role;
+revoke all on function public.my_machines_report(integer, integer, integer) from public, anon, authenticated, service_role;
 --> statement-breakpoint
-grant execute on function public.my_machines_report(integer) to authenticated;
+grant execute on function public.my_machines_report(integer, integer, integer) to authenticated;
 --> statement-breakpoint
 
 -- Opaque keyset cursor over (started_at, run_id); the desktop writes the CSV or
 -- JSON file locally, and the server returns only run summary fields.
-create or replace function public.export_my_history(p_cursor text default null, p_limit integer default 500)
+create or replace function public.export_my_history(p_cursor text default null, p_limit integer default 20)
 returns jsonb language plpgsql stable security definer set search_path = '' as $$
 declare v_uid uuid; v_plan_id text; v_allowed boolean; v_cursor jsonb;
   v_items jsonb; v_next text; v_count integer;
 begin
-  if p_limit is null or p_limit not between 1 and 500
+  if p_limit is null or p_limit not between 1 and 50
      or (p_cursor is not null and length(p_cursor) > 300) then
     raise exception 'invalid_request' using errcode = 'PT422';
   end if;

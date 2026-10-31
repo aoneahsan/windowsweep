@@ -45,6 +45,10 @@ begin
   if p_key = 'referral_reward_plan' and not exists (
     select 1 from public.plans where id = p_value #>> '{}' and is_active and rank > 0) then
     raise exception 'invalid_plan' using errcode = 'PT422'; end if;
+  if p_key = 'referral_badge_key' and not exists (
+    select 1 from public.badge_catalogue
+      where key = p_value #>> '{}' and family = 'referral' and is_active) then
+    raise exception 'invalid_badge' using errcode = 'PT422'; end if;
   if p_key in ('referral_reward_months', 'referral_reward_months_cap_per_year') then
     select case when p_key = 'referral_reward_months' then v_number::integer
       else (value #>> '{}')::integer end into v_months
@@ -91,7 +95,8 @@ begin
       'id', v_row.id, 'user_id', v_row.user_id, 'user_email', v_row.user_email,
       'plan_id', v_row.plan_id, 'interval', v_row.interval, 'seats', v_row.seats,
       'note', v_row.note, 'status', v_row.status, 'created_at', v_row.created_at,
-      'notified_at', v_row.notified_at, 'closed_at', v_row.closed_at,
+      'notified_at', v_row.notified_at, 'notify_uncertain_at', v_row.notify_uncertain_at,
+      'closed_at', v_row.closed_at,
       'closed_by', v_row.closed_by));
     v_count := v_count + 1; v_last := v_row.created_at; v_last_id := v_row.id::text;
   end loop;
@@ -106,12 +111,12 @@ revoke all on function public.admin_requests_list(text, text, integer)
 grant execute on function public.admin_requests_list(text, text, integer) to authenticated;
 --> statement-breakpoint
 
--- Claim an email batch with a ten-minute lease; the Edge Function sends the mail
--- and marks only successful deliveries. A failed send releases its claim.
+-- Claim an email batch without automatic expiry. Unknown outcomes, including
+-- a failed attempt to mark uncertain, remain blocked until admin reconciliation.
 create or replace function public.admin_requests_claim(p_cursor text default null,
   p_limit integer default 20)
 returns jsonb language plpgsql security definer set search_path = '' as $$
-declare v_cursor jsonb; v_admin uuid; v_items jsonb := '[]'::jsonb;
+declare v_cursor jsonb; v_admin uuid; v_items jsonb := '[]'::jsonb; v_token uuid;
   v_row record; v_last timestamptz; v_last_id text; v_count integer := 0;
 begin
   if p_limit is null or p_limit not between 1 and 20 then
@@ -120,14 +125,17 @@ begin
   v_admin := private.require_admin();
   for v_row in select r.*, p.email as user_email from public.plan_requests r
     join public.profiles p on p.user_id = r.user_id
-    where r.status = 'pending' and p.email is not null
-      and (r.notify_claimed_at is null or r.notify_claimed_at < now() - interval '10 minutes')
+    where r.status = 'pending' and p.email is not null and r.notify_uncertain_at is null
+      and r.notify_claimed_at is null
       and (v_cursor is null or (r.created_at, r.id::text) <
         ((v_cursor ->> 't')::timestamptz, v_cursor ->> 'id'))
     order by r.created_at desc, r.id desc limit p_limit for update of r skip locked loop
-    update public.plan_requests set notify_claimed_at = now() where id = v_row.id;
+    v_token := pg_catalog.gen_random_uuid();
+    update public.plan_requests set notify_claimed_at = now(), notify_claim_token = v_token
+      where id = v_row.id;
     v_items := v_items || jsonb_build_array(jsonb_build_object(
-      'id', v_row.id, 'user_id', v_row.user_id, 'user_email', v_row.user_email,
+      'id', v_row.id, 'claim_token', v_token,
+      'user_id', v_row.user_id, 'user_email', v_row.user_email,
       'plan_id', v_row.plan_id, 'interval', v_row.interval, 'seats', v_row.seats));
     v_count := v_count + 1; v_last := v_row.created_at; v_last_id := v_row.id::text;
   end loop;
@@ -142,11 +150,13 @@ revoke all on function public.admin_requests_claim(text, integer)
 grant execute on function public.admin_requests_claim(text, integer) to authenticated;
 --> statement-breakpoint
 
-create or replace function public.admin_request_mark_notified(p_request_id uuid, p_reason text)
+create or replace function public.admin_request_mark_notified(p_request_id uuid,
+  p_token uuid, p_reason text)
 returns jsonb language plpgsql security definer set search_path = '' as $$
 declare v_admin uuid; v_status public.plan_request_status;
 begin
-  if p_request_id is null then raise exception 'invalid_request' using errcode = 'PT422'; end if;
+  if p_request_id is null or p_token is null then
+    raise exception 'invalid_request' using errcode = 'PT422'; end if;
   perform private.admin_reason(p_reason);
   v_admin := private.require_admin();
   select status into v_status from public.plan_requests where id = p_request_id for update;
@@ -154,8 +164,10 @@ begin
   if v_status = 'notified' or v_status = 'closed' then
     return jsonb_build_object('id', p_request_id, 'status', v_status);
   end if;
-  update public.plan_requests set status = 'notified', notified_at = now(), notify_claimed_at = null
-    where id = p_request_id and status = 'pending' and notify_claimed_at is not null;
+  update public.plan_requests set status = 'notified', notified_at = now(),
+    notify_claimed_at = null, notify_claim_token = null
+    where id = p_request_id and status = 'pending' and notify_claim_token = p_token
+      and notify_uncertain_at is null;
   if not found then raise exception 'invalid_request' using errcode = 'PT422'; end if;
   insert into public.admin_audit (actor, action, subject_table, subject_id, after)
     values (v_admin, 'plan_request.notify_open', 'plan_requests', p_request_id::text,
@@ -164,26 +176,46 @@ begin
 end;
 $$;
 --> statement-breakpoint
-revoke all on function public.admin_request_mark_notified(uuid, text)
+revoke all on function public.admin_request_mark_notified(uuid, uuid, text)
   from public, anon, authenticated, service_role;
 --> statement-breakpoint
-grant execute on function public.admin_request_mark_notified(uuid, text) to authenticated;
+grant execute on function public.admin_request_mark_notified(uuid, uuid, text) to authenticated;
 --> statement-breakpoint
 
-create or replace function public.admin_request_release_claim(p_request_id uuid)
+create or replace function public.admin_request_release_claim(p_request_id uuid, p_token uuid)
 returns void language plpgsql security definer set search_path = '' as $$
 begin
-  if p_request_id is null then raise exception 'invalid_request' using errcode = 'PT422'; end if;
+  if p_request_id is null or p_token is null then
+    raise exception 'invalid_request' using errcode = 'PT422'; end if;
   perform private.require_admin();
-  update public.plan_requests set notify_claimed_at = null
-    where id = p_request_id and status = 'pending';
+  update public.plan_requests set notify_claimed_at = null, notify_claim_token = null
+    where id = p_request_id and status = 'pending' and notify_claim_token = p_token;
 end;
 $$;
 --> statement-breakpoint
-revoke all on function public.admin_request_release_claim(uuid)
+revoke all on function public.admin_request_release_claim(uuid, uuid)
   from public, anon, authenticated, service_role;
 --> statement-breakpoint
-grant execute on function public.admin_request_release_claim(uuid) to authenticated;
+grant execute on function public.admin_request_release_claim(uuid, uuid) to authenticated;
+--> statement-breakpoint
+
+create or replace function public.admin_request_mark_uncertain(p_request_id uuid, p_token uuid)
+returns boolean language plpgsql security definer set search_path = '' as $$
+begin
+  if p_request_id is null or p_token is null then
+    raise exception 'invalid_request' using errcode = 'PT422'; end if;
+  perform private.require_admin();
+  update public.plan_requests set notify_uncertain_at = now(),
+    notify_claimed_at = null, notify_claim_token = null
+    where id = p_request_id and status = 'pending' and notify_claim_token = p_token;
+  return found;
+end;
+$$;
+--> statement-breakpoint
+revoke all on function public.admin_request_mark_uncertain(uuid, uuid)
+  from public, anon, authenticated, service_role;
+--> statement-breakpoint
+grant execute on function public.admin_request_mark_uncertain(uuid, uuid) to authenticated;
 --> statement-breakpoint
 
 create or replace function public.admin_request_close(p_request_id uuid, p_reason text)
@@ -328,3 +360,88 @@ revoke all on function public.admin_audit_list(text, text, integer)
   from public, anon, authenticated, service_role;
 --> statement-breakpoint
 grant execute on function public.admin_audit_list(text, text, integer) to authenticated;
+--> statement-breakpoint
+
+-- Catalogue administration is separate from choosing the active referral badge.
+create or replace function public.admin_badges_list(p_limit integer default 20,
+  p_page integer default 0)
+returns jsonb language plpgsql stable security definer set search_path = '' as $$
+declare v_total integer;
+begin
+  if p_limit is null or p_limit not between 1 and 50 or
+     p_page is null or p_page not between 0 and 1000 then
+    raise exception 'invalid_request' using errcode = 'PT422'; end if;
+  perform private.require_admin();
+  select count(*)::integer into v_total from public.badge_catalogue;
+  return jsonb_build_object('items', (select coalesce(jsonb_agg(to_jsonb(b) order by b.key), '[]'::jsonb)
+    from (select * from public.badge_catalogue order by key
+      limit p_limit offset p_limit * p_page) b),
+    'page', p_page, 'limit', p_limit, 'total', v_total,
+    'next_page', case when (p_page + 1) * p_limit < v_total then p_page + 1 else null end);
+end;
+$$;
+--> statement-breakpoint
+revoke all on function public.admin_badges_list(integer, integer)
+  from public, anon, authenticated, service_role;
+--> statement-breakpoint
+grant execute on function public.admin_badges_list(integer, integer) to authenticated;
+--> statement-breakpoint
+
+create or replace function public.admin_badges_create(p_key text, p_name text, p_reason text)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare v_admin uuid;
+begin
+  if p_key is null or p_key !~ '^[a-z][a-z0-9_]{1,63}$' or
+     p_name is null or char_length(p_name) not between 1 and 80 then
+    raise exception 'invalid_request' using errcode = 'PT422'; end if;
+  perform private.admin_reason(p_reason);
+  v_admin := private.require_admin();
+  if exists (select 1 from public.badge_catalogue where key = p_key) then
+    raise exception 'badge_exists' using errcode = 'PT409'; end if;
+  insert into public.badge_catalogue (key, name, family)
+    values (p_key, p_name, 'referral');
+  insert into public.admin_audit (actor, action, subject_table, subject_id, before, after)
+    values (v_admin, 'badges.create', 'badge_catalogue', p_key, null,
+      jsonb_build_object('name', p_name, 'family', 'referral', 'reason', p_reason));
+  return jsonb_build_object('key', p_key, 'name', p_name, 'family', 'referral');
+end;
+$$;
+--> statement-breakpoint
+revoke all on function public.admin_badges_create(text, text, text)
+  from public, anon, authenticated, service_role;
+--> statement-breakpoint
+grant execute on function public.admin_badges_create(text, text, text) to authenticated;
+--> statement-breakpoint
+
+-- Misuse voids a live referral without erasing its anonymous provenance.
+create or replace function public.admin_referral_void(p_referral uuid, p_reason text)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare v_admin uuid; v_ref record; v_revoked integer;
+begin
+  if p_referral is null then raise exception 'invalid_request' using errcode = 'PT422'; end if;
+  perform private.admin_reason(p_reason);
+  v_admin := private.require_admin();
+  select * into v_ref from public.referrals where id = p_referral for update;
+  if not found then raise exception 'not_found' using errcode = 'PT404'; end if;
+  if v_ref.status = 'void' then
+    return jsonb_build_object('status', 'void', 'changed', false, 'revoked_grants', 0); end if;
+  update public.referrals set status = 'void', voided_at = now(),
+    notify_claimed_at = null, notify_claim_token = null where id = p_referral;
+  update public.referral_badge_awards set voided_at = now()
+    where referral_id = p_referral and voided_at is null;
+  v_revoked := private.reconcile_referral_rewards(v_ref.referrer_id, v_admin, p_referral);
+  insert into public.referral_voids (reason_code) values ('misuse');
+  insert into public.admin_audit (actor, action, subject_table, subject_id, before, after)
+    values (v_admin, 'referral.void', 'referrals', p_referral,
+      jsonb_build_object('status', v_ref.status),
+      jsonb_build_object('reason_code', 'misuse', 'reason', p_reason));
+  return jsonb_build_object('status', 'void', 'changed', true,
+    'revoked_grants', v_revoked);
+end;
+$$;
+--> statement-breakpoint
+revoke all on function public.admin_referral_void(uuid, text)
+  from public, anon, authenticated, service_role;
+--> statement-breakpoint
+grant execute on function public.admin_referral_void(uuid, text) to authenticated;
+--> statement-breakpoint

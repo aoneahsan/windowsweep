@@ -1,7 +1,7 @@
 CREATE TYPE "public"."billing_interval" AS ENUM('month', 'year');--> statement-breakpoint
 CREATE TYPE "public"."grant_source" AS ENUM('admin', 'referral');--> statement-breakpoint
 CREATE TYPE "public"."plan_request_status" AS ENUM('pending', 'notified', 'closed');--> statement-breakpoint
-CREATE TYPE "public"."referral_status" AS ENUM('pending', 'confirmed');--> statement-breakpoint
+CREATE TYPE "public"."referral_status" AS ENUM('pending', 'confirmed', 'void');--> statement-breakpoint
 CREATE TYPE "public"."release_channel" AS ENUM('production', 'test');--> statement-breakpoint
 CREATE TYPE "public"."release_platform" AS ENUM('desktop', 'web', 'docs');--> statement-breakpoint
 CREATE TYPE "public"."release_severity" AS ENUM('urgent', 'normal');--> statement-breakpoint
@@ -58,10 +58,14 @@ CREATE TABLE "webhook_events" (
 	"id" text PRIMARY KEY NOT NULL,
 	"type" text NOT NULL,
 	"order_id" text,
+	"checkout_id" text,
+	"polar_subscription_id" text,
+	"returned_cents" integer,
 	"received_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"processed_at" timestamp with time zone,
 	"result" text,
-	CONSTRAINT "webhook_events_id_len" CHECK (char_length("webhook_events"."id") between 1 and 200)
+	CONSTRAINT "webhook_events_id_len" CHECK (char_length("webhook_events"."id") between 1 and 200),
+	CONSTRAINT "webhook_events_returned_nonneg" CHECK ("webhook_events"."returned_cents" is null or "webhook_events"."returned_cents" >= 0)
 );
 --> statement-breakpoint
 ALTER TABLE "webhook_events" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
@@ -135,11 +139,14 @@ CREATE TABLE "plan_requests" (
 	"status" "plan_request_status" DEFAULT 'pending' NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"notify_claimed_at" timestamp with time zone,
+	"notify_claim_token" uuid,
+	"notify_uncertain_at" timestamp with time zone,
 	"notified_at" timestamp with time zone,
 	"closed_at" timestamp with time zone,
 	"closed_by" uuid,
 	CONSTRAINT "plan_requests_seats_range" CHECK ("plan_requests"."seats" between 1 and 1000),
-	CONSTRAINT "plan_requests_note_len" CHECK ("plan_requests"."note" is null or char_length("plan_requests"."note") between 1 and 1000)
+	CONSTRAINT "plan_requests_note_len" CHECK ("plan_requests"."note" is null or char_length("plan_requests"."note") between 1 and 1000),
+	CONSTRAINT "plan_requests_notify_claim_pair" CHECK (("plan_requests"."notify_claimed_at" is null) = ("plan_requests"."notify_claim_token" is null))
 );
 --> statement-breakpoint
 ALTER TABLE "plan_requests" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
@@ -182,11 +189,18 @@ CREATE TABLE "referrals" (
 	"reward_grant_id" uuid,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"confirmed_at" timestamp with time zone,
+	"voided_at" timestamp with time zone,
 	"notified_at" timestamp with time zone,
+	"notify_claimed_at" timestamp with time zone,
+	"notify_claim_token" uuid,
+	"notify_uncertain_at" timestamp with time zone,
 	CONSTRAINT "referrals_invitee_id_unique" UNIQUE("invitee_id"),
 	CONSTRAINT "referrals_not_self" CHECK ("referrals"."referrer_id" <> "referrals"."invitee_id"),
 	CONSTRAINT "referrals_points_nonneg" CHECK ("referrals"."points_awarded" >= 0),
-	CONSTRAINT "referrals_confirmed_pair" CHECK (("referrals"."status" = 'confirmed') = ("referrals"."confirmed_at" is not null))
+	CONSTRAINT "referrals_confirmed_timestamp" CHECK ("referrals"."status" <> 'confirmed' or "referrals"."confirmed_at" is not null),
+	CONSTRAINT "referrals_pending_timestamp" CHECK ("referrals"."status" <> 'pending' or "referrals"."confirmed_at" is null),
+	CONSTRAINT "referrals_void_pair" CHECK (("referrals"."status" = 'void') = ("referrals"."voided_at" is not null)),
+	CONSTRAINT "referrals_notify_claim_pair" CHECK (("referrals"."notify_claimed_at" is null) = ("referrals"."notify_claim_token" is null))
 );
 --> statement-breakpoint
 ALTER TABLE "referrals" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
@@ -216,7 +230,11 @@ CREATE TABLE "team_invites" (
 	"accepted_at" timestamp with time zone,
 	"accepted_by" uuid,
 	"last_sent_at" timestamp with time zone,
-	CONSTRAINT "team_invites_email_format" CHECK ("team_invites"."email" = lower("team_invites"."email") and char_length("team_invites"."email") between 3 and 254 and position('@' in "team_invites"."email") > 1)
+	"send_claimed_at" timestamp with time zone,
+	"send_claim_token" uuid,
+	"send_uncertain_at" timestamp with time zone,
+	CONSTRAINT "team_invites_email_format" CHECK ("team_invites"."email" = lower("team_invites"."email") and char_length("team_invites"."email") between 3 and 254 and position('@' in "team_invites"."email") > 1),
+	CONSTRAINT "team_invites_send_claim_pair" CHECK (("team_invites"."send_claimed_at" is null) = ("team_invites"."send_claim_token" is null))
 );
 --> statement-breakpoint
 ALTER TABLE "team_invites" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
@@ -243,7 +261,11 @@ ALTER TABLE "teams" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 ALTER TABLE "profiles" ADD COLUMN "referral_code" text;--> statement-breakpoint
 ALTER TABLE "profiles" ADD COLUMN "limits_override" jsonb;--> statement-breakpoint
 ALTER TABLE "profiles" ADD COLUMN "welcome_sent_at" timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "profiles" ADD COLUMN "welcome_claimed_at" timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "profiles" ADD COLUMN "welcome_claim_token" uuid;--> statement-breakpoint
+ALTER TABLE "profiles" ADD COLUMN "welcome_uncertain_at" timestamp with time zone;--> statement-breakpoint
 ALTER TABLE "profiles" ADD COLUMN "verified_at" timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "profiles" ADD COLUMN "referral_eligible_at" timestamp with time zone;--> statement-breakpoint
 ALTER TABLE "profiles" ADD COLUMN "legal_notice_seen_at" timestamp with time zone;--> statement-breakpoint
 ALTER TABLE "runs" ADD COLUMN "device_id" uuid;--> statement-breakpoint
 ALTER TABLE "checkout_quotes" ADD CONSTRAINT "checkout_quotes_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -293,6 +315,7 @@ CREATE INDEX "profiles_created_idx" ON "profiles" USING btree ("created_at","use
 CREATE INDEX "runs_device_id_idx" ON "runs" USING btree ("device_id");--> statement-breakpoint
 ALTER TABLE "profiles" ADD CONSTRAINT "profiles_referral_code_unique" UNIQUE("referral_code");--> statement-breakpoint
 ALTER TABLE "profiles" ADD CONSTRAINT "profiles_referral_code_format" CHECK ("profiles"."referral_code" ~ '^[A-Z0-9]{10}$');--> statement-breakpoint
+ALTER TABLE "profiles" ADD CONSTRAINT "profiles_welcome_claim_pair" CHECK (("profiles"."welcome_claimed_at" is null) = ("profiles"."welcome_claim_token" is null));--> statement-breakpoint
 ALTER TABLE "profiles" ADD CONSTRAINT "profiles_limits_override_object" CHECK ("profiles"."limits_override" is null or jsonb_typeof("profiles"."limits_override") = 'object');--> statement-breakpoint
 CREATE VIEW "public"."latest_app_releases" WITH (security_invoker = false) AS (select distinct on (r.platform, r.channel) r.id, r.platform, r.channel, r.version, r.severity, r.reason, r.min_native_version, r.published_at from public.app_releases r order by r.platform, r.channel, r.published_at desc, r.id desc);--> statement-breakpoint
 CREATE POLICY "devices_select_own" ON "devices" AS PERMISSIVE FOR SELECT TO "authenticated" USING ((select auth.uid()) = "devices"."user_id");--> statement-breakpoint
@@ -305,3 +328,76 @@ ALTER POLICY "contact_requests_insert_own" ON "contact_requests" TO authenticate
 ALTER POLICY "runs_insert_own" ON "runs" TO authenticated WITH CHECK ((select auth.uid()) = "runs"."user_id" and (select private.is_anon()) is false and ("runs"."device_id" is null or exists (select 1 from public.devices d where d.id = "runs"."device_id" and d.user_id = (select auth.uid()))));--> statement-breakpoint
 ALTER POLICY "user_settings_insert_own" ON "user_settings" TO authenticated WITH CHECK ((select auth.uid()) = "user_settings"."user_id" and (select private.is_anon()) is false);--> statement-breakpoint
 ALTER POLICY "user_settings_update_own" ON "user_settings" TO authenticated USING ((select auth.uid()) = "user_settings"."user_id" and (select private.is_anon()) is false) WITH CHECK ((select auth.uid()) = "user_settings"."user_id" and (select private.is_anon()) is false);
+--> statement-breakpoint
+CREATE TABLE "badge_catalogue" (
+	"key" text PRIMARY KEY NOT NULL,
+	"name" text NOT NULL,
+	"family" text DEFAULT 'referral' NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "badge_catalogue_key_format" CHECK ("badge_catalogue"."key" ~ '^[a-z][a-z0-9_]{1,63}$'),
+	CONSTRAINT "badge_catalogue_name_len" CHECK (char_length("badge_catalogue"."name") between 1 and 80),
+	CONSTRAINT "badge_catalogue_family" CHECK ("badge_catalogue"."family" = 'referral')
+);
+--> statement-breakpoint
+ALTER TABLE "badge_catalogue" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "referral_badge_awards" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" uuid NOT NULL,
+	"referral_id" uuid NOT NULL,
+	"badge_key" text NOT NULL,
+	"awarded_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"voided_at" timestamp with time zone,
+	CONSTRAINT "referral_badge_awards_referral_id_unique" UNIQUE("referral_id")
+);
+--> statement-breakpoint
+ALTER TABLE "referral_badge_awards" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+ALTER TABLE "referral_badge_awards" ADD CONSTRAINT "referral_badge_awards_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "referral_badge_awards" ADD CONSTRAINT "referral_badge_awards_referral_id_referrals_id_fk" FOREIGN KEY ("referral_id") REFERENCES "public"."referrals"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "referral_badge_awards" ADD CONSTRAINT "referral_badge_awards_badge_key_badge_catalogue_key_fk" FOREIGN KEY ("badge_key") REFERENCES "public"."badge_catalogue"("key") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "referral_badge_awards_user_at_idx" ON "referral_badge_awards" USING btree ("user_id","awarded_at");--> statement-breakpoint
+CREATE INDEX "referral_badge_awards_badge_idx" ON "referral_badge_awards" USING btree ("badge_key");
+--> statement-breakpoint
+CREATE TABLE "referral_voids" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"reason_code" text NOT NULL,
+	"voided_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "referral_voids_reason" CHECK ("referral_voids"."reason_code" in ('misuse', 'account_deleted'))
+);
+--> statement-breakpoint
+ALTER TABLE "referral_voids" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE INDEX "referral_voids_at_idx" ON "referral_voids" USING btree ("voided_at");
+--> statement-breakpoint
+CREATE INDEX "plan_requests_notify_uncertain_idx" ON "plan_requests" USING btree ("notify_uncertain_at","id") WHERE "plan_requests"."notify_uncertain_at" is not null;--> statement-breakpoint
+CREATE INDEX "referrals_notify_uncertain_idx" ON "referrals" USING btree ("notify_uncertain_at","id") WHERE "referrals"."notify_uncertain_at" is not null;--> statement-breakpoint
+CREATE INDEX "profiles_welcome_uncertain_idx" ON "profiles" USING btree ("welcome_uncertain_at","user_id") WHERE "profiles"."welcome_uncertain_at" is not null;--> statement-breakpoint
+CREATE INDEX "team_invites_send_uncertain_idx" ON "team_invites" USING btree ("send_uncertain_at","id") WHERE "team_invites"."send_uncertain_at" is not null;
+
+--> statement-breakpoint
+CREATE TABLE "billing_email_deliveries" (
+	"event_id" text NOT NULL,
+	"template" text NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"claimed_at" timestamp with time zone,
+	"claim_token" uuid,
+	"uncertain_at" timestamp with time zone,
+	"sent_at" timestamp with time zone,
+	"recipient_missing_at" timestamp with time zone,
+	"unavailable_at" timestamp with time zone,
+	CONSTRAINT "billing_email_deliveries_event_id_template_pk" PRIMARY KEY("event_id","template"),
+	CONSTRAINT "billing_email_template" CHECK ("billing_email_deliveries"."template" in ('windowsweep-plan-confirmed', 'windowsweep-payment-returned')),
+	CONSTRAINT "billing_email_claim_pair" CHECK (("billing_email_deliveries"."claimed_at" is null) = ("billing_email_deliveries"."claim_token" is null)),
+	CONSTRAINT "billing_email_not_sent_uncertain" CHECK ("billing_email_deliveries"."sent_at" is null or "billing_email_deliveries"."uncertain_at" is null),
+	CONSTRAINT "billing_email_sent_available" CHECK ("billing_email_deliveries"."sent_at" is null or "billing_email_deliveries"."unavailable_at" is null)
+);
+--> statement-breakpoint
+ALTER TABLE "billing_email_deliveries" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+ALTER TABLE "billing_email_deliveries" ADD CONSTRAINT "billing_email_deliveries_event_id_webhook_events_id_fk" FOREIGN KEY ("event_id") REFERENCES "public"."webhook_events"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "billing_email_created_idx" ON "billing_email_deliveries" USING btree ("created_at","event_id");--> statement-breakpoint
+CREATE INDEX "billing_email_uncertain_idx" ON "billing_email_deliveries" USING btree ("uncertain_at","event_id") WHERE "billing_email_deliveries"."uncertain_at" is not null;
+
+--> statement-breakpoint
+CREATE INDEX "plan_requests_notify_claimed_idx" ON "plan_requests" USING btree ("notify_claimed_at","id") WHERE "plan_requests"."notify_claimed_at" is not null;--> statement-breakpoint
+CREATE INDEX "referrals_notify_claimed_idx" ON "referrals" USING btree ("notify_claimed_at","id") WHERE "referrals"."notify_claimed_at" is not null;--> statement-breakpoint
+CREATE INDEX "profiles_welcome_claimed_idx" ON "profiles" USING btree ("welcome_claimed_at","user_id") WHERE "profiles"."welcome_claimed_at" is not null;--> statement-breakpoint
+CREATE INDEX "team_invites_send_claimed_idx" ON "team_invites" USING btree ("send_claimed_at","id") WHERE "team_invites"."send_claimed_at" is not null;

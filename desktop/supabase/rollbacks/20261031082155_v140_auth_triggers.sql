@@ -1,6 +1,8 @@
 -- REVIEWED ROLLBACK; never run directly. Restore the 1.3.2 signup writer while
 -- retaining the existing profiles; historical referral codes stay until the
 -- separate, destructive schema rollback is explicitly approved.
+drop trigger if exists on_auth_user_referral_delete on auth.users;
+drop function if exists private.record_referral_account_deletion();
 drop trigger if exists on_auth_user_updated on auth.users;
 drop function if exists public.handle_auth_user_updated();
 create or replace function public.handle_new_user()

@@ -1,6 +1,6 @@
 {
   "id": "55db33b6-e780-4776-b26a-7232487f8599",
-  "prevId": "a89140d9-e4e8-4ea1-8721-6dba1f53463e",
+  "prevId": "193c764a-cf79-4d12-abc7-0dcbcbd44213",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -464,6 +464,24 @@
           "primaryKey": false,
           "notNull": false
         },
+        "checkout_id": {
+          "name": "checkout_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "polar_subscription_id": {
+          "name": "polar_subscription_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "returned_cents": {
+          "name": "returned_cents",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "received_at": {
           "name": "received_at",
           "type": "timestamp with time zone",
@@ -496,9 +514,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "webhook_events_order_idx": {
           "name": "webhook_events_order_idx",
@@ -517,9 +535,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {},
@@ -530,6 +548,10 @@
         "webhook_events_id_len": {
           "name": "webhook_events_id_len",
           "value": "char_length(\"webhook_events\".\"id\") between 1 and 200"
+        },
+        "webhook_events_returned_nonneg": {
+          "name": "webhook_events_returned_nonneg",
+          "value": "\"webhook_events\".\"returned_cents\" is null or \"webhook_events\".\"returned_cents\" >= 0"
         }
       },
       "isRLSEnabled": true
@@ -1132,6 +1154,18 @@
           "primaryKey": false,
           "notNull": false
         },
+        "notify_claim_token": {
+          "name": "notify_claim_token",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notify_uncertain_at": {
+          "name": "notify_uncertain_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
         "notified_at": {
           "name": "notified_at",
           "type": "timestamp with time zone",
@@ -1163,10 +1197,10 @@
             }
           ],
           "isUnique": true,
-          "with": {},
-          "method": "btree",
           "where": "\"plan_requests\".\"status\" = 'pending'",
-          "concurrently": false
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         },
         "plan_requests_status_created_idx": {
           "name": "plan_requests_status_created_idx",
@@ -1191,9 +1225,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "plan_requests_user_created_idx": {
           "name": "plan_requests_user_created_idx",
@@ -1212,9 +1246,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "plan_requests_plan_idx": {
           "name": "plan_requests_plan_idx",
@@ -1227,38 +1261,82 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
+        },
+        "plan_requests_notify_uncertain_idx": {
+          "name": "plan_requests_notify_uncertain_idx",
+          "columns": [
+            {
+              "expression": "notify_uncertain_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"plan_requests\".\"notify_uncertain_at\" is not null",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "plan_requests_notify_claimed_idx": {
+          "name": "plan_requests_notify_claimed_idx",
+          "columns": [
+            {
+              "expression": "notify_claimed_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"plan_requests\".\"notify_claimed_at\" is not null",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
         "plan_requests_user_id_users_id_fk": {
           "name": "plan_requests_user_id_users_id_fk",
           "tableFrom": "plan_requests",
+          "tableTo": "users",
+          "schemaTo": "auth",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
-          "schemaTo": "auth",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "plan_requests_plan_id_plans_id_fk": {
           "name": "plan_requests_plan_id_plans_id_fk",
           "tableFrom": "plan_requests",
+          "tableTo": "plans",
           "columnsFrom": [
             "plan_id"
           ],
-          "tableTo": "plans",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1291,6 +1369,10 @@
         "plan_requests_note_len": {
           "name": "plan_requests_note_len",
           "value": "\"plan_requests\".\"note\" is null or char_length(\"plan_requests\".\"note\") between 1 and 1000"
+        },
+        "plan_requests_notify_claim_pair": {
+          "name": "plan_requests_notify_claim_pair",
+          "value": "(\"plan_requests\".\"notify_claimed_at\" is null) = (\"plan_requests\".\"notify_claim_token\" is null)"
         }
       },
       "isRLSEnabled": true
@@ -1546,8 +1628,32 @@
           "primaryKey": false,
           "notNull": false
         },
+        "voided_at": {
+          "name": "voided_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
         "notified_at": {
           "name": "notified_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notify_claimed_at": {
+          "name": "notify_claimed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notify_claim_token": {
+          "name": "notify_claim_token",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notify_uncertain_at": {
+          "name": "notify_uncertain_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
@@ -1577,9 +1683,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "referrals_reward_grant_idx": {
           "name": "referrals_reward_grant_idx",
@@ -1592,62 +1698,106 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
+        },
+        "referrals_notify_uncertain_idx": {
+          "name": "referrals_notify_uncertain_idx",
+          "columns": [
+            {
+              "expression": "notify_uncertain_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"referrals\".\"notify_uncertain_at\" is not null",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "referrals_notify_claimed_idx": {
+          "name": "referrals_notify_claimed_idx",
+          "columns": [
+            {
+              "expression": "notify_claimed_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"referrals\".\"notify_claimed_at\" is not null",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
         "referrals_referrer_id_users_id_fk": {
           "name": "referrals_referrer_id_users_id_fk",
           "tableFrom": "referrals",
+          "tableTo": "users",
+          "schemaTo": "auth",
           "columnsFrom": [
             "referrer_id"
           ],
-          "tableTo": "users",
-          "schemaTo": "auth",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "referrals_invitee_id_users_id_fk": {
           "name": "referrals_invitee_id_users_id_fk",
           "tableFrom": "referrals",
+          "tableTo": "users",
+          "schemaTo": "auth",
           "columnsFrom": [
             "invitee_id"
           ],
-          "tableTo": "users",
-          "schemaTo": "auth",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "referrals_reward_grant_id_plan_grants_id_fk": {
           "name": "referrals_reward_grant_id_plan_grants_id_fk",
           "tableFrom": "referrals",
+          "tableTo": "plan_grants",
           "columnsFrom": [
             "reward_grant_id"
           ],
-          "tableTo": "plan_grants",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "set null"
+          "onDelete": "set null",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "referrals_invitee_id_unique": {
           "name": "referrals_invitee_id_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "invitee_id"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -1660,9 +1810,21 @@
           "name": "referrals_points_nonneg",
           "value": "\"referrals\".\"points_awarded\" >= 0"
         },
-        "referrals_confirmed_pair": {
-          "name": "referrals_confirmed_pair",
-          "value": "(\"referrals\".\"status\" = 'confirmed') = (\"referrals\".\"confirmed_at\" is not null)"
+        "referrals_confirmed_timestamp": {
+          "name": "referrals_confirmed_timestamp",
+          "value": "\"referrals\".\"status\" <> 'confirmed' or \"referrals\".\"confirmed_at\" is not null"
+        },
+        "referrals_pending_timestamp": {
+          "name": "referrals_pending_timestamp",
+          "value": "\"referrals\".\"status\" <> 'pending' or \"referrals\".\"confirmed_at\" is null"
+        },
+        "referrals_void_pair": {
+          "name": "referrals_void_pair",
+          "value": "(\"referrals\".\"status\" = 'void') = (\"referrals\".\"voided_at\" is not null)"
+        },
+        "referrals_notify_claim_pair": {
+          "name": "referrals_notify_claim_pair",
+          "value": "(\"referrals\".\"notify_claimed_at\" is null) = (\"referrals\".\"notify_claim_token\" is null)"
         }
       },
       "isRLSEnabled": true
@@ -2124,8 +2286,32 @@
           "primaryKey": false,
           "notNull": false
         },
+        "welcome_claimed_at": {
+          "name": "welcome_claimed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "welcome_claim_token": {
+          "name": "welcome_claim_token",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "welcome_uncertain_at": {
+          "name": "welcome_uncertain_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
         "verified_at": {
           "name": "verified_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "referral_eligible_at": {
+          "name": "referral_eligible_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
@@ -2155,35 +2341,79 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
+        },
+        "profiles_welcome_uncertain_idx": {
+          "name": "profiles_welcome_uncertain_idx",
+          "columns": [
+            {
+              "expression": "welcome_uncertain_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"profiles\".\"welcome_uncertain_at\" is not null",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "profiles_welcome_claimed_idx": {
+          "name": "profiles_welcome_claimed_idx",
+          "columns": [
+            {
+              "expression": "welcome_claimed_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"profiles\".\"welcome_claimed_at\" is not null",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
         "profiles_user_id_users_id_fk": {
           "name": "profiles_user_id_users_id_fk",
           "tableFrom": "profiles",
+          "tableTo": "users",
+          "schemaTo": "auth",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
-          "schemaTo": "auth",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "profiles_referral_code_unique": {
           "name": "profiles_referral_code_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "referral_code"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {
@@ -2224,6 +2454,10 @@
         "profiles_referral_code_format": {
           "name": "profiles_referral_code_format",
           "value": "\"profiles\".\"referral_code\" ~ '^[A-Z0-9]{10}$'"
+        },
+        "profiles_welcome_claim_pair": {
+          "name": "profiles_welcome_claim_pair",
+          "value": "(\"profiles\".\"welcome_claimed_at\" is null) = (\"profiles\".\"welcome_claim_token\" is null)"
         },
         "profiles_limits_override_object": {
           "name": "profiles_limits_override_object",
@@ -2586,6 +2820,24 @@
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
+        },
+        "send_claimed_at": {
+          "name": "send_claimed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "send_claim_token": {
+          "name": "send_claim_token",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "send_uncertain_at": {
+          "name": "send_uncertain_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
@@ -2606,10 +2858,10 @@
             }
           ],
           "isUnique": true,
-          "with": {},
-          "method": "btree",
           "where": "\"team_invites\".\"accepted_at\" is null",
-          "concurrently": false
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         },
         "team_invites_email_idx": {
           "name": "team_invites_email_idx",
@@ -2622,24 +2874,68 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
+        },
+        "team_invites_send_uncertain_idx": {
+          "name": "team_invites_send_uncertain_idx",
+          "columns": [
+            {
+              "expression": "send_uncertain_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"team_invites\".\"send_uncertain_at\" is not null",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "team_invites_send_claimed_idx": {
+          "name": "team_invites_send_claimed_idx",
+          "columns": [
+            {
+              "expression": "send_claimed_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"team_invites\".\"send_claimed_at\" is not null",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
         "team_invites_team_id_teams_id_fk": {
           "name": "team_invites_team_id_teams_id_fk",
           "tableFrom": "team_invites",
+          "tableTo": "teams",
           "columnsFrom": [
             "team_id"
           ],
-          "tableTo": "teams",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -2649,6 +2945,10 @@
         "team_invites_email_format": {
           "name": "team_invites_email_format",
           "value": "\"team_invites\".\"email\" = lower(\"team_invites\".\"email\") and char_length(\"team_invites\".\"email\") between 3 and 254 and position('@' in \"team_invites\".\"email\") > 1"
+        },
+        "team_invites_send_claim_pair": {
+          "name": "team_invites_send_claim_pair",
+          "value": "(\"team_invites\".\"send_claimed_at\" is null) = (\"team_invites\".\"send_claim_token\" is null)"
         }
       },
       "isRLSEnabled": true
@@ -2803,6 +3103,407 @@
         }
       },
       "isRLSEnabled": true
+    },
+    "public.badge_catalogue": {
+      "name": "badge_catalogue",
+      "schema": "",
+      "columns": {
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "family": {
+          "name": "family",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'referral'"
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "badge_catalogue_key_format": {
+          "name": "badge_catalogue_key_format",
+          "value": "\"badge_catalogue\".\"key\" ~ '^[a-z][a-z0-9_]{1,63}$'"
+        },
+        "badge_catalogue_name_len": {
+          "name": "badge_catalogue_name_len",
+          "value": "char_length(\"badge_catalogue\".\"name\") between 1 and 80"
+        },
+        "badge_catalogue_family": {
+          "name": "badge_catalogue_family",
+          "value": "\"badge_catalogue\".\"family\" = 'referral'"
+        }
+      },
+      "isRLSEnabled": true
+    },
+    "public.referral_badge_awards": {
+      "name": "referral_badge_awards",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "referral_id": {
+          "name": "referral_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "badge_key": {
+          "name": "badge_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "awarded_at": {
+          "name": "awarded_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "voided_at": {
+          "name": "voided_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "referral_badge_awards_user_at_idx": {
+          "name": "referral_badge_awards_user_at_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "awarded_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "referral_badge_awards_badge_idx": {
+          "name": "referral_badge_awards_badge_idx",
+          "columns": [
+            {
+              "expression": "badge_key",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "referral_badge_awards_user_id_users_id_fk": {
+          "name": "referral_badge_awards_user_id_users_id_fk",
+          "tableFrom": "referral_badge_awards",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "referral_badge_awards_referral_id_referrals_id_fk": {
+          "name": "referral_badge_awards_referral_id_referrals_id_fk",
+          "tableFrom": "referral_badge_awards",
+          "tableTo": "referrals",
+          "columnsFrom": [
+            "referral_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "referral_badge_awards_badge_key_badge_catalogue_key_fk": {
+          "name": "referral_badge_awards_badge_key_badge_catalogue_key_fk",
+          "tableFrom": "referral_badge_awards",
+          "tableTo": "badge_catalogue",
+          "columnsFrom": [
+            "badge_key"
+          ],
+          "columnsTo": [
+            "key"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "referral_badge_awards_referral_id_unique": {
+          "name": "referral_badge_awards_referral_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "referral_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": true
+    },
+    "public.referral_voids": {
+      "name": "referral_voids",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "reason_code": {
+          "name": "reason_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "voided_at": {
+          "name": "voided_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "referral_voids_at_idx": {
+          "name": "referral_voids_at_idx",
+          "columns": [
+            {
+              "expression": "voided_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "referral_voids_reason": {
+          "name": "referral_voids_reason",
+          "value": "\"referral_voids\".\"reason_code\" in ('misuse', 'account_deleted')"
+        }
+      },
+      "isRLSEnabled": true
+    },
+    "public.billing_email_deliveries": {
+      "name": "billing_email_deliveries",
+      "schema": "",
+      "columns": {
+        "event_id": {
+          "name": "event_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "template": {
+          "name": "template",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "claimed_at": {
+          "name": "claimed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "claim_token": {
+          "name": "claim_token",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "uncertain_at": {
+          "name": "uncertain_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sent_at": {
+          "name": "sent_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "recipient_missing_at": {
+          "name": "recipient_missing_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "unavailable_at": {
+          "name": "unavailable_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "billing_email_created_idx": {
+          "name": "billing_email_created_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "event_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "billing_email_uncertain_idx": {
+          "name": "billing_email_uncertain_idx",
+          "columns": [
+            {
+              "expression": "uncertain_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "event_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"billing_email_deliveries\".\"uncertain_at\" is not null",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "billing_email_deliveries_event_id_webhook_events_id_fk": {
+          "name": "billing_email_deliveries_event_id_webhook_events_id_fk",
+          "tableFrom": "billing_email_deliveries",
+          "tableTo": "webhook_events",
+          "columnsFrom": [
+            "event_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "billing_email_deliveries_event_id_template_pk": {
+          "name": "billing_email_deliveries_event_id_template_pk",
+          "columns": [
+            "event_id",
+            "template"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "billing_email_template": {
+          "name": "billing_email_template",
+          "value": "\"billing_email_deliveries\".\"template\" in ('windowsweep-plan-confirmed', 'windowsweep-payment-returned')"
+        },
+        "billing_email_claim_pair": {
+          "name": "billing_email_claim_pair",
+          "value": "(\"billing_email_deliveries\".\"claimed_at\" is null) = (\"billing_email_deliveries\".\"claim_token\" is null)"
+        },
+        "billing_email_not_sent_uncertain": {
+          "name": "billing_email_not_sent_uncertain",
+          "value": "\"billing_email_deliveries\".\"sent_at\" is null or \"billing_email_deliveries\".\"uncertain_at\" is null"
+        },
+        "billing_email_sent_available": {
+          "name": "billing_email_sent_available",
+          "value": "\"billing_email_deliveries\".\"sent_at\" is null or \"billing_email_deliveries\".\"unavailable_at\" is null"
+        }
+      },
+      "isRLSEnabled": true
     }
   },
   "enums": {
@@ -2836,7 +3537,8 @@
       "schema": "public",
       "values": [
         "pending",
-        "confirmed"
+        "confirmed",
+        "void"
       ]
     },
     "public.release_channel": {

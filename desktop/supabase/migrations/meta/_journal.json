@@ -166,19 +166,26 @@
     {
       "idx": 23,
       "version": "7",
+      "when": 1793435328000,
+      "tag": "20261031082847_v140_admin_email",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
       "when": 1793435467503,
       "tag": "20261031083107_v140_signup_hook",
       "breakpoints": true
     },
     {
-      "idx": 24,
+      "idx": 25,
       "version": "7",
       "when": 1793435497793,
       "tag": "20261031083137_v140_seed_rows",
       "breakpoints": true
     },
     {
-      "idx": 25,
+      "idx": 26,
       "version": "7",
       "when": 1793435582631,
       "tag": "20261031083302_v140_f_sec_009_revokes",

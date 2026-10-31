@@ -31,6 +31,8 @@ revoke all on table public.checkout_quotes from public, anon, authenticated, ser
 --> statement-breakpoint
 revoke all on table public.webhook_events from public, anon, authenticated, service_role;
 --> statement-breakpoint
+revoke all on table public.billing_email_deliveries from public, anon, authenticated, service_role;
+--> statement-breakpoint
 revoke all on table public.plan_grants from public, anon, authenticated, service_role;
 --> statement-breakpoint
 revoke all on table public.plan_requests from public, anon, authenticated, service_role;
@@ -42,6 +44,12 @@ revoke all on table public.team_members from public, anon, authenticated, servic
 revoke all on table public.team_invites from public, anon, authenticated, service_role;
 --> statement-breakpoint
 revoke all on table public.referrals from public, anon, authenticated, service_role;
+--> statement-breakpoint
+revoke all on table public.badge_catalogue from public, anon, authenticated, service_role;
+--> statement-breakpoint
+revoke all on table public.referral_badge_awards from public, anon, authenticated, service_role;
+--> statement-breakpoint
+revoke all on table public.referral_voids from public, anon, authenticated, service_role;
 --> statement-breakpoint
 revoke all on table public.app_releases from public, anon, authenticated, service_role;
 --> statement-breakpoint
@@ -90,6 +98,8 @@ grant insert (device_id) on table public.runs to authenticated;
 -- Deliberately NOT granted, each with its reason:
 --   profiles.legal_notice_seen_at - written only by mark_legal_notice_seen() (one-way, server time)
 --   profiles.referral_code, limits_override, welcome_sent_at, verified_at - auth triggers and definers only
---   run_claims, subscriptions, checkout_quotes, webhook_events, plan_grants, teams, team_members, team_invites,
---   referrals, app_releases - definer functions only; the person reads their own through my_plan(),
+--   run_claims, subscriptions, checkout_quotes, webhook_events, billing_email_deliveries,
+--   plan_grants, teams, team_members, team_invites,
+--   referrals, badge_catalogue, referral_badge_awards, referral_voids, app_releases - definer functions only;
+--   the person reads their own through my_plan(),
 --   my_referral_status() and the team function, none of which projects another person's id

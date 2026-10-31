@@ -195,6 +195,8 @@ export const planRequests = pgTable(
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     /** Set while one `notify_open` batch is sending, so two admins never email a request twice. */
     notifyClaimedAt: timestamp('notify_claimed_at', { withTimezone: true }),
+    notifyClaimToken: uuid('notify_claim_token'),
+    notifyUncertainAt: timestamp('notify_uncertain_at', { withTimezone: true }),
     notifiedAt: timestamp('notified_at', { withTimezone: true }),
     closedAt: timestamp('closed_at', { withTimezone: true }),
     /** No foreign key: who closed a request survives that admin's deletion. */
@@ -206,12 +208,22 @@ export const planRequests = pgTable(
       'plan_requests_note_len',
       sql`${t.note} is null or char_length(${t.note}) between 1 and 1000`
     ),
+    check(
+      'plan_requests_notify_claim_pair',
+      sql`(${t.notifyClaimedAt} is null) = (${t.notifyClaimToken} is null)`
+    ),
     uniqueIndex('plan_requests_one_pending_idx')
       .on(t.userId)
       .where(sql`${t.status} = 'pending'`),
     index('plan_requests_status_created_idx').on(t.status, t.createdAt, t.id),
     index('plan_requests_user_created_idx').on(t.userId, t.createdAt),
     index('plan_requests_plan_idx').on(t.planId),
+    index('plan_requests_notify_uncertain_idx')
+      .on(t.notifyUncertainAt, t.id)
+      .where(sql`${t.notifyUncertainAt} is not null`),
+    index('plan_requests_notify_claimed_idx')
+      .on(t.notifyClaimedAt, t.id)
+      .where(sql`${t.notifyClaimedAt} is not null`),
 
     pgPolicy('plan_requests_insert_own', {
       for: 'insert',

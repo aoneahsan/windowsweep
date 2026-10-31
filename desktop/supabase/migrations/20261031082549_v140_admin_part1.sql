@@ -440,7 +440,8 @@ begin
       where user_id = p_user and month = v_month),
     'referrals', (select jsonb_build_object('confirmed', count(*) filter (where status = 'confirmed'),
       'pending', count(*) filter (where status = 'pending'),
-      'points', coalesce(sum(points_awarded), 0)) from public.referrals where referrer_id = p_user),
+      'points', coalesce(sum(points_awarded) filter (where status = 'confirmed'), 0))
+      from public.referrals where referrer_id = p_user),
     'requests', (select coalesce(jsonb_agg(to_jsonb(x) order by x.created_at desc), '[]'::jsonb)
       from (select id, plan_id, interval, seats, status, created_at, notified_at, closed_at
         from public.plan_requests where user_id = p_user order by created_at desc limit 10) x));

@@ -22,8 +22,8 @@ export const grantSource = pgEnum('grant_source', ['admin', 'referral']);
 /** A member's role inside a team: a product role, never a platform role. */
 export const teamRole = pgEnum('team_role', ['owner', 'member']);
 
-/** A referral is pending until the invitee's account exists AND its email is verified. */
-export const referralStatus = pgEnum('referral_status', ['pending', 'confirmed']);
+/** A referral is pending until verified, confirmed when rewarded, or voided after misuse. */
+export const referralStatus = pgEnum('referral_status', ['pending', 'confirmed', 'void']);
 
 /** A plan request stays pending until it is emailed a pay link (D68) or an admin closes it. */
 export const planRequestStatus = pgEnum('plan_request_status', ['pending', 'notified', 'closed']);

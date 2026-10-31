@@ -89,8 +89,13 @@ export const profiles = pgTable(
     limitsOverride: jsonb('limits_override'),
     /** The welcome email went out (`account-welcome`, once). */
     welcomeSentAt: timestamp('welcome_sent_at', { withTimezone: true }),
-    /** When this became a verified, non-anonymous (Google) account; the referral window counts from it. */
+    welcomeClaimedAt: timestamp('welcome_claimed_at', { withTimezone: true }),
+    welcomeClaimToken: uuid('welcome_claim_token'),
+    welcomeUncertainAt: timestamp('welcome_uncertain_at', { withTimezone: true }),
+    /** First verified email timestamp; referral windows use referral_eligible_at. */
     verifiedAt: timestamp('verified_at', { withTimezone: true }),
+    /** First email-bearing, non-anonymous account conversion; never reset on relink. */
+    referralEligibleAt: timestamp('referral_eligible_at', { withTimezone: true }),
     /** Server-stamped once after this account has seen the current legal notice. */
     legalNoticeSeenAt: timestamp('legal_notice_seen_at', { withTimezone: true }),
   },
@@ -101,11 +106,21 @@ export const profiles = pgTable(
     ),
     check('profiles_referral_code_format', sql`${t.referralCode} ~ '^[A-Z0-9]{10}$'`),
     check(
+      'profiles_welcome_claim_pair',
+      sql`(${t.welcomeClaimedAt} is null) = (${t.welcomeClaimToken} is null)`
+    ),
+    check(
       'profiles_limits_override_object',
       sql`${t.limitsOverride} is null or jsonb_typeof(${t.limitsOverride}) = 'object'`
     ),
     /* The admin account list: newest first, keyset on (created_at, user_id). */
     index('profiles_created_idx').on(t.createdAt, t.userId),
+    index('profiles_welcome_uncertain_idx')
+      .on(t.welcomeUncertainAt, t.userId)
+      .where(sql`${t.welcomeUncertainAt} is not null`),
+    index('profiles_welcome_claimed_idx')
+      .on(t.welcomeClaimedAt, t.userId)
+      .where(sql`${t.welcomeClaimedAt} is not null`),
 
     pgPolicy('profiles_select_own', {
       for: 'select',

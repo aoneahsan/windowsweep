@@ -1,4 +1,8 @@
 -- REVIEWED ROLLBACK; never run directly. Disable Polar checkout/webhook first.
+drop function if exists public.billing_email_mark_uncertain(text, text, uuid);
+drop function if exists public.billing_email_release_claim(text, text, uuid);
+drop function if exists public.billing_email_mark_sent(text, text, uuid);
+drop function if exists public.billing_email_claim(text, text);
 -- Restoring the old deletion function removes the live-subscription guard;
 -- do this only when there are no uncancelled live subscriptions.
 create or replace function public.delete_my_account()
@@ -14,7 +18,7 @@ revoke all on function public.delete_my_account() from public, anon, authenticat
 grant execute on function public.delete_my_account() to authenticated;
 drop function if exists public.billing_mark_cancelled(uuid, text);
 drop function if exists public.my_active_polar_subscription_ids(integer);
-drop function if exists public.billing_record_returned(text, text, integer);
+drop function if exists public.billing_record_returned(text, text, integer, text, text);
 drop function if exists public.billing_record_paid(text, text, text, text, text, integer, text);
 drop function if exists public.billing_record_quote(text, uuid, text, text, integer, integer, integer);
 drop function if exists public.billing_quote(text, text, integer);

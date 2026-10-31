@@ -18,6 +18,7 @@ import {
   check,
   index,
   integer,
+  primaryKey,
   pgTable,
   smallint,
   text,
@@ -125,13 +126,52 @@ export const webhookEvents = pgTable(
     id: text('id').primaryKey().notNull(),
     type: text('type').notNull(),
     orderId: text('order_id'),
+    checkoutId: text('checkout_id'),
+    polarSubscriptionId: text('polar_subscription_id'),
+    returnedCents: integer('returned_cents'),
     receivedAt: timestamp('received_at', { withTimezone: true }).notNull().defaultNow(),
     processedAt: timestamp('processed_at', { withTimezone: true }),
     result: text('result'),
   },
   (t) => [
     check('webhook_events_id_len', sql`char_length(${t.id}) between 1 and 200`),
+    check(
+      'webhook_events_returned_nonneg',
+      sql`${t.returnedCents} is null or ${t.returnedCents} >= 0`
+    ),
     index('webhook_events_received_idx').on(t.receivedAt),
     index('webhook_events_order_idx').on(t.orderId, t.type),
+  ]
+).enableRLS();
+
+/** One independently retryable mail record per successfully processed webhook. */
+export const billingEmailDeliveries = pgTable(
+  'billing_email_deliveries',
+  {
+    eventId: text('event_id')
+      .notNull()
+      .references(() => webhookEvents.id, { onDelete: 'cascade' }),
+    template: text('template').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    claimedAt: timestamp('claimed_at', { withTimezone: true }),
+    claimToken: uuid('claim_token'),
+    uncertainAt: timestamp('uncertain_at', { withTimezone: true }),
+    sentAt: timestamp('sent_at', { withTimezone: true }),
+    recipientMissingAt: timestamp('recipient_missing_at', { withTimezone: true }),
+    unavailableAt: timestamp('unavailable_at', { withTimezone: true }),
+  },
+  (t) => [
+    primaryKey({ columns: [t.eventId, t.template] }),
+    check(
+      'billing_email_template',
+      sql`${t.template} in ('windowsweep-plan-confirmed', 'windowsweep-payment-returned')`
+    ),
+    check('billing_email_claim_pair', sql`(${t.claimedAt} is null) = (${t.claimToken} is null)`),
+    check('billing_email_not_sent_uncertain', sql`${t.sentAt} is null or ${t.uncertainAt} is null`),
+    check('billing_email_sent_available', sql`${t.sentAt} is null or ${t.unavailableAt} is null`),
+    index('billing_email_created_idx').on(t.createdAt, t.eventId),
+    index('billing_email_uncertain_idx')
+      .on(t.uncertainAt, t.eventId)
+      .where(sql`${t.uncertainAt} is not null`),
   ]
 ).enableRLS();

@@ -59,7 +59,9 @@ grant execute on function public.team_create(text) to authenticated;
 create or replace function public.team_invite_prepare(p_email text)
 returns jsonb language plpgsql security definer set search_path = '' as $$
 declare v_uid uuid; v_team uuid; v_id uuid; v_last timestamptz; v_expires timestamptz;
-  v_capacity integer; v_used integer; v_email text;
+  v_capacity integer; v_used integer; v_email text; v_claimed timestamptz;
+  v_uncertain timestamptz;
+  v_token uuid;
 begin
   if p_email is null or length(trim(p_email)) not between 3 and 254
      or position('@' in p_email) < 2 then
@@ -76,7 +78,8 @@ begin
       where tm.team_id = v_team and lower(p.email) = v_email) then
     raise exception 'already_member' using errcode = 'PT409';
   end if;
-  select id, last_sent_at, expires_at into v_id, v_last, v_expires from public.team_invites
+  select id, last_sent_at, expires_at, send_claimed_at, send_uncertain_at
+    into v_id, v_last, v_expires, v_claimed, v_uncertain from public.team_invites
     where team_id = v_team and email = v_email and accepted_at is null for update;
   if v_id is null then
     select (select count(*) from public.team_members where team_id = v_team) +
@@ -95,8 +98,14 @@ begin
         where id = v_id;
     end if;
   end if;
-  return jsonb_build_object('invite_id', v_id,
-    'should_send', v_last is null or v_last <= now() - interval '24 hours');
+  if v_uncertain is null and (v_last is null or v_last <= now() - interval '24 hours') and
+     v_claimed is null then
+    v_token := pg_catalog.gen_random_uuid();
+    update public.team_invites set send_claimed_at = now(), send_claim_token = v_token
+      where id = v_id;
+  end if;
+  return jsonb_build_object('invite_id', v_id, 'should_send', v_token is not null,
+    'claim_token', v_token);
 end;
 $$;
 --> statement-breakpoint
@@ -105,19 +114,55 @@ revoke all on function public.team_invite_prepare(text) from public, anon, authe
 grant execute on function public.team_invite_prepare(text) to authenticated;
 --> statement-breakpoint
 
-create or replace function public.team_invite_mark_sent(p_invite_id uuid)
-returns void language plpgsql security definer set search_path = '' as $$
+create or replace function public.team_invite_mark_sent(p_invite_id uuid, p_token uuid)
+returns boolean language plpgsql security definer set search_path = '' as $$
 begin
-  if p_invite_id is null then raise exception 'invalid_request' using errcode = 'PT422'; end if;
-  update public.team_invites set last_sent_at = now()
-    where id = p_invite_id and accepted_at is null and expires_at > now();
-  if not found then raise exception 'invite_not_found' using errcode = 'PT404'; end if;
+  if p_invite_id is null or p_token is null then
+    raise exception 'invalid_request' using errcode = 'PT422'; end if;
+  update public.team_invites set last_sent_at = now(), send_claimed_at = null,
+    send_claim_token = null where id = p_invite_id and send_claim_token = p_token
+      and accepted_at is null and expires_at > now();
+  return found;
 end;
 $$;
 --> statement-breakpoint
-revoke all on function public.team_invite_mark_sent(uuid) from public, anon, authenticated, service_role;
+revoke all on function public.team_invite_mark_sent(uuid, uuid) from public, anon, authenticated, service_role;
 --> statement-breakpoint
-grant execute on function public.team_invite_mark_sent(uuid) to service_role;
+grant execute on function public.team_invite_mark_sent(uuid, uuid) to service_role;
+--> statement-breakpoint
+
+create or replace function public.team_invite_release_send(p_invite_id uuid, p_token uuid)
+returns boolean language plpgsql security definer set search_path = '' as $$
+begin
+  if p_invite_id is null or p_token is null then
+    raise exception 'invalid_request' using errcode = 'PT422'; end if;
+  update public.team_invites set send_claimed_at = null, send_claim_token = null
+    where id = p_invite_id and send_claim_token = p_token;
+  return found;
+end;
+$$;
+--> statement-breakpoint
+revoke all on function public.team_invite_release_send(uuid, uuid)
+  from public, anon, authenticated, service_role;
+--> statement-breakpoint
+grant execute on function public.team_invite_release_send(uuid, uuid) to service_role;
+--> statement-breakpoint
+
+create or replace function public.team_invite_mark_uncertain(p_invite_id uuid, p_token uuid)
+returns boolean language plpgsql security definer set search_path = '' as $$
+begin
+  if p_invite_id is null or p_token is null then
+    raise exception 'invalid_request' using errcode = 'PT422'; end if;
+  update public.team_invites set send_uncertain_at = now(), send_claimed_at = null,
+    send_claim_token = null where id = p_invite_id and send_claim_token = p_token;
+  return found;
+end;
+$$;
+--> statement-breakpoint
+revoke all on function public.team_invite_mark_uncertain(uuid, uuid)
+  from public, anon, authenticated, service_role;
+--> statement-breakpoint
+grant execute on function public.team_invite_mark_uncertain(uuid, uuid) to service_role;
 --> statement-breakpoint
 
 create or replace function public.team_my_invites(p_limit integer default 20,

@@ -12,15 +12,22 @@ values
 on conflict (id) do nothing;
 --> statement-breakpoint
 
+insert into public.badge_catalogue (key, name, family)
+values ('referral_confirmed', 'Referral', 'referral')
+on conflict (key) do nothing;
+--> statement-breakpoint
+
 insert into public.app_config (key, value, is_public, min_value, max_value, description)
 values
   ('device_real_runs_per_month', '15'::jsonb, true, 0, 100000, ''),
   ('account_extra_real_runs_per_month', '15'::jsonb, true, 0, 100000, ''),
   ('referral_enabled', 'true'::jsonb, true, null, null, ''),
   ('referral_points_per_confirmed', '10'::jsonb, true, 0, 1000, ''),
+  ('referral_badge_key', '"referral_confirmed"'::jsonb, true, null, null, ''),
   ('referral_reward_threshold', '3'::jsonb, true, 1, 100, ''),
   ('referral_reward_plan', '"pro"'::jsonb, true, null, null, ''),
   ('referral_reward_months', '1'::jsonb, true, 1, 12, ''),
   ('referral_reward_months_cap_per_year', '4'::jsonb, true, 0, 12, ''),
-  ('referral_claim_window_days', '30'::jsonb, true, 1, 365, '')
+  ('referral_claim_window_days', '30'::jsonb, true, 1, 365, ''),
+  ('referral_signup_window_minutes', '60'::jsonb, true, 1, 1440, '')
 on conflict (key) do nothing;

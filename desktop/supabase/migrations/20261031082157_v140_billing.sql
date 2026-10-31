@@ -78,7 +78,8 @@ begin
      or p_currency is null or p_currency !~ '^[a-z]{3}$' then
     raise exception 'invalid_request' using errcode = 'PT422';
   end if;
-  insert into public.webhook_events (id, type, order_id) values (p_event_id, 'order.paid', p_order_id)
+  insert into public.webhook_events (id, type, order_id, checkout_id, polar_subscription_id)
+    values (p_event_id, 'order.paid', p_order_id, p_checkout_id, p_subscription_id)
     on conflict (id) do nothing;
   if not found then return jsonb_build_object('result', 'duplicate'); end if;
   perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended('order:' || p_order_id, 0));
@@ -160,6 +161,8 @@ begin
     values (null, 'billing.paid', 'subscriptions', v_new_id::text,
       jsonb_build_object('plan_id', v_plan, 'period_end', v_end, 'seats', v_seats));
   update public.webhook_events set processed_at = now(), result = 'paid' where id = p_event_id;
+  insert into public.billing_email_deliveries (event_id, template)
+    values (p_event_id, 'windowsweep-plan-confirmed') on conflict do nothing;
   return jsonb_build_object('result', 'paid', 'user_id', v_user,
     'subscription_id', v_new_id, 'plan_id', v_plan, 'period_end', v_end);
 end;
@@ -173,7 +176,7 @@ grant execute on function public.billing_record_paid(text, text, text, text, tex
 --> statement-breakpoint
 
 create or replace function public.billing_record_returned(p_event_id text, p_order_id text,
-  p_returned_cents integer)
+  p_returned_cents integer, p_checkout_id text, p_subscription_id text)
 returns jsonb language plpgsql security definer set search_path = '' as $$
 declare v_id uuid;
 begin
@@ -181,7 +184,10 @@ begin
      or p_order_id is null or p_returned_cents is null or p_returned_cents < 0 then
     raise exception 'invalid_request' using errcode = 'PT422';
   end if;
-  insert into public.webhook_events (id, type, order_id) values (p_event_id, 'order.refunded', p_order_id)
+  insert into public.webhook_events (id, type, order_id, checkout_id,
+    polar_subscription_id, returned_cents)
+    values (p_event_id, 'order.refunded', p_order_id, p_checkout_id,
+      p_subscription_id, p_returned_cents)
     on conflict (id) do nothing;
   if not found then return jsonb_build_object('result', 'duplicate'); end if;
   perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended('order:' || p_order_id, 0));
@@ -194,15 +200,17 @@ begin
       values (null, 'billing.returned', 'subscriptions', v_id::text,
         jsonb_build_object('order_id', p_order_id, 'returned_cents', p_returned_cents));
   end if;
+  insert into public.billing_email_deliveries (event_id, template)
+    values (p_event_id, 'windowsweep-payment-returned') on conflict do nothing;
   update public.webhook_events set processed_at = now(), result = 'returned' where id = p_event_id;
   return jsonb_build_object('result', 'returned', 'subscription_id', v_id);
 end;
 $$;
 --> statement-breakpoint
-revoke all on function public.billing_record_returned(text, text, integer)
+revoke all on function public.billing_record_returned(text, text, integer, text, text)
   from public, anon, authenticated, service_role;
 --> statement-breakpoint
-grant execute on function public.billing_record_returned(text, text, integer) to service_role;
+grant execute on function public.billing_record_returned(text, text, integer, text, text) to service_role;
 --> statement-breakpoint
 
 -- The delete-account Edge Function reads these under the caller's JWT, cancels each
@@ -270,3 +278,121 @@ $$;
 revoke all on function public.delete_my_account() from public, anon, authenticated, service_role;
 --> statement-breakpoint
 grant execute on function public.delete_my_account() to authenticated;
+--> statement-breakpoint
+
+-- A processed billing event owns a separately claimable mail delivery.
+create or replace function public.billing_email_claim(p_event_id text, p_template text)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare v_delivery record; v_sub record; v_token uuid; v_now_plan text;
+begin
+  if p_event_id is null or length(p_event_id) not between 1 and 200 or
+     p_template is null or p_template not in
+       ('windowsweep-plan-confirmed', 'windowsweep-payment-returned') then
+    raise exception 'invalid_request' using errcode = 'PT422'; end if;
+  select * into v_delivery from public.billing_email_deliveries
+    where event_id = p_event_id and template = p_template for update;
+  if not found or v_delivery.sent_at is not null or v_delivery.uncertain_at is not null
+     or v_delivery.claimed_at is not null or v_delivery.recipient_missing_at is not null
+     or v_delivery.unavailable_at is not null then return null; end if;
+  select x.*, p.name as plan_name, pr.email, e.returned_cents as event_returned_cents
+    into v_sub from public.webhook_events e
+    join lateral (
+      select 1 as priority, s.user_id, s.plan_id, s.interval, s.seats,
+        s.amount_cents, s.currency, s.period_start, s.period_end, s.created_at
+        from public.subscriptions s where s.polar_order_id = e.order_id
+      union all
+      select 2, s.user_id, s.plan_id, s.interval, s.seats,
+        s.amount_cents, s.currency, s.period_start, s.period_end, s.created_at
+        from public.subscriptions s where e.polar_subscription_id is not null
+          and s.polar_subscription_id = e.polar_subscription_id
+      union all
+      select 3, q.user_id, q.plan_id, q.interval, q.seats,
+        q.amount_cents, q.currency, null::timestamptz, null::timestamptz, q.created_at
+        from public.checkout_quotes q where e.checkout_id is not null
+          and q.polar_checkout_id = e.checkout_id
+    ) x on true
+    join public.plans p on p.id = x.plan_id
+    join public.profiles pr on pr.user_id = x.user_id and pr.email is not null
+    where e.id = p_event_id order by x.priority, x.created_at desc limit 1;
+  if not found then
+    update public.billing_email_deliveries set recipient_missing_at = now()
+      where event_id = p_event_id and template = p_template;
+    return null;
+  end if;
+  select coalesce((select p.name from private.plan_for_user(v_sub.user_id) ep
+      join public.plans p on p.id = ep.plan_id),
+    (select name from public.plans where id = 'free'))
+    into v_now_plan;
+  v_token := pg_catalog.gen_random_uuid();
+  update public.billing_email_deliveries set claimed_at = now(), claim_token = v_token
+    where event_id = p_event_id and template = p_template;
+  return jsonb_build_object('event_id', p_event_id, 'template', p_template,
+    'claim_token', v_token, 'email', v_sub.email, 'plan_name', v_sub.plan_name,
+    'plan_id', v_sub.plan_id, 'interval', v_sub.interval, 'amount_cents', v_sub.amount_cents,
+    'returned_cents', v_sub.event_returned_cents, 'currency', v_sub.currency,
+    'seats', v_sub.seats, 'period_start', v_sub.period_start,
+    'period_end', v_sub.period_end, 'plan_now', v_now_plan);
+end;
+$$;
+--> statement-breakpoint
+revoke all on function public.billing_email_claim(text, text)
+  from public, anon, authenticated, service_role;
+--> statement-breakpoint
+grant execute on function public.billing_email_claim(text, text) to service_role;
+--> statement-breakpoint
+
+create or replace function public.billing_email_mark_sent(p_event_id text,
+  p_template text, p_token uuid)
+returns boolean language plpgsql security definer set search_path = '' as $$
+begin
+  if p_event_id is null or p_template is null or p_token is null then
+    raise exception 'invalid_request' using errcode = 'PT422'; end if;
+  update public.billing_email_deliveries set sent_at = now(), claimed_at = null,
+    claim_token = null where event_id = p_event_id and template = p_template
+      and claim_token = p_token and uncertain_at is null and sent_at is null;
+  return found;
+end;
+$$;
+--> statement-breakpoint
+revoke all on function public.billing_email_mark_sent(text, text, uuid)
+  from public, anon, authenticated, service_role;
+--> statement-breakpoint
+grant execute on function public.billing_email_mark_sent(text, text, uuid) to service_role;
+--> statement-breakpoint
+
+create or replace function public.billing_email_release_claim(p_event_id text,
+  p_template text, p_token uuid)
+returns boolean language plpgsql security definer set search_path = '' as $$
+begin
+  if p_event_id is null or p_template is null or p_token is null then
+    raise exception 'invalid_request' using errcode = 'PT422'; end if;
+  update public.billing_email_deliveries set claimed_at = null, claim_token = null
+    where event_id = p_event_id and template = p_template and claim_token = p_token
+      and uncertain_at is null and sent_at is null;
+  return found;
+end;
+$$;
+--> statement-breakpoint
+revoke all on function public.billing_email_release_claim(text, text, uuid)
+  from public, anon, authenticated, service_role;
+--> statement-breakpoint
+grant execute on function public.billing_email_release_claim(text, text, uuid) to service_role;
+--> statement-breakpoint
+
+create or replace function public.billing_email_mark_uncertain(p_event_id text,
+  p_template text, p_token uuid)
+returns boolean language plpgsql security definer set search_path = '' as $$
+begin
+  if p_event_id is null or p_template is null or p_token is null then
+    raise exception 'invalid_request' using errcode = 'PT422'; end if;
+  update public.billing_email_deliveries set uncertain_at = now(), claimed_at = null,
+    claim_token = null where event_id = p_event_id and template = p_template
+      and claim_token = p_token and sent_at is null;
+  return found;
+end;
+$$;
+--> statement-breakpoint
+revoke all on function public.billing_email_mark_uncertain(text, text, uuid)
+  from public, anon, authenticated, service_role;
+--> statement-breakpoint
+grant execute on function public.billing_email_mark_uncertain(text, text, uuid) to service_role;

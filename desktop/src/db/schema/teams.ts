@@ -75,15 +75,28 @@ export const teamInvites = pgTable(
     acceptedAt: timestamp('accepted_at', { withTimezone: true }),
     acceptedBy: uuid('accepted_by'),
     lastSentAt: timestamp('last_sent_at', { withTimezone: true }),
+    sendClaimedAt: timestamp('send_claimed_at', { withTimezone: true }),
+    sendClaimToken: uuid('send_claim_token'),
+    sendUncertainAt: timestamp('send_uncertain_at', { withTimezone: true }),
   },
   (t) => [
     check(
       'team_invites_email_format',
       sql`${t.email} = lower(${t.email}) and char_length(${t.email}) between 3 and 254 and position('@' in ${t.email}) > 1`
     ),
+    check(
+      'team_invites_send_claim_pair',
+      sql`(${t.sendClaimedAt} is null) = (${t.sendClaimToken} is null)`
+    ),
     uniqueIndex('team_invites_open_unique')
       .on(t.teamId, t.email)
       .where(sql`${t.acceptedAt} is null`),
     index('team_invites_email_idx').on(t.email),
+    index('team_invites_send_uncertain_idx')
+      .on(t.sendUncertainAt, t.id)
+      .where(sql`${t.sendUncertainAt} is not null`),
+    index('team_invites_send_claimed_idx')
+      .on(t.sendClaimedAt, t.id)
+      .where(sql`${t.sendClaimedAt} is not null`),
   ]
 ).enableRLS();

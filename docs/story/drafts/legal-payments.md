@@ -35,7 +35,7 @@ to the day the new words go live, by the owner's rule of 2026-09-24.
 | `~/.claude/rules/payment-copy.md` | NO REFUNDS, plain and once in the Terms, with a plain Privacy passage; every kind sold is named; the returned-payment rule; the neutral cancellation sentence |
 | `aoneahsan-cccs-plans-entitlements` → `terms-and-data-use.md` | cancellation ends the renewal, not the period; the LabFlow Privacy model *"Payments for a plan are not refunded"* |
 | D56, D58, D61, D62, D63 (`docs/PROJECT-CONTEXT.md`) | the plans, anonymous sign-ins, devices and run claims, the legal-notice flag, Polar dormant, the early wave |
-| D64, D67 to D71, and the facts settled 2026-10-31 | the desktop window's analytics without Clarity; a running plan keeps its price; what a request does; the fleet report; deletion cancels a paid plan first; what survives a deletion; `devices` with no name or Windows version |
+| D64, D67 to D71, D75, and the facts settled 2026-10-31 | the desktop window's analytics without Clarity and its existing public GA4 Measurement ID; a running plan keeps its price; what a request does; the fleet report; deletion cancels a paid plan first; what survives a deletion; `devices` with no name or Windows version |
 | The approved brief (GATE 4, 2026-10-31) | Polar as merchant of record, renewal, cancellation, the returned payment, the email that confirms a plan |
 | `aoneahsan-cccs-polar-payments` | Polar hosts the customer portal; plan time is bought per paid order. Its portal-link email is unverified and not claimed in shipping copy |
 | `aoneahsan-cccs-update-flow` → `contract.md`; the approved plan, wave 2 | the release check's timing; a running cleanup is never stopped; the updater every six hours |
@@ -264,8 +264,8 @@ app has synced, your run summaries, and the messages you have sent. ..."* · *"W
 handles one of your messages, that action is logged ..."*
 
 ```json
-"accountNote": "You can read every one of those values back on your <lnk>account page</lnk>, and delete the account from there. If it has a paid plan, deleting it first cancels the subscription with Polar, so nothing is charged afterwards. Deleting removes the sign-in itself and everything stored against it: your profile, your payment and grant records, the settings the desktop app has synced and your run summaries. Your invite code, referrals and team seat go too, with the messages you have sent. The daily analytics count against your account goes too. It happens immediately and it cannot be undone.",
-"deleteWhatStays": "What stays is not yours. When an admin handled one of your messages or changed your plan, that action stays in the log with its id, what changed and who did it, and none of your words. A machine’s run claim stays with a random row id, its random install id, the month, the allowance it used and the section numbers, so deleting an account does not reset the count. A voided referral leaves an anonymous event with a random row id, a reason code and a date; it has no account, referral or invite code attached. The count of desktop analytics events across all accounts has no account id; a daily job removes it once its UTC day is older than 30 days. Polar keeps its own record of each payment, under its own terms. Nothing on your machine is touched."
+"accountNote": "You can read every one of those values back on your <lnk>account page</lnk>, and delete the account from there. If it has a paid plan, deleting it first cancels the subscription with Polar, so nothing is charged afterwards. Deleting removes the sign-in itself and everything stored against it: your profile, your payment and grant records, the settings the desktop app has synced and your run summaries. Your invite code, referrals and team seat go too, with the messages you have sent. It happens immediately and it cannot be undone.",
+"deleteWhatStays": "What stays is not yours. When an admin handled one of your messages or changed your plan, that action stays in the log with its id, what changed and who did it, and none of your words. A machine’s run claim stays with a random row id, its random install id, the month, the allowance it used and the section numbers, so deleting an account does not reset the count. A voided referral leaves an anonymous event with a random row id, a reason code and a date; it has no account, referral or invite code attached. Polar keeps its own record of each payment, under its own terms. Nothing on your machine is touched."
 ```
 
 | Sentence | Source |
@@ -275,7 +275,6 @@ handles one of your messages, that action is logged ..."*
 | The audit row keeps none of your words | the same settled facts |
 | A machine's claim keeps the random row id and four allowance fields, without an account id or exact timestamp | D71; the schema agent removed `created_at` before application |
 | A referral void leaves only an anonymous event id, reason code and date | The 1.4.0 `referral_voids` schema; no account id, referral id, email, invite code or free text |
-| The account's daily analytics count goes; the global count stays without an account id until its day ages out | The 1.4.0 `analytics_daily_usage` FK cascade and `analytics_daily_totals`; the `windowsweep-analytics-retention` daily job removes rows older than 30 UTC days |
 
 The same two sentences also appear on `/account` (`account.deleteWhatGoes` and `deleteWhatStays`), so the keeper routes
 the matching change to row 18.
@@ -318,9 +317,9 @@ The notice bar is a bar, so *behind a banner* could read as false. *A consent ba
 
 ### P-11 · the desktop window without Clarity (D64; wave: with 1.4.0)
 
-D64 keeps Amplitude and Sentry in the desktop window; GA4 uses the Measurement Protocol there. The website keeps
-Clarity. Every approved sentence that puts a session replay in the desktop window
-turns false the day 1.4.0 ships, so these replacements wait for that day; 1.3.2 still runs Clarity until it updates.
+D64 keeps Amplitude and Sentry in the desktop window. D75 keeps GA4's existing public Measurement ID and `gtag.js`
+path there. The website keeps Clarity. Every approved sentence that puts a session replay in the desktop window turns
+false the day 1.4.0 ships, so these replacements wait for that day; 1.3.2 still runs Clarity until it updates.
 
 ```json
 "privacy.sends.web.f3": "<b>Microsoft Clarity</b>, on this website only, records a session replay: the page as you used it, with every piece of text masked. It sees where you moved and what you clicked. It does not see what any of it said. The desktop window does not run it.",
@@ -350,20 +349,6 @@ Unchanged on purpose: `privacy.signedIn.alsoStored` still names the four tools, 
 changelog entry for 1.3.2 still says the replay ran in that release, because it did. The desktop window's own strings
 are in `notices-1.4.0`, N-016.
 
-### P-12 · the desktop GA4 relay and its daily counts (wave: with 1.4.0)
-
-Place this paragraph after `privacy.sends.web.f1`. It names the extra server hop and the two counts without
-suggesting that the command-line engine sends anything. The website's own GA4 path does not change.
-
-```json
-"privacy.sends.web.broker": "The desktop window sends usage events to windowsweep’s account service, which forwards them to Google Analytics 4. To limit the number sent, it keeps a daily count against each signed-in or anonymous account identifier, and one count across all accounts. No event content stays there. Neither count stores the event name or analytics identifier. One account can send 200 events a day; the total stops at 10,000. Counts older than 30 UTC days are removed each day. Deleting an account removes its own count at once; the shared count has no account id."
-```
-
-The account identifier is the Auth UUID, including for an anonymous session. `analytics_daily_usage` stores
-only day, user id and count, with `ON DELETE CASCADE`; `analytics_daily_totals` stores only day and count. The
-`windowsweep-analytics-retention` daily job prunes both tables after 30 UTC days. The GA4 API secret stays on
-the server, and neither table stores the event payload, name, client id or session id. Publish after live proof.
-
 ---
 
 ## NEEDS DECISION
@@ -388,9 +373,9 @@ Answered on 2026-10-31, and applied above:
   in progress is never stopped for it"*, *"A request charges nothing"*. No humour, no urgency, no softening of T-03.
 - **Rhythm.** Shortest sentence: *"Nothing is charged."* (three words, P-03). Longer sentences explain the machine
   record and deletion consequences; shorter ones state what is kept or refused.
-- **Length.** As the clauses need: the Terms' new and replaced strings remain about 500 words across T-01 to T-04 while
-  the Privacy page's run about 1,400 across P-01 to P-12. The factual corrections add only fields needed for an
-  honest account of the data.
+- **Length.** As the clauses need: the Terms' new and replaced strings remain about 500 words across T-01 to T-04.
+  The Privacy additions run across P-01 to P-11. The factual corrections add only fields needed for an honest account
+  of the data.
 - **Unsure.** ND-6 is resolved by the owner's choice. T-04 is still offered for him to take or cut at GATE 4.
 
 ### Banned words and tells
@@ -416,8 +401,7 @@ each page, plainly, and nowhere a person pays: not in the head strings, not on `
 | `devices` stores record timestamps and temporary hand-over metadata, but no machine name, host name or Windows version; payment and grant records, invite code, referrals and seat go with the account; an admin change is audited without the person's words | the main session's settled facts, 2026-10-31 |
 | A voided referral leaves an anonymous event with a random id, reason code and date; it cannot be joined to the deleted account | the 1.4.0 `referral_voids` schema, 2026-10-31 |
 | The fleet report: paged synced run summaries by member and machine, date, mode, sections run, bytes reclaimed; never a path, file name, machine name or user name | D69 |
-| The desktop window: Amplitude, Sentry, GA4 by the Measurement Protocol, no Clarity; the website keeps Clarity | D64 |
-| The desktop GA4 relay keeps per-account and global daily counts with 200/10,000 caps; no event payload in those rows; account deletion cascades the first and daily retention prunes both after 30 UTC days | The appended `analytics_daily_usage` and `analytics_daily_totals` schema and `windowsweep-analytics-retention` migration, 2026-10-31 |
+| The desktop window: Amplitude, Sentry and GA4 through the existing public Measurement ID and `gtag.js`, with no Clarity; the website keeps Clarity | D64; D75 |
 | Team per seat from a minimum; the owner invites and removes | D56; macleanup `teams`, `team_invites` |
 | A referral month extends a paid plan and never shortens one | the referral reference §4 |
 | Every purchase final; windowsweep offers no refund, credit or exchange; a reversed payment ends its plan time | `payment-copy.md`; the brief's *Policies*; Polar buyer terms govern its legally required remedies |

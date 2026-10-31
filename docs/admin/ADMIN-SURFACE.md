@@ -20,22 +20,21 @@
 | `team_members`, `team_invites` | User detail and Team owner actions | Team RPCs enforce ownership and seat limits | Source ready; admin Team overview pending |
 | `billing_email_deliveries` and other email claims | `emails.uncertain/reconcile` (including `kind: grant`), `emails.grant_send`, `emails.billing_list/reconcile/send` | Token-checked mail RPCs. The grant queue lists pending, uncertain and claims stale for ten minutes; staff inspect FilesHub before marking an unknown send as sent or retryable. A pending send and every reconciliation write an audit row | Source ready; website and live probes pending |
 | `app_releases` | `releases.list/publish` | Immutable release RPC and `admin_audit` write | Source ready; website and test-channel proof pending |
-| `analytics_daily_usage`, `analytics_daily_totals` | `analytics.budget` with optional `user_id` | `admin_analytics_budget` checks `private.require_admin()`; returns one UTC day, global count/cap and one selected user count/cap. No event payload or unbounded list. | Source ready; website and live probes pending |
 | `contact_requests` | `/admin` inbox | Existing triage actions and `admin_audit` | Live source; repeat non-admin probe after release |
 | `admin_audit` | `/admin/audit` | Admin-only read; append-only server writes | Live source; repeat non-admin probe after release |
 
 ## Merge decisions and open work
 
-User list, plan provenance and per-user analytics budget belong on one user detail page. Global budget belongs with admin statistics. Email claims use one queue with type and status filters; a billing email can be resent without replaying a payment. The desktop engine never sends telemetry; only its window can call `analytics-ingest`.
+User list and plan provenance belong on one user detail page. Email claims use one queue with type and status filters; a billing email can be resent without replaying a payment. The desktop engine never sends telemetry; its window sends scrubbed GA4 events with the existing Measurement ID.
 
 The status cells above are release gates, not accepted omissions. The website needs to expose the 1.4.0 capabilities and prove each write persists and each refusal occurs for an ordinary account. Role grant/revoke, account suspension, a transaction view and a Team overview remain open findings for the completion run.
 
 ## Sweeps
 
-- **A — unmanaged data:** The two analytics budget tables have an aggregate RPC; they have no direct read grant. Payment, Team and email ledgers still need complete admin views.
+- **A — unmanaged data:** Payment, Team and email ledgers still need complete admin views.
 - **B — dead vocabulary:** `superadmin`, `admin` and `user` are checked by the current server role gate. Team `owner` and `member` are checked by the Team RPCs. Recheck the website after its admin pages land.
-- **C — console dependence:** The owner must not need SQL to inspect a daily telemetry cap; `analytics.budget` supplies that read. Platform role changes and account suspension still depend on out-of-band action.
+- **C — console dependence:** Platform role changes and account suspension still depend on out-of-band action.
 
 ## Non-admin proof
 
-After deployment, call `analytics.budget` and every admin write with an ordinary account and assert 403. Then call as a seeded superadmin, verify the bounded result and an audited write. No live database or Edge Function was called while this source was authored.
+After deployment, call every admin write with an ordinary account and assert 403. Then call as a seeded superadmin, verify a bounded result and an audited write. No live database or Edge Function was called while this source was authored.

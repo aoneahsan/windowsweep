@@ -11,6 +11,7 @@ This public repository is the Windows PowerShell cleanup CLI, Node launcher, Tau
 - CLI 1.3.2 and desktop-v1.3.2 were the latest recorded releases on 2026-09-28. The remaining programme is owner/second-machine gated; consult the tracker before any next release. `../release-kit-1.3.2/` is the spent release record, not an automatic next release. The root summary and product tracker are the status authorities.
 - The website and desktop share an owner-created Supabase project. Agent Supabase operations are DEV-only by default, with an explicit DEV ref. Production actions require exact current-session owner approval and a pinned target. No old Firebase backend work belongs to this maintenance pass. Firebase is website hosting/GA4 only.
 - AI fallback task DONE-024 closed on 2026-10-31: source inventory found no AI model call in the CLI, desktop, website or docs; the fleet AI rules apply if a model call is added.
+- Owner decision D76 (2026-10-31): do not start or use Docker for WindowSweep work. Database backups use a standalone PostgreSQL client; Supabase CLI `db dump` is excluded because it starts a container.
 
 ## Safety and build gates
 

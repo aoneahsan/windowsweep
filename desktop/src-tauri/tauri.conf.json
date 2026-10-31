@@ -25,7 +25,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; img-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost https://api2.amplitude.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://nlmetjyytgwaxcliusuo.supabase.co wss://nlmetjyytgwaxcliusuo.supabase.co; frame-src 'none'; object-src 'none'; base-uri 'self'"
+      "csp": "default-src 'self'; img-src 'self' data: blob: https://www.google-analytics.com https://*.google-analytics.com https://*.googletagmanager.com; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' https://www.googletagmanager.com; connect-src 'self' ipc: http://ipc.localhost https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://*.googletagmanager.com https://api2.amplitude.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://nlmetjyytgwaxcliusuo.supabase.co wss://nlmetjyytgwaxcliusuo.supabase.co; frame-src 'none'; object-src 'none'; base-uri 'self'"
     }
   },
   "bundle": {

@@ -1,6 +1,6 @@
 /**
- * Build-time public configuration. The GA4 enable flag contains no secret:
- * analytics-ingest holds the Measurement Protocol credentials server-side.
+ * Build-time public configuration. The GA4 Measurement ID is a public client
+ * identifier; no Measurement Protocol API secret is needed in the desktop app.
  * Missing optional destinations never block the app.
  */
 
@@ -9,7 +9,7 @@ import type { AnalyticsKeys } from './analytics';
 const env = import.meta.env;
 
 export const keys: AnalyticsKeys = {
-  ga4IngestEnabled: env.VITE_GA4_INGEST_ENABLED === 'true',
+  ga4MeasurementId: env.VITE_GA4_MEASUREMENT_ID,
   amplitudeApiKey: env.VITE_AMPLITUDE_API_KEY,
   sentryDsn: env.VITE_SENTRY_DSN,
 };
@@ -70,7 +70,7 @@ export function configuredFeatures(): {
     signIn: supabaseReady,
     sync: supabaseReady,
     telemetry: {
-      ga4: Boolean(keys.ga4IngestEnabled && supabaseReady),
+      ga4: Boolean(keys.ga4MeasurementId),
       amplitude: Boolean(keys.amplitudeApiKey),
       sentry: Boolean(keys.sentryDsn),
     },

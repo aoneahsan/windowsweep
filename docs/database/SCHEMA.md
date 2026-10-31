@@ -20,7 +20,6 @@ erDiagram
   AUTH_USERS ||--o| TEAM_MEMBERS : joins
   AUTH_USERS ||--o{ REFERRALS : refers
   AUTH_USERS ||--o| REFERRALS : joins_by_code
-  AUTH_USERS ||--o{ ANALYTICS_DAILY_USAGE : counts
   DEVICES ||--o{ RUNS : attributes
   PLANS ||--o{ SUBSCRIPTIONS : pays_for
   PLANS ||--o{ CHECKOUT_QUOTES : quotes
@@ -59,8 +58,6 @@ erDiagram
   TEAM_MEMBERS { uuid team_id PK uuid user_id PK team_role role }
   TEAM_INVITES { uuid id PK uuid team_id FK text email }
   APP_RELEASES { uuid id PK release_platform platform release_channel channel text version }
-  ANALYTICS_DAILY_USAGE { date day PK uuid user_id FK integer event_count }
-  ANALYTICS_DAILY_TOTALS { date day PK integer event_count }
 ```
 
 `run_claims.device_id` deliberately has no foreign key. A forgotten PC or deleted account must not reset that random install id's monthly count. On account deletion, `run_claims.user_id` becomes null and the row keeps no exact timestamp. `admin_audit`, `app_releases`, and `webhook_events` outlive account deletion; they do not store the person's words.
@@ -98,8 +95,6 @@ Admin grant mail uses four nullable delivery columns on `plan_grants` instead of
 | `team_members` | One membership per account; `user_id`. | Definer only. Up to active Team seats. |
 | `team_invites` | Email-address invitations; team owns row. | Definer only. Open invite uniqueness per team/email; email index. Sending uses a token-checked lease and indexed uncertain state. |
 | `app_releases` | Immutable admin-published update record; no row owner. | Definer write, no client grant. Public latest view only. Few per platform/channel. |
-| `analytics_daily_usage` | One count per auth identity and UTC day, with no event name or payload. | Definer only, no direct grant or RLS policy. At most one row per identity per day; account deletion cascades. A daily job removes rows older than 30 UTC days. |
-| `analytics_daily_totals` | One global count per UTC day; stops anonymous identity farming from exhausting telemetry quota. | Definer only, no direct grant or RLS policy. One row per day; the same 30-day job removes old rows. |
 
 ## Change log
 
@@ -126,7 +121,6 @@ All 1.4.0 changes are generated from Drizzle into `20261031082151_v140_schema.sq
 | 2026-10-31 · `referral_voids` | Keep an anonymous reason-code event when a referral is voided or either account is deleted, without retaining the deleted account's referral row. | No foreign key, referral id or personal columns. Misuse revokes unearned grants and excludes points and badge; account deletion writes this ledger before the live row cascades. |
 | 2026-10-31 · `teams`, `team_members`, `team_invites` | A Team has one owner, many members and pending email seats. A JSON list on profiles cannot enforce one-team membership. | Definer only; unique owner/member/open invite and email indexes; cascades with owner or member. Seat capacity is derived. |
 | 2026-10-31 · `app_releases` and `latest_app_releases` | A published release must gate older clients without exposing the admin id. The view gives one row per platform/channel. | Definer insert, immutable trigger; public latest-view read; indexed by platform/channel/time. |
-| 2026-10-31 · `analytics_daily_usage`, `analytics_daily_totals` | A secret-holding Measurement Protocol broker needs a server-enforced cap; a client counter or event log can be changed or replayed. No existing table owns anonymous and account-wide telemetry budgets. | Atomic definer claim, 200 per identity and 10,000 globally per UTC day; primary keys cover day/user lookups. No event data retained. Account deletion cascades the user row, and a named pg_cron job removes both tables' rows older than 30 UTC days. |
 | 2026-09-05 to 2026-09-25 · existing site and sync tables | `profiles`, `user_settings`, `runs`, `contact_requests`, `admin_audit` predate 1.4.0. | Existing ownership policies and grants remain, except the signed-in checks and `runs.device_id` addition above. |
 
 Closed sets use the `billing_interval`, `grant_source`, `plan_request_status`, `referral_status`, `release_channel`, `release_platform`, `release_severity`, `run_pool`, `subscription_status` and `team_role` enums. Their values are in `desktop/src/db/schema/enums.ts`; a new value requires a forward migration. The plan id is a row, so a new tier uses the admin surface rather than a new enum.

@@ -74,7 +74,7 @@ The fenced copy was checked by hand against the banned list and the fingerprint'
 | `analytics` | First sentence: `consent.title`, the approved first-run line, verbatim. Second: fingerprint sentence 9 trimmed to two refusals, which is the band R that row 24 places here. Together they stay one short line, the size of the law's own example |
 | Variants | None. Both surfaces carry the same words; only the tag syntax differs |
 | Behaviour | `role="status"`, never a dialog. Marked seen the moment it shows, held while hovered or focused, gone after 10 seconds. Never on the sign-in callback |
-| D64/D74 check | The line names no tool and no replay. It stays true with Amplitude and Sentry in the desktop window, GA4 routed through the server-side `analytics-ingest` broker when enabled, and Clarity on the site. No change |
+| D64/D75 check | The line names no tool and no replay. It stays true with Amplitude and Sentry in the desktop window, GA4 through the existing public Measurement ID and `gtag.js`, and Clarity on the site. No change |
 
 No *consent*, no *cookie*, no *updated*, no warning icon: the law forbids each, and the words give none of them a place
 to stand.
@@ -448,8 +448,8 @@ them: three destinations remain on each surface, each already approved.
 | `settings.privacy.sessionReplay` · `...Desc` | Settings, Privacy (`SettingsPrivacy.tsx`) | the row leaves; the other three rows and *Never sent* stay |
 | `consent.*`, the rest | the Consent screen | retired with the screen, which the legal bar replaces |
 
-`consent.provider.ga4.what` still reads true: when enabled, `analytics-ingest` forwards the approved screen and button
-events through the Measurement Protocol without placing its API secret in the desktop window.
+`consent.provider.ga4.what` still reads true: when enabled, the desktop window sends the approved screen and button
+events through `gtag.js` with its existing public GA4 Measurement ID.
 The website's sentences about the window are `legal-payments` P-11. These three belong to rows 11 to 13, so the keeper
 routes them under the owner's GATE 4.
 
@@ -506,7 +506,7 @@ appears only inside the bar's fixed sentence, once in each catalogue. No *consen
 | The platform role is seeded out of band for two addresses | `admin.json` `users.lede`, approved |
 | A request grants nothing and charges nothing when submitted; a successful pay-link email marks it Notified, and only then can an admin close it | D68; `docs/CONTRACTS.md` §7 |
 | The form warns when a version is above the deployed build | settled in the main session, 2026-10-31 |
-| The desktop window: Amplitude, Sentry, GA4 through the server-side `analytics-ingest` broker when enabled, no Clarity | D64; D74 |
+| The desktop window: Amplitude, Sentry and GA4 through the existing public Measurement ID and `gtag.js`, with no Clarity | D64; D75 |
 
 ## Measured lengths
 

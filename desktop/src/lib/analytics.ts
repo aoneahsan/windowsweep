@@ -1,23 +1,28 @@
 /**
  * One reporting surface. Call track(); never call a provider at a feature site.
- * GA4 uses the authenticated analytics-ingest broker, so its Measurement Protocol
- * secret stays on the server. Amplitude and Sentry stay bundled in the window.
+ * GA4 uses the existing public Measurement ID and gtag.js. Amplitude and Sentry
+ * stay bundled in the window. The command-line engine never sends telemetry.
  *
  * A development build reports nothing. A production build with no destination
  * configured still opens, and an event failure never blocks the user's action.
  */
 
 import type { EventName } from './events';
-import { supabaseConfig } from './config';
-import { readStored, writeStored } from './storage';
 
 export interface AnalyticsKeys {
-  ga4IngestEnabled?: boolean | undefined;
+  ga4MeasurementId?: string | undefined;
   amplitudeApiKey?: string | undefined;
   sentryDsn?: string | undefined;
 }
 
 type EventProps = Record<string, string | number | boolean | null>;
+
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
+    gtag?: (...args: unknown[]) => void;
+  }
+}
 
 interface Provider {
   name: string;
@@ -104,79 +109,35 @@ function scrubProps(props: EventProps): EventProps {
   return out;
 }
 
-const CLIENT_ID_KEY = 'windowsweep:analytics-client-id';
-const SESSION_KEY = 'windowsweep:analytics-session';
-const SESSION_IDLE_MS = 30 * 60 * 1000;
-const PARAM_KEYS = ['route', 'control', 'version', 'reason'] as const;
-
-interface AnalyticsSession {
-  id: string;
-  lastEventMs: number;
-}
-
-function eventContext(): { clientId: string; sessionId: string; engagementMs: number } {
-  let clientId = readStored(CLIENT_ID_KEY, '');
-  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clientId)) {
-    clientId = crypto.randomUUID();
-    writeStored(CLIENT_ID_KEY, clientId);
-  }
-  const now = Date.now();
-  const prior = readStored<AnalyticsSession>(SESSION_KEY, { id: '', lastEventMs: 0 });
-  const lastEventMs = Number.isFinite(prior.lastEventMs) ? prior.lastEventMs : 0;
-  const active =
-    /^[1-9][0-9]{0,15}$/.test(prior.id) &&
-    now >= lastEventMs &&
-    now - lastEventMs < SESSION_IDLE_MS;
-  const sessionId = active ? prior.id : String(Math.floor(now / 1000));
-  const engagementMs = active ? Math.min(Math.max(now - lastEventMs, 1), 60_000) : 1;
-  writeStored(SESSION_KEY, { id: sessionId, lastEventMs: now });
-  return { clientId, sessionId, engagementMs };
-}
-
-async function sendGa4(event: string, props: EventProps): Promise<void> {
-  if (!supabaseConfig.url || !supabaseConfig.publishableKey) return;
-  const { supabase } = await import('./auth');
-  const client = supabase();
-  if (!client) return;
-  const { data, error } = await client.auth.getSession();
-  // The D72 device-session wave supplies an anonymous JWT for signed-out use.
-  // Analytics never creates an account as a side effect of tracking an event.
-  if (error || !data.session) return;
-  const params: Record<string, string> = {};
-  for (const key of PARAM_KEYS) {
-    const value = props[key];
-    if (typeof value === 'string') {
-      params[key] = key === 'reason' ? (value === 'deadline' ? 'deadline' : 'other') : value;
-    }
-  }
-  const { clientId, sessionId, engagementMs } = eventContext();
-  await fetch(`${supabaseConfig.url.replace(/\/$/, '')}/functions/v1/analytics-ingest`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      apikey: supabaseConfig.publishableKey,
-      Authorization: `Bearer ${data.session.access_token}`,
-    },
-    body: JSON.stringify({
-      event: event.replaceAll('.', '_'),
-      client_id: clientId,
-      session_id: sessionId,
-      engagement_time_msec: engagementMs,
-      app_version: appVersion,
-      params,
-    }),
-    signal: AbortSignal.timeout(5000),
+function loadScript(src: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = src;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error(`could not load ${src}`));
+    document.head.appendChild(script);
   });
 }
 
-function startGa4(): void {
+async function startGa4(measurementId: string): Promise<void> {
+  window.dataLayer = window.dataLayer ?? [];
+  // gtag.js reads an arguments object. Pushing a rest array silently loses config.
+  function gtag(..._args: unknown[]): void {
+    // eslint-disable-next-line prefer-rest-params
+    window.dataLayer?.push(arguments);
+  }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  await loadScript(
+    `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`
+  );
+  gtag('config', measurementId, { send_page_view: false, app_version: appVersion });
   register({
     name: 'ga4',
     ready: true,
     send: (event, props) => {
-      void sendGa4(event, props).catch(() => {
-        // Telemetry failure does not change the user's action or block the window.
-      });
+      window.gtag?.('event', event.replaceAll('.', '_'), props);
     },
   });
 }
@@ -305,7 +266,7 @@ export async function startAnalytics(keys: AnalyticsKeys, version: string): Prom
   appVersion = version;
 
   const jobs: Promise<void>[] = [];
-  if (keys.ga4IngestEnabled && supabaseConfig.url && supabaseConfig.publishableKey) startGa4();
+  if (keys.ga4MeasurementId) jobs.push(startGa4(keys.ga4MeasurementId));
   if (keys.amplitudeApiKey) jobs.push(startAmplitude(keys.amplitudeApiKey));
   if (keys.sentryDsn) jobs.push(startSentry(keys.sentryDsn));
 

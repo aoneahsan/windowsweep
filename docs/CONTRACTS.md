@@ -423,7 +423,6 @@ Edge Function secrets, names only:
 | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEYS`, `SUPABASE_SECRET_KEYS` | all; provided by the platform | 500 `internal_error`, naming the variable |
 | `POLAR_ACCESS_TOKEN`, `POLAR_SERVER` (`sandbox` or `production`), `POLAR_WEBHOOK_SECRET`, `POLAR_PRODUCTS` (JSON: `pro_month`, `pro_year`, `team_month`, `team_year` to product ids) | `polar-checkout`, `polar-webhook` | checkout dormant: `available: false`, 503 `billing_unavailable` |
 | `FILESHUB_API_KEY` (server-side key; no Origin is sent) | `account-welcome`, `polar-webhook`, `team`, `admin` | the email remains pending for an audited later send; the business action still succeeds |
-| `GA4_MEASUREMENT_ID`, `GA4_MP_API_SECRET` | `analytics-ingest` only | telemetry is skipped; desktop behavior continues |
 | `APP_WEBSITE_URL` | email links, `return_url` | `https://windowsweep.aoneahsan.com` |
 
 Auth settings the backend assumes, sent by the main session after the migrations: `external_anonymous_users_enabled:
@@ -487,17 +486,9 @@ D70 makes server-side Polar cancellation a prerequisite for account deletion. D7
 claims after deletion, with the account reference cleared. D73 permits the legal misuse clause; its final
 wording remains under the owner's legal GATE 4.
 
-## 18. Desktop analytics relay
+## 18. Desktop analytics
 
-`POST analytics-ingest` requires a Supabase bearer JWT, including a device session after D72 is enabled. The
-desktop sends one event per call: `screen_view(route)`, `control_press(control, route)`,
-`update_check_available(version)`, `update_check_skipped(reason)`, or `update_install_failed(reason)`. The client
-passes a random UUID client id, numeric session id, engagement time and app version. `route` and `control` are
-closed server allowlists; `reason` becomes `deadline` or `other`. No path, filename, email or machine label is
-accepted. Unknown fields are 422 `invalid_request`.
-
-The function alone holds the GA4 Measurement Protocol API secret. It atomically claims one event from
-`analytics_daily_usage` and `analytics_daily_totals` before sending. The limits are 200 per auth id
-and 10,000 total per UTC day; refusal returns `{ ok: true, accepted: false }` and never blocks the app. User
-count rows cascade on account deletion, and both count tables prune rows older than 30 UTC days. The public
-desktop flag `VITE_GA4_INGEST_ENABLED` is set only after the server settings and endpoint pass live checks.
+The desktop window uses the public `VITE_GA4_MEASUREMENT_ID` to load `gtag.js` and send its closed, scrubbed
+event vocabulary directly to GA4. The Measurement ID is not a secret. The command-line engine sends no
+telemetry. A missing Measurement ID skips GA4 without blocking the desktop. D75 removed the proposed
+`analytics-ingest` relay and its server-side counters before deployment.

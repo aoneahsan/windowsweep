@@ -243,9 +243,8 @@ Asked in one batch at the start of the run; each answer is his verbatim option. 
   (plans arriving with 1.4.0; checkout dormant, plan requests instead of pay buttons) and the Terms/Privacy payment
   clauses after his GATE 4. This requires an extra site deploy before the release deploy.
 - **D64 - desktop analytics "Bundled analytics only (Recommended)"** (2026-10-31, from the security lane's F-SEC-003):
-  Amplitude and Sentry stay bundled; GA4 events leave through the Measurement Protocol as plain requests; `gtag.js`
-  and Clarity leave the desktop window (Clarity stays on the website); the window's CSP returns to `script-src 'self'`.
-  Supersedes D52's widening.
+  Amplitude and Sentry stay bundled; Clarity leaves the desktop window and stays on the website. Its GA4
+  Measurement Protocol choice and `script-src 'self'` narrowing are superseded by D75.
 - **D65 - database hardening "Yes, both (Recommended)"**: SSL enforcement on and the legacy JWT API keys disabled, each
   checked first (nothing may still use a legacy key; FilesHub's keepalive is checked first) and read back after.
 - **D66 - "1.4.0 removes it"**: a Free user's weekly task from 1.3.2 is removed on the first start of 1.4.0, said once,
@@ -264,11 +263,14 @@ Asked in one batch at the start of the run; each answer is his verbatim option. 
   hook and anonymous sign-ins, so "Sign in with Google" links onto the device session.
 - **D73 - "Keep the clause (recommended)"** (2026-10-31): the Terms may state that deliberate run-limit evasion or
   referral-account farming can lead to account deletion and referral voiding. Legal GATE 4 remains pending.
-- **D74 - GA4 secret stays server-side** (2026-10-31, implementation correction to D64): the desktop sends its
-  closed, scrubbed event vocabulary through the authenticated `analytics-ingest` Edge Function. That function alone
-  holds the GA4 Measurement Protocol API secret and submits to Google. Its SQL budget atomically caps 200 events per
-  account and 10,000 in total per UTC day; old count rows are pruned after 30 days. Anonymous device sessions may
-  send only after D72 is live. The client flag stays off until the server secret and function are verified.
+- **D74 - GA4 relay proposal, superseded by D75** (2026-10-31): a server-side Measurement Protocol relay and
+  daily counters were drafted but never applied or deployed. The owner questioned the extra secret and chose D75.
+- **D75 - "Use existing Measurement ID (Recommended)"** (2026-10-31): keep the desktop's existing public GA4
+  Measurement ID and `gtag.js` path, with its scrubbed event vocabulary. No Measurement Protocol API secret,
+  `analytics-ingest` function or daily telemetry-count tables are needed. Amplitude and Sentry remain bundled;
+  Clarity remains website-only. The desktop CSP allows the GA4 tag and collection hosts.
+- **D76 - no Docker for WindowSweep** (2026-10-31): the owner forbids starting or using Docker because of its
+  system load. The Supabase CLI's `db dump` path is excluded; backups use a standalone PostgreSQL client.
 - Settled in the main session the same day, not owner questions: the release form warns when a version is ABOVE the
   deployed build (a record above every build would block everyone; the update-flow skill's wording is corrected);
   `devices` stores no machine name, host name or Windows version (the product's "never a machine name" promise); the

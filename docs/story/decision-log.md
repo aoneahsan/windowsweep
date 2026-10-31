@@ -1254,3 +1254,9 @@ main session is re-evaluating D74's transport. T-01 to T-04 and P-01 to P-10 do 
 P-11's destination count and P-12's relay and retention description do. P-11 and P-12 are held, and the legal
 surface remains open until the transport is settled. If their text changes, show the revised draft to the
 owner for a fresh legal GATE 4 before publication. No legal clause is marked live by this record.
+
+**D75 correction, 2026-10-31:** the owner chose the existing public GA4 Measurement ID and `gtag.js` for the
+desktop. The server relay and count tables were never deployed and have been removed from source. The revised
+draft removes P-12 and the two deletion-count claims, and updates P-11's factual note. T-01 to T-04, P-01 to
+P-10 and the approved misuse clause remain. The main session asked for a fresh legal GATE 4 on this exact
+revision; publication and the row 23 record still wait for that answer.

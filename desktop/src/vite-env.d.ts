@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_GA4_INGEST_ENABLED?: string;
+  readonly VITE_GA4_MEASUREMENT_ID?: string;
   readonly VITE_AMPLITUDE_API_KEY?: string;
   readonly VITE_SENTRY_DSN?: string;
   readonly VITE_SUPABASE_URL?: string;

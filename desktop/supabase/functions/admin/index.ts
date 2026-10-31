@@ -136,7 +136,6 @@ serve(async (request) => {
   const action = textField(body, "action", 1, 40);
   const actions = [
     "stats",
-    "analytics.budget",
     "users.list",
     "users.view",
     "users.set_plan",
@@ -173,10 +172,6 @@ serve(async (request) => {
   switch (action) {
     case "stats":
       functionName = "admin_stats";
-      break;
-    case "analytics.budget":
-      functionName = "admin_analytics_budget";
-      args = { p_user: optionalUuid(body, "user_id") };
       break;
     case "users.list":
       functionName = "admin_users_list";

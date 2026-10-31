@@ -30,6 +30,7 @@ import { openUrl } from '@tauri-apps/plugin-opener';
 import { supabaseConfig } from './config';
 import { loopbackRedirect } from './oauth-redirect';
 import { clearRunLedger } from './sync-local';
+import { authStorage, removeStored } from './storage';
 
 export interface AuthUser {
   /** `auth.users.id` - the value every RLS policy compares against. */
@@ -58,6 +59,7 @@ export function supabase(): SupabaseClient | null {
       persistSession: true,
       autoRefreshToken: true,
       storageKey: 'windowsweep:supabase-auth',
+      storage: authStorage,
     },
   });
   return client;
@@ -168,10 +170,6 @@ export async function deleteAccount(): Promise<void> {
 export async function signOut(): Promise<void> {
   const sb = supabase();
   if (sb) await sb.auth.signOut({ scope: 'local' });
-  try {
-    window.localStorage.removeItem('windowsweep:history-cloud');
-  } catch {
-    /* nothing cached, or storage unavailable */
-  }
+  removeStored('windowsweep:history-cloud');
   clearRunLedger();
 }

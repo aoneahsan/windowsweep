@@ -14,15 +14,15 @@
  * release that changes WHAT is collected can tell whether this person has seen the
  * current wording. They are not decoration.
  *
- * 🔴 The storage key is unchanged, so an existing record written under the old
- * four-boolean shape has no `seen` field and reads as unseen. That is correct
- * rather than unfortunate: what the notice says has materially changed, and the
- * person has not seen the new wording.
+ * The 1.4.0 legal bar has new Terms wording. A 1.3.2 `windowsweep:consent`
+ * acknowledgement does not count as having seen it; the new key starts unseen.
  *
  * What survived the change, deliberately: the engine's zero-network fact and the
  * "never sent" list. That list is the whole reason the one line is credible - a
  * notice with nothing checkable in it is just an announcement.
  */
+
+import { readStored, writeStored } from './storage';
 
 export interface NoticeState {
   /** The notice has been shown and dismissed. Never "the person agreed". */
@@ -32,7 +32,7 @@ export interface NoticeState {
   collected: number;
 }
 
-export const NOTICE_STORAGE_KEY = 'windowsweep:consent';
+export const NOTICE_STORAGE_KEY = 'windowsweep:legal-notice';
 
 export const NOTICE_UNSEEN: NoticeState = { seen: false, seenAt: null, collected: 0 };
 
@@ -60,25 +60,14 @@ export const COLLECTED_KEYS: readonly string[] = [
 ];
 
 export function readNotice(): NoticeState {
-  try {
-    const raw = window.localStorage.getItem(NOTICE_STORAGE_KEY);
-    if (!raw) return { ...NOTICE_UNSEEN };
-    const parsed: unknown = JSON.parse(raw);
-    const wrapped = parsed as { v?: unknown };
-    const value = (
-      typeof wrapped === 'object' && wrapped !== null && 'v' in wrapped ? wrapped.v : parsed
-    ) as Partial<NoticeState> | undefined;
-    if (typeof value !== 'object' || value === null) return { ...NOTICE_UNSEEN };
-    return {
-      seen: value.seen === true,
-      seenAt: typeof value.seenAt === 'string' ? value.seenAt : null,
-      collected: typeof value.collected === 'number' ? value.collected : 0,
-    };
-  } catch {
-    /* An unreadable record reads as unseen: showing the notice once more is a
-       smaller cost than a person never seeing it because storage broke. */
-    return { ...NOTICE_UNSEEN };
-  }
+  const value = readStored<unknown>(NOTICE_STORAGE_KEY, null);
+  if (typeof value !== 'object' || value === null) return { ...NOTICE_UNSEEN };
+  const notice = value as Partial<NoticeState>;
+  return {
+    seen: notice.seen === true,
+    seenAt: typeof notice.seenAt === 'string' ? notice.seenAt : null,
+    collected: typeof notice.collected === 'number' ? notice.collected : 0,
+  };
 }
 
 /** Record that the notice was shown. Returns what was written. */
@@ -88,11 +77,6 @@ export function markNoticeSeen(): NoticeState {
     seenAt: new Date().toISOString(),
     collected: COLLECTED_KEYS.length,
   };
-  try {
-    window.localStorage.setItem(NOTICE_STORAGE_KEY, JSON.stringify({ v: state }));
-  } catch {
-    /* A private window or blocked site data: the notice is shown again next
-       launch, which is the harmless direction to fail in. */
-  }
+  writeStored(NOTICE_STORAGE_KEY, state);
   return state;
 }

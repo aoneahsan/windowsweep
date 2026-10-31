@@ -112,6 +112,7 @@ Node from `desktop/.nvmrc` (`24.13.0`), `engines.node` `>=22`.
 | `react-aria-components` | `^1.21.1` | The interactive primitives. The click dummy specifies the look; RAC owns the DOM |
 | `react-dom` | `^19.3.0` | used by the screens |
 | `react-i18next` | `^17.0.15` | The React binding |
+| `strata-storage` | `^3.1.3` | Owns desktop browser storage, including preferences, local run history, sync records, legal notice state and the Supabase session. The 1.3.2 physical keys are adopted without a prefix; the pre-paint reader accepts both old and new envelopes |
 | `zustand` | `^5.0.15` | The one store |
 
 ### Development

@@ -1,6 +1,5 @@
 /**
- * What sync keeps on THIS machine: two small records, in the `{ v: ... }` shape every
- * other persisted value in this window uses (`state/store.ts` -> `readLocal`).
+ * What sync keeps on THIS machine: two small records in the shared strata store.
  *
  * 🔴 BOOT-SAFE - NO RUNTIME IMPORT AT ALL. The store reaches the settings stamp at
  * boot through `sync-hooks.ts`, and nothing on that path may drag the Supabase client
@@ -14,26 +13,17 @@
  *    `lib/auth.ts` -> `signOut` clears it with the account's other local traces.
  */
 
+import { readStored, removeStored, writeStored } from './storage';
+
 const SETTINGS_STAMP_KEY = 'windowsweep:settings-updated-at';
 const RUN_LEDGER_KEY = 'windowsweep:sync-runs';
 
 function read(key: string): unknown {
-  try {
-    const raw = window.localStorage.getItem(key);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as { v?: unknown };
-    return parsed.v ?? null;
-  } catch {
-    return null;
-  }
+  return readStored(key, null);
 }
 
 function write(key: string, value: unknown): void {
-  try {
-    window.localStorage.setItem(key, JSON.stringify({ v: value }));
-  } catch {
-    /* a private window - the session works, it just forgets */
-  }
+  writeStored(key, value);
 }
 
 /** When the settings last changed on this machine, or null when no change was recorded. */
@@ -74,9 +64,5 @@ export function writeRunLedger(ledger: RunLedger): void {
 }
 
 export function clearRunLedger(): void {
-  try {
-    window.localStorage.removeItem(RUN_LEDGER_KEY);
-  } catch {
-    /* nothing stored, or storage unavailable */
-  }
+  removeStored(RUN_LEDGER_KEY);
 }

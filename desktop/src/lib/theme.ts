@@ -12,6 +12,7 @@
  */
 
 import registry from './axes.json';
+import { readStored, writeStored } from './storage';
 
 export interface AxisValue {
   value: string;
@@ -117,28 +118,13 @@ export function applyAllAxes(prefs: AxisPrefs, root: HTMLElement = document.docu
 }
 
 export function readPrefs(): AxisPrefs {
-  try {
-    const raw = window.localStorage.getItem(PREFS_STORAGE_KEY);
-    if (!raw) return {};
-    const parsed: unknown = JSON.parse(raw);
-    if (typeof parsed !== 'object' || parsed === null) return {};
-    const wrapped = parsed as { v?: unknown };
-    const value = 'v' in wrapped ? wrapped.v : parsed;
-    return typeof value === 'object' && value !== null ? (value as AxisPrefs) : {};
-  } catch {
-    return {};
-  }
+  const value = readStored<unknown>(PREFS_STORAGE_KEY, {});
+  return typeof value === 'object' && value !== null ? (value as AxisPrefs) : {};
 }
 
 export function writePrefs(prefs: AxisPrefs): void {
-  try {
-    // The `{v: ...}` wrapper and the `namespace:key` physical key are strata-storage's
-    // own shape, named at both ends so a namespace change cannot silently revert this
-    // to unprefixed keys. Verify by reading the physical key, never by reading config.
-    window.localStorage.setItem(PREFS_STORAGE_KEY, JSON.stringify({ v: prefs }));
-  } catch {
-    /* a private window or blocked site data - the session still works, it just forgets */
-  }
+  // This physical key is also read by the pre-paint script before modules load.
+  writeStored(PREFS_STORAGE_KEY, prefs);
 }
 
 /**

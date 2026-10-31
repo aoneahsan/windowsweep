@@ -10,7 +10,7 @@
  * `useState`, so the back button works and a state is linkable.
  */
 
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import {
   createHashHistory,
   createRootRoute,
@@ -29,6 +29,7 @@ import { useStore } from './state/store';
 import { loadCatalogue } from './lib/engine';
 import { track } from './lib/analytics';
 import { configuredFeatures } from './lib/config';
+import { watchForUpdates } from './lib/updater';
 
 /**
  * 🔴 THE APP BOOTS THROUGH SPLASH, and until now it did not.
@@ -50,6 +51,7 @@ function RootLayout() {
   const setEngineError = useStore((s) => s.setEngineError);
   const navigate = useNavigate();
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const initialPathRef = useRef(path);
 
   useEffect(() => {
     if (booted) return;
@@ -86,6 +88,18 @@ function RootLayout() {
       () => undefined
     );
   }, []);
+
+  /* Splash owns the first check on normal launches. A deep link skips Splash,
+     so the watcher supplies its first check there; both paths share the same
+     six-hour timer and resume listener afterward. */
+  useEffect(
+    () =>
+      watchForUpdates(
+        (outcome) => useStore.getState().setUpdateOutcome(outcome.kind),
+        initialPathRef.current !== '/' && initialPathRef.current !== '/splash'
+      ),
+    []
+  );
 
   return <Outlet />;
 }

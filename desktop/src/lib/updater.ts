@@ -24,6 +24,7 @@ import { check, type Update } from '@tauri-apps/plugin-updater';
 import { relaunch } from '@tauri-apps/plugin-process';
 
 import { track } from './analytics';
+import { useStore } from '../state/store';
 
 /** What the check found. `skipped` carries the reason for the report, never for the screen. */
 export type UpdateOutcome =
@@ -49,6 +50,11 @@ export interface UpdateHandle {
 
 /** A few seconds. Long enough for a slow answer, short enough to never feel stuck. */
 export const UPDATE_CHECK_TIMEOUT_MS = 4000;
+export const UPDATE_RECHECK_MS = 6 * 60 * 60 * 1000;
+const RESUME_CHECK_MIN_GAP_MS = 60 * 1000;
+
+let lastCheckStartedAt = 0;
+let pendingCheck: Promise<UpdateOutcome> | null = null;
 
 function inTauriWindow(): boolean {
   return '__TAURI_INTERNALS__' in window;
@@ -94,7 +100,7 @@ function handleFor(update: Update): UpdateHandle {
       let contentLength = 0;
       let received = 0;
       try {
-        await update.downloadAndInstall((event) => {
+        await update.download((event) => {
           if (event.event === 'Started') {
             contentLength = event.data.contentLength ?? 0;
             onProgress(contentLength > 0 ? 0 : null);
@@ -102,11 +108,15 @@ function handleFor(update: Update): UpdateHandle {
           }
           if (event.event === 'Progress') {
             received += event.data.chunkLength;
-            onProgress(contentLength > 0 ? Math.min(100, (received / contentLength) * 100) : null);
+            onProgress(contentLength > 0 ? Math.min(99, (received / contentLength) * 100) : null);
             return;
           }
-          onProgress(100);
         });
+        // Downloading is harmless during a cleanup. Installing is not: on
+        // Windows the installer exits the app, so wait until the run settles.
+        await waitForQuietMoment();
+        await update.install({ restartAfterInstall: false });
+        onProgress(100);
       } catch (error) {
         // Reported here so the screen never names a destination, and rethrown so
         // the screen still owns what the person sees.
@@ -119,6 +129,22 @@ function handleFor(update: Update): UpdateHandle {
   };
 }
 
+function waitForQuietMoment(): Promise<void> {
+  if (useStore.getState().phase !== 'running') return Promise.resolve();
+  return new Promise((resolve) => {
+    const unsubscribe = useStore.subscribe((state) => {
+      if (state.phase === 'running') return;
+      unsubscribe();
+      resolve();
+    });
+    // The run can finish between the first read and the subscription.
+    if (useStore.getState().phase !== 'running') {
+      unsubscribe();
+      resolve();
+    }
+  });
+}
+
 /**
  * Ask whether a newer build exists.
  *
@@ -126,17 +152,17 @@ function handleFor(update: Update): UpdateHandle {
  * does not verify, a deadline - resolves as `skipped`, because the one thing this
  * must not do is stop the app from starting.
  */
-export async function checkForUpdate(
+async function performUpdateCheck(
   timeoutMs: number = UPDATE_CHECK_TIMEOUT_MS
 ): Promise<UpdateOutcome> {
-  const dev = await devUpdater();
-  if (dev) return dev.devCheckForUpdate();
-
-  // No Tauri window and not a development build: there is no installer to
-  // replace, so the honest answer is that there is nothing to offer.
-  if (!inTauriWindow()) return { kind: 'none' };
-
   try {
+    const dev = await devUpdater();
+    if (dev) return await dev.devCheckForUpdate();
+
+    // No Tauri window and not a development build: there is no installer to
+    // replace, so the honest answer is that there is nothing to offer.
+    if (!inTauriWindow()) return { kind: 'none' };
+
     const result = await withDeadline(check({ timeout: timeoutMs }), timeoutMs + 1000);
     if (result === TIMED_OUT) {
       track('update.check.skipped', { reason: 'deadline' });
@@ -155,6 +181,52 @@ export async function checkForUpdate(
   }
 }
 
+/** Share one network request between Splash, the timer and a resume event. */
+export function checkForUpdate(
+  timeoutMs: number = UPDATE_CHECK_TIMEOUT_MS
+): Promise<UpdateOutcome> {
+  if (pendingCheck) return pendingCheck;
+  lastCheckStartedAt = Date.now();
+  const work = performUpdateCheck(timeoutMs);
+  pendingCheck = work;
+  const clearPending = () => {
+    if (pendingCheck === work) pendingCheck = null;
+  };
+  void work.then(clearPending, clearPending);
+  return work;
+}
+
+/**
+ * Keep the updater fresh after the boot screen is gone. The caller owns how an
+ * available version is shown; this service never installs without that action.
+ */
+export function watchForUpdates(
+  onOutcome: (outcome: UpdateOutcome) => void,
+  checkOnStart = true
+): () => void {
+  let active = true;
+  const checkAndReport = () => {
+    void checkForUpdate().then((outcome) => {
+      if (active) onOutcome(outcome);
+    });
+  };
+  if (checkOnStart) checkAndReport();
+  const interval = window.setInterval(checkAndReport, UPDATE_RECHECK_MS);
+  const onResume = () => {
+    if (document.visibilityState !== 'visible') return;
+    if (Date.now() - lastCheckStartedAt < RESUME_CHECK_MIN_GAP_MS) return;
+    checkAndReport();
+  };
+  document.addEventListener('visibilitychange', onResume);
+  window.addEventListener('focus', onResume);
+  return () => {
+    active = false;
+    window.clearInterval(interval);
+    document.removeEventListener('visibilitychange', onResume);
+    window.removeEventListener('focus', onResume);
+  };
+}
+
 /**
  * Restart into the new build.
  *
@@ -165,5 +237,6 @@ export async function checkForUpdate(
  */
 export async function restartApp(): Promise<void> {
   if (!inTauriWindow()) return;
+  await waitForQuietMoment();
   await relaunch();
 }

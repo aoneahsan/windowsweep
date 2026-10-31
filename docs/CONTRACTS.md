@@ -8,9 +8,11 @@ owns this file: a writer proposes a change in its report, the change lands here,
 and the diagram: [`database/SCHEMA.md`](database/SCHEMA.md). Owner decisions D55-D74:
 [`PROJECT-CONTEXT.md`](PROJECT-CONTEXT.md).
 
-**Status (2026-10-31): designed, not applied.** One hosted project, `nlmetjyytgwaxcliusuo`, is development and
-production. The main session rehearses each migration in `BEGIN ... ROLLBACK`, applies it, then changes the Auth
-settings, sets the secrets and deploys the functions, in the order in `desktop/supabase/README.md`.
+**Status (2026-10-31): SQL phase partly applied.** One hosted project, `nlmetjyytgwaxcliusuo`, is development
+and production. The first 20 migrations were rehearsed and applied in order. The six-scenario referral probe
+rolled back after finding a same-transaction reward overlap; migration 21 is a committed forward fix awaiting
+fresh production approval. Auth settings, function secrets and function deployment still follow in the order
+in `desktop/supabase/README.md`.
 
 ## 1. Rules every surface follows
 

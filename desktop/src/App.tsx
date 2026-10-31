@@ -29,6 +29,7 @@ import { useStore } from './state/store';
 import { loadCatalogue } from './lib/engine';
 import { track } from './lib/analytics';
 import { configuredFeatures } from './lib/config';
+import { errorText, logger } from './lib/logger';
 import { watchForUpdates } from './lib/updater';
 
 /**
@@ -89,6 +90,18 @@ function RootLayout() {
     );
   }, []);
 
+  /* Register the installation and restore (or create) its device session at
+     every launch, including a deep link that never visits Plans. A network
+     failure does not block local scans or dry runs. */
+  useEffect(() => {
+    if (!configuredFeatures().signIn) return;
+    void import('./lib/allowance')
+      .then((allowance) => allowance.getAllowance())
+      .catch((error: unknown) => {
+        logger.warn('device allowance registration failed at boot', { error: errorText(error) });
+      });
+  }, []);
+
   /* Splash owns the first check on normal launches. A deep link skips Splash,
      so the watcher supplies its first check there; both paths share the same
      six-hour timer and resume listener afterward. */
@@ -141,6 +154,7 @@ const Picker = lazy(() => import('./screens/Picker').then((m) => ({ default: m.P
 const History = lazy(() => import('./screens/History').then((m) => ({ default: m.History })));
 const Report = lazy(() => import('./screens/Report').then((m) => ({ default: m.Report })));
 const Account = lazy(() => import('./screens/Account').then((m) => ({ default: m.Account })));
+const Plans = lazy(() => import('./screens/Plans').then((m) => ({ default: m.Plans })));
 const Settings = lazy(() => import('./screens/Settings').then((m) => ({ default: m.Settings })));
 const Elevation = lazy(() => import('./screens/Elevation').then((m) => ({ default: m.Elevation })));
 
@@ -170,6 +184,15 @@ function withShell(Component: React.ComponentType) {
   };
 }
 
+const plansRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/plans',
+  validateSearch: (search: Record<string, unknown>) => ({
+    billing: search.billing === 'year' ? ('year' as const) : ('month' as const),
+  }),
+  component: withShell(Plans),
+});
+
 const routes = [
   consentRoute,
   splashRoute,
@@ -184,6 +207,7 @@ const routes = [
   createRoute({ getParentRoute: () => rootRoute, path: '/history', component: withShell(History) }),
   createRoute({ getParentRoute: () => rootRoute, path: '/report', component: withShell(Report) }),
   createRoute({ getParentRoute: () => rootRoute, path: '/account', component: withShell(Account) }),
+  plansRoute,
   createRoute({
     getParentRoute: () => rootRoute,
     path: '/settings',

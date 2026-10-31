@@ -49,6 +49,7 @@ const NAV: NavEntry[] = [
   { to: '/report', labelKey: 'nav.report', icon: 'doc' },
   { group: 'nav.group.you' },
   { to: '/account', labelKey: 'nav.account', icon: 'user' },
+  { to: '/plans', labelKey: 'nav.plans', icon: 'list' },
   { to: '/settings', labelKey: 'nav.settings', icon: 'gear' },
   { to: '/elevation', labelKey: 'nav.elevation', icon: 'backend' },
 ];
@@ -261,6 +262,7 @@ const FIXED_NOTES: Record<string, string> = {
   '/report': 'status.report',
   '/picker': 'status.picker',
   '/account': 'status.account',
+  '/plans': 'status.plans',
   /* `settings.html:64` - withheld from round 8 until something synced; TASK-013 made it true
      (D-66, GATE 4 round 14). */
   '/settings': 'status.settings',

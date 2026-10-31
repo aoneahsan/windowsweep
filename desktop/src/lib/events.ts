@@ -57,6 +57,15 @@ export const CONTROL_IDS = [
   'account.signIn',
   'elevation.askAndRun',
   'splash.updateNow',
+  'plans.requestPro',
+  'plans.requestTeam',
+  'plans.signIn',
+  'plans.copyInvite',
+  'plans.copyCommand',
+  'team.create',
+  'team.invite',
+  'team.removeInvite',
+  'team.removeMember',
 ] as const;
 
 export type ControlId = (typeof CONTROL_IDS)[number];

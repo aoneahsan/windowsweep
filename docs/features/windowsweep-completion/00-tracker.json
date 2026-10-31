@@ -15,9 +15,9 @@
     "audit": "D:/work/my-work/projects-finalization-record/product-audits/windowsweep/2026-10-30-2224/findings.json",
     "migrationCount": 21,
     "migrationManifestSha256": "5529F0105AC4794CD688B054DEAE7D797D3A37E1E4C91D024E873D72BDECDA33",
-    "migrationState": "The approved 20-file set at 9912a2b rehearsed in BEGIN/ROLLBACK, applied to PROD nlmetjyytgwaxcliusuo, and a post-apply dry run reports up to date. The separately approved six-scenario referral probe failed inside rollback at scenario 4; all three temporary Auth users were deleted and read back absent. A new forward-only boundary fix is drafted as migration 21 and requires a fresh exact production approval before rehearsal/application and test retry.",
-    "contentState": "rows 21, 22 and 24-27 recorded under D59; the owner approved D75-revised legal row 23 including T-04 at GATE 4, with keeper record and publication/live verification pending",
-    "designState": "pricing, desktop Plans/Team/legal/update, and email gallery design directions approved by owner; production and live visual proof remain",
+    "migrationState": "The approved 20-file set at 9912a2b rehearsed in BEGIN/ROLLBACK, applied to PROD nlmetjyytgwaxcliusuo, and a post-apply dry run reports up to date. The separately approved six-scenario referral probe failed inside rollback at scenario 4; all three temporary Auth users were deleted and read back absent. Forward boundary fix migration 21 is committed at f641197; its rehearsal/application and test retry await fresh exact production approval.",
+    "contentState": "rows 21-27 are recorded, including the owner's D75-revised legal row 23 with T-04. The first-wave payment clauses are live on the website; P-11 Clarity correction and T-04 remain scheduled for the 1.4.0 desktop release.",
+    "designState": "pricing is live and browser-verified at 390 and 1440; desktop Plans/Team/legal/update and email gallery directions approved, with production desktop visual proof and new allowance/device-owned dummy review pending",
     "releaseState": "1.4.0 not built or published"
   },
   "planFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-functional-canyon.md",

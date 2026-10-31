@@ -34,6 +34,8 @@ reason to act now is that a reader wants what the plan does. The row's beat orde
   in `seo`, `sitemap` and `common.footer`. Key names are proposals; the main session writes the catalogue, dummy first.
 - **Every figure is a data slot** read from the plan rows and `app_config`, formatted by `Intl` at render or at build.
   None is typed into a catalogue.
+- **One typed plan record** supplies the rendered cards, page head, `pricing.md`, `llms.txt` and JSON-LD offers. The
+  question headings are H2s above their Free, Pro and Team cards; each card keeps its short plan name.
 - **Two link tags for the consent line**, `<terms>` and `<privacy>`. The site's `RichText` maps every `<lnk>` in a key
   to one element, so the call site needs a two-link variant; one key still holds the whole sentence, as the i18n rule
   requires.
@@ -72,9 +74,9 @@ The fact-checker is the real gate.
 
 ---
 
-# `/pricing` - the page
+## `/pricing` - the page
 
-## S-001 · page head - crumb, eyebrow, H1, lede (beat 1, what Free keeps)
+### S-001 · page head - crumb, eyebrow, H1, lede (beat 1, what Free keeps)
 
 ```json
 "crumb": "Pricing",
@@ -88,7 +90,7 @@ The fact-checker is the real gate.
 | `title` | The answer first. The first sentence is a refusal of the usual paid-tier move, holding sections back; the second names the one thing Pro changes |
 | `lede` | Every limit sits in the sentence that makes its claim. *No sign-in* rather than *no account*, because a signed-out desktop app holds an anonymous session (`legal-payments` P-02 says so) |
 
-## S-002 · the line shown before desktop 1.4.0 ships
+### S-002 · the line shown before desktop 1.4.0 ships
 
 ```json
 "beforeRelease": "These plans start with desktop app 1.4.0, which is in progress. Today’s desktop app, {{desktopVersion}}, has no plans and no run limit."
@@ -97,10 +99,11 @@ The fact-checker is the real gate.
 The brief's own sentence, with the version as a slot. The page goes live first (D63). A reader on 1.3.2 must learn
 that nothing changed for them yet.
 
-## S-003 · the Free card (beat 1)
+### S-003 · the Free card (beat 1)
 
 ```json
 "free": {
+  "heading": "What does Free include?",
   "name": "Free",
   "price": "{{freePrice}}",
   "line": "The whole engine, with a monthly count of real runs.",
@@ -111,7 +114,7 @@ that nothing changed for them yet.
     "sync": "Run summaries synced to your account, signed in",
     "export": "Any run’s report, exported as Markdown or HTML"
   },
-  "keeps": "No section is held back for a paid plan, and every plan refuses the same protected paths.",
+  "keeps": "No section is held back for a paid plan. Every plan refuses the same protected paths.",
   "cta": "Download the desktop app"
 }
 ```
@@ -121,10 +124,11 @@ that nothing changed for them yet.
 | `keeps` | Band R, as the row asks. Two refusals the reader can check: `--list` and `--list-targets` print the same sections and paths on any plan. *No section*, never *nothing*: schedules, the history export and multi-machine reports are held back, and the card must not deny it |
 | `cta` | `/download`. Free has nothing to request or buy |
 
-## S-004 · the Pro card (beat 2, what Pro adds)
+### S-004 · the Pro card (beat 2, what Pro adds)
 
 ```json
 "pro": {
+  "heading": "What does Pro add?",
   "name": "Pro",
   "priceMonth": "{{proMonth}} a month",
   "priceYear": "{{proYear}} a year",
@@ -148,10 +152,11 @@ that nothing changed for them yet.
 | `schedules` | Names what the schedule is today. *Schedules, including* would promise kinds nobody has built |
 | `subscribe` | The exact verb: the plan renews. `request` is state A's button and `subscribe` is state B's |
 
-## S-005 · the Team card (beat 3, what Team adds)
+### S-005 · the Team card (beat 3, what Team adds)
 
 ```json
 "team": {
+  "heading": "What does Team add?",
   "name": "Team",
   "priceMonth": "{{teamSeatMonth}} a seat a month",
   "priceYear": "{{teamSeatYear}} a seat a year",
@@ -172,11 +177,12 @@ that nothing changed for them yet.
 `summaries` is band R, and it is D69's own list: per member and machine, a run's date, mode, sections and bytes
 reclaimed, and never a path, a file name, a machine name or a user name.
 
-## S-006 · the controls the cards share
+### S-006 · the controls the cards share
 
 ```json
 "current": "Your plan",
 "billing": { "label": "Billing", "monthly": "Monthly", "yearly": "Yearly" },
+"priceUpdated": "Prices in US dollars. Plan details last updated {{plansUpdatedOn}}.",
 "seats": {
   "label": "Seats", "hint": "From {{teamMinSeats}}.",
   "totalMonth_one": "{{count}} seat: {{total}} a month", "totalMonth_other": "{{count}} seats: {{total}} a month",
@@ -189,9 +195,10 @@ reclaimed, and never a path, a file name, a machine name or a user name.
 | Element | Note |
 |---|---|
 | `consent` | 🔴 Renders exactly *"By continuing, you agree to our Terms of Service and Privacy Policy."*, small and muted, directly under each of the two buttons, in **both** states. The request button stands where the pay button will, so the plans contract test sees one shape in either state. It is the only payment-terms text on the page |
+| `priceUpdated` | One date. Render it beside the plan prices. `{{plansUpdatedOn}}` is the newest plan-row `updated_at`, formatted for the reader; it dates the plan details, including changes unrelated to prices |
 | *our* | The fingerprint bans the first person plural. These words are fixed by fleet law (`payment-copy.md`) and the dispatch says EXACTLY, so precedence keeps them, and nothing else on the page says *we* or *our* |
 
-## S-007 · the yearly arithmetic
+### S-007 · the yearly arithmetic
 
 ```json
 "yearly": "Paid yearly, Pro is {{proYear}} instead of {{proYearAtMonthly}}. A Team seat is {{teamSeatYear}} a year instead of {{teamSeatYearAtMonthly}}, so the smallest team, {{teamMinSeats}} seats, pays {{teamMinYear}} a year."
@@ -200,11 +207,13 @@ reclaimed, and never a path, a file name, a machine name or a user name.
 The brief's arithmetic with each figure computed from the rows. *A quarter off* is left out: it is true at $36
 against $48 and false the day either price moves.
 
-## S-008 · side by side
+### S-008 · side by side
 
 ```json
 "compare": {
-  "title": "Side by side",
+  "title": "What does each plan include?",
+  "safetyLink": "Every plan uses the same <lnk>safety model</lnk>.",
+  "sectionsLink": "See the <lnk>26-section reference</lnk> for what each section touches.",
   "colIncluded": "Included",
   "rows": {
     "runs": "Real runs a month", "unlimited": "Dry-runs, scans and reports",
@@ -224,18 +233,20 @@ against $48 and false the day either price moves.
 
 The column headers are the plan names and every row label is a noun, so no header asks a yes/no question
 (`safety.md`). *Schedules in the desktop app* keeps Free's *No* true, since the command line's own task is free.
+Show the two links beside the comparison: `/safety-model` and `/sections` on the docs site. Each key has one
+`<lnk>` tag for the site's existing `RichText` renderer. One link per key.
 
-## S-009 · how paying works (beat 4) - state A, state B, and the moments around a request or a checkout
+### S-009 · how paying works (beat 4) - state A, state B, and the moments around a request or a checkout
 
 ```json
 "paying": {
-  "title": "How paying works",
+  "title": "How does paying work?",
   "closed": "Checkout is not open yet. Until it is, the Pro and Team buttons send a plan request instead: it records the plan you asked for on your account, and nothing is charged.",
-  "closedNext": "A request grants nothing. When checkout opens, the windowsweep team emails you a link to pay, and the request closes.",
-  "open": "Checkout opens in your browser on Polar’s page, for the account you are signed in with. Polar is the merchant of record: it charges the card, adds any sales tax or VAT for your country, and issues the receipt. Once Polar confirms the payment, the plan reaches every machine signed in to that account.",
+  "closedNext": "Submitting a request grants nothing. When checkout opens, the windowsweep team emails you a link to pay; paying through that link is a separate step.",
+  "open": "Checkout opens on Polar’s page in your browser for the account you are signed in with. Polar is the merchant of record: it charges the card, adds any sales tax or VAT for your country, and issues the receipt. Once Polar confirms the payment, the plan reaches every machine signed in to that account.",
   "requesting": "Sending the request…",
-  "requested": "Request recorded for {{plan}}. Nothing is charged and nothing is granted: when checkout opens, the windowsweep team emails you a link to pay, and the request closes.",
-  "requestPending": "You asked for {{plan}} on {{date}}. When checkout opens, the windowsweep team emails you a link to pay, and this request closes. Until then, nothing is charged or granted.",
+  "requested": "Request recorded for {{plan}}. Sending it charged nothing and granted nothing. When checkout opens, the windowsweep team emails you a link to pay.",
+  "requestPending": "You asked for {{plan}} on {{date}}. Sending that request charged nothing and granted nothing. When checkout opens, the windowsweep team emails you a link to pay.",
   "requestFailed": "The request did not reach the server, so nothing was recorded. Try again in a moment.",
   "opening": "Opening the checkout…",
   "openFailed": "The checkout did not open, and nothing was charged. Try again in a moment.",
@@ -248,12 +259,12 @@ The column headers are the plan names and every row label is a noun, so no heade
 | Element | Note |
 |---|---|
 | `closed` | State A. *Nothing is charged* is band R, a refusal the reader can rely on before pressing anything |
-| `closedNext`, `requested`, `requestPending` | D68 in each: a request grants nothing, the team emails a link to pay when checkout opens, and the request closes |
+| `closedNext`, `requested`, `requestPending` | D68 in each: submitting a request charges and grants nothing; the later emailed link can lead to payment. The server marks a successfully emailed request `notified`; an admin closes it separately through `requests.close` |
 | `open` | State B, the brief's payment-model sentences with *organisation* and the flow steps compressed. No renewal or refund sentence: on a pay surface the consent line is the only payment-terms text |
 | `afterCheckout` | Polar's own confirmation page is the success page (`polar-payments` §3); `return_url` may bring the reader back here, and a redirect never grants the plan, so this line promises nothing beyond the webhook |
 | `active` | No triumph. A fact and its consequence |
 
-## S-010 · questions about plans (3 to 5, answer first)
+### S-010 · questions about plans (3 to 5, answer first)
 
 ```json
 "faq": {
@@ -263,11 +274,11 @@ The column headers are the plan names and every row label is a noun, so no heade
   "cli": { "q": "What does the command line cost?",
     "a": "Nothing. <mono>npx windowsweep</mono> is open source under the MIT licence, has no run limit, and is never counted: it makes no network calls at all. From a copy installed with npm, <mono>windowsweep --install-task</mono> sets up its weekly Scheduled Task with no account." },
   "limit": { "q": "What happens at the limit?",
-    "a": "No real run starts until the count resets next month. Dry-runs, scans and reports carry on. Signing in adds {{freeAccountRuns}} more a month, Pro has no limit, and the command line is never counted." },
+    "a": "If the device count is used, signing in can add up to {{freeAccountRuns}} more real runs this month. If both Free pools are used, wait for next month's reset or an active Pro or Team plan. Dry-runs, scans and reports carry on. The command line is never counted." },
   "cancel": { "q": "Can I cancel?",
-    "a": "Any time. Your plan runs to the end of the period you paid for, and then the account moves to Free." },
+    "a": "Any time. Your paid period runs to its end. After that, the account uses Free unless an admin grant, referral reward or Team entitlement still applies." },
   "freeKeeps": { "q": "What does Free keep?",
-    "a": "All 26 sections and every safety check, with dry-runs, scans and reports unlimited. Any run’s report exports to Markdown or HTML, and signed in, run summaries sync to your account and History lists them. Every plan refuses the same protected paths." }
+    "a": "All 26 sections and every safety check, with dry-runs, scans and reports unlimited. Any run’s report exports to Markdown or HTML. When you sign in, run summaries sync to your account and History lists them. Every plan refuses the same protected paths." }
 }
 ```
 
@@ -275,15 +286,15 @@ The column headers are the plan names and every row label is a noun, so no heade
 |---|---|
 | `realRun` | The brief's answer, word for word except *desktop-app run* opened into a phrase |
 | `cli` | *Installed with npm* because `--install-task` refuses to install from an npx cache, which Windows evicts (`settings.scheduleConseq`, question map row 8) |
-| `limit` | *Resets next month* rather than a weekday or an hour: the month boundary is the server's, and the desktop app prints the exact date |
-| `cancel` | `payment-copy.md`'s neutral sentence. Cancellation is the one payment fact a plans surface may carry |
+| `limit` | A spent device pool can be followed by the signed-in account pool; a real run waits only after both are spent. The month boundary is the server's, and the desktop app prints the exact date |
+| `cancel` | `payment-copy.md`'s neutral sentence with the actual entitlement fallback. Cancellation is the one payment fact a plans surface may carry |
 | `freeKeeps` | Band R in the last sentence. No FAQPage schema: row 6 scopes FAQPage to the docs `faq` page alone |
 
 ---
 
-# The page's other homes
+## The page's other homes
 
-## S-011 · `seo.pricing` - the `<title>` and `<meta name="description">`
+### S-011 · `seo.pricing` - the `<title>` and `<meta name="description">`
 
 ```json
 "pricing": {
@@ -295,14 +306,14 @@ The column headers are the plan names and every row label is a noun, so no heade
 The build fills the slots from the plan rows, the same way it fills `SoftwareApplication.softwareVersion` from the
 version mirror. Measured lengths are in the self-check.
 
-## S-012 · `/sitemap` - its name and blurb
+### S-012 · `/sitemap` - its name and blurb
 
 ```json
 "name": { "pricing": "Pricing" },
 "blurb": { "pricing": "Free, Pro and Team side by side, what counts as a real run, and how paying works. The command line is never counted." }
 ```
 
-## S-013 · the footer label
+### S-013 · the footer label
 
 ```json
 "pricing": "Pricing"
@@ -310,7 +321,7 @@ version mirror. Measured lengths are in the self-check.
 
 A `common.footer.links` member, in the *Product* column beside *Download*.
 
-## S-014 · `public/llms.txt` - three edits
+### S-014 · `public/llms.txt` - three edits
 
 Today the intro sentence reads *"This site is windowsweep.aoneahsan.com: where the tool is downloaded, and where an
 account holds what the desktop app has synced."*, and the file has no Pricing line and no plan fact.
@@ -325,23 +336,25 @@ and where an account holds what the desktop app has synced.
   {{freeDeviceRuns}} real runs a month on each machine and {{freeAccountRuns}} more signed in, dry-runs, scans and
   reports unlimited. Pro: {{proMonth}} a month or {{proYear}} a year, no limit on real runs, schedules, reports across
   up to {{proMachines}} machines and a history export. Team: {{teamSeatMonth}} a seat a month or {{teamSeatYear}} a
-  seat a year, from {{teamMinSeats}} seats, Pro for every seat plus a shared fleet report. Prices are in US dollars
-  and can change; the pricing page is current. The command line costs nothing, is MIT-licensed, has no run limit
-  and is never counted.
+  seat a year, from {{teamMinSeats}} seats, Pro for every seat plus a shared fleet report. Plan details last updated
+  {{plansUpdatedOn}} in this build. Prices are in US dollars and may change. The command line costs nothing,
+  is MIT-licensed, has no run limit and is never counted.
 ```
 
 The Pricing line joins *Pages on this site* after Download. The plan fact joins *Facts an answer should get right*.
-While checkout is closed, the build appends *"Checkout is not open yet; the pricing page takes plan requests, which
-charge and grant nothing, and each open request is emailed a link to pay when checkout opens."* to that bullet. Before 1.4.0 ships it appends *"Desktop app 1.3.2 has no plans and no run limit."*
+While checkout is closed, the build appends *"Checkout is not open yet; the pricing page takes plan requests.
+Submitting a request charges nothing and grants nothing. When checkout opens, the windowsweep team emails
+requesters a link to pay; paying through that link is a separate step."* to that bullet. Before 1.4.0 ships it
+appends *"Desktop app 1.3.2 has no plans and no run limit."*
 
-## S-015 · `public/pricing.md` - the plan facts as plain text
+### S-015 · `public/pricing.md` - the plan facts as plain text
 
 ```markdown
 # windowsweep pricing
 
 > Plans for the windowsweep desktop app. The command line costs nothing, is MIT-licensed and is never counted.
-> Prices are in US dollars, as of {{plansUpdatedOn}}. They can change; https://windowsweep.aoneahsan.com/pricing
-> is current.
+> Prices are in US dollars and may change. Plan details last updated {{plansUpdatedOn}} in this build.
+> This file is a build snapshot; the [pricing page](https://windowsweep.aoneahsan.com/pricing) carries its own date.
 
 ## Plans
 
@@ -362,27 +375,30 @@ command line is counted.
 
 ## Links
 
-- Pricing page: https://windowsweep.aoneahsan.com/pricing
-- Terms of Service: https://windowsweep.aoneahsan.com/terms
-- Privacy Policy: https://windowsweep.aoneahsan.com/privacy
+- [Pricing page](https://windowsweep.aoneahsan.com/pricing)
+- [Terms of Service](https://windowsweep.aoneahsan.com/terms)
+- [Privacy Policy](https://windowsweep.aoneahsan.com/privacy)
 ```
 
-`{{payingState}}` is one of three sentences, chosen at build:
+`{{payingState}}` is one of three states, chosen at build. State A names only the website until desktop 1.4.0 ships:
 
 ```text
-A: Checkout is not open yet. The pricing page and the desktop app's Plans screen take a plan request instead, which charges nothing and grants nothing. When checkout opens, the windowsweep team emails each open request a link to pay, and the request closes.
+A before 1.4.0: Checkout is not open yet. The pricing page takes a plan request instead. Submitting it charges nothing and grants nothing. When checkout opens, the windowsweep team emails each pending requester a link to pay; paying through that link is a separate step.
+A from 1.4.0: Checkout is not open yet. The pricing page and the desktop app's Plans screen take a plan request instead. Submitting it charges nothing and grants nothing. When checkout opens, the windowsweep team emails each pending requester a link to pay; paying through that link is a separate step.
 B: Pro and Team are paid by card in a Polar checkout in the browser, signed in with Google. Polar is the merchant of record: it charges the card, applies any sales tax or VAT and issues the receipt. Plans are billed monthly or yearly in advance and renew automatically; cancel any time, and the plan runs to the end of the period paid for.
 Before 1.4.0, appended to either: These plans start with desktop app 1.4.0, which is in progress. Desktop app {{desktopVersion}} has no plans and no run limit.
 ```
 
 No refund sentence and no consent line: this file has no button, and `payment-copy.md` keeps refund words off every
-pricing surface, machine-readable ones included. *As of* is the newest `updated_at` among the plan rows. A build date
-would claim a freshness the prices never had.
+pricing surface, machine-readable ones included. The newest `updated_at` among the plan rows dates the plan details
+in this build, including changes unrelated to prices. It does not claim that the build snapshot is live.
 
-## S-016 · `offers` - the `SoftwareApplication` offer names and descriptions
+### S-016 · `offers` - the `SoftwareApplication` offer names and descriptions
 
 No `offers` key exists today. 🔴 `vite/prerender.ts` refuses one (the gate of 2026-09-12); D56 superseded the rule it
-enforces, so that gate changes in the same commit.
+enforces, so that gate changes in the same commit. The existing `SoftwareApplication` with `@id` ending `/#software`
+describes the free command-line engine. These offers belong to a separate desktop `SoftwareApplication` with a
+distinct `@id` ending `/pricing#desktop-app`.
 
 ```json
 "offers": {
@@ -394,17 +410,17 @@ enforces, so that gate changes in the same commit.
 }
 ```
 
-`price` and `priceCurrency` (`USD`) come from the same rows. Each offer says only what the page shows, so the schema
-never says more than the page (`aeo-seo.md`).
+`price` and `priceCurrency` (`USD`) come from the same rows. The desktop entity and its offers say only what the page
+shows; the existing command-line entity keeps its own description and version (`aeo-seo.md`).
 
 ---
 
-# Approved strings this surface makes false - proposals for the keeper
+## Approved strings this surface makes false - proposals for the keeper
 
 Not this row's words. Each was approved on another row and turns false the day `/pricing` asks for a sign-in. They are
 written here so the keeper can route them; they ship through their own rows' gates.
 
-## S-017 · rows 18 and 19
+### S-017 · rows 18 and 19
 
 ```json
 "signin.lede": "Signing in is needed for three things: sending a message that can be replied to, reading back what the desktop app has synced, and requesting or buying a plan. Nothing else on the site needs it.",
@@ -420,35 +436,35 @@ written here so the keeper can route them; they ship through their own rows' gat
 
 ---
 
-# NEEDS DECISION
+## NEEDS DECISION
 
-None is open on this row. **ND-1 was answered by D68** (2026-10-31): a plan request grants nothing; when checkout opens,
-the team emails each open request a link to pay, and the request closes. S-009's `closedNext`, `requested` and
-`requestPending` say exactly that, as do the matching strings in the other three drafts.
+None is open on this row. **ND-1 was answered by D68** (2026-10-31): submitting a plan request charges and grants
+nothing. When checkout opens, the team emails pending requesters a link to pay, marks a request `notified` after a
+successful send, and closes it separately through an admin action. S-009 and S-015 keep those steps separate.
 
 ---
 
-# Self-check
+## Self-check
 
-- **Palette.** P owns the H1, the lede, both payment states, the arithmetic and four answers. R lands in Free's `keeps`,
+- **Palette.** P owns the H1, the lede, the payment states, the arithmetic and four answers. R lands in Free's `keeps`,
   `paying.closed` (*nothing is charged*), Team's `summaries` and the last sentence of `freeKeeps`. W is absent, as row 21
   requires. Nothing here hurries, shames or triumphs.
 - **Rhythm.** Shortest sentence: *"Nothing."*, the whole first answer to *What does the command line cost?* Longest:
   `paying.closed`'s second sentence, 27 words. The lede runs 9, 21, 3, 17 and 9 words, measured with the hook's tokenizer,
   a slot counted as one word.
-- **Length.** One page, as the cap says. S-001 to S-010 hold 897 words across both states, every price variant and every
-  moment around a request or a checkout; a reader sees one state at a time. The lede is 59 words, and the five answers
-  run 25, 42, 34, 21 and 41.
+- **Length.** One page, as the cap says. S-001 to S-010 hold 973 source-string words across both states, every price
+  variant and every moment around a request or a checkout; a reader sees one state at a time. The lede is 59 words,
+  and the five answers run 25, 46, 46, 26 and 43.
 - **Unsure.** Nothing open. ND-1 is answered by D68, and every fact traces to a record in the table below.
 
-## Banned words and tells
+### Banned words and tells
 
 Fenced copy, checked by hand against `banned-phrases.txt` and the fingerprint's never-list: no hit. The shipping strings
 carry no exclamation mark and no em dash, and no *we*, *us* or *our* appears anywhere except inside the consent line,
 whose words fleet law fixes. No refund sentence. *Free* appears only as the plan's name. *Costs nothing* is said only of
 the command line: the scope the 2026-10-31 map amendment allows for a price claim.
 
-## Every fact, with its source
+### Every fact, with its source
 
 | Fact | Source |
 |---|---|
@@ -461,17 +477,17 @@ the command line: the scope the 2026-10-31 map amendment allows for a price clai
 | What counts as a real run | the brief's *What counts as a real run?* |
 | The command line: MIT, no limit, never counted, no network calls | D56; the brief; `privacy.json` `sends.cli` |
 | Checkout dormant, a plan request, nothing charged | D61; D63 |
-| A request grants nothing; the pay link is emailed when checkout opens; the request closes | D68 |
+| Submitting a request charges and grants nothing; a successfully emailed pay link marks it `notified`, and an admin closes it separately | D68; `docs/CONTRACTS.md` §7 |
 | The fleet report: per member and machine, date, mode, sections, bytes; never a path, file name, machine name or user name | D69 |
 | Polar is the merchant of record: card, sales tax or VAT, receipt | the brief's payment model |
 | The plan reaches every signed-in machine once Polar confirms | the brief's payment flow, steps 6 to 9 |
 | A redirect never grants a plan | `aoneahsan-cccs-polar-payments` §3 |
-| Cancel any time; the plan runs to the end of the period; then Free | `payment-copy.md`; the brief |
+| Cancel any time; the paid period runs to its end, then the account's remaining entitlements determine the plan | `payment-copy.md`; `docs/CONTRACTS.md` §5 |
 | Plans start with 1.4.0; 1.3.2 has no plans and no run limit | the brief; D63 |
 | Every plan refuses the same protected paths | the brief: *"The chokepoint refuses the same paths on every plan."* |
 | The consent line | `payment-copy.md`, verbatim |
 
-## Measured lengths (seeded values)
+### Measured lengths (seeded values)
 
 | String | Characters | Limit |
 |---|---|---|

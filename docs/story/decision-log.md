@@ -1164,6 +1164,12 @@ applied only after a real-browser proof shows an unfinished draft persisted befo
 the block, Update and reload. The unconditional row 24 strings may proceed without that line. The legal
 Terms and Privacy additions in row 23 remain at the owner's separate GATE 4.
 
+**Post-record factual correction, 2026-10-31:** `users.planEndsHint` now says an end date is required for
+every plan except Free. The backend refuses a non-Free admin grant without `ends_at`; the previous hint
+said an empty date could mean no end. Targeted SQL fact recheck PASS and finalizer READY confirmed the new
+line. This corrects a fact within the approved register, with no new owner decision or review round.
+Implementation and live proof remain pending; `release.draftKept` stays conditional as above.
+
 ## 2026-10-31 - `tours-desktop` (row 25), GATE 4 approved and recorded
 
 **Gate:** D59 pre-authorised GATE 4 for the non-legal page tours and desktop walkthrough, conditional on the full
@@ -1197,3 +1203,54 @@ No motif, glossary, palette or fingerprint change is needed, and no owner decisi
 changelog entry and `llms.txt` additions require implementation, a real release date and app/docs live proof.
 The draft and content-map row remain recorded, while the docs must not be marked applied or published until those
 checks pass.
+
+## 2026-10-31 - `emails-1.4.0` (row 26), GATE 4 copy approved and recorded
+
+**Gate:** D59 pre-authorised GATE 4 for this non-legal copy after a bounded panel, finalizer fact-consistency
+PASS and zero unanswered NEEDS DECISION. The panel and targeted fact/backend recheck passed for the saved source;
+the finalizer returned READY. This approves the words in `drafts/emails-1.4.0.md` for implementation. No email
+has been sent or published by this record.
+
+**Panel and reconciliation:** developmental, line and copy reviews closed the structure and wording. The
+benefit-first release subject replaced the generic opening; the workshop-dry aside was removed from the
+welcome email. Fact review corrected the paid-order subtotal label, required grant end date, permanent-delete
+qualifier, welcome link and durable referral-mail claim. SEO/AEO and humor/emotion passed after those changes.
+The messages retain the Bible's precise facts and specific refusals, with no humour near payment, deletion,
+account loss or other consequences. No motif, glossary, palette or fingerprint change is needed.
+
+**Publication state:** the 21 SQL migrations require rehearsal and application. FilesHub templates require
+HTML/text parity, escaping and live rendering; the invite, pricing and newsletter flows require live proof;
+the release email requires a live 1.4.0 build and real screen captures. Marketing `[TEST]` approval and any
+send require the owner's explicit approval. These gates remain open; the copy record does not imply an
+operational email or an audience send.
+
+## 2026-10-31 - `plans-app` (row 22), GATE 4 copy approved and recorded
+
+**Gate:** D59 pre-authorised GATE 4 for the non-legal Plans, Team, allowance and website account copy. The bounded
+panel closed, the targeted fact recheck passed for the corrected draft, the finalizer returned READY and no
+NEEDS DECISION remains. This approves the words in `drafts/plans-app.md` for implementation; it does not mark a
+screen, account flow or payment path live.
+
+**Panel and reconciliation:** the correction says the referral cap runs over a rolling 365 days. The fleet report
+excludes a Windows user name without implying that member account names or emails disappear. Polar portal copy
+does not promise an automatic email. Banked referral time waits behind paid, Team and admin coverage of equal or
+higher rank. The finalizer's 14-point check passed; shipping strings did not change in that last pass. These facts
+preserve the Bible's precision and refusal bands. No motif, glossary, palette or fingerprint change is needed.
+
+**Publication state:** the allowance, referral and Team SQL must pass rehearsal and application. The desktop and
+website must render the approved words against real account states, and the request and invite flows need live
+checks. Checkout remains a plan request until the owner creates the WindowSweep Polar organization and the
+payment account is configured. Those checks remain open; the copy record does not claim a working plan screen.
+
+## 2026-10-31 - `legal-payments` (row 23), GATE 4 answer and GA4 hold
+
+**Owner answer:** the owner explicitly approved the current Terms and Privacy draft, including T-04's required
+update rule, P-08's anonymous referral-void counters, P-12's server-side GA4 relay and daily counts, and the
+D73 clause allowing possible account deletion and referral voiding for deliberate run-limit evasion or
+referral-account farming. This is the legal GATE 4 answer for that exact draft, not a publication record.
+
+**Publication hold:** the owner then questioned why the desktop needs a GA4 Measurement Protocol secret. The
+main session is re-evaluating D74's transport. T-01 to T-04 and P-01 to P-10 do not depend on that transport;
+P-11's destination count and P-12's relay and retention description do. P-11 and P-12 are held, and the legal
+surface remains open until the transport is settled. If their text changes, show the revised draft to the
+owner for a fresh legal GATE 4 before publication. No legal clause is marked live by this record.

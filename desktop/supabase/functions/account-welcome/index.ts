@@ -6,6 +6,7 @@ import {
   serve,
 } from "../_shared/http.ts";
 import { sendTemplate, website } from "../_shared/email.ts";
+import { referralRewardLine } from "../_shared/referral-email.ts";
 import { caller, rpc, serviceClient } from "../_shared/supabase.ts";
 
 serve(async (request) => {
@@ -96,6 +97,11 @@ serve(async (request) => {
         reward_plan: String(notification.reward_plan),
         reward_months: String(notification.reward_months),
         rewarded: notification.rewarded ? "yes" : "no",
+        reward_line: referralRewardLine(
+          notification.rewarded,
+          notification.reward_months,
+          notification.reward_plan,
+        ),
         account_url: website("/account"),
       },
     );

@@ -8,13 +8,13 @@ Open defects found while using or documenting windowsweep, one `### ISSUE-NNN` e
 ### ISSUE-001 — README and website claims that the code does not make true
 - **Found:** 2026-11-02, while writing the LinkedIn series from the code (version 1.3.2).
 - **What:**
-  1. "Self-test: 156 checks" in the README; the 1.3.2 release record (`docs/runs-and-releases.md:272-273`) says 160.
+  1. (already fixed: `README.md:128` now says 160 checks.)
   2. The long-path test is described as 445 characters (README) or "past 400" (site); the code checks only for more than 260.
   3. The site says the self-test "hashes" a test folder; the code compares a text snapshot.
   4. The records say 3 or 4 report-only sections; the code has 5 that delete nothing.
-  5. A comment in `lib/safety.ps1` says network paths and `..` segments are refused; no refusal for either was found in the code.
+  5. (withdrawn 2026-11-02: `lib/safety.ps1:118-122` does refuse `..` segments and UNC paths.) The header comment at
+     `lib/safety.ps1:3` says every deletion goes through two functions; stale prunes, tree children and the external
+     commands (docker, cleanmgr, DISM, wevtutil) delete on their own paths. Make the comment match the code.
 - **Fix:** make each statement match the code (or implement 5 with a fixture in the self-test), then re-check the site copy.
-- **Priority:** medium (item 5 is a safety claim: high if the refusal really is missing).
-- **Item 5 verified 2026-11-02 (P9 session):** the refusals exist - `lib/safety.ps1:118` (`..` segments),
-  `:119` and `:122` (UNC paths), `:123` (drive roots), all in `Get-ProtectionReason`. Items 1-4 are fixed with
-  P9's docs pass (tracker `P9.docs`), where the self-test count changes anyway.
+- **Priority:** low (copy and comments only; the refusals exist).
+- **Picked up by:** P9's docs pass (tracker `P9.docs`, 2026-11-02), where the self-test count changes anyway.

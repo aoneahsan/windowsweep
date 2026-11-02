@@ -275,26 +275,33 @@ decision; this is a decision, and an approved artefact outranks a skill default.
 
 ## 8. Consent, privacy, and the account
 
-The CLI makes **zero network calls** and its own test suite asserts it. The desktop app can send analytics and
-crash reports and sends nothing until accepted - all four providers listed individually and individually
-revocable. Sign-in is **optional and for sync only**; 🔴 **runs are never gated, there is no paid tier and no
-plan set** (an explicit owner exemption from the fleet plan-set rule, 2026-09-03). Synced run history carries
-no paths, host name or user name, so the History screen labels cloud rows "summary only".
+The CLI makes **zero network calls** and its own test suite asserts it. The desktop app has a Free, Pro and
+Team plan design for 1.4.0. The 15 device runs and 15 signed-in account runs are counted separately; dry-runs,
+scans and reports are never counted. The 1.4.0 design adds a Plans screen, Team status and release notices.
+See `CLICK-DUMMY-INVENTORY-1.4.0.md` and `AMENDMENTS-3.md` for the new scope and its approval state.
 
 ## 9. What the dummy does not decide
 
 The **DOM of interactive widgets** belongs to React Aria Components - this gives the visual specification and
 working behaviour, not the anatomy. Also not the dummy's: routes, the data model, or which features exist.
 
-## 10. Deviations, each with its authority
+## 10. Static runtime and storage
 
-| Deviation | Why |
-|---|---|
-| **No pricing page**, though `page-inventory.md` calls it mandatory | The owner's explicit 2026-09-03 decision for this app: runs always free, no paid tier, no plan set. His current instruction outranks a skill default. Recorded, not silently dropped |
-| **No admin batch** | A local utility with optional sync has no platform surface; the derived admin surface is the Firebase console (recorded 2026-09-03) |
-| **Plain CSS, no Tailwind CDN** | `tokens.css` is authored in exactly the shape the app's `@theme inline` will wrap, so it still promotes in one direction - and the dummy gains zero network dependencies, which a design specification should have |
-| **`wsStore` wrapper, not `strata-storage`** | Vendoring strata is a download, gated on `PENDING-TASKS.md` TASK-001. Same shape and the same `namespace` semantics, verified by reading a physical key |
-| **Three screens at A1, not one** | One direction, **not a menu** - which is what "A1 delivers ONE home page" forbids. The two extra screens are the dense regime where direction 01 actually failed. Owner-approved scope |
+The flat HTML pages use plain CSS from `tokens.css` and one shared classic script, `app.js`.
+All persistence goes through `strata-storage` 3.1.3. Its installed package is bundled into
+`windowsweep-click-dummy/vendor/strata-storage.iife.js` so each page opens over `file://` without a server.
+To rebuild the bundle from `windowsweep/desktop/` after `yarn install`:
+
+```powershell
+.\node_modules\.bin\esbuild.cmd design/strata-entry.js --bundle --format=iife --platform=browser --target=es2022 --minify --outfile=design/windowsweep-click-dummy/vendor/strata-storage.iife.js
+```
+
+Review the physical namespace from a browser after loading a flat page: set `physicalProbe` through the
+`WindowSweepStrata.defineStorage({ namespace: 'wsdummy', adapters: { localStorage: {} } })` sync API and
+read the browser's raw storage key. The verified key is `strata:wsdummy:physicalProbe`, and its envelope has
+`value: "x"`. Remove the probe through `removeSync`. The in-dummy gate checks package-scoped keys; the
+physical-key check must inspect browser storage, never the package configuration. The wrapper also imports
+old `wsdummy:<key>` dummy values on first read through the package's `importRawSync` API.
 
 ## 11. Gates
 

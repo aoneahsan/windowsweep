@@ -17,3 +17,4 @@ The sections, whole and in their original order:
 | 10-13 | GATE 4 rounds one to four against the installed app, 2026-09-07 | [`CLICK-DUMMY-INVENTORY-gate4-rounds-1-4.md`](CLICK-DUMMY-INVENTORY-gate4-rounds-1-4.md) |
 | 14 | GATE 4 round five: ten of eleven close | [`CLICK-DUMMY-INVENTORY-gate4-round-5.md`](CLICK-DUMMY-INVENTORY-gate4-round-5.md) |
 | 15 | GATE 4 round six: the gate closes on all eleven | [`CLICK-DUMMY-INVENTORY-gate4-round-6.md`](CLICK-DUMMY-INVENTORY-gate4-round-6.md) |
+| 16 | 1.4.0 addendum: Plans, Team and shared notices; new approval pending | [`CLICK-DUMMY-INVENTORY-1.4.0.md`](CLICK-DUMMY-INVENTORY-1.4.0.md) |

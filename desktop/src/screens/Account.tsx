@@ -133,13 +133,22 @@ export function Account() {
      finishing run restored the session in between. Nothing local is deleted -
      the settings and the History stay on this machine. */
   function onSignOut() {
+    const who = user;
     setSigningOut(true);
+    setError(null);
     stopSync();
-    void signOut().finally(() => {
-      stopSync();
-      setUser(null);
-      setSigningOut(false);
-    });
+    void signOut()
+      .then(() => {
+        stopSync();
+        setUser(null);
+      })
+      .catch((e: unknown) => {
+        setError(e instanceof Error ? e.message : String(e));
+        if (who) void startSync(who);
+      })
+      .finally(() => {
+        setSigningOut(false);
+      });
   }
 
   return (
@@ -199,6 +208,16 @@ export function Account() {
                     <p className="t-sm ink-3" style={{ marginTop: 'var(--sp-3)' }}>
                       {t('account.signOutNote')}
                     </p>
+                    {error ? (
+                      <div
+                        className="note note-warn"
+                        style={{ marginTop: 'var(--sp-3)' }}
+                        role="alert"
+                      >
+                        <span aria-hidden="true">⚠</span>
+                        <span className="t-sm">{error}</span>
+                      </div>
+                    ) : null}
                   </>
                 ) : (
                   <>

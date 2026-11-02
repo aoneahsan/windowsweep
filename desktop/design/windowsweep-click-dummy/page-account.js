@@ -1,4 +1,4 @@
-/* Account - optional Google sign-in, for sync only. Runs are never gated.
+/* Account - Google sign-in for a shared run allowance and settings sync.
 
    The states TASK-013's sync adds (2026-09-25, D39-D42) are reachable by URL, the way
    index.html?empty=1 is, because none of them is something a reviewer can make a real
@@ -159,10 +159,10 @@
 
     if (!db.facts.signedIn) {
       host.appendChild(el('p', 'caps ink-3', 'Not signed in'));
-      host.appendChild(el('h2', 't-lg wide', 'Everything works as it is.'));
+      host.appendChild(el('h2', 't-lg wide', 'Sign in to see what remains.'));
       host.appendChild(el('p', 't-base',
-        'You are using every feature windowsweep has. Signing in adds one thing: your settings and a ' +
-        'summary of each run follow you to another machine.'));
+        'A Free account has 15 extra runs a month across machines. Your settings and a ' +
+        'summary of each run can also follow you to another machine.'));
       var b = el('button', 'btn btn-primary btn-lg');
       b.type = 'button';
       b.style.marginTop = 'var(--sp-4)';
@@ -483,5 +483,11 @@
         document.addEventListener(type, function () { setTimeout(recheck, 0); });
       });
     }
+  };
+  window.wsAccountReviewSignIn = function () {
+    signedOutEverywhere();
+    card(); sync(); runs(); deleteBand();
+    var button = document.querySelector('[data-ws-account-card] .btn-primary');
+    if (button) button.click();
   };
 })();

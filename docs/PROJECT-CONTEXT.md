@@ -1,6 +1,7 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-09-28 (latest: row 30 closed on the owner's word - the consent screen published; web row 4's sign-in proved from the server. Earlier the same day: D54 - a development build reports no analytics (DONE-023); row 31 closed by the owner's own sign-in and dry-run on 1.3.2; the site's tables and the eighth migration moved verbatim to `PROJECT-CONTEXT-supabase.md` at the 500-line ceiling. Earlier the same day: D53 - desktop-v1.3.2 and CLI 1.3.2: the desktop sign-in fixed (DONE-021), TASK-020 (DONE-020), TASK-022 (DONE-022), TASK-023 filed; the D28 line corrected. Earlier 2026-09-26: D52 - TASK-020 widens the desktop CSP for Clarity. Earlier the same day: `desktop-v1.3.1` released and proved under D50 - the current-status line. Earlier the same day: D50 - `desktop-v1.3.1` this session - and D51 - the stray `runs$RUNID` folder deleted; TASK-019's generators became Vite plugins. Earlier the same day: D49 - the workspace root backed up on the private site repo's `project-root`
+Last Updated: 2026-10-30 (latest: D55-D61 - the first `/complete-project` run: category, plan set, agents,
+the Supabase production set, GATE 4, release 1.4.0, Polar dormant). Earlier 2026-09-28 (row 30 closed on the owner's word - the consent screen published; web row 4's sign-in proved from the server. Earlier the same day: D54 - a development build reports no analytics (DONE-023); row 31 closed by the owner's own sign-in and dry-run on 1.3.2; the site's tables and the eighth migration moved verbatim to `PROJECT-CONTEXT-supabase.md` at the 500-line ceiling. Earlier the same day: D53 - desktop-v1.3.2 and CLI 1.3.2: the desktop sign-in fixed (DONE-021), TASK-020 (DONE-020), TASK-022 (DONE-022), TASK-023 filed; the D28 line corrected. Earlier 2026-09-26: D52 - TASK-020 widens the desktop CSP for Clarity. Earlier the same day: `desktop-v1.3.1` released and proved under D50 - the current-status line. Earlier the same day: D50 - `desktop-v1.3.1` this session - and D51 - the stray `runs$RUNID` folder deleted; TASK-019's generators became Vite plugins. Earlier the same day: D49 - the workspace root backed up on the private site repo's `project-root`
 branch. Earlier 2026-09-25: `desktop-v1.3.0` published as Latest and proved by the in-app updater 1.2.0 -> 1.3.0,
 CLI 1.3.1 on npm with the team's maker lines, rounds 14 and 15 with D47, session 14's decision table moved to
 `docs/project-history.md`. Earlier the same day: RW-116 and TASK-013 verified as a person and torn down, O6' set, the desktop cascaded to 1.3.0, the open-unknowns section brought to date - TASK-017 and TASK-018 are the two open owner decisions. Earlier: session 17: D25-D43 recorded - the Terms page, sign-in live on the site, the runs index, the desktop sync behaviour, up to four agents; RW-132: the dated session narratives moved verbatim to `docs/project-history.md` and the verified runs and release record to `docs/runs-and-releases.md`, nothing reworded; the stamp this replaces follows)
@@ -205,11 +206,82 @@ in production and approved", then approved executing plan v5 with custom agents.
   - GA4, Amplitude, Clarity and Sentry are watched on a production-protocol build or on the installed first boot.
   - The production bundle is byte-identical, so no release carries the change (DONE-023).
 
-### How the frontend UI mandates map to this product - the declared exemptions
+### Session 21 decisions (2026-10-30) - the first `/complete-project` run
+
+Asked in one batch at the start of the run; each answer is his verbatim option. The run's state file is
+`projects-finalization-record/production/windowsweep-complete-project.json`.
+
+- **D55 - category "Desktop app + CLI (Recommended)"**: the column he set for macleanup the same day. No store, so
+  no store-listing set; AI and FilesHub storage NA; Android and a browser extension do not apply; iOS 0.
+- **D56 - plan set "Mirror macleanup exactly (Recommended)"**: Free (every section, unlimited previews, 15 real
+  runs per PC a month + 15 more signed in) · Pro $4 a month or $36 a year (unlimited real runs, synced history on
+  up to 5 PCs, schedules, exports) · Team $3 a seat a month or $30 a year, minimum 3 seats (+ shared fleet
+  reports) · referral 10 points per confirmed friend, one Pro month per 3, at most 4 a year. Every figure is an admin
+  field. The npm CLI stays free, MIT and unlimited. **Supersedes the 2026-09-05 no-pricing
+  decision and its old §13 admin declaration.** The current scope is recorded below.
+- **D57 - agents "Up to 4 (Recommended)"**: at most four custom agents at once, resource-checked before each dispatch.
+- **D58 - Supabase "Approve the set (Recommended)"**: on `nlmetjyytgwaxcliusuo`, each rehearsed in
+  `BEGIN ... ROLLBACK` first - additive Drizzle migrations (release records + public latest view + admin publish RPC;
+  plans, plan fields, `app_config`, billing and Polar events, referral, teams and invites, admin RPCs and audit, the
+  legal-notice seen flag, devices and run claims); the Google-only `before_user_created` hook (Google + the `t1`
+  test aliases); anonymous sign-ins on; the Edge Functions `polar-checkout`, `polar-webhook`, `admin`, `team`,
+  `account-welcome` and `allowance`; secrets `FILESHUB_API_KEY` and `POLAR_*`.
+- **D59 - GATE 4 "Extend the pre-authorisation (Recommended)"** to this run's new non-legal surfaces (pricing and
+  plan screens, the legal bar, tours and the walkthrough, the update notice and block screens, admin pages, the
+  welcome email) on the 2026-09-07 condition. Terms and Privacy changes and every marketing `[TEST]` go to him first.
+- **D60 - release "Yes, 1.4.0 this run (Recommended)"**: desktop and CLI 1.4.0 through the release kit; the
+  second-machine items (RW-064/065/066) move to 1.5.0.
+- **D61 - Polar "Build it dormant now (Recommended)"**: checkout, webhook and products built and tested; a plan
+  request replaces the pay button until his windowsweep Polar organization exists as a FilesHub payment account.
+- Mid-run, the same day: he asked for the "What is windowsweep" and LinkedIn company page documents so he can create
+  the Polar organization; they live in the notebook's `linkedin-social-content/windowsweep/`.
+- **D62 - "Free keeps them (Recommended)"** (2026-10-31): Free keeps 1.3.2's signed-in run-summary sync,
+  cross-machine History and Markdown/HTML per-run export. Pro adds reports across 5 machines (5 per Team seat),
+  history export, schedules and unlimited real runs. D56 changes the desktop weekly schedule and monthly real-run
+  limits; the CLI keeps `--install-task` and `--export`.
+- **D63 - "Yes, ship them early (Recommended)"** (2026-10-31): ahead of 1.4.0, deploy `/pricing` for Polar review
+  (plans arriving with 1.4.0; checkout dormant, plan requests instead of pay buttons) and the Terms/Privacy payment
+  clauses after his GATE 4. This requires an extra site deploy before the release deploy.
+- **D64 - desktop analytics "Bundled analytics only (Recommended)"** (2026-10-31, from the security lane's F-SEC-003):
+  Amplitude and Sentry stay bundled; Clarity leaves the desktop window and stays on the website. Its GA4
+  Measurement Protocol choice and `script-src 'self'` narrowing are superseded by D75.
+- **D65 - database hardening "Yes, both (Recommended)"**: SSL enforcement on and the legacy JWT API keys disabled, each
+  checked first (nothing may still use a legacy key; FilesHub's keepalive is checked first) and read back after.
+- **D66 - "1.4.0 removes it"**: a Free user's weekly task from 1.3.2 is removed on the first start of 1.4.0, said once,
+  with Pro and the command line's free `--install-task` named as the alternatives.
+- **D67 - "They keep their price (Recommended)"**: a running subscription renews at the price it started with until
+  cancelled; an admin price change applies to new purchases.
+- **D68 - "Pay link when checkout opens (Recommended)"**: a plan request grants nothing; when checkout opens, the team
+  emails each open request a link to pay, and the request closes.
+- **D69 - "Each member's run summaries (Recommended)"**: the Team fleet report shows, per member and machine, date,
+  mode, sections run and bytes reclaimed - never a path, file name, machine name or user name.
+- **D70 - "Cancel it server-side first (Recommended)"**: deleting an account first cancels its Polar subscription
+  through the server, then deletes; this approves one Edge Function beyond D58's six (`delete-account`).
+- **D71 - "Keep the anonymous counts (Recommended)"**: after a deletion a machine's run claims keep only the random
+  install id, the month, the pool and the section numbers; the Privacy Policy says so.
+- **D72 - "Approve it (Recommended)"**: `security_manual_linking_enabled` turned on in the same Auth update as D58's
+  hook and anonymous sign-ins, so "Sign in with Google" links onto the device session.
+- **D73 - "Keep the clause (recommended)"** (2026-10-31): the Terms may state that deliberate run-limit evasion or
+  referral-account farming can lead to account deletion and referral voiding. Legal GATE 4 remains pending.
+- **D74 - GA4 relay proposal, superseded by D75** (2026-10-31): a server-side Measurement Protocol relay and
+  daily counters were drafted but never applied or deployed. The owner questioned the extra secret and chose D75.
+- **D75 - "Use existing Measurement ID (Recommended)"** (2026-10-31): keep the desktop's existing public GA4
+  Measurement ID and `gtag.js` path, with its scrubbed event vocabulary. No Measurement Protocol API secret,
+  `analytics-ingest` function or daily telemetry-count tables are needed. Amplitude and Sentry remain bundled;
+  Clarity remains website-only. The desktop CSP allows the GA4 tag and collection hosts.
+- **D76 - no Docker for WindowSweep** (2026-10-31): the owner forbids starting or using Docker because of its
+  system load. The Supabase CLI's `db dump` path is excluded; backups use a standalone PostgreSQL client.
+- Settled in the main session the same day, not owner questions: the release form warns when a version is ABOVE the
+  deployed build (a record above every build would block everyone; the update-flow skill's wording is corrected);
+  `devices` stores no machine name, host name or Windows version (the product's "never a machine name" promise); the
+  plan record, invite code, referrals and team seat are deleted with the account; an admin's plan change is audited
+  without any of the person's words.
+
+### How the frontend UI mandates map to this product
 
 `~/.claude/rules/frontend-ui-standards.md` applies to the desktop app (the CLI has no UI at all). Recorded
-here because the rule says anything a product declines to ship is **declared with a reason, never quietly
-dropped** - and three of its mandates genuinely do not apply to a local disk utility.
+here as evidence of the checks. D56 supersedes the old plan and admin decision; the 1.4.0
+work must meet those requirements and the update-flow gate before completion.
 
 **Met, and verified by measurement on 2026-09-05:**
 
@@ -225,22 +297,9 @@ dropped** - and three of its mandates genuinely do not apply to a local disk uti
 | 14 | Every string through `t()` from day one | enforced by `no-restricted-syntax` AST selectors at `error`, watched failing on two different plants |
 | 15 | External links leave the origin, and the do-follow policy | `lib/links.ts` is the one policy module; a raw `href="http…"` appears nowhere in a component |
 
-**Declared out, with reasons:**
-
-🔴 **§13, the admin panel and the five plan-administration capabilities: NOT APPLICABLE, and this is the
-reason.** The rule exists so a product's limits are admin fields rather than code changes. This product has
-**no server, no plan, no limit and no second user**: the engine runs locally with no network calls at all, and
-the desktop window's only account feature is syncing one person's own settings between their own machines.
-There is nothing an administrator could administer and no limit to raise. Consistent with the owner's
-2026-09-05 decision that **no surface makes a pricing claim** - which is why the app says what signing in
-*does* rather than what it costs.
-
-⚠️ **§2, the upload-field info popover:** there is no upload field anywhere in the app. Nothing to declare
-beyond its absence.
-
-⚠️ **§16, a decorative overlay painted outside its surface:** none ships. The custom cursor axis was removed
-on 2026-10-26 (owner: browser default pointer only, every project). If a floating badge or scroll indicator is
-added later, that mandate applies to it.
+**Current scope:** §13's admin panel and plan controls are part of 1.4.0 under D56.
+The app currently has no upload field (§2) or decorative overlay (§16). The custom
+cursor axis was removed on 2026-10-26; the browser's default pointer applies.
 
 **Open, and honestly so:** §10's GATE 4 parity - screenshot pairs of the dummy beside the app, judged by eye
 in the app's own WebView2 - is not done, and needs owner row 22. §12's interaction floor has no automated
@@ -249,11 +308,9 @@ acknowledges within 100 ms. That is a look-at-it check and it is owed.
 
 ### Two durable constraints found on 2026-09-05, worth not rediscovering
 
-🔴 **`Write-Box` draws a 78-glyph rule, so the tagline has a de-facto 75-character
-budget.** `lib/ui.ps1` draws a 78-character rule and indents the subtitle by three, so anything longer
-overruns it in the terminal. The current tagline is 91 characters and already does. Cosmetic and accepted,
-recorded so the next session does not treat it as a new defect - and so a tagline rewrite knows the real
-constraint is 75, not the 110 the content map states for the npm and docs-site copies.
+🔴 **`Write-Box` draws a 78-glyph rule and indents the subtitle by three.** The 1.4.0
+CLI now wraps the tagline inside that rule; the 160-check self-test covers it. Keep
+that wrapping when the sentence changes.
 
 🔴 **The tagline lives in FIVE places, not the three the records used to name**, and they do not all agree
 today. `package.json` `description`, `WS_TAGLINE` in `lib/constants.ps1`, the docs site's
@@ -357,7 +414,7 @@ passed its 500-line ceiling (514 lines).
 - `lib/constants.ps1` - section catalogue, profiles, safe batch, version fallback (must equal `package.json` and `VERSION`).
 - `lib/actions.ps1` - `New-Target` rows + `Invoke-TargetList`; the cache-folder name allowlist for layout kinds.
 - `modules/release_helpers.ps1` - the self-test groups [1]-[12]; `modules/self_test_extra.ps1` carries groups
-  [13]-[18]. 156 checks in total (junction, dry-run, keep-newest, extension, catalogue and contract fixtures).
+  [13]-[18]. 160 checks in total since 1.3.0 (junction, dry-run, keep-newest, extension, catalogue and contract fixtures).
 - `docs/sections.md`, `docs/cli-reference.md`, README section table - must agree with the catalogue.
 
 ## Verification

@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>windowsweep — email specimens</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="components.css">
+<script src="vendor/strata-storage.iife.js"></script>
+<script src="app.js"></script>
+<style>
+/* The frame uses the approved Reclaim tokens. The message itself uses hex and inline
+   fallbacks because real mail clients cannot consume the app's OKLCH variables. */
+.email-head { display:flex; flex-wrap:wrap; gap:var(--sp-5); align-items:end; justify-content:space-between; }
+.email-head h1 { margin-block:var(--sp-2); }
+.email-tabs { display:flex; gap:var(--sp-2); flex-wrap:wrap; margin-block:var(--sp-6); }
+.email-tab { padding:var(--sp-2) var(--sp-3); min-height:44px; border:1px solid var(--c-line-strong); border-radius:var(--r-sm); background:var(--c-panel); color:var(--c-ink); }
+.email-tab:hover, .email-tab:focus-visible { border-color:var(--c-accent); }
+.email-tab[aria-selected="true"] { background:var(--c-accent); color:var(--c-on-accent); border-color:var(--c-accent); }
+.email-preview-grid { display:grid; grid-template-columns:minmax(0, 600px) minmax(0, 390px); align-items:start; gap:var(--sp-6); }
+.email-preview { min-width:0; }
+.email-preview h2 { font-size:var(--fs-md); margin-block:0 var(--sp-2); }
+.email-preview .email-meta { color:var(--c-ink-3); margin-bottom:var(--sp-3); font-size:var(--fs-sm); overflow-wrap:anywhere; }
+.email-canvas { max-width:100%; border:1px solid var(--c-line-strong); border-radius:var(--r-md); overflow:hidden; background:#f5f7f1; box-shadow:0 16px 42px rgba(0,0,0,.14); container-type:inline-size; }
+.email-canvas[data-width="600"] { width:600px; }
+.email-canvas[data-width="390"] { width:390px; }
+.email-canvas table { max-width:100%; }
+.email-canvas a { overflow-wrap:anywhere; }
+.email-note { max-width:70ch; margin-block:var(--sp-2) var(--sp-6); color:var(--c-ink-3); }
+.mail-facts { border-collapse:collapse; width:100%; }
+.mail-facts th, .mail-facts td { text-align:left; vertical-align:top; padding:8px 0; border-bottom:1px solid #dce4d4; font-size:14px; line-height:1.45; }
+.mail-facts th { color:#4c5b49; font-weight:500; width:50%; padding-right:12px; }
+.mail-facts td { color:#243327; font-weight:600; overflow-wrap:anywhere; }
+.mail-body p { margin:0 0 15px; }
+.mail-body p:last-child { margin-bottom:0; }
+.mail-body h3 { font:700 21px/1.2 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; margin:24px 0 12px; color:#243327; }
+.mail-image-slot { min-height:155px; display:grid; place-items:center; border:1px dashed #8da180; border-radius:6px; background:#edf2e8; color:#4c5b49; text-align:center; padding:20px; font-size:14px; }
+.mail-bullet { border-left:4px solid #4d7c0f; padding:9px 0 9px 14px; margin-bottom:8px; }
+.mail-wide-only { display:inline; }
+@media (max-width:1100px) { .email-preview-grid { grid-template-columns:minmax(0, 1fr); } }
+@container (max-width:480px) { .mail-facts th,.mail-facts td { display:block; width:100%; padding:5px 0; } .mail-facts th { border:0; padding-bottom:0; } }
+@media (max-width:480px) { .email-head { display:block; } .email-tabs { gap:var(--sp-1); } .email-tab { font-size:var(--fs-sm); } .email-canvas { border-radius:0; } }
+/* The production layout emits equivalent @media (prefers-color-scheme: dark)
+   overrides. These preview selectors follow the dummy's appearance switch. */
+:root[data-appearance='dark'] .email-canvas table[width='100%'] { background:#17221c !important; color:#eef4e7 !important; }
+:root[data-appearance='dark'] .email-canvas h2,
+:root[data-appearance='dark'] .email-canvas h3,
+:root[data-appearance='dark'] .email-canvas table[width='100%'] > tbody > tr > td > table:first-child td:last-child { color:#eef4e7 !important; }
+:root[data-appearance='dark'] .email-canvas .mail-facts { background:#26362a !important; }
+:root[data-appearance='dark'] .email-canvas .mail-facts th { color:#c5d4bf !important; border-color:#3c5140; }
+:root[data-appearance='dark'] .email-canvas .mail-facts td { color:#eef4e7 !important; border-color:#3c5140; }
+:root[data-appearance='dark'] .email-canvas table[width='100%'] > tbody > tr:last-child > td { background:#26362a !important; color:#c5d4bf !important; }
+:root[data-appearance='dark'] .email-canvas .mail-image-slot { background:#26362a; color:#c5d4bf; border-color:#7b956d; }
+:root[data-appearance='dark'] .email-canvas .mail-body p[style*='background'] { background:#26362a !important; }
+@media (prefers-reduced-motion:reduce) { .email-tab { transition:none; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="titlebar" data-ws-titlebar></header>
+  <div class="shell">
+    <nav class="rail" data-ws-rail aria-label="Main"></nav>
+    <main class="content" id="emails-main">
+      <section class="band band-app band-tight"><div class="wrap email-head"><div>
+        <p class="caps ink-3">Design dummy · 1.4.0</p>
+        <h1 class="t-xl wide">Mail, before it leaves</h1>
+        <p class="lede">Seven account messages and one release email. Select a message to inspect its words, facts and fallback links at both email widths.</p>
+      </div><span class="badge badge-warn">Specimens · no messages sent</span></div></section>
+      <section class="band band-app"><div class="wrap">
+        <div class="email-tabs" role="tablist" aria-label="Email specimens" id="email-tabs"></div>
+        <p class="email-note" id="email-note" role="status"></p>
+        <div class="email-preview-grid">
+          <section class="email-preview" aria-labelledby="email-wide-heading"><h2 id="email-wide-heading">600 px · desktop mail client</h2><p class="email-meta" data-email-subject-wide></p><div class="email-canvas" data-width="600" id="email-wide"></div></section>
+          <section class="email-preview" aria-labelledby="email-narrow-heading"><h2 id="email-narrow-heading">390 px · phone mail client</h2><p class="email-meta" data-email-subject-narrow></p><div class="email-canvas" data-width="390" id="email-narrow"></div></section>
+        </div>
+      </div></section>
+    </main>
+  </div>
+  <footer class="statusbar"><span class="dot" aria-hidden="true"></span><span>email gallery · eight specimens</span><span class="only-wide">layout and copy review</span><span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span></footer>
+</div>
+
+<!-- Each template is the body specimen. The production composer supplies the
+     shared document head, lang, title, preheader padding and dark overrides. -->
+<template id="email-welcome" data-specimen='{"device_runs":"5","account_runs":"15","app_url":"https://windowsweep.aoneahsan.com/account"}' data-subject="Your windowsweep account is ready" data-preheader="See how your machine and account run allowances work." data-label="Welcome" data-note="Account conversion only. An uncertain provider response needs an audited decision before any retry.">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:600px;background:#ffffff;color:#243327;font:16px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"><tr><td style="padding:26px 24px 10px">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background:#eaf1df;border-radius:8px;padding:8px"><img src="../../../assets/logo/windowsweep-mark.png" width="32" height="32" alt="windowsweep" style="display:block;width:32px;height:32px"></td><td style="padding-left:10px;font-weight:700;font-size:17px;color:#243327">windowsweep</td></tr></table>
+    <p style="margin:28px 0 8px;color:#4d7c0f;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Account ready</p>
+    <h2 style="margin:0 0 16px;font-size:28px;line-height:1.2;color:#243327">Your account is ready.</h2>
+    <div class="mail-body"><p>This machine's allowance goes first: 5 real runs each month. Sign in and your account adds 15 more across the machines you use. Dry-runs, scans and reports do not count.</p></div>
+    <table class="mail-facts" role="presentation" style="margin:18px 0 22px;background:#f5f7f1"><tr><th>This machine</th><td>5 real runs each month</td></tr><tr><th>Your account</th><td>15 more real runs each month</td></tr></table>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#4d7c0f" style="background:#4d7c0f;border-radius:8px"><a href="https://windowsweep.aoneahsan.com/account" style="display:inline-block;padding:14px 24px;color:#ffffff;text-decoration:none;font-weight:700">Open your account</a></td></tr></table>
+    <p style="margin:14px 0 24px;font-size:13px;color:#4c5b49;overflow-wrap:anywhere">If the button does not work: https://windowsweep.aoneahsan.com/account</p>
+    <div class="mail-body"><p>Your account shows what remains. The command-line engine still makes no network calls; the desktop window checks your allowance and updates separately.</p><p>Before a real run, read the target list in a dry-run. Protected folders stay refused. The dry-run removes none of your files.</p><p>The windowsweep team</p></div>
+  </td></tr><tr><td style="padding:20px 24px;background:#edf2e8;color:#4c5b49;font-size:13px;line-height:1.5">You received this because your windowsweep account was created. This account message cannot be turned off; use the <a href="https://windowsweep.aoneahsan.com/contact" style="color:#365a0b">site contact form</a> for help.<br><a href="https://windowsweep.aoneahsan.com" style="color:#365a0b">windowsweep.aoneahsan.com</a></td></tr></table>
+</template>
+
+<template id="email-plan-confirmed" data-specimen='{"plan_name":"Pro","interval_label":"Monthly","amount":"$4.00","seats":"1","period_start":"1 November 2026 (UTC)","period_end":"1 December 2026 (UTC)","account_url":"https://windowsweep.aoneahsan.com/account"}' data-subject="Your windowsweep plan is active" data-preheader="The paid period and seat count are recorded below." data-label="Plan confirmed" data-note="The amount shown is the verified order subtotal before discounts and tax. The Polar receipt holds the final charge.">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:600px;background:#ffffff;color:#243327;font:16px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"><tr><td style="padding:26px 24px 10px">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background:#eaf1df;border-radius:8px;padding:8px"><img src="../../../assets/logo/windowsweep-mark.png" width="32" height="32" alt="windowsweep" style="display:block;width:32px;height:32px"></td><td style="padding-left:10px;font-weight:700;font-size:17px;color:#243327">windowsweep</td></tr></table>
+    <p style="margin:28px 0 8px;color:#4d7c0f;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Plan confirmed</p><h2 style="margin:0 0 16px;font-size:28px;line-height:1.2;color:#243327">Your Pro plan is active.</h2>
+    <div class="mail-body"><p>Your paid period runs from 1 November 2026 (UTC) to 1 December 2026 (UTC). The account shows which machines or Team seats the plan covers. The subtotal below is before discounts and tax; your Polar receipt shows the final charge.</p></div>
+    <table class="mail-facts" role="presentation" style="margin:18px 0 22px;background:#f5f7f1"><tr><th>Plan</th><td>Pro</td></tr><tr><th>Interval</th><td>Monthly</td></tr><tr><th>Subtotal before discounts and tax</th><td>$4.00</td></tr><tr><th>Seats</th><td>1</td></tr><tr><th>Period</th><td>1 November 2026 (UTC) to 1 December 2026 (UTC)</td></tr></table>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#4d7c0f" style="background:#4d7c0f;border-radius:8px"><a href="https://windowsweep.aoneahsan.com/account" style="display:inline-block;padding:14px 24px;color:#ffffff;text-decoration:none;font-weight:700">View your plan</a></td></tr></table>
+    <p style="margin:14px 0 24px;font-size:13px;color:#4c5b49;overflow-wrap:anywhere">If the button does not work: https://windowsweep.aoneahsan.com/account</p>
+    <div class="mail-body"><p>The plan is recorded on your account. If the subtotal or period above differs from your Polar order, use the site contact form and include the plan and period. Do not send a payment card number.</p><p>The windowsweep team</p></div>
+  </td></tr><tr><td style="padding:20px 24px;background:#edf2e8;color:#4c5b49;font-size:13px;line-height:1.5">You received this because a payment activated your windowsweep plan. This transaction message cannot be turned off; use the <a href="https://windowsweep.aoneahsan.com/contact" style="color:#365a0b">site contact form</a> for billing help.<br><a href="https://windowsweep.aoneahsan.com" style="color:#365a0b">windowsweep.aoneahsan.com</a></td></tr></table>
+</template>
+
+<template id="email-referral-confirmed" data-specimen='{"points":"10","total_points":"30","confirmed":"3","threshold":"3","reward_line":"This confirmation earned 1 month of Pro. Your account shows when that time can be used.","account_url":"https://windowsweep.aoneahsan.com/account"}' data-subject="Your windowsweep referral was confirmed" data-preheader="The points and confirmed-friend count have changed." data-label="Referral confirmed" data-note="The reward sentence is assembled from committed referral facts. This specimen shows the earned branch.">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:600px;background:#ffffff;color:#243327;font:16px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"><tr><td style="padding:26px 24px 10px">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background:#eaf1df;border-radius:8px;padding:8px"><img src="../../../assets/logo/windowsweep-mark.png" width="32" height="32" alt="windowsweep" style="display:block;width:32px;height:32px"></td><td style="padding-left:10px;font-weight:700;font-size:17px;color:#243327">windowsweep</td></tr></table>
+    <p style="margin:28px 0 8px;color:#4d7c0f;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Referral confirmed</p><h2 style="margin:0 0 16px;font-size:28px;line-height:1.2;color:#243327">Your referral counted.</h2>
+    <div class="mail-body"><p>This friend added 10 points. Your total is now 30 points from 3 confirmed friends. A reward takes 3 confirmed friends.</p><p>This confirmation earned 1 month of Pro. Your account shows when that time can be used.</p></div>
+    <table class="mail-facts" role="presentation" style="margin:18px 0 22px;background:#f5f7f1"><tr><th>Points from this referral</th><td>10</td></tr><tr><th>Total points</th><td>30</td></tr><tr><th>Confirmed friends</th><td>3</td></tr><tr><th>Reward threshold</th><td>3 confirmed friends</td></tr></table>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#4d7c0f" style="background:#4d7c0f;border-radius:8px"><a href="https://windowsweep.aoneahsan.com/account" style="display:inline-block;padding:14px 24px;color:#ffffff;text-decoration:none;font-weight:700">View your referrals</a></td></tr></table>
+    <p style="margin:14px 24px 24px 0;font-size:13px;color:#4c5b49;overflow-wrap:anywhere">If the button does not work: https://windowsweep.aoneahsan.com/account</p><div class="mail-body"><p>The windowsweep team</p></div>
+  </td></tr><tr><td style="padding:20px 24px;background:#edf2e8;color:#4c5b49;font-size:13px;line-height:1.5">You received this because a friend joined with your windowsweep referral code and confirmed their account. This account message cannot be turned off; use the <a href="https://windowsweep.aoneahsan.com/contact" style="color:#365a0b">site contact form</a> for help.<br><a href="https://windowsweep.aoneahsan.com" style="color:#365a0b">windowsweep.aoneahsan.com</a></td></tr></table>
+</template>
+
+<template id="email-payment-returned" data-specimen='{"plan_name":"Pro","amount_returned":"$4.00","plan_now":"Free","pricing_url":"https://windowsweep.aoneahsan.com/pricing"}' data-subject="A windowsweep payment was returned" data-preheader="Your current plan is recorded below." data-label="Payment returned" data-note="Consequence message. Its values must come from the verified returned-payment event and current entitlement.">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:600px;background:#ffffff;color:#243327;font:16px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"><tr><td style="padding:26px 24px 10px">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background:#eaf1df;border-radius:8px;padding:8px"><img src="../../../assets/logo/windowsweep-mark.png" width="32" height="32" alt="windowsweep" style="display:block;width:32px;height:32px"></td><td style="padding-left:10px;font-weight:700;font-size:17px;color:#243327">windowsweep</td></tr></table>
+    <p style="margin:28px 0 8px;color:#4d7c0f;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Payment returned</p><h2 style="margin:0 0 16px;font-size:28px;line-height:1.2;color:#243327">A payment was returned.</h2>
+    <div class="mail-body"><p>The returned amount is $4.00. Your current plan is Free. Check it before your next real run; a returned payment can change what it includes.</p></div>
+    <table class="mail-facts" role="presentation" style="margin:18px 0 22px;background:#f5f7f1"><tr><th>Plan on the returned order</th><td>Pro</td></tr><tr><th>Amount returned</th><td>$4.00</td></tr><tr><th>Current plan</th><td>Free</td></tr></table>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#4d7c0f" style="background:#4d7c0f;border-radius:8px"><a href="https://windowsweep.aoneahsan.com/pricing" style="display:inline-block;padding:14px 24px;color:#ffffff;text-decoration:none;font-weight:700">See current plans</a></td></tr></table>
+    <p style="margin:14px 0 24px;font-size:13px;color:#4c5b49;overflow-wrap:anywhere">If the button does not work: https://windowsweep.aoneahsan.com/pricing</p>
+    <div class="mail-body"><p>If the returned amount does not match your payment record, use the site contact form and include the date and amount shown by your payment provider. Do not send a card number.</p><p>The windowsweep team</p></div>
+  </td></tr><tr><td style="padding:20px 24px;background:#edf2e8;color:#4c5b49;font-size:13px;line-height:1.5">You received this because the payment provider reported a returned windowsweep payment. This transaction message cannot be turned off; use the <a href="https://windowsweep.aoneahsan.com/contact" style="color:#365a0b">site contact form</a> for billing help.<br><a href="https://windowsweep.aoneahsan.com" style="color:#365a0b">windowsweep.aoneahsan.com</a></td></tr></table>
+</template>
+
+<template id="email-plan-granted" data-specimen='{"plan_name":"Pro","seats":"1","ends_at":"31 December 2026 (UTC)","account_url":"https://windowsweep.aoneahsan.com/account"}' data-subject="A windowsweep plan grant was recorded" data-preheader="See its plan, seats and end date." data-label="Plan grant" data-note="The grant may start later. This message records it without claiming immediate access.">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:600px;background:#ffffff;color:#243327;font:16px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"><tr><td style="padding:26px 24px 10px">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background:#eaf1df;border-radius:8px;padding:8px"><img src="../../../assets/logo/windowsweep-mark.png" width="32" height="32" alt="windowsweep" style="display:block;width:32px;height:32px"></td><td style="padding-left:10px;font-weight:700;font-size:17px;color:#243327">windowsweep</td></tr></table>
+    <p style="margin:28px 0 8px;color:#4d7c0f;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Plan grant</p><h2 style="margin:0 0 16px;font-size:28px;line-height:1.2;color:#243327">A Pro grant was recorded.</h2>
+    <div class="mail-body"><p>Seats covered: 1. Your account shows when this grant applies alongside any paid period or Team membership. Those records are kept separately.</p></div>
+    <table class="mail-facts" role="presentation" style="margin:18px 0 22px;background:#f5f7f1"><tr><th>Plan</th><td>Pro</td></tr><tr><th>Seats</th><td>1</td></tr><tr><th>End date</th><td>31 December 2026 (UTC)</td></tr></table>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#4d7c0f" style="background:#4d7c0f;border-radius:8px"><a href="https://windowsweep.aoneahsan.com/account" style="display:inline-block;padding:14px 24px;color:#ffffff;text-decoration:none;font-weight:700">View your plan</a></td></tr></table>
+    <p style="margin:14px 0 24px;font-size:13px;color:#4c5b49;overflow-wrap:anywhere">If the button does not work: https://windowsweep.aoneahsan.com/account</p>
+    <div class="mail-body"><p>If this grant is unexpected, use the site contact form. Include the plan name, not a payment card number.</p><p>The windowsweep team</p></div>
+  </td></tr><tr><td style="padding:20px 24px;background:#edf2e8;color:#4c5b49;font-size:13px;line-height:1.5">You received this because an administrator recorded a windowsweep plan grant for your account. This account message cannot be turned off; use the <a href="https://windowsweep.aoneahsan.com/contact" style="color:#365a0b">site contact form</a> for help.<br><a href="https://windowsweep.aoneahsan.com" style="color:#365a0b">windowsweep.aoneahsan.com</a></td></tr></table>
+</template>
+
+<template id="email-plan-request-open" data-specimen='{"plan_name":"Pro","interval_label":"Monthly","pay_url":"https://windowsweep.aoneahsan.com/pricing?plan=pro","pricing_url":"https://windowsweep.aoneahsan.com/pricing"}' data-subject="Your windowsweep plan link is ready" data-preheader="Your earlier plan request did not start a paid plan." data-label="Plan request" data-note="The button opens pricing with the request selected. Checkout remains the page's action.">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:600px;background:#ffffff;color:#243327;font:16px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"><tr><td style="padding:26px 24px 10px">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background:#eaf1df;border-radius:8px;padding:8px"><img src="../../../assets/logo/windowsweep-mark.png" width="32" height="32" alt="windowsweep" style="display:block;width:32px;height:32px"></td><td style="padding-left:10px;font-weight:700;font-size:17px;color:#243327">windowsweep</td></tr></table>
+    <p style="margin:28px 0 8px;color:#4d7c0f;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Plan request</p><h2 style="margin:0 0 16px;font-size:28px;line-height:1.2;color:#243327">Your plan link is ready.</h2>
+    <div class="mail-body"><p>You asked for Pro on the Monthly interval. The request did not start a paid plan. Open the link to review the plan and continue to checkout; the plan begins only after payment is confirmed.</p></div>
+    <table class="mail-facts" role="presentation" style="margin:18px 0 22px;background:#f5f7f1"><tr><th>Requested plan</th><td>Pro</td></tr><tr><th>Interval</th><td>Monthly</td></tr></table>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#4d7c0f" style="background:#4d7c0f;border-radius:8px"><a href="https://windowsweep.aoneahsan.com/pricing?plan=pro" style="display:inline-block;padding:14px 24px;color:#ffffff;text-decoration:none;font-weight:700">Review your plan</a></td></tr></table>
+    <p style="margin:14px 0 8px;font-size:13px;color:#4c5b49;overflow-wrap:anywhere">If the button does not work: https://windowsweep.aoneahsan.com/pricing?plan=pro</p>
+    <p style="margin:0 0 22px;font-size:12px;color:#4c5b49">By continuing, you agree to our <a href="https://windowsweep.aoneahsan.com/terms" style="color:#365a0b">Terms of Service</a> and <a href="https://windowsweep.aoneahsan.com/privacy" style="color:#365a0b">Privacy Policy</a>.</p>
+    <div class="mail-body"><p>You can compare the current plans at https://windowsweep.aoneahsan.com/pricing. The checkout page shows the amount before you pay.</p><p>The windowsweep team</p></div>
+  </td></tr><tr><td style="padding:20px 24px;background:#edf2e8;color:#4c5b49;font-size:13px;line-height:1.5">You received this because you asked windowsweep to send a plan link when checkout opened. This request message cannot be turned off; use the <a href="https://windowsweep.aoneahsan.com/contact" style="color:#365a0b">site contact form</a> for help.<br><a href="https://windowsweep.aoneahsan.com" style="color:#365a0b">windowsweep.aoneahsan.com</a></td></tr></table>
+</template>
+
+<template id="email-team-invite" data-specimen='{"team_name":"Example Team","invited_by":"A team owner","accept_url":"https://windowsweep.aoneahsan.com/account?team_invite=example"}' data-subject="A windowsweep Team invitation" data-preheader="Review who invited you before joining." data-label="Team invitation" data-note="The team and inviter values are escaped by the composer. No account joins until the invitation is accepted.">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:600px;background:#ffffff;color:#243327;font:16px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"><tr><td style="padding:26px 24px 10px">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background:#eaf1df;border-radius:8px;padding:8px"><img src="../../../assets/logo/windowsweep-mark.png" width="32" height="32" alt="windowsweep" style="display:block;width:32px;height:32px"></td><td style="padding-left:10px;font-weight:700;font-size:17px;color:#243327">windowsweep</td></tr></table>
+    <p style="margin:28px 0 8px;color:#4d7c0f;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Team invitation</p><h2 style="margin:0 0 16px;font-size:28px;line-height:1.2;color:#243327">You were invited to Example Team.</h2>
+    <div class="mail-body"><p>A team owner invited this address to join their windowsweep Team. Open the link to review and accept the invitation. Joining adds your account as a Team member; it does not start a purchase in your name.</p></div>
+    <table class="mail-facts" role="presentation" style="margin:18px 0 22px;background:#f5f7f1"><tr><th>Team</th><td>Example Team</td></tr><tr><th>Invited by</th><td>A team owner</td></tr></table>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#4d7c0f" style="background:#4d7c0f;border-radius:8px"><a href="https://windowsweep.aoneahsan.com/account?team_invite=example" style="display:inline-block;padding:14px 24px;color:#ffffff;text-decoration:none;font-weight:700">Review the invitation</a></td></tr></table>
+    <p style="margin:14px 0 24px;font-size:13px;color:#4c5b49;overflow-wrap:anywhere">If the button does not work: https://windowsweep.aoneahsan.com/account?team_invite=example</p>
+    <div class="mail-body"><p>If you did not expect this invitation, leave it alone. Your account does not join until you accept.</p><p>The windowsweep team</p></div>
+  </td></tr><tr><td style="padding:20px 24px;background:#edf2e8;color:#4c5b49;font-size:13px;line-height:1.5">You received this because a Team owner invited this address to windowsweep. This invitation message cannot be turned off; use the <a href="https://windowsweep.aoneahsan.com/contact" style="color:#365a0b">site contact form</a> for help.<br><a href="https://windowsweep.aoneahsan.com" style="color:#365a0b">windowsweep.aoneahsan.com</a></td></tr></table>
+</template>
+
+<template id="email-release-140" data-specimen='{"download_url":"https://windowsweep.aoneahsan.com/download","release":"1.4.0"}' data-subject="See each run in windowsweep 1.4.0" data-preheader="The desktop app shows your allowance, plan and update notice." data-label="Release 1.4.0" data-note="Marketing draft only. Four real 1.4.0 screen captures, a live download, an owner-approved [TEST] and an explicit send approval are required.">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:600px;background:#ffffff;color:#243327;font:16px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"><tr><td style="padding:26px 24px 10px">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background:#eaf1df;border-radius:8px;padding:8px"><img src="../../../assets/logo/windowsweep-mark.png" width="32" height="32" alt="windowsweep" style="display:block;width:32px;height:32px"></td><td style="padding-left:10px;font-weight:700;font-size:17px;color:#243327">windowsweep</td></tr></table>
+    <p style="margin:28px 0 8px;color:#4d7c0f;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Release notes · 1.4.0</p><h2 style="margin:0 0 16px;font-size:28px;line-height:1.2;color:#243327">See what a run will touch</h2>
+    <div class="mail-body"><p>windowsweep is a Windows cleanup tool that names targets before it removes them.</p></div>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:12px 0 22px"><tr><td bgcolor="#4d7c0f" style="background:#4d7c0f;border-radius:8px"><a href="https://windowsweep.aoneahsan.com/download" style="display:inline-block;padding:14px 24px;color:#ffffff;text-decoration:none;font-weight:700">Get windowsweep 1.4.0</a></td></tr></table>
+    <div class="mail-body">
+      <div class="mail-image-slot" role="img" aria-label="Real 1.4.0 Run screen capture required">Real 1.4.0 Run screen capture required<br>Target list and dry-run choice</div>
+      <h3>What fills the disk</h3><div class="mail-bullet"><strong>Build caches return.</strong> A new install or build can recreate them; removing one costs time.</div><div class="mail-bullet"><strong>Personal files matter.</strong> Documents, pictures, credentials and browser state are protected.</div>
+      <p>The number reclaimed depends on your machine. <code>--scan</code> measures it before cleanup. The app keeps that difference visible.</p>
+      <h3>What 1.4.0 shows you</h3><p><strong>A rehearsal before the run.</strong> Start with a dry-run to see the same sections and paths a real run would examine. The dry-run writes its own log and report. No files are removed.</p>
+      <div class="mail-image-slot" role="img" aria-label="Real 1.4.0 dry-run result capture required">Real 1.4.0 dry-run result capture required</div>
+      <p><strong>A receipt after the run.</strong> The report names which sections ran and how much space they reclaimed. It does not promise a figure before your machine has been measured.</p>
+      <div class="mail-image-slot" role="img" aria-label="Real 1.4.0 report capture required">Real 1.4.0 report capture required</div>
+      <p><strong>A count for real runs.</strong> The Plans screen shows the monthly allowance and reset date. A dry-run, scan or report does not spend a real run. If you sign in, the machine's allowance is used first, then your account's.</p>
+      <div class="mail-image-slot" role="img" aria-label="Real 1.4.0 Plans screen capture required">Real 1.4.0 Plans screen capture required</div>
+      <h3>What stays out of reach</h3><div class="mail-bullet"><strong>Measure before removing.</strong> <code>--scan</code> counts targets, and a dry-run rehearses without removing your files.</div><div class="mail-bullet"><strong>Keep protected folders.</strong> The chokepoint refuses documents, photos, credentials and browser state. No flag lifts that refusal.</div><div class="mail-bullet"><strong>Keep the CLI local.</strong> The command-line engine makes no network calls. The desktop window handles account and update requests separately.</div>
+      <p>Some sections ask you to pick individual personal files. Nothing is selected for you. By default, those picks go to the Recycle Bin; <code>--permanent</code> removes that recovery route.</p>
+      <h3>Where to start</h3><p>Open the download page and choose the current desktop installer. Select sections on the Run screen, then start with a dry-run. Read the target list. Decide whether to run for real.</p>
+      <p>The CLI remains available if you work in PowerShell. Its section numbers mean the same thing in the desktop app and the terminal.</p>
+      <p style="padding:14px;background:#edf2e8;border-left:4px solid #4d7c0f">The path is named first. What the chokepoint refuses stays refused.</p>
+    </div>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:12px 0"><tr><td bgcolor="#4d7c0f" style="background:#4d7c0f;border-radius:8px"><a href="https://windowsweep.aoneahsan.com/download" style="display:inline-block;padding:14px 24px;color:#ffffff;text-decoration:none;font-weight:700">Get windowsweep 1.4.0</a></td></tr></table>
+    <p style="margin:14px 0 22px;font-size:13px;color:#4c5b49;overflow-wrap:anywhere">If the button does not work: https://windowsweep.aoneahsan.com/download</p>
+    <div class="mail-body"><p>P.S. Reply to tell the windowsweep team which section needs a clearer explanation.</p></div>
+  </td></tr><tr><td style="padding:20px 24px;background:#edf2e8;color:#4c5b49;font-size:13px;line-height:1.5">You asked for windowsweep release emails. <a href="https://windowsweep.aoneahsan.com/unsubscribe" style="color:#365a0b">Unsubscribe in one click</a> from this message; replies reach the product's main support mailbox.<br><a href="https://windowsweep.aoneahsan.com" style="color:#365a0b">windowsweep.aoneahsan.com</a></td></tr></table>
+</template>
+
+<script>
+(function () {
+  'use strict';
+  var templates = Array.prototype.slice.call(document.querySelectorAll('template[id^="email-"]'));
+  var tabs = document.getElementById('email-tabs');
+  var wide = document.getElementById('email-wide');
+  var narrow = document.getElementById('email-narrow');
+  var note = document.getElementById('email-note');
+  function render(index, focus) {
+    var template = templates[index];
+    if (!template) return;
+    [wide, narrow].forEach(function (host) { host.replaceChildren(template.content.cloneNode(true)); });
+    document.querySelector('[data-email-subject-wide]').textContent = template.dataset.subject + ' · ' + template.dataset.preheader;
+    document.querySelector('[data-email-subject-narrow]').textContent = template.dataset.subject + ' · ' + template.dataset.preheader;
+    note.textContent = template.dataset.note;
+    Array.prototype.forEach.call(tabs.children, function (tab, tabIndex) {
+      var selected = tabIndex === index;
+      tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+      tab.tabIndex = selected ? 0 : -1;
+      if (selected && focus) tab.focus();
+    });
+  }
+  templates.forEach(function (template, index) {
+    var tab = document.createElement('button');
+    tab.type = 'button'; tab.className = 'email-tab'; tab.setAttribute('role', 'tab');
+    tab.textContent = String(index + 1).padStart(2, '0') + ' · ' + template.dataset.label;
+    tab.setAttribute('aria-controls', 'email-wide email-narrow');
+    tab.addEventListener('click', function () { render(index, false); });
+    tab.addEventListener('keydown', function (event) {
+      var next = index;
+      if (event.key === 'ArrowRight') next = (index + 1) % templates.length;
+      if (event.key === 'ArrowLeft') next = (index + templates.length - 1) % templates.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = templates.length - 1;
+      if (next !== index) { event.preventDefault(); render(next, true); }
+    });
+    tabs.appendChild(tab);
+  });
+  [wide, narrow].forEach(function (host) {
+    host.addEventListener('click', function (event) {
+      var link = event.target.closest('a');
+      if (!link) return;
+      event.preventDefault();
+      note.textContent = 'Specimen link. Destination: ' + link.href;
+    });
+  });
+  render(0, false);
+}());
+</script>
+</body>
+</html>

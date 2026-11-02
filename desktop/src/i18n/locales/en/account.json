@@ -38,8 +38,6 @@
   "settings.privacy.productAnalyticsDesc": "Which screens and which buttons.",
   "settings.privacy.behaviourAnalytics": "Behaviour analytics",
   "settings.privacy.behaviourAnalyticsDesc": "The same events, in a second analytics tool.",
-  "settings.privacy.sessionReplay": "Session replay",
-  "settings.privacy.sessionReplayDesc": "This window, with all text masked.",
   "settings.privacy.crashReports": "Crash reports",
   "settings.privacy.crashReportsDesc": "Stack traces with paths stripped.",
   "settings.privacy.neverSent": "Never sent",

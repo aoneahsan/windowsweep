@@ -72,7 +72,12 @@ export function renderPrepaint(root: string): RenderedPrepaint {
   var prefs = {};
   try {
     var raw = localStorage.getItem(R.storageKey);
-    if (raw) { var p = JSON.parse(raw); prefs = (p && typeof p === 'object' && 'v' in p) ? (p.v || {}) : (p || {}); }
+    if (raw) {
+      var p = JSON.parse(raw);
+      prefs = p && typeof p === 'object'
+        ? ('value' in p ? (p.value || {}) : ('v' in p ? (p.v || {}) : p))
+        : {};
+    }
   } catch (e) { prefs = {}; }
 
   var url = {};

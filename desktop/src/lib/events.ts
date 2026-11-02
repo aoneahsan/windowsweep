@@ -13,10 +13,8 @@
  * sentence describes. `screen.view` and `control.press` are that sentence, made
  * true. (PENDING-TASKS TASK-005.)
  *
- * 🔴 GA4's `send_page_view` stays FALSE. `screen.view` replaces it rather than
- * sitting beside it: this window is one document with a hash router, so gtag's own
- * page_view fires once at boot and never again, which would report every session
- * as a single screen.
+ * The broker receives screen.view on each hash-route change. It does not add
+ * another automatic page view, which would count only the window's boot.
  *
  * The property vocabulary is bounded on purpose - `route`, `control`, `version`,
  * `reason`. A property invented per event is a property nobody can segment on.
@@ -59,6 +57,15 @@ export const CONTROL_IDS = [
   'account.signIn',
   'elevation.askAndRun',
   'splash.updateNow',
+  'plans.requestPro',
+  'plans.requestTeam',
+  'plans.signIn',
+  'plans.copyInvite',
+  'plans.copyCommand',
+  'team.create',
+  'team.invite',
+  'team.removeInvite',
+  'team.removeMember',
 ] as const;
 
 export type ControlId = (typeof CONTROL_IDS)[number];

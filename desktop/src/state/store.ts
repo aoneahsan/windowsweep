@@ -15,6 +15,7 @@
 import { create } from 'zustand';
 
 import { toggleExclusion, usableExclusions } from '../lib/exclusions';
+import { readStored, writeStored } from '../lib/storage';
 import { interactiveSectionIds, mergeOffers } from '../lib/offers';
 import type { Catalogue } from '../lib/catalogue';
 import type { Rehearsal } from '../lib/rehearsal';
@@ -245,22 +246,11 @@ const LARGE_FILE_MB_KEY = 'windowsweep:largeFileMb';
 let startedAt = Date.now();
 
 function readLocal<T>(key: string, fallback: T): T {
-  try {
-    const raw = window.localStorage.getItem(key);
-    if (!raw) return fallback;
-    const parsed = JSON.parse(raw) as { v?: T };
-    return parsed.v ?? fallback;
-  } catch {
-    return fallback;
-  }
+  return readStored(key, fallback);
 }
 
 function writeLocal(key: string, value: unknown): void {
-  try {
-    window.localStorage.setItem(key, JSON.stringify({ v: value }));
-  } catch {
-    /* a private window - the session works, it just forgets */
-  }
+  writeStored(key, value);
 }
 
 export const useStore = create<StoreState>()((set, get) => ({

@@ -13,54 +13,52 @@
 (function () {
   'use strict';
 
-  var NS = 'wsdummy';                       // physical keys are `wsdummy:<key>`
+  var NS = 'wsdummy';
   var PREFS_KEY = 'prefs';
 
-  /* -------------------------------------------------------------------------
-     STORAGE. Same shape and the same `namespace` semantics as strata-storage, so
-     the app swaps the implementation and nothing else. strata itself is not
-     vendored here because that is a download, gated on PENDING-TASKS TASK-001.
-
-     🔴 The value is wrapped `{v: ...}` exactly as strata wraps it, and the
-     physical key is `<namespace>:<key>` - both couplings are named at BOTH ends
-     so a namespace change cannot silently revert this to unprefixed keys.
-     Verify by reading a physical key, never by reading this config.
-     ------------------------------------------------------------------------- */
+  /* The checked-in classic bundle is built from desktop's installed
+     strata-storage package so the dummy also works over file://. */
+  var storage = window.WindowSweepStrata.defineStorage({
+    namespace: NS,
+    adapters: { localStorage: {}, memory: {} },
+    defaultStorages: ['localStorage', 'memory']
+  });
+  var adapter = 'localStorage';
+  try {
+    storage.setSync('__probe', 'x', { storage: adapter });
+    if (storage.getSync('__probe', { storage: adapter }) !== 'x') throw new Error('Storage probe failed');
+    storage.removeSync('__probe', { storage: adapter });
+  } catch (e) { adapter = 'memory'; }
   var store = {
-    backend: 'memory',
-    _mem: {},
-    key: function (k) { return NS + ':' + k; },
+    backend: adapter,
     get: function (k, dflt) {
       try {
-        var raw = localStorage.getItem(this.key(k));
-        if (raw == null) return dflt;
-        var parsed = JSON.parse(raw);
-        return parsed && typeof parsed === 'object' && 'v' in parsed ? parsed.v : dflt;
-      } catch (e) { return this._mem[k] !== undefined ? this._mem[k] : dflt; }
+        var value = storage.getSync(k, { storage: adapter });
+        if (value != null) return value;
+        if (adapter === 'localStorage') {
+          var old = storage.importRawSync(NS + ':' + k, k, { storage: adapter });
+          if (old != null) {
+            var parsed = JSON.parse(old);
+            if (parsed && typeof parsed === 'object' && 'v' in parsed) {
+              storage.setSync(k, parsed.v, { storage: adapter });
+              return parsed.v;
+            }
+          }
+        }
+      } catch (e) { /* a damaged demo value falls back to the supplied default */ }
+      return dflt;
     },
     set: function (k, v) {
-      this._mem[k] = v;
-      try { localStorage.setItem(this.key(k), JSON.stringify({ v: v })); } catch (e) { /* memory only */ }
+      try { storage.setSync(k, v, { storage: adapter }); }
+      catch (e) {
+        adapter = 'memory'; this.backend = adapter;
+        storage.setSync(k, v, { storage: adapter });
+      }
     },
     clearAll: function () {
-      this._mem = {};
-      try {
-        var doomed = [];
-        for (var i = 0; i < localStorage.length; i++) {
-          var k = localStorage.key(i);
-          if (k && k.indexOf(NS + ':') === 0) doomed.push(k);
-        }
-        doomed.forEach(function (k) { localStorage.removeItem(k); });
-      } catch (e) { /* ignore */ }
+      storage.clearSync({ storage: adapter });
     }
   };
-  // probe availability with a real write/read/delete rather than trusting a list
-  try {
-    var probe = NS + ':__probe';
-    localStorage.setItem(probe, '1');
-    if (localStorage.getItem(probe) === '1') store.backend = 'localStorage';
-    localStorage.removeItem(probe);
-  } catch (e) { store.backend = 'memory'; }
 
   /* -------------------------------------------------------------------------
      🔴 THE AXIS REGISTRY - ONE table. The pre-paint pass iterates it, the panel
@@ -174,6 +172,8 @@
     { href: 'report.html',    label: 'Reports',   icon: 'doc' },
     { group: 'You' },
     { href: 'account.html',   label: 'Account',   icon: 'user' },
+    { href: 'plans.html',     label: 'Plans',     icon: 'doc' },
+    { href: 'plans.html?tab=team', label: 'Team', icon: 'user' },
     { href: 'settings.html',  label: 'Settings',  icon: 'gear' },
     { href: 'elevation.html', label: 'Admin',     icon: 'backend' },
     { group: 'Prototype' },
@@ -249,7 +249,7 @@
           toast('That screen is in the next batch of this dummy – the direction is what is under review now.');
         });
       }
-      if (item.href === here) a.setAttribute('aria-current', 'page');
+      if ((item.href === here && !(here === 'plans.html' && new URLSearchParams(location.search).get('tab') === 'team')) || (here === 'plans.html' && item.href.indexOf('plans.html?tab=') === 0 && new URLSearchParams(location.search).get('tab') === 'team')) a.setAttribute('aria-current', 'page');
       mount.appendChild(a);
     });
 
@@ -485,24 +485,15 @@
       };
     },
 
-    /* Proves the namespace actually reached the adapter. A prefix that is silently
-       discarded is indistinguishable from one that works, because the same wrong
-       key is used both ways. */
+    /* This checks the package's scoped key list; the review command in README
+       also reads the physical browser key outside application code. */
     storageNamespace: function () {
-      try { localStorage.removeItem('__gate'); } catch (e) { /* a prior run's plant */ }
       store.set('__gate', 'x');
-      var physical = null, stray = [];
-      try {
-        for (var i = 0; i < localStorage.length; i++) {
-          var k = localStorage.key(i);
-          if (!k || k.indexOf('__gate') === -1) continue;
-          if (k === NS + ':__gate') physical = k; else stray.push(k);
-        }
-      } catch (e) { /* ignore */ }
-      var ok = physical === NS + ':__gate' && stray.length === 0;
-      try { localStorage.removeItem(NS + ':__gate'); localStorage.removeItem('__gate'); } catch (e) { /* ignore */ }
-      return { pass: ok, physicalKey: physical || (stray[0] || null), stray: stray,
-               expected: NS + ':__gate', backend: store.backend };
+      var keys = storage.keysSync({ storage: adapter });
+      var ok = store.get('__gate', null) === 'x' && keys.indexOf('__gate') !== -1;
+      storage.removeSync('__gate', { storage: adapter });
+      return { pass: ok, logicalKey: '__gate', backend: store.backend,
+               physicalKeyProof: 'Run the browser probe in design/README.md' };
     },
 
     /* 🔴 documentElement.scrollWidth returns the viewport width whatever overflows
@@ -613,11 +604,95 @@
     bar.appendChild(wc);
   }
 
+  /* Shared 1.4.0 legal and release surfaces. One owner builds each piece on every
+     page; URL parameters drive review states and never become saved preferences. */
+  function buildNotices() {
+    var q = new URLSearchParams(location.search);
+    var here = currentPage();
+    var release = q.get('release');
+    if (release === 'clear') { store.set('releaseNoticeDismissed:1.4.0', false); return; }
+    var legalPreview = q.get('legal') === '1';
+    var taskPage = ['run.html', 'picker.html', 'elevation.html', 'splash.html', 'consent.html'].indexOf(here) !== -1;
+    var account = window.wsdb && window.wsdb.facts.signedIn && window.wsdb.facts.email;
+    var legalKey = account ? 'legalSeen:account:' + String(account).toLowerCase() : 'legalSeen:browser';
+    if (!release && !taskPage && (legalPreview || !store.get(legalKey, false))) {
+      if (!document.querySelector('[data-ws-legal]')) {
+        var bar = el('aside', 'ws-legal'); bar.setAttribute('data-ws-legal', ''); bar.setAttribute('role', 'status');
+        var copy = el('div', 'ws-legal-copy');
+        var first = el('p', null, 'By using windowsweep, you agree to our ');
+        var privacy = el('a', 'lnk', 'Privacy Policy'); privacy.href = 'https://windowsweep.aoneahsan.com/privacy'; privacy.target = '_blank'; privacy.rel = 'noopener';
+        privacy.appendChild(el('span', 'visually-hidden', ' (opens in a new tab)'));
+        var terms = el('a', 'lnk', 'Terms of Service'); terms.href = 'https://windowsweep.aoneahsan.com/terms'; terms.target = '_blank'; terms.rel = 'noopener';
+        terms.appendChild(el('span', 'visually-hidden', ' (opens in a new tab)'));
+        first.appendChild(privacy); first.appendChild(document.createTextNode(' and ')); first.appendChild(terms); first.appendChild(document.createTextNode('.'));
+        copy.appendChild(first);
+        copy.appendChild(el('p', 't-sm ink-3', 'windowsweep collects usage data to improve the product for everyone. Never a file path, never the contents of anything.'));
+        var okay = el('button', 'btn btn-sm', 'Okay'); okay.type = 'button'; okay.addEventListener('click', function () { bar.remove(); });
+        bar.appendChild(copy); bar.appendChild(okay); document.body.appendChild(bar);
+        if (!legalPreview) store.set(legalKey, true);
+        var elapsed = 0;
+        var timer = setInterval(function () {
+          if (!bar.isConnected) { clearInterval(timer); return; }
+          if (bar.matches(':hover') || bar.contains(document.activeElement)) return;
+          elapsed += 1000;
+          if (elapsed >= 10000) { bar.remove(); clearInterval(timer); }
+        }, 1000);
+      }
+    }
+
+    if (!release || document.querySelector('[data-ws-release]')) return;
+    if (release === 'notice' && store.get('releaseNoticeDismissed:1.4.0', false)) return;
+    var block = release !== 'notice';
+    var host = el('section', block ? 'ws-release-block' : 'ws-release-notice');
+    host.setAttribute('data-ws-release', '');
+    host.setAttribute('role', block ? 'dialog' : 'status');
+    if (block) { host.setAttribute('aria-modal', 'true'); host.setAttribute('aria-labelledby', 'ws-release-title'); }
+    var box = el('div', 'panel pad ws-release-box');
+    box.appendChild(el('p', 'caps ink-3', 'Design dummy · release gate'));
+    var title = el('h2', 't-lg wide', block ? 'windowsweep 1.4.0 is required.' : 'windowsweep 1.4.0 is required from the next start.');
+    title.id = 'ws-release-title'; box.appendChild(title);
+    box.appendChild(el('p', 't-sm', block
+      ? release === 'next' ? 'It was announced in an earlier session. From this start, nothing else in windowsweep works until it is installed.' : 'Nothing else in windowsweep works until it is installed.'
+      : 'Until then, this copy works as it does now. Update now installs it and restarts windowsweep.'));
+    if (block) {
+      var reason = el('p', 'ws-release-reason', q.get('reason') || '{{reason}}');
+      box.appendChild(reason);
+      box.appendChild(el('p', 'mono t-sm ink-3', 'Running 1.3.2 · required 1.4.0'));
+      box.appendChild(el('p', 't-sm ink-3', 'Your settings and history are untouched.'));
+    }
+    var status = el('p', 't-sm'); status.setAttribute('role', 'status'); box.appendChild(status);
+    if (release === 'offline') status.textContent = 'This machine is offline. Reconnect, then try the update again.';
+    if (release === 'failed') status.textContent = 'The update did not install: {{message}}';
+    var actions = el('div', 'ws-release-actions');
+    var update = el('button', 'btn btn-primary', release === 'offline' || release === 'failed' ? 'Try again' : block ? 'Update' : 'Update now'); update.type = 'button';
+    update.addEventListener('click', function () {
+      update.dataset.state = 'pending'; status.textContent = 'Downloading 1.4.0 · 0%';
+      setTimeout(function () { status.textContent = 'Downloaded and verified.'; update.dataset.state = 'done'; }, 750);
+      setTimeout(function () { status.textContent = 'Installing. windowsweep restarts when it finishes.'; }, 1500);
+      setTimeout(function () { store.set('releaseNoticeDismissed:1.4.0', false); location.href = here; }, 2600);
+    });
+    actions.appendChild(update);
+    if (!block) {
+      var later = el('button', 'btn', 'Later'); later.type = 'button'; later.addEventListener('click', function () { store.set('releaseNoticeDismissed:1.4.0', true); host.remove(); }); actions.appendChild(later);
+    }
+    box.appendChild(actions);
+    if (release === 'failed') {
+      var fallback = el('p', 't-sm ink-3', 'If the retry fails while connected, download the installer from the release page and run it.');
+      box.appendChild(fallback);
+      var link = el('a', 'lnk t-sm', 'Open the release page'); link.href = 'https://github.com/aoneahsan/windowsweep/releases'; link.target = '_blank'; link.rel = 'noopener'; link.appendChild(el('span', 'visually-hidden', ' (opens in a new tab)')); box.appendChild(link);
+      box.appendChild(el('p', 't-sm ink-3', 'If the installer also fails, open a support issue.'));
+      var support = el('a', 'lnk t-sm', 'Open support issues'); support.href = 'https://github.com/aoneahsan/windowsweep/issues'; support.target = '_blank'; support.rel = 'noopener'; support.appendChild(el('span', 'visually-hidden', ' (opens in a new tab)')); box.appendChild(support);
+    }
+    host.appendChild(box); document.body.appendChild(host);
+    if (block) { var app = document.querySelector('.app'); if (app) app.inert = true; update.focus(); }
+  }
+
   /* ------------------------------------------------------------------------- */
   function boot() {
     buildTitlebar(document.querySelector('[data-ws-titlebar]'));
     buildRail(document.querySelector('[data-ws-rail]'));
     buildPanel();
+    buildNotices();
 
     // the theme toggle is injected by the SAME owner that builds the panel and the
     // bar it lands in, so the three cannot disagree

@@ -9,7 +9,6 @@
 [![npm version](https://img.shields.io/npm/v/windowsweep.svg)](https://www.npmjs.com/package/windowsweep)
 [![downloads](https://img.shields.io/npm/dm/windowsweep.svg)](https://www.npmjs.com/package/windowsweep)
 [![license](https://img.shields.io/npm/l/windowsweep.svg)](https://github.com/aoneahsan/windowsweep/blob/main/LICENSE)
-[![ci](https://github.com/aoneahsan/windowsweep/actions/workflows/ci.yml/badge.svg)](https://github.com/aoneahsan/windowsweep/actions/workflows/ci.yml)
 [![node](https://img.shields.io/node/v/windowsweep.svg)](https://nodejs.org)
 [![platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0078d4?logo=windows&logoColor=white)](https://github.com/aoneahsan/windowsweep#platform-support)
 
@@ -126,7 +125,7 @@ reclaims disk space, nothing else.
 - **Running-app guard** - an open browser, editor or app keeps its caches; the tool tells you which to close.
 - **Session reports** - schema-versioned JSON, exportable to Markdown or a self-contained HTML page, plus
   `--json` for scripts.
-- **Self-test** - 156 checks prove the guards on your machine with a real junction, a 445-character path and
+- **Self-test** - 160 checks prove the guards on your machine with a real junction, a 445-character path and
   a dry-run fixture before you trust it.
 - **Offline by design** - the command-line tool makes zero network calls: no telemetry, no update check.
   Self-test check [9] fails the build on an HTTP or socket call in the source. Crash bundles stay on disk.
@@ -138,7 +137,7 @@ reclaims disk space, nothing else.
 |---|---|---|
 | Windows 11 | ✅ | Same engine and PowerShell hosts; a real run on Windows 11 is on the verification list ([project status](https://github.com/aoneahsan/windowsweep/blob/main/docs/features/windowsweep-completion/00-tracker.json)) |
 | Windows 10 (1809 and later) | ✅ | The primary development target; every real run so far |
-| Windows Server 2019+ | ⚠️ | Uses nothing newer than 1809; CI runs the self-test and a dry-run on Windows Server (`windows-latest`) on every push to `main` and every pull request, but no real cleanup has been run on Server |
+| Windows Server 2019+ | ⚠️ | Uses nothing newer than 1809; no real cleanup has been verified on Server |
 | Linux | ❌ | `os: ["win32"]` makes npm refuse to install; use [linux-cleanup](https://github.com/aoneahsan/linux-cleanup) |
 | macOS | ❌ | Use [macleanup](https://github.com/aoneahsan/macleanup) |
 

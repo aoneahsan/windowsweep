@@ -48,6 +48,9 @@ const CLOSE_PAGE: &str = "<!doctype html><html lang=\"en\"><head><meta charset=\
 enum Reply {
     /// This sign-in's state and a code: the redirect the window is waiting for.
     Code(String),
+    /// Google is already attached to an account; the window may hand the device
+    /// to that account only after a separate sign-in.
+    IdentityAlreadyExists,
     /// This sign-in's state and an error: Google or Supabase refused, and said why.
     Refused(String),
     /// This sign-in's state and neither: the flow ended without a code.
@@ -67,11 +70,13 @@ fn classify(target: &str, expected_state: &str) -> Reply {
     let mut code: Option<String> = None;
     let mut state: Option<String> = None;
     let mut error: Option<String> = None;
+    let mut error_code: Option<String> = None;
     for (k, v) in parsed.query_pairs() {
         match k.as_ref() {
             "code" => code = Some(v.into_owned()),
             "state" => state = Some(v.into_owned()),
             "error" => error = Some(v.into_owned()),
+            "error_code" => error_code = Some(v.into_owned()),
             _ => {}
         }
     }
@@ -79,6 +84,9 @@ fn classify(target: &str, expected_state: &str) -> Reply {
     // 🔴 The state check. A reply this app did not begin never reaches the exchange.
     if state.as_deref().filter(|s| !s.is_empty()) != Some(expected_state) {
         return Reply::NotOurs;
+    }
+    if error.is_some() && error_code.as_deref() == Some("identity_already_exists") {
+        return Reply::IdentityAlreadyExists;
     }
     match (error, code) {
         (Some(e), _) => Reply::Refused(e),
@@ -148,6 +156,10 @@ fn wait_for_reply(pending: &Pending, wait: Duration) -> Result<String, String> {
             Reply::Code(code) => {
                 respond_page(request, DONE_PAGE);
                 return Ok(code);
+            }
+            Reply::IdentityAlreadyExists => {
+                respond_page(request, CLOSE_PAGE);
+                return Err(String::from("identity_already_exists"));
             }
             Reply::Refused(e) => {
                 respond_page(request, CLOSE_PAGE);
@@ -221,6 +233,28 @@ mod tests {
         assert_eq!(
             classify(&both, STATE),
             Reply::Refused("server_error".into())
+        );
+    }
+
+    #[test]
+    fn only_a_matching_identity_conflict_starts_the_handoff_path() {
+        let conflict =
+            format!("/?state={STATE}&error=access_denied&error_code=identity_already_exists");
+        assert_eq!(classify(&conflict, STATE), Reply::IdentityAlreadyExists);
+        assert_eq!(classify(&conflict, "another-state"), Reply::NotOurs);
+        assert_eq!(
+            classify(
+                &format!("/?state={STATE}&error=access_denied&error_code=bad_oauth_callback"),
+                STATE
+            ),
+            Reply::Refused("access_denied".into())
+        );
+        assert_eq!(
+            classify(
+                &format!("/?state={STATE}&code=a1b2c3&error_code=identity_already_exists"),
+                STATE
+            ),
+            Reply::Code("a1b2c3".into())
         );
     }
 

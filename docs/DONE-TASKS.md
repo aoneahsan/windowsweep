@@ -3,7 +3,7 @@
 Closed agent follow-ups, moved here from the root `PENDING-TASKS.md` with the date and the commit that closed
 them. Open work lives there; owner-only rows live in `docs/MANUAL-TASKS.md`.
 
-Last updated: 2026-09-28 (latest: DONE-023 - TASK-023, a development build reports no analytics (D54), with no release needed. Earlier the same day: DONE-020 (TASK-020, the window's CSP), DONE-021 (the desktop sign-in) and DONE-022 (empty run folders), all closed with desktop-v1.3.2. Earlier 2026-09-26: DONE-001 to DONE-012 moved verbatim to `DONE-TASKS-001-012.md` at this file's 500-line ceiling, and DONE-019 gained its tag-run proof. Earlier the same day: DONE-019 - TASK-019, the build-time generators became Vite plugins. Earlier 2026-09-25: DONE-018 - TASK-017, the triage stamps moved to the server. Earlier: DONE-017 - TASK-018, History's zero-count total, closed without new words. Earlier: DONE-016 - TASK-013, the desktop sync, verified live. Earlier 2026-09-17: DONE-013, DONE-014 and DONE-015 - the design-record split, the Report export, and three of the four History and Report gaps)
+Last updated: 2026-10-31 (DONE-024 closed because no windowsweep surface calls an AI model. Earlier completions remain below.)
 
 **DONE-001 to DONE-012** moved verbatim to [`DONE-TASKS-001-012.md`](DONE-TASKS-001-012.md) on 2026-09-26, when
 this file passed its 500-line ceiling (573 lines). Their IDs, order and words are unchanged; a new entry is still
@@ -299,3 +299,7 @@ with `false` and drops the branch. **Proved** in `../gate4-evidence/task023/`:
 Round 18's axis-parity driver already leaves `AMP_*` keys out, so no round driver breaks. From now on a round watches
 analytics only on a production-protocol build or the installed first boot (`../release-kit-1.3.2/README.md` binds the
 next kit).
+
+### DONE-024 - AI fallback task does not apply
+
+**Closed 2026-10-31** from TASK-024 (`<!-- fleet:ai-cheapest-fallback-v1 -->`). A source inventory of the CLI engine, desktop, website and docs found no AI model call. The matching fleet tracker row is closed with that reason; the hourly lease, paid fallback and credit-expiry rules apply when a model call is introduced.

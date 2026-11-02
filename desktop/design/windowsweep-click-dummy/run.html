@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="shared.css">
 <link rel="stylesheet" href="components.css">
+<script src="vendor/strata-storage.iife.js"></script>
 <script src="app.js"></script>
 </head>
 <body>
@@ -42,6 +43,15 @@
             <button class="btn btn-primary btn-lg" data-ws-action="runStart"><span class="btn-label">Start the safe run</span></button>
           </div>
         </div>
+      </section>
+
+      <section class="band band-app band-tight" data-allowance-notice hidden aria-labelledby="run-allowance-title">
+        <div class="wrap"><div class="note note-warn"><span aria-hidden="true">!</span><div>
+          <h2 class="t-md wide" id="run-allowance-title" data-allowance-title></h2>
+          <p class="t-sm" data-allowance-body></p>
+          <p class="t-sm state-warn" data-allowance-inline role="status" hidden>No real runs left this month. A dry-run still works.</p>
+          <div class="allowance-actions" data-allowance-actions></div>
+        </div></div></div>
       </section>
 
       <!-- The engine refusing to run is a REAL state and it had no words at all: the
@@ -162,6 +172,7 @@
 <script src="widgets.js"></script>
 <script src="page-run.js"></script>
 <script src="wire.js"></script>
+<script src="allowance-review.js"></script>
 <script src="demo.js"></script>
 </body>
 </html>

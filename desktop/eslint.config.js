@@ -57,7 +57,29 @@ export default defineConfig(
     rules: {
       ...reactHooks.configs.recommended.rules,
       ...houseRules,
+      'no-restricted-globals': [
+        'error',
+        ...['localStorage', 'sessionStorage', 'indexedDB', 'caches'].map((name) => ({
+          name,
+          message: 'Use src/lib/storage.ts for web persistence.',
+        })),
+      ],
+      'no-restricted-properties': [
+        'error',
+        ...['window', 'globalThis'].flatMap((object) =>
+          ['localStorage', 'sessionStorage', 'indexedDB', 'caches'].map((property) => ({
+            object,
+            property,
+            message: 'Use src/lib/storage.ts for web persistence.',
+          }))
+        ),
+        { object: 'document', property: 'cookie', message: 'Use src/lib/storage.ts for cookies.' },
+      ],
     },
+  },
+  {
+    files: ['src/lib/storage.ts'],
+    rules: { 'no-restricted-globals': 'off', 'no-restricted-properties': 'off' },
   },
   {
     // The build-time generators and gates (TASK-019): Node-side, in `tsconfig.node.json`,

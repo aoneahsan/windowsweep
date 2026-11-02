@@ -37,6 +37,8 @@ function Initialize-Safety {
     "$A\npm", "$A\nvm", "$L\nvm", "$SD\nvm4w", "$L\Volta", "$L\fnm", "$L\fnm_multishells", "$L\node\corepack",
     "$L\pnpm\global", "$U\.bun\bin", "$U\.bun\install\global", "$U\.deno\bin", "$U\.cargo\bin", "$U\.rustup", "$U\go\bin",
     "$L\Programs", "$L\Microsoft\WindowsApps", "$L\Android\Sdk",
+    # The desktop app's own install and data folders (section 23 offered the data folder on the P52, 2026-11-02).
+    "$L\windowsweep", "$L\com.aoneahsan.windowsweep",
     "$SR\Prefetch", "$SR\Installer", "$SR\WinSxS", "$SR\System32\config", "$SR\servicing", "$SR\Boot", "$SR\Fonts",
     "$PD\Package Cache", "$PD\Microsoft\Windows\Start Menu",
     "$SD\`$Recycle.Bin", "$SD\System Volume Information", "$SD\Recovery", "$SD\Boot", "$SD\EFI"

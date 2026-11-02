@@ -19,6 +19,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- **Section 23 no longer offers folders that still belong to something.** It offered the desktop app's own
+  data folder, a Store app's data, an installed program known by its initials, and a tool running from its
+  own folder. A reverse-DNS folder name (`com.vendor.app`) is now matched segment by segment, a shared vendor
+  stem counts as a claim, a program of three or more words also claims its initials, and the folders in a
+  running program's command-line paths count as claimed. The desktop app's install and data folders are
+  protected outright.
 - **`--json` is one line again on every run.** Section 12's Delivery Optimization step printed two lines to
   stdout ahead of the JSON document. Its words now go to the log, and the runner discards anything a section
   leaves on its output stream.

@@ -24,7 +24,7 @@ function Invoke-SelfTest14 {
   $root = Join-Path $Fixture 'g19'
   Reset-AccessVerdicts
   try {
-    Write-Section '[19] 1.4.0: idle basis when last-access is live (D82), one-line --json'
+    Write-Section '[19] 1.4.0: idle basis when last-access is live (D82), one-line --json, orphan claims'
 
     # 19a - the verdict rule itself
     $checks++
@@ -71,6 +71,33 @@ function Invoke-SelfTest14 {
     $doc = (Get-JsonSummary) | ConvertTo-Json -Depth 5 -Compress
     $named = @(($doc | ConvertFrom-Json).access_live_volumes)
     if ($named -contains $vol -and -not $doc.Contains("`n")) { Write-Ok "--json names the live-access volume ($vol) in access_live_volumes, still on one line" } else { Write-Err "access_live_volumes wrong: [$($named -join ',')] expected $vol"; $fails++ }
+
+    # 19h-19l - section 23 claims learned from the P52 (every case erred towards calling a live folder orphaned)
+    $set = New-Object System.Collections.Generic.HashSet[string]([StringComparer]::Ordinal)
+    foreach ($name in 'windowsweep', 'DBeaverCorp.DBeaverCE', 'Internet Download Manager') { Add-MatchTokens -Set $set -Text $name }
+    Add-CommandLineTokens -Set $set -CommandLine 'node C:/Users/x/.claude/plugins/cache/superpowers-chrome/3.0.2/mcp/dist/index.js'
+    $index = [pscustomobject]@{ Tokens = $set; RegistryCount = 3; Rows = @() }
+    $checks++
+    $dnsClaimed = -not (Test-OrphanFolderName -Name 'com.aoneahsan.windowsweep' -Index $index)
+    $dnsOrphan = Test-OrphanFolderName -Name 'com.example.zqxwvu' -Index $index
+    if ($dnsClaimed -and $dnsOrphan) { Write-Ok 'reverse-DNS data folder: com.aoneahsan.windowsweep is claimed by "windowsweep"; an unknown app id stays an orphan' } else { Write-Err "reverse-DNS claim wrong: claimed=$dnsClaimed unknownIsOrphan=$dnsOrphan"; $fails++ }
+    $checks++
+    $stem = -not (Test-OrphanFolderName -Name 'DBeaverData' -Index $index)
+    $other = Test-OrphanFolderName -Name 'ChessBase' -Index $index
+    if ($stem -and $other) { Write-Ok 'vendor stem: DBeaverData is claimed by the DBeaverCorp.DBeaverCE Store app; ChessBase is not' } else { Write-Err "vendor stem wrong: DBeaverData claimed=$stem ChessBase orphan=$other"; $fails++ }
+    $checks++
+    if (-not (Test-OrphanFolderName -Name 'IDM' -Index $index)) { Write-Ok 'acronym: IDM is claimed by Internet Download Manager' } else { Write-Err 'acronym claim missing: IDM offered as orphaned'; $fails++ }
+    $checks++
+    $bare = New-Object System.Collections.Generic.HashSet[string]([StringComparer]::Ordinal)
+    Add-MatchTokens -Set $bare -Text 'windowsweep'
+    Add-CommandLineTokens -Set $bare -CommandLine 'bash -c "grep -c vega-desktop-updater log.txt"'
+    $bareIndex = [pscustomobject]@{ Tokens = $bare; RegistryCount = 1; Rows = @() }
+    $pathClaims = -not (Test-OrphanFolderName -Name 'superpowers' -Index $index)
+    $wordIgnored = Test-OrphanFolderName -Name 'vega-desktop-updater' -Index $bareIndex
+    if ($pathClaims -and $wordIgnored) { Write-Ok 'command line: a folder in a running PATH (superpowers) is claimed; a bare word in a shell command line claims nothing' } else { Write-Err "command-line claim wrong: pathClaims=$pathClaims bareWordIgnored=$wordIgnored"; $fails++ }
+    $checks++
+    $why = Get-ProtectionReason (Join-Path $env:LOCALAPPDATA 'com.aoneahsan.windowsweep\EBWebView')
+    if ($why) { Write-Ok "the desktop app's own data folder is protected ($why)" } else { Write-Err "DANGEROUS: the desktop app's data folder is not protected"; $fails++ }
 
     # 19f - nothing a section emits can reach --json stdout
     $checks++

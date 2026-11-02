@@ -58,11 +58,12 @@ function Get-GlobalPackages {
   <# .SYNOPSIS Packages under one global root. Reads each package.json (top level only) - never walks a global tree. #>
   param([pscustomobject] $RootRow)
   $rows = @()
+  $ignore = Test-LastAccessLive -Root $RootRow.Root
   if ($RootRow.Style -eq 'bin') {
     foreach ($e in (Get-ChildEntries $RootRow.Root)) {
       if ($e -is [IO.DirectoryInfo]) { continue }
       if ($e.Extension -eq '.cmd') { continue }
-      $idle = [int][math]::Floor(([datetime]::UtcNow - (Get-NewestTimestampUtc $e)).TotalDays)
+      $idle = [int][math]::Floor(([datetime]::UtcNow - (Get-NewestTimestampUtc $e -IgnoreAccess:$ignore)).TotalDays)
       $rows += [pscustomobject]@{ Manager = $RootRow.Manager; Name = [IO.Path]::GetFileNameWithoutExtension($e.Name)
         Version = ''; Path = (Remove-LongPrefix $e.FullName); Bytes = [long]$e.Length; Idle = $idle
         Bins = @([IO.Path]::GetFileNameWithoutExtension($e.Name)) }
@@ -89,7 +90,7 @@ function Get-GlobalPackages {
     if ($manifest -and $manifest.version) { $version = [string]$manifest.version }
     # The newest of the package's own top-level entries: a global node_modules is far too big to walk.
     $newest = [datetime]::MinValue
-    foreach ($c in (Get-ChildEntries $d.Dir)) { $t = Get-NewestTimestampUtc $c; if ($t -gt $newest) { $newest = $t } }
+    foreach ($c in (Get-ChildEntries $d.Dir)) { $t = Get-NewestTimestampUtc $c -IgnoreAccess:$ignore; if ($t -gt $newest) { $newest = $t } }
     if ($newest -eq [datetime]::MinValue) { $newest = [datetime]::UtcNow }
     $rows += [pscustomobject]@{ Manager = $RootRow.Manager; Name = $d.Name; Version = $version; Path = $d.Dir
       Bytes = [long](Get-DirectoryBytes $d.Dir); Idle = [int][math]::Floor(([datetime]::UtcNow - $newest).TotalDays)
@@ -107,6 +108,7 @@ function Get-ProjectPackageIndex {
   $script = New-Object System.Text.StringBuilder
   $seen = 0
   foreach ($root in $Roots) {
+    $ignore = Test-LastAccessLive -Root $root
     $stack = New-Object System.Collections.Generic.Stack[object]
     $stack.Push(@($root, 0))
     while ($stack.Count -gt 0 -and $seen -lt $MaxFiles) {
@@ -125,7 +127,7 @@ function Get-ProjectPackageIndex {
         }
         if ($e.Name -ne 'package.json') { continue }
         $seen++
-        if ([int][math]::Floor(([datetime]::UtcNow - (Get-NewestTimestampUtc $e)).TotalDays) -ge $Days) { continue }
+        if ([int][math]::Floor(([datetime]::UtcNow - (Get-NewestTimestampUtc $e -IgnoreAccess:$ignore)).TotalDays) -ge $Days) { continue }
         $m = $null
         try { $m = @(Read-JsonFile (Remove-LongPrefix $e.FullName))[0] } catch { $m = $null }
         if ($null -eq $m) { continue }

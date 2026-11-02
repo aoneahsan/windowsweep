@@ -15,3 +15,6 @@ Open defects found while using or documenting windowsweep, one `### ISSUE-NNN` e
   5. A comment in `lib/safety.ps1` says network paths and `..` segments are refused; no refusal for either was found in the code.
 - **Fix:** make each statement match the code (or implement 5 with a fixture in the self-test), then re-check the site copy.
 - **Priority:** medium (item 5 is a safety claim: high if the refusal really is missing).
+- **Item 5 verified 2026-11-02 (P9 session):** the refusals exist - `lib/safety.ps1:118` (`..` segments),
+  `:119` and `:122` (UNC paths), `:123` (drive roots), all in `Get-ProtectionReason`. Items 1-4 are fixed with
+  P9's docs pass (tracker `P9.docs`), where the self-test count changes anyway.

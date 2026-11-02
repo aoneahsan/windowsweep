@@ -61,12 +61,102 @@ function Get-ChildEntries {
 }
 
 function Get-NewestTimestampUtc {
-  <# .SYNOPSIS The most recent of write / access / creation time - the safe "last touched" estimate when access tracking is off. #>
-  param([System.IO.FileSystemInfo] $Info)
+  <# .SYNOPSIS The most recent of write / access / creation time - the safe "last touched" estimate when access tracking is off.
+     -IgnoreAccess drops last-access (D82: used where Test-LastAccessLive found it carries no signal). #>
+  param([System.IO.FileSystemInfo] $Info, [switch] $IgnoreAccess)
   $t = $Info.LastWriteTimeUtc
-  try { if ($Info.LastAccessTimeUtc -gt $t) { $t = $Info.LastAccessTimeUtc } } catch { $null = $_ }
+  if (-not $IgnoreAccess) { try { if ($Info.LastAccessTimeUtc -gt $t) { $t = $Info.LastAccessTimeUtc } } catch { $null = $_ } }
   try { if ($Info.CreationTimeUtc -gt $t) { $t = $Info.CreationTimeUtc } } catch { $null = $_ }
   return $t
+}
+
+# D82 (owner, 2026-11-02): last-access can be live - Windows updating it, or an indexer, backup, antivirus or disk
+# scanner reading every file - and then every file looks touched today, so an idle gate deletes nothing (the P52:
+# a 30-day developer run found 1.5 GB of ~37 GB). Each root is sampled once. When at least WS_ACCESS_SAMPLE_MIN
+# files written or created a week or more ago were nearly all "read" within the last day, last-access says
+# nothing there and idle age uses write/creation time for that root. A root too small to judge inherits a live
+# verdict already reached on its volume; otherwise it keeps the conservative newest-of-three.
+$Script:WS_ACCESS_LIVE = @{}
+$Script:WS_ACCESS_LIVE_VOLUME = @{}
+$Script:WS_ACCESS_SAMPLE_MIN = 20
+$Script:WS_ACCESS_SAMPLE_MAX = 400
+$Script:WS_ACCESS_LIVE_RATIO = 0.9
+
+function Test-AccessSampleLive {
+  <# .SYNOPSIS The D82 verdict for a counted sample: enough old files, and nearly all of them read in the last day. #>
+  param([int] $Old, [int] $FreshAccess)
+  if ($Old -lt $Script:WS_ACCESS_SAMPLE_MIN) { return $false }
+  return (($FreshAccess / [double]$Old) -ge $Script:WS_ACCESS_LIVE_RATIO)
+}
+
+function Get-VolumeKey {
+  <# .SYNOPSIS Lower-case volume root of a path ("c:\"), or '' when it cannot be resolved. #>
+  param([string] $Path)
+  $full = Get-FullPath $Path
+  if (-not $full) { return '' }
+  try { return ([IO.Path]::GetPathRoot($full)).ToLowerInvariant() } catch { return '' }
+}
+
+function Get-AccessLiveVolumes {
+  <# .SYNOPSIS Volumes where a D82 sample found last-access live this run ("C:", "D:") - the --json summary names them. #>
+  return @($Script:WS_ACCESS_LIVE_VOLUME.Keys | ForEach-Object { ([string]$_).TrimEnd('\').ToUpperInvariant() } | Sort-Object)
+}
+
+function Reset-AccessVerdicts {
+  <# .SYNOPSIS Forget every D82 verdict (the self-test isolates its fixtures with this). #>
+  $Script:WS_ACCESS_LIVE = @{}
+  $Script:WS_ACCESS_LIVE_VOLUME = @{}
+}
+
+function Test-LastAccessLive {
+  <# .SYNOPSIS $true when last-access carries no signal under Root (D82). Judged once per root from a bounded,
+     breadth-first sample that never follows reparse points; the answer is cached for the run. #>
+  param([string] $Root)
+  $full = Get-FullPath $Root
+  if (-not $full) { return $false }
+  $key = $full.ToLowerInvariant()
+  if ($Script:WS_ACCESS_LIVE.ContainsKey($key)) { return [bool]$Script:WS_ACCESS_LIVE[$key] }
+  $now = [datetime]::UtcNow
+  $oldCut = $now.AddDays(-7); $freshCut = $now.AddDays(-1)
+  $old = 0; $fresh = 0; $seen = 0
+  $rootInfo = Get-ItemInfo $full
+  if ($rootInfo -is [IO.DirectoryInfo] -and -not (Test-ReparsePoint $rootInfo)) {
+    $queue = New-Object System.Collections.Generic.Queue[System.IO.DirectoryInfo]
+    $queue.Enqueue($rootInfo)
+    while ($queue.Count -gt 0 -and $seen -lt $Script:WS_ACCESS_SAMPLE_MAX) {
+      $dir = $queue.Dequeue()
+      $entries = $null
+      try { $entries = $dir.EnumerateFileSystemInfos() } catch { continue }
+      try {
+        foreach ($e in $entries) {
+          if (($e.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) { continue }
+          if (($e.Attributes -band [IO.FileAttributes]::Directory) -ne 0) { $queue.Enqueue([IO.DirectoryInfo]$e); continue }
+          $seen++
+          if ((Get-NewestTimestampUtc $e -IgnoreAccess) -le $oldCut) {
+            $old++
+            if ($e.LastAccessTimeUtc -ge $freshCut) { $fresh++ }
+          }
+          if ($seen -ge $Script:WS_ACCESS_SAMPLE_MAX) { break }
+        }
+      } catch { $null = $_ }
+    }
+  }
+  if ($old -ge $Script:WS_ACCESS_SAMPLE_MIN) {
+    $live = Test-AccessSampleLive -Old $old -FreshAccess $fresh
+    $Script:WS_ACCESS_LIVE[$key] = $live
+    $vol = Get-VolumeKey $full
+    if ($live -and $vol -and -not $Script:WS_ACCESS_LIVE_VOLUME.ContainsKey($vol)) {
+      $Script:WS_ACCESS_LIVE_VOLUME[$vol] = $true
+      $msg = "last-access looks live on {0} ({1} of {2} files written a week or more ago were read in the last day) - idle age there uses write/creation time" -f $vol.TrimEnd('\').ToUpperInvariant(), $fresh, $old
+      Write-Note $msg
+      Write-LogLine "idle basis: $msg (first seen under $full)"
+    }
+    return $live
+  }
+  $vol = Get-VolumeKey $full
+  $inherit = [bool]($vol -and $Script:WS_ACCESS_LIVE_VOLUME.ContainsKey($vol))
+  $Script:WS_ACCESS_LIVE[$key] = $inherit
+  return $inherit
 }
 
 function Format-Utc8601 {
@@ -79,17 +169,18 @@ function Format-Utc8601 {
 }
 
 function Get-DirectoryStats {
-  <# .SYNOPSIS Walk a tree without following reparse points. Returns Bytes, Files, Dirs, Links, Newest (UTC), Errors. #>
-  param([string] $Path)
+  <# .SYNOPSIS Walk a tree without following reparse points. Returns Bytes, Files, Dirs, Links, Newest (UTC), Errors.
+     -IgnoreAccess leaves last-access out of Newest (D82). #>
+  param([string] $Path, [switch] $IgnoreAccess)
   $bytes = [long]0; $files = 0; $dirs = 0; $links = 0; $errors = 0
   $newest = [datetime]::MinValue
   $root = Get-ItemInfo $Path
   if ($null -eq $root) { return [pscustomobject]@{ Bytes = 0; Files = 0; Dirs = 0; Links = 0; Newest = $newest; Errors = 0; Exists = $false } }
   if ($root -is [IO.FileInfo]) {
-    return [pscustomobject]@{ Bytes = [long]$root.Length; Files = 1; Dirs = 0; Links = 0; Newest = (Get-NewestTimestampUtc $root); Errors = 0; Exists = $true }
+    return [pscustomobject]@{ Bytes = [long]$root.Length; Files = 1; Dirs = 0; Links = 0; Newest = (Get-NewestTimestampUtc $root -IgnoreAccess:$IgnoreAccess); Errors = 0; Exists = $true }
   }
   if (Test-ReparsePoint $root) {
-    return [pscustomobject]@{ Bytes = 0; Files = 0; Dirs = 0; Links = 1; Newest = (Get-NewestTimestampUtc $root); Errors = 0; Exists = $true }
+    return [pscustomobject]@{ Bytes = 0; Files = 0; Dirs = 0; Links = 1; Newest = (Get-NewestTimestampUtc $root -IgnoreAccess:$IgnoreAccess); Errors = 0; Exists = $true }
   }
   $stack = New-Object System.Collections.Generic.Stack[System.IO.DirectoryInfo]
   $stack.Push($root)
@@ -104,13 +195,13 @@ function Get-DirectoryStats {
         $files++
         $bytes += [long]$e.Length
         $t = $e.LastWriteTimeUtc
-        if ($e.LastAccessTimeUtc -gt $t) { $t = $e.LastAccessTimeUtc }
+        if (-not $IgnoreAccess -and $e.LastAccessTimeUtc -gt $t) { $t = $e.LastAccessTimeUtc }
         if ($e.CreationTimeUtc -gt $t) { $t = $e.CreationTimeUtc }
         if ($t -gt $newest) { $newest = $t }
       }
     } catch { $errors++ }
   }
-  if ($newest -eq [datetime]::MinValue) { $newest = Get-NewestTimestampUtc $root }
+  if ($newest -eq [datetime]::MinValue) { $newest = Get-NewestTimestampUtc $root -IgnoreAccess:$IgnoreAccess }
   return [pscustomobject]@{ Bytes = $bytes; Files = $files; Dirs = $dirs; Links = $links; Newest = $newest; Errors = $errors; Exists = $true }
 }
 
@@ -134,14 +225,16 @@ function Get-DirectoryBytes {
 }
 
 function Get-IdleDays {
-  <# .SYNOPSIS Days since the path (or anything inside it) was last touched. 999999 when absent. #>
+  <# .SYNOPSIS Days since the path (or anything inside it) was last touched. 999999 when absent.
+     Last-access counts unless Test-LastAccessLive found it carries no signal here (D82). #>
   param([string] $Path)
   $info = Get-ItemInfo $Path
   if ($null -eq $info) { return 999999 }
+  $ignore = Test-LastAccessLive -Root $Path
   if ($info -is [IO.FileInfo] -or (Test-ReparsePoint $info)) {
-    return [int][math]::Floor(([datetime]::UtcNow - (Get-NewestTimestampUtc $info)).TotalDays)
+    return [int][math]::Floor(([datetime]::UtcNow - (Get-NewestTimestampUtc $info -IgnoreAccess:$ignore)).TotalDays)
   }
-  $stats = Get-DirectoryStats $Path
+  $stats = Get-DirectoryStats $Path -IgnoreAccess:$ignore
   return [int][math]::Floor(([datetime]::UtcNow - $stats.Newest).TotalDays)
 }
 
@@ -156,6 +249,7 @@ function Get-StaleFiles {
   if ($null -eq $rootInfo -or -not ($rootInfo -is [IO.DirectoryInfo]) -or (Test-ReparsePoint $rootInfo)) {
     return [pscustomobject]@{ Files = $stale; Dirs = $visited }
   }
+  $ignore = Test-LastAccessLive -Root $Root
   $stack = New-Object System.Collections.Generic.Stack[System.IO.DirectoryInfo]
   $stack.Push($rootInfo)
   while ($stack.Count -gt 0) {
@@ -171,7 +265,7 @@ function Get-StaleFiles {
           continue
         }
         $t = $e.LastWriteTimeUtc
-        if ($e.LastAccessTimeUtc -gt $t) { $t = $e.LastAccessTimeUtc }
+        if (-not $ignore -and $e.LastAccessTimeUtc -gt $t) { $t = $e.LastAccessTimeUtc }
         if ($e.CreationTimeUtc -gt $t) { $t = $e.CreationTimeUtc }
         if ($t -le $cutoff) { $stale.Add([pscustomobject]@{ Path = $e.FullName; Bytes = [long]$e.Length }) }
       }

@@ -63,6 +63,7 @@ function Get-ProjectActivityDays {
   <# .SYNOPSIS Days since any SOURCE file in the project changed (artefact dirs and .git excluded). #>
   param([string] $ProjectDir)
   $newest = [datetime]::MinValue
+  $ignore = Test-LastAccessLive -Root $ProjectDir
   $stack = New-Object System.Collections.Generic.Stack[string]
   $stack.Push($ProjectDir)
   $seen = 0
@@ -75,7 +76,7 @@ function Get-ProjectActivityDays {
         if ($Script:WS_ARTEFACT_DIRS -contains $e.Name -or $Script:WS_NEVER_ENTER -contains $e.Name -or (Test-MarkedArtefactDir -Dir $dir -Name $e.Name)) { continue }
         $stack.Push((Remove-LongPrefix $e.FullName)); continue
       }
-      $t = Get-NewestTimestampUtc $e
+      $t = Get-NewestTimestampUtc $e -IgnoreAccess:$ignore
       if ($t -gt $newest) { $newest = $t }
     }
   }

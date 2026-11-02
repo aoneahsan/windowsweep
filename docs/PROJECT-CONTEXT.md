@@ -48,8 +48,9 @@ proved it catches one), the engine diffing EMPTY against `v1.3.1`, `desktop-ci` 
   author-block rule of name, site, GitHub, LinkedIn and email): the README's Author section names the team, its team
   page and its contact form; the licence, LICENSE copyright and npm `author` field keep the owner's name. No phone number.
 - Section numbers are frozen from the release that introduced them; a retired section stays as a no-op and a
-  number is never reused. 0-21 shipped in 1.0.0, 22-25 in 1.1.0; the next new section starts at 26 (which is
-  free because RW-066's driver-leftover section was deferred, not shipped).
+  number is never reused. 0-21 shipped in 1.0.0, 22-25 in 1.1.0; 26-29 are assigned for 1.4.0 by D77-D81
+  (uninstall, leftovers, releases, browserai). RW-066's deferred driver-leftover section takes the next free
+  number (30) if it ships.
 - Developer mode semantics (owner requirement): developer = idle gate (100 days) + keep-newest on sections 1-5;
   non-developer = clear those caches. Non-interactive with no saved answer defaults to developer on.
 - Idle age = newest of write/access/creation time, because Windows disables last-access updates on most
@@ -271,6 +272,28 @@ Asked in one batch at the start of the run; each answer is his verbatim option. 
   Clarity remains website-only. The desktop CSP allows the GA4 tag and collection hosts.
 - **D76 - no Docker for WindowSweep** (2026-10-31): the owner forbids starting or using Docker because of its
   system load. The Supabase CLI's `db dump` path is excluded; backups use a standalone PostgreSQL client.
+- **D77 - uninstalling selected programs is in scope** (2026-11-02, owner: "get rid of all softwares which i do
+  not need from this system fully ... get all that implemented as features in this software"): new section 26 runs
+  the selected program's own registered uninstaller. Interactive only, never batch; `--yes` never selects. It
+  replaces the old non-goal "running an uninstaller (section 24 only reports)".
+- **D78 - leftovers outside AppData** (2026-11-02): new section 27 offers unclaimed top-level folders in Program
+  Files, ProgramData, Common Files, `%LOCALAPPDATA%\Programs`, profile dot-folders and drive-root folders; Recycle
+  Bin, interactive, fails closed. A leftover inside a protected subtree is reported, never removed.
+- **D79 - two narrow protection exceptions, computed at start-up** (2026-11-02): Codex standalone releases other
+  than the `current` junction target and the newest previous one; and the allowlisted Chromium cache leaves inside
+  a user-declared browser-profile root (`browserProfileRoots`). Everything else in `.codex` and `.local` stays protected.
+- **D80 - these ship in 1.4.0** (2026-11-02, "Ship as 1.4.0 when gates pass"): they join the 1.4.0 programme and
+  its existing gates; the second-machine candidate rows RW-064/065/066 move to 1.5.0.
+- **D81 - browser AI model** (2026-11-02): section 29 sets Chrome's `GenAILocalFoundationalModelSettings = 1`
+  (HKLM). Chrome then deletes `OptGuideOnDeviceModel` itself (seen on the P52 that day: 4 GB gone with Chrome
+  running). It shows "Managed by your organization"; the undo is documented.
+- **D82 - idle basis** (2026-11-02, "Auto-detect, then write time (Recommended)"): where last-access is live on a
+  root (a sample shows most files read within a day but written long before), the idle gate ignores last-access
+  and uses write/creation; elsewhere it stays the newest of the three. The output names the basis used.
+- **D83 - 1.4.0 section extensions** (2026-11-02, from the P52 cleanup): 4 adds system images no AVD uses and
+  dangling AVD `.ini` files (`sdkmanager --uninstall`); 7 adds `browserProfileRoots`; 10 adds `tempRoots`; 24
+  adds a last-run column from Prefetch when elevated; 23's claim logic learns reverse-DNS app ids, Store package
+  names, acronyms and process command lines, and never offers the desktop app's own data folder.
 - Settled in the main session the same day, not owner questions: the release form warns when a version is ABOVE the
   deployed build (a record above every build would block everyone; the update-flow skill's wording is corrected);
   `devices` stores no machine name, host name or Windows version (the product's "never a machine name" promise); the
@@ -406,8 +429,8 @@ passed its 500-line ceiling (514 lines).
 - Must not: add dependencies; follow reparse points; delete inside a protected root under any flag; auto-run
   deep or interactive sections in batch mode; store credentials or machine-specific paths in the repo.
 - Explicitly out of scope for the CLI: registry cleaning, changing startup items (section 25 only reports),
-  driver or service changes (section 26 removes installer leftovers, never drivers), undo for caches, running
-  an uninstaller (section 24 only reports). A GUI is not part of the CLI; the desktop app is phase P6.
+  driver or service changes, undo for caches. Running a program's own uninstaller is in scope since D77 (section
+  26, interactive only); section 24 still only reports. A GUI is not part of the CLI; the desktop app is phase P6.
 
 ## Key paths and contracts
 - `lib/safety.ps1` - the chokepoint and the protected lists; every change here is a safety change.

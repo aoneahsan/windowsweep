@@ -226,8 +226,8 @@
         {
           "id": "P1.RW-020",
           "title": "First real elevated run of sections 12-15 (16 and 20 separately), then record the outcome and fix what it exposes",
-          "status": "blocked",
-          "note": "MANUAL-TASKS row 1; owner runs, agent records",
+          "status": "in_progress",
+          "note": "MANUAL-TASKS row 1. 2026-11-02: 12-15 ran for real, elevated through UAC approved by the owner on the P52 (CLI 1.3.2 from the repo): 12 reclaimed 22 MB, 13 ran, 14 DISM 7.2 GB, 15 off 12.7 GB, exit 0 (../machine-evidence/p52-2026-11-02/ws-a4-admin-run.json). Exposed: --json stdout polluted by Delete-DeliveryOptimizationCache output - fixed under P9.json-stdout. Still open: 16 and 20 separately.",
           "awaitingUser": true
         },
         {
@@ -1134,6 +1134,27 @@
           "awaitingUser": false
         }
       ]
+    },
+    {
+      "id": "P9",
+      "title": "1.4.0 machine-cleanup features from the 2026-11-02 P52 cleanup (D77-D83)",
+      "status": "in_progress",
+      "subTasks": [
+        { "id": "P9.decisions", "title": "Record D77-D83 and replace the uninstaller non-goal", "status": "complete", "note": "docs/PROJECT-CONTEXT.md, 2026-11-02", "awaitingUser": false },
+        { "id": "P9.idle-basis", "title": "D82: detect a live last-access per root and fall back to write/creation; the output names the basis", "status": "pending", "note": "lib/fs.ps1 Get-IdleDays / Get-NewestTimestampUtc; evidence: 30-day dry-run found 1.5 GB of ~37 GB", "awaitingUser": false },
+        { "id": "P9.json-stdout", "title": "Keep --json stdout to one line: capture Delete-DeliveryOptimizationCache and other external output", "status": "pending", "note": "evidence: ../machine-evidence/p52-2026-11-02/ws-a4-admin-run.json starts with 'Deleting...'", "awaitingUser": false },
+        { "id": "P9.s23-claims", "title": "Section 23 claim fixes: reverse-DNS ids, Store package names, acronyms, process command lines; never offer the desktop app's own data", "status": "pending", "note": "false positives seen 2026-11-02: com.aoneahsan.windowsweep, DBeaverData, IDM, superpowers", "awaitingUser": false },
+        { "id": "P9.s26-uninstall", "title": "Section 26: run a selected program's own uninstaller, verify, then a targeted leftover pass", "status": "pending", "note": "lessons: Adobe needs --baseVersion and strictly serial runs (bootstrapper lock); Chromium setup exit 19 = success", "awaitingUser": false },
+        { "id": "P9.s27-leftovers", "title": "Section 27: unclaimed folders outside AppData -> Recycle Bin, fails closed", "status": "pending", "note": "real-run proof: C:\\Program Files\\AVAST Software", "awaitingUser": false },
+        { "id": "P9.s28-releases", "title": "Section 28: superseded Codex releases, Electron updater downloads, Ollama updates, unpinned nvm Node versions", "status": "pending", "note": "real-run proof: Codex 0.163.0 + 0.164.0, Node v24.10.0, vega-desktop-updater", "awaitingUser": false },
+        { "id": "P9.s29-browserai", "title": "Section 29: Chrome on-device AI model policy (D81)", "status": "pending", "note": "real run reports the policy already set", "awaitingUser": false },
+        { "id": "P9.extensions", "title": "D83: section 4 images + dangling AVD .ini, 7 browserProfileRoots, 10 tempRoots, 24 Prefetch last run", "status": "pending", "note": "real-run proof: android-34 + 2 .ini, ahsan-automation caches, C:\\t profiles", "awaitingUser": false },
+        { "id": "P9.selftest", "title": "Self-test group for every new behaviour (dry-run = real estimate, exceptions exact, --yes never selects, fail closed)", "status": "pending", "note": "", "awaitingUser": false },
+        { "id": "P9.docs", "title": "sections, cli-reference, safety-model, CONTRACTS, profiles, faq, CHANGELOG, AI guide, README, root inventory; docs site mirror", "status": "pending", "note": "", "awaitingUser": false },
+        { "id": "P9.desktop", "title": "Click dummy first, then sections.json words for 26/27/29 and parity at 1440/760; yarn gates", "status": "pending", "note": "", "awaitingUser": false },
+        { "id": "P9.real-run", "title": "Prove each new section on the P52 with the held items (list in ../machine-evidence/p52-2026-11-02 and the notebook record)", "status": "pending", "note": "fallback: remove the held items by hand if P9 stalls", "awaitingUser": false },
+        { "id": "P9.release", "title": "Ship in 1.4.0 with the rest of the 1.4.0 programme (activeCompletionRun gates)", "status": "blocked", "note": "release-kit-1.4.0/README.md; legal GATE 4, database rollout and site checks gate it", "awaitingUser": false }
+      ]
     }
   ],
   "runHistory": [
@@ -1469,6 +1490,12 @@
       "model": "claude-opus-5-5[1m]; main context only, no agents (D21)",
       "phase": "Session 20 - row 31 closed by the owner on the installed 1.3.2; TASK-023 closed under D54",
       "summary": "The owner reported his Google sign-in on the installed 1.3.2 working, asked for it to be marked and for the whole state to be confirmed, then did the dry-run. Read back from the server (../site-evidence/row31/, read-only, 27 of 27 checks, every needle seen matching a plant first): the sign-in at 13:22:29Z completed its exchange (no flow_state row left, one session), user_settings was created at 13:22:31Z with only the palette and theme axes, and the dry-run at 13:40:20Z (mode all, 11 sections, about 2.47 GB estimated) reached the account with its local run folder - no path, drive label, machine name or user name in either row. MANUAL-TASKS row 31 moved to Completed at his instruction. D54 chose TASK-023 option (a): startAnalytics returns under import.meta.env.DEV; the production bundle is byte-identical (so no release), and a dev page load went from 8 analytics attempts to 0 (../gate4-evidence/task023/). DONE-023 recorded; no agent task is open. PROJECT-CONTEXT.md passed 500 lines (514), so its two Supabase migration subsections moved verbatim to docs/PROJECT-CONTEXT-supabase.md (lossless: 0 missing, 0 extra; a planted drop named). Release state re-verified: all four repos clean and in sync, CI green, desktop-v1.3.2 Latest with a signed latest.json, npm 1.3.2, the site and docs 200, the installed app 1.3.2. Later the same session: row 30 closed on his word (the consent screen published; no API reads it), and web row 4's sign-in read back from the server (../site-evidence/web-row4/, 6 of 6) - his Google session on the site dates from 2026-09-26 and was refreshed at 14:44Z when he tried it; run 1 of that driver looked for a newer sign-in time and found none, and its log is kept."
+    },
+    {
+      "date": "2026-11-02",
+      "model": "claude-opus-5-5; main context only (RAM check: 8.3 GB available, no dispatch)",
+      "phase": "P52 disk cleanup with CLI 1.3.2 from the repo; P9 opened (D77-D83)",
+      "summary": "The owner's machine had C: at 7.7% free. Cleaned with the repo's CLI (safe batch 27.4 GB, admin 12-15 19.9 GB, browsers 5.1 GB, section 23 with a reviewed selection) plus each program's own uninstaller for 15 owner-chosen programs; C: 21.1 -> 125.4 GB free, D: 52.4 -> 144.9 GB. Real-machine findings feed P9: last-access is live on C:/D: so the idle gate reclaimed 1.5 GB of ~37 GB (D82), --json stdout polluted by section 12, section 23 false positives (its own desktop data folder among them), Adobe uninstall lessons. Held items for P9's real-run proof are listed in ../machine-evidence/p52-2026-11-02/ (private root)."
     }
   ],
   "resumeInstructions": "RED Read ../completion-plan-v5-2026-09-24.md for the method and docs/work-history/2026-09-28-WH013-desktop-signin-fixed-and-v132-released.md for session 19 (session 20 is this file's last runHistory row). FIFTY-FOUR owner decisions are in force: D1-D24 as before, D25-D54 in docs/PROJECT-CONTEXT.md (D54: a development build reports no analytics); apply them, never re-ask. STATE AFTER SESSION 20 (2026-09-28): desktop-v1.3.2 is Latest (tagged on c530312) and installed here; windowsweep@1.3.2 is on npm; the site and the docs follow desktop-v1.3.2. Row 31 is CLOSED - the owner's own Google sign-in and dry-run on the installed 1.3.2, read back from the server with no path in either row (../site-evidence/row31/). TASK-023 is CLOSED as DONE-023 (D54): yarn dev and tauri dev report no analytics, so a GATE 4 round watches GA4/Amplitude/Clarity/Sentry only on a production-protocol build (yarn tauri build --debug --no-bundle) or the installed first boot, and names the build it watched. No agent task is open. RED tauri dev applies NO CSP and now sends NO analytics (knownRisks). RESUME HERE: (0) Verify the state - the three repos clean and in sync (product remote o, web and docs origin), CI green at each head, latest.json 1.3.2, npm 1.3.2, the site and the docs answering 200, the installed app 1.3.2 (HKCU, Get-ItemProperty). (1) RW-055, the portfolio refresh, on or after 2026-10-02 (the file's own date) - it records desktop-v1.3.2 and corrects its \"the first release you can sign in to\" line (../remaining-work.md section 8). (2) The second machine (../remaining-work.md section 11): row 20's probe, RW-064/065/066, the P1 rows, then CLI 1.4.0. OWNER ROWS OPEN: web 4 (its sign-in proved 2026-09-28; the cancelled attempt and the deletion remain - with a throwaway account, never his own, which is the site superadmin), 15 (tick - his own sign-ins went through it), 5 and 13, 26 and 28, 29 and web 3, web 2. Row 30 is CLOSED (2026-09-28, the consent screen published - his word; no API reads it). Never commit the owner's untracked assets/logo/windowsweep-mark.png.",

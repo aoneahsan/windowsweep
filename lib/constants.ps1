@@ -70,7 +70,9 @@ $Script:WS_SECTIONS = @(
   @{ Id = 23; Key = 'orphaned';   Title = 'Orphaned application data under AppData -> Recycle Bin';   Tier = 'recycle';   Admin = $false; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section23' }
   @{ Id = 24; Key = 'programs';   Title = 'Installed programs not modified for N+ days - report only'; Tier = 'report';   Admin = $false; Batch = 'safe';        Dev = $false; Fn = 'Invoke-Section24' }
   @{ Id = 25; Key = 'startup';    Title = 'Startup items audit (Run keys, Startup folders, logon tasks) - report only'; Tier = 'report'; Admin = $false; Batch = 'safe'; Dev = $false; Fn = 'Invoke-Section25' }
-  @{ Id = 28; Key = 'releases';   Title = 'Superseded tool releases and old downloaded updates (Codex, Electron updaters, Ollama, unrequested Node) - current kept'; Tier = 'rebuilds'; Admin = $false; Batch = 'safe'; Dev = $false; Fn = 'Invoke-Section28' }
+  @{ Id = 26; Key = 'uninstall';  Title = 'Uninstall programs you pick, each with its own uninstaller, then the folders they left -> Recycle Bin'; Tier = 'permanent'; Admin = $false; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section26' }
+  @{ Id = 27; Key = 'leftovers';  Title = 'Folders uninstalled programs left in Program Files, Common Files and ProgramData -> Recycle Bin'; Tier = 'recycle'; Admin = $true; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section27' }
+  @{ Id = 28; Key = 'releases';  Title = 'Superseded tool releases and old downloaded updates (Codex, Electron updaters, Ollama, unrequested Node) - current kept'; Tier = 'rebuilds'; Admin = $false; Batch = 'safe'; Dev = $false; Fn = 'Invoke-Section28' }
   @{ Id = 29; Key = 'browserai';  Title = 'Chrome on-device AI model - set the policy that removes it (Chrome shows "Managed by your organization")'; Tier = 'config'; Admin = $true; Batch = 'deep'; Dev = $false; Fn = 'Invoke-Section29' }
 )
 
@@ -89,7 +91,7 @@ $Script:WS_PROFILES = @{
 
 # Walkthrough order (interactive default mode). Admin sections are inserted when elevated.
 $Script:WS_WALKTHROUGH = @(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 28, 11, 17, 18, 19, 23)
-$Script:WS_WALKTHROUGH_ADMIN = @(12, 13, 14)
+$Script:WS_WALKTHROUGH_ADMIN = @(12, 13, 14, 27)
 
 function Get-Section {
   <# .SYNOPSIS Returns the catalogue entry for a section id, or $null. #>

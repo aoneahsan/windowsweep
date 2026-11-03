@@ -11,6 +11,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- **Section 26 - uninstall the programs you pick.** It lists the installed programs - never Windows parts,
+  runtimes, drivers, hardware software, build kits or patches - and removes the ones you select with their own
+  uninstaller, one at a time, silently where the uninstaller has a silent form (MSI, Inno Setup, NSIS, Chromium
+  family, WiX bundles, winget, Docker Desktop, Qt, Adobe Creative Cloud, rustup) and in the vendor's own window
+  otherwise. A program installed for all users needs an elevated run. After a real uninstall it offers the
+  folders the program left for the Recycle Bin. `--yes` never selects here; `--select` or `--select-file` does.
+- **Section 27 - folders uninstalled programs left behind.** It lists the top-level folders in Program Files,
+  both Common Files and ProgramData that no installed program, service, driver, PATH or environment entry, Run
+  entry, shortcut, scheduled task or running process still uses and that have been idle `--days`, and moves the
+  ones you pick to the Recycle Bin. A folder inside a protected location is shown, never removed, and an
+  unreadable registry offers nothing. It also lists environment entries that name something that no longer
+  exists (report only). Administrator; it joins the elevated walkthrough.
+- **`--json` candidates can carry a `label`.** Section 26's program candidates use the program's uninstall
+  registry key as their `path` and its name as `label`; the folders it offers after an uninstall carry
+  `leftover: <program>`.
 - **Section 28 - superseded tool releases and old downloaded updates.** Tools that update themselves often keep
   every old release. This removes the superseded ones and keeps the release in use, any newer one and the newest
   older one; a release a running program uses is skipped. It covers Codex standalone releases, Electron updaters
@@ -30,6 +45,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   last-access says nothing, and the idle gate used to keep every file. Each root is now sampled once; where
   last-access is live, idle age uses write and creation time, the log says so, and `--json` lists those volumes
   in `access_live_volumes`. Everywhere else the rule is unchanged.
+- **More folders are protected roots.** Both Common Files folders and `ProgramData\Microsoft` can never be
+  removed as a whole, whatever an installer registered as its own folder.
 
 ### Fixed
 

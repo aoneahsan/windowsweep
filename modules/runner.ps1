@@ -60,9 +60,12 @@ function Write-MachineProgress {
 
 function Add-JsonCandidate {
   <# .SYNOPSIS Record one item an interactive section offered, so --json callers can present the same list. #>
-  param([int] $Section, [int] $Index, [string] $Path, [long] $Bytes, [int] $IdleDays, [string] $Project = '')
+  param([int] $Section, [int] $Index, [string] $Path, [long] $Bytes, [int] $IdleDays, [string] $Project = '', [string] $Label = '')
   if (-not $Script:WS.JsonMode) { return }
-  $Script:WS.Candidates += [ordered]@{ section = $Section; index = $Index; path = $Path; bytes = $Bytes; idle_days = $IdleDays; project = $Project }
+  $c = [ordered]@{ section = $Section; index = $Index; path = $Path; bytes = $Bytes; idle_days = $IdleDays; project = $Project }
+  # 1.4.0: an optional display name - section 26's candidates are programs whose path is a registry key.
+  if ($Label) { $c.label = $Label }
+  $Script:WS.Candidates += $c
 }
 
 function Invoke-SectionById {

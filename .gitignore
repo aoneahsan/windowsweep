@@ -23,6 +23,7 @@ credentials/
 
 # npm / yarn
 node_modules/
+.playwright-cli/
 npm-debug.log*
 *.tgz
 .pnp.*

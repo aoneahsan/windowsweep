@@ -1,5 +1,5 @@
 {
-  "version": "1.4.0-design",
+  "version": "1.4.1-tour-design-review",
   "defaults": {
     "theme": "dark",
     "palette": "lime",
@@ -30,7 +30,8 @@
     { "dummy": "account.html", "route": "/account", "sections": 5, "bands": ["band-app", "band-app", "band-app", "band-well", "band-app"] },
     { "dummy": "settings.html", "route": "/settings", "sections": 2, "bands": ["band-app", "band-app"] },
     { "dummy": "elevation.html", "route": "/elevation", "sections": 5, "bands": ["band-app", "band-app", "band-app", "band-well", "band-app"] },
-    { "dummy": "plans.html", "route": "/plans", "sections": 6, "bands": ["band-app", "band-app", "band-well", "band-app", "band-app", "band-well"], "status": "in review" }
+    { "dummy": "plans.html", "route": "/plans", "sections": 6, "bands": ["band-app", "band-app", "band-well", "band-app", "band-app", "band-well"], "status": "in review" },
+    { "dummy": "walkthrough.html", "route": "/walkthrough", "sections": 2, "bands": ["band-app", "band-well"], "status": "approved 2026-11-03: owner wrote 'Approve desktop tours and walkthrough'" }
   ],
   "archetypes": [
     { "dummy": "plans.html?tab=team", "routes": ["/team"], "status": "in review" }
@@ -44,13 +45,17 @@
     { "dummy": "run.html?allowance=offline", "state": "account server unavailable; start disabled" },
     { "dummy": "account.html?device=owned", "state": "sign in to owner account or use this PC as new" },
     { "dummy": "plans.html?state=deviceOwned", "state": "device recovery choice" },
-    { "dummy": "plans.html?state=offline", "state": "allowance read unavailable" }
+    { "dummy": "plans.html?state=offline", "state": "allowance read unavailable" },
+    { "dummy": "index.html?tour=1", "state": "Home page tour first step" },
+    { "dummy": "walkthrough.html?step=4", "state": "protected-path walkthrough step" }
   ],
   "sharedSurfaces": [
     { "source": "app.js:609", "name": "legal bar", "preview": "plans.html?legal=1", "status": "in review" },
     { "source": "app.js:609", "name": "normal update notice", "preview": "plans.html?release=notice", "status": "in review" },
     { "source": "app.js:609", "name": "urgent update block", "preview": "plans.html?release=urgent", "status": "in review" },
-    { "source": "app.js:609", "name": "next-start update block", "preview": "plans.html?release=next", "status": "in review" }
+    { "source": "app.js:609", "name": "next-start update block", "preview": "plans.html?release=next", "status": "in review" },
+    { "source": "tours.js", "name": "page tours", "preview": "index.html?tour=1", "status": "approved 2026-11-03" },
+    { "source": "walkthrough.js", "name": "seven-step walkthrough", "preview": "walkthrough.html?step=4", "status": "approved 2026-11-03" }
   ],
   "storage": {
     "source": "app.js:21",
@@ -61,7 +66,7 @@
   "noDummy": [],
   "evidence": {
     "widths": [760, 1440],
-    "captures": ["../gate4/plans-*-dummy-1.4.0.png", "../gate4/allowance-*.png", "../gate4/device-owned-*.png"],
+    "captures": ["../gate4/plans-*-dummy-1.4.0.png", "../gate4/allowance-*.png", "../gate4/device-owned-*.png", "assets/tour-home-1440.png", "assets/tour-home-760.png", "assets/walkthrough-review-1440.png", "assets/walkthrough-review-760.png", "assets/walkthrough/*-1440.png"],
     "appParityStatus": "not run for 1.4.0"
   }
 }

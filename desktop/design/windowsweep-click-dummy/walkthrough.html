@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>windowsweep - Walkthrough</title>
+<link rel="icon" href="data:,">
+<meta name="description" content="A seven-screen walkthrough of the windowsweep desktop app, from scan to report.">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="components.css">
+<link rel="stylesheet" href="tours.css">
+<script src="vendor/strata-storage.iife.js"></script>
+<script src="app.js"></script>
+</head>
+<body>
+<div class="app">
+  <header class="titlebar" data-ws-titlebar></header>
+  <div class="shell">
+    <nav class="rail" data-ws-rail aria-label="Main"></nav>
+    <main class="content">
+      <section class="band band-app">
+        <div class="wrap">
+          <p class="caps ink-3">Seven screens · no cleanup starts here</p>
+          <h1 class="t-xl wide">Walk through windowsweep</h1>
+          <p class="lede">From a scan to a report. Nothing in this walkthrough changes a selection or starts a run.</p>
+        </div>
+      </section>
+      <section class="band band-well">
+        <div class="wrap ws-walkthrough" data-ws-walkthrough aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
+  <footer class="statusbar"><span class="dot" aria-hidden="true"></span><span>engine <span class="mono" data-ws-text="engineVersion">1.4.1</span></span><span style="margin-inline-start:auto">Walkthrough · review fixture</span></footer>
+</div>
+<script src="seed.js"></script>
+<script src="db.js"></script>
+<script src="walkthrough.js"></script>
+<script src="wire.js"></script>
+</body>
+</html>

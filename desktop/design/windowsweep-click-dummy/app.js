@@ -194,6 +194,7 @@
     min: 'M4 10h12',
     max: 'M5 5h10v10H5z',
     menu: 'M3 6h14M3 10h14M3 14h14',
+    tour: 'M10 2v3M10 15v3M2 10h3M15 10h3M7 7a3 3 0 1 1 5 2.4c-1.2.8-2 1.3-2 2.6M10 15h.01',
     /* The Admin rail entry has always named this icon (NAV below) and the map never
        defined it, so svgIcon fell back to 'doc' - the same mark as Reports and
        Components. Drawn now, the path the app draws (GATE 4 round 8 prep). */
@@ -270,6 +271,12 @@
     sub.appendChild(el('span', null, ' sections'));
     foot.appendChild(sub);
     mount.appendChild(foot);
+    if (here !== 'splash.html' && here !== 'consent.html') {
+      var walk = el('a', 'rail-item', 'Walk through windowsweep');
+      walk.href = 'walkthrough.html';
+      walk.setAttribute('data-ws-walkthrough-link', '');
+      mount.appendChild(walk);
+    }
   }
 
   /* -------------------------------------------------------------------------
@@ -697,6 +704,58 @@
     // the theme toggle is injected by the SAME owner that builds the panel and the
     // bar it lands in, so the three cannot disagree
     var host = document.querySelector('[data-ws-actions]');
+    var tourPages = ['index.html', 'sections.html', 'picker.html', 'run.html', 'history.html', 'report.html', 'account.html', 'settings.html', 'plans.html'];
+    if (host && tourPages.indexOf(currentPage()) !== -1 && !host.querySelector('[data-ws-tour-open]')) {
+      var tour = el('button', 'btn btn-ghost btn-sm tb-interactive');
+      tour.type = 'button';
+      tour.setAttribute('data-ws-tour-open', '');
+      tour.setAttribute('aria-label', 'Tour this page');
+      tour.title = 'Tour this page';
+      tour.appendChild(svgIcon('tour', 15));
+      host.appendChild(tour);
+      if (!document.querySelector('link[href="tours.css"]')) {
+        var hintCss = document.createElement('link');
+        hintCss.rel = 'stylesheet'; hintCss.href = 'tours.css'; document.head.appendChild(hintCss);
+      }
+      var loaded = false;
+      function loadTours(done) {
+        if (loaded && window.wsTours) { done(); return; }
+        var script = document.createElement('script');
+        script.src = 'tours.js';
+        script.onload = function () { loaded = true; done(); };
+        document.head.appendChild(script);
+      }
+      tour.addEventListener('click', function () { loadTours(function () { window.wsTours.open(); }); });
+      var tourParam = new URLSearchParams(location.search).get('tour');
+      if (tourParam) loadTours(function () { window.wsTours.open(Number(tourParam)); });
+      else if (!document.querySelector('[data-ws-release]') &&
+        (currentPage() !== 'run.html' || /ready|not started/i.test((document.querySelector('[data-ws-text="runState"]') || {}).textContent || ''))) {
+        var accountKey = window.wsdb && window.wsdb.facts.signedIn ? String(window.wsdb.facts.email || 'account').toLowerCase() : 'browser';
+        var key = 'tourHint:' + accountKey + ':' + currentPage();
+        if (!store.get(key, false)) {
+          store.set(key, true);
+          var hint = el('div', 'ws-tour-hint');
+          hint.setAttribute('role', 'status');
+          hint.appendChild(el('span', null, 'New here? Take the tour.'));
+          var show = el('button', 'btn btn-sm', 'Show me');
+          show.type = 'button';
+          show.addEventListener('click', function () { hint.remove(); tour.click(); });
+          hint.appendChild(show);
+          var close = el('button', 'btn btn-ghost btn-sm', 'Close');
+          close.type = 'button';
+          close.addEventListener('click', function () { hint.remove(); });
+          hint.appendChild(close);
+          host.appendChild(hint);
+          var elapsed = 0;
+          var timer = setInterval(function () {
+            if (!hint.isConnected) { clearInterval(timer); return; }
+            if (hint.matches(':hover') || hint.contains(document.activeElement)) return;
+            elapsed += 1000;
+            if (elapsed >= 8000) { hint.remove(); clearInterval(timer); }
+          }, 1000);
+        }
+      }
+    }
     if (host && !host.querySelector('[data-ws-theme-toggle]')) {
       var b = el('button', 'btn btn-ghost btn-sm tb-interactive');
       b.setAttribute('data-ws-theme-toggle', '');

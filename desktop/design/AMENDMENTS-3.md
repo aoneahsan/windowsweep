@@ -100,3 +100,10 @@ engine's own flag, and the dummy accepts absolute Windows folders without a semi
 idle window describes D82's per-volume timestamp choice, and the section 19 threshold says “large or old”.
 All four new sections use the established cockpit components, tokens and default pointer. No new screen
 or navigation destination is added. These extensions remain in review with the section 19 scanner.
+
+## Amendment - 2026-11-03: desktop tours and walkthrough approved
+
+The owner reviewed the 1440 and 760 px page-tour and seven-step walkthrough captures and wrote:
+**“Approve desktop tours and walkthrough.”** The shared titlebar Tour button, step controls and
+walkthrough composition are approved for production implementation. The seven dummy fixture
+images must be replaced with fresh 1.4.1 app captures before the live walkthrough is verified.

@@ -1,6 +1,6 @@
 # Admin sections and elevation
 
-Sections 12, 13, 14, 15, 16 and 20 change things only an administrator may change. windowsweep never asks for
+Sections 12, 13, 14, 15, 16, 20, 27 and 29 change things only an administrator may change. Section 26 may also need elevation for a machine-wide program. windowsweep never asks for
 a password and never stores one; it detects whether the current console is elevated and, when it is not, skips
 those sections with the exact command that runs them.
 
@@ -14,8 +14,10 @@ those sections with the exact command that runs them.
 | 15 | Hibernation file | `powercfg /hibernate off` or `/type reduced` |
 | 16 | Event logs | `wevtutil cl` for every log (permanent) |
 | 20 | Disk-image compaction | Stops Docker Desktop and WSL, `diskpart compact vdisk` on selected `.vhdx` files |
+| 27 | Leftover program folders | Offers folders under Program Files, Common Files and ProgramData for selection and recycling |
+| 29 | Chrome on-device AI model policy | Sets a persistent Chrome policy that removes the downloaded model |
 
-12 and 13 join `--all` automatically when the console is already elevated. 14 is opt-in, because it is slow, and stays out of `--all` even when elevated. 15, 16 and 20 are deep-gated.
+12 and 13 join `--all` automatically when the console is already elevated. 14 is opt-in, because it is slow, and stays out of `--all` even when elevated. 15, 16, 20 and 29 are deep-gated; 27 requires selection.
 
 ## `--elevate`
 
@@ -53,4 +55,4 @@ Running speed is unaffected either way; the gain is disk space, which matters mo
 system; the Explorer thumbnail and icon databases are locked by Explorer and are rebuilt cleanly only through
 Disk Cleanup; WinSxS may only be touched by DISM. Everything a non-elevated user owns is handled by sections 1-10.
 
-Last Updated: 2026-09-05
+Last Updated: 2026-11-03

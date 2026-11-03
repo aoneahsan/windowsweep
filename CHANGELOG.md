@@ -9,6 +9,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-11-03
+
+### Fixed
+
+- The desktop app now reads published release records on start, resume and reconnect. An urgent release blocks an older build immediately; a normal release is announced immediately and required from the next start. Its Update button uses the signed updater.
+- Removed the desktop updater's six-hour network timer. Release broadcasts and lifecycle events trigger the checks.
+- Corrected the package's release notes and documentation for section 19's Recycle Bin rule and section 26's permanent uninstall action.
+
 ## [1.4.0] - 2026-11-03
 
 ### Added

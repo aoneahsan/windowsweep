@@ -23,6 +23,7 @@ import {
 } from '@tanstack/react-router';
 
 import { Shell } from './components/Shell';
+import { ReleaseGate } from './components/ReleaseGate';
 import { Consent } from './screens/Consent';
 import { Splash } from './screens/Splash';
 import { useStore } from './state/store';
@@ -102,9 +103,9 @@ function RootLayout() {
       });
   }, []);
 
-  /* Splash owns the first check on normal launches. A deep link skips Splash,
-     so the watcher supplies its first check there; both paths share the same
-     six-hour timer and resume listener afterward. */
+  /* Splash owns the first updater check on normal launches. A deep link skips
+     Splash, so the watcher supplies that check there. Later checks respond to
+     resume and reconnect, without a periodic network timer. */
   useEffect(
     () =>
       watchForUpdates(
@@ -114,7 +115,12 @@ function RootLayout() {
     []
   );
 
-  return <Outlet />;
+  return (
+    <>
+      <Outlet />
+      <ReleaseGate />
+    </>
+  );
 }
 
 const rootRoute = createRootRoute({ component: RootLayout });

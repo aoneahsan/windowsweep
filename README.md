@@ -18,10 +18,11 @@
 
 > [!IMPORTANT]
 > **This tool deletes files.** Most of what it removes are caches that rebuild themselves; personal files it
-> lists go to the Recycle Bin; and two sections - emptying the Recycle Bin, clearing event logs - are
-> permanent, with no undo of any kind. Those two sit behind `--i-understand-deep`, along with the hibernation
+> lists go to the Recycle Bin; emptying the Recycle Bin and clearing event logs have no undo. Those two sit
+> behind `--i-understand-deep`, along with the hibernation
 > file and disk-image compaction. Start with `npx windowsweep --scan`, which deletes nothing, then
 > `npx windowsweep --dry-run --all --yes`, which shows exactly what a real run would remove.
+> Uninstalling a program you select in section 26 is permanent too.
 > **Windows only** - npm refuses to install it elsewhere.
 
 What it reclaims is the disk space that quietly disappears on a Windows machine: package-manager and build caches,
@@ -35,14 +36,14 @@ It is the Windows member of a family with [linux-cleanup](https://github.com/aon
 
 | | |
 |---|---|
-| **Version** | `1.4.0` |
+| **Version** | `1.4.1` |
 | **License** | MIT |
 | **Node** | `>=14` (launcher only) |
 | **Runtime** | Windows PowerShell 5.1 (built in) or PowerShell 7 |
 | **Platforms** | Windows 10 (1809+) and Windows 11 |
 | **Install size** | ~167 kB packed · ~560 kB unpacked · 53 files · no dependencies |
 | **Undo** | Recycle Bin for personal files; none for caches (they regenerate) |
-| **Status** | Stable · 1.4.0, released 2026-11-03 |
+| **Status** | Stable · 1.4.1, released 2026-11-03 |
 
 <a id="table-of-contents"></a>
 ## 🧭 Table of Contents&nbsp;[#](#table-of-contents)
@@ -201,7 +202,7 @@ section with `a` run / `s` skip / `q` quit and a running total.
 
 ### The sections
 
-This table describes version 1.4.0.
+This table describes version 1.4.1.
 
 **Tier** says what happens to the data: *report* deletes nothing, *rebuilds* comes back on its own, *slow*
 comes back but costs minutes, *Recycle Bin* is recoverable until you empty it (`--list` shows this tier as
@@ -458,8 +459,9 @@ More: [FAQ](https://windowsweep-docs.aoneahsan.com/faq).
 <a id="changelog"></a>
 ## 🔄 Changelog&nbsp;[#](#changelog)
 
-Latest release: **`1.4.0`** - scan Downloads and folders you add for large or old files, then choose individual
-files for the Recycle Bin. The new uninstall and leftover-folder sections also require explicit selection.
+Latest release: **`1.4.1`** - the 1.4 scanner searches Downloads and folders you add for large or old files;
+you choose individual files for the Recycle Bin. The uninstall and leftover-folder sections require explicit
+selection. This patch corrects release documentation and adds the desktop release notice and update gate.
 Full history: [CHANGELOG.md](https://github.com/aoneahsan/windowsweep/blob/main/CHANGELOG.md).
 
 <a id="contributing"></a>

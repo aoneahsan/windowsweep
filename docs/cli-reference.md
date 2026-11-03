@@ -56,7 +56,7 @@ delete files (subject to every guard in the [safety model](./safety-model.md)).
 | `--large-file-mb N` | 100 | Large-file threshold for section 19; files older than `--days` qualify at any size |
 | `--hiberfil off|reduced|keep` | ask | What section 15 does |
 | `--reset-base` | off | Add `/ResetBase` to section 14 |
-| `--permanent` | off | Sections 18, 19 and 23 delete instead of using the Recycle Bin |
+| `--permanent` | off | Supported selected leftovers can be deleted instead of recycled; section 19 always recycles selected personal files |
 | `--logs-dir P`, `--reports-dir P` | `~\.windowsweep\...` | Where logs and reports are written |
 | `--no-report` | off | Skip the JSON report (the log is still written) |
 | `--cleanup-logs` | off | Delete this run's log at exit; reports are kept |

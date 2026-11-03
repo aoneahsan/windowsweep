@@ -50,7 +50,6 @@ export interface UpdateHandle {
 
 /** A few seconds. Long enough for a slow answer, short enough to never feel stuck. */
 export const UPDATE_CHECK_TIMEOUT_MS = 4000;
-export const UPDATE_RECHECK_MS = 6 * 60 * 60 * 1000;
 const RESUME_CHECK_MIN_GAP_MS = 60 * 1000;
 
 let lastCheckStartedAt = 0;
@@ -181,7 +180,7 @@ async function performUpdateCheck(
   }
 }
 
-/** Share one network request between Splash, the timer and a resume event. */
+/** Share one network request between Splash and lifecycle events. */
 export function checkForUpdate(
   timeoutMs: number = UPDATE_CHECK_TIMEOUT_MS
 ): Promise<UpdateOutcome> {
@@ -197,8 +196,8 @@ export function checkForUpdate(
 }
 
 /**
- * Keep the updater fresh after the boot screen is gone. The caller owns how an
- * available version is shown; this service never installs without that action.
+ * Recheck when the window resumes or reconnects. Release publication itself is
+ * signalled by the separate release-record channel, with no periodic requests.
  */
 export function watchForUpdates(
   onOutcome: (outcome: UpdateOutcome) => void,
@@ -211,7 +210,6 @@ export function watchForUpdates(
     });
   };
   if (checkOnStart) checkAndReport();
-  const interval = window.setInterval(checkAndReport, UPDATE_RECHECK_MS);
   const onResume = () => {
     if (document.visibilityState !== 'visible') return;
     if (Date.now() - lastCheckStartedAt < RESUME_CHECK_MIN_GAP_MS) return;
@@ -219,11 +217,12 @@ export function watchForUpdates(
   };
   document.addEventListener('visibilitychange', onResume);
   window.addEventListener('focus', onResume);
+  window.addEventListener('online', checkAndReport);
   return () => {
     active = false;
-    window.clearInterval(interval);
     document.removeEventListener('visibilitychange', onResume);
     window.removeEventListener('focus', onResume);
+    window.removeEventListener('online', checkAndReport);
   };
 }
 

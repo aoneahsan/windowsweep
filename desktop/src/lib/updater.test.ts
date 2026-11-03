@@ -36,8 +36,6 @@ function browser() {
     __TAURI_INTERNALS__: {},
     setTimeout,
     clearTimeout,
-    setInterval,
-    clearInterval,
     addEventListener: events.addEventListener.bind(events),
     removeEventListener: events.removeEventListener.bind(events),
   });
@@ -98,13 +96,13 @@ it('defers a restart until the current run settles', async () => {
   expect(state.relaunch).toHaveBeenCalledOnce();
 });
 
-it('shares the startup check and rechecks on resume and after six hours', async () => {
+it('shares the startup check and rechecks on resume and reconnect without a timer', async () => {
   vi.useFakeTimers();
   vi.setSystemTime(new Date('2026-10-31T12:00:00Z'));
   const { events, documentEvents } = browser();
   vi.stubEnv('DEV', false);
   state.check.mockResolvedValue(null);
-  const { checkForUpdate, watchForUpdates, UPDATE_RECHECK_MS } = await import('./updater');
+  const { checkForUpdate, watchForUpdates } = await import('./updater');
   const outcomes: string[] = [];
   const stop = watchForUpdates((outcome) => outcomes.push(outcome.kind));
   await checkForUpdate();
@@ -116,11 +114,13 @@ it('shares the startup check and rechecks on resume and after six hours', async 
   expect(state.check).toHaveBeenCalledTimes(1);
   await vi.advanceTimersByTimeAsync(60_001);
   documentEvents.dispatchEvent(new Event('visibilitychange'));
-  await Promise.resolve();
+  await vi.advanceTimersByTimeAsync(0);
   expect(state.check).toHaveBeenCalledTimes(2);
-  await vi.advanceTimersByTimeAsync(UPDATE_RECHECK_MS);
+  events.dispatchEvent(new Event('online'));
+  await vi.advanceTimersByTimeAsync(0);
   expect(state.check).toHaveBeenCalledTimes(3);
   stop();
-  await vi.advanceTimersByTimeAsync(UPDATE_RECHECK_MS);
+  await vi.advanceTimersByTimeAsync(6 * 60 * 60 * 1000);
+  events.dispatchEvent(new Event('online'));
   expect(state.check).toHaveBeenCalledTimes(3);
 });

@@ -12,11 +12,11 @@ The desktop app is a window over the same engine. It runs the bundled `windowswe
 
 Nothing to the deletion behaviour. Everything to what you can see while it happens.
 
-The catalogue becomes a table you can filter. A run shows the engine's own log as it arrives, beside a table of what each section reclaimed; the four sections that ask a person to choose get a picker. Most controls in Settings map to a flag the engine already has, so anything you set there you can also type.
+The catalogue becomes a table you can filter. A run shows the engine's own log as it arrives, beside a table of what each section reclaimed; sections that ask you to choose files, folders or programs get a picker. Most controls in Settings map to a flag the engine already has, so anything you set there you can also type.
 
 ## What it does not do
 
-It never raises its own privileges. Six sections need Windows to ask your permission first. Ask for one, and a second, elevated window runs only those sections and writes its own report, while this one waits unelevated. It does not remove the deep-section gate.
+It never raises its own privileges. Eight sections need Windows to ask your permission first, and a machine-wide program uninstall in section 26 may need it too. Ask for an admin section, and a second, elevated window runs only that work and writes its own report, while this one waits unelevated. It does not remove the deep-section gate.
 
 ## What leaves the machine
 
@@ -57,7 +57,7 @@ This note is here rather than hidden because meeting that dialog unexplained is 
 
 ## Updates
 
-The check runs on the splash screen. An update is offered rather than applied: **Later**, or **Install and restart**. If the check cannot reach the network, you get a note saying so, with **Try again**, and the app carries on without it.
+The signed updater checks on the splash screen and again when the window resumes or reconnects. An available update is offered as **Later** or **Install and restart**. A published release record adds a separate gate: an urgent release blocks an older build immediately with its reason and an **Update** button; a normal release is announced at once and becomes required from the next start. A record is checked on start and when the window resumes or reconnects, and a broadcast signals publication. If the network is unavailable, the app carries on unless a normal release was already announced on an earlier start. A failed update offers the release page and support links.
 
 ## Where it writes
 
@@ -65,4 +65,4 @@ Each run gets its own folder under `%LOCALAPPDATA%\com.aoneahsan.windowsweep\run
 
 See also: [Safety model](./safety-model.md) · [Admin sections and elevation](./admin-and-elevation.md) · [Sections 0-29](./sections.md)
 
-Last Updated: 2026-09-28
+Last Updated: 2026-11-03

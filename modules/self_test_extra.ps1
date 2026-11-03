@@ -359,6 +359,8 @@ function Invoke-SelfTestExtra {
     $checks += $g19.Checks; $fails += $g19.Fails
     $g20 = Invoke-SelfTest20 -Fixture $fx
     $checks += $g20.Checks; $fails += $g20.Fails
+    $g21 = Invoke-SelfTest21
+    $checks += $g21.Checks; $fails += $g21.Fails
 
   } catch {
     & $unmute

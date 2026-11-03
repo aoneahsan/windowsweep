@@ -17,6 +17,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   named without "@" (installers and pending updates idle 7+ days), Ollama's downloaded update and - in developer
   mode, with `--scan-roots` - Node versions no project asks for, removed with nvm itself. It joins `--all` and the
   `dev` and `deep` profiles.
+- **Section 29 - Chrome's on-device AI model.** Chrome downloads a model of several GB and fetches it again if the
+  folder is deleted. This sets the `GenAILocalFoundationalModelSettings` policy that stops the download; Chrome
+  then removes the model on its next start, and the folder goes at once when Chrome is closed. Chrome shows
+  "Managed by your organization" while the policy is set; the section prints the one-line undo. It is a deep,
+  administrator section that no batch or profile runs.
 
 ### Changed
 

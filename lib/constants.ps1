@@ -71,6 +71,7 @@ $Script:WS_SECTIONS = @(
   @{ Id = 24; Key = 'programs';   Title = 'Installed programs not modified for N+ days - report only'; Tier = 'report';   Admin = $false; Batch = 'safe';        Dev = $false; Fn = 'Invoke-Section24' }
   @{ Id = 25; Key = 'startup';    Title = 'Startup items audit (Run keys, Startup folders, logon tasks) - report only'; Tier = 'report'; Admin = $false; Batch = 'safe'; Dev = $false; Fn = 'Invoke-Section25' }
   @{ Id = 28; Key = 'releases';   Title = 'Superseded tool releases and old downloaded updates (Codex, Electron updaters, Ollama, unrequested Node) - current kept'; Tier = 'rebuilds'; Admin = $false; Batch = 'safe'; Dev = $false; Fn = 'Invoke-Section28' }
+  @{ Id = 29; Key = 'browserai';  Title = 'Chrome on-device AI model - set the policy that removes it (Chrome shows "Managed by your organization")'; Tier = 'config'; Admin = $true; Batch = 'deep'; Dev = $false; Fn = 'Invoke-Section29' }
 )
 
 # The safe batch run by --all. Admin sections 12 and 13 join it only when already elevated.

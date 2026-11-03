@@ -116,6 +116,39 @@ function Invoke-SelfTest14 {
   return [pscustomobject]@{ Checks = $checks; Fails = $fails }
 }
 
+function Invoke-SelfTest21 {
+  <# .SYNOPSIS Group [21]: section 29 (the Chrome on-device AI policy) - never written by a dry-run, never batched. #>
+  $checks = 0; $fails = 0
+  $ws = $Script:WS
+  $savedDry = $ws.DryRun
+  $key = 'HKCU:\Software\windowsweep-selftest-' + [guid]::NewGuid().ToString('N')
+  try {
+    Write-Section '[21] 1.4.0: the Chrome on-device AI policy (section 29)'
+    # 21a - a dry-run prints the change and writes nothing
+    $checks++
+    $ws.DryRun = $true
+    $dry = Set-BrowserAiPolicy -KeyPath $key
+    if ($dry -eq 'would-set' -and -not (Test-Path -LiteralPath $key)) { Write-Ok 'dry-run: the policy is described, no registry key is written' } else { Write-Err "dry-run wrote the policy or answered '$dry'"; $fails++ }
+    # 21b - a real run writes exactly the value Chrome reads (on a throwaway key, never the machine policy)
+    $checks++
+    $ws.DryRun = $false
+    $real = Set-BrowserAiPolicy -KeyPath $key
+    $state = Get-BrowserAiPolicyState -KeyPath $key
+    if ($real -eq 'set' -and $state -eq 1) { Write-Ok "a real run sets $($Script:WS_BROWSERAI_POLICY_VALUE) = 1" } else { Write-Err "policy write wrong: result='$real' value='$state'"; $fails++ }
+    # 21c - it changes a browser's configuration: deep, admin, config tier, in no batch or profile
+    $checks++
+    $s = Get-Section 29
+    $batched = @($Script:WS_SAFE_BATCH + $Script:WS_SAFE_BATCH_ADMIN + @($Script:WS_PROFILES.Values | ForEach-Object { $_ }) + $Script:WS_WALKTHROUGH + $Script:WS_WALKTHROUGH_ADMIN) -contains 29
+    if ($s -and $s.Batch -eq 'deep' -and $s.Admin -and $s.Tier -eq 'config' -and -not $batched) { Write-Ok 'section 29 is deep, admin and config, and no batch, profile or walkthrough runs it' } else { Write-Err "section 29 contract wrong: batch=$($s.Batch) admin=$($s.Admin) tier=$($s.Tier) batched=$batched"; $fails++ }
+  } catch {
+    Write-Err "group [21] crashed: $($_.Exception.Message) | at $(($_.ScriptStackTrace -split "`n" | Select-Object -First 3) -join ' <- ')"; $fails++
+  } finally {
+    $ws.DryRun = $savedDry
+    try { if (Test-Path -LiteralPath $key) { Remove-Item -LiteralPath $key -Recurse -Force } } catch { $null = $_ }
+  }
+  return [pscustomobject]@{ Checks = $checks; Fails = $fails }
+}
+
 function Invoke-SelfTest20 {
   <# .SYNOPSIS Group [20]: section 28 (superseded releases, Node pins) and the D79 exception rules. #>
   param([string] $Fixture)

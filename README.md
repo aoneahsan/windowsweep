@@ -35,14 +35,14 @@ It is the Windows member of a family with [linux-cleanup](https://github.com/aon
 
 | | |
 |---|---|
-| **Version** | `1.4.0` source; `1.3.2` is the published release until the release gates pass |
+| **Version** | `1.4.0` |
 | **License** | MIT |
 | **Node** | `>=14` (launcher only) |
 | **Runtime** | Windows PowerShell 5.1 (built in) or PowerShell 7 |
 | **Platforms** | Windows 10 (1809+) and Windows 11 |
-| **Install size** | ~120 kB packed · ~401 kB unpacked · 46 files · no dependencies |
+| **Install size** | ~167 kB packed · ~560 kB unpacked · 53 files · no dependencies |
 | **Undo** | Recycle Bin for personal files; none for caches (they regenerate) |
-| **Status** | Stable · 1.3.2, released 2026-09-28 |
+| **Status** | Stable · 1.4.0, released 2026-11-03 |
 
 <a id="table-of-contents"></a>
 ## 🧭 Table of Contents&nbsp;[#](#table-of-contents)
@@ -125,7 +125,7 @@ reclaims disk space, nothing else.
 - **Running-app guard** - an open browser, editor or app keeps its caches; the tool tells you which to close.
 - **Session reports** - schema-versioned JSON, exportable to Markdown or a self-contained HTML page, plus
   `--json` for scripts.
-- **Self-test** - 221 checks in the 1.4.0 source prove the guards on your machine with a real junction, a path longer than 260 characters and
+- **Self-test** - 223 checks prove the guards on your machine with a real junction, a path longer than 260 characters and
   a dry-run fixture before you trust it.
 - **Offline by design** - the command-line tool makes zero network calls: no telemetry, no update check.
   Self-test check [9] fails the build on an HTTP or socket call in the source. Crash bundles stay on disk.
@@ -201,8 +201,7 @@ section with `a` run / `s` skip / `q` quit and a running total.
 
 ### The sections
 
-This table describes the 1.4.0 source on `main`. The latest published npm release remains 1.3.2
-until the 1.4.0 release gates pass.
+This table describes version 1.4.0.
 
 **Tier** says what happens to the data: *report* deletes nothing, *rebuilds* comes back on its own, *slow*
 comes back but costs minutes, *Recycle Bin* is recoverable until you empty it (`--list` shows this tier as
@@ -459,16 +458,8 @@ More: [FAQ](https://windowsweep-docs.aoneahsan.com/faq).
 <a id="changelog"></a>
 ## 🔄 Changelog&nbsp;[#](#changelog)
 
-Latest release: **`1.3.2`** - the engine is 1.3.1's, file for file. The version moves so the desktop app and
-the engine it bundles keep one number, and the desktop app's 1.3.2 fixes its Google sign-in.
-
-Before it, **`1.3.1`** - nothing about what is cleaned, how it is decided or what is refused changed. The tool
-names the windowsweep team as its maker instead of one person, and the web address it prints is the product's
-own site.
-
-Before that, **`1.3.0`** - the documentation address the tool carries became the documentation site, two files
-that had grown past the project's own 500-line ceiling were split (the deletion chokepoint stayed exactly where
-it was), and the at-a-glance rows inside the published package were corrected.
+Latest release: **`1.4.0`** - scan Downloads and folders you add for large or old files, then choose individual
+files for the Recycle Bin. The new uninstall and leftover-folder sections also require explicit selection.
 Full history: [CHANGELOG.md](https://github.com/aoneahsan/windowsweep/blob/main/CHANGELOG.md).
 
 <a id="contributing"></a>

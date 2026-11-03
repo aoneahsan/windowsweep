@@ -41,9 +41,10 @@ function Get-FilesUnder {
 function Get-PartialDownloads {
   $list = @()
   foreach ($root in (Get-PersonalRoots)) {
+    $ignore = Test-LastAccessLive -Root $root
     foreach ($f in (Get-FilesUnder -Root $root -MaxDepth 4)) {
       foreach ($pat in $Script:WS_PARTIAL_PATTERNS) {
-        if ($f.Name -like $pat) { $list += [pscustomobject]@{ Path = (Remove-LongPrefix $f.FullName); Bytes = [long]$f.Length; Idle = [int][math]::Floor(([datetime]::UtcNow - (Get-NewestTimestampUtc $f)).TotalDays); Root = $root }; break }
+        if ($f.Name -like $pat) { $list += [pscustomobject]@{ Path = (Remove-LongPrefix $f.FullName); Bytes = [long]$f.Length; Idle = [int][math]::Floor(([datetime]::UtcNow - (Get-NewestTimestampUtc $f -IgnoreAccess:$ignore)).TotalDays); Root = $root }; break }
       }
     }
   }
@@ -55,9 +56,10 @@ function Get-LargeStaleFiles {
   $min = [long]$ws.LargeFileMb * 1MB
   $list = @()
   foreach ($root in (Get-PersonalRoots)) {
+    $ignore = Test-LastAccessLive -Root $root
     foreach ($f in (Get-FilesUnder -Root $root -MaxDepth 4)) {
       if ([long]$f.Length -lt $min) { continue }
-      $idle = [int][math]::Floor(([datetime]::UtcNow - (Get-NewestTimestampUtc $f)).TotalDays)
+      $idle = [int][math]::Floor(([datetime]::UtcNow - (Get-NewestTimestampUtc $f -IgnoreAccess:$ignore)).TotalDays)
       if ($idle -lt $ws.Days) { continue }
       $list += [pscustomobject]@{ Path = (Remove-LongPrefix $f.FullName); Bytes = [long]$f.Length; Idle = $idle; Root = $root }
     }

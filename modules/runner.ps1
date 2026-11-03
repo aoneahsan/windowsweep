@@ -113,7 +113,9 @@ function Invoke-SectionById {
   $status = 'ran'
   if ($ws.DryRun) { $status = 'dry-run' }
   try {
-    & $sec.Fn
+    # A section speaks through the Write-* helpers; anything left on its output stream (a cmdlet's return value)
+    # would land on stdout ahead of the --json line, so it is discarded here for every section.
+    $null = & $sec.Fn
   } catch {
     $status = 'failed'
     Write-Err "section $Id failed: $($_.Exception.Message)"
@@ -223,7 +225,10 @@ function Get-JsonSummary {
     sections = @($ws.Report.steps | ForEach-Object { [ordered]@{ section = $_.section; status = $_.status; freed_bytes = $_.freed_bytes } })
     # candidates and targets are ALWAYS present, empty when nothing was collected: a caller can rely on the shape.
     candidates = @($ws.Candidates); targets = @($ws.ScanTargets)
-    refusals = @($ws.Refusals); excluded = @($ws.Excluded); log_file = $ws.LogFile; report_file = $ws.ReportFile
+    refusals = @($ws.Refusals); excluded = @($ws.Excluded)
+    # D82: the volumes where idle age used write/creation time because last-access was found live.
+    access_live_volumes = @(Get-AccessLiveVolumes)
+    log_file = $ws.LogFile; report_file = $ws.ReportFile
   }
 }
 

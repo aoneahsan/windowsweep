@@ -26,13 +26,35 @@ function ConvertTo-MatchToken {
 }
 
 function Add-MatchTokens {
-  <# .SYNOPSIS Add a display string to the token set: the whole thing, plus each word of 4+ characters. #>
+  <# .SYNOPSIS Add a display string to the token set: the whole thing, each word of 4+ characters, and - for a
+     name of three or more words - its initials ("Internet Download Manager" claims a folder named "IDM"). #>
   param([System.Collections.Generic.HashSet[string]] $Set, [string] $Text)
   $whole = ConvertTo-MatchToken $Text
   if ($whole.Length -ge 3) { $null = $Set.Add($whole) }
-  foreach ($w in ($Text -split '[^A-Za-z0-9]+')) {
+  $words = @($Text -split '[^A-Za-z0-9]+' | Where-Object { $_ })
+  foreach ($w in $words) {
     $t = ConvertTo-MatchToken $w
     if ($t.Length -ge 4) { $null = $Set.Add($t) }
+  }
+  if ($words.Count -ge 3) {
+    $initials = (($words | ForEach-Object { $_.Substring(0, 1) }) -join '').ToLowerInvariant()
+    if ($initials.Length -ge 3) { $null = $Set.Add($initials) }
+  }
+}
+
+function Add-CommandLineTokens {
+  <# .SYNOPSIS Claim every path segment of a running command line: a tool started as "node ...\superpowers-chrome\..."
+     runs under a process named node, so its own name only ever appears here. #>
+  param([System.Collections.Generic.HashSet[string]] $Set, [string] $CommandLine)
+  if ([string]::IsNullOrWhiteSpace($CommandLine)) { return }
+  # Only the folders of PATH arguments count. A bare word claims nothing: a shell whose command line merely
+  # mentioned "vega-desktop-updater" made that orphan look claimed on the P52 (2026-11-02).
+  foreach ($arg in ($CommandLine -split '[\s"]+')) {
+    $a = $arg.Trim("'")
+    if ($a -notmatch '^[A-Za-z]:[\\/]' -and $a -notmatch '^[\\/]{2}' -and @($a -split '[\\/]').Count -lt 3) { continue }
+    foreach ($seg in ($a -split '[\\/=]+')) {
+      if ($seg.Length -ge 4 -and -not $seg.StartsWith('-')) { Add-MatchTokens -Set $Set -Text $seg }
+    }
   }
 }
 
@@ -79,6 +101,7 @@ function Get-InstalledProgramIndex {
   }
   foreach ($e in (Get-ChildEntries (Join-Path $P.L 'Packages'))) { Add-MatchTokens -Set $set -Text (($e.Name -split '_')[0]) }
   try { foreach ($proc in (Get-Process -ErrorAction SilentlyContinue)) { Add-MatchTokens -Set $set -Text $proc.ProcessName } } catch { $null = $_ }
+  try { foreach ($proc in @(Get-CimInstance Win32_Process -ErrorAction Stop)) { Add-CommandLineTokens -Set $set -CommandLine ([string]$proc.CommandLine) } } catch { $null = $_ }
   return [pscustomobject]@{ Tokens = $set; RegistryCount = $rows.Count; Rows = $rows }
 }
 
@@ -114,6 +137,15 @@ function Test-OrphanFolderName {
   foreach ($t in $Index.Tokens) {
     if ($t.Length -lt 4) { continue }
     if ($t.StartsWith($n) -or $n.StartsWith($t)) { return $false }
+    # A shared vendor stem claims it too: "DBeaverData" belongs to the "DBeaverCorp.DBeaverCE" Store app.
+    if ($n.Length -ge 6 -and $t.Length -ge 6 -and $n.Substring(0, 6) -eq $t.Substring(0, 6)) { return $false }
+  }
+  # A reverse-DNS app id ("com.vendor.app", as Tauri and Electron apps name their data folder) is claimed when
+  # any segment after the first is: "com.aoneahsan.windowsweep" belongs to the installed "windowsweep".
+  if ($Name -match '^[A-Za-z0-9-]+(\.[A-Za-z0-9-]+){2,}$') {
+    foreach ($seg in @($Name.Split('.') | Select-Object -Skip 1)) {
+      if ((ConvertTo-MatchToken $seg).Length -ge 4 -and -not (Test-OrphanFolderName -Name $seg -Index $Index)) { return $false }
+    }
   }
   return $true
 }

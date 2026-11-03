@@ -17,6 +17,7 @@ Open defects found while using or documenting windowsweep, one `### ISSUE-NNN` e
      commands (docker, cleanmgr, DISM, wevtutil) delete on their own paths. Make the comment match the code.
 - **Fix:** make each statement match the code (or implement 5 with a fixture in the self-test), then re-check the site copy.
 - **Priority:** low (copy and comments only; the refusals exist).
+- **Picked up by:** P9's docs pass (tracker `P9.docs`, 2026-11-02), where the self-test count changes anyway.
 
 ### ISSUE-002 — website copy (windowsweep-web) that the 1.3.2 code does not make true
 - **Found:** 2026-11-03, while capturing the LinkedIn cards (live bundle `index-D1dRi3Ia.js`).

@@ -9,6 +9,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- **Idle age uses write time where last-access is live.** When nearly every file written a week or more ago
+  was also "read" in the last day - an indexer, a backup, an antivirus or a disk scanner reading everything -
+  last-access says nothing, and the idle gate used to keep every file. Each root is now sampled once; where
+  last-access is live, idle age uses write and creation time, the log says so, and `--json` lists those volumes
+  in `access_live_volumes`. Everywhere else the rule is unchanged.
+
+### Fixed
+
+- **Section 23 no longer offers folders that still belong to something.** It offered the desktop app's own
+  data folder, a Store app's data, an installed program known by its initials, and a tool running from its
+  own folder. A reverse-DNS folder name (`com.vendor.app`) is now matched segment by segment, a shared vendor
+  stem counts as a claim, a program of three or more words also claims its initials, and the folders in a
+  running program's command-line paths count as claimed. The desktop app's install and data folders are
+  protected outright.
+- **`--json` is one line again on every run.** Section 12's Delivery Optimization step printed two lines to
+  stdout ahead of the JSON document. Its words now go to the log, and the runner discards anything a section
+  leaves on its output stream.
+
 ## [1.3.2] - 2026-09-28
 
 No change to what is cleaned, how it is decided, or what is refused: the engine is 1.3.1's, file for file.

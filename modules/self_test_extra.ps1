@@ -354,6 +354,10 @@ function Invoke-SelfTestExtra {
     $contract = Invoke-SelfTestContract -Fixture $fx
     $checks += $contract.Checks; $fails += $contract.Fails
 
+    # [19] the 1.4.0 behaviour found on a real machine lives in modules/self_test_1_4.ps1 (P9).
+    $g19 = Invoke-SelfTest14 -Fixture $fx
+    $checks += $g19.Checks; $fails += $g19.Fails
+
   } catch {
     & $unmute
     Write-Err "extra self-test crashed: $($_.Exception.Message)"; $fails++

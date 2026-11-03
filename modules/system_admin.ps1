@@ -64,7 +64,13 @@ function Invoke-Section12 {
   if (Get-Command Delete-DeliveryOptimizationCache -ErrorAction SilentlyContinue) {
     if ($ws.DryRun) { Write-DryRun 'would run Delete-DeliveryOptimizationCache -Force' }
     else {
-      try { Delete-DeliveryOptimizationCache -Force -ErrorAction Stop; Write-Ok 'Delivery Optimization cache cleared' } catch { Write-Warn "Delivery Optimization: $($_.Exception.Message)" }
+      # Every stream is captured: the cmdlet prints "Deleting..." and a success line on stdout, which broke the
+      # one-line --json contract on the P52 (2026-11-02). Its words go to the log instead.
+      try {
+        $said = @(Delete-DeliveryOptimizationCache -Force -ErrorAction Stop *>&1)
+        foreach ($line in $said) { Write-LogLine "Delete-DeliveryOptimizationCache: $line" }
+        Write-Ok 'Delivery Optimization cache cleared'
+      } catch { Write-Warn "Delivery Optimization: $($_.Exception.Message)" }
     }
   }
 }

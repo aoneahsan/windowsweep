@@ -18,7 +18,7 @@ $Script:WS = @{
   Days = $null; TempDays = $null; LargeFileMb = $null; PurgeAll = $false
   DeveloperFlag = $null; ForgetDeveloper = $false; Developer = $null; DeveloperSource = ''
   ScanRoots = @(); ExcludePaths = @(); Excluded = @(); Hiberfil = ''; ResetBase = $false; Permanent = $false
-  BrowserProfileRoots = @(); TempRoots = @()
+  BrowserProfileRoots = @(); TempRoots = @(); PersonalRoots = @(); PersonalRootsReport = @()
   OnlyList = ''; Profile = ''; Exclude = ''; ExportFmt = 'both'; ExportId = 'latest'; PruneDays = 90
   LogsDir = ''; ReportsDir = ''; NoReport = $false; CleanupLogs = $false
   JsonMode = $false; Quiet = $false; NoColor = $false; Ascii = $false; Notify = $false
@@ -84,6 +84,7 @@ OPTIONS
       --browser-profile-roots "P1;P2"   Folders of test/automation browser profiles: section 7 clears their caches
       --temp-roots "P1;P2"   Scratch folders: section 10 removes each entry nothing wrote for --temp-days, never one in use
       --large-file-mb N    Minimum size for section 19 (default 100)
+      --personal-roots "P1;P2"   Folders section 19 scans besides Downloads for large or old files
       --hiberfil off|reduced|keep   What section 15 does       --reset-base   DISM /ResetBase in 14
       --permanent       Sections 18, 19 and 23 delete instead of using the Recycle Bin
       --select L        Pre-answer the next interactive selection, e.g. --select 1,3-5. Repeatable: the
@@ -174,6 +175,7 @@ function Read-Arguments {
       '--exclude-path' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; $ws.ExcludePaths += $v }
       '--browser-profile-roots' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; $ws.BrowserProfileRoots = @($v -split ';' | ForEach-Object { $_.Trim() } | Where-Object { $_ }) }
       '--temp-roots' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; $ws.TempRoots = @($v -split ';' | ForEach-Object { $_.Trim() } | Where-Object { $_ }) }
+      '--personal-roots' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; $ws.PersonalRoots = @($v -split ';' | ForEach-Object { $_.Trim() } | Where-Object { $_ }) }
       '--large-file-mb' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; if ($v -notmatch '^\d+$') { throw "--large-file-mb needs a whole number, got '$v'" }; $ws.LargeFileMb = [int]$v }
       '--hiberfil' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; if ($v -notin 'off', 'reduced', 'keep') { throw "--hiberfil must be off, reduced or keep" }; $ws.Hiberfil = $v }
       '--reset-base' { $ws.ResetBase = $true }
@@ -246,6 +248,7 @@ function Initialize-Settings {
   if ($cfg.excludePaths) { $ws.ExcludePaths = @($ws.ExcludePaths) + @($cfg.excludePaths) }
   if ($ws.BrowserProfileRoots.Count -eq 0 -and $cfg.browserProfileRoots) { $ws.BrowserProfileRoots = @($cfg.browserProfileRoots) }
   if ($ws.TempRoots.Count -eq 0 -and $cfg.tempRoots) { $ws.TempRoots = @($cfg.tempRoots) }
+  if ($ws.PersonalRoots.Count -eq 0 -and $cfg.personalRoots) { $ws.PersonalRoots = @($cfg.personalRoots) }
   # Must come after the merge above, or every config-file exclusion is silently dropped.
   Initialize-Exclusions
   # D79: computed after the merge for the same reason - the profile roots may come from the config file.

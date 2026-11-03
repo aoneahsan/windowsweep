@@ -1,4 +1,5 @@
-# personal.ps1 - sections 18 and 19: personal files in Downloads. Interactive only; the Recycle Bin is the destination.
+# personal.ps1 - section 18 (partial downloads in Downloads) and the file walk section 19 shares (data_scanner.ps1).
+# Interactive only; the Recycle Bin is the destination.
 
 $Script:WS_PARTIAL_PATTERNS = @('*.crdownload', '*.part', '*.partial', '*.fdmdownload', '*.opdownload', '*.!ut', '*.aria2', '*.download', '*.bc!', '*.tmp')
 
@@ -15,15 +16,9 @@ function Get-Targets18 {
   return $t
 }
 
-function Get-Targets19 {
-  $t = @()
-  foreach ($r in (Get-PersonalRoots)) { $t += (New-Target 19 "Files >= $($Script:WS.LargeFileMb) MB idle $($Script:WS.Days)+ days" $r -Kind cmd -Note 'moved to the Recycle Bin after you pick them') }
-  return $t
-}
-
 function Get-FilesUnder {
   <# .SYNOPSIS Files under Root up to MaxDepth, never following links, never entering protected folders. #>
-  param([string] $Root, [int] $MaxDepth = 4)
+  param([string] $Root, [int] $MaxDepth = 4, [int] $MaxFiles = 0)
   $out = New-Object System.Collections.Generic.List[object]
   $stack = New-Object System.Collections.Generic.Stack[object]
   $stack.Push(@($Root, 0))
@@ -33,6 +28,7 @@ function Get-FilesUnder {
       if (Test-ReparsePoint $e) { continue }
       if ($e -is [IO.DirectoryInfo]) { if ([int]$item[1] -lt $MaxDepth) { $stack.Push(@((Remove-LongPrefix $e.FullName), [int]$item[1] + 1)) }; continue }
       $out.Add($e)
+      if ($MaxFiles -gt 0 -and $out.Count -ge $MaxFiles) { return $out }
     }
   }
   return $out
@@ -49,22 +45,6 @@ function Get-PartialDownloads {
     }
   }
   return @($list | Sort-Object Bytes -Descending)
-}
-
-function Get-LargeStaleFiles {
-  $ws = $Script:WS
-  $min = [long]$ws.LargeFileMb * 1MB
-  $list = @()
-  foreach ($root in (Get-PersonalRoots)) {
-    $ignore = Test-LastAccessLive -Root $root
-    foreach ($f in (Get-FilesUnder -Root $root -MaxDepth 4)) {
-      if ([long]$f.Length -lt $min) { continue }
-      $idle = [int][math]::Floor(([datetime]::UtcNow - (Get-NewestTimestampUtc $f -IgnoreAccess:$ignore)).TotalDays)
-      if ($idle -lt $ws.Days) { continue }
-      $list += [pscustomobject]@{ Path = (Remove-LongPrefix $f.FullName); Bytes = [long]$f.Length; Idle = $idle; Root = $root }
-    }
-  }
-  return @($list | Sort-Object Bytes -Descending | Select-Object -First 100)
 }
 
 function Show-FileTable {
@@ -106,23 +86,11 @@ function Invoke-Section18 {
   Invoke-PersonalPicker -Rows @(Get-PartialDownloads) -Prompt 'Move the selected partial downloads to the Recycle Bin' -Section 18
 }
 
-function Invoke-Section19 {
-  $ws = $Script:WS
-  Write-SectionIntro @(
-    "Files of $($ws.LargeFileMb) MB or more in Downloads that nothing has touched for $($ws.Days)+ days: old installers, ISOs,",
-    'archives you already extracted. You pick what goes; it lands in the Recycle Bin.'
-  )
-  if (@(Get-PersonalRoots).Count -eq 0) { Write-Info 'no Downloads folder found'; return }
-  Invoke-PersonalPicker -Rows @(Get-LargeStaleFiles) -Prompt 'Move the selected files to the Recycle Bin' -Section 19
-}
-
 function Show-PersonalScan {
   <# .SYNOPSIS Read-only listing used by --scan. #>
   Write-Box 'Personal files (read-only)' 'Sections 18 and 19 are interactive only - nothing here is deleted'
   Write-Section 'Partial / orphan downloads'
   $p = @(Get-PartialDownloads)
   if ($p.Count -eq 0) { Write-Info 'none found' } else { Show-FileTable @($p | Select-Object -First 30) }
-  Write-Section "Files >= $($Script:WS.LargeFileMb) MB idle $($Script:WS.Days)+ days in Downloads"
-  $l = @(Get-LargeStaleFiles)
-  if ($l.Count -eq 0) { Write-Info 'none found' } else { Show-FileTable @($l | Select-Object -First 30) }
+  Show-DataScan
 }

@@ -63,7 +63,7 @@ $Script:WS_SECTIONS = @(
   @{ Id = 16; Key = 'eventlogs';  Title = 'Clear Windows Event Logs - PERMANENT';                     Tier = 'permanent'; Admin = $true;  Batch = 'deep';        Dev = $false; Fn = 'Invoke-Section16' }
   @{ Id = 17; Key = 'projects';   Title = 'Stale project build artefacts (node_modules, dist, .next, target, ...)'; Tier = 'rebuilds'; Admin = $false; Batch = 'interactive'; Dev = $true; Fn = 'Invoke-Section17' }
   @{ Id = 18; Key = 'partials';   Title = 'Partial / orphan downloads -> Recycle Bin';                Tier = 'recycle';   Admin = $false; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section18' }
-  @{ Id = 19; Key = 'large';      Title = 'Large stale personal files (Downloads) -> Recycle Bin';    Tier = 'recycle';   Admin = $false; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section19' }
+  @{ Id = 19; Key = 'large';      Title = 'Large or old personal files (Downloads and folders you add) -> Recycle Bin'; Tier = 'recycle';   Admin = $false; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section19' }
   @{ Id = 20; Key = 'vhdx';       Title = 'Docker Desktop / WSL disk image compaction (stops Docker + WSL)'; Tier = 'config'; Admin = $true; Batch = 'deep';    Dev = $true;  Fn = 'Invoke-Section20' }
   @{ Id = 21; Key = 'diskusage';  Title = 'Disk usage report (largest entries, drives, disk images)'; Tier = 'report';    Admin = $false; Batch = 'safe';        Dev = $false; Fn = 'Invoke-Section21' }
   @{ Id = 22; Key = 'globals';    Title = 'Globally installed packages audit (npm, pnpm, yarn, bun, deno) - report only'; Tier = 'report'; Admin = $false; Batch = 'safe'; Dev = $false; Fn = 'Invoke-Section22' }

@@ -41,6 +41,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Section 24 shows when each program last ran.** In an elevated run it reads Windows Prefetch and adds a RAN
   column; "none" means no run is on record. File names many programs ship (`uninstall.exe`, `update.exe`,
   `setup.exe`, crash handlers) never count, because Prefetch records a run by file name only.
+- **Section 19 is now a data scanner: large or old personal files.** It lists files in Downloads, and in folders
+  you add with `--personal-roots "P1;P2"` (config `personalRoots`), that are large (`--large-file-mb` or more, at
+  any age) or old (untouched for `--days`, at any size) - each file once, with its reason, age and the timestamps
+  that age came from. A folder is refused as a root when it is a drive root, your profile folder, inside Windows,
+  Program Files, ProgramData or AppData, a link, or protected. Removal stays yours: exact files only, never by
+  `--yes`, the Recycle Bin by default - and a file that changed after the list was made, or is now reached through a
+  link, is refused. File names and paths stay on your machine. `--json` candidates for section 19 add `reason`
+  (`large`/`old`/`both`), `age_basis` (`write` or `write+access`), `modified`, `root` and `selectable` (with
+  `skip_reason` and `index` 0 for a file that cannot be picked); the summary adds `personal_roots`.
 - **Section 28 - superseded tool releases and old downloaded updates.** Tools that update themselves often keep
   every old release. This removes the superseded ones and keeps the release in use, any newer one and the newest
   older one; a release a running program uses is skipped. It covers Codex standalone releases, Electron updaters

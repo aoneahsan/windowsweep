@@ -242,6 +242,81 @@ function Invoke-SelfTest24 {
   return [pscustomobject]@{ Checks = $checks; Fails = $fails }
 }
 
+function Invoke-SelfTest25 {
+  <# .SYNOPSIS Group [25]: section 19's data scanner - reasons, refusals, root rules, the change check, --json. #>
+  param([string] $Fixture)
+  $checks = 0; $fails = 0
+  $ws = $Script:WS
+  $root = Join-Path $Fixture 'g25'
+  $savedExclude = $Script:WS_EXCLUDE
+  $saved = @{ Json = $ws.JsonMode; Cands = $ws.Candidates }
+  try {
+    Write-Section '[25] 1.4.0: the data scanner (section 19) - large or old, refusals, the change check'
+    $d = Join-Path $root 'data'
+    New-Item -ItemType Directory -Force -Path (Join-Path $d 'sub') | Out-Null
+    $old = [datetime]::UtcNow.AddDays(-400)
+    $spec = @(@('big-new.bin', 2048, $false), @('small-old.txt', 10, $true), @('big-old.iso', 4096, $true), @('small-new.txt', 10, $false), @('sub\deep-old.log', 10, $true), @('excluded-old.txt', 10, $true))
+    foreach ($s in $spec) {
+      $p = Join-Path $d $s[0]
+      [IO.File]::WriteAllBytes($p, (New-Object byte[] ([int]$s[1])))
+      if ($s[2]) { [IO.File]::SetCreationTimeUtc($p, $old); [IO.File]::SetLastWriteTimeUtc($p, $old); [IO.File]::SetLastAccessTimeUtc($p, $old) }
+    }
+    $exPath = Get-FullPath (Join-Path $d 'excluded-old.txt')
+    $Script:WS_EXCLUDE = @{ Prefixes = @($exPath + '\'); Roots = @($exPath) }
+    $rows = @(Find-PersonalFiles -Roots @((Get-FullPath $d)) -MinBytes 1024 -Days 100)
+    $Script:WS_EXCLUDE = $savedExclude
+    $got = (@($rows | ForEach-Object { "$(Split-Path -Leaf $_.Path)=$($_.Reason)" } | Sort-Object) -join ',')
+
+    # 25a - large at any age, old at any size, both, each file once; a small new file is not listed
+    $checks++
+    if ($got -eq 'big-new.bin=large,big-old.iso=both,deep-old.log=old,excluded-old.txt=old,small-old.txt=old') { Write-Ok 'data scanner: large (any age), old (any size) and both, each file once' } else { Write-Err "scanner reasons wrong: $got"; $fails++ }
+
+    # 25b - a file the chokepoint refuses stays visible with its reason and cannot be picked
+    $checks++
+    $ex = @($rows | Where-Object { $_.Path -eq $exPath })
+    if ($ex.Count -eq 1 -and -not $ex[0].Selectable -and $ex[0].SkipReason -like 'excluded: *' -and @($rows | Where-Object { -not $_.Selectable }).Count -eq 1) { Write-Ok 'a refused file is listed with its reason and is not selectable' } else { Write-Err 'refused file handling wrong'; $fails++ }
+
+    # 25c - personal roots: never a drive root, the profile, a system/program/app-data folder, a link or a missing folder
+    $checks++
+    $link = Join-Path $root 'link'
+    New-Item -ItemType Junction -Path $link -Target $d | Out-Null
+    $verdicts = @(
+      ((Test-PersonalRoot 'C:\') -eq 'a drive root'), ((Test-PersonalRoot $Script:P.U) -eq 'the profile folder itself'),
+      ((Test-PersonalRoot $Script:P.PF) -like 'inside a system*'), ((Test-PersonalRoot (Join-Path $Script:P.SR 'Temp')) -like 'inside a system*'),
+      ((Test-PersonalRoot (Join-Path $Script:P.L 'Temp')) -like 'inside a system*'), ((Test-PersonalRoot $link) -like 'a link*'),
+      ((Test-PersonalRoot (Join-Path $root 'missing')) -eq 'not an existing folder'), ($null -eq (Test-PersonalRoot $d))
+    )
+    if (@($verdicts | Where-Object { -not $_ }).Count -eq 0) { Write-Ok 'personal roots: drive roots, the profile, system, program and app-data folders, links and missing folders are refused' } else { Write-Err "personal root rules wrong: [$($verdicts -join ',')]"; $fails++ }
+
+    # 25d - right before removal: a changed file, and a folder on the path that became a link, are refused
+    $checks++
+    $one = @($rows | Where-Object { $_.Path -like '*small-old.txt' })[0]
+    $before = Test-PersonalFileUnchanged $one
+    [IO.File]::AppendAllText($one.Path, 'x')
+    $after = Test-PersonalFileUnchanged $one
+    $deepRow = @($rows | Where-Object { $_.Path -like '*deep-old.log' })[0]
+    Rename-Item -LiteralPath (Join-Path $d 'sub') -NewName 'sub-real'
+    New-Item -ItemType Junction -Path (Join-Path $d 'sub') -Target (Join-Path $d 'sub-real') | Out-Null
+    $swap = Test-PersonalFileUnchanged $deepRow
+    if ($null -eq $before -and $after -like 'changed since the scan*' -and $swap -like 'a folder on its path became a link*') { Write-Ok 'the change check refuses a file edited after the scan and one now reached through a link' } else { Write-Err "change check wrong: before='$before' after='$after' swap='$swap'"; $fails++ }
+
+    # 25e - --json carries the scanner's own fields after the shared ones
+    $checks++
+    $ws.JsonMode = $true; $ws.Candidates = @()
+    Add-JsonCandidate -Section 19 -Index 1 -Path 'C:\x' -Bytes 5 -IdleDays 400 -Extra ([ordered]@{ reason = 'both'; age_basis = 'write'; selectable = $true })
+    $c = $ws.Candidates[0]
+    if ((@($c.Keys) -join ',') -eq 'section,index,path,bytes,idle_days,project,reason,age_basis,selectable') { Write-Ok '--json: section 19 candidates add reason, age_basis and selectable after the shared fields' } else { Write-Err "candidate shape wrong: $(@($c.Keys) -join ',')"; $fails++ }
+  } catch {
+    Write-Err "group [25] crashed: $($_.Exception.Message) | at $(($_.ScriptStackTrace -split "`n" | Select-Object -First 3) -join ' <- ')"; $fails++
+  } finally {
+    $Script:WS_EXCLUDE = $savedExclude
+    $ws.JsonMode = $saved.Json; $ws.Candidates = $saved.Cands
+    foreach ($j in @((Join-Path $root 'link'), (Join-Path $root 'data\sub'))) { try { if ((Test-Path -LiteralPath $j) -and (Test-ReparsePoint (Get-Item -LiteralPath $j -Force))) { [IO.Directory]::Delete($j, $false) } } catch { $null = $_ } }
+    try { if (Test-Path -LiteralPath $root) { [IO.Directory]::Delete((Get-LongPath $root), $true) } } catch { $null = $_ }
+  }
+  return [pscustomobject]@{ Checks = $checks; Fails = $fails }
+}
+
 function Invoke-SelfTest23 {
   <# .SYNOPSIS Group [23]: section 27's command-path reader and machine leftover finder. #>
   param([string] $Fixture)

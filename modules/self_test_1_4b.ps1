@@ -227,11 +227,12 @@ function Invoke-SelfTest24 {
 
     # 24f - Prefetch: file names, and days since the newest run of any of a program's files
     $checks++
-    $pf = @{ 'chrome.exe' = [datetime]::UtcNow.AddDays(-2); 'steam.exe' = [datetime]::UtcNow.AddDays(-40) }
+    $pf = @{ 'chrome.exe' = [datetime]::UtcNow.AddDays(-2); 'steam.exe' = [datetime]::UtcNow.AddDays(-40); 'uninstall.exe' = [datetime]::UtcNow }
     $ok = ((ConvertFrom-PrefetchName 'CHROME.EXE-1A2B3C4D.pf') -eq 'chrome.exe' -and (ConvertFrom-PrefetchName 'Layout.ini') -eq '' -and
       (ConvertFrom-PrefetchName 'NOTEPAD.EXE-ZZZZZZZZ.pf') -eq '' -and (Get-LastRunDays -ExeNames @('steam.exe', 'steamwebhelper.exe') -Prefetch $pf) -eq 40 -and
-      (Get-LastRunDays -ExeNames @('chrome.exe', 'steam.exe') -Prefetch $pf) -eq 2 -and (Get-LastRunDays -ExeNames @('none.exe') -Prefetch $pf) -eq -1)
-    if ($ok) { Write-Ok 'last run: Prefetch names parse, and a program counts from its most recently run file' } else { Write-Err 'Prefetch parsing or last-run days wrong'; $fails++ }
+      (Get-LastRunDays -ExeNames @('chrome.exe', 'steam.exe') -Prefetch $pf) -eq 2 -and (Get-LastRunDays -ExeNames @('none.exe') -Prefetch $pf) -eq -1 -and
+      (Get-LastRunDays -ExeNames @('filezilla.exe', 'uninstall.exe') -Prefetch $pf) -eq -1)
+    if ($ok) { Write-Ok 'last run: Prefetch names parse, a program counts from its most recently run file, and a shared uninstall.exe never counts' } else { Write-Err 'Prefetch parsing or last-run days wrong'; $fails++ }
   } catch {
     Write-Err "group [24] crashed: $($_.Exception.Message) | at $(($_.ScriptStackTrace -split "`n" | Select-Object -First 3) -join ' <- ')"; $fails++
   } finally {
@@ -268,7 +269,7 @@ function Invoke-SelfTest23 {
     $checks++
     $m = Join-Path $root 'machine'
     $old = [datetime]::UtcNow.AddDays(-40)
-    foreach ($d in 'OldVendor', 'FreshVendor', 'UsedByPath', 'ClaimedName', 'Windows Defender') { $null = New-AgedFiles -Dir (Join-Path $m $d) -Count 2 -WrittenDaysAgo 40 -FreshReads 0 }
+    foreach ($d in 'OldVendor', 'FreshVendor', 'UsedByPath', 'ClaimedName', 'Windows Defender', 'MSECache', 'DESIGNER', 'Validity') { $null = New-AgedFiles -Dir (Join-Path $m $d) -Count 2 -WrittenDaysAgo 40 -FreshReads 0 }
     [IO.File]::WriteAllText((Join-Path $m 'FreshVendor\new.txt'), 'x')
     $claims = New-ClaimsFixture -Tokens @('claimedname') -Paths @((Join-Path $m 'UsedByPath\f000.bin'))
     $rows = @(Find-MachineLeftovers -Days 30 -Roots @($m) -Claims $claims)
@@ -282,6 +283,14 @@ function Invoke-SelfTest23 {
     $ex = @(Find-MachineLeftovers -Days 30 -Roots @($m) -Claims $claims)
     $Script:WS_EXCLUDE = $savedExclude
     if ($ex.Count -eq 1 -and $ex[0].Reason -like 'excluded: *') { Write-Ok 'an excluded or protected leftover carries its reason and is only reported' } else { Write-Err "exclusion not honoured: $(@($ex | ForEach-Object { "$($_.Path)=$($_.Reason)" }) -join '; ')"; $fails++ }
+
+    # 23e - an 8.3 name in a registration (COM servers store them) resolves to the long path a folder is listed by
+    $checks++
+    $long = Join-Path $Script:P.PF86 'Common Files'
+    $short = ''
+    try { $short = (New-Object -ComObject Scripting.FileSystemObject).GetFolder($long).ShortPath } catch { $short = '' }
+    if (-not $short -or $short -eq $long) { Write-Ok '8.3 names are off on this volume - nothing to expand (not judged)' }
+    elseif ((Expand-ShortPath "$short\x.dll") -eq "$long\x.dll") { Write-Ok "8.3 names expand: $short -> $long" } else { Write-Err "short path not expanded: $short -> $(Expand-ShortPath "$short\x.dll")"; $fails++ }
 
     # 23d - an unreadable registry offers nothing
     $checks++

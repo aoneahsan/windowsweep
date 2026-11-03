@@ -93,11 +93,19 @@ function Get-InstallLocationExeNames {
   return $names
 }
 
+# Prefetch keys a run by file name only, so a name many programs ship says nothing about this one: Steam's
+# uninstall.exe running made FileZilla (which also ships uninstall.exe) look "ran today" (P52, 2026-11-03).
+$Script:WS_PREFETCH_GENERIC = '^(unins\d*|uninst.*|uninstall.*|update.*|updater.*|setup.*|install.*|crash.*|elevate.*|helper.*|maintenancetool|au_|launcher|bootstrap.*|vc_redist.*|notification_helper|squirrel)\.exe$'
+
 function Get-LastRunDays {
-  <# .SYNOPSIS Pure: days since the newest Prefetch run of any of these program files, or -1 when none ran. #>
+  <# .SYNOPSIS Pure: days since the newest Prefetch run of any of these program files - generic names (uninstall.exe,
+     update.exe, setup.exe, crash handlers) never count - or -1 when none ran. #>
   param([string[]] $ExeNames, [hashtable] $Prefetch, [datetime] $NowUtc = [datetime]::UtcNow)
   $best = [datetime]::MinValue
-  foreach ($n in @($ExeNames)) { if ($Prefetch.ContainsKey($n) -and $Prefetch[$n] -gt $best) { $best = $Prefetch[$n] } }
+  foreach ($n in @($ExeNames)) {
+    if ($n -match $Script:WS_PREFETCH_GENERIC) { continue }
+    if ($Prefetch.ContainsKey($n) -and $Prefetch[$n] -gt $best) { $best = $Prefetch[$n] }
+  }
   if ($best -eq [datetime]::MinValue) { return -1 }
   return [int][math]::Floor(($NowUtc - $best).TotalDays)
 }

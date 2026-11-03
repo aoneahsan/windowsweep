@@ -21,8 +21,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   both Common Files and ProgramData that no installed program, service, driver, PATH or environment entry, Run
   entry, shortcut, scheduled task or running process still uses and that have been idle `--days`, and moves the
   ones you pick to the Recycle Bin. A folder inside a protected location is shown, never removed, and an
-  unreadable registry offers nothing. It also lists environment entries that name something that no longer
-  exists (report only). Administrator; it joins the elevated walkthrough.
+  unreadable registry offers nothing. Registered COM servers and type libraries count as use too (shared Office
+  and ADO components live in Common Files and are registered only that way), and shared Microsoft folders,
+  install caches and hardware-driver folders are never offered. It also lists environment entries that name
+  something that no longer exists (report only). Administrator; it joins the elevated walkthrough.
 - **`--json` candidates can carry a `label`.** Section 26's program candidates use the program's uninstall
   registry key as their `path` and its name as `label`; the folders it offers after an uninstall carry
   `leftover: <program>`.
@@ -37,7 +39,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **`--temp-roots "P1;P2"` (config `tempRoots`) for section 10.** Folders you use as scratch space: each entry
   nothing wrote for `--temp-days` goes whole, unless a running program's command line names it.
 - **Section 24 shows when each program last ran.** In an elevated run it reads Windows Prefetch and adds a RAN
-  column; "none" means no run is on record.
+  column; "none" means no run is on record. File names many programs ship (`uninstall.exe`, `update.exe`,
+  `setup.exe`, crash handlers) never count, because Prefetch records a run by file name only.
 - **Section 28 - superseded tool releases and old downloaded updates.** Tools that update themselves often keep
   every old release. This removes the superseded ones and keeps the release in use, any newer one and the newest
   older one; a release a running program uses is skipped. It covers Codex standalone releases, Electron updaters

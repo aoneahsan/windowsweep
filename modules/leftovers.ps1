@@ -17,6 +17,9 @@ $Script:WS_LEFTOVER_NEVER = @(
   'PowerShell', 'Windows', 'WindowsHolographicDevices', 'USOPrivate', 'USOShared', 'SoftwareDistribution', 'ssh', 'Packages',
   'Package Cache', 'regid.1991-06.com.microsoft', 'Comms', 'Application Data', 'Desktop', 'Documents', 'Start Menu',
   'Templates', 'Favorites', 'DeviceSync', 'Temp', 'Tmp', 'IIS', 'IIS Express', 'Intel', 'NVIDIA', 'NVIDIA Corporation', 'AMD',
+  # Shared Microsoft components and install caches, and a fingerprint driver's data - offered on the P52 (2026-11-03)
+  'MSECache', 'MSOCache', 'DESIGNER', 'Microsoft Shared', 'System', 'Services', 'SpeechEngines', 'InstallShield',
+  'InstallShield Installation Information', 'Windows Live', 'Validity',
   'ATI Technologies', 'Realtek', 'Synaptics', 'Lenovo', 'Dell', 'HP', 'Hewlett-Packard', 'Thunderbolt', 'Conexant', 'Dolby',
   'Waves', 'Qualcomm', 'Broadcom', 'Killer Networking', 'Rivet Networks', 'Elantech', 'Alps', 'Bonjour', 'Apple', 'Google',
   'Mozilla', 'Oracle', 'Java', 'Git', 'nodejs', 'Python', 'WSL', 'windowsweep', 'com.aoneahsan.windowsweep'
@@ -67,6 +70,67 @@ function Get-ShortcutTargets {
   return $out.ToArray()
 }
 
+function Get-ComServerPaths {
+  <# .SYNOPSIS Files registered COM servers and type libraries load (machine 64- and 32-bit, and this user). Office
+     2007's add-in designer in Common Files\DESIGNER is registered only this way (P52, 2026-11-03). #>
+  $out = New-Object System.Collections.Generic.HashSet[string]([StringComparer]::OrdinalIgnoreCase)
+  foreach ($v in @(@('LocalMachine', 'Registry64'), @('LocalMachine', 'Registry32'), @('CurrentUser', 'Default'))) {
+    $base = $null
+    try { $base = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]$v[0], [Microsoft.Win32.RegistryView]$v[1]) } catch { continue }
+    try {
+      $clsid = $base.OpenSubKey('SOFTWARE\Classes\CLSID')
+      if ($clsid) {
+        foreach ($name in $clsid.GetSubKeyNames()) {
+          foreach ($sub in 'InprocServer32', 'LocalServer32') {
+            $k = $null
+            try { $k = $clsid.OpenSubKey("$name\$sub") } catch { $k = $null }
+            if ($k) { $val = [string]$k.GetValue(''); $k.Close(); if ($val) { $null = $out.Add($val) } }
+          }
+        }
+        $clsid.Close()
+      }
+      $tl = $base.OpenSubKey('SOFTWARE\Classes\TypeLib')
+      if ($tl) {
+        foreach ($g in $tl.GetSubKeyNames()) {
+          $gk = $null
+          try { $gk = $tl.OpenSubKey($g) } catch { $gk = $null }
+          if (-not $gk) { continue }
+          foreach ($ver in $gk.GetSubKeyNames()) {
+            foreach ($lcid in @(try { $gk.OpenSubKey($ver).GetSubKeyNames() } catch { @() })) {
+              foreach ($plat in 'win32', 'win64') {
+                $pk = $null
+                try { $pk = $gk.OpenSubKey("$ver\$lcid\$plat") } catch { $pk = $null }
+                if ($pk) { $val = [string]$pk.GetValue(''); $pk.Close(); if ($val) { $null = $out.Add($val) } }
+              }
+            }
+          }
+          $gk.Close()
+        }
+        $tl.Close()
+      }
+    } catch { $null = $_ } finally { $base.Close() }
+  }
+  return @($out)
+}
+
+function Expand-ShortPath {
+  <# .SYNOPSIS C:\PROGRA~2\COMMON~1\x -> C:\Program Files (x86)\Common Files\x. COM registrations often store 8.3
+     names; a claim must compare with the long path a folder is listed by. Unchanged when it cannot resolve. #>
+  param([string] $Path)
+  if ($Path -notmatch '~') { return $Path }
+  $parts = $Path.Split('\')
+  $cur = $parts[0] + '\'
+  for ($i = 1; $i -lt $parts.Count; $i++) {
+    $seg = $parts[$i]
+    if (-not $seg) { continue }
+    if ($seg.Contains('~')) {
+      try { $hit = @(([IO.DirectoryInfo]$cur).GetFileSystemInfos($seg)); if ($hit.Count -eq 1) { $seg = $hit[0].Name } } catch { return $Path }
+    }
+    $cur = Join-Path $cur $seg
+  }
+  return $cur
+}
+
 function Get-LeftoverClaims {
   <# .SYNOPSIS What still claims a folder. Names: the installed-program index without the folders being judged.
      Paths: existing files and folders an uninstall entry, a service or driver, an environment variable (PATH
@@ -98,6 +162,7 @@ function Get-LeftoverClaims {
     } catch { $null = $_ }
   }
   foreach ($x in (Get-ShortcutTargets)) { $raw.Add($x) }
+  foreach ($x in (Get-ComServerPaths)) { foreach ($y in (Get-CommandPaths $x)) { $raw.Add($y) } }
   try {
     foreach ($task in @(Get-ScheduledTask -ErrorAction Stop)) {
       foreach ($a in @($task.Actions)) {
@@ -114,7 +179,7 @@ function Get-LeftoverClaims {
   $set = New-Object System.Collections.Generic.HashSet[string]([StringComparer]::OrdinalIgnoreCase)
   foreach ($r in $raw) {
     $f = ''
-    try { $f = Get-FullPath $r } catch { $f = '' }
+    try { $f = Expand-ShortPath (Get-FullPath $r) } catch { $f = '' }
     if ($f -and -not $set.Contains($f) -and (Test-Path -LiteralPath $f)) { $null = $set.Add($f) }
   }
   return [pscustomobject]@{ Tokens = $index.Tokens; RegistryCount = $index.RegistryCount; Rows = $index.Rows; Paths = @($set) }

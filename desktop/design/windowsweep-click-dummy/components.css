@@ -437,7 +437,7 @@
 }
 .pager-gap { padding-inline: var(--sp-1); color: var(--c-ink-3); }
 
-/* command palette - 26 sections earn a Ctrl+K */
+/* command palette - 30 sections earn a Ctrl+K */
 .cmdk-scrim {
   position: fixed; inset: 0; z-index: 60;
   background: var(--c-scrim);

@@ -15,6 +15,7 @@
 import { create } from 'zustand';
 
 import { toggleExclusion, usableExclusions } from '../lib/exclusions';
+import { usableRoots } from '../lib/roots';
 import { readStored, writeStored } from '../lib/storage';
 import { interactiveSectionIds, mergeOffers } from '../lib/offers';
 import type { Catalogue } from '../lib/catalogue';
@@ -209,6 +210,13 @@ interface StoreState {
    */
   largeFileMb: number;
   setLargeFileMb: (mb: number) => void;
+  personalRoots: string[];
+  browserProfileRoots: string[];
+  tempRoots: string[];
+  setRootList: (
+    kind: 'personalRoots' | 'browserProfileRoots' | 'tempRoots',
+    paths: string[]
+  ) => void;
 
   /* --- what the boot update check found ---------------------------------
      🔴 Recorded so the About tab can say "up to date" only when the check
@@ -241,6 +249,11 @@ const DEVELOPER_KEY = 'windowsweep:developer';
 const IDLE_DAYS_KEY = 'windowsweep:idleDays';
 const TEMP_DAYS_KEY = 'windowsweep:tempDays';
 const LARGE_FILE_MB_KEY = 'windowsweep:largeFileMb';
+const ROOT_KEYS = {
+  personalRoots: 'windowsweep:personalRoots',
+  browserProfileRoots: 'windowsweep:browserProfileRoots',
+  tempRoots: 'windowsweep:tempRoots',
+} as const;
 
 /** When the run in flight began, so `finishRun` can record how long it took. */
 let startedAt = Date.now();
@@ -480,6 +493,15 @@ export const useStore = create<StoreState>()((set, get) => ({
     writeLocal(LARGE_FILE_MB_KEY, value);
     set({ largeFileMb: value });
     if (changed) noteLocalSettingChanged();
+  },
+  personalRoots: usableRoots(readLocal<string[]>(ROOT_KEYS.personalRoots, [])),
+  browserProfileRoots: usableRoots(readLocal<string[]>(ROOT_KEYS.browserProfileRoots, [])),
+  tempRoots: usableRoots(readLocal<string[]>(ROOT_KEYS.tempRoots, [])),
+  setRootList: (kind, paths) => {
+    const value = usableRoots(paths);
+    writeLocal(ROOT_KEYS[kind], value);
+    set({ [kind]: value });
+    noteLocalSettingChanged();
   },
 
   updateOutcome: 'unknown',

@@ -87,6 +87,9 @@ const ALLOWED_VALUE_FLAGS: &[&str] = &[
     "--large-file-mb",
     "--hiberfil",
     "--scan-roots",
+    "--personal-roots",
+    "--browser-profile-roots",
+    "--temp-roots",
     // Verified at windowsweep.ps1:170; repeatable, which the validator already
     // handles because it walks the vector rather than deduplicating it.
     "--exclude-path",
@@ -286,6 +289,11 @@ mod tests {
         assert!(ok(vec!["--large-file-mb", "500"]).is_ok()); // :171
         assert!(ok(vec!["--exclude-path", "C:\\keep"]).is_ok()); // :170
         assert!(ok(vec!["--select-file", "C:\\runs\\r1\\select.txt"]).is_ok()); // :181
+        for flag in ["--personal-roots", "--browser-profile-roots", "--temp-roots"] {
+            assert!(ok(vec![flag, "C:\\Data;D:\\Archive"]).is_ok());
+            assert!(ok(vec![flag, ""]).is_ok());
+            assert!(ok(vec![flag]).is_err());
+        }
                                                                                 // Repeatable, which the engine supports and the validator must not break.
         assert!(ok(vec!["--exclude-path", "C:\\a", "--exclude-path", "C:\\b"]).is_ok());
 

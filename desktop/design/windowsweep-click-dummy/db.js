@@ -24,6 +24,8 @@
     tempDays: 3,
     largeFileMb: 100,     // section 19's 'large enough to offer you' threshold; --large-file-mb
     dataRoots: [],        // explicit personal-file folders; Downloads remains implicit
+    browserProfileRoots: [],
+    tempRoots: [],
     dataReason: 'all',    // scanner view only, never an action preset
     dataSort: 'size',     // scanner view only
     consent: null,         // null = never asked; otherwise {ga4,amplitude,clarity,sentry}
@@ -60,7 +62,7 @@
 
   function reset() {
     store.clearAll();
-    facts = Object.assign({}, DEFAULT_FACTS, { excluded: [], selection: [], dataRoots: [] });
+    facts = Object.assign({}, DEFAULT_FACTS, { excluded: [], selection: [], dataRoots: [], browserProfileRoots: [], tempRoots: [] });
     persist(); emit();
   }
 

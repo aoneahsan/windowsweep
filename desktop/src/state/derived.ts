@@ -49,7 +49,18 @@ export function useRunPreferences(): RunPreferences {
   const idleDays = useStore((s) => s.idleDays);
   const tempDays = useStore((s) => s.tempDays);
   const largeFileMb = useStore((s) => s.largeFileMb);
-  return { developer, idleDays, tempDays, largeFileMb };
+  const personalRoots = useStore((s) => s.personalRoots);
+  const browserProfileRoots = useStore((s) => s.browserProfileRoots);
+  const tempRoots = useStore((s) => s.tempRoots);
+  return {
+    developer,
+    idleDays,
+    tempDays,
+    largeFileMb,
+    personalRoots,
+    browserProfileRoots,
+    tempRoots,
+  };
 }
 
 /**

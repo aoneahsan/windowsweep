@@ -46,8 +46,10 @@
             <!-- D-37 (GATE 4 round 7): 18 is partial downloads and 19 is large files, as
                  seed.js and the engine's catalogue both say. The two labels were swapped. -->
             <button class="fchip" data-ws-pick="18" aria-pressed="false">18 &#183; partial downloads</button>
-            <button class="fchip" data-ws-pick="19" aria-pressed="false">19 &#183; large files</button>
+            <button class="fchip" data-ws-pick="19" aria-pressed="false">19 &#183; large or old files</button>
             <button class="fchip" data-ws-pick="23" aria-pressed="false">23 &#183; orphaned data</button>
+            <button class="fchip" data-ws-pick="26" aria-pressed="false">26 &#183; uninstall</button>
+            <button class="fchip" data-ws-pick="27" aria-pressed="false">27 &#183; leftovers</button>
             <input class="field" type="search" placeholder="Filter by path or project"
                    data-ws-pick-search style="max-width:16rem;margin-inline-start:auto">
           </div>
@@ -112,7 +114,7 @@
 
           <div class="note note-info" style="margin-top:var(--sp-4)">
             <span aria-hidden="true">i</span>
-            <span><strong>Nothing here is pre-selected, on purpose.</strong> These four sections refuse to
+            <span><strong>Nothing here is pre-selected, on purpose.</strong> These six sections refuse to
               act on <code class="mono">--yes</code> alone &#8211; the prompt still appears, the default is
               none, and the final question is never auto-answered. A scripted selection
               (<code class="mono">--select</code> or <code class="mono">--select-file</code>) counts as a
@@ -205,7 +207,7 @@
     <!-- GATE 4 round 8, D-49 (decided with D-48): section 17's artefacts go through
          Remove-PathSafe whichever mode is set (modules/projects.ps1:157), so when one of its
          rows is chosen the bar says what the choice governs. -->
-    <p class="t-sm ink-3" style="flex-basis:100%">The Recycle Bin can be emptied later. Permanent has no undo.<span data-ws-pick-17 hidden> Section 17's rows are deleted outright whichever you choose; this choice covers 18, 19 and 23.</span></p>
+    <p class="t-sm ink-3" style="flex-basis:100%">The Recycle Bin can be emptied later. Permanent has no undo.<span data-ws-pick-17 hidden> Section 17's rows are deleted outright whichever you choose.</span><span data-ws-pick-26 hidden> Uninstalling a program is permanent whichever mode you choose. Its leftover folders are offered separately after uninstalling.</span><span data-ws-pick-27 hidden> Section 27 needs administrator permission before it can move chosen folders to the Recycle Bin.</span></p>
   </div>
 
   <!-- GATE 4 round 8, D-48 (decided 2026-09-13, docs/story/decision-log.md): a Permanent

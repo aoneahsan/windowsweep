@@ -118,8 +118,8 @@
     g.appendChild(devRow);
 
     g.appendChild(row('Idle window',
-      'A file untouched for longer than this counts as stale. The newest of its write, access and ' +
-      'creation times is what is measured.',
+      'A file older than this counts as stale. Where last-access tracking is live, the engine uses ' +
+      'write and creation time; elsewhere it uses the newest of write, access and creation.',
       num(db.facts.idleDays, 'days', function (v) {
         db.set('idleDays', v); general();
       }),
@@ -131,7 +131,7 @@
       'Maps to --temp-days ' + db.facts.tempDays + '.'));
 
     g.appendChild(row('Large file threshold',
-      'What section 19 counts as large enough to offer you.',
+      'Section 19 offers files at least this large at any age, and old files at any size.',
       num(db.facts.largeFileMb, 'MB', function (v) { db.set('largeFileMb', v); }),
       'Maps to --large-file-mb ' + db.facts.largeFileMb + '.'));
 
@@ -188,6 +188,53 @@
     g.appendChild(row('Folders to scan for stale artefacts',
       'Section 17 looks only inside these. It never scans a whole drive.', roots,
       'Maps to --scan-roots "D:\\work;E:\\04-code".'));
+
+    function declaredRoots(key, label) {
+      var box = el('div', 'tags');
+      box.style.width = 'min(28rem, 100%)';
+      var values = Array.isArray(db.facts[key]) ? db.facts[key] : [];
+      values.forEach(function (path) {
+        var tag = el('span', 'tag');
+        tag.appendChild(el('span', null, path));
+        var remove = el('button', 'tag-x', '\u00d7');
+        remove.type = 'button';
+        remove.setAttribute('aria-label', 'Stop scanning ' + path);
+        remove.addEventListener('click', function () {
+          db.set(key, values.filter(function (item) { return item !== path; }));
+          host.dataset.built = '0'; host.textContent = ''; scan();
+        });
+        tag.appendChild(remove);
+        box.appendChild(tag);
+      });
+      var input = el('input', 'tags-in');
+      input.placeholder = 'Add a folder…';
+      input.setAttribute('aria-label', label);
+      input.addEventListener('keydown', function (event) {
+        if (event.key !== 'Enter') return;
+        event.preventDefault();
+        var path = input.value.trim();
+        if (!/^[A-Za-z]:\\/.test(path) || /[;\r\n]/.test(path)) return;
+        if (!values.some(function (item) { return item.toLowerCase() === path.toLowerCase(); })) {
+          db.set(key, values.concat(path));
+        }
+        host.dataset.built = '0'; host.textContent = ''; scan();
+      });
+      box.appendChild(input);
+      return box;
+    }
+
+    g.appendChild(row('Personal file folders',
+      'Section 19 always scans Downloads. Add other folders here, then review large or old files one by one.',
+      declaredRoots('dataRoots', 'Add a personal file folder'),
+      'Maps to --personal-roots; an empty list keeps the scope at Downloads.'));
+    g.appendChild(row('Automation browser profiles',
+      'Section 7 clears only known cache folders inside these profile roots. Saved browser data stays.',
+      declaredRoots('browserProfileRoots', 'Add an automation profile root'),
+      'Maps to --browser-profile-roots.'));
+    g.appendChild(row('Scratch folders',
+      'Section 10 checks each entry for recent writes and running programs before removing it.',
+      declaredRoots('tempRoots', 'Add a scratch folder'),
+      'Maps to --temp-roots.'));
 
     var ex = el('div', 'tags');
     ex.style.width = 'min(28rem, 100%)';

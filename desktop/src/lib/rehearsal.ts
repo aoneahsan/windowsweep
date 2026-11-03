@@ -115,6 +115,9 @@ export function isCurrentRehearsal(
     was.idleDays === prefs.idleDays &&
     was.tempDays === prefs.tempDays &&
     was.largeFileMb === prefs.largeFileMb &&
+    sameSet(was.personalRoots, prefs.personalRoots) &&
+    sameSet(was.browserProfileRoots, prefs.browserProfileRoots) &&
+    sameSet(was.tempRoots, prefs.tempRoots) &&
     sameSet(rehearsal.excludedPaths, excludedPaths)
   );
 }

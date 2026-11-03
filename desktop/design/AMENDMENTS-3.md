@@ -85,3 +85,18 @@ The panel uses the cockpit regime, the existing tokens, filters, table and selec
 minimum, controls wrap above the table and the table retains its existing horizontal scroll. No new colour,
 cursor or navigation destination is introduced. `docs/story/content-map.md` row 13 still owns Picker's words.
 The owner must review this extension before the desktop app follows it; app parity remains a separate Gate 4.
+
+## Amendment - 2026-11-03: remaining P9 sections and declared folders
+
+The catalogue now carries sections 26-29 from the engine's 1.4.0 list. Picker chips and sample rows show
+26 as program uninstallation and 27 as leftover folders. The selection bar says an uninstall is permanent
+regardless of the Recycle Bin choice, and that 27 needs administrator permission. The Elevation screen
+names section 29's Chrome policy and its “Managed by your organization” effect. Section 27 stays in Picker;
+it cannot be run as an unattended elevation card without a selection.
+
+Settings' scan tab now shows the personal, automation profile and scratch folder lists. The personal list
+shares Picker's saved folders; Downloads remains implicit and cannot be removed. Each list maps to the
+engine's own flag, and the dummy accepts absolute Windows folders without a semicolon separator. The
+idle window describes D82's per-volume timestamp choice, and the section 19 threshold says “large or old”.
+All four new sections use the established cockpit components, tokens and default pointer. No new screen
+or navigation destination is added. These extensions remain in review with the section 19 scanner.

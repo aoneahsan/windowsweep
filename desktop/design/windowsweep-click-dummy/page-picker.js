@@ -1,4 +1,4 @@
-/* Picker - sections 17, 18, 19 and 23. The one screen whose entire point is
+/* Picker - sections 17, 18, 19, 23, 26 and 27. The one screen whose entire point is
    that NOTHING is chosen for you: --yes never selects here, the default is
    none, and the final question is never auto-answered. */
 (function () {
@@ -16,7 +16,9 @@
     17: ['Stale build artefacts', 'node_modules, target, .gradle and friends, in projects nothing has touched for months. Rebuilt by the project\u2019s own install or build command.'],
     18: ['Partial downloads', 'Half-finished downloads left behind by browsers and download managers. Only Downloads \u2013 never Desktop, never Documents.'],
     19: ['Large or old files', 'Downloads first. You can add folders, inspect each result, and choose what goes to the Recycle Bin.'],
-    23: ['Orphaned application data', 'AppData folders belonging to programs that are no longer installed. Fails closed: if the registry cannot be read, nothing is offered.']
+    23: ['Orphaned application data', 'AppData folders belonging to programs that are no longer installed. Fails closed: if the registry cannot be read, nothing is offered.'],
+    26: ['Uninstall programs you pick', 'Each chosen program runs its own uninstaller. That is permanent. A second list offers any folders it left behind.'],
+    27: ['Leftover program folders', 'Folders in Program Files, Common Files and ProgramData that no installed program claims. Needs administrator permission. Chosen folders go to the Recycle Bin.']
   };
 
   /* Home's "Choose items" opens picker.html?section=N (wire.js renderNeeds), and this
@@ -66,7 +68,7 @@
     return offered(current).filter(function (c) {
       var reason = current === 19 ? dataReasonFor(c) : '';
       if (current === 19 && dataReason !== 'all' && reason !== dataReason && reason !== 'both') return false;
-      return !search || (c.path + ' ' + (c.project || '') + ' ' + reason).toLowerCase().indexOf(search) !== -1;
+      return !search || (c.path + ' ' + (c.label || c.project || '') + ' ' + reason).toLowerCase().indexOf(search) !== -1;
     }).sort(function (a, b) {
       return current === 19 && dataSort === 'age' ? b.idle - a.idle : b.bytes - a.bytes;
     });
@@ -191,8 +193,8 @@
 
       var reason = current === 19 ? dataReasonFor(c) : '';
       tr.appendChild(el('td', 't-sm ink-3', current === 19 ?
-        (reason === 'both' ? 'Large + old' : reason === 'large' ? 'Large' : 'Old') : (c.project || '—')));
-      tr.appendChild(el('td', 'num t-sm ink-3', c.idle + 'd'));
+        (reason === 'both' ? 'Large + old' : reason === 'large' ? 'Large' : 'Old') : (c.label || c.project || '—')));
+      tr.appendChild(el('td', 'num t-sm ink-3', c.idle < 0 ? '—' : c.idle + 'd'));
       tr.appendChild(el('td', 'num-cell t-sm accent-ink', fmt.bytes(c.bytes)));
       tb.appendChild(tr);
     });
@@ -223,6 +225,10 @@
     /* D-49: 17's rows are deleted outright whichever mode is chosen. */
     var line17 = document.querySelector('[data-ws-pick-17]');
     if (line17) line17.hidden = !secs[17];
+    var line26 = document.querySelector('[data-ws-pick-26]');
+    if (line26) line26.hidden = !secs[26];
+    var line27 = document.querySelector('[data-ws-pick-27]');
+    if (line27) line27.hidden = !secs[27];
   }
 
   /* ---- the selection file ---------------------------------------------------

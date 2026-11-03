@@ -3,7 +3,7 @@
   'use strict';
   var G = window.G, el = G.el;
 
-  var LONG = 'Reclaim 42.7 GB across twenty-six sections';
+  var LONG = 'Reclaim 42.7 GB across thirty sections';
   var LABELS = { short: 'Run', typical: 'Start the safe run', long: LONG, rtl: 'ابدأ التنظيف الآمن' };
 
   /* ---- playground: ONE live button, driven ------------------------------- */

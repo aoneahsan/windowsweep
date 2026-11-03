@@ -4,7 +4,7 @@
    Every reclaimable target as one tile, sized by bytes, coloured by tier, grouped
    by section. It exists because the product's whole thesis is one sentence - "the
    user must know what will go before it goes" - and a treemap is that sentence,
-   drawn. It is also the only way 26 sections and hundreds of targets become
+   drawn. It is also the only way 30 sections and hundreds of targets become
    readable at a glance.
 
    🔴 REAL d3.treemap(), vendored, not SVG assembled from template strings. A fake

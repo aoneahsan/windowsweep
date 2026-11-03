@@ -3,7 +3,7 @@
 This is the contract an automated caller can rely on: what windowsweep promises, what it refuses, what it
 prints, and what it returns. It is written for an agent or a script rather than a person. For what the tool
 *is*, read the [README](https://github.com/aoneahsan/windowsweep#readme); for what each section touches, read
-[Sections 0-25](https://github.com/aoneahsan/windowsweep/blob/main/docs/sections.md).
+[Sections 0-29](https://github.com/aoneahsan/windowsweep/blob/main/docs/sections.md).
 
 **windowsweep deletes files.** Every command below that is not marked read-only can remove data. There is no
 undo for caches. Treat a real run as an irreversible operation and preview it first.
@@ -22,17 +22,17 @@ summary**, and every human-readable line goes to stderr. `--json` also implies `
 
 ## What `--yes` covers, and what it never covers
 
-`--yes` auto-confirms **regenerable caches only**: sections 0-3, 5-10, 21, and 12-13 when the console is
+`--yes` auto-confirms **regenerable caches and superseded releases only**: sections 0-3, 5-10, 21, 28, and 12-13 when the console is
 already elevated.
 
 | Never covered by `--yes` | Behaviour |
 |---|---|
-| Sections 17, 18, 19, 23 | The selection prompt appears even with `--yes` and defaults to none. With no console attached nothing is selected, and each asks a final question `--yes` does not answer. Only `--select` / `--select-file` supply a choice (see below) |
-| Sections 11, 15, 16, 20 | Deep. Refused in batch mode unless `--i-understand-deep` is also passed |
+| Sections 17, 18, 19, 23, 26, 27 | The selection prompt appears even with `--yes` and defaults to none. With no console attached nothing is selected, and each asks a final question `--yes` does not answer. Only `--select` / `--select-file` supply a choice (see below) |
+| Sections 11, 15, 16, 20, 29 | Deep. Refused in batch mode unless `--i-understand-deep` is also passed |
 | `--uninstall-data` | Always asks; `--yes` does not answer it |
 | `--purge-all` | From a console it asks for a typed `purge` once per run. In a batch run `--yes` is the confirmation |
 
-In batch mode (`--all`, `--only`, `--profile`) sections 17, 18, 19 and 23 are refused outright and reported as
+In batch mode (`--all`, `--only`, `--profile`) sections 17, 18, 19, 23, 26 and 27 are refused outright and reported as
 `refused`, unless a `--select` or `--select-file` choice was supplied. They need a person choosing items -
 in advance is fine, absent is not.
 
@@ -133,7 +133,7 @@ answered by a script, so `--elevate` does not belong in an unattended context.
 - - **Protected paths are refused regardless of flags**: every drive root, fifteen declared roots (Windows, System32, SysWOW64, both Program Files folders, ProgramData, `C:\Users` with Default and Public, the profile root, and the AppData Roaming, Local and LocalLow folders), 66 protected subtrees, 50 path patterns and 13 file names. Two paths are declared exceptions - `%LOCALAPPDATA%\Android\Sdk\.temp` and `.downloadIntermediates` - and there are no others. No flag bypasses any of it.
 - **Junctions and symlinks are removed as links, never followed.**
 - **`--dry-run` and `--scan` write nothing** but the log and the report.
-- **Section numbers are a public contract.** 0-25 today; a section may be retired as a no-op, and a number is
+- **Section numbers are a public contract.** 0-29 in the 1.4.0 source; a section may be retired as a no-op, and a number is
   never reused. Read `--list --json` rather than hard-coding the set.
 - **Zero runtime dependencies.** The package is PowerShell plus a Node launcher that uses only built-in
   modules.
@@ -144,7 +144,7 @@ answered by a script, so `--elevate` does not belong in an unattended context.
   local package and the command fails. Run it from anywhere else.
 - Do not schedule `npx windowsweep` as a task action. The npx cache is evicted and the task breaks; install
   globally and use `--install-task`, which refuses under npx for this reason.
-- Do not pipe `y` into the tool to force a personal section. Sections 17, 18, 19 and 23 are interactive by
+- Do not pipe `y` into the tool to force a personal section. Sections 17, 18, 19, 23, 26 and 27 are interactive by
   design and a piped answer selects nothing - pass `--select` or `--select-file` instead, which is the
   supported way and names exactly what goes.
 - Do not treat a green `--dry-run` as proof that a real run frees the same amount: an app that is open at run
@@ -152,7 +152,7 @@ answered by a script, so `--elevate` does not belong in an unattended context.
 
 ## Driving the interactive sections (1.1.0+)
 
-Sections 17, 18, 19 and 23 refuse to run unattended, because they delete things a person should choose. Two
+Sections 17, 18, 19, 23, 26 and 27 refuse to run unattended, because they delete things a person should choose. Two
 flags supply that choice in advance, and either one lifts the refusal:
 
 ```powershell

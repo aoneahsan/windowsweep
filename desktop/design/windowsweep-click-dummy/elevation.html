@@ -63,8 +63,8 @@
           <div class="note note-danger">
             <span aria-hidden="true">!</span>
             <div>
-              <p class="t-sm"><strong>Two of these cannot be undone, and one changes how Windows
-                starts.</strong> windowsweep will not run them unattended until you say you know
+              <p class="t-sm"><strong>These actions change Windows settings or remove data.</strong>
+                windowsweep will not run them unattended until you say you know
                 that &#8211; it passes <code class="mono">--i-understand-deep</code>, and nothing
                 else in this window does.</p>
               <ul class="t-sm ink-3" style="margin:var(--sp-2) 0 0;padding-inline-start:var(--sp-5)">
@@ -76,6 +76,9 @@
                   and removes the history a technician would use to diagnose a problem.</li>
                 <li data-ws-deep-item="20"><strong>WSL disk images.</strong> Compaction stops Docker
                   Desktop and every WSL distro first. Start Docker again afterwards.</li>
+                <li data-ws-deep-item="29"><strong>Chrome on-device AI model.</strong> Sets a machine policy
+                  that makes Chrome remove the downloaded model. Chrome will show "Managed by your
+                  organization" for that setting until the policy is removed.</li>
               </ul>
               <label class="t-sm" style="display:flex;gap:var(--sp-2);align-items:center;margin-top:var(--sp-3)">
                 <button class="switch" type="button" role="switch" aria-checked="false"

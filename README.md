@@ -4,7 +4,7 @@
 
 <h1>windowsweep</h1>
 
-<p><strong>Developer-aware Windows cleanup CLI: dry-run first, personal folders refused, zero install via npx.</strong></p>
+<p><strong>Windows cleanup CLI: dry-run first, personal files chosen row by row, zero install via npx.</strong></p>
 
 [![npm version](https://img.shields.io/npm/v/windowsweep.svg)](https://www.npmjs.com/package/windowsweep)
 [![downloads](https://img.shields.io/npm/dm/windowsweep.svg)](https://www.npmjs.com/package/windowsweep)
@@ -116,7 +116,7 @@ reclaims disk space, nothing else.
 - check [6] walks every directory and file target and fails if one resolves inside a protected path.
 - **A dry-run that writes nothing** - `--dry-run` short-circuits every deletion and every destructive command
   and reports an exact estimate. `--scan` and `--list-targets` are read-only.
-- **Personal files go to the Recycle Bin** - partial downloads and large stale files are listed, you pick, and
+- **Personal files go to the Recycle Bin** - partial downloads and large or old files are listed, you pick, and
   Windows keeps the undo.
 - **Batch policy** - `--all` runs the safe batch only; deep sections need `--i-understand-deep`; personal
   sections never run unattended.
@@ -125,7 +125,7 @@ reclaims disk space, nothing else.
 - **Running-app guard** - an open browser, editor or app keeps its caches; the tool tells you which to close.
 - **Session reports** - schema-versioned JSON, exportable to Markdown or a self-contained HTML page, plus
   `--json` for scripts.
-- **Self-test** - 160 checks prove the guards on your machine with a real junction, a 445-character path and
+- **Self-test** - 221 checks in the 1.4.0 source prove the guards on your machine with a real junction, a path longer than 260 characters and
   a dry-run fixture before you trust it.
 - **Offline by design** - the command-line tool makes zero network calls: no telemetry, no update check.
   Self-test check [9] fails the build on an HTTP or socket call in the source. Crash bundles stay on disk.
@@ -201,6 +201,9 @@ section with `a` run / `s` skip / `q` quit and a running total.
 
 ### The sections
 
+This table describes the 1.4.0 source on `main`. The latest published npm release remains 1.3.2
+until the 1.4.0 release gates pass.
+
 **Tier** says what happens to the data: *report* deletes nothing, *rebuilds* comes back on its own, *slow*
 comes back but costs minutes, *Recycle Bin* is recoverable until you empty it (`--list` shows this tier as
 `recycle`), *permanent* is not, *config* changes a setting.
@@ -226,19 +229,23 @@ comes back but costs minutes, *Recycle Bin* is recoverable until you empty it (`
 | 16 | Clear Windows Event Logs | **permanent** | yes | deep |
 | 17 | Stale project build artefacts (`node_modules`, `dist`, `.next`, `target`, ...) | rebuilds | - | interactive, developer-gated |
 | 18 | Partial / orphan downloads | Recycle Bin | - | interactive |
-| 19 | Large stale personal files in Downloads | Recycle Bin | - | interactive |
+| 19 | Large or old personal files in Downloads and folders you add | Recycle Bin | - | interactive |
 | 20 | Docker Desktop / WSL disk-image compaction | config | yes | deep, developer-gated |
 | 21 | Disk usage report | report | - | safe |
 | 22 | Global packages audit (npm, pnpm, yarn, bun, deno) - never uninstalls | report | - | safe · audit only |
 | 23 | Orphaned application data under AppData | Recycle Bin | - | interactive |
 | 24 | Installed programs not modified for N+ days - never uninstalls | report | - | safe · audit only |
 | 25 | Startup items audit - never changes them | report | - | safe · audit only |
+| 26 | Uninstall programs you pick | **permanent** | per program | interactive |
+| 27 | Leftover program folders | Recycle Bin | yes | interactive |
+| 28 | Superseded tool releases | rebuilds | - | safe |
+| 29 | Chrome on-device AI model policy | config | yes | deep |
 
 *Safe* sections run in `--all`; *opt-in* ones run when named in `--only` or a profile; *deep* ones also need
 `--i-understand-deep`; *interactive* ones never run unattended unless you pass a selection. The three
 *audit only* sections are read-only and safe, but stay out of `--all` so a cleanup run is a cleanup run -
 `--profile audit` is where they live. Every section is documented in
-[Sections 0-25](https://windowsweep-docs.aoneahsan.com/sections).
+[Sections 0-29](https://windowsweep-docs.aoneahsan.com/sections).
 
 ### Reclaim interactively
 
@@ -307,17 +314,20 @@ windowsweep [mode] [options]
 |---|---|---|
 | `--dry-run` | off | Delete nothing; show what would go and how much it frees |
 | `-y`, `--yes` | off | Auto-confirm regenerable caches. Never personal files |
-| `--i-understand-deep` | off | Allow sections 11, 15, 16, 20 unattended (with `--yes`) |
+| `--i-understand-deep` | off | Allow sections 11, 15, 16, 20, 29 unattended (with `--yes`) |
 | `--elevate` | off | Relaunch elevated through a UAC prompt |
 | `-d N`, `--days N` | `100` | Idle window: a file goes when its newest timestamp is N+ days old |
 | `--temp-days N` | `3` | Idle window for temp folders |
 | `--purge-all` | off | 🔥 Clear cache targets completely instead of pruning idle files |
 | `--developer`, `--not-developer`, `--forget-developer` | saved answer | Override or re-ask the developer question |
 | `--scan-roots "P1;P2"` | auto | Section 17 project roots |
+| `--personal-roots "P1;P2"` | Downloads only | Extra section 19 folders; explicit empty keeps Downloads only |
+| `--browser-profile-roots "P1;P2"` | none | Cache leaves inside declared automation browser profiles |
+| `--temp-roots "P1;P2"` | none | Idle scratch-folder entries |
 | `--exclude-path P` | - | A tree to leave alone, in **every** section (repeatable) |
 | `--hiberfil off\|reduced\|keep` | ask | What section 15 does |
 | `--permanent` | off | Sections 18, 19 and 23 delete instead of using the Recycle Bin |
-| `--select L`, `--select-file P` | off | Answer an interactive section's selection in advance, by index or by path - the one way sections 17/18/19/23 run unattended |
+| `--select L`, `--select-file P` | off | Answer an interactive section's selection in advance; section 19 requires exact paths in `--select-file` |
 | `--notify` | off | A Windows notification when the run ends |
 | `--json`, `--quiet`, `--no-color`, `--ascii`, `--no-report`, `--cleanup-logs` | off | Output and record controls |
 
@@ -395,9 +405,8 @@ More: [Troubleshooting](https://windowsweep-docs.aoneahsan.com/troubleshooting).
   Bin instead.
 - **Windows only.** Linux and macOS are blocked at install and at launch.
 - **It cannot promise a number.** `--scan` measures your disk; the README will not guess.
-- **The idle gate is conservative.** Windows keeps last-access times off on most volumes, so the tool reads the
-  newest of write, access and creation time - a file can only look fresher than it is, never older. Some old
-  caches survive the default window; `--days` and `--purge-all` exist for that.
+- **The idle gate checks each volume.** Where last-access is live it uses write and creation time; elsewhere
+  it uses the newest of write, access and creation. `--days` and `--purge-all` change how much is offered.
 - **Admin sections need an elevated console** and a UAC click; a Scheduled Task runs the safe batch only.
 - **Disk Cleanup (section 13) cannot preview sizes.** Its dry-run names the handlers it would run and nothing more.
 - **No automated test suite beyond `--self-test`.** Correctness rests on the self-test's fixtures, dry-runs and
@@ -438,7 +447,7 @@ More: [FAQ](https://windowsweep-docs.aoneahsan.com/faq).
 | [Quick start](https://windowsweep-docs.aoneahsan.com/quick-start) | running your first cleanup |
 | [Safety model](https://windowsweep-docs.aoneahsan.com/safety-model) | you want every guarantee spelled out before deleting anything |
 | [Developer mode](https://windowsweep-docs.aoneahsan.com/developer-mode) | you want to know what the first question changes |
-| [Sections 0-25](https://windowsweep-docs.aoneahsan.com/sections) | you want to know precisely what one section touches |
+| [Sections 0-29](https://windowsweep-docs.aoneahsan.com/sections) | you want to know precisely what one section touches |
 | [CLI reference](https://windowsweep-docs.aoneahsan.com/cli-reference) | you need an exact flag, exit code or variable |
 | [Admin sections and elevation](https://windowsweep-docs.aoneahsan.com/admin-and-elevation) | before running the system profile or touching the hibernation file |
 | [Reports and logs](https://windowsweep-docs.aoneahsan.com/reports-and-logs) | parsing the JSON or finding a log |

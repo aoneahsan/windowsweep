@@ -33,12 +33,12 @@
   function isDeep(s) { return s.batch === 'deep'; }
 
   function chosenIds() {
-    return S.SECTIONS.filter(function (s) { return s.admin && chosen[s.id]; })
+    return S.SECTIONS.filter(function (s) { return s.admin && s.batch !== 'interactive' && chosen[s.id]; })
       .map(function (s) { return s.id; });
   }
 
   function chosenDeepIds() {
-    return S.SECTIONS.filter(function (s) { return s.admin && isDeep(s) && chosen[s.id]; })
+    return S.SECTIONS.filter(function (s) { return s.admin && s.batch !== 'interactive' && isDeep(s) && chosen[s.id]; })
       .map(function (s) { return s.id; });
   }
 
@@ -155,7 +155,7 @@
 
   window.wsPage = {
     init: function () {
-      var admin = S.SECTIONS.filter(function (s) { return s.admin; });
+      var admin = S.SECTIONS.filter(function (s) { return s.admin && s.batch !== 'interactive'; });
       admin.forEach(function (s) { chosen[s.id] = !isDeep(s); });
 
       var host = document.querySelector('[data-ws-elevated]');

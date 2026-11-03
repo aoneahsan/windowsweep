@@ -172,7 +172,7 @@
   hint.appendChild(el('span', 'kbd', 'K'));
   hint.appendChild(document.createTextNode(' anywhere.'));
   G.row(cp, [{ node: open }, { node: hint }]);
-  G.note(cp, 'Twenty-six sections earn a palette: typing "chrome" reaches section 7 in two keystrokes, ' +
+  G.note(cp, 'Thirty sections earn a palette: typing "chrome" reaches section 7 in two keystrokes, ' +
     'where the rail would take a page load and a scan of a table.');
 
   /* build it once, into the body */

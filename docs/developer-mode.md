@@ -39,12 +39,12 @@ The answer is saved in `%USERPROFILE%\.windowsweep\config.json`. It decides how 
 A non-interactive run with no saved answer (a Scheduled Task on a fresh machine, `--json`) defaults to
 developer mode **on**, the conservative choice, and says so.
 
-## Why 100 days, and why "newest of the three timestamps"
+## Why 100 days, and which timestamp counts
 
-Windows keeps last-access times off on most volumes, so the tool takes the newest of last-write, last-access
-and creation time as the "last touched" estimate. That can only make a file look fresher than it is, never
-older, so a mistake keeps a cache entry instead of removing one. The 100-day default matches the sibling tools
-for Linux and macOS; an entry a project needed in the last three months is the kind a developer misses.
+The engine samples each volume. Where last-access tracking is live, it measures write and creation time;
+elsewhere it uses the newest of write, access and creation. The output names the basis and the JSON summary
+lists live-access volumes. The default is 100 days because a cache an active project still needs is costly
+to rebuild. An old timestamp is still only an estimate of use.
 
 ## Being more aggressive, and what it costs
 

@@ -75,11 +75,11 @@ that runs one which does, and it is worth knowing before you read a firewall log
 | Tier | Sections | Recoverable? |
 |---|---|---|
 | **Report** - reads and prints, deletes nothing in any mode | 0, 21, 22, 24, 25 | Nothing is removed |
-| **Rebuilds** - caches and temp files the tool or Windows recreates on next use | 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 14, 17 | No undo. Nothing is copied first; a cache comes back because the tool that made it makes it again. Not everything in 12, 13 and 14 does - see below |
+| **Rebuilds** - caches and temp files the tool or Windows recreates on next use | 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 14, 17, 28 | No undo. Nothing is copied first; a cache comes back because the tool that made it makes it again. Not everything in 12, 13 and 14 does - see below |
 | **Slow to rebuild** - Android emulator images, recreated in Android Studio | 4 | No undo. Recreating one takes minutes and no download while its system image is still installed - but everything installed or saved inside the emulator, and its snapshots, are gone. The per-AVD idle gate exists for that reason |
-| **Recycle Bin** - personal files you selected | 18, 19, 23 | The Recycle Bin, until you empty it. `--permanent` deletes instead of recycling, and that has no undo |
-| **Permanent** | 11 (empty the Recycle Bin), 16 (event logs) | No undo |
-| **Configuration** - hibernation off or reduced, disk images compacted; nothing of yours is deleted | 15 (hibernation), 20 (disk-image compaction) | Nothing of yours is removed. Section 15 removes `hiberfil.sys` itself, and `powercfg /hibernate on` puts it back; compaction rewrites a disk image without dropping anything from it |
+| **Recycle Bin** - personal files or leftover folders you selected | 18, 19, 23, 27; section 26's second leftover pass | The Recycle Bin, until you empty it. `--permanent` deletes instead of recycling, and that has no undo |
+| **Permanent** | 11 (empty the Recycle Bin), 16 (event logs), 26 (a program's own uninstaller) | No undo |
+| **Configuration** - hibernation off or reduced, disk images compacted, a Chrome AI policy | 15 (hibernation), 20 (disk-image compaction), 29 (Chrome AI model policy) | The setting persists until you change it; section 15 removes `hiberfil.sys` and `powercfg /hibernate on` puts it back |
 
 Sections 13 and 14 hand their work to Windows' own cleanup and component-store tools, and some of what
 those remove does not come back: a previous Windows installation, superseded drivers and components, and
@@ -88,10 +88,11 @@ The tier name describes the rule; those are the exceptions to it.
 
 ## The idle gate
 
-A cache file goes only when its newest timestamp (last write, last access, creation) is at least `--days` old
-(default 100). Windows disables last-access updates on most volumes, so the tool reads the newest of the three
-and errs toward "recently used". A background indexer that touches one file inside a tool version makes the
-whole version look fresh; the consequence is that the tool keeps more, never less.
+The engine samples each volume to see whether last-access times are live. Where they are, idle age uses
+write and creation time so an indexer reading an old file does not make it look new. Elsewhere it uses
+the newest of write, access and creation. The default window is `--days 100`; temp entries use
+`--temp-days 3`. The JSON summary names volumes where last-access is live in `access_live_volumes`.
+An idle timestamp is a clue for review, not proof that a personal file is unneeded.
 
 Versioned tool caches (Cypress, Playwright, Gradle distributions, Squirrel `app-x.y.z` folders) also apply a
 **keep-newest** rule: the freshest version of each tool is never removed by the idle gate.
@@ -104,12 +105,12 @@ The saved developer answer changes seven sections, in two ways. Sections 1, 2, 3
 
 | Policy | Sections | Unattended (`--all`, `--only`, `--profile`) |
 |---|---|---|
-| safe | 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 21 (+12, 13 when elevated); 22, 24, 25 are read-only and safe but are not in `--all` | run with `--yes` |
+| safe | 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 21, 28 (+12, 13 when elevated); 22, 24, 25 are read-only and safe but are not in `--all` | run with `--yes` |
 | opt-in | 4, 14 | run only when named in `--only` or a profile, with `--yes` |
-| deep | 11, 15, 16, 20 | refused without `--i-understand-deep`; `--dry-run` previews are allowed |
-| interactive | 17, 18, 19, 23 | never, unless a selection was supplied; they need a person choosing items |
+| deep | 11, 15, 16, 20, 29 | refused without `--i-understand-deep`; `--dry-run` previews are allowed |
+| interactive | 17, 18, 19, 23, 26, 27 | never, unless a selection was supplied; they need a person choosing items |
 
-`--yes` never applies to personal or project files: sections 17, 18, 19 and 23 show their selection prompt
+`--yes` never applies to personal files, project files or programs: interactive sections show their selection prompt
 even with `--yes`, default to none, and ask a final question `--yes` does not answer. Section 20's disk
 picker is the documented exception (deep-gated, `--yes` selects every disk).
 
@@ -136,7 +137,8 @@ the `\\?\` prefix. The self-test proves both with a real junction and a 400+ cha
 
 `--dry-run` short-circuits every deletion helper and every destructive external command (`docker`, `cleanmgr`,
 `Dism`, `powercfg`, `wevtutil`, `diskpart`, service stop/start, registry writes), printing what would happen and
-tallying an estimate. The self-test hashes a fixture tree before and after a dry-run to prove nothing changed.
+tallying an estimate. The self-test compares a fixture tree's file names, sizes, write times and directories
+before and after a dry-run to check that it did not change.
 
 ## No undo
 
@@ -151,4 +153,4 @@ windowsweep --scan            # sizes, read-only
 windowsweep --dry-run --all --yes
 ```
 
-Last Updated: 2026-09-24
+Last Updated: 2026-11-03

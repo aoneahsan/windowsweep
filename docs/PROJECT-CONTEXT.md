@@ -294,6 +294,11 @@ Asked in one batch at the start of the run; each answer is his verbatim option. 
   dangling AVD `.ini` files (`sdkmanager --uninstall`); 7 adds `browserProfileRoots`; 10 adds `tempRoots`; 24
   adds a last-run column from Prefetch when elevated; 23's claim logic learns reverse-DNS app ids, Store package
   names, acronyms and process command lines, and never offers the desktop app's own data folder.
+- **D84 - personal data scanner roots** (2026-11-03, owner: "Downloads by default; users add folders"):
+  section 19 searches Downloads and only the extra folders a person adds. The desktop stores those extra
+  roots locally and passes them explicitly, including an empty list. Large or old describes a file, not
+  whether it is needed. Selection is row by row; removal defaults to the Recycle Bin, and a file changed
+  since the scan is refused.
 - Settled in the main session the same day, not owner questions: the release form warns when a version is ABOVE the
   deployed build (a record above every build would block everyone; the update-flow skill's wording is corrected);
   `devices` stores no machine name, host name or Windows version (the product's "never a machine name" promise); the

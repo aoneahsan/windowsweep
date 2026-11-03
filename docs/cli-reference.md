@@ -14,7 +14,7 @@ delete files (subject to every guard in the [safety model](./safety-model.md)).
 |---|---|---|
 | Walkthrough (default) | `-w`, `--walkthrough` | 🔥 Guided run through every section, one confirmation per step |
 | Menu | `-m`, `--menu` | 🔥 Pick one section at a time; toggle dry-run and auto-yes |
-| Safe batch | `-a`, `--all` | 🔥 Sections 0,1,2,3,5,6,7,8,9,10,21 (+12,13 when elevated), no prompts with `--yes` |
+| Safe batch | `-a`, `--all` | 🔥 Sections 0,1,2,3,5,6,7,8,9,10,21,28 (+12,13 when elevated), no prompts with `--yes` |
 | Only | `--only L` | 🔥 Exactly these sections, e.g. `--only 1,3,5-7` |
 | Profile | `--profile NAME` | 🔥 A named bundle - see [Profiles](./profiles.md) |
 | Scan | `-s`, `--scan` | Read-only: health report, every target with its size, personal-file scanners |
@@ -48,9 +48,12 @@ delete files (subject to every guard in the [safety model](./safety-model.md)).
 | `--developer` / `--not-developer` | saved answer | Override developer mode for this run only |
 | `--forget-developer` | - | Ask the developer question again |
 | `--scan-roots "P1;P2"` | auto-detected | Project roots for section 17 (semicolon-separated) |
+| `--personal-roots "P1;P2"` | Downloads only | Extra folders for section 19. An explicit empty value keeps the scope at Downloads even if config names roots |
+| `--browser-profile-roots "P1;P2"` | none | Test or automation browser profile roots for section 7; only known cache leaves are eligible |
+| `--temp-roots "P1;P2"` | none | Scratch folders for section 10; idle entries not held by a program may be removed |
 | `--exclude-path P` | - | Never scan or touch this tree, in **any** section (repeatable). Since 1.2.0 the deletion chokepoint itself refuses an excluded path, so it holds everywhere rather than only in section 17 |
 | `--exclude L` | - | Drop sections from `--all` or a profile |
-| `--large-file-mb N` | 100 | Minimum size for section 19 |
+| `--large-file-mb N` | 100 | Large-file threshold for section 19; files older than `--days` qualify at any size |
 | `--hiberfil off|reduced|keep` | ask | What section 15 does |
 | `--reset-base` | off | Add `/ResetBase` to section 14 |
 | `--permanent` | off | Sections 18, 19 and 23 delete instead of using the Recycle Bin |
@@ -70,7 +73,7 @@ Options may also be written `--days=30`.
 
 ## Scripting the interactive sections
 
-Sections 17, 18, 19 and 23 normally need a person choosing items, and they refuse to run unattended. Two
+Sections 17, 18, 19, 23, 26 and 27 normally need a person choosing items, and they refuse to run unattended. Two
 flags let a script or a GUI supply that choice in advance:
 
 ```powershell
@@ -88,6 +91,9 @@ windowsweep --only 17,18 --select-file .\picks.txt
   for the rest, and selects nothing when there is no console.
 - `--select-file` is offered to every prompt, so a line that matches nothing in a given section is normal;
   it is reported once and skipped.
+- Section 19 requires exact `--select-file` paths for scripted removal. A selected file that changes
+  after discovery is kept. Section 26 has a second, separate selection after uninstalling for any
+  leftover folders; a queued `--select` never picks from that second list.
 - Nothing here reaches a path the deletion chokepoint would otherwise refuse.
 
 The usual pairing is to list the candidates first and then act on the ones you want:
@@ -106,12 +112,16 @@ windowsweep --only 17 --select-file .\picks.txt
 | `tool`, `version`, `mode`, `dry_run`, `elevated`, `developer` | what ran |
 | `freed_bytes`, `estimated_bytes` | reclaimed, and the dry-run estimate |
 | `sections[]` | `section`, `status` (`ran`, `dry-run`, `skipped`, `refused`, `failed`), `freed_bytes` |
-| `candidates[]` | what an interactive section offered: `section`, `index`, `path`, `bytes`, `idle_days`, `project` |
+| `candidates[]` | what an interactive section offered: `section`, `index`, `path`, `bytes`, `idle_days`, `project`; optional `label` for section 26 |
+| `personal_roots[]` | section 19's root verdicts: `path`, `accepted`, `reason`; otherwise empty |
+| `access_live_volumes[]` | volumes where idle age uses write/creation time because last-access is live |
 | `targets[]` | in scan mode: `section`, `label`, `path`, `bytes` |
 | `refusals[]`, `log_file`, `report_file` | what was refused, and where the run was recorded |
 
 `candidates` and `targets` are always present, as empty arrays when nothing was collected, so a caller can
 rely on the shape.
+Section 19 candidates also carry `reason` (`large`, `old`, `both`), `age_basis`, `modified`, `root`
+and `selectable`. A refused row has `index: 0` and `skip_reason`, and must never be offered for selection.
 
 In `--json` mode each section also brackets itself on **stderr** so a caller can show progress:
 
@@ -157,5 +167,8 @@ In `--json` mode each section also brackets itself on **stderr** so a caller can
 | `largeFileMb` | 100 | Section 19 minimum size |
 | `scanRoots` | `[]` | Section 17 roots |
 | `excludePaths` | `[]` | Trees to leave alone, in **every** section - the same reach as `--exclude-path` |
+| `personalRoots` | `[]` | Extra section 19 folders; Downloads is always first when it exists |
+| `browserProfileRoots` | `[]` | Test or automation profile roots for section 7 |
+| `tempRoots` | `[]` | Scratch folders for section 10 |
 
-Last Updated: 2026-09-05
+Last Updated: 2026-11-03

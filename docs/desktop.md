@@ -63,6 +63,6 @@ The check runs on the splash screen. An update is offered rather than applied: *
 
 Each run gets its own folder under `%LOCALAPPDATA%\com.aoneahsan.windowsweep\runs\`, holding that run's report and log. An elevated run writes a second report beside the first, because two windows each write their own.
 
-See also: [Safety model](./safety-model.md) · [Admin sections and elevation](./admin-and-elevation.md) · [Sections 0-25](./sections.md)
+See also: [Safety model](./safety-model.md) · [Admin sections and elevation](./admin-and-elevation.md) · [Sections 0-29](./sections.md)
 
 Last Updated: 2026-09-28

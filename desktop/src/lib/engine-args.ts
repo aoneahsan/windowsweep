@@ -33,6 +33,17 @@ function excludeArgs(excludedPaths: readonly string[]): string[] {
   return excludedPaths.flatMap((path) => ['--exclude-path', path]);
 }
 
+function rootArgs(options: RunPreferences): string[] {
+  return [
+    '--personal-roots',
+    options.personalRoots.join(';'),
+    '--browser-profile-roots',
+    options.browserProfileRoots.join(';'),
+    '--temp-roots',
+    options.tempRoots.join(';'),
+  ];
+}
+
 /**
  * Read-only. Measures every declared target and deletes nothing.
  *
@@ -54,6 +65,7 @@ export function scanArgs(options: { excludedPaths: readonly string[] } & RunPref
     String(options.tempDays),
     '--large-file-mb',
     String(options.largeFileMb),
+    ...rootArgs(options),
     ...excludeArgs(options.excludedPaths),
   ];
 }
@@ -72,6 +84,9 @@ export interface RunPreferences {
   idleDays: number;
   tempDays: number;
   largeFileMb: number;
+  personalRoots: readonly string[];
+  browserProfileRoots: readonly string[];
+  tempRoots: readonly string[];
 }
 
 /**
@@ -114,6 +129,7 @@ export function safeBatchArgs(
   args.push('--days', String(options.idleDays));
   args.push('--temp-days', String(options.tempDays));
   args.push('--large-file-mb', String(options.largeFileMb));
+  args.push(...rootArgs(options));
   args.push(...excludeArgs(options.excludedPaths));
   return args;
 }
@@ -198,6 +214,7 @@ export function selectionArgs(
   args.push('--days', String(options.idleDays));
   args.push('--temp-days', String(options.tempDays));
   args.push('--large-file-mb', String(options.largeFileMb));
+  args.push(...rootArgs(options));
   if (options.permanent) args.push('--permanent');
   args.push(...excludeArgs(options.excludedPaths));
   return args;
@@ -295,6 +312,7 @@ export function elevatedArgs(
   args.push('--days', String(options.idleDays));
   args.push('--temp-days', String(options.tempDays));
   args.push('--large-file-mb', String(options.largeFileMb));
+  args.push(...rootArgs(options));
   /* 🔴 The elevated run is the one that matters most for this flag: it runs as
      administrator over Windows Update, the component store and the event logs, so
      a forgotten exclusion here is the largest blast radius of the four paths. It is

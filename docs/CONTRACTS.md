@@ -1,6 +1,6 @@
 # windowsweep 1.4.0 - backend contracts
 
-Last Updated: 2026-10-31
+Last Updated: 2026-11-03
 
 The one agreement between the desktop app (`desktop/src`), the website (`windowsweep-web`) and the backend
 (`desktop/src/db/schema/*.ts`, `desktop/supabase/migrations/`, `desktop/supabase/functions/`). The main session
@@ -494,3 +494,19 @@ The desktop window uses the public `VITE_GA4_MEASUREMENT_ID` to load `gtag.js` a
 event vocabulary directly to GA4. The Measurement ID is not a secret. The command-line engine sends no
 telemetry. A missing Measurement ID skips GA4 without blocking the desktop. D75 removed the proposed
 `analytics-ingest` relay and its server-side counters before deployment.
+
+## 19. Local engine JSON for the 1.4.0 desktop
+
+The desktop launches the bundled CLI with `--json` and reads one stdout document. This contract stays local:
+paths, file names, candidate labels and root verdicts must never enter an analytics event, backend request or
+synced run summary. `candidates[]` may include `label`, `reason` (`large`, `old`, `both`), `age_basis`
+(`write`, `write+access`), `modified`, `root`, `selectable` and `skip_reason`. A refused section 19 file can
+have `index: 0` and `selectable: false`; the picker must not offer it for selection. `personal_roots[]` records
+each declared scanner root as `{ path, accepted, reason }`; `access_live_volumes[]` names volumes whose
+access timestamp was observed to advance. Both arrays are present even when empty. Older summary readers
+may normalize an absent array to `[]`.
+
+The desktop passes `--personal-roots`, `--browser-profile-roots` and `--temp-roots` on every invocation,
+including an empty value. An empty value means no added roots and must not fall through to a saved CLI
+configuration. Section 19 still includes Downloads by default; only user-declared additional roots are
+scanned. Roots remain local through the existing settings store. A changed file is refused at removal time.

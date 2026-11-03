@@ -35,7 +35,7 @@
 
       if (v.sample === 'heading') {
         box.appendChild(el('p', 'caps ink-3', 'Reclaimable now'));
-        var h = el('h2', 't-xl wide', 'Twenty-six sections, one door');
+        var h = el('h2', 't-xl wide', 'Thirty sections, one door');
         box.appendChild(h);
         box.appendChild(el('p', 't-sm ink-3',
           'Hierarchy is carried by the WIDTH axis, not only by size and weight. Almost no interface does ' +

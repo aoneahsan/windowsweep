@@ -19,6 +19,7 @@ $Script:WS = @{
   DeveloperFlag = $null; ForgetDeveloper = $false; Developer = $null; DeveloperSource = ''
   ScanRoots = @(); ExcludePaths = @(); Excluded = @(); Hiberfil = ''; ResetBase = $false; Permanent = $false
   BrowserProfileRoots = @(); TempRoots = @(); PersonalRoots = @(); PersonalRootsReport = @()
+  BrowserProfileRootsExplicit = $false; TempRootsExplicit = $false; PersonalRootsExplicit = $false
   OnlyList = ''; Profile = ''; Exclude = ''; ExportFmt = 'both'; ExportId = 'latest'; PruneDays = 90
   LogsDir = ''; ReportsDir = ''; NoReport = $false; CleanupLogs = $false
   JsonMode = $false; Quiet = $false; NoColor = $false; Ascii = $false; Notify = $false
@@ -173,9 +174,9 @@ function Read-Arguments {
       '--forget-developer' { $ws.ForgetDeveloper = $true }
       '--scan-roots' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; $ws.ScanRoots = @($v -split ';' | ForEach-Object { $_.Trim() } | Where-Object { $_ }) }
       '--exclude-path' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; $ws.ExcludePaths += $v }
-      '--browser-profile-roots' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; $ws.BrowserProfileRoots = @($v -split ';' | ForEach-Object { $_.Trim() } | Where-Object { $_ }) }
-      '--temp-roots' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; $ws.TempRoots = @($v -split ';' | ForEach-Object { $_.Trim() } | Where-Object { $_ }) }
-      '--personal-roots' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; $ws.PersonalRoots = @($v -split ';' | ForEach-Object { $_.Trim() } | Where-Object { $_ }) }
+      '--browser-profile-roots' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; $ws.BrowserProfileRoots = @($v -split ';' | ForEach-Object { $_.Trim() } | Where-Object { $_ }); $ws.BrowserProfileRootsExplicit = $true }
+      '--temp-roots' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; $ws.TempRoots = @($v -split ';' | ForEach-Object { $_.Trim() } | Where-Object { $_ }); $ws.TempRootsExplicit = $true }
+      '--personal-roots' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; $ws.PersonalRoots = @($v -split ';' | ForEach-Object { $_.Trim() } | Where-Object { $_ }); $ws.PersonalRootsExplicit = $true }
       '--large-file-mb' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; if ($v -notmatch '^\d+$') { throw "--large-file-mb needs a whole number, got '$v'" }; $ws.LargeFileMb = [int]$v }
       '--hiberfil' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; if ($v -notin 'off', 'reduced', 'keep') { throw "--hiberfil must be off, reduced or keep" }; $ws.Hiberfil = $v }
       '--reset-base' { $ws.ResetBase = $true }
@@ -246,9 +247,9 @@ function Initialize-Settings {
   if ($null -eq $ws.LargeFileMb) { $ws.LargeFileMb = [int]$cfg.largeFileMb }
   if ($ws.ScanRoots.Count -eq 0 -and $cfg.scanRoots) { $ws.ScanRoots = @($cfg.scanRoots) }
   if ($cfg.excludePaths) { $ws.ExcludePaths = @($ws.ExcludePaths) + @($cfg.excludePaths) }
-  if ($ws.BrowserProfileRoots.Count -eq 0 -and $cfg.browserProfileRoots) { $ws.BrowserProfileRoots = @($cfg.browserProfileRoots) }
-  if ($ws.TempRoots.Count -eq 0 -and $cfg.tempRoots) { $ws.TempRoots = @($cfg.tempRoots) }
-  if ($ws.PersonalRoots.Count -eq 0 -and $cfg.personalRoots) { $ws.PersonalRoots = @($cfg.personalRoots) }
+  if (-not $ws.BrowserProfileRootsExplicit -and $cfg.browserProfileRoots) { $ws.BrowserProfileRoots = @($cfg.browserProfileRoots) }
+  if (-not $ws.TempRootsExplicit -and $cfg.tempRoots) { $ws.TempRoots = @($cfg.tempRoots) }
+  if (-not $ws.PersonalRootsExplicit -and $cfg.personalRoots) { $ws.PersonalRoots = @($cfg.personalRoots) }
   # Must come after the merge above, or every config-file exclusion is silently dropped.
   Initialize-Exclusions
   # D79: computed after the merge for the same reason - the profile roots may come from the config file.

@@ -185,7 +185,7 @@
       td0.style.padding = 'var(--sp-8)';
       td0.style.textAlign = 'center';
       td0.appendChild(el('p', 't-md wide', 'No section matches that.'));
-      td0.appendChild(el('p', 't-xs ink-3', 'All 26 are still there. The filter is narrow.'));
+      td0.appendChild(el('p', 't-xs ink-3', 'All 30 are still there. The filter is narrow.'));
       tr0.appendChild(td0); tb.appendChild(tr0);
     }
 

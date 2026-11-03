@@ -1,4 +1,4 @@
-# Sections 0-25
+# Sections 0-29
 
 Every cleanup operation lives in one numbered section. Numbers are a public contract: a section may be
 retired as a no-op, never renumbered. `windowsweep --list` prints the table; `--list-targets` prints every
@@ -25,13 +25,17 @@ path each section can reach on your machine.
 | 16 | Event logs | permanent | admin | deep |
 | 17 | Stale project build artefacts | rebuilds | - | interactive, developer-gated |
 | 18 | Partial downloads | Recycle Bin | - | interactive |
-| 19 | Large stale personal files | Recycle Bin | - | interactive |
+| 19 | Large or old personal files | Recycle Bin | - | interactive |
 | 20 | Disk-image compaction | config | admin | deep, developer-gated |
 | 21 | Disk usage report | report | - | safe |
 | 22 | Global packages audit | report | - | safe, audit only |
 | 23 | Orphaned application data | Recycle Bin | - | interactive |
 | 24 | Installed programs not modified for N+ days | report | - | safe, audit only |
 | 25 | Startup items audit | report | - | safe, audit only |
+| 26 | Uninstall selected programs | permanent | per program | interactive |
+| 27 | Leftover program folders | Recycle Bin | admin | interactive |
+| 28 | Superseded tool releases | rebuilds | - | safe |
+| 29 | Chrome on-device AI model policy | config | admin | deep |
 
 "Developer-gated" means the idle gate applies when the developer answer is yes; otherwise the cache is cleared completely. "Developer-only" means the section does not run at all when the answer is no ([Developer mode](./developer-mode.md)). Every section honours `--dry-run`. Tier `recycle` means the item goes to the Recycle Bin (`--list` shows `recycle`).
 
@@ -69,6 +73,8 @@ Not touched: anything under a Chrome-for-Testing folder. The pattern list refuse
 Each `.avd` folder plus its `.ini` is one unit, removed only when nothing inside it changed for the window
 (booting an emulator updates its files). Skipped while an emulator is running. Not part of `--all`; run it with
 `--only 4 --yes` or from the walkthrough.
+Section 4 also identifies unused Android SDK system images and dangling AVD `.ini` pointers. SDK images are
+uninstalled through `sdkmanager`; a live AVD keeps its image.
 
 ## 5 - Docker
 
@@ -92,6 +98,8 @@ Chrome (stable, Beta, Dev, Canary), Edge, Brave, Vivaldi, Opera and Opera GX, Ch
 LibreWolf and Waterfox. For every profile: `Cache`, `Code Cache`, `GPUCache`, shader and Dawn caches, the
 service-worker script cache; at the root: shader caches, Crashpad reports, SwReporter. Profile data is never
 touched. A browser that is open is skipped entirely.
+`--browser-profile-roots "P1;P2"` also names test or automation profile roots. Only known cache leaves
+inside those declared roots are eligible; profiles and their saved data remain protected.
 
 ## 8 - Desktop-app caches
 
@@ -113,6 +121,8 @@ certificate URL cache, diagnostics results older than 30 days, and `ipconfig /fl
 
 `%TEMP%`, `%TMP%`, `AppData\Local\Temp` and `AppData\LocalLow\Temp`: files idle `--temp-days`+ days
 (default 3), then empty folders. Files a running program holds open are skipped.
+`--temp-roots "P1;P2"` adds scratch folders. An entry is eligible only after nothing inside it was
+written for the temp window and no running program uses it.
 
 ## 11 - Recycle Bin
 
@@ -174,11 +184,16 @@ even with `--yes`, Enter selects nothing, and the final question is never auto-a
 and `.tmp` files in Downloads (4 levels deep). You select; selected files go to the Recycle Bin. Interactive
 only; `--yes` never selects and never answers the final question.
 
-## 19 - Large stale personal files
+## 19 - Large or old personal files
 
-Files of `--large-file-mb`+ MB (default 100) in Downloads that nothing touched for the window, largest first.
-You select; selected files go to the Recycle Bin (`--permanent` deletes instead). Interactive only; `--yes`
-never selects and never answers the final question.
+Downloads is scanned by default. `--personal-roots "P1;P2"` adds folders you choose; drive roots,
+system and program folders, the profile root, links and missing folders are refused with reasons. A file
+qualifies when it is at least `--large-file-mb` MB (default 100) **or** at least `--days` days old,
+regardless of size. The engine offers at most 500 selectable files at once, largest first, and reports
+protected files as unselectable rows. Large and old describe a file, not whether you still need it.
+You select paths one by one with `--select-file`; `--yes` never chooses them. Selected files go to the
+Recycle Bin by default. Immediately before removal the engine checks that each is still the same file,
+size and write time, and that no path component became a link; a changed file is kept.
 
 ## 20 - Disk-image compaction (admin)
 
@@ -236,13 +251,15 @@ automatically**, derived from the declared target list at run time so it cannot 
 Read-only. Reads the three uninstall hives and lists non-system programs, largest first, whose files under
 their install location have not been modified for `--days`+ days, each with the command that removes it -
 `winget uninstall --id <id>` when one `winget list` call resolves it, otherwise the program's own
-`UninstallString`. Store apps are listed separately with `Remove-AppxPackage` hints. **It never runs an
-uninstaller.**
+`UninstallString`. Store apps are listed separately with `Remove-AppxPackage` hints. This report never runs
+an uninstaller; section 26 does that only for a program you select.
 
 The number is **"not modified", not "not used"**: Windows keeps no reliable last-launched record. It is
 measured from last-write times only, because last-access is live on many systems and would report every
 program as touched today. A program with no recorded install location cannot be measured and is not listed.
 Writes `installed-programs-<stamp>.txt`. Part of the `audit` profile.
+When elevated, the report also shows days since a program last ran where Prefetch supplies a credible
+program-specific match. A shared executable such as `uninstall.exe` never counts as a run.
 
 ## 25 - Startup items audit
 
@@ -255,6 +272,33 @@ The enabled/disabled state comes from Explorer's `StartupApproved` record, and s
 timestamp it stores: a value carrying a real timestamp was switched off, one whose timestamp is zero is on. A
 value too short to read is reported as `unknown` rather than guessed. Writes `startup-items-<stamp>.txt`.
 Part of the `audit` profile.
+
+## 26 - Uninstall selected programs
+
+Interactive only. The first list names installed programs, and each selected program runs its own
+registered uninstaller, silently when that uninstaller supports it. A machine-wide program may require
+elevation. Uninstalling is permanent and can remove the program's settings. After a real uninstall,
+a second list offers folders it left; only folders selected in that second list go to the Recycle Bin.
+`--yes` never selects a program or leftover folder.
+
+## 27 - Leftover program folders
+
+Interactive and elevated. Finds folders uninstalled programs left under Program Files, Common Files and
+ProgramData. Installed programs, services, drivers, tasks and Run entries can claim a folder and keep it.
+If the installed-program registry cannot be read, no folder is offered. Protected and excluded folders
+are reported with their reason. Only chosen folders go to the Recycle Bin.
+
+## 28 - Superseded tool releases
+
+Safe batch. Removes old Codex standalone releases, downloaded Electron updater installers, superseded
+Ollama versions and Node versions no current project requests. The current version and the newest
+previous Codex release are kept. It can run in `--all`, `dev` and `deep`; dry-run shows the choices.
+
+## 29 - Chrome on-device AI model policy
+
+Deep and elevated. Sets Chrome's `GenAILocalFoundationalModelSettings` policy to `1`; Chrome then
+removes its downloaded on-device model. Chrome displays “Managed by your organization” for this
+policy. The policy remains until you remove it; the model may return after that.
 
 ## Candidate targets awaiting verification
 
@@ -277,4 +321,4 @@ is exactly what this rule exists to prevent. Each will be added once its folder 
 a hidden `GfxCPLBatchFiles` - driver support content, not installer extraction leftovers. It will not become
 a target.
 
-Last Updated: 2026-09-05
+Last Updated: 2026-11-03

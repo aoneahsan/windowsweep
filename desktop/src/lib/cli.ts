@@ -18,7 +18,7 @@ export interface RunSectionResult {
   freed_bytes: number;
 }
 
-/** A row a section offers for selection - section 17/18/19/23 populate this. */
+/** A row an interactive section offers for selection (17/18/19/23/26/27). */
 export interface Candidate {
   section: number;
   index: number;
@@ -26,6 +26,19 @@ export interface Candidate {
   bytes: number;
   idle_days: number | null;
   project: string | null;
+  label?: string;
+  reason?: 'large' | 'old' | 'both';
+  age_basis?: 'write' | 'write+access';
+  modified?: string;
+  root?: string;
+  selectable?: boolean;
+  skip_reason?: string;
+}
+
+export interface PersonalRootVerdict {
+  path: string;
+  accepted: boolean;
+  reason: string;
 }
 
 /** A declared target with its size on disk, produced by `--scan`. */
@@ -83,6 +96,8 @@ export interface RunSummary {
    * Always present, empty when nothing was refused.
    */
   excluded: string[];
+  access_live_volumes: string[];
+  personal_roots: PersonalRootVerdict[];
   log_file: string | null;
   report_file: string | null;
 }
@@ -202,6 +217,10 @@ export function parseRunSummary(stdout: string): RunSummary {
     targets: Array.isArray(doc.targets) ? doc.targets.map(readTarget) : [],
     refusals: Array.isArray(doc.refusals) ? doc.refusals : [],
     excluded: Array.isArray(doc.excluded) ? doc.excluded.map((p) => String(p)) : [],
+    access_live_volumes: Array.isArray(doc.access_live_volumes)
+      ? doc.access_live_volumes.map(String)
+      : [],
+    personal_roots: Array.isArray(doc.personal_roots) ? doc.personal_roots : [],
     log_file: doc.log_file ?? null,
     report_file: doc.report_file ?? null,
   };

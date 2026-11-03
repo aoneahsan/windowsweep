@@ -44,24 +44,28 @@
     { id:16, key:'eventlogs', tier:'permanent', batch:'deep',        admin:true,  dev:false, title:'Clear Windows Event Logs - PERMANENT' },
     { id:17, key:'projects',  tier:'rebuilds',  batch:'interactive', admin:false, dev:true,  title:'Stale project build artefacts (node_modules, dist, .next, target, ...)' },
     { id:18, key:'partials',  tier:'recycle',   batch:'interactive', admin:false, dev:false, title:'Partial / orphan downloads -> Recycle Bin' },
-    { id:19, key:'large',     tier:'recycle',   batch:'interactive', admin:false, dev:false, title:'Large stale personal files (Downloads) -> Recycle Bin' },
+    { id:19, key:'large',     tier:'recycle',   batch:'interactive', admin:false, dev:false, title:'Large or old personal files (Downloads and folders you add) -> Recycle Bin' },
     { id:20, key:'vhdx',      tier:'config',    batch:'deep',        admin:true,  dev:true,  title:'Docker Desktop / WSL disk image compaction (stops Docker + WSL)' },
     { id:21, key:'diskusage', tier:'report',    batch:'safe',        admin:false, dev:false, title:'Disk usage report (largest entries, drives, disk images)' },
     { id:22, key:'globals',   tier:'report',    batch:'safe',        admin:false, dev:false, title:'Globally installed packages audit (npm, pnpm, yarn, bun, deno) - report only' },
     { id:23, key:'orphaned',  tier:'recycle',   batch:'interactive', admin:false, dev:false, title:'Orphaned application data under AppData -> Recycle Bin' },
     { id:24, key:'programs',  tier:'report',    batch:'safe',        admin:false, dev:false, title:'Installed programs not modified for N+ days - report only' },
-    { id:25, key:'startup',   tier:'report',    batch:'safe',        admin:false, dev:false, title:'Startup items audit (Run keys, Startup folders, logon tasks) - report only' }
+    { id:25, key:'startup',   tier:'report',    batch:'safe',        admin:false, dev:false, title:'Startup items audit (Run keys, Startup folders, logon tasks) - report only' },
+    { id:26, key:'uninstall', tier:'permanent', batch:'interactive', admin:false, dev:false, title:'Uninstall programs you pick, then offer leftover folders' },
+    { id:27, key:'leftovers', tier:'recycle', batch:'interactive', admin:true, dev:false, title:'Leftover program folders -> Recycle Bin' },
+    { id:28, key:'releases', tier:'rebuilds', batch:'safe', admin:false, dev:false, title:'Superseded tool releases and old downloaded updates' },
+    { id:29, key:'browserai', tier:'config', batch:'deep', admin:true, dev:false, title:'Chrome on-device AI model policy' }
   ];
 
-  var SAFE_BATCH = [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 21];
+  var SAFE_BATCH = [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 21, 28];
   var SAFE_BATCH_ADMIN = [12, 13];
-  var INTERACTIVE = [17, 18, 19, 23];
+  var INTERACTIVE = [17, 18, 19, 23, 26, 27];
   var PROFILES = {
-    dev:        [1, 2, 3, 5, 6, 17],
+    dev:        [1, 2, 3, 5, 6, 17, 28],
     minimal:    [7, 9, 10],
     'cache-only': [1, 2, 3, 6, 7, 8, 9],
     system:     [9, 10, 12, 13],
-    deep:       [11, 14, 15, 16, 20],
+    deep:       [11, 14, 15, 16, 20, 29],
     audit:      [0, 21, 22, 24, 25]
   };
 
@@ -169,7 +173,11 @@
     { section:19, path:'D:\\Archive\\camera-2019.zip',                     bytes: 3.10*GB, idle:803, basis:'modified', root:'D:\\Archive' },
     { section:19, path:'D:\\Media\\raw-footage.mov',                       bytes: 8.42*GB, idle:8,   basis:'modified', root:'D:\\Media' },
     { section:23, path:'%APPDATA%\\OldVendorTool',                          bytes: 214*MB,  idle:503 },
-    { section:23, path:'%LOCALAPPDATA%\\DiscontinuedIDE',                   bytes: 688*MB,  idle:441 }
+    { section:23, path:'%LOCALAPPDATA%\\DiscontinuedIDE',                   bytes: 688*MB,  idle:441 },
+    { section:26, path:'HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\OldTool', label:'Old Tool', bytes: 320*MB, idle:-1 },
+    { section:26, path:'HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\LegacyEditor', label:'Legacy Editor', bytes: 810*MB, idle:-1 },
+    { section:27, path:'C:\\Program Files\\Old Tool', bytes: 147*MB, idle:390 },
+    { section:27, path:'C:\\ProgramData\\LegacyEditor', bytes: 64*MB, idle:201 }
   ];
 
   /* the protected list only ever grows - these are refused regardless of flags */

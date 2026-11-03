@@ -6,7 +6,7 @@
 
   var STEPS = [
     ['Starting the engine\u2026', 18],
-    ['Reading the catalogue - 26 sections', 46],
+    ['Reading the catalogue - 30 sections', 46],
     ['Checking for a newer build\u2026', 78],
     ['Ready', 100]
   ];

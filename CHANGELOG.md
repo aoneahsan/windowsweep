@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-11-03
+
 ### Added
 
 - **Section 26 - uninstall the programs you pick.** It lists the installed programs - never Windows parts,
@@ -46,7 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   any age) or old (untouched for `--days`, at any size) - each file once, with its reason, age and the timestamps
   that age came from. A folder is refused as a root when it is a drive root, your profile folder, inside Windows,
   Program Files, ProgramData or AppData, a link, or protected. Removal stays yours: exact files only, never by
-  `--yes`, the Recycle Bin by default - and a file that changed after the list was made, or is now reached through a
+  `--yes`, always the Recycle Bin - and a file that changed after the list was made, or is now reached through a
   link, is refused. File names and paths stay on your machine. `--json` candidates for section 19 add `reason`
   (`large`/`old`/`both`), `age_basis` (`write` or `write+access`), `modified`, `root` and `selectable` (with
   `skip_reason` and `index` 0 for a file that cannot be picked); the summary adds `personal_roots`.

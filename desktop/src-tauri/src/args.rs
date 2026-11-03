@@ -189,7 +189,12 @@ mod tests {
             vec!["--only".to_string(), "12,13".to_string()],
             vec!["--dry-run".to_string()],
             vec!["--list".to_string(), "--json".to_string()],
-            vec!["--only".to_string(), "27".to_string(), "--dry-run".to_string(), "--elevate".to_string()],
+            vec![
+                "--only".to_string(),
+                "27".to_string(),
+                "--dry-run".to_string(),
+                "--elevate".to_string(),
+            ],
         ] {
             assert!(
                 wants_summary(&args),
@@ -279,12 +284,16 @@ mod tests {
         assert!(ok(vec!["--large-file-mb", "500"]).is_ok()); // :171
         assert!(ok(vec!["--exclude-path", "C:\\keep"]).is_ok()); // :170
         assert!(ok(vec!["--select-file", "C:\\runs\\r1\\select.txt"]).is_ok()); // :181
-        for flag in ["--personal-roots", "--browser-profile-roots", "--temp-roots"] {
+        for flag in [
+            "--personal-roots",
+            "--browser-profile-roots",
+            "--temp-roots",
+        ] {
             assert!(ok(vec![flag, "C:\\Data;D:\\Archive"]).is_ok());
             assert!(ok(vec![flag, ""]).is_ok());
             assert!(ok(vec![flag]).is_err());
         }
-                                                                                // Repeatable, which the engine supports and the validator must not break.
+        // Repeatable, which the engine supports and the validator must not break.
         assert!(ok(vec!["--exclude-path", "C:\\a", "--exclude-path", "C:\\b"]).is_ok());
 
         // 🔴 `--large-mb` IS NOT A FLAG. The engine spells it `--large-file-mb` and

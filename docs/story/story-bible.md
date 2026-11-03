@@ -63,8 +63,8 @@ Three supporting commitments, in the order the reader cares about them:
 
 > **2026-11-03 correction to commitment 1:** section 19 searches Downloads by default and accepted folders
 > added with `--personal-roots`. Its large or old files are listed for individual selection; `--yes` cannot
-> select them. Selected files go to the Recycle Bin by default, or are permanently removed with
-> `--permanent`. `Remove-PathSafe` and `Send-ToRecycleBin` both check the declared root and protection rules;
+> select them. Selected files always go to the Recycle Bin, even when `--permanent` is set.
+> `Remove-PathSafe` and `Send-ToRecycleBin` both check the declared root and protection rules;
 > section 19 also rechecks the file immediately before removal. The owner approved the replacement sentence
 > above for 1.4.0. This describes 1.4.0 source, not the currently published 1.3.2 release.
 
@@ -149,8 +149,8 @@ the copy points at it. **Never state a gigabyte figure as a promise.**
 
 ## 10. Safety constraints
 
-- **Never imply a deletion is reversible.** Caches have no undo; selected personal files go to the Recycle
-  Bin by default, while `--permanent` removes them permanently. State that distinction wherever relevant.
+- **Never imply a deletion is reversible.** Caches have no undo; section 19 always sends selected personal
+  files to the Recycle Bin, even when `--permanent` is set. State that distinction wherever relevant.
 - **Never promise a number.** How much comes back depends on the reader's disk.
 - **Never claim a security property the tool does not have.** It is not a privacy tool, not a registry
   cleaner, not an anti-malware product. It reclaims disk space.

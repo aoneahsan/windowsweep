@@ -56,6 +56,43 @@
 
       <section class="band band-app band-tight">
         <div class="wrap">
+          <div class="panel pad" data-ws-data-scanner hidden style="margin-bottom:var(--sp-4)">
+            <div style="display:flex;flex-wrap:wrap;gap:var(--sp-4);align-items:start;justify-content:space-between">
+              <div>
+                <p class="caps ink-3">Personal file scan · section 19</p>
+                <h2 class="t-lg wide">Find large or old files</h2>
+                <p class="t-sm ink-3">Downloads is scanned by default. Add another folder only when you choose it.</p>
+                <p class="t-sm ink-3" data-ws-data-thresholds>Large: 100 MB or more. Old: 100 days or more by the timestamp shown on each row. Change the limits in Settings.</p>
+              </div>
+              <button class="btn btn-primary" type="button" data-ws-action="dataScan">Scan these folders</button>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:var(--sp-3);align-items:center;margin-top:var(--sp-5)">
+              <span class="caps ink-3">Folders</span>
+              <span class="badge badge-outline">Downloads · default</span>
+              <span data-ws-data-roots style="display:flex;flex-wrap:wrap;gap:var(--sp-2)"></span>
+              <button class="btn btn-sm" type="button" data-ws-action="dataAddFolder">Add folder</button>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:var(--sp-3);align-items:center;margin-top:var(--sp-4)">
+              <span class="caps ink-3">Show</span>
+              <div class="filters" role="group" aria-label="File reason">
+                <button class="fchip" type="button" data-ws-data-reason="all" aria-pressed="true">All</button>
+                <button class="fchip" type="button" data-ws-data-reason="large" aria-pressed="false">Large</button>
+                <button class="fchip" type="button" data-ws-data-reason="old" aria-pressed="false">Old</button>
+              </div>
+              <label class="t-sm" style="margin-inline-start:auto">Sort
+                <select class="field" data-ws-data-sort aria-label="Sort files" style="display:inline-block;width:auto;margin-inline-start:var(--sp-2)">
+                  <option value="size">Largest first</option>
+                  <option value="age">Oldest first</option>
+                </select>
+              </label>
+            </div>
+            <p class="t-sm ink-3" role="status" data-ws-data-status style="margin-top:var(--sp-3)">Sample results. Scan to refresh the selected folders.</p>
+            <p class="num t-sm accent-ink" data-ws-data-summary style="margin-top:var(--sp-2)">No files measured yet.</p>
+            <div class="note note-info" style="margin-top:var(--sp-4)">
+              <span aria-hidden="true">i</span>
+              <span>“Old” means the recorded timestamp passed the idle window. It does not prove the file is unneeded. Nothing is selected until you choose a row.</span>
+            </div>
+          </div>
           <div class="panel" style="overflow:visible">
             <div class="xscroll">
             <table class="tbl">
@@ -63,8 +100,8 @@
                 <tr>
                   <th style="width:2.4rem"><span class="visually-hidden">Choose</span></th>
                   <th>Path</th>
-                  <th style="width:9rem">Project</th>
-                  <th style="width:5rem">Idle</th>
+                  <th style="width:9rem" data-ws-data-column="reason">Project</th>
+                  <th style="width:5rem" data-ws-data-column="age">Idle</th>
                   <th style="width:6.5rem" class="num-cell">Size</th>
                 </tr>
               </thead>
@@ -132,6 +169,20 @@
 
       <div style="height:var(--sp-16)"></div>
     </main>
+  </div>
+
+  <div class="scrim" id="data-folder-dialog" hidden>
+    <div class="dlg dlg-sm" role="dialog" aria-modal="true" aria-labelledby="data-folder-title" aria-describedby="data-folder-description">
+      <div class="dlg-hd"><div><h2 class="t-md wide" id="data-folder-title">Add a folder to scan</h2></div></div>
+      <div class="dlg-bd">
+        <p class="t-sm" id="data-folder-description">This prototype simulates a Windows folder chooser. The app will use the native folder dialog. No files are opened here.</p>
+        <div style="display:flex;flex-direction:column;gap:var(--sp-2);margin-top:var(--sp-4)">
+          <button class="btn" type="button" data-ws-data-folder="D:\Archive">D:\Archive</button>
+          <button class="btn" type="button" data-ws-data-folder="D:\Media">D:\Media</button>
+        </div>
+      </div>
+      <div class="dlg-ft"><button class="btn" type="button" data-w-close data-autofocus>Cancel</button></div>
+    </div>
   </div>
 
   <!-- GATE 4 round 8, D-49: with section 17's sentence the one-row bar squeezed its own

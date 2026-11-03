@@ -11,7 +11,7 @@
     ['3', 'Run', 'run.html', 'Determinate progress from the engine\u2019s own ##windowsweep lines.', 'moment'],
     ['4', 'Splash', 'splash.html', 'Boot and the update gate.', 'moment'],
     ['5', 'Legacy consent', 'consent.html', '1.3.2 reference; the 1.4.0 legal bar replaces this screen.', 'retired'],
-    ['6', 'Picker', 'picker.html', 'Sections 17, 18, 19 and 23 \u2013 nothing pre-selected.', 'cockpit'],
+    ['6', 'Picker', 'picker.html', 'Sections 17, 18, 19 and 23; section 19 scans Downloads and any folders you add.', 'cockpit'],
     ['7', 'History', 'history.html', 'Local runs in full, cloud runs as summaries.', 'cockpit'],
     ['8', 'Report', 'report.html', 'One run, rendered from its JSON.', 'cockpit'],
     ['9', 'Account', 'account.html', 'Optional sign-in, for sync only.', 'moment'],

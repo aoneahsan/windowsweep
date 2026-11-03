@@ -66,3 +66,22 @@ Rejected: a pricing-first screen, because it would bury the count someone came t
 gauge, because its zero state would look like an empty decoration; and a blocking legal dialog, because the
 notice law requires a quiet bar. The owner still needs to review this 1.4.0 extension in writing. App parity
 is a separate Gate 4 after implementation.
+
+## Amendment - 2026-11-03: personal file scanner in Picker
+
+The owner chose Downloads as the default scan root and explicitly added folders as the only extension. Section
+19 of the existing Picker is the review surface, so the same row-by-row selection and Recycle Bin default stay
+in view. The new folder panel sits above the candidate table. It shows the fixed Downloads root and the folders
+the person adds; the prototype's folder dialog stands in for the app's native Windows chooser. Adding or removing
+a folder invalidates the previous section-19 results and selection. Scanning clears that selection again.
+
+Results distinguish large, old and both. The two reason filters include a both-result in either view. The table
+shows the measured age and timestamp basis, not a claim that a file is unused. Protected files remain visible
+with a refusal reason and no selection control. The selection file also refuses to match those rows. Nothing is
+preselected, and the dummy never reads or removes a real file. The folder list and view preferences persist in
+the existing strata-storage namespace; candidate rows and selections do not.
+
+The panel uses the cockpit regime, the existing tokens, filters, table and selection bar. At the 760 px native
+minimum, controls wrap above the table and the table retains its existing horizontal scroll. No new colour,
+cursor or navigation destination is introduced. `docs/story/content-map.md` row 13 still owns Picker's words.
+The owner must review this extension before the desktop app follows it; app parity remains a separate Gate 4.

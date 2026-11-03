@@ -162,8 +162,12 @@
     { section:17, path:'D:\\work\\spikes\\rust-parser\\target',             bytes: 511*MB,  idle:266, project:'rust-parser' },
     { section:18, path:'%USERPROFILE%\\Downloads\\ubuntu-24.04.iso.crdownload', bytes: 2.31*GB, idle:63 },
     { section:18, path:'%USERPROFILE%\\Downloads\\vs_BuildTools.exe.part',  bytes: 118*MB,  idle:147 },
-    { section:19, path:'%USERPROFILE%\\Downloads\\Win11_24H2_x64.iso',      bytes: 5.84*GB, idle:284 },
-    { section:19, path:'%USERPROFILE%\\Downloads\\dataset-2025-archive.zip',bytes: 3.10*GB, idle:196 },
+    { section:19, path:'%USERPROFILE%\\Downloads\\Win11_24H2_x64.iso',      bytes: 5.84*GB, idle:284, basis:'modified', root:'Downloads' },
+    { section:19, path:'%USERPROFILE%\\Downloads\\camera-export.mov',       bytes: 2.16*GB, idle:12,  basis:'modified', root:'Downloads' },
+    { section:19, path:'%USERPROFILE%\\Downloads\\old-receipt.txt',         bytes: 48*1024, idle:421, basis:'modified', root:'Downloads' },
+    { section:19, path:'%USERPROFILE%\\Downloads\\private-key-backup.txt', bytes: 96*1024, idle:602, basis:'modified', root:'Downloads', protected:'Credential file' },
+    { section:19, path:'D:\\Archive\\camera-2019.zip',                     bytes: 3.10*GB, idle:803, basis:'modified', root:'D:\\Archive' },
+    { section:19, path:'D:\\Media\\raw-footage.mov',                       bytes: 8.42*GB, idle:8,   basis:'modified', root:'D:\\Media' },
     { section:23, path:'%APPDATA%\\OldVendorTool',                          bytes: 214*MB,  idle:503 },
     { section:23, path:'%LOCALAPPDATA%\\DiscontinuedIDE',                   bytes: 688*MB,  idle:441 }
   ];

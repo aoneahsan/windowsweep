@@ -106,6 +106,19 @@ function Test-KnownCacheLeaf {
   return ($known -contains [IO.Path]::GetFileName($Path))
 }
 
+function Add-CacheLeafExceptions {
+  <# .SYNOPSIS D79 (1.4.0): lift the protected lists (lib/safety.ps1) for EXACTLY these folders, each of which must
+     carry a declared cache folder's name - never a profile, an app root or a protected root. Returns the count. #>
+  param([string[]] $Paths)
+  $pr = $Script:WS_PROTECT; $n = 0
+  foreach ($x in @($Paths)) {
+    $f = Get-FullPath $x
+    if (-not $f -or $pr.Exact.Contains($f) -or -not (Test-KnownCacheLeaf $f) -or $pr.Exceptions -contains $f) { continue }
+    $pr.Exceptions = @($pr.Exceptions) + $f; $pr.ExceptionPrefixes = @($pr.ExceptionPrefixes) + ($f + '\'); $n++
+  }
+  return $n
+}
+
 function Invoke-TargetList {
   <# .SYNOPSIS Run every target with its mode under the dry-run, developer, purge and running-app policies. Returns bytes freed/estimated. #>
   param([pscustomobject[]] $Targets)

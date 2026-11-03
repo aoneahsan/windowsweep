@@ -67,9 +67,38 @@ function Get-TempRoots {
   return $roots
 }
 
+function Get-DeclaredTempRoots {
+  <# .SYNOPSIS 1.4.0: --temp-roots / tempRoots - folders a person uses as scratch space (C:\t on the P52, where
+     test runs left one browser profile per run). Existing ones, once each, never a Windows temp root twice. #>
+  $known = @(Get-TempRoots)
+  $out = @()
+  foreach ($r in @($Script:WS.TempRoots)) {
+    if (-not $r -or -not (Test-DirPresent $r)) { continue }
+    $f = Get-FullPath $r
+    if ($known -notcontains $f -and $out -notcontains $f) { $out += $f }
+  }
+  return $out
+}
+
+function Get-TempRootPlan {
+  <# .SYNOPSIS Pure over its inputs: the top-level entries of a declared temp root that go whole - nothing inside
+     written for -Days or more (the caller measures write/creation time only), and not named in any running
+     program's command line (a test browser using one as its profile). #>
+  param([object[]] $Entries, [int] $Days, [string[]] $BusyText)
+  $out = @()
+  foreach ($e in @($Entries)) {
+    if ($e.Idle -lt $Days) { continue }
+    $named = $false
+    foreach ($b in @($BusyText)) { if ($b -and $b.IndexOf($e.Path, [StringComparison]::OrdinalIgnoreCase) -ge 0) { $named = $true; break } }
+    if (-not $named) { $out += $e }
+  }
+  return $out
+}
+
 function Get-Targets10 {
   $t = @()
   foreach ($r in (Get-TempRoots)) { $t += (New-Target 10 'User temp' $r -Mode prune -Days $Script:WS.TempDays -Note "files idle $($Script:WS.TempDays)+ days; open files are skipped") }
+  foreach ($r in (Get-DeclaredTempRoots)) { $t += (New-Target 10 "Declared temp root ($r)" $r -Mode clear-old -Days $Script:WS.TempDays -Note "each entry idle $($Script:WS.TempDays)+ days goes whole; one a running program names is kept") }
   return $t
 }
 
@@ -79,11 +108,26 @@ function Invoke-Section10 {
     "Temporary files idle for $($ws.TempDays)+ days. Files a running program still has open are skipped, so an",
     'installer or build that is in progress right now is safe. Lower the window with --temp-days 1 for a harder sweep.'
   )
-  $targets = @(Get-Targets10)
-  if ($targets.Count -eq 0) { Write-Info 'no temp folders found'; return }
+  $targets = @(Get-Targets10 | Where-Object { $_.Mode -ne 'clear-old' })
+  $declared = @(Get-DeclaredTempRoots)
+  if ($targets.Count -eq 0 -and $declared.Count -eq 0) { Write-Info 'no temp folders found'; return }
   $null = Show-TargetSizes $targets
+  $busy = @()
+  if ($declared.Count -gt 0) { try { $busy = @(Get-CimInstance Win32_Process -Property CommandLine -ErrorAction Stop | ForEach-Object { [string]$_.CommandLine } | Where-Object { $_ }) } catch { $busy = @() } }
+  $plans = @()
+  foreach ($root in $declared) {
+    $entries = @(Get-ChildEntries $root | Where-Object { -not (Test-ReparsePoint $_) } | ForEach-Object { $full = Remove-LongPrefix $_.FullName; [pscustomobject]@{ Path = $full; Idle = (Get-IdleDays $full -WriteOnly) } })
+    $go = @(Get-TempRootPlan -Entries $entries -Days $ws.TempDays -BusyText $busy)
+    Write-UiLine ("  {0}: {1} of {2} entries idle {3}+ days and not in use" -f $root, $go.Count, $entries.Count, $ws.TempDays) 'Gray'
+    $plans += [pscustomobject]@{ Root = $root; Go = $go }
+  }
   if (-not (Confirm-Section "Remove temp files idle $($ws.TempDays)+ days?")) { Write-Info 'skipped'; return }
   $null = Invoke-TargetList $targets
+  foreach ($pl in $plans) {
+    $freed = [long]0; $n = 0
+    foreach ($e in $pl.Go) { $r = Remove-PathSafe -Path $e.Path -Within $pl.Root -Label 'declared temp root'; if ($r.Removed) { $freed += $r.Bytes; $n++ } }
+    if (-not $ws.DryRun -and $n -gt 0) { Write-Ok ("{0} - {1} entries removed ({2})" -f $pl.Root, $n, (Format-Bytes $freed)) }
+  }
 }
 
 # ---------------------------------------------------------------------------------------------

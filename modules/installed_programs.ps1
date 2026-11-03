@@ -51,6 +51,57 @@ function Get-InstallLocationIdleDays {
   return [int][math]::Floor(([datetime]::UtcNow - $newest).TotalDays)
 }
 
+function ConvertFrom-PrefetchName {
+  <# .SYNOPSIS "CHROME.EXE-1A2B3C4D.pf" -> "chrome.exe"; '' for anything else. #>
+  param([string] $Name)
+  if ($Name -match '^(.+\.exe)-[0-9A-Fa-f]{8}\.pf$') { return $Matches[1].ToLowerInvariant() }
+  return ''
+}
+
+function Get-PrefetchLastRun {
+  <# .SYNOPSIS 1.4.0: program file name -> newest run (UTC) from Windows\Prefetch, which Windows rewrites on every
+     run. Readable only when elevated; empty otherwise or when prefetch is off. #>
+  $map = @{}
+  if (-not $Script:WS.IsAdmin) { return $map }
+  foreach ($e in (Get-ChildEntries (Join-Path $Script:P.SR 'Prefetch'))) {
+    if (-not ($e -is [IO.FileInfo])) { continue }
+    $exe = ConvertFrom-PrefetchName $e.Name
+    if ($exe -and (-not $map.ContainsKey($exe) -or $e.LastWriteTimeUtc -gt $map[$exe])) { $map[$exe] = $e.LastWriteTimeUtc }
+  }
+  return $map
+}
+
+function Get-InstallLocationExeNames {
+  <# .SYNOPSIS Program file names (lower case) at depth <= 2 under an install folder, never through a junction. #>
+  param([string] $Location, [int] $MaxEntries = 4000)
+  $names = @()
+  if ([string]::IsNullOrWhiteSpace($Location)) { return $names }
+  $root = Get-FullPath ($Location.Trim().Trim('"').TrimEnd('\'))
+  if (-not $root -or -not (Test-DirPresent $root)) { return $names }
+  $stack = New-Object System.Collections.Generic.Stack[object]
+  $stack.Push(@($root, 0))
+  $seen = 0
+  while ($stack.Count -gt 0 -and $seen -lt $MaxEntries) {
+    $item = $stack.Pop()
+    foreach ($e in (Get-ChildEntries ([string]$item[0]))) {
+      $seen++
+      if (Test-ReparsePoint $e) { continue }
+      if ($e -is [IO.DirectoryInfo]) { if ([int]$item[1] -lt 2) { $stack.Push(@((Remove-LongPrefix $e.FullName), ([int]$item[1] + 1))) }; continue }
+      if ($e.Name -like '*.exe') { $names += $e.Name.ToLowerInvariant() }
+    }
+  }
+  return $names
+}
+
+function Get-LastRunDays {
+  <# .SYNOPSIS Pure: days since the newest Prefetch run of any of these program files, or -1 when none ran. #>
+  param([string[]] $ExeNames, [hashtable] $Prefetch, [datetime] $NowUtc = [datetime]::UtcNow)
+  $best = [datetime]::MinValue
+  foreach ($n in @($ExeNames)) { if ($Prefetch.ContainsKey($n) -and $Prefetch[$n] -gt $best) { $best = $Prefetch[$n] } }
+  if ($best -eq [datetime]::MinValue) { return -1 }
+  return [int][math]::Floor(($NowUtc - $best).TotalDays)
+}
+
 function Get-ProgramRemovalHint {
   <# .SYNOPSIS The command that removes a program: winget when it knows it, otherwise its own UninstallString. #>
   param([pscustomobject] $Row, [hashtable] $WingetMap)
@@ -86,11 +137,19 @@ function Invoke-Section24 {
   if ($scored.Count -eq 0) {
     Write-Info "no installed program has been untouched for $($ws.Days)+ days"
   } else {
-    Write-UiLine ("  {0,-44} {1,-14} {2,10} {3,6}  {4}" -f 'PROGRAM', 'VERSION', 'SIZE', 'IDLE', 'PUBLISHER') 'White'
+    $prefetch = Get-PrefetchLastRun
+    if ($prefetch.Count -gt 0) { Write-Note 'RAN = days since Windows Prefetch last saw one of its program files run; "none" means no run is on record (Prefetch keeps about 1,024 programs)' }
+    else { Write-Note 'RAN needs an elevated run (Windows Prefetch): windowsweep --only 24 --elevate' }
+    Write-UiLine ("  {0,-44} {1,-14} {2,10} {3,6} {4,6}  {5}" -f 'PROGRAM', 'VERSION', 'SIZE', 'IDLE', 'RAN', 'PUBLISHER') 'White'
     foreach ($s in ($scored | Sort-Object Bytes -Descending)) {
       $size = 'unknown'
       if ($s.Bytes -gt 0) { $size = Format-Bytes $s.Bytes }
-      $line = "  {0,-44} {1,-14} {2,10} {3,5}d  {4}" -f $s.Row.DisplayName, $s.Row.DisplayVersion, $size, $s.Idle, $s.Row.Publisher
+      $ran = '-'
+      if ($prefetch.Count -gt 0) {
+        $d = Get-LastRunDays -ExeNames @(Get-InstallLocationExeNames -Location $s.Row.InstallLocation) -Prefetch $prefetch
+        if ($d -ge 0) { $ran = "${d}d" } else { $ran = 'none' }
+      }
+      $line = "  {0,-44} {1,-14} {2,10} {3,5}d {4,6}  {5}" -f $s.Row.DisplayName, $s.Row.DisplayVersion, $size, $s.Idle, $ran, $s.Row.Publisher
       Write-UiLine $line 'Gray'
       $lines += $line.Trim()
       $lines += ('    remove with: ' + (Get-ProgramRemovalHint -Row $s.Row -WingetMap $winget))

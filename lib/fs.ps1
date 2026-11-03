@@ -76,10 +76,16 @@ function Get-NewestTimestampUtc {
 # files written or created a week or more ago were nearly all "read" within the last day, last-access says
 # nothing there and idle age uses write/creation time for that root. A root too small to judge inherits a live
 # verdict already reached on its volume; otherwise it keeps the conservative newest-of-three.
+# The sample walks on until it has WS_ACCESS_SAMPLE_MAX old files or has seen WS_ACCESS_SCAN_CAP files: on the
+# P52 (2026-11-03) %TEMP% held 79,202 files, its 14,041 old ones sat deep under node-compile-cache and all were
+# read in one hour by a scanner, yet the first 5,000 entries held too few old files to judge - so %TEMP% inherited,
+# and kept its old files whenever no other root had set the volume's verdict first in that run. A cache with
+# plenty of old files still stops after 400 of them; only a root of mostly new files walks further.
 $Script:WS_ACCESS_LIVE = @{}
 $Script:WS_ACCESS_LIVE_VOLUME = @{}
 $Script:WS_ACCESS_SAMPLE_MIN = 20
 $Script:WS_ACCESS_SAMPLE_MAX = 400
+$Script:WS_ACCESS_SCAN_CAP = 50000
 $Script:WS_ACCESS_LIVE_RATIO = 0.9
 
 function Test-AccessSampleLive {
@@ -123,7 +129,7 @@ function Test-LastAccessLive {
   if ($rootInfo -is [IO.DirectoryInfo] -and -not (Test-ReparsePoint $rootInfo)) {
     $queue = New-Object System.Collections.Generic.Queue[System.IO.DirectoryInfo]
     $queue.Enqueue($rootInfo)
-    while ($queue.Count -gt 0 -and $seen -lt $Script:WS_ACCESS_SAMPLE_MAX) {
+    while ($queue.Count -gt 0 -and $old -lt $Script:WS_ACCESS_SAMPLE_MAX -and $seen -lt $Script:WS_ACCESS_SCAN_CAP) {
       $dir = $queue.Dequeue()
       $entries = $null
       try { $entries = $dir.EnumerateFileSystemInfos() } catch { continue }
@@ -136,7 +142,7 @@ function Test-LastAccessLive {
             $old++
             if ($e.LastAccessTimeUtc -ge $freshCut) { $fresh++ }
           }
-          if ($seen -ge $Script:WS_ACCESS_SAMPLE_MAX) { break }
+          if ($old -ge $Script:WS_ACCESS_SAMPLE_MAX -or $seen -ge $Script:WS_ACCESS_SCAN_CAP) { break }
         }
       } catch { $null = $_ }
     }
@@ -227,10 +233,12 @@ function Get-DirectoryBytes {
 function Get-IdleDays {
   <# .SYNOPSIS Days since the path (or anything inside it) was last touched. 999999 when absent.
      Last-access counts unless Test-LastAccessLive found it carries no signal here (D82). #>
-  param([string] $Path)
+  # -WriteOnly (1.4.0): write/creation time only - for declared scratch roots, where a scanner's partial read
+  # (67-85% of a month-old test profile's files on the P52, 2026-11-03) must not count as use.
+  param([string] $Path, [switch] $WriteOnly)
   $info = Get-ItemInfo $Path
   if ($null -eq $info) { return 999999 }
-  $ignore = Test-LastAccessLive -Root $Path
+  $ignore = $WriteOnly -or (Test-LastAccessLive -Root $Path)
   if ($info -is [IO.FileInfo] -or (Test-ReparsePoint $info)) {
     return [int][math]::Floor(([datetime]::UtcNow - (Get-NewestTimestampUtc $info -IgnoreAccess:$ignore)).TotalDays)
   }

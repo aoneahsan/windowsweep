@@ -145,6 +145,102 @@ function Invoke-SelfTest22 {
   return [pscustomobject]@{ Checks = $checks; Fails = $fails }
 }
 
+function Invoke-SelfTest24 {
+  <# .SYNOPSIS Group [24]: the 1.4.0 extensions to sections 4, 7, 10 and 24. #>
+  param([string] $Fixture)
+  $checks = 0; $fails = 0
+  $root = Join-Path $Fixture 'g24'
+  $pr = $Script:WS_PROTECT
+  $savedEx = @($pr.Exceptions); $savedExP = @($pr.ExceptionPrefixes)
+  try {
+    Write-Section '[24] 1.4.0: emulator leftovers (4), declared profiles (7), declared temp roots (10), last run (24)'
+    # 24a - an AVD, its pointer, and a pointer to a folder that is gone (the P52's pointed into a missing drive)
+    $checks++
+    $avdRoot = Join-Path $root 'avd'
+    $pix = Join-Path $avdRoot 'Pixel.avd'
+    New-Item -ItemType Directory -Force -Path $pix | Out-Null
+    [IO.File]::WriteAllLines((Join-Path $pix 'config.ini'), [string[]]@('hw.cpu.arch=x86_64', 'image.sysdir.1=system-images\android-34\default\x86_64\'))
+    [IO.File]::WriteAllLines((Join-Path $avdRoot 'Pixel.ini'), [string[]]@('avd.ini.encoding=UTF-8', "path=$pix"))
+    [IO.File]::WriteAllLines((Join-Path $avdRoot 'Gone.ini'), [string[]]@('avd.ini.encoding=UTF-8', ('path=' + (Join-Path $root 'missing\Gone.avd'))))
+    $inv = Get-AvdInventory -Roots @($avdRoot)
+    if (@($inv.Avds).Count -eq 1 -and -not $inv.Avds[0].External -and @($inv.Dangling).Count -eq 1 -and (Split-Path -Leaf $inv.Dangling[0].Path) -eq 'Gone.ini') { Write-Ok 'AVDs: a pointer whose AVD folder is gone is found; the live pair is one AVD' } else { Write-Err "AVD inventory wrong: avds=$(@($inv.Avds).Count) dangling=[$(@($inv.Dangling | ForEach-Object { $_.Path }) -join ',')]"; $fails++ }
+
+    # 24b - images: one in use stays; with no AVD left everything and the emulator go; an AVD naming none keeps all
+    $checks++
+    $imgs = @(
+      [pscustomobject]@{ Package = 'system-images;android-34;default;x86_64'; Path = 'x'; Rel = 'system-images\android-34\default\x86_64' },
+      [pscustomobject]@{ Package = 'system-images;android-36.1;google_apis_playstore;x86_64'; Path = 'y'; Rel = 'system-images\android-36.1\google_apis_playstore\x86_64' }
+    )
+    $one = @((Get-UnusedSdkPackages -Images $imgs -Avds @($inv.Avds) -EmulatorPresent $true).Packages | ForEach-Object { $_.Package })
+    $none = @((Get-UnusedSdkPackages -Images $imgs -Avds @() -EmulatorPresent $true).Packages | ForEach-Object { $_.Package })
+    $blank = Join-Path $root 'blank.avd'
+    New-Item -ItemType Directory -Force -Path $blank | Out-Null
+    $odd = Get-UnusedSdkPackages -Images $imgs -Avds @([pscustomobject]@{ Name = 'blank.avd'; Path = $blank }) -EmulatorPresent $true
+    if (($one -join ',') -eq 'system-images;android-36.1;google_apis_playstore;x86_64' -and $none.Count -eq 3 -and $none -contains 'emulator' -and @($odd.Packages).Count -eq 0 -and $odd.Reason) { Write-Ok 'SDK packages: only images no AVD uses; the emulator once none is left; an unreadable AVD keeps every image' } else { Write-Err "SDK package plan wrong: one=[$($one -join ',')] none=[$($none -join ',')] odd=$(@($odd.Packages).Count)"; $fails++ }
+
+    # 24c - a declared profile root: only its cache folders become exceptions (D79), never the profile or its data
+    $checks++
+    $prof = Join-Path $root 'profiles\run1'
+    foreach ($d in 'Default\Cache', 'Default\Code Cache', 'Default\Local Storage', 'ShaderCache') { New-Item -ItemType Directory -Force -Path (Join-Path $prof $d) | Out-Null }
+    [IO.File]::WriteAllText((Join-Path $prof 'Local State'), '{}')
+    $dirs = @(Get-DeclaredProfileDirs -Roots @((Join-Path $root 'profiles')))
+    $added = Add-CacheLeafExceptions -Paths @(@(Get-ChromiumCacheDirs $prof) + $prof + (Join-Path $prof 'Default\Local Storage'))
+    $ex = @($pr.Exceptions)
+    if ($dirs.Count -eq 1 -and $added -eq 3 -and $ex -contains (Get-FullPath (Join-Path $prof 'Default\Cache')) -and $ex -notcontains (Get-FullPath $prof) -and $ex -notcontains (Get-FullPath (Join-Path $prof 'Default\Local Storage'))) { Write-Ok 'declared profiles: exactly the cache folders are lifted - the profile and its Local Storage stay protected' } else { Write-Err "profile-root exceptions wrong: dirs=$($dirs.Count) added=$added"; $fails++ }
+
+    # 24d - the three ways a browser command line names its profile
+    $checks++
+    $forms = @(
+      @('chrome.exe --user-data-dir=C:\t\sl-1 --headless', 'C:\t\sl-1'),
+      @('chrome.exe --user-data-dir="C:\a b\p" --x', 'C:\a b\p'),
+      @('"chrome.exe" "--user-data-dir=C:\a b\q" --x', 'C:\a b\q'),
+      @('chrome.exe --type=renderer', '')
+    )
+    $bad = @($forms | Where-Object { (Get-UserDataDirFromCommandLine $_[0]) -ne $_[1] } | ForEach-Object { $_[0] })
+    if ($bad.Count -eq 0) { Write-Ok '--user-data-dir is read bare, quoted and inside a quoted argument' } else { Write-Err "user-data-dir parsing wrong: $($bad -join '; ')"; $fails++ }
+
+    # 24e - a declared temp root: idle entries go whole, a fresh one stays, one a running program names stays
+    $checks++
+    $entries = @(
+      [pscustomobject]@{ Path = 'C:\t\sl-old'; Idle = 10 }, [pscustomobject]@{ Path = 'C:\t\old.txt'; Idle = 10 },
+      [pscustomobject]@{ Path = 'C:\t\sl-fresh'; Idle = 0 }, [pscustomobject]@{ Path = 'C:\t\sl-busy'; Idle = 10 }
+    )
+    $go = @(Get-TempRootPlan -Entries $entries -Days 3 -BusyText @('chrome.exe --user-data-dir=C:\t\sl-busy --headless', '') | ForEach-Object { $_.Path })
+    if (($go -join ',') -eq 'C:\t\sl-old,C:\t\old.txt') { Write-Ok 'declared temp roots: idle entries go whole; fresh ones and ones in use stay' } else { Write-Err "temp-root plan wrong: [$($go -join ',')]"; $fails++ }
+
+    # 24g - a scratch entry a scanner just read (fresh last-access, old writes) is still idle by write time
+    $checks++
+    $scan = New-AgedFiles -Dir (Join-Path $root 'scratch\sl-old') -Count 30 -WrittenDaysAgo 20 -FreshReads 20
+    $wo = Get-IdleDays $scan -WriteOnly
+    if ($wo -ge 19) { Write-Ok "declared temp roots measure write time: 2 of 3 files read today, still $wo days idle" } else { Write-Err "write-only idle wrong: $wo"; $fails++ }
+
+    # 24h - D82: old files below hundreds of new ones still give the root its own verdict (P52 %TEMP%, 2026-11-03)
+    $checks++
+    $deep = Join-Path $root 'deepsample'
+    New-Item -ItemType Directory -Force -Path $deep | Out-Null
+    for ($i = 0; $i -lt 450; $i++) { [IO.File]::WriteAllText((Join-Path $deep ("n{0:D3}.tmp" -f $i)), 'x') }
+    $null = New-AgedFiles -Dir (Join-Path $deep 'zz-old') -Count 30 -WrittenDaysAgo 30 -FreshReads 30
+    Reset-AccessVerdicts
+    $verdict = Test-LastAccessLive -Root $deep
+    Reset-AccessVerdicts
+    if ($verdict) { Write-Ok 'D82: 30 old files under 450 new ones are still sampled - the root is judged itself, not by section order' } else { Write-Err 'D82 sample stopped before the old files: the root inherited a verdict'; $fails++ }
+
+    # 24f - Prefetch: file names, and days since the newest run of any of a program's files
+    $checks++
+    $pf = @{ 'chrome.exe' = [datetime]::UtcNow.AddDays(-2); 'steam.exe' = [datetime]::UtcNow.AddDays(-40) }
+    $ok = ((ConvertFrom-PrefetchName 'CHROME.EXE-1A2B3C4D.pf') -eq 'chrome.exe' -and (ConvertFrom-PrefetchName 'Layout.ini') -eq '' -and
+      (ConvertFrom-PrefetchName 'NOTEPAD.EXE-ZZZZZZZZ.pf') -eq '' -and (Get-LastRunDays -ExeNames @('steam.exe', 'steamwebhelper.exe') -Prefetch $pf) -eq 40 -and
+      (Get-LastRunDays -ExeNames @('chrome.exe', 'steam.exe') -Prefetch $pf) -eq 2 -and (Get-LastRunDays -ExeNames @('none.exe') -Prefetch $pf) -eq -1)
+    if ($ok) { Write-Ok 'last run: Prefetch names parse, and a program counts from its most recently run file' } else { Write-Err 'Prefetch parsing or last-run days wrong'; $fails++ }
+  } catch {
+    Write-Err "group [24] crashed: $($_.Exception.Message) | at $(($_.ScriptStackTrace -split "`n" | Select-Object -First 3) -join ' <- ')"; $fails++
+  } finally {
+    $pr.Exceptions = $savedEx; $pr.ExceptionPrefixes = $savedExP
+    try { if (Test-Path -LiteralPath $root) { [IO.Directory]::Delete((Get-LongPath $root), $true) } } catch { $null = $_ }
+  }
+  return [pscustomobject]@{ Checks = $checks; Fails = $fails }
+}
+
 function Invoke-SelfTest23 {
   <# .SYNOPSIS Group [23]: section 27's command-path reader and machine leftover finder. #>
   param([string] $Fixture)

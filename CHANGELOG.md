@@ -26,6 +26,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **`--json` candidates can carry a `label`.** Section 26's program candidates use the program's uninstall
   registry key as their `path` and its name as `label`; the folders it offers after an uninstall carry
   `leftover: <program>`.
+- **Section 4 also clears what emulators leave behind.** It looks in every folder the emulator may keep AVDs in
+  (`ANDROID_AVD_HOME`, `ANDROID_EMULATOR_HOME`, `ANDROID_SDK_HOME`, `ANDROID_PREFS_ROOT`), moves pointer `.ini` files
+  whose AVD is gone to the Recycle Bin, and removes system images no remaining AVD uses - and the emulator once no
+  AVD is left - with the SDK's own `sdkmanager`. An AVD whose settings name no image keeps every image, and a folder
+  an interrupted SDK install left is named for you to remove.
+- **`--browser-profile-roots "P1;P2"` (config `browserProfileRoots`) for section 7.** Folders holding test or
+  automation browser profiles: section 7 clears the cache folders of each Chromium profile found in them, and skips
+  a profile a running browser holds. Only those cache folders are opened up; the profiles stay protected.
+- **`--temp-roots "P1;P2"` (config `tempRoots`) for section 10.** Folders you use as scratch space: each entry
+  nothing wrote for `--temp-days` goes whole, unless a running program's command line names it.
+- **Section 24 shows when each program last ran.** In an elevated run it reads Windows Prefetch and adds a RAN
+  column; "none" means no run is on record.
 - **Section 28 - superseded tool releases and old downloaded updates.** Tools that update themselves often keep
   every old release. This removes the superseded ones and keeps the release in use, any newer one and the newest
   older one; a release a running program uses is skipped. It covers Codex standalone releases, Electron updaters
@@ -44,7 +56,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   was also "read" in the last day - an indexer, a backup, an antivirus or a disk scanner reading everything -
   last-access says nothing, and the idle gate used to keep every file. Each root is now sampled once; where
   last-access is live, idle age uses write and creation time, the log says so, and `--json` lists those volumes
-  in `access_live_volumes`. Everywhere else the rule is unchanged.
+  in `access_live_volumes`. Everywhere else the rule is unchanged. The sample walks on until it holds enough old
+  files, so a folder of mostly new files - a busy temp folder - is judged on its own and the answer no longer
+  depends on which section ran first.
 - **More folders are protected roots.** Both Common Files folders and `ProgramData\Microsoft` can never be
   removed as a whole, whatever an installer registered as its own folder.
 

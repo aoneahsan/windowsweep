@@ -10,6 +10,8 @@ function Get-DefaultConfig {
     largeFileMb = 100
     scanRoots = @()
     excludePaths = @()
+    browserProfileRoots = @()
+    tempRoots = @()
     welcomed = $false
   }
 }
@@ -28,6 +30,7 @@ function Import-Config {
       }
       if ($null -eq $cfg.scanRoots) { $cfg.scanRoots = @() }
       if ($null -eq $cfg.excludePaths) { $cfg.excludePaths = @() }
+      foreach ($k in 'browserProfileRoots', 'tempRoots') { if ($null -eq $cfg[$k]) { $cfg[$k] = @() } }
     } catch {
       Write-Warn "config file unreadable, using defaults: $path ($($_.Exception.Message))"
     }

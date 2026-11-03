@@ -1,5 +1,5 @@
 # browsers.ps1 - section 7: browser caches for every profile. Profile data is never touched.
-# 1.4.0: --browser-profile-roots / browserProfileRoots name folders that hold Chromium user-data directories of
+# P9: --browser-profile-roots / browserProfileRoots name folders that hold Chromium user-data directories of
 # their own - automation and test profiles (the P52 kept 2.0 GB of cache in ~\.local\share\ahsan-automation\profiles,
 # 2026-11-02). Only the declared cache folders inside them are cleared (D79), and a profile a running browser
 # holds through --user-data-dir is skipped. ASCII only.

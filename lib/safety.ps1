@@ -26,7 +26,7 @@ function Initialize-Safety {
 
   $exact = New-Object System.Collections.Generic.HashSet[string]([StringComparer]::OrdinalIgnoreCase)
   foreach ($d in [IO.DriveInfo]::GetDrives()) { $null = $exact.Add($d.Name.TrimEnd('\')); $null = $exact.Add($d.Name) }
-  # 1.4.0: the Common Files and ProgramData\Microsoft roots - section 26 reads InstallLocation from the registry,
+  # P9: the Common Files and ProgramData\Microsoft roots - section 26 reads InstallLocation from the registry,
   # and an installer that registered one of these as its own folder must never get it offered as a leftover.
   foreach ($p in @($SR, "$SR\System32", "$SR\SysWOW64", $PF, $PF86, $PD, "$SD\Users", "$SD\Users\Default", "$SD\Users\Public", $env:PUBLIC, $U, "$U\AppData", $A, $L, $LL,
       "$PF\Common Files", "$PF86\Common Files", "$PD\Microsoft")) {

@@ -1,4 +1,4 @@
-# data_scanner.ps1 - section 19 (1.4.0 data scanner): large or old personal files. Downloads by default; folders a
+# data_scanner.ps1 - section 19 (P9 data scanner): large or old personal files. Downloads by default; folders a
 # person adds with --personal-roots / personalRoots (owner, 2026-11-03). Discovery is read-only and lists each file
 # once with its reason (large: >= --large-file-mb at any age; old: idle --days at any size; both), its age and the
 # timestamps that age came from (D82). Removal stays interactive: exact paths only, never by --yes, Recycle Bin by

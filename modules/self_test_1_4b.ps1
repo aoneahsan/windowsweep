@@ -1,4 +1,4 @@
-# self_test_1_4b.ps1 - self-test groups [22]-[23] for 1.4.0: uninstall programs (section 26) and the leftover
+# self_test_1_4b.ps1 - self-test groups [22]-[23] for P9: uninstall programs (section 26) and the leftover
 # finder (sections 26 and 27). Fixtures and pure logic only; nothing is uninstalled or recycled. ASCII only.
 
 function New-ProgramRow {
@@ -26,7 +26,7 @@ function Invoke-SelfTest22 {
   $root = Join-Path $Fixture 'g22'
   $saved = @{ Queue = $ws.SelectQueue; Paths = $ws.SelectPaths; Interactive = $ws.Interactive; DryRun = $ws.DryRun }
   try {
-    Write-Section '[22] 1.4.0: uninstall programs (section 26) and the folders they leave'
+    Write-Section '[22] P9: uninstall programs (section 26) and the folders they leave'
     # 22a - command lines exactly as the P52's uninstall entries wrote them (2026-11-02)
     $checks++
     $cases = @(
@@ -178,14 +178,14 @@ function Invoke-SelfTest26 {
 }
 
 function Invoke-SelfTest24 {
-  <# .SYNOPSIS Group [24]: the 1.4.0 extensions to sections 4, 7, 10 and 24. #>
+  <# .SYNOPSIS Group [24]: the P9 extensions to sections 4, 7, 10 and 24. #>
   param([string] $Fixture)
   $checks = 0; $fails = 0
   $root = Join-Path $Fixture 'g24'
   $pr = $Script:WS_PROTECT
   $savedEx = @($pr.Exceptions); $savedExP = @($pr.ExceptionPrefixes)
   try {
-    Write-Section '[24] 1.4.0: emulator leftovers (4), declared profiles (7), declared temp roots (10), last run (24)'
+    Write-Section '[24] P9: emulator leftovers (4), declared profiles (7), declared temp roots (10), last run (24)'
     # 24a - an AVD, its pointer, and a pointer to a folder that is gone (the P52's pointed into a missing drive)
     $checks++
     $avdRoot = Join-Path $root 'avd'
@@ -283,7 +283,7 @@ function Invoke-SelfTest25 {
   $savedExclude = $Script:WS_EXCLUDE
   $saved = @{ Json = $ws.JsonMode; Cands = $ws.Candidates; Permanent = $ws.Permanent }
   try {
-    Write-Section '[25] 1.4.0: the data scanner (section 19) - large or old, refusals, the change check'
+    Write-Section '[25] P9: the data scanner (section 19) - large or old, refusals, the change check'
     $d = Join-Path $root 'data'
     New-Item -ItemType Directory -Force -Path (Join-Path $d 'sub') | Out-Null
     $old = [datetime]::UtcNow.AddDays(-400)
@@ -361,7 +361,7 @@ function Invoke-SelfTest23 {
   $root = Join-Path $Fixture 'g23'
   $savedExclude = $Script:WS_EXCLUDE
   try {
-    Write-Section '[23] 1.4.0: leftover program folders (section 27)'
+    Write-Section '[23] P9: leftover program folders (section 27)'
     # 23a - registered commands as services, drivers, tasks and Run entries write them
     $checks++
     $SR = $Script:P.SR

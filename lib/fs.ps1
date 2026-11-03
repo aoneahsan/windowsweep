@@ -233,7 +233,7 @@ function Get-DirectoryBytes {
 function Get-IdleDays {
   <# .SYNOPSIS Days since the path (or anything inside it) was last touched. 999999 when absent.
      Last-access counts unless Test-LastAccessLive found it carries no signal here (D82). #>
-  # -WriteOnly (1.4.0): write/creation time only - for declared scratch roots, where a scanner's partial read
+  # -WriteOnly (P9): write/creation time only - for declared scratch roots, where a scanner's partial read
   # (67-85% of a month-old test profile's files on the P52, 2026-11-03) must not count as use.
   param([string] $Path, [switch] $WriteOnly)
   $info = Get-ItemInfo $Path

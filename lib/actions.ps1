@@ -107,7 +107,7 @@ function Test-KnownCacheLeaf {
 }
 
 function Add-CacheLeafExceptions {
-  <# .SYNOPSIS D79 (1.4.0): lift the protected lists (lib/safety.ps1) for EXACTLY these folders, each of which must
+  <# .SYNOPSIS D79 (P9): lift the protected lists (lib/safety.ps1) for EXACTLY these folders, each of which must
      carry a declared cache folder's name - never a profile, an app root or a protected root. Returns the count. #>
   param([string[]] $Paths)
   $pr = $Script:WS_PROTECT; $n = 0

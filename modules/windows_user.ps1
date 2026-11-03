@@ -68,7 +68,7 @@ function Get-TempRoots {
 }
 
 function Get-DeclaredTempRoots {
-  <# .SYNOPSIS 1.4.0: --temp-roots / tempRoots - folders a person uses as scratch space (C:\t on the P52, where
+  <# .SYNOPSIS P9: --temp-roots / tempRoots - folders a person uses as scratch space (C:\t on the P52, where
      test runs left one browser profile per run). Existing ones, once each, never a Windows temp root twice. #>
   $known = @(Get-TempRoots)
   $out = @()

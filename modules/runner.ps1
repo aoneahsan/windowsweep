@@ -64,9 +64,9 @@ function Add-JsonCandidate {
     [System.Collections.IDictionary] $Extra = $null)
   if (-not $Script:WS.JsonMode) { return }
   $c = [ordered]@{ section = $Section; index = $Index; path = $Path; bytes = $Bytes; idle_days = $IdleDays; project = $Project }
-  # 1.4.0: an optional display name - section 26's candidates are programs whose path is a registry key.
+  # P9: an optional display name - section 26's candidates are programs whose path is a registry key.
   if ($Label) { $c.label = $Label }
-  # 1.4.0: section-specific fields added after the shared ones (section 19's data scanner: reason, age basis, ...).
+  # P9: section-specific fields added after the shared ones (section 19's data scanner: reason, age basis, ...).
   if ($null -ne $Extra) { foreach ($k in $Extra.Keys) { $c[$k] = $Extra[$k] } }
   $Script:WS.Candidates += $c
 }
@@ -234,7 +234,7 @@ function Get-JsonSummary {
     refusals = @($ws.Refusals); excluded = @($ws.Excluded)
     # D82: the volumes where idle age used write/creation time because last-access was found live.
     access_live_volumes = @(Get-AccessLiveVolumes)
-    # 1.4.0: the folders section 19 scanned or refused ({path, accepted, reason}); empty unless it ran.
+    # P9: the folders section 19 scanned or refused ({path, accepted, reason}); empty unless it ran.
     personal_roots = @($ws.PersonalRootsReport)
     log_file = $ws.LogFile; report_file = $ws.ReportFile
   }

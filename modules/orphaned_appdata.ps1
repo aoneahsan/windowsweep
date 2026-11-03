@@ -78,7 +78,7 @@ function Get-InstalledProgramRows {
         Publisher = [string]$props.Publisher; InstallDate = [string]$props.InstallDate
         EstimatedSizeKb = [long]0 + $props.EstimatedSize; InstallLocation = [string]$props.InstallLocation
         UninstallString = [string]$props.UninstallString; SystemComponent = [int]0 + $props.SystemComponent
-        # Section 26 (1.4.0) reads these; sections 23 and 24 ignore them.
+        # Section 26 (P9) reads these; sections 23 and 24 ignore them.
         KeyPath = [string]$k.Name; KeyName = [string]$k.PSChildName; Machine = ([string]$k.Name).StartsWith('HKEY_LOCAL_MACHINE', [StringComparison]::OrdinalIgnoreCase)
         QuietUninstallString = [string]$props.QuietUninstallString; WindowsInstaller = [int]0 + $props.WindowsInstaller
         ParentKeyName = [string]$props.ParentKeyName; ReleaseType = [string]$props.ReleaseType
@@ -91,7 +91,7 @@ function Get-InstalledProgramRows {
 function Get-InstalledProgramIndex {
   <# .SYNOPSIS Everything that says "a program owns this name": uninstall entries, program folders, Store
      package names and running processes. RegistryCount drives the fail-closed gate in section 23. #>
-  # -IgnorePaths (1.4.0, sections 26 and 27): folders being judged as leftovers, whose own names must not
+  # -IgnorePaths (P9, sections 26 and 27): folders being judged as leftovers, whose own names must not
   # count as a claim on themselves.
   param([string[]] $IgnorePaths = @())
   $P = $Script:P

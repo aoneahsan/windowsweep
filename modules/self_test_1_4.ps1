@@ -1,4 +1,4 @@
-# self_test_1_4.ps1 - self-test group [19]: the 1.4.0 behaviour found on a real machine (P9, 2026-11-02).
+# self_test_1_4.ps1 - self-test group [19]: the P9 behaviour found on a real machine (P9, 2026-11-02).
 # Called by Invoke-SelfTestExtra with its fixture root; verdict lines only. ASCII only.
 
 function New-AgedFiles {
@@ -24,7 +24,7 @@ function Invoke-SelfTest14 {
   $root = Join-Path $Fixture 'g19'
   Reset-AccessVerdicts
   try {
-    Write-Section '[19] 1.4.0: idle basis when last-access is live (D82), one-line --json, orphan claims'
+    Write-Section '[19] P9: idle basis when last-access is live (D82), one-line --json, orphan claims'
 
     # 19a - the verdict rule itself
     $checks++
@@ -123,7 +123,7 @@ function Invoke-SelfTest21 {
   $savedDry = $ws.DryRun
   $key = 'HKCU:\Software\windowsweep-selftest-' + [guid]::NewGuid().ToString('N')
   try {
-    Write-Section '[21] 1.4.0: the Chrome on-device AI policy (section 29)'
+    Write-Section '[21] P9: the Chrome on-device AI policy (section 29)'
     # 21a - a dry-run prints the change and writes nothing
     $checks++
     $ws.DryRun = $true
@@ -156,7 +156,7 @@ function Invoke-SelfTest20 {
   $root = Join-Path $Fixture 'g20'
   $savedExclude = $Script:WS_EXCLUDE
   try {
-    Write-Section '[20] 1.4.0: superseded releases (section 28) and narrow exceptions (D79)'
+    Write-Section '[20] P9: superseded releases (section 28) and narrow exceptions (D79)'
     $rel = Join-Path $root 'codex\releases'
     foreach ($v in '0.1.0-x86_64-pc-windows-msvc', '0.2.0-x86_64-pc-windows-msvc', '0.3.0-x86_64-pc-windows-msvc', '0.4.0-x86_64-pc-windows-msvc', 'notes') { New-Item -ItemType Directory -Force -Path (Join-Path $rel $v) | Out-Null }
     $link = Join-Path $root 'codex\current'

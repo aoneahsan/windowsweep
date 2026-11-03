@@ -1,5 +1,5 @@
 # android_avd.ps1 - section 4: Android emulators (AVDs) and what they leave. Slow to recreate, so a per-AVD idle
-# gate and never in --all. 1.4.0: every AVD root (also ANDROID_AVD_HOME), pointer .ini files whose AVD is gone
+# gate and never in --all. P9: every AVD root (also ANDROID_AVD_HOME), pointer .ini files whose AVD is gone
 # (the P52's pointed into a drive that no longer existed, 2026-11-02) and system images no remaining AVD uses -
 # removed with the SDK's own sdkmanager, the emulator too once no AVD is left. ASCII only.
 

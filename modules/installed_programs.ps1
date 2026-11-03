@@ -59,7 +59,7 @@ function ConvertFrom-PrefetchName {
 }
 
 function Get-PrefetchLastRun {
-  <# .SYNOPSIS 1.4.0: program file name -> newest run (UTC) from Windows\Prefetch, which Windows rewrites on every
+  <# .SYNOPSIS P9: program file name -> newest run (UTC) from Windows\Prefetch, which Windows rewrites on every
      run. Readable only when elevated; empty otherwise or when prefetch is off. #>
   $map = @{}
   if (-not $Script:WS.IsAdmin) { return $map }

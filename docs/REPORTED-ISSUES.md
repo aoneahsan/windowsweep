@@ -17,3 +17,11 @@ Open defects found while using or documenting windowsweep, one `### ISSUE-NNN` e
      commands (docker, cleanmgr, DISM, wevtutil) delete on their own paths. Make the comment match the code.
 - **Fix:** make each statement match the code (or implement 5 with a fixture in the self-test), then re-check the site copy.
 - **Priority:** low (copy and comments only; the refusals exist).
+
+### ISSUE-002 — website copy (windowsweep-web) that the 1.3.2 code does not make true
+- **Found:** 2026-11-03, while capturing the LinkedIn cards (live bundle `index-D1dRi3Ia.js`).
+- **What:** the chokepoint band says "ONE FUNCTION" and that traversal and UNC paths are "refused outright" (two deletion
+  functions; `..` is resolved and refused only where `safety.ps1:118-122` applies); "hashes a fixture tree" (text
+  snapshot); "past 400 characters" (code checks > 260); "44 files" (1.3.2 has 46); the developer band shows `[y/N]`
+  while the code prints `[Y/n]`; the docs page `developer-mode` repeats its first paragraph.
+- **Fix:** correct the copy in `windowsweep-web` and the docs from the code. **Priority:** medium.

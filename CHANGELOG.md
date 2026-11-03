@@ -9,6 +9,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- **Section 28 - superseded tool releases and old downloaded updates.** Tools that update themselves often keep
+  every old release. This removes the superseded ones and keeps the release in use, any newer one and the newest
+  older one; a release a running program uses is skipped. It covers Codex standalone releases, Electron updaters
+  named without "@" (installers and pending updates idle 7+ days), Ollama's downloaded update and - in developer
+  mode, with `--scan-roots` - Node versions no project asks for, removed with nvm itself. It joins `--all` and the
+  `dev` and `deep` profiles.
+
 ### Changed
 
 - **Idle age uses write time where last-access is live.** When nearly every file written a week or more ago
@@ -19,6 +28,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- **`--exclude-path` now also holds inside the tool's own exceptions.** An exception (the Android SDK temp
+  folders, and from this release the superseded Codex releases) used to let a path through even when you had
+  excluded it.
 - **Section 23 no longer offers folders that still belong to something.** It offered the desktop app's own
   data folder, a Store app's data, an installed program known by its initials, and a tool running from its
   own folder. A reverse-DNS folder name (`com.vendor.app`) is now matched segment by segment, a shared vendor

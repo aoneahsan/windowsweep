@@ -70,23 +70,24 @@ $Script:WS_SECTIONS = @(
   @{ Id = 23; Key = 'orphaned';   Title = 'Orphaned application data under AppData -> Recycle Bin';   Tier = 'recycle';   Admin = $false; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section23' }
   @{ Id = 24; Key = 'programs';   Title = 'Installed programs not modified for N+ days - report only'; Tier = 'report';   Admin = $false; Batch = 'safe';        Dev = $false; Fn = 'Invoke-Section24' }
   @{ Id = 25; Key = 'startup';    Title = 'Startup items audit (Run keys, Startup folders, logon tasks) - report only'; Tier = 'report'; Admin = $false; Batch = 'safe'; Dev = $false; Fn = 'Invoke-Section25' }
+  @{ Id = 28; Key = 'releases';   Title = 'Superseded tool releases and old downloaded updates (Codex, Electron updaters, Ollama, unrequested Node) - current kept'; Tier = 'rebuilds'; Admin = $false; Batch = 'safe'; Dev = $false; Fn = 'Invoke-Section28' }
 )
 
 # The safe batch run by --all. Admin sections 12 and 13 join it only when already elevated.
-$Script:WS_SAFE_BATCH = @(0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 21)
+$Script:WS_SAFE_BATCH = @(0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 21, 28)
 $Script:WS_SAFE_BATCH_ADMIN = @(12, 13)
 
 $Script:WS_PROFILES = @{
-  'dev'        = @(1, 2, 3, 4, 5, 6, 17)
+  'dev'        = @(1, 2, 3, 4, 5, 6, 17, 28)
   'minimal'    = @(7, 8, 9, 10)
   'cache-only' = @(1, 2, 3, 6, 7, 8, 9)
   'system'     = @(12, 13, 14)
-  'deep'       = @(0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 14, 21)
+  'deep'       = @(0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 14, 21, 28)
   'audit'      = @(0, 21, 22, 24, 25)
 }
 
 # Walkthrough order (interactive default mode). Admin sections are inserted when elevated.
-$Script:WS_WALKTHROUGH = @(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 17, 18, 19, 23)
+$Script:WS_WALKTHROUGH = @(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 28, 11, 17, 18, 19, 23)
 $Script:WS_WALKTHROUGH_ADMIN = @(12, 13, 14)
 
 function Get-Section {

@@ -115,3 +115,68 @@ function Invoke-SelfTest14 {
   }
   return [pscustomobject]@{ Checks = $checks; Fails = $fails }
 }
+
+function Invoke-SelfTest20 {
+  <# .SYNOPSIS Group [20]: section 28 (superseded releases, Node pins) and the D79 exception rules. #>
+  param([string] $Fixture)
+  $checks = 0; $fails = 0
+  $root = Join-Path $Fixture 'g20'
+  $savedExclude = $Script:WS_EXCLUDE
+  try {
+    Write-Section '[20] 1.4.0: superseded releases (section 28) and narrow exceptions (D79)'
+    $rel = Join-Path $root 'codex\releases'
+    foreach ($v in '0.1.0-x86_64-pc-windows-msvc', '0.2.0-x86_64-pc-windows-msvc', '0.3.0-x86_64-pc-windows-msvc', '0.4.0-x86_64-pc-windows-msvc', 'notes') { New-Item -ItemType Directory -Force -Path (Join-Path $rel $v) | Out-Null }
+    $link = Join-Path $root 'codex\current'
+
+    # 20b first, while the link is absent - no readable current release means nothing is dropped
+    $checks++
+    $none = Get-CodexReleasePlan -Root $rel -CurrentLink $link
+    if ($none.Reason -and @($none.Drop).Count -eq 0) { Write-Ok 'no current-release link: nothing is offered (fail closed)' } else { Write-Err "missing link not fail-closed: drop=[$($none.Drop -join ',')]"; $fails++ }
+
+    # 20a - current 0.3.0 keeps itself, the newer 0.4.0, the rollback 0.2.0 and the odd folder; only 0.1.0 goes
+    $checks++
+    New-Item -ItemType Junction -Path $link -Target (Join-Path $rel '0.3.0-x86_64-pc-windows-msvc') | Out-Null
+    $plan = Get-CodexReleasePlan -Root $rel -CurrentLink $link
+    $dropNames = @($plan.Drop | ForEach-Object { Split-Path -Leaf $_ })
+    $keepNames = @($plan.Keep | ForEach-Object { Split-Path -Leaf $_ } | Sort-Object)
+    if (-not $plan.Reason -and ($dropNames -join ',') -eq '0.1.0-x86_64-pc-windows-msvc' -and $keepNames.Count -eq 4) { Write-Ok 'Codex plan: current, newer, rollback and an odd folder kept; only the oldest release goes' } else { Write-Err "Codex plan wrong: drop=[$($dropNames -join ',')] keep=[$($keepNames -join ',')] reason='$($plan.Reason)'"; $fails++ }
+
+    # 20c - the live exceptions are exactly the live plan's Drop folders, and the kept ones stay protected
+    $checks++
+    $live = Get-CodexReleasePlan
+    $codexPrefix = (Join-Path $Script:P.U '.codex') + '\'
+    $ex = @($Script:WS_PROTECT.Exceptions | Where-Object { $_.StartsWith($codexPrefix, [StringComparison]::OrdinalIgnoreCase) } | Sort-Object)
+    $want = @($live.Drop | Sort-Object)
+    $keptOpen = @($live.Keep | Where-Object { -not (Get-ProtectionReason $_) })
+    if ((($ex -join '|') -eq ($want -join '|')) -and $keptOpen.Count -eq 0) { Write-Ok "D79: $($ex.Count) Codex exception(s), exactly the superseded releases; every kept release still refused" } else { Write-Err "D79 exceptions wrong: exceptions=[$($ex -join ',')] plan=[$($want -join ',')] keptButAllowed=[$($keptOpen -join ',')]"; $fails++ }
+
+    # 20d - an exception never lifts the user's own --exclude-path
+    $checks++
+    $tempEx = $Script:WS_PROTECT.Exceptions | Select-Object -First 1
+    $inside = Join-Path $tempEx 'probe.bin'
+    $open = Get-ProtectionReason $inside
+    $Script:WS_EXCLUDE = @{ Prefixes = @($tempEx.TrimEnd('\') + '\'); Roots = @($tempEx) }
+    $closed = Get-ProtectionReason $inside
+    if (-not $open -and $closed -like 'excluded: *') { Write-Ok 'inside an exception, the path is allowed - until the user excludes it' } else { Write-Err "exception vs exclusion wrong: open='$open' closed='$closed'"; $fails++ }
+    $Script:WS_EXCLUDE = $savedExclude
+
+    # 20e - Node: the active version, exact pins and the newest of a pinned major stay; nothing else is needed
+    $checks++
+    $pins = @('24.13.0', '24', '22', '20', 'v24.16.0' | ForEach-Object { ConvertTo-NodePin $_ })
+    $np = Get-NodeVersionPlan -Installed @('v22.22.0', 'v24.10.0', 'v24.13.0') -Active 'v24.13.0' -Pins $pins
+    $odd = Get-NodeVersionPlan -Installed @('v22.22.0', 'v24.10.0') -Active 'v22.22.0' -Pins @((ConvertTo-NodePin 'banana'))
+    if (($np.Drop -join ',') -eq 'v24.10.0' -and @($np.Keep).Count -eq 2 -and @($np.Unmet).Count -eq 2 -and $odd.Reason -and @($odd.Drop).Count -eq 0) { Write-Ok 'Node plan: only v24.10.0 is unrequested; 20 and 24.16.0 are reported as missing; an unreadable request keeps everything' } else { Write-Err "Node plan wrong: drop=[$($np.Drop -join ',')] keep=[$($np.Keep -join ',')] unmet=[$($np.Unmet -join ',')] oddDrop=[$($odd.Drop -join ',')]"; $fails++ }
+
+    # 20f - version requests as projects write them
+    $checks++
+    $kinds = @('v24.16.0', '24', '>=22.12.0', '^24', 'lts/*', 'banana' | ForEach-Object { $n = ConvertTo-NodePin $_; "$($n.Kind):$($n.Major)" })
+    if (($kinds -join ' ') -eq 'exact:24 major:24 major:22 major:24 newest:0 unknown:0') { Write-Ok 'version requests: exact, major, ranges, lts and nonsense each read correctly' } else { Write-Err "version request parsing wrong: $($kinds -join ' ')"; $fails++ }
+  } catch {
+    Write-Err "group [20] crashed: $($_.Exception.Message) | at $(($_.ScriptStackTrace -split "`n" | Select-Object -First 3) -join ' <- ')"; $fails++
+  } finally {
+    $Script:WS_EXCLUDE = $savedExclude
+    try { $j = Join-Path $root 'codex\current'; if (Test-Path -LiteralPath $j) { [IO.Directory]::Delete($j, $false) } } catch { $null = $_ }
+    try { if (Test-Path -LiteralPath $root) { [IO.Directory]::Delete((Get-LongPath $root), $true) } } catch { $null = $_ }
+  }
+  return [pscustomobject]@{ Checks = $checks; Fails = $fails }
+}

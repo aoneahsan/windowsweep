@@ -1,12 +1,16 @@
 # safety.ps1 - the deletion chokepoint and its guards.
 #
-# Every byte this tool removes passes through Remove-PathSafe (or Send-ToRecycleBin), which:
-#   1. resolves the path and refuses relative segments, UNC paths, drive roots and system roots;
-#   2. refuses every protected subtree / pattern / basename (Test-ProtectedPath);
-#   3. asserts the path lies strictly inside the target root the caller declared (-Within);
-#   4. short-circuits in --dry-run, printing what it would do and tallying an estimate;
-#   5. removes reparse points as links, never following them; skips locked files, never fails a run.
-# No flag bypasses steps 1-3.
+# Every path the tool deletes is first checked by Get-ProtectionReason, which:
+#   1. refuses relative segments, UNC paths, drive roots and system roots;
+#   2. refuses every protected subtree / pattern / basename - except an exception, an exact folder inside a
+#      protected subtree that a section may remove (declared below, or computed for the run: D79);
+#   3. refuses the user's own --exclude-path / excludePaths entries, exceptions included.
+# The deleting functions: Remove-PathSafe (one file, folder or link, strictly inside a declared -Within root),
+# Send-ToRecycleBin, Remove-StaleFiles (each idle file after the same check) and Clear-DirectoryContents (each
+# child through Remove-PathSafe); Remove-TreeInternal removes the children of a folder that passed the check.
+# All of them honour --dry-run, remove reparse points as links without following them, and skip locked files.
+# Tools that delete on their own (docker, cleanmgr, DISM, wevtutil, powercfg, sdkmanager, nvm) run through
+# Invoke-External -Destructive, which --dry-run turns into a printed command. No flag lifts steps 1 and 2.
 
 function Initialize-Safety {
   <# .SYNOPSIS Build the protected-path tables from the environment. Called once at startup. #>
@@ -45,6 +49,11 @@ function Initialize-Safety {
   )
   # Declared exceptions: paths inside a protected subtree that ARE regenerable caches.
   $exceptions = @("$L\Android\Sdk\.temp", "$L\Android\Sdk\.downloadIntermediates")
+  # D79 (2026-11-02): computed for this run - exactly the superseded Codex release folders section 28 may remove.
+  # The current release and the newest older one are never listed, so the chokepoint still refuses them.
+  if (Get-Command Get-CodexReleaseExceptions -ErrorAction SilentlyContinue) {
+    try { $exceptions += @(Get-CodexReleaseExceptions) } catch { $null = $_ }
+  }
 
   # Wildcards matched against the full path. Browser/editor state that must never be mistaken for cache.
   $patterns = @(
@@ -127,18 +136,23 @@ function Get-ProtectionReason {
   if ($pr.Exact.Contains($p)) { return "protected root: $p" }
   $ic = [StringComparison]::OrdinalIgnoreCase
   $pSlash = $p + '\'
-  foreach ($e in $pr.ExceptionPrefixes) { if ($pSlash.StartsWith($e, $ic)) { return $null } }
-  for ($i = 0; $i -lt $pr.SubtreePrefixes.Count; $i++) {
-    if ($pSlash.StartsWith($pr.SubtreePrefixes[$i], $ic)) { return "inside protected: $($pr.Subtrees[$i])" }
-  }
-  for ($i = 0; $i -lt $pr.PatternObjects.Count; $i++) {
-    if ($pr.PatternObjects[$i].IsMatch($p)) { return "matches protected pattern: $($pr.Patterns[$i])" }
-  }
-  $base = [IO.Path]::GetFileName($p)
-  foreach ($b in $pr.Basenames) { if ($base.Equals($b, $ic)) { return "protected file name: $b" } }
-  if ($Script:WS.Home -and -not $Script:WS.AllowOwnData) {
-    if (-not $pr.HomePrefix) { $pr.HomePrefix = (Get-FullPath $Script:WS.Home) + '\' }
-    if ($pSlash.StartsWith($pr.HomePrefix, $ic)) { return 'the tool''s own data directory' }
+  # An exception lifts the protected lists for its exact folder, never the user's own exclusions below: an
+  # early return here used to let an exception path through even when the user had excluded it.
+  $excepted = $false
+  foreach ($e in $pr.ExceptionPrefixes) { if ($pSlash.StartsWith($e, $ic)) { $excepted = $true; break } }
+  if (-not $excepted) {
+    for ($i = 0; $i -lt $pr.SubtreePrefixes.Count; $i++) {
+      if ($pSlash.StartsWith($pr.SubtreePrefixes[$i], $ic)) { return "inside protected: $($pr.Subtrees[$i])" }
+    }
+    for ($i = 0; $i -lt $pr.PatternObjects.Count; $i++) {
+      if ($pr.PatternObjects[$i].IsMatch($p)) { return "matches protected pattern: $($pr.Patterns[$i])" }
+    }
+    $base = [IO.Path]::GetFileName($p)
+    foreach ($b in $pr.Basenames) { if ($base.Equals($b, $ic)) { return "protected file name: $b" } }
+    if ($Script:WS.Home -and -not $Script:WS.AllowOwnData) {
+      if (-not $pr.HomePrefix) { $pr.HomePrefix = (Get-FullPath $Script:WS.Home) + '\' }
+      if ($pSlash.StartsWith($pr.HomePrefix, $ic)) { return 'the tool''s own data directory' }
+    }
   }
   # A user exclusion is checked LAST, so a path that is both protected and excluded still reports the
   # PROTECTED reason - the stronger statement, and the one no flag can lift. When nothing is excluded the

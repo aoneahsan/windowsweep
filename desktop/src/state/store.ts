@@ -16,6 +16,7 @@ import { create } from 'zustand';
 
 import { toggleExclusion, usableExclusions } from '../lib/exclusions';
 import { usableRoots } from '../lib/roots';
+import { withoutSectionOffers } from './offers-reset';
 import { readStored, writeStored } from '../lib/storage';
 import { interactiveSectionIds, mergeOffers } from '../lib/offers';
 import type { Catalogue } from '../lib/catalogue';
@@ -475,7 +476,7 @@ export const useStore = create<StoreState>()((set, get) => ({
     const value = clampIdleDays(days);
     const changed = value !== get().idleDays;
     writeLocal(IDLE_DAYS_KEY, value);
-    set({ idleDays: value });
+    set({ idleDays: value, ...(changed ? withoutSectionOffers(get(), [17, 19, 27]) : {}) });
     if (changed) noteLocalSettingChanged();
   },
   tempDays: clampTempDays(readLocal<number>(TEMP_DAYS_KEY, DEFAULT_TEMP_DAYS)),
@@ -491,7 +492,7 @@ export const useStore = create<StoreState>()((set, get) => ({
     const value = clampLargeFileMb(mb);
     const changed = value !== get().largeFileMb;
     writeLocal(LARGE_FILE_MB_KEY, value);
-    set({ largeFileMb: value });
+    set({ largeFileMb: value, ...(changed ? withoutSectionOffers(get(), [19]) : {}) });
     if (changed) noteLocalSettingChanged();
   },
   personalRoots: usableRoots(readLocal<string[]>(ROOT_KEYS.personalRoots, [])),
@@ -499,9 +500,13 @@ export const useStore = create<StoreState>()((set, get) => ({
   tempRoots: usableRoots(readLocal<string[]>(ROOT_KEYS.tempRoots, [])),
   setRootList: (kind, paths) => {
     const value = usableRoots(paths);
+    const changed = value.join('\0') !== get()[kind].join('\0');
     writeLocal(ROOT_KEYS[kind], value);
-    set({ [kind]: value });
-    noteLocalSettingChanged();
+    set({
+      [kind]: value,
+      ...(kind === 'personalRoots' && changed ? withoutSectionOffers(get(), [19]) : {}),
+    });
+    if (changed) noteLocalSettingChanged();
   },
 
   updateOutcome: 'unknown',

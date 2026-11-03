@@ -27,12 +27,14 @@ export function PickerConfirm({
   count,
   onCancel,
   onConfirm,
+  uninstall = false,
 }: {
   isOpen: boolean;
   /** How many chosen rows would go - the title's plural. */
   count: number;
   onCancel: () => void;
   onConfirm: () => void;
+  uninstall?: boolean;
 }) {
   const { t } = useTranslation();
   const bodyId = useId();
@@ -58,13 +60,15 @@ export function PickerConfirm({
             </div>
             <div>
               <Heading slot="title" className="t-md wide">
-                {t('picker.confirmTitle', { count })}
+                {uninstall
+                  ? t('picker.confirmUninstallTitle', { count })
+                  : t('picker.confirmTitle', { count })}
               </Heading>
             </div>
           </div>
           <div className="dlg-bd">
             <p className="t-sm" id={bodyId}>
-              {t('picker.confirmBody')}
+              {t(uninstall ? 'picker.confirmUninstallBody' : 'picker.confirmBody')}
             </p>
           </div>
           <div className="dlg-ft">
@@ -75,7 +79,7 @@ export function PickerConfirm({
               control="picker.removePermanently"
               tone="danger"
               onPress={onConfirm}
-              label={t('picker.confirmRemove')}
+              label={t(uninstall ? 'picker.confirmUninstall' : 'picker.confirmRemove')}
             />
           </div>
         </Dialog>

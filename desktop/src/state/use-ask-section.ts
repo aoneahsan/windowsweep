@@ -53,16 +53,24 @@ export function useAskSection(): AskSection {
     async (section: number) => {
       setAsking(section);
       try {
-        await runEngine(
-          safeBatchArgs({ dryRun: true, sections: [section], ...prefs, excludedPaths })
+        const result = await runEngine(
+          safeBatchArgs({
+            dryRun: true,
+            sections: [section],
+            elevate: section === 27,
+            ...prefs,
+            excludedPaths,
+          })
+        );
+        if (!mountedRef.current) return null;
+        return (
+          result?.summary?.sections.some(
+            (step) => step.section === section && step.status === 'dry-run'
+          ) ?? false
         );
       } finally {
         setAsking(null);
       }
-      if (!mountedRef.current) return null;
-      /* Read back from the one place that decides it (`lib/offers.ts`), so "did the
-         engine search this section" has a single answer. */
-      return useStore.getState().offeredSections.includes(section);
     },
     [runEngine, prefs, excludedPaths]
   );

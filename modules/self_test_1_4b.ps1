@@ -145,6 +145,38 @@ function Invoke-SelfTest22 {
   return [pscustomobject]@{ Checks = $checks; Fails = $fails }
 }
 
+function Invoke-SelfTest26 {
+  <# .SYNOPSIS Elevated JSON handoff to a waiting desktop or CLI parent; no UAC needed. #>
+  param([Parameter(Mandatory)] [string] $Fixture)
+  $savedDir = $Script:WS.ReportsDir
+  $savedChild = $Script:WS.ElevatedChild
+  $savedToken = $Script:WS.ElevatedSummaryToken
+  $token = [guid]::NewGuid().ToString('N')
+  $path = Join-Path $Fixture ("elevated-summary-$token.json")
+  $checks = 1; $fails = 0
+  try {
+    $Script:WS.ReportsDir = $Fixture
+    $Script:WS.ElevatedChild = $true
+    $Script:WS.ElevatedSummaryToken = $token
+    $json = '{"candidates":[{"section":27,"path":"C:\\Fixture"}]}'
+    Save-ElevatedSummary -Json $json
+    $returned = [IO.File]::ReadAllText($path) | ConvertFrom-Json
+    Remove-Item -LiteralPath $path -Force
+    $Script:WS.ElevatedChild = $false
+    Save-ElevatedSummary -Json $json
+    if ($returned.candidates[0].section -eq 27 -and -not (Test-Path -LiteralPath $path)) {
+      Write-Ok 'elevated JSON reaches the parent file; ordinary runs write no handoff'
+    } else { Write-Err 'elevated JSON handoff or ordinary-run guard failed'; $fails++ }
+  } catch { Write-Err "elevated JSON handoff failed: $($_.Exception.Message)"; $fails++ }
+  finally {
+    Remove-Item -LiteralPath $path -Force -ErrorAction SilentlyContinue
+    $Script:WS.ReportsDir = $savedDir
+    $Script:WS.ElevatedChild = $savedChild
+    $Script:WS.ElevatedSummaryToken = $savedToken
+  }
+  return [pscustomobject]@{ Checks = $checks; Fails = $fails }
+}
+
 function Invoke-SelfTest24 {
   <# .SYNOPSIS Group [24]: the 1.4.0 extensions to sections 4, 7, 10 and 24. #>
   param([string] $Fixture)
@@ -249,7 +281,7 @@ function Invoke-SelfTest25 {
   $ws = $Script:WS
   $root = Join-Path $Fixture 'g25'
   $savedExclude = $Script:WS_EXCLUDE
-  $saved = @{ Json = $ws.JsonMode; Cands = $ws.Candidates }
+  $saved = @{ Json = $ws.JsonMode; Cands = $ws.Candidates; Permanent = $ws.Permanent }
   try {
     Write-Section '[25] 1.4.0: the data scanner (section 19) - large or old, refusals, the change check'
     $d = Join-Path $root 'data'
@@ -306,11 +338,16 @@ function Invoke-SelfTest25 {
     Add-JsonCandidate -Section 19 -Index 1 -Path 'C:\x' -Bytes 5 -IdleDays 400 -Extra ([ordered]@{ reason = 'both'; age_basis = 'write'; selectable = $true })
     $c = $ws.Candidates[0]
     if ((@($c.Keys) -join ',') -eq 'section,index,path,bytes,idle_days,project,reason,age_basis,selectable') { Write-Ok '--json: section 19 candidates add reason, age_basis and selectable after the shared fields' } else { Write-Err "candidate shape wrong: $(@($c.Keys) -join ',')"; $fails++ }
+    $checks++
+    $ws.Permanent = $true
+    $recycleOnly = -not (Test-UsePermanentRemoval -Permanent $ws.Permanent -AlwaysRecycle $true)
+    $normalPermanent = Test-UsePermanentRemoval -Permanent $ws.Permanent -AlwaysRecycle $false
+    if ($recycleOnly -and $normalPermanent) { Write-Ok 'personal-file Recycle Bin override survives --permanent; ordinary permanent removal still works' } else { Write-Err 'personal-file Recycle Bin override failed'; $fails++ }
   } catch {
     Write-Err "group [25] crashed: $($_.Exception.Message) | at $(($_.ScriptStackTrace -split "`n" | Select-Object -First 3) -join ' <- ')"; $fails++
   } finally {
     $Script:WS_EXCLUDE = $savedExclude
-    $ws.JsonMode = $saved.Json; $ws.Candidates = $saved.Cands
+    $ws.JsonMode = $saved.Json; $ws.Candidates = $saved.Cands; $ws.Permanent = $saved.Permanent
     foreach ($j in @((Join-Path $root 'link'), (Join-Path $root 'data\sub'))) { try { if ((Test-Path -LiteralPath $j) -and (Test-ReparsePoint (Get-Item -LiteralPath $j -Force))) { [IO.Directory]::Delete($j, $false) } } catch { $null = $_ } }
     try { if (Test-Path -LiteralPath $root) { [IO.Directory]::Delete((Get-LongPath $root), $true) } } catch { $null = $_ }
   }

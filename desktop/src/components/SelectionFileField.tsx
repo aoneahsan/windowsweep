@@ -88,7 +88,7 @@ export function SelectionFileField({
       }
       const found = matchSelection(
         selectionLines(text),
-        candidates.map((c) => c.path)
+        candidates.filter((c) => c.selectable !== false).map((c) => c.path)
       );
       if (found.paths.length > 0) onMatch(found.paths);
       setVerdict({

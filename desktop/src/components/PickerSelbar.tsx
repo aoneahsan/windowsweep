@@ -42,6 +42,9 @@ export function PickerSelbar({
   onClear,
   onRemove,
   outright,
+  uninstall,
+  needsAdmin,
+  recycleOnly,
 }: {
   count: number;
   bytes: number;
@@ -56,6 +59,9 @@ export function PickerSelbar({
   onRemove: () => void;
   /** A row of section 17 is chosen - those rows go outright whichever mode is set. */
   outright: boolean;
+  uninstall: boolean;
+  needsAdmin: boolean;
+  recycleOnly: boolean;
 }) {
   const { t } = useTranslation();
 
@@ -107,6 +113,7 @@ export function PickerSelbar({
               name="pick-mode"
               value="permanent"
               checked={mode === 'permanent'}
+              disabled={recycleOnly}
               onChange={() => {
                 onMode('permanent');
               }}
@@ -134,6 +141,9 @@ export function PickerSelbar({
       <p className="t-sm ink-3" style={{ flexBasis: '100%' }}>
         {t('picker.consequence')}
         {outright ? <> {t('picker.consequence17')}</> : null}
+        {uninstall ? <> {t('picker.consequence26')}</> : null}
+        {needsAdmin ? <> {t('picker.consequence27')}</> : null}
+        {recycleOnly ? <> {t('picker.consequence19')}</> : null}
       </p>
       {/* 🔴 The engine's own refusal, verbatim, beside the button that was pressed.
           It appears only when nothing ran: once a run has started its reasons go

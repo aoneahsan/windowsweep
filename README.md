@@ -35,7 +35,7 @@ It is the Windows member of a family with [linux-cleanup](https://github.com/aon
 
 | | |
 |---|---|
-| **Version** | `1.3.2` |
+| **Version** | `1.4.0` source; `1.3.2` is the published release until the release gates pass |
 | **License** | MIT |
 | **Node** | `>=14` (launcher only) |
 | **Runtime** | Windows PowerShell 5.1 (built in) or PowerShell 7 |
@@ -87,7 +87,7 @@ the lot again, and your afternoon is gone. `windowsweep` takes the narrower path
 |---|---|---|---|
 | **Knows developer caches** | yarn, npm, pnpm, Gradle, Cypress, Playwright, AVDs, Docker, editors | no | some |
 | **Default action** | prune files idle 100+ days; keep the newest version of every tool | fixed categories | wipe the whole cache |
-| **Personal folders** | hard refusal, no flag bypasses it | out of scope | usually configurable |
+| **Personal folders** | Downloads and folders you add are scanned for large or old files; only chosen files go to the Recycle Bin | out of scope | usually configurable |
 | **Junctions and symlinks** | never followed | n/a | varies |
 | **Dry-run** | every section, exact estimate | no | sometimes |
 | **Unattended use** | `--all --yes`, Scheduled Task | Storage Sense | GUI-first |
@@ -326,7 +326,7 @@ windowsweep [mode] [options]
 | `--temp-roots "P1;P2"` | none | Idle scratch-folder entries |
 | `--exclude-path P` | - | A tree to leave alone, in **every** section (repeatable) |
 | `--hiberfil off\|reduced\|keep` | ask | What section 15 does |
-| `--permanent` | off | Sections 18, 19 and 23 delete instead of using the Recycle Bin |
+| `--permanent` | off | Sections 18 and 23 delete instead of using the Recycle Bin; section 19 always recycles selected personal files |
 | `--select L`, `--select-file P` | off | Answer an interactive section's selection in advance; section 19 requires exact paths in `--select-file` |
 | `--notify` | off | A Windows notification when the run ends |
 | `--json`, `--quiet`, `--no-color`, `--ascii`, `--no-report`, `--cleanup-logs` | off | Output and record controls |

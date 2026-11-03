@@ -29,6 +29,7 @@ import { useTranslation } from 'react-i18next';
 import { SettingsGeneral } from '../components/SettingsGeneral';
 import { SettingsPrivacy } from '../components/SettingsPrivacy';
 import { SettingsAbout } from '../components/SettingsAbout';
+import { SettingsScanning } from '../components/SettingsScanning';
 
 type Tab = 'general' | 'scanning' | 'notifications' | 'privacy' | 'about';
 const TABS: Tab[] = ['general', 'scanning', 'notifications', 'privacy', 'about'];
@@ -71,7 +72,8 @@ export function Settings() {
             <div className="tabpanel" role="tabpanel" tabIndex={0}>
               {tab === 'general' ? <SettingsGeneral /> : null}
 
-              {tab === 'scanning' || tab === 'notifications' ? (
+              {tab === 'scanning' ? <SettingsScanning /> : null}
+              {tab === 'notifications' ? (
                 <div className="panel pad">
                   <p className="t-sm ink-3">{t('pending.body')}</p>
                 </div>

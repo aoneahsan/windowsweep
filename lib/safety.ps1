@@ -447,11 +447,17 @@ function Clear-DirectoryContents {
   return $out
 }
 
+function Test-UsePermanentRemoval {
+  param([bool] $Permanent, [bool] $AlwaysRecycle)
+  return ($Permanent -and -not $AlwaysRecycle)
+}
+
 function Send-ToRecycleBin {
-  <# .SYNOPSIS Move a personal file/folder to the Recycle Bin (or delete when --permanent). Same guards as Remove-PathSafe. #>
-  param([Parameter(Mandatory = $true)][string] $Path, [Parameter(Mandatory = $true)][string] $Within)
+  <# .SYNOPSIS Move a file/folder to the Recycle Bin; section 19 always keeps this undo path. #>
+  param([Parameter(Mandatory = $true)][string] $Path, [Parameter(Mandatory = $true)][string] $Within,
+    [switch] $AlwaysRecycle)
   $ws = $Script:WS
-  if ($ws.Permanent) { return (Remove-PathSafe -Path $Path -Within $Within) }
+  if (Test-UsePermanentRemoval -Permanent $ws.Permanent -AlwaysRecycle $AlwaysRecycle) { return (Remove-PathSafe -Path $Path -Within $Within) }
   $r = New-RemoveResult
   $p = Get-FullPath $Path
   $why = Get-ProtectionReason $p

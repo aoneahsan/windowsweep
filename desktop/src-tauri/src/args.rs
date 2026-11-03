@@ -133,9 +133,6 @@ pub fn validate(args: &[String]) -> Result<(), String> {
 const NO_SUMMARY_FLAGS: &[&str] = &[
     "--version",
     "--self-test",
-    // The parent hands off to an elevated window and exits before the runner that
-    // prints the summary is reached (windowsweep.ps1:291-295).
-    "--elevate",
     // 🔴 The scheduling pair, and leaving them out is a failure that reads as the
     // OPPOSITE of what happened. `install_task` dispatches to `Install-WeeklyTask`
     // (`modules/release_helpers.ps1:341`), which registers the Scheduled Task and
@@ -192,6 +189,7 @@ mod tests {
             vec!["--only".to_string(), "12,13".to_string()],
             vec!["--dry-run".to_string()],
             vec!["--list".to_string(), "--json".to_string()],
+            vec!["--only".to_string(), "27".to_string(), "--dry-run".to_string(), "--elevate".to_string()],
         ] {
             assert!(
                 wants_summary(&args),
@@ -200,18 +198,10 @@ mod tests {
         }
 
         // These print their own shape instead, and demanding a summary from them
-        // turns a working path into a hard error. `--elevate` is the one that cost a
-        // hang: the parent hands off to an elevated window and exits before the runner
-        // that prints the summary is reached.
+        // turns a working path into a hard error.
         for args in [
             vec!["--version".to_string()],
             vec!["--self-test".to_string(), "--no-color".to_string()],
-            vec![
-                "--only".to_string(),
-                "12,13,14".to_string(),
-                "--elevate".to_string(),
-                "--yes".to_string(),
-            ],
         ] {
             assert!(
                 !wants_summary(&args),

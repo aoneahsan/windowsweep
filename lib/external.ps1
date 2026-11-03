@@ -70,15 +70,28 @@ function Test-CanElevate {
 function Invoke-Elevated {
   <# .SYNOPSIS Relaunch this run elevated (UAC prompt) and wait for it. Returns the child's exit code. #>
   $ws = $Script:WS
+  $summaryPath = $null
+  if ($ws.JsonMode) {
+    $token = [guid]::NewGuid().ToString('N')
+    $summaryPath = Join-Path $ws.ReportsDir ("elevated-summary-$token.json")
+  }
   $childArgs = @('-NoProfile', '-NoLogo', '-ExecutionPolicy', 'Bypass', '-File', ('"' + $ws.ScriptPath + '"'))
   foreach ($a in $ws.RawArgs) {
     if ($a -eq '--elevate') { continue }
     if ($a -match '[\s"]') { $childArgs += ('"' + ($a -replace '"', '\"') + '"') } else { $childArgs += $a }
   }
   $childArgs += '--elevated-child'
+  if ($summaryPath) { $childArgs += @('--elevated-summary-token', $token) }
   Write-Info 'Requesting elevation (a UAC prompt appears). The elevated run opens in a new window and writes its own log.'
   try {
     $proc = Start-Process -FilePath 'powershell.exe' -ArgumentList $childArgs -Verb RunAs -Wait -PassThru
+    if ($summaryPath -and (Test-Path -LiteralPath $summaryPath)) {
+      try {
+        $json = [IO.File]::ReadAllText($summaryPath).Trim()
+        $null = $json | ConvertFrom-Json -ErrorAction Stop
+        [Console]::Out.WriteLine($json)
+      } finally { Remove-Item -LiteralPath $summaryPath -Force -ErrorAction SilentlyContinue }
+    }
     return $proc.ExitCode
   } catch {
     Write-Err "elevation refused or failed: $($_.Exception.Message)"

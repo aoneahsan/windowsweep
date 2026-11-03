@@ -133,7 +133,7 @@ function Invoke-Section19 {
   }
   Write-Info ('total: ' + (Format-Bytes $total))
   $dest = 'the Recycle Bin'
-  if ($ws.Permanent) { $dest = 'PERMANENT deletion (--permanent)' }
+  if ($ws.Permanent) { Write-Note '--permanent does not apply to personal files in section 19' }
   Write-Note "selected files go to $dest"
   $picks = @(Read-MultiSelect -Total $offer.Count -NoAutoYes -Candidates @($offer | ForEach-Object { $_.Path }))
   if ($picks.Count -eq 0) { Write-Info 'nothing selected'; return }
@@ -144,7 +144,7 @@ function Invoke-Section19 {
     $row = $offer[$k - 1]
     $changed = Test-PersonalFileUnchanged $row
     if ($changed) { Write-Warn "kept $($row.Path) - $changed"; continue }
-    $null = Send-ToRecycleBin -Path $row.Path -Within $row.Root
+    $null = Send-ToRecycleBin -Path $row.Path -Within $row.Root -AlwaysRecycle
   }
 }
 

@@ -1,6 +1,6 @@
 # Content map - windowsweep
 
-Status: **APPROVED at GATE 2, 2026-09-05** · Bible: approved 2026-09-05 · Last updated: **2026-10-31**
+Status: **APPROVED at GATE 2, 2026-09-05** · Bible: approved 2026-09-05 · Last updated: **2026-11-03**
 (row 20, `site-terms`, added on the owner's request - the amendment at the end. Earlier 2026-09-13,
 the keeper batch: every status cell carries its applying commit; row 12, row 19's schema and question row 7
 corrected - each a map-accuracy correction forced by an owner decision or a release, recorded in
@@ -76,10 +76,10 @@ said the docs domain had never resolved.)*
 
 | # | Question | Answer-first sentence | Keywords | Surface | Freshness |
 |---|---|---|---|---|---|
-| 1 | how to free up disk space on windows without deleting anything important | windowsweep removes only regenerable caches, and refuses your documents, credentials and browser state outright. Start with `npx windowsweep --scan`, which deletes nothing and measures what is reclaimable. | free disk space windows, safe disk cleanup | 9, 1 | stable |
+| 1 | how to free up disk space on windows without deleting anything important | In 1.4.0, windowsweep refuses protected folders and lets you select individual large or old files from Downloads and folders you add. Start with `npx windowsweep --scan`; it deletes nothing. | free disk space windows, safe disk cleanup | 9, 1 | verify against published 1.4.0 |
 | 2 | how to delete node_modules from old projects on windows | Section 17 lists build artefacts in projects you have not touched for 100 days and removes only the ones you select. It never scans a whole drive - you name the folders. | delete node_modules, stale build artefacts | 5, 6 | stable |
 | 3 | how to clear the yarn / npm cache on windows safely | Sections 1 and 3 prune package-manager caches on an idle gate, keeping anything used in the last 100 days and the newest version of every versioned tool, so the next install is still fast. | clear yarn cache, clear npm cache windows | 5, 3 | stable |
-| 4 | is it safe to use a windows cleaner / will it delete my files | Every deletion passes through one function with a declared folder, and personal folders are refused unconditionally - no flag overrides it. Personal files you select go to the Recycle Bin by default; `--permanent` chooses permanent removal. | safe windows cleaner, cleaner deleted my files | 4, 1 | stable |
+| 4 | is it safe to use a windows cleaner / will it delete my files | In 1.4.0, `Remove-PathSafe` and `Send-ToRecycleBin` check a declared folder and the shared protection rules. Section 19 scans Downloads and folders you add, then removes only files you select. It rechecks each file before removal and always uses the Recycle Bin, even when `--permanent` is set. | safe windows cleaner, cleaner deleted my files | 4, 1 | verify against published 1.4.0 |
 | 5 | how to see what a cleanup tool will delete before it deletes it | `--scan` measures every target and deletes nothing; `--dry-run` performs the whole run and changes nothing in the tree it rehearses (it writes only its own log and report - corrected 2026-09-24 to Bible section 3's 2026-09-07 wording). The rehearsal is the same command as the performance, minus one word. | dry run cleanup, preview before delete | 3, 4 | stable |
 | 6 | windows update cache / SoftwareDistribution taking up space | Section 12 clears the Windows Update cache, Delivery Optimization and the servicing logs. It needs an elevated console, so it skips with the exact command when you are not elevated. | windows update cache, softwaredistribution folder | 5 | stable |
 | 7 | does this cleanup tool send my data anywhere | The command line sends nothing at all: it makes no network calls, and its own test suite fails the build if any appear. The desktop window and the website send analytics - usage events and crash reports, never a file path - and there is no switch. (Corrected 2026-09-13; the old answer said the app sends nothing until you accept.) | no telemetry cleaner, offline disk cleanup | 9, 4 | **re-check on every desktop release** - re-checked 2026-09-28 on `desktop-v1.3.2`: signed out it reaches only the disclosed hosts, the session replay now runs with every text node masked (0 readable, dialogs included) and crash reports reach Sentry, and no payload carries a path, so the answer holds (earlier: 2026-09-26 on `desktop-v1.3.1`, where the window's CSP refused the replay and every crash report, TASK-020; 2026-09-25 on `desktop-v1.3.0`; sync is opt-in and disclosed on `desktop.md`) |
@@ -88,6 +88,11 @@ said the docs domain had never resolved.)*
 | 10 | how do I update the windowsweep desktop app | The desktop app checks for a signed update and shows an Update action when a newer release is required. An urgent release blocks an older copy immediately; a normal release blocks at its next start. | windowsweep desktop update, required update | 27, 24 | verify against 1.4.0 updater proof |
 | 11 | what does the windowsweep policy notice say | The notice links the Terms and Privacy pages and states what usage data leaves the desktop app. Its shown state is kept per browser and account, and its links remain available after dismissal. | windowsweep privacy notice, terms | 27, 24 | verify against 1.4.0 browser proof |
 | 12 | how do I use the windowsweep desktop tour | Each page offers a short tour of its controls; the walkthrough follows scan, protected paths, dry-run and report in order. The tour changes no cleanup selection. | windowsweep desktop tour, walkthrough | 27, 25 | verify against 1.4.0 browser proof |
+
+The 2026-11-03 1.4.0 correction changes question answers 1 and 4 from the approved 1.3.2 wording. The
+owner approved the section 19 personal-file promise and its factual Bible alignment. Rows 5, 9, 13, 16
+and 19 must use that same scope when their reference, docs front, desktop, marketing and search text is
+applied; their earlier recorded status does not prove the 1.4.0 words are published.
 
 **Internal-link floor:** every indexed page links to the safety model and to one reference page. The safety
 model links to the sections page. No page is more than two clicks from `--scan`.

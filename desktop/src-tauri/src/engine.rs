@@ -282,13 +282,10 @@ pub async fn run_clean(
     // flags legitimately produce no summary, so they are exempt by name. Guarding on the
     // built vector would have turned them into failures the first time anything used them.
     //
-    // 🔴 `--elevate` is the third, and leaving it out cost a hang. The parent process
-    // hands the work to a NEW elevated window and exits at windowsweep.ps1:291-295,
-    // before the runner that prints the summary is ever reached - so an elevated run
-    // has no summary on the parent's stdout by design, not by failure. Without this
-    // exemption the guard rejected every elevated run, and because Elevation.tsx had
-    // no catch the Run screen stayed on "Running" for ever. The child's own summary
-    // lands in the run folder; reading it is a separate, unbuilt piece of work.
+    // An elevated child writes a token-named summary inside the run folder. Its
+    // waiting parent relays that JSON to stdout, so a successful elevated run owes
+    // the same machine result as an ordinary run. A declined UAC prompt has no
+    // summary and fails this guard instead of reusing stale picker candidates.
     // 🔴 ...and a CANCELLED run is the fourth exemption, for the opposite reason to
     // the other three. It produces no summary because someone stopped it, which is
     // the guard's own condition met by a deliberate act. Without this clause,

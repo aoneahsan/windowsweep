@@ -14,11 +14,11 @@ refusal-as-reassurance · 15 workshop dryness
 These are the target. A writer imitates the rhythm and the stance, not the subject matter.
 
 1. This was a dry-run. Run the same command without `--dry-run` to reclaim the space.
-2. Every deletion passes through one function, with the folder it is allowed to touch declared up front.
-3. Your documents, photos, keys and saved passwords are never touched — not by a flag, not by a profile, not
-   by accident.
+2. The two removal paths share the same protection rules and each requires a declared folder.
+3. Personal folders stay protected; section 19 scans Downloads and folders you add, and only removes files
+   you select.
 4. Caches that rebuild themselves next time you need them.
-5. Six sections need Windows to ask your permission first.
+5. Eight sections need Windows to ask your permission first.
 6. It cannot promise a number. Your disk decides that, and `--scan` measures it.
 7. Chrome was open, so its cache was left alone; close it and run `windowsweep --only 7 --yes`.
 8. A safe run never touches these — you pick, item by item.
@@ -26,7 +26,7 @@ These are the target. A writer imitates the rhythm and the stance, not the subje
 10. The idle gate keeps anything you have used in the last hundred days, which is the point: the next
     install should still be fast.
 11. Emptying the Recycle Bin is permanent. That section is behind its own flag for exactly that reason.
-12. Twenty-six sections, and the numbers never change meaning — a section number is a promise.
+12. Thirty sections, and the numbers never change meaning — a section number is a promise.
 
 ## Rhythm
 
@@ -88,7 +88,7 @@ runs measured so far" are all in voice, because the product's whole claim is tha
 |---|---|
 | "Safely and effortlessly clean your PC!" | "It names every path before it touches it." |
 | "Frees up tons of space" | "22.08 GB on the machine it was built on. Yours will differ; `--scan` measures it." |
-| "We never touch your personal files" | "Documents, Desktop and Pictures are refused by the chokepoint." |
+| "We never touch your personal files" | "Personal folders stay protected; section 19 scans Downloads and folders you add, and only removes files you select." |
 | "Smart cleaning technology" | "The idle gate keeps anything used in the last hundred days." |
 | "Simply run the command and you're done!" | "Run `npx windowsweep --scan` first. It deletes nothing." |
 
@@ -114,3 +114,11 @@ Home's ledger.
 
 The Bible's §3 commitments 2 and 3 were corrected in the same pass, for the same reason and with the
 measurements beside them.
+
+## Correction, 2026-11-03 - section 19 and the section count
+
+The owner approved specimen 3's replacement sentence verbatim for the 1.4.0 scanner. The earlier absolute
+claim about personal files is false when section 19 offers files from Downloads or an accepted added folder.
+Specimen 2 now describes the two guarded removal paths. `docs/sections.md` lists sections 0-29, eight with
+an admin requirement, so specimens 5 and 12 use those counts. These are source-accuracy corrections; the
+60/25/15 palette, stance and rhythm rules are unchanged. The 1.4.0 source is not yet the published release.

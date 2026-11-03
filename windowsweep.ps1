@@ -14,7 +14,7 @@ $Script:WS_ROOT = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $Script:WS = @{
   Mode = 'walkthrough'; RawArgs = @($args); ScriptPath = $MyInvocation.MyCommand.Path
-  DryRun = $false; Yes = $false; Deep = $false; Elevate = $false; ElevatedChild = $false; BatchMode = $false
+  DryRun = $false; Yes = $false; Deep = $false; Elevate = $false; ElevatedChild = $false; ElevatedSummaryToken = ''; BatchMode = $false
   Days = $null; TempDays = $null; LargeFileMb = $null; PurgeAll = $false
   DeveloperFlag = $null; ForgetDeveloper = $false; Developer = $null; DeveloperSource = ''
   ScanRoots = @(); ExcludePaths = @(); Excluded = @(); Hiberfil = ''; ResetBase = $false; Permanent = $false
@@ -166,6 +166,11 @@ function Read-Arguments {
       '--i-understand-deep' { $ws.Deep = $true }
       '--elevate' { $ws.Elevate = $true }
       '--elevated-child' { $ws.ElevatedChild = $true }
+      '--elevated-summary-token' {
+        $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }
+        if ($v -notmatch '^[a-f0-9]{32}$') { throw '--elevated-summary-token needs a 32-character hex token' }
+        $ws.ElevatedSummaryToken = $v
+      }
       { $_ -in '-d', '--days' } { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; if ($v -notmatch '^\d+$') { throw "--days needs a whole number, got '$v'" }; $ws.Days = [int]$v }
       '--temp-days' { $v = $inline; if ($null -eq $v) { $v = Get-NextArg $argv ([ref]$i) $a }; if ($v -notmatch '^\d+$') { throw "--temp-days needs a whole number, got '$v'" }; $ws.TempDays = [int]$v }
       '--purge-all' { $ws.PurgeAll = $true }

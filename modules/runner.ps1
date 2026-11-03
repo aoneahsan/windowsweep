@@ -253,7 +253,18 @@ function Get-CatalogueJson {
   }
 }
 
+function Save-ElevatedSummary {
+  <# .SYNOPSIS Let the waiting non-admin parent relay an elevated child's JSON to its caller. #>
+  param([string] $Json)
+  if ($Script:WS.ElevatedChild -and $Script:WS.ElevatedSummaryToken) {
+    $path = Join-Path $Script:WS.ReportsDir ("elevated-summary-$($Script:WS.ElevatedSummaryToken).json")
+    [IO.File]::WriteAllText($path, $Json, (New-Object System.Text.UTF8Encoding($false)))
+  }
+}
+
 function Write-JsonSummary {
   <# .SYNOPSIS --json: the only line written to stdout. #>
-  [Console]::Out.WriteLine(((Get-JsonSummary) | ConvertTo-Json -Depth 5 -Compress))
+  $json = (Get-JsonSummary) | ConvertTo-Json -Depth 5 -Compress
+  Save-ElevatedSummary -Json $json
+  [Console]::Out.WriteLine($json)
 }

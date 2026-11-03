@@ -58,6 +58,7 @@ export function PickerTable({
   asking,
   askDisabled,
   onAsk,
+  section,
 }: {
   body: PickerBody;
   /** The rows to draw when `body` is `rows` - already filtered by the search. */
@@ -69,6 +70,7 @@ export function PickerTable({
   /** Another run holds the engine, or another ask is in flight. */
   askDisabled: boolean;
   onAsk: () => void;
+  section: number;
 }) {
   const { t } = useTranslation();
 
@@ -80,8 +82,12 @@ export function PickerTable({
             <span className="visually-hidden">{t('picker.colChoose')}</span>
           </th>
           <th>{t('picker.colPath')}</th>
-          <th style={{ width: '9rem' }}>{t('picker.colProject')}</th>
-          <th style={{ width: '5rem' }}>{t('picker.colIdle')}</th>
+          <th style={{ width: '9rem' }}>
+            {t(section === 19 ? 'picker.colReason' : 'picker.colProject')}
+          </th>
+          <th style={{ width: '5rem' }}>
+            {t(section === 19 ? 'picker.colAge' : 'picker.colIdle')}
+          </th>
           <th style={{ width: '6.5rem' }} className="num-cell">
             {t('picker.colSize')}
           </th>
@@ -92,16 +98,27 @@ export function PickerTable({
           <EmptyRow title={t('picker.nothingHereTitle')} body={t('picker.devOff')} />
         ) : null}
         {body === 'not-asked' ? (
-          <EmptyRow title={t('picker.notAskedTitle')} body={t('picker.notAskedBody')}>
-            <button
-              className="btn btn-sm"
-              type="button"
-              onClick={onAsk}
-              disabled={askDisabled}
-              {...controlState(stateOf(asking))}
-            >
-              <span className="btn-label">{t('picker.ask')}</span>
-            </button>
+          <EmptyRow
+            title={t(section === 19 ? 'picker.dataNotAskedTitle' : 'picker.notAskedTitle')}
+            body={t(
+              section === 19
+                ? 'picker.dataNotAskedBody'
+                : section === 27
+                  ? 'picker.adminScanBody'
+                  : 'picker.notAskedBody'
+            )}
+          >
+            {section !== 19 ? (
+              <button
+                className="btn btn-sm"
+                type="button"
+                onClick={onAsk}
+                disabled={askDisabled}
+                {...controlState(stateOf(asking))}
+              >
+                <span className="btn-label">{t('picker.ask')}</span>
+              </button>
+            ) : null}
           </EmptyRow>
         ) : null}
         {body === 'no-match' ? (
@@ -112,21 +129,28 @@ export function PickerTable({
         ) : null}
         {body === 'rows'
           ? rows.map((r) => {
-              const on = selectedPaths.has(r.path);
+              const selectable = r.selectable !== false;
+              const on = selectable && selectedPaths.has(r.path);
               return (
                 <tr key={r.path} data-selected={on ? 'true' : 'false'}>
                   <td>
-                    <button
-                      className="switch"
-                      type="button"
-                      role="switch"
-                      aria-checked={on}
-                      aria-label={t('picker.chooseRow', { path: r.path })}
-                      style={{ ['--sw-w' as string]: 'calc(1.9rem * var(--density))' }}
-                      onClick={() => {
-                        onToggle(r.path);
-                      }}
-                    />
+                    {selectable ? (
+                      <button
+                        className="switch"
+                        type="button"
+                        role="switch"
+                        aria-checked={on}
+                        aria-label={t('picker.chooseRow', { path: r.path })}
+                        style={{ ['--sw-w' as string]: 'calc(1.9rem * var(--density))' }}
+                        onClick={() => {
+                          onToggle(r.path);
+                        }}
+                      />
+                    ) : (
+                      <span className="badge badge-outline" title={r.skip_reason}>
+                        {t('picker.refused')}
+                      </span>
+                    )}
                   </td>
                   <td>
                     {/* The engine reports absolute paths, often past 80 characters, so
@@ -144,11 +168,27 @@ export function PickerTable({
                     >
                       {r.path}
                     </div>
+                    {section === 19 ? (
+                      <p className="t-xs ink-3" style={{ marginTop: 'var(--sp-1)' }}>
+                        {t('picker.fileBasis', {
+                          root: r.root ?? '',
+                          days: r.idle_days ?? 0,
+                          basis: t(
+                            r.age_basis === 'write+access'
+                              ? 'picker.basisWriteAccess'
+                              : 'picker.basisWrite'
+                          ),
+                        })}
+                        {r.skip_reason ? ` · ${r.skip_reason}` : ''}
+                      </p>
+                    ) : null}
                   </td>
                   {/* The engine sends an empty string, not null, for a row with no project -
                       section 23's folders - so both read as the dummy's dash. */}
                   <td className="t-sm ink-3">
-                    {r.project !== null && r.project !== '' ? r.project : '—'}
+                    {section === 19
+                      ? t(`picker.reason.${r.reason ?? 'old'}`)
+                      : r.label || r.project || '—'}
                   </td>
                   <td className="num t-sm ink-3">
                     {r.idle_days === null ? '—' : t('picker.idleShort', { count: r.idle_days })}

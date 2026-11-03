@@ -91,7 +91,10 @@ export function Elevation() {
   /** Bytes the last measurement found across the chosen sections; null until one finishes. */
   const [measured, setMeasured] = useState<number | null>(null);
 
-  const admin = useMemo(() => (catalogue?.sections ?? []).filter((s) => s.admin), [catalogue]);
+  const admin = useMemo(
+    () => (catalogue?.sections ?? []).filter((s) => s.admin && s.batch !== 'interactive'),
+    [catalogue]
+  );
 
   /* 🔴 TWO LISTS, BECAUSE THE TWO KINDS HAVE OPPOSITE DEFAULTS. The three ordinary
      admin sections start chosen - that is what this screen has always done for them

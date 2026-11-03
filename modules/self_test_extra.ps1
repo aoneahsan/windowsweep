@@ -361,7 +361,7 @@ function Invoke-SelfTestExtra {
     $checks += $g20.Checks; $fails += $g20.Fails
     $g21 = Invoke-SelfTest21
     $checks += $g21.Checks; $fails += $g21.Fails
-    foreach ($g in @((Invoke-SelfTest22 -Fixture $fx), (Invoke-SelfTest23 -Fixture $fx), (Invoke-SelfTest24 -Fixture $fx), (Invoke-SelfTest25 -Fixture $fx))) { $checks += $g.Checks; $fails += $g.Fails }
+    foreach ($g in @((Invoke-SelfTest22 -Fixture $fx), (Invoke-SelfTest23 -Fixture $fx), (Invoke-SelfTest24 -Fixture $fx), (Invoke-SelfTest25 -Fixture $fx), (Invoke-SelfTest26 -Fixture $fx))) { $checks += $g.Checks; $fails += $g.Fails }
 
   } catch {
     & $unmute

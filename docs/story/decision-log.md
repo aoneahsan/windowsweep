@@ -1279,3 +1279,28 @@ or fingerprint change is needed.
 waves, update each page's effective date on the day it goes live, and verify the live pages. This record
 approves the words; it does not claim publication or a working checkout. The Polar organisation and FilesHub
 payment account remain owner work, so checkout still follows the plan-request path.
+
+## 2026-11-03 - 1.4.0 section 19 promise and continuity correction
+
+**Owner approval:** the owner approved replacing “Nothing personal, ever” with “Personal folders stay
+protected; section 19 scans Downloads and folders you add, and only removes files you select.” He also
+approved the factual Bible and spine corrections needed to keep that promise consistent with section 19.
+The approved click dummy remains the implementation reference. This is approval of the 1.4.0 wording and
+continuity correction, not evidence that 1.4.0 is published; 1.3.2 is the current published release.
+
+**Reason and evidence:** `modules/data_scanner.ps1` scans Downloads and accepted `--personal-roots`, offers
+large or old files for individual selection, refuses automatic `--yes` selection, and rechecks each file
+before removal. `docs/sections.md` lists sections 0-29. `lib/safety.ps1` has two removal paths,
+`Remove-PathSafe` and `Send-ToRecycleBin`, both using `Get-ProtectionReason` and a declared `-Within` root.
+The former Bible's absolute personal-file refusal, single-function description, and spine ending “nothing
+you wanted is gone” overstated those facts. The fingerprint's 26-section count and six-admin-section
+sentence were also stale; the section table marks eight sections as requiring admin access.
+
+**Reconciliation:** the exact approved sentence now anchors Bible §3 and fingerprint specimen 3. Bible §6
+keeps the chokepoint motif while naming both guarded paths; its spine now names explicit selection instead
+of guaranteeing that every wanted file stays. The 60/25/15 palette, person, diction, and rhythm rules remain
+unchanged. Content-map answers 1 and 4 are scoped to 1.4.0 and require published-release verification.
+Existing recorded rows 5, 9, 13, 16 and 19 are historical; their 1.4.0 implementations must be checked
+against the revised Bible and approved dummy. No new motif or glossary term was added. The global voice
+registry is outside this dispatch's exclusive scope, so its entry was not updated and its timestamp was
+not advanced. No new owner decision remains for this continuity correction.

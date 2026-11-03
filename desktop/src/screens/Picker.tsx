@@ -44,10 +44,11 @@ import { useRunPreferences } from '../state/derived';
 import { useAskSection } from '../state/use-ask-section';
 import { formatBytes } from '../lib/format';
 import { DEV_GATED_SECTIONS } from '../lib/catalogue';
-import { newRunId, run, selectionArgs, writeSelectFile } from '../lib/engine';
 import { PickerTable, type PickerBody } from '../components/PickerTable';
 import { PickerSelbar, type DeleteMode } from '../components/PickerSelbar';
 import { PickerConfirm } from '../components/PickerConfirm';
+import { PickerDataScanner, type DataReason, type DataSort } from '../components/PickerDataScanner';
+import { usePickerRemoval } from '../state/use-picker-removal';
 
 /* 🔴 Loaded when the Picker is, never on first paint. The field is the only user of
    React Aria's drag-and-drop and tooltip layers, and bundling them into the entry
@@ -78,14 +79,24 @@ interface PickerQuery {
   section: number;
   q: string;
   mode: DeleteMode;
+  reason: DataReason;
+  sort: DataSort;
 }
 
 /** The query a Picker URL carries, with the defaults left out. */
-function toSearch(next: PickerQuery): { section: number; q?: string; mode?: DeleteMode } {
+function toSearch(next: PickerQuery): {
+  section: number;
+  q?: string;
+  mode?: DeleteMode;
+  reason?: DataReason;
+  sort?: DataSort;
+} {
   return {
     section: next.section,
     ...(next.q === '' ? {} : { q: next.q }),
     ...(next.mode === 'permanent' ? { mode: next.mode } : {}),
+    ...(next.reason === 'all' ? {} : { reason: next.reason }),
+    ...(next.sort === 'size' ? {} : { sort: next.sort }),
   };
 }
 
@@ -96,9 +107,11 @@ export function Picker() {
   const candidates = useStore((s) => s.candidates);
   const offeredSections = useStore((s) => s.offeredSections);
   const selectedPaths = useStore((s) => s.selectedPaths);
+  const setRootList = useStore((s) => s.setRootList);
   const toggleCandidate = useStore((s) => s.toggleCandidate);
   const setSelection = useStore((s) => s.setSelection);
   const phase = useStore((s) => s.phase);
+  const summary = useStore((s) => s.summary);
   /* 🔴 The same four preferences every other run path carries. The engine
      re-derives each section's candidate list on this run and matches the select
      file against it, so a threshold that differs from the one the rows were
@@ -106,13 +119,15 @@ export function Picker() {
      nothing is silently not deleted. */
   const prefs = useRunPreferences();
   const excludedPaths = useStore((s) => s.excludedPaths);
-  const startRun = useStore((s) => s.startRun);
-  const appendLog = useStore((s) => s.appendLog);
-  const applyProgress = useStore((s) => s.applyProgress);
-  const finishRun = useStore((s) => s.finishRun);
   const { asking, ask } = useAskSection();
 
-  const search: { section?: unknown; q?: unknown; mode?: unknown } = useSearch({ strict: false });
+  const search: {
+    section?: unknown;
+    q?: unknown;
+    mode?: unknown;
+    reason?: unknown;
+    sort?: unknown;
+  } = useSearch({ strict: false });
   /* The chips are the catalogue's own interactive sections, never a list kept here. */
   const sections = useMemo(
     () => (catalogue?.sections ?? []).filter((s) => s.batch === 'interactive'),
@@ -121,19 +136,20 @@ export function Picker() {
   const current = sections.find((s) => s.id === Number(search.section)) ?? sections[0] ?? null;
   const q = typeof search.q === 'string' ? search.q : '';
   const mode: DeleteMode = search.mode === 'permanent' ? 'permanent' : 'recycle';
+  const reason: DataReason =
+    search.reason === 'large' || search.reason === 'old' ? search.reason : 'all';
+  const sort: DataSort = search.sort === 'age' ? 'age' : 'size';
 
-  const [busy, setBusy] = useState(false);
   /** The Permanent confirmation is open (D-48). Only its "Remove permanently" runs. */
   const [confirming, setConfirming] = useState(false);
   /** The engine's own refusal, rendered as data beside the button that was pressed. */
-  const [failed, setFailed] = useState<string | null>(null);
 
   const available = useMemo(
     () => candidates.filter((c) => prefs.developer || !DEV_GATED_SECTIONS.has(c.section)),
     [candidates, prefs.developer]
   );
   const chosen = useMemo(
-    () => available.filter((c) => selectedPaths.has(c.path)),
+    () => available.filter((c) => c.selectable !== false && selectedPaths.has(c.path)),
     [available, selectedPaths]
   );
   const sectionRows = useMemo(
@@ -141,106 +157,66 @@ export function Picker() {
     [available, current]
   );
   const needle = q.trim().toLowerCase();
-  const visibleRows =
-    needle === ''
-      ? sectionRows
-      : sectionRows.filter((c) => `${c.path} ${c.project ?? ''}`.toLowerCase().includes(needle));
+  const visibleRows = sectionRows
+    .filter(
+      (c) => reason === 'all' || current?.id !== 19 || c.reason === reason || c.reason === 'both'
+    )
+    .filter(
+      (c) =>
+        needle === '' ||
+        `${c.path} ${c.label ?? ''} ${c.project ?? ''} ${c.reason ?? ''}`
+          .toLowerCase()
+          .includes(needle)
+    )
+    .sort((a, b) =>
+      current?.id === 19 && sort === 'age'
+        ? (b.idle_days ?? -1) - (a.idle_days ?? -1)
+        : b.bytes - a.bytes
+    );
+  const recycleOnly = chosen.some((c) => c.section === 19);
+  const effectiveMode: DeleteMode = recycleOnly ? 'recycle' : mode;
+  const {
+    busy,
+    failed,
+    clearFailed,
+    remove: onRemove,
+  } = usePickerRemoval({
+    chosen,
+    permanent: effectiveMode === 'permanent',
+    prefs,
+    excludedPaths,
+  });
 
   const go = useCallback(
     (next: Partial<PickerQuery>, replace: boolean) => {
       if (current === null) return;
       void navigate({
         to: '/picker',
-        search: toSearch({ section: current.id, q, mode, ...next }),
+        search: toSearch({ section: current.id, q, mode, reason, sort, ...next }),
         replace,
       });
     },
-    [current, q, mode, navigate]
+    [current, q, mode, reason, sort, navigate]
   );
 
   /** A file's matches are ADDED to the selection - it never unticks a person's choice. */
   const onMatch = useCallback(
     (paths: string[]) => {
-      setSelection([...new Set([...selectedPaths, ...paths])]);
+      const selectable = new Set(
+        available.filter((c) => c.selectable !== false).map((c) => c.path)
+      );
+      setSelection(
+        [...new Set([...selectedPaths, ...paths])].filter((path) => selectable.has(path))
+      );
+      if (
+        mode === 'permanent' &&
+        available.some((row) => row.section === 19 && paths.includes(row.path))
+      ) {
+        go({ mode: 'recycle' }, true);
+      }
     },
-    [selectedPaths, setSelection]
+    [available, selectedPaths, setSelection, mode, go]
   );
-
-  /**
-   * Write the selection file, then run only the sections those rows came from.
-   *
-   * 🔴 The sections are DERIVED from the chosen rows, never from the whole
-   * interactive set: running a section nobody picked a row in would put that
-   * section's own prompt in front of an unattended engine, which `--select-file`
-   * answers with nothing and `--yes` is not allowed to answer at all.
-   */
-  const onRemove = useCallback(() => {
-    const paths = chosen.map((c) => c.path);
-    if (paths.length === 0) return;
-    const runSections = [...new Set(chosen.map((c) => c.section))].sort((a, b) => a - b);
-    const permanent = mode === 'permanent';
-
-    setBusy(true);
-    setFailed(null);
-    const id = newRunId();
-    /* Whether the run itself began - the one fact that decides which failure below
-       this is. */
-    let started = false;
-    writeSelectFile(id, paths)
-      .then((selectFilePath) => {
-        started = true;
-        startRun(id);
-        void navigate({ to: '/run' });
-        return run(
-          selectionArgs({
-            selectFilePath,
-            sections: runSections,
-            ...prefs,
-            permanent,
-            excludedPaths,
-          }),
-          id,
-          {
-            onLog: appendLog,
-            onProgress: (section, event, status, freedBytes) => {
-              applyProgress({
-                section,
-                event,
-                ...(status ? { status } : {}),
-                ...(freedBytes !== undefined ? { freedBytes } : {}),
-              });
-            },
-          }
-        );
-      })
-      .then((r) => {
-        finishRun(r.summary, r.exitCode > 1 && !r.cancelled);
-      })
-      .catch((e: unknown) => {
-        /* 🔴 Two different failures land here and they are shown differently. The
-           selection file is written BEFORE the run starts, so a refusal from
-           `write_select_file` - a path with a line break in it, say - means nothing
-           ran at all, and there is no Run screen to carry the message. It is shown
-           beside the button instead. Once the run has started, the reason belongs
-           in the log with the engine's own lines.
-
-           🔴 AND A REFUSAL BEFORE ANYTHING STARTED IS NOT A RUN (D-59, GATE 4
-           round 9). It used to call `finishRun(null, true)` here too, so Run read
-           STOPPED over the previous rehearsal's rows and Home's scan button
-           reverted - a run recorded that never began. Now it touches no run state
-           at all: the reason is at the control, and nothing else moved. */
-        const reason = e instanceof Error ? e.message : String(e);
-        if (!started) {
-          setFailed(reason);
-          return;
-        }
-        appendLog(reason);
-        finishRun(null, true);
-      })
-      .finally(() => {
-        setBusy(false);
-      });
-  }, [chosen, mode, prefs, excludedPaths, navigate, startRun, appendLog, applyProgress, finishRun]);
 
   /* The catalogue arrives at boot; until it does there is no section to draw, and a
      failure to load it is already on screen from the shell. */
@@ -254,7 +230,7 @@ export function Picker() {
       ? 'not-asked'
       : visibleRows.length > 0
         ? 'rows'
-        : needle === ''
+        : needle === '' && (current.id !== 19 || reason === 'all')
           ? 'nothing'
           : 'no-match';
   const here = chosen.filter((c) => c.section === current.id);
@@ -298,7 +274,10 @@ export function Picker() {
               <p className="t-sm ink-3">
                 <Trans
                   i18nKey="picker.chosenOf"
-                  values={{ chosen: here.length, total: sectionRows.length }}
+                  values={{
+                    chosen: here.length,
+                    total: sectionRows.filter((row) => row.selectable !== false).length,
+                  }}
                   components={COUNT_MARKUP}
                 />
               </p>
@@ -350,16 +329,50 @@ export function Picker() {
 
       <section className="band band-app band-tight">
         <div className="wrap">
+          {current.id === 19 ? (
+            <PickerDataScanner
+              roots={prefs.personalRoots}
+              onRoots={(next) => {
+                setRootList('personalRoots', next);
+              }}
+              reason={reason}
+              onReason={(next) => {
+                go({ reason: next }, true);
+              }}
+              sort={sort}
+              onSort={(next) => {
+                go({ sort: next }, true);
+              }}
+              rows={sectionRows}
+              verdicts={
+                asked && summary?.sections.some((step) => step.section === 19)
+                  ? summary.personal_roots
+                  : []
+              }
+              asked={asked}
+              asking={asking === current.id}
+              askDisabled={asking !== null || phase === 'running'}
+              onAsk={onAsk}
+              largeFileMb={prefs.largeFileMb}
+              idleDays={prefs.idleDays}
+            />
+          ) : null}
           <div className="panel" style={{ overflow: 'visible' }}>
             <div className="xscroll">
               <PickerTable
                 body={body}
                 rows={visibleRows}
                 selectedPaths={selectedPaths}
-                onToggle={toggleCandidate}
+                onToggle={(path) => {
+                  if (current.id === 19 && !selectedPaths.has(path) && mode === 'permanent') {
+                    go({ mode: 'recycle' }, true);
+                  }
+                  toggleCandidate(path);
+                }}
                 asking={asking === current.id}
                 askDisabled={asking !== null || phase === 'running'}
                 onAsk={onAsk}
+                section={current.id}
               />
             </div>
           </div>
@@ -395,7 +408,7 @@ export function Picker() {
         count={chosen.length}
         bytes={chosen.reduce((sum, c) => sum + c.bytes, 0)}
         sections={chosenSections}
-        mode={mode}
+        mode={effectiveMode}
         onMode={(next) => {
           go({ mode: next }, true);
         }}
@@ -403,25 +416,32 @@ export function Picker() {
         failed={failed}
         onClear={() => {
           setSelection([]);
-          setFailed(null);
+          clearFailed();
         }}
         /* 🔴 D-48 (GATE 4 round 8, decided): Permanent asks first. Recycle Bin keeps
            its single press - it is recoverable. */
         onRemove={() => {
-          if (mode === 'permanent') setConfirming(true);
-          else onRemove();
+          if (effectiveMode === 'permanent' || chosenSections.includes(26)) setConfirming(true);
+          else void onRemove();
         }}
         outright={chosenSections.includes(OUTRIGHT_SECTION)}
+        uninstall={chosenSections.includes(26)}
+        needsAdmin={
+          chosenSections.includes(27) ||
+          chosen.some((c) => c.section === 26 && c.path.startsWith('HKEY_LOCAL_MACHINE'))
+        }
+        recycleOnly={recycleOnly}
       />
       <PickerConfirm
         isOpen={confirming}
         count={chosen.length}
+        uninstall={chosenSections.includes(26)}
         onCancel={() => {
           setConfirming(false);
         }}
         onConfirm={() => {
           setConfirming(false);
-          onRemove();
+          void onRemove();
         }}
       />
     </>

@@ -108,6 +108,8 @@ export interface RunPreferences {
 export function safeBatchArgs(
   options: {
     dryRun: boolean;
+    /** Read-only UAC scan for an interactive admin section such as 27. */
+    elevate?: boolean;
     sections?: number[];
     /**
      * 🔴 REQUIRED, for the same reason the three preferences above are: a call site
@@ -125,6 +127,7 @@ export function safeBatchArgs(
   else args.push('--all');
   args.push('--yes');
   if (options.dryRun) args.push('--dry-run');
+  if (options.elevate) args.push('--elevate');
   args.push(options.developer ? '--developer' : '--not-developer');
   args.push('--days', String(options.idleDays));
   args.push('--temp-days', String(options.tempDays));
@@ -187,6 +190,8 @@ export function selectionArgs(
      * "18, 19 and 23" for the same reason.
      */
     permanent: boolean;
+    /** Section 27 and machine-wide section 26 entries need the engine's UAC relaunch. */
+    elevate: boolean;
     excludedPaths: readonly string[];
   } & RunPreferences
 ): string[] {
@@ -215,6 +220,7 @@ export function selectionArgs(
   args.push('--temp-days', String(options.tempDays));
   args.push('--large-file-mb', String(options.largeFileMb));
   args.push(...rootArgs(options));
+  if (options.elevate) args.push('--elevate');
   if (options.permanent) args.push('--permanent');
   args.push(...excludeArgs(options.excludedPaths));
   return args;

@@ -1,7 +1,7 @@
 # Story Bible - windowsweep
 
-Status: **APPROVED at GATE 1, 2026-09-05** · Slug: `windowsweep` · Language: en-GB · Last updated: 2026-09-13
-(the keeper batch: the glossary gains **switch**; section 3 was corrected on 2026-09-07 and is unchanged)
+Status: **APPROVED at GATE 1, 2026-09-05** · Slug: `windowsweep` · Language: en-GB · Last updated: 2026-11-03
+(the owner approved the section 19 continuity correction; the 2026-09-07 corrections to commitments 2 and 3 remain)
 
 Built from repository evidence on 2026-09-05 and **approved as drafted** by the owner the same day: asked to
 approve the Bible, the palette and the registry entry, he chose *"Approved as drafted"*. The premise in
@@ -39,12 +39,11 @@ guarantees.
 
 ## 3. Core promise
 
-**You will know what goes before it goes, and the things you cannot afford to lose are refused outright.**
+**You will know what goes before it goes, and protected paths are refused outright.**
 
 Three supporting commitments, in the order the reader cares about them:
 
-1. **Nothing personal, ever.** Documents, Desktop, Pictures, credentials, cloud-sync folders and browser
-   state are refused by a single function that no flag can override.
+1. **Personal folders stay protected; section 19 scans Downloads and folders you add, and only removes files you select.**
 2. **A dry-run that writes nothing of yours** - two files of its own, and nothing else - so the rehearsal and
    the performance are the same command minus one word.
 3. **The engine makes no network calls at all** - not telemetry, not an update check - and a test that fails
@@ -61,6 +60,13 @@ Three supporting commitments, in the order the reader cares about them:
 > opt-out and the update gate shipped. The window is where the collection is stated; the engine is where the
 > promise still holds without qualification. Scoping the sentence keeps the strong claim where it is earned
 > instead of losing it to a product-wide phrasing that a reader can falsify in one command.
+
+> **2026-11-03 correction to commitment 1:** section 19 searches Downloads by default and accepted folders
+> added with `--personal-roots`. Its large or old files are listed for individual selection; `--yes` cannot
+> select them. Selected files go to the Recycle Bin by default, or are permanently removed with
+> `--permanent`. `Remove-PathSafe` and `Send-ToRecycleBin` both check the declared root and protection rules;
+> section 19 also rechecks the file immediately before removal. The owner approved the replacement sentence
+> above for 1.4.0. This describes 1.4.0 source, not the currently published 1.3.2 release.
 
 ## 4. Emotional palette
 
@@ -87,13 +93,13 @@ reader something.
 ## 6. Story spine and recurring motifs
 
 **The spine:** *a machine fills up invisibly → a general cleaner is a gamble you have already lost once →
-this one names every path first, refuses the irreplaceable, and rehearses before it acts → you get the space
-back and nothing you wanted is gone.*
+this one names every path first, refuses protected paths, and rehearses before it acts → you select any
+eligible personal files yourself, then reclaim the space from what you chose.*
 
 Recurring motifs, each already present in the product:
 
-- **The chokepoint.** Every deletion passes through one function with a declared root. It is the product's
-  central image: one door, one guard, no side entrances.
+- **The chokepoint.** `Remove-PathSafe` and `Send-ToRecycleBin` check each file against a declared root and
+  the shared protection rules. It is the product's central image: the same refusals on either removal path.
 - **The rehearsal.** `--dry-run` is the same command minus a word. The rehearsal and the performance differ
   by one flag, which is why the rehearsal is trustworthy.
 - **The list read aloud.** Naming the path before touching it - in `--scan`, in `--list-targets`, in the
@@ -110,7 +116,7 @@ lower-case, even at the start of a sentence, and never "WindowSweep" or "Window 
 
 | Term | Use | Never |
 |---|---|---|
-| section | a numbered unit of work (0-25), a frozen public contract | module, task, job |
+| section | a numbered unit of work (0-29 in 1.4.0 source), a frozen public contract | module, task, job |
 | target | one declared path a section can reach | location, item |
 | the chokepoint | `Remove-PathSafe` / `Send-ToRecycleBin` | the safety layer, the guard rail |
 | dry-run | the rehearsal, always hyphenated | simulation, preview, test mode |
@@ -143,8 +149,8 @@ the copy points at it. **Never state a gigabyte figure as a promise.**
 
 ## 10. Safety constraints
 
-- **Never imply a deletion is reversible.** Caches have no undo; personal files go to the Recycle Bin and
-  that distinction is stated every time it is relevant.
+- **Never imply a deletion is reversible.** Caches have no undo; selected personal files go to the Recycle
+  Bin by default, while `--permanent` removes them permanently. State that distinction wherever relevant.
 - **Never promise a number.** How much comes back depends on the reader's disk.
 - **Never claim a security property the tool does not have.** It is not a privacy tool, not a registry
   cleaner, not an anti-malware product. It reclaims disk space.

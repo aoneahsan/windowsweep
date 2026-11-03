@@ -166,7 +166,7 @@ export async function devRun(
 
   const summary = {
     tool: 'windowsweep',
-    version: '1.3.2',
+    version: '1.4.0',
     mode: scan ? 'scan' : 'all',
     // 🔴 Always a rehearsal. This stand-in has no path that reports a real deletion.
     dry_run: true,
@@ -176,7 +176,11 @@ export async function devRun(
     estimated_bytes: total,
     sections: sections.map((id) => ({
       section: id,
-      status: (BYTES[id] ?? 0) > 0 ? 'ran' : 'skipped',
+      status: [17, 18, 19, 23, 26, 27].includes(id)
+        ? 'dry-run'
+        : (BYTES[id] ?? 0) > 0
+          ? 'dry-run'
+          : 'skipped',
       freed_bytes: 0,
     })),
     candidates:
@@ -215,12 +219,26 @@ export async function devRun(
               project: null,
               reason: 'both',
               age_basis: 'write',
+              root: 'C:\\Users\\example\\Downloads',
               selectable: true,
+            },
+            {
+              section: 19,
+              index: 2,
+              path: 'C:\\Users\\example\\Downloads\\kept-photo.jpg',
+              bytes: 2.1e8,
+              idle_days: 300,
+              project: null,
+              reason: 'old',
+              age_basis: 'write+access',
+              root: 'C:\\Users\\example\\Downloads',
+              selectable: false,
+              skip_reason: 'excluded by the person',
             },
             {
               section: 26,
               index: 1,
-              path: 'C:\\example\\Uninstall\\ExampleTool.exe',
+              path: 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\ExampleTool',
               bytes: 0,
               idle_days: null,
               project: null,

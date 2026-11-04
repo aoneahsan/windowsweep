@@ -1,6 +1,6 @@
 # Admin surface — windowsweep
 
-> Derived from the 1.4.0 schema and Edge action registry on 2026-10-31. The new backend is source only until migrations, functions and the website admin pages are deployed and checked as a non-admin.
+> Derived from the 1.4.0 schema and Edge action registry on 2026-10-31; updated 2026-11-04. Migrations and Edge functions are deployed. Website admin screens and current non-admin checks remain incomplete.
 
 ## Role model
 
@@ -19,7 +19,7 @@
 | `referrals`, `badge_catalogue`, `referral_voids` | `badges.list/create`, `referrals.void` | Referral/admin RPCs; void revokes unearned rewards | Source ready; website and live probes pending |
 | `team_members`, `team_invites` | User detail and Team owner actions | Team RPCs enforce ownership and seat limits | Source ready; admin Team overview pending |
 | `billing_email_deliveries` and other email claims | `emails.uncertain/reconcile` (including `kind: grant`), `emails.grant_send`, `emails.billing_list/reconcile/send` | Token-checked mail RPCs. The grant queue lists pending, uncertain and claims stale for ten minutes; staff inspect FilesHub before marking an unknown send as sent or retryable. A pending send and every reconciliation write an audit row | Source ready; website and live probes pending |
-| `app_releases` | `releases.list/publish` | Immutable release RPC and `admin_audit` write | Source ready; website and test-channel proof pending |
+| `app_releases` | `/admin/releases`, `releases.list/publish` | Immutable release RPC and `admin_audit` write | Website source passes gates; genuine-admin visual, test-channel and production proof pending |
 | `contact_requests` | `/admin` inbox | Existing triage actions and `admin_audit` | Live source; repeat non-admin probe after release |
 | `admin_audit` | `/admin/audit` | Admin-only read; append-only server writes | Live source; repeat non-admin probe after release |
 

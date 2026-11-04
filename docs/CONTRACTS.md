@@ -332,8 +332,8 @@ supabase.from('latest_app_releases')
 
 No row, or a failed read: nothing happens (fail open). Compare the running version with `compareSemver` and act on
 the table in `aoneahsan-cccs-update-flow` `references/contract.md`: urgent and older blocks now; normal and older
-shows the notice now and blocks from the next start. Check after the first paint, every 15 minutes, and when the
-window becomes visible (at most once a minute). On the desktop, **Update** runs the Tauri updater and falls back to
+shows the notice now and blocks from the next start. Check after the first paint, on the release broadcast, and when the
+window becomes visible or reconnects. On the desktop, **Update** runs the Tauri updater and falls back to
 the GitHub Releases page. A verification uses a `test` row, never a production row.
 
 `app_releases` has no client policy and no client grant. A release is never edited; a mistake is corrected by

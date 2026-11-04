@@ -106,6 +106,7 @@ Node from `desktop/.nvmrc` (`24.13.0`), `engines.node` `>=22`.
 | `d3-shape` | `^3.2.0` | used by the screens |
 | `d3-time-format` | `^4.1.0` | used by the screens |
 | `drizzle-orm` | `^0.45.3` | The schema at `src/db/schema/` (below) |
+| `driver.js` | `1.10.2` | MIT licensed spotlight for the approved desktop page tours; its popover and controls are replaced by the app's accessible card. Verified against the installed `LICENSE`. |
 | `i18next` | `^26.4.2` | Every user-visible string, from day one |
 | `motion` | `^13.4.4` | Entrance and state motion, gated on the `motion` axis AND the OS query |
 | `react` | `^19.3.0` | used by the screens |

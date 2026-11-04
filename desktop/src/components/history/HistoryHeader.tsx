@@ -25,7 +25,7 @@ export function HistoryHeader({ freedBytes, runs }: { freedBytes: number; runs: 
               nothing to total - "0 B, freed in the last 0 runs" said nothing the empty
               row below does not say better - so the block steps aside. */}
           {runs > 0 ? (
-            <div className="hist-total">
+            <div className="hist-total" data-tour="history-total">
               <p className="num t-xl wide accent-ink">{formatBytes(freedBytes)}</p>
               <p className="t-sm ink-3">
                 <Trans

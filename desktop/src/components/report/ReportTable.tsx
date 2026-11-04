@@ -29,7 +29,7 @@ export function ReportTable({
 }) {
   const { t } = useTranslation();
   return (
-    <div className="panel rep-table">
+    <div className="panel rep-table" data-tour="report-sections">
       <div className="xscroll">
         <table className="tbl">
           <thead>

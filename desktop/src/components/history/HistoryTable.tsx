@@ -182,7 +182,7 @@ export function HistoryTable({
   const { t } = useTranslation();
   const baseId = useId();
   return (
-    <div className="panel hist-table">
+    <div className="panel hist-table" data-tour={rows.length ? 'history-table' : undefined}>
       <div className="xscroll">
         <table className="tbl">
           <thead>

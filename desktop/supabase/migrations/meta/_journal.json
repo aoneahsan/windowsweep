@@ -232,6 +232,20 @@
       "when": 1793713031710,
       "tag": "20261103133711_v141_release_broadcast",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1793790494792,
+      "tag": "20261104110814_tour_hint_column",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1793790583671,
+      "tag": "20261104110943_tour_hint_marker",
+      "breakpoints": true
     }
   ]
 }

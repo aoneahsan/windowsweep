@@ -25,7 +25,7 @@ export function HistoryShow({
   return (
     <section className="band band-well band-tight hist-show">
       <div className="wrap">
-        <div className="filters" role="group" aria-labelledby={labelId}>
+        <div className="filters" data-tour="history-filter" role="group" aria-labelledby={labelId}>
           <span className="caps ink-3 hist-show-label" id={labelId}>
             {t('history.show')}
           </span>

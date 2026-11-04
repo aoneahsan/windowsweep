@@ -163,6 +163,9 @@ const Account = lazy(() => import('./screens/Account').then((m) => ({ default: m
 const Plans = lazy(() => import('./screens/Plans').then((m) => ({ default: m.Plans })));
 const Settings = lazy(() => import('./screens/Settings').then((m) => ({ default: m.Settings })));
 const Elevation = lazy(() => import('./screens/Elevation').then((m) => ({ default: m.Elevation })));
+const Walkthrough = lazy(() =>
+  import('./screens/Walkthrough').then((m) => ({ default: m.Walkthrough }))
+);
 
 /**
  * 🔴 ONE `Suspense`, and it is INSIDE the shell rather than around the `Outlet`.
@@ -213,6 +216,11 @@ const routes = [
   createRoute({ getParentRoute: () => rootRoute, path: '/history', component: withShell(History) }),
   createRoute({ getParentRoute: () => rootRoute, path: '/report', component: withShell(Report) }),
   createRoute({ getParentRoute: () => rootRoute, path: '/account', component: withShell(Account) }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/walkthrough',
+    component: withShell(Walkthrough),
+  }),
   plansRoute,
   createRoute({
     getParentRoute: () => rootRoute,

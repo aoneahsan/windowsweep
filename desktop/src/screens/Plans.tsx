@@ -133,7 +133,7 @@ function PlansContent() {
       <section className="band band-app" aria-labelledby="plan-count-title">
         <div className="wrap">
           <div className="plan-count-grid">
-            <div className="panel pad plan-meter">
+            <div className="panel pad plan-meter" data-tour="plans-allowance">
               <p className="caps ink-3" id="plan-count-title">
                 {t('plans.thisMonth')}
               </p>
@@ -264,7 +264,11 @@ function PlansContent() {
         failed={registry.isError || mine.isError || !configured}
         retry={() => void registry.refetch()}
       />
-      <section className="band band-app" aria-labelledby="referral-title">
+      <section
+        className="band band-app"
+        data-tour="plans-referrals"
+        aria-labelledby="referral-title"
+      >
         <div className="wrap plan-secondary-grid">
           <div>
             <p className="caps ink-3">{t('plans.referral.title')}</p>

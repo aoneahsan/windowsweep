@@ -37,13 +37,15 @@ import type enHome from './locales/en/home.json';
 import type enSections from './locales/en/sections.json';
 import type enAccount from './locales/en/account.json';
 import type enPlans from './locales/en/plans.json';
+import type enTours from './locales/en/tours.json';
 import { DEFAULT_LOCALE } from '../lib/format';
 
 type English = typeof enShell &
   typeof enHome &
   typeof enSections &
   typeof enAccount &
-  typeof enPlans;
+  typeof enPlans &
+  typeof enTours;
 
 export type TranslationKeys = keyof English;
 

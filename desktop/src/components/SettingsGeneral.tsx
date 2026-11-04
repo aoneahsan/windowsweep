@@ -113,7 +113,7 @@ export function SettingsGeneral() {
   const heldBack = useHeldBackBytes();
 
   return (
-    <div className="set-grp">
+    <div className="set-grp" data-tour="settings-thresholds">
       <SettingRow
         title={t('home.developerTitle')}
         description={t('settings.developerDesc')}

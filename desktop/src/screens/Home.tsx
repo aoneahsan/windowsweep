@@ -395,6 +395,7 @@ export function Home() {
           </div>
           <div className="hero-actions">
             <button
+              data-tour="home-scan"
               className="btn"
               type="button"
               onClick={onScan}
@@ -408,6 +409,7 @@ export function Home() {
               </span>
             </button>
             <button
+              data-tour="home-dry-run"
               className="btn"
               type="button"
               onClick={onDryRun}

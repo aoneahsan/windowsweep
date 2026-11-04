@@ -18,6 +18,7 @@ export const ICONS = {
   max: 'M5 5h10v10H5z',
   menu: 'M3 6h14M3 10h14M3 14h14',
   backend: 'M3 5h14v4H3zM3 11h14v4H3zM6 7h.01M6 13h.01',
+  tour: 'M10 2v3M10 15v3M2 10h3M15 10h3M7 7a3 3 0 1 1 5 2.4c-1.2.8-2 1.3-2 2.6M10 15h.01',
 } as const;
 
 export type IconName = keyof typeof ICONS;

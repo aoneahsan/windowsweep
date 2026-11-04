@@ -34,6 +34,13 @@ export const EVENTS = {
   'update.check.available': { version: 'string' },
   'update.check.skipped': { reason: 'string' },
   'update.install.failed': { reason: 'string' },
+  tour_hint_shown: { route: 'string' },
+  tour_started: { route: 'string' },
+  tour_step_viewed: { route: 'string', step: 'number' },
+  tour_completed: { route: 'string', step: 'number' },
+  tour_skipped: { route: 'string', step: 'number' },
+  walkthrough_step_viewed: { step: 'number' },
+  walkthrough_cta_clicked: { step: 'number' },
 } as const;
 
 export type EventName = keyof typeof EVENTS;

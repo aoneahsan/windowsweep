@@ -55,7 +55,7 @@ export function HomeSafety() {
           <span>{t('home.assure')}</span>
         </p>
 
-        <details className="disclose" style={{ marginTop: 'var(--sp-4)' }}>
+        <details className="disclose" data-tour="home-safety" style={{ marginTop: 'var(--sp-4)' }}>
           <summary>
             <span className="disclose-line">{t('home.chokeSummary')}</span>
             <span className="disclose-more">{t('consent.detailsMore')}</span>

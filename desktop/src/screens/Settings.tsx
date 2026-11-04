@@ -52,13 +52,23 @@ export function Settings() {
       <section className="band band-app">
         <div className="wrap">
           <div className="tabs">
-            <div className="tablist" role="tablist" aria-label={t('settings.tabsLabel')}>
+            <div
+              className="tablist"
+              data-tour="settings-tabs"
+              role="tablist"
+              aria-label={t('settings.tabsLabel')}
+            >
               {TABS.map((x) => (
                 <button
                   className="tab"
                   role="tab"
                   type="button"
                   key={x}
+                  {...(x === 'privacy'
+                    ? { 'data-tour': 'settings-privacy' }
+                    : x === 'about'
+                      ? { 'data-tour': 'settings-version' }
+                      : {})}
                   aria-selected={tab === x}
                   onClick={() => {
                     void navigate({ to: '/settings', search: { tab: x } });

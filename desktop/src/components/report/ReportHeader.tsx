@@ -121,7 +121,7 @@ export function ReportHeader({
     <section className="band band-app band-tight">
       <div className="wrap">
         <ReportCrumbs current={exactStamp(entry.startedAt)} />
-        <div className="rep-head">
+        <div className="rep-head" data-tour={report ? 'report-summary' : undefined}>
           <div>
             <h1 className="t-xl wide">{title}</h1>
             {/* Held at its own height while the file is read, so nothing moves when it lands. */}
@@ -154,6 +154,7 @@ export function ReportHeader({
                 className="btn"
                 type="button"
                 disabled={report === null || exporting}
+                data-tour={report ? 'report-export' : undefined}
                 aria-describedby={reasonId ?? undefined}
                 onClick={onExport}
                 {...controlState(stateOf(exporting, exported))}

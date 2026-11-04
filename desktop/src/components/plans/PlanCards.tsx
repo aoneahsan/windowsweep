@@ -124,7 +124,11 @@ export function PlanCards({ plans, myPlan, lastRequest, failed, retry }: Props) 
   }
   const pending = myPlan?.pending_request;
   return (
-    <section className="band band-well" aria-labelledby="plan-choose-title">
+    <section
+      className="band band-well"
+      data-tour="plans-options"
+      aria-labelledby="plan-choose-title"
+    >
       <div className="wrap">
         <div className="plan-section-head">
           <div>

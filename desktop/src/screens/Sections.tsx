@@ -177,7 +177,7 @@ export function Sections() {
               state, so the active filter was indistinguishable from the others,
               and its hover turns danger-red - reading as "press to remove" on a
               control that selects. The class was the whole defect. */}
-          <div className="filters">
+          <div className="filters" data-tour="sections-filter">
             <span className="caps ink-3" style={{ marginInlineEnd: 'var(--sp-2)' }}>
               {t('sections.show')}
             </span>
@@ -219,7 +219,11 @@ export function Sections() {
 
       <section className="band band-app band-tight">
         <div className="wrap">
-          <div className="panel" style={{ overflow: 'visible' }}>
+          <div
+            className="panel"
+            data-tour={rows.length ? 'sections-table' : undefined}
+            style={{ overflow: 'visible' }}
+          >
             <div className="xscroll" style={{ overflowX: 'auto' }}>
               <SectionsTable
                 rows={rows}

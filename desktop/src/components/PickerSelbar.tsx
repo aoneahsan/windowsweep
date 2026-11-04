@@ -71,6 +71,7 @@ export function PickerSelbar({
        its own controls ("Remove these" broke onto two lines). */
     <div
       className="selbar"
+      data-tour="choose-consequence"
       hidden={count === 0}
       style={{ flexWrap: 'wrap', rowGap: 'var(--sp-1)' }}
     >

@@ -123,7 +123,7 @@ cannot provide a remedy it owes under law or its buyer terms. The third sentence
 ```json
 "updates": {
   "title": "When an update is required",
-  "body": "On start and every 15 minutes, the desktop app, this website and the documentation check whether a newer version is required. If one is, they can ask for the update before you continue, and they show the reason. A run already in progress is never stopped for it."
+  "body": "On start, when a release is announced and on returning to view, the desktop app, this website and the documentation check whether a newer version is required. If one is, they can ask for the update before you continue, and they show the reason. A run already in progress is never stopped for it."
 }
 ```
 
@@ -288,7 +288,7 @@ the matching change to row 18.
 "unasked": {
   "title": "Requests that run without being asked for",
   "updater": "The desktop app fetches <mono>latest.json</mono> from the release page on every start, every six hours while it is open, and when it comes back into view, to see whether an update exists.",
-  "release": "On start, every 15 minutes and on coming back into view, the desktop app, this website and the documentation each read the newest release record, to see whether an update is required. The record is selected by program and channel; it holds no information about you.",
+  "release": "On start, when a release is announced and on coming back into view, the desktop app, this website and the documentation each read the newest release record, to see whether an update is required. The record is selected by program and channel; it holds no information about you.",
   "webview": "On a machine with no WebView2, the installer downloads it from Microsoft.",
   "none": "The GitHub and Microsoft requests carry no account data. The release-record request may use your account session if you are signed in. GitHub, Microsoft and Supabase, which hosts the account service, see ordinary request details as any website does."
 }
@@ -405,7 +405,7 @@ each page, plainly, and nowhere a person pays: not in the head strings, not on `
 | Team per seat from a minimum; the owner invites and removes | D56; macleanup `teams`, `team_invites` |
 | A referral month extends a paid plan and never shortens one | the referral reference §4 |
 | Every purchase final; windowsweep offers no refund, credit or exchange; a reversed payment ends its plan time | `payment-copy.md`; the brief's *Policies*; Polar buyer terms govern its legally required remedies |
-| The update check on start, every 15 minutes and on return; a run is never stopped for it | `contract.md` *The client gate*; the approved plan, wave 2 |
+| The update check on start, release announcement and return; a run is never stopped for it | `contract.md` *The client gate*; current `update-flow.md` |
 | The updater: start, every six hours, on resume | the approved plan, wave 2 |
 | A random device id; an anonymous session with no email and no name | D58; macleanup `devices` |
 | One pre-run claim: device, month, sections, allowance, account if signed in | 1.4.0 `claim_run` contract |

@@ -1,6 +1,6 @@
 # WindowSweep database schema
 
-The Drizzle source is `desktop/src/db/schema/*.ts`. `desktop/supabase/migrations/` is the ordered SQL output. The hosted project serves development and production; no migration in this document has been applied by this offline schema pass. The view `latest_app_releases` exposes the latest public release per platform and channel without the publishing admin's id.
+The Drizzle source is `desktop/src/db/schema/*.ts`. `desktop/supabase/migrations/` is the ordered SQL output. The hosted project serves development and production; migrations through `20261104110943_tour_hint_marker.sql` are applied there. The view `latest_app_releases` exposes the latest public release per platform and channel without the publishing admin's id.
 
 ## Diagram
 
@@ -35,7 +35,7 @@ erDiagram
   AUTH_USERS ||--o{ REFERRAL_BADGE_AWARDS : earns
 
   AUTH_USERS { uuid id PK }
-  PROFILES { uuid user_id PK text email text platform_role text referral_code }
+  PROFILES { uuid user_id PK text email text platform_role text referral_code jsonb tour_hinted }
   USER_SETTINGS { uuid user_id PK jsonb prefs timestamptz settings_updated_at }
   RUNS { text run_id PK uuid user_id FK uuid device_id FK timestamptz started_at }
   CONTACT_REQUESTS { uuid id PK uuid user_id FK text status }
@@ -72,7 +72,7 @@ Admin grant mail uses four nullable delivery columns on `plan_grants` instead of
 
 | Table | Purpose and owner | RLS and expected size |
 |---|---|---|
-| `profiles` | One row per auth identity; `user_id`. Device sessions have null email and referral eligibility time until Google conversion. | Own read, admin read, display-name-only update. One per user. Welcome mail has a token-checked send lease and an indexed uncertain state. |
+| `profiles` | One row per auth identity; `user_id`. Device sessions have null email and referral eligibility time until Google conversion. `tour_hinted` keeps one-way page hint marks across the site and desktop app. | Own read, admin read, display-name-only direct update. The authenticated marker function adds a true route key only to the caller's row. One per user. Welcome mail has a token-checked send lease and an indexed uncertain state. |
 | `user_settings` | Cross-device preferences; `user_id`. | Own signed-in read/write. One per account. |
 | `runs` | Synced run summaries; `user_id`. | Own signed-in read/insert/delete. Grows with runs; `(user_id, started_at)` index. |
 | `contact_requests` | Support messages; `user_id`. | Own signed-in insert/read; admin triage. Small per account, indexed by owner and status. |
@@ -102,6 +102,7 @@ All 1.4.0 changes are generated from Drizzle into `20261031082151_v140_schema.sq
 
 | Date and change | Need, existing home checked, decision | Access, index and deletion |
 |---|---|---|
+| 2026-11-04 · `profiles.tour_hinted` and marker RPC | The guided-tour hint must show once per page per browser and account. The existing profile is the account-owned row; a separate table would add a second lifecycle for small boolean marks. Atomic JSONB merge keeps simultaneous devices from overwriting each other. | Authenticated caller marks only its own profile via a bounded security-definer RPC; no direct column update grant. Existing owner/admin read policies and account cascade apply. No index: every read filters by user id. Both migrations were applied under the owner's exact current-session approval; the post-apply dry run was up to date. |
 | 2026-10-31 · referral same-transaction boundary fix | A reward whose start equals the transaction timestamp has consumed no time. The original reflow treated it as started, so a second reward confirmed in the same transaction could overlap instead of stacking. The forward migration replaces only `private.reflow_referral_grants` and keeps the applied migration immutable. | Existing definer privileges and revocations remain; no table, index, policy or deletion change. The companion restores the old function only as a reviewed manual rollback and would reintroduce this defect. |
 | 2026-10-31 · admin grant email columns and RPCs | A successful grant must not be repeated because FilesHub is unavailable or its response is unknown. Four nullable columns on the existing grant row keep its one notification beside its durable business record; an extra table would add a second lifetime and key. | Service-role claim/mark RPCs only; authenticated admin list, audited resend request and reconciliation. Partial `(created_at,id)` review index, account cascade, no stored recipient address. A reviewed rollback refuses while any delivery state exists. |
 | 2026-10-31 · referral grant balance columns and reflow triggers | A later paid renewal or Team change can overlap a banked month. Three nullable columns on the existing grant row preserve its remaining time and prior blocker snapshot; a second table would split one grant's state. The projector unions overlapping blockers, accounts only uncovered elapsed time, and serializes subsequent referral rewards. | Definer only, existing grant indexes and account cascade. Paid and grant changes reflow the owner and Team members with live referral rewards; membership changes reflow that member. Window changes are system-audited; `my_referral_status.rewards[].paused` reports current overlap separately from `banked`. Admin rank or fleet toggles that would change a live reward's blocker fail with `referral_rewards_block_plan_shape_change` (409); names, prices and limits remain editable. A manual rollback refuses once referral grants exist, since consumed time cannot be discarded. |

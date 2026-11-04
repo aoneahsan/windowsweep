@@ -291,7 +291,7 @@ export function Picker() {
         style={{ position: 'sticky', top: 0, zIndex: 4 }}
       >
         <div className="wrap">
-          <div className="filters">
+          <div className="filters" data-tour="choose-filter">
             <span className="caps ink-3" style={{ marginInlineEnd: 'var(--sp-2)' }}>
               {t('picker.sectionFilter')}
             </span>
@@ -357,7 +357,7 @@ export function Picker() {
               idleDays={prefs.idleDays}
             />
           ) : null}
-          <div className="panel" style={{ overflow: 'visible' }}>
+          <div className="panel" data-tour="choose-table" style={{ overflow: 'visible' }}>
             <div className="xscroll">
               <PickerTable
                 body={body}

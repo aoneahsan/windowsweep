@@ -58,7 +58,7 @@ export function SectionSelbar({
        `[data-ws-selbar]` is: returning null made the bar pop in and out, where
        `.selbar[hidden]` slides it (D-40, GATE 4 round 8). Hidden, it is out of the tab
        order and the accessibility tree too (`visibility: hidden` after the slide). */
-    <div className="selbar" hidden={selection.length === 0}>
+    <div className="selbar" data-tour="sections-selection" hidden={selection.length === 0}>
       <span className="num t-md wide">{selection.length}</span>
       {/* `count` so the noun agrees with the number beside it (D-33). */}
       <span className="t-sm ink-2">{t('sections.selSelected', { count: selection.length })}</span>

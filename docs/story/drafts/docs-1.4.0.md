@@ -61,7 +61,7 @@ Choose **Update** when the desktop app says a release is required. An urgent rel
 
 Choose **Update** in the notice or block. The app downloads and verifies the signed update. A run already in progress finishes before installation begins. The release screen tells you when the update is downloaded and verified and when installation begins. Your settings and History remain. If the download fails, choose **Try again** while online. The block screen also links to the [release page](https://github.com/aoneahsan/windowsweep/releases) for a manual installer and to [support issues](https://github.com/aoneahsan/windowsweep/issues) if the installer fails.
 
-The app checks for a published release after it opens, every 15 minutes while open, and when it returns to view. If the release service cannot be reached, it continues and checks again later; a published block is not silently dismissed.
+The app checks for a published release after it opens, when a release is announced, and when it returns to view or reconnects. If the release service cannot be reached, it continues and checks again on return; a published block is not silently dismissed.
 
 ## How do I update the website or docs?
 

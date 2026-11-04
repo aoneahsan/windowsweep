@@ -238,7 +238,10 @@ export function Account() {
                     <p className="caps ink-3">{t('account.cardEyebrow')}</p>
                     <h2 className="t-lg wide">{t('account.cardTitle')}</h2>
                     <p className="t-base">{t('account.cardBody')}</p>
-                    <div style={{ marginTop: 'var(--sp-4)' }}>
+                    <div
+                      data-tour={features.signIn ? 'account-sign-in' : undefined}
+                      style={{ marginTop: 'var(--sp-4)' }}
+                    >
                       <PrimaryButton
                         control="account.signIn"
                         size="lg"
@@ -272,7 +275,7 @@ export function Account() {
             </div>
 
             <div className="c6">
-              <div className="well pad">
+              <div className="well pad" data-tour="account-stored">
                 <h2 className="t-md wide">{t('account.storedTitle')}</h2>
                 <div className="xscroll" style={{ marginTop: 'var(--sp-3)' }}>
                   <table className="tbl">
@@ -319,7 +322,7 @@ export function Account() {
       {user ? (
         <section className="band band-app band-tight">
           <div className="wrap wrap-narrow">
-            <div className="panel pad">
+            <div className="panel pad" data-tour="account-delete">
               <h2 className="t-md wide">{t('account.deleteTitle')}</h2>
               {/* Exactly what the cascade does, and nothing more. */}
               <p className="t-sm">{t('account.deleteWhatGoes')}</p>

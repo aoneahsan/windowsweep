@@ -8,7 +8,7 @@
  * changed in the dummy first and copied here second.
  */
 
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useState } from 'react';
 import { Link, useRouterState, useSearch } from '@tanstack/react-router';
 import { Trans, useTranslation } from 'react-i18next';
 /* 🔴 `getCurrentWindow` is imported lazily, inside the handler. Calling it during
@@ -27,6 +27,10 @@ import { formatBytes } from '../lib/format';
 import { logDirectory } from '../lib/cli';
 import { commandLine, safeBatchArgs } from '../lib/engine';
 import { filterSections, SECTION_FILTERS, type SectionFilter } from '../lib/catalogue';
+
+const TourControl = lazy(() =>
+  import('../tours/TourControl').then((module) => ({ default: module.TourControl }))
+);
 
 interface NavGroup {
   group: string;
@@ -155,6 +159,11 @@ function Titlebar({
           number a person can check against the command-line tool. */}
       <span className="badge badge-outline mono">{version || '-'}</span>
       <div className="wincontrols tb-interactive">
+        {drawer ? (
+          <Suspense fallback={null}>
+            <TourControl />
+          </Suspense>
+        ) : null}
         <button
           className="btn btn-ghost btn-sm"
           type="button"
@@ -248,6 +257,10 @@ function Rail() {
       {/* The rail had ~500px of dead space below the nav; this readout uses it and
           keeps the number in view on every screen, not only Home. */}
       <div className="rail-foot">
+        <Link className="rail-item" to="/walkthrough">
+          <Icon name="tour" />
+          <span>{t('tour.walkthrough.open')}</span>
+        </Link>
         <span className="caps ink-3">{t('home.reclaimable')}</span>
         <span className="num t-md wide accent-ink">{reclaimable}</span>
         <span className="t-xs ink-3">{t('home.acrossSections', { count: sectionCount })}</span>

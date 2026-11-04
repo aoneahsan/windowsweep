@@ -280,7 +280,7 @@ export function RunScreen() {
       {/* `band band-app`, as `run.html` draws it: the hero carried `band-tight` from the
           first build, which set everything below it 8 px higher (D-70, GATE 4 round 16). */}
       <section className="band band-app">
-        <div className="wrap readout">
+        <div className="wrap readout" data-tour="run-prepared">
           <div>
             {/* 🔴 The never-run state said `Finished` and `The run finished.` on a
                 screen whose own log pane said `Nothing has run yet.` - the app
@@ -387,6 +387,7 @@ export function RunScreen() {
 
           {/* `run.html:37-40` - Cancel then Start, at the end of the readout. */}
           <div
+            data-tour="run-start"
             style={{
               display: 'flex',
               gap: 'var(--sp-2)',
@@ -483,6 +484,7 @@ export function RunScreen() {
                 announcing every line of a purge would be an assault, so the region
                 is readable on demand and `aria-busy` says work is ongoing. */}
             <div
+              data-tour="run-log"
               className="logview"
               ref={tailRef}
               role="log"

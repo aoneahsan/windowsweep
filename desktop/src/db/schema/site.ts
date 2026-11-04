@@ -75,6 +75,8 @@ export const profiles = pgTable(
     email: text('email'),
     /** The one field the person owns. In the UPDATE grant; nothing else here is. */
     displayName: text('display_name'),
+    /** Shown tour hints, shared by the site and desktop. Only mark_tour_hint writes it. */
+    tourHinted: jsonb('tour_hinted').notNull().default({}),
     /** 🔴 Out of every grant. See the note above - this is a privilege column. */
     platformRole: text('platform_role').notNull().default('user'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
@@ -105,6 +107,10 @@ export const profiles = pgTable(
       sql`${t.platformRole} in ('superadmin', 'admin', 'user')`
     ),
     check('profiles_referral_code_format', sql`${t.referralCode} ~ '^[A-Z0-9]{10}$'`),
+    check(
+      'profiles_tour_hinted_bounded',
+      sql`jsonb_typeof(${t.tourHinted}) = 'object' and octet_length(${t.tourHinted}::text) <= 8192`
+    ),
     check(
       'profiles_welcome_claim_pair',
       sql`(${t.welcomeClaimedAt} is null) = (${t.welcomeClaimToken} is null)`

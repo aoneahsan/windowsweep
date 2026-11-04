@@ -1,0 +1,59 @@
+.ws-walkthrough {
+  display: grid;
+  grid-template-columns: minmax(16rem, 0.8fr) minmax(0, 1.7fr);
+  gap: var(--sp-6);
+  align-items: center;
+}
+.ws-walk-copy {
+  display: grid;
+  gap: var(--sp-4);
+}
+.ws-walk-copy h2,
+.ws-walk-copy p,
+.ws-walk-figure {
+  margin: 0;
+}
+.ws-walk-figure {
+  background: var(--c-panel);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  padding: var(--sp-3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+.ws-walk-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-md);
+  background: var(--c-well);
+}
+.ws-walk-figure figcaption {
+  padding-top: var(--sp-2);
+}
+.ws-walk-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+.ws-walk-dot {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--c-panel);
+  color: var(--c-ink);
+  border: 1px solid var(--c-line);
+  border-radius: 50%;
+}
+.ws-walk-dot[aria-current='step'] {
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+  border-color: var(--c-accent);
+}
+.ws-walk-dot:focus-visible {
+  outline: 3px solid var(--c-accent);
+  outline-offset: 2px;
+}
+@media (max-width: 60rem) {
+  .ws-walkthrough {
+    grid-template-columns: 1fr;
+  }
+}

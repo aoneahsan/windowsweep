@@ -1,7 +1,7 @@
 /**
  * The update flow's layer 2 (`aoneahsan-cccs-update-flow` `references/contract.md`):
- * an admin-published release record that every surface checks at start, every 15
- * minutes and when it comes back into view.
+ * an admin-published release record that every surface checks at start, after a
+ * release signal, and when it returns to view or reconnects.
  *
  * `app_releases` has NO client policy and no client grant. Clients read the public
  * view `latest_app_releases` - the latest row per platform and channel, without

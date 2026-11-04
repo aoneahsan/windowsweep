@@ -373,7 +373,7 @@ Pending cannot close. Submitting the request charges nothing; the recipient can 
   "confirmUrgent": "Every older copy stops at once and shows your reason until it updates.",
   "confirmNormal": "Every older copy is told now, and stops at its next start until it updates.",
   "confirmAction": "Publish", "cancel": "Cancel",
-  "published": "Published. Open copies check every 15 minutes; closed ones check at their next start.",
+  "published": "Published. Open copies check when the release signal arrives or they return; closed copies check at their next start.",
   "refused": "Nothing was published: {{message}}",
   "listTitle": "The last 20 releases",
   "listCaption": "Newest first. To correct a release, publish a newer one.",
@@ -390,7 +390,7 @@ Pending cannot close. Submitting the request charges nothing; the recipient can 
 | `minNativeHint` | No windowsweep platform has a separate web layer, so the field is always empty. Hiding it is the implementer's call; the words are ready either way |
 | `warnAbove` | Settled 2026-10-31: the form warns when the version is above the deployed build, because copies older than that version could be asked for a build that does not exist yet. Offline reads fail open |
 | `confirmUrgent` / `confirmNormal` | A publish that stops every older copy is a consequence, so it is confirmed. The sentence names what will happen, never how sure the admin is |
-| `published` | Open copies check every 15 minutes and on returning to view; closed ones check at start. Offline reads fail open (`contract.md`) |
+| `published` | Open copies check on release broadcast and on returning to view; closed ones check at start. Offline reads fail open (`contract.md`) |
 
 ### N-015 · approved admin strings 1.4.0 makes false, and the heads of the new pages
 
@@ -499,7 +499,7 @@ appears only inside the bar's fixed sentence, once in each catalogue. No *consen
 | *Downloaded and verified.*, *Later*, settings and history untouched | `splash.update.*`, approved (row 11) |
 | Platforms `desktop`, `web`, `docs`; the test channel | the approved plan; `verification.md` |
 | The reason up to 280 characters; never edited, corrected by a newer row; the last 20 | `contract.md` |
-| Checks every 15 minutes and on returning to view | `contract.md` |
+| Checks on release broadcast and on returning to view | `contract.md`; current `update-flow.md` |
 | Plan, downgrade target, date; provenance; every write audited with a reason | `aoneahsan-cccs-plans-entitlements` → `manual-grant.md`; `-platform-admin` |
 | The nine referral settings, the badge catalogue and award, and the cap that stops only plan months | `docs/CONTRACTS.md` §§5, 9, 11 |
 | Never rename a key, deactivate rather than delete | `data-driven-registry.md` §1–2 |

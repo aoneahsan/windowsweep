@@ -8,11 +8,22 @@ import { track } from '../lib/analytics';
 import { supabase } from '../lib/auth';
 import { readStored, writeStored } from '../lib/storage';
 import { useStore } from '../state/store';
-import { isTourRoute, visibleSteps } from './registry';
+import { isTourRoute, visibleSteps, type TourRoute } from './registry';
 import './tour.css';
 
 const HINT_KEY = 'windowsweep:tour-hinted';
 const EMPTY_HINTS: Record<string, boolean> = {};
+const PAGE_TITLE: Record<TourRoute, string> = {
+  '/': 'nav.home',
+  '/sections': 'nav.sections',
+  '/picker': 'nav.picker',
+  '/run': 'nav.run',
+  '/history': 'nav.history',
+  '/report': 'nav.report',
+  '/account': 'nav.account',
+  '/settings': 'nav.settings',
+  '/plans': 'nav.plans',
+};
 
 function stepKey(id: string): string {
   const parts = id.split('-');
@@ -43,7 +54,6 @@ export function TourControl() {
   const [hoverHint, setHoverHint] = useState(false);
   const [steps, setSteps] = useState<ReturnType<typeof visibleSteps>>([]);
   const [availableCount, setAvailableCount] = useState(0);
-  const [jumpOpen, setJumpOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const driverRef = useRef<import('driver.js').Driver | null>(null);
@@ -259,7 +269,7 @@ export function TourControl() {
         requestAnimationFrame(follow);
       };
       requestAnimationFrame(follow);
-      requestAnimationFrame(() => cardRef.current?.focus());
+      requestAnimationFrame(() => cardRef.current?.querySelector('button')?.focus());
     });
     track('tour_step_viewed', { route: source, step: index + 1 });
     return () => {
@@ -370,49 +380,39 @@ export function TourControl() {
                 className="ws-tour-card"
                 role="dialog"
                 aria-modal="true"
-                aria-label={t('tour.progress', { current: index + 1, total: steps.length })}
+                aria-labelledby="ws-tour-title"
                 tabIndex={-1}
               >
                 <div className="ws-tour-card-head">
-                  <span className="caps" role="status">
+                  <span className="caps accent-ink" role="status">
                     {t('tour.progress', { current: index + 1, total: steps.length })}
                   </span>
                   <button
                     className="btn btn-ghost btn-sm"
                     type="button"
-                    aria-label={t('tour.close')}
                     onClick={() => close(false)}
                   >
-                    <Icon name="close" size={14} />
+                    {t('tour.close')}
                   </button>
                 </div>
+                <h2 id="ws-tour-title" className="t-md wide">
+                  {t(PAGE_TITLE[route])}
+                </h2>
                 <p className="t-base">{t(stepKey(active.id))}</p>
-                <button
-                  className="btn btn-ghost btn-sm"
-                  type="button"
-                  aria-expanded={jumpOpen}
-                  onClick={() => setJumpOpen(!jumpOpen)}
-                >
+                <label className="t-xs ink-3">
                   {t('tour.jump')}
-                </button>
-                {jumpOpen ? (
-                  <div className="ws-tour-actions">
+                  <select
+                    className="field"
+                    value={index}
+                    onChange={(event) => go(Number(event.target.value) + 1)}
+                  >
                     {steps.map((step, position) => (
-                      <button
-                        key={step.id}
-                        type="button"
-                        className="btn btn-ghost btn-sm"
-                        aria-current={position === index ? 'step' : undefined}
-                        onClick={() => {
-                          setJumpOpen(false);
-                          go(position + 1);
-                        }}
-                      >
+                      <option key={step.id} value={position}>
                         {t('tour.jumpItem', { step: position + 1 })}
-                      </button>
+                      </option>
                     ))}
-                  </div>
-                ) : null}
+                  </select>
+                </label>
                 <div className="ws-tour-actions">
                   <button
                     className="btn btn-ghost btn-sm"
@@ -422,7 +422,7 @@ export function TourControl() {
                     {t('tour.skip')}
                   </button>
                   <button
-                    className="btn btn-ghost btn-sm"
+                    className="btn btn-sm"
                     type="button"
                     disabled={index === 0}
                     onClick={() => go(index)}
@@ -430,7 +430,7 @@ export function TourControl() {
                     {t('tour.back')}
                   </button>
                   <button
-                    className="btn btn-sm"
+                    className="btn btn-sm btn-primary"
                     type="button"
                     onClick={() => (index === steps.length - 1 ? close(true) : go(index + 2))}
                   >

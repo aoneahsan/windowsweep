@@ -34,6 +34,10 @@
   justify-content: space-between;
   gap: var(--sp-2);
 }
+.ws-tour-card-head .btn-ghost {
+  border-color: var(--c-accent);
+  color: var(--c-ink);
+}
 .ws-tour-actions {
   flex-wrap: wrap;
 }

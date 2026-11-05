@@ -36,7 +36,13 @@ export default defineConfig({
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
   define: { __APP_VERSION__: JSON.stringify(version) },
-  server: { port: 5974, strictPort: true },
+  server: {
+    port: 5974,
+    strictPort: true,
+    /* 🔴 Tauri's own template ignores src-tauri: cargo watches it, and Vite watching the target
+       folder crashed `tauri dev` with EBUSY on a binary the linker was still writing (2026-11-05). */
+    watch: { ignored: ['**/src-tauri/**'] },
+  },
   preview: { port: 5974, strictPort: true },
   clearScreen: false,
   build: {

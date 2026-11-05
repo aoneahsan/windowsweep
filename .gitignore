@@ -47,3 +47,7 @@ desktop.ini
 # `git add docs/story/drafts` would have swept it into a commit.
 *.tmp
 .payload.tmp
+
+# Python bytecode from the cloned skills under .claude/skills/ (generated, never source).
+__pycache__/
+*.pyc

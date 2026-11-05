@@ -15,7 +15,7 @@
 .ws-walk-figure img{display:block;width:100%;height:auto;border-radius:var(--r-md);background:var(--c-well)}
 .ws-walk-figure figcaption{padding-top:var(--sp-2)}
 .ws-walk-dots{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
-.ws-walk-dot{width:2.5rem;height:2.5rem;background:var(--c-panel);color:var(--c-ink);border:1px solid var(--c-line);border-radius:50%;cursor:pointer}
+.ws-walk-dot{display:inline-grid;place-items:center;padding:0;width:2.5rem;height:2.5rem;background:var(--c-panel);color:var(--c-ink);border:1px solid var(--c-line);border-radius:50%;cursor:pointer}
 .ws-walk-dot[aria-current="step"]{background:var(--c-accent);color:var(--c-on-accent);border-color:var(--c-accent)}
 .ws-tour-hint{position:fixed;z-index:75;top:3.5rem;right:3rem;max-width:min(22rem,calc(100vw - 2rem));display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;padding:var(--sp-3);background:var(--c-panel);color:var(--c-ink);border:1px solid var(--c-line);border-radius:var(--r-md);box-shadow:0 12px 36px rgba(0,0,0,.18)}
 @media(max-width:50rem){.ws-tour-hint{right:.5rem;top:3.25rem}}

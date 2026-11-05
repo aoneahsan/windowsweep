@@ -107,16 +107,16 @@ export function decideRelease({
   const validRecord = recordOrder === null ? null : record;
   const storedOrder = stored ? compareSemver(running, stored.version) : null;
   const storedIsNewer = storedOrder !== null && storedOrder < 0;
-  const usableRecord = validRecord && recordOrder !== null && recordOrder < 0 ? validRecord : null;
-  if (!usableRecord && (!stored || !storedIsNewer)) return { kind: 'none' };
 
+  // 🔴 The newest published row is the truth: a mistake is corrected by publishing a newer row
+  // (update-flow contract), so a stored notice never outranks a record that was read - a row at or
+  // below this build clears it. The stored notice stands in only with no record or a failed read.
+  // Proved on the test channel 2026-11-05: the older rule kept a copy blocked on 1.4.2 after 1.4.1.
   let release: ReleaseRecord;
-  if (
-    usableRecord &&
-    (!storedIsNewer || !stored || (compareSemver(usableRecord.version, stored.version) ?? 0) >= 0)
-  )
-    release = usableRecord;
-  else if (stored) {
+  if (validRecord) {
+    if ((recordOrder ?? 0) >= 0) return { kind: 'none' };
+    release = validRecord;
+  } else if (stored && storedIsNewer) {
     release = {
       version: stored.version,
       severity: 'normal',

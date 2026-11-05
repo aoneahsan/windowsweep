@@ -60,6 +60,18 @@ describe('release gate decisions', () => {
     });
   });
 
+  it('lets the newest row correct a stored notice (a mistake is fixed by a newer row)', () => {
+    /* Proved on the test channel 2026-11-05: 1.4.2 published, then 1.4.1. A row at or below
+       this build clears the stored notice; one still above it is announced as its own release. */
+    const higher: StoredReleaseNotice = { ...stored, version: '1.4.3' };
+    expect(
+      decideRelease({ running: '1.4.1', record: normal, stored: higher, runId: 'new-run' })
+    ).toEqual({ kind: 'none' });
+    expect(
+      decideRelease({ running: '1.4.0', record: normal, stored: higher, runId: 'new-run' })
+    ).toMatchObject({ kind: 'notice', release: normal });
+  });
+
   it('announces a normal release during the same run and can dismiss its notice', () => {
     expect(
       decideRelease({ running: '1.4.0', record: normal, stored: null, runId: 'run' })
@@ -89,17 +101,6 @@ describe('release gate decisions', () => {
     expect(
       decideRelease({ running: '1.3.2', record: newer, stored: olderStored, runId: 'new-run' })
     ).toMatchObject({ kind: 'notice', release: newer, dismissed: false });
-  });
-
-  it('keeps a newer saved notice when the server returns an older row', () => {
-    const newerStored = { ...stored, version: '1.4.3', reason: 'Update to 1.4.3.' };
-    const older = { ...normal, version: '1.4.2' };
-    expect(
-      decideRelease({ running: '1.4.1', record: older, stored: newerStored, runId: 'new-run' })
-    ).toMatchObject({ kind: 'block', release: { version: '1.4.3' } });
-    expect(
-      decideRelease({ running: '1.4.1', record: normal, stored: newerStored, runId: 'new-run' })
-    ).toMatchObject({ kind: 'block', release: { version: '1.4.3' } });
   });
 
   it('blocks an urgent release immediately and names its reason', () => {

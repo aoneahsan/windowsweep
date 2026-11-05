@@ -92,25 +92,68 @@ async function withDeadline<T>(work: Promise<T>, ms: number): Promise<T | typeof
   }
 }
 
+/**
+ * One download per found update, shared by the background stage and a press.
+ *
+ * The splash's sentence promises "carry on and install it later", so layer 1 must
+ * not wait for a press: the moment a check finds a build, it is downloaded in the
+ * background (`stageForClose`), and "Install and restart" reuses that download
+ * rather than starting a second one against the same updater resource.
+ */
+function downloaderFor(update: Update) {
+  let downloading: Promise<void> | null = null;
+  let report: ((percent: number | null) => void) | null = null;
+  let contentLength = 0;
+  let received = 0;
+  return {
+    /** Point progress at the screen that is now showing it. */
+    reportTo(onProgress: (percent: number | null) => void): void {
+      report = onProgress;
+      if (downloading && contentLength > 0) {
+        onProgress(Math.min(99, (received / contentLength) * 100));
+      }
+    },
+    download(): Promise<void> {
+      if (downloading) return downloading;
+      const work = update.download((event) => {
+        if (event.event === 'Started') {
+          contentLength = event.data.contentLength ?? 0;
+          report?.(contentLength > 0 ? 0 : null);
+          return;
+        }
+        if (event.event === 'Progress') {
+          received += event.data.chunkLength;
+          report?.(contentLength > 0 ? Math.min(99, (received / contentLength) * 100) : null);
+        }
+      });
+      downloading = work;
+      // A failed download is retried by the next press or check, never by a timer.
+      work.catch(() => {
+        if (downloading === work) downloading = null;
+      });
+      return work;
+    },
+  };
+}
+
+const downloaders = new WeakMap<Update, ReturnType<typeof downloaderFor>>();
+function downloaderOf(update: Update): ReturnType<typeof downloaderFor> {
+  let found = downloaders.get(update);
+  if (!found) {
+    found = downloaderFor(update);
+    downloaders.set(update, found);
+  }
+  return found;
+}
+
 function handleFor(update: Update): UpdateHandle {
   return {
     version: update.version,
     downloadAndInstall: async (onProgress) => {
-      let contentLength = 0;
-      let received = 0;
+      const downloader = downloaderOf(update);
       try {
-        await update.download((event) => {
-          if (event.event === 'Started') {
-            contentLength = event.data.contentLength ?? 0;
-            onProgress(contentLength > 0 ? 0 : null);
-            return;
-          }
-          if (event.event === 'Progress') {
-            received += event.data.chunkLength;
-            onProgress(contentLength > 0 ? Math.min(99, (received / contentLength) * 100) : null);
-            return;
-          }
-        });
+        downloader.reportTo(onProgress);
+        await downloader.download();
         // Downloading is harmless during a cleanup. Installing is not: on
         // Windows the installer exits the app, so wait until the run settles.
         await waitForQuietMoment();
@@ -126,6 +169,57 @@ function handleFor(update: Update): UpdateHandle {
       }
     },
   };
+}
+
+/** The version already downloaded and waiting for the window to close. */
+let stagedVersion: string | null = null;
+let closeHookFor: Update | null = null;
+
+/**
+ * Layer 1 without a click: download now, install when the window closes.
+ *
+ * Closing is the quiet moment the splash names ("install it later"): the installer
+ * runs with no restart, so the next start is the new build and nothing interrupts
+ * a person mid-task. A run in progress is never cut short - its close goes ahead
+ * on the old build, and the download waits for the next close or the next start.
+ */
+async function stageForClose(update: Update): Promise<void> {
+  if (stagedVersion === update.version) return;
+  stagedVersion = update.version;
+  try {
+    await downloaderOf(update).download();
+    closeHookFor = update;
+    await armCloseInstall();
+    track('update.staged', { version: update.version });
+  } catch (error) {
+    stagedVersion = null;
+    track('update.stage.failed', {
+      reason: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+let closeHookArmed = false;
+async function armCloseInstall(): Promise<void> {
+  if (closeHookArmed) return;
+  closeHookArmed = true;
+  const { getCurrentWindow } = await import('@tauri-apps/api/window');
+  const win = getCurrentWindow();
+  await win.onCloseRequested(async (event) => {
+    const update = closeHookFor;
+    if (!update || useStore.getState().phase === 'running') return;
+    event.preventDefault();
+    try {
+      // On Windows the installer takes this process with it; no relaunch is asked for.
+      await update.install({ restartAfterInstall: false });
+    } catch (error) {
+      track('update.install.failed', {
+        reason: error instanceof Error ? error.message : String(error),
+      });
+    }
+    // Reached only when the installer did not end the process: close as asked.
+    await win.destroy();
+  });
 }
 
 function waitForQuietMoment(): Promise<void> {
@@ -169,6 +263,7 @@ async function performUpdateCheck(
     }
     if (!result) return { kind: 'none' };
     track('update.check.available', { version: result.version });
+    void stageForClose(result);
     return { kind: 'available', handle: handleFor(result) };
   } catch (error) {
     // 🔴 Reported through the one consent-gated reporting surface, which scrubs

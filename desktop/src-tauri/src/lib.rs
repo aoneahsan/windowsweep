@@ -12,6 +12,7 @@ mod export;
 mod oauth;
 mod rundir;
 mod runs;
+mod runwatch;
 mod schedule;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -26,6 +27,8 @@ pub fn run() {
         // The live-run map. `run_clean` puts a run in it and takes it out again;
         // `cancel_run` is the only other thing that touches it.
         .manage(cancel::RunRegistry::default())
+        // The run-folder watches that push the elevated tail (`runwatch.rs`).
+        .manage(runwatch::RunWatches::default())
         // The empty run folders earlier versions left, one or two a launch
         // (TASK-022), swept off the startup path: empty and a day old only.
         .setup(|app| {
@@ -48,6 +51,8 @@ pub fn run() {
             drives::list_drives,
             runs::write_select_file,
             runs::list_run_files,
+            runwatch::watch_run_files,
+            runwatch::unwatch_run_files,
             schedule::schedule_status,
             oauth::oauth_listen_start,
             oauth::oauth_listen_await,

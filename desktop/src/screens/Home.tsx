@@ -198,6 +198,7 @@ export function Home() {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     if (scannedAt === null) return;
+    // eslint-disable-next-line no-restricted-syntax -- polling-exception: local-timer — ages the scan's minutes-ago line; asks for no data
     const tick = window.setInterval(() => {
       setNow(Date.now());
     }, 30_000);

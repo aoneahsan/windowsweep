@@ -249,6 +249,27 @@ export async function listRunFiles(runId: string): Promise<string[]> {
 }
 
 /**
+ * Watch a run's folder: `src-tauri/src/runwatch.rs` emits `run:files-changed` with
+ * the run id for every file created or written there. The signal means "re-read",
+ * never "here is the data" - the reader asks `listRunFiles` and `readReport` again.
+ */
+export async function watchRunFiles(runId: string): Promise<void> {
+  await invoke('watch_run_files', { runId });
+}
+
+/** Stop the watch `watchRunFiles` started. Safe to call for a run never watched. */
+export async function unwatchRunFiles(runId: string): Promise<void> {
+  await invoke('unwatch_run_files', { runId });
+}
+
+/** Call `onChange` each time this run's folder changes. Resolves to the unsubscribe. */
+export function onRunFilesChanged(runId: string, onChange: () => void): Promise<UnlistenFn> {
+  return listen<string>('run:files-changed', (event) => {
+    if (event.payload === runId) onChange();
+  });
+}
+
+/**
  * Export this run's report to Markdown and HTML, and reveal them.
  *
  * 🔴 NOT `run` WITH AN `--export` FLAG. The engine's own `--export` is what converts

@@ -80,7 +80,9 @@ it('downloads during a run but waits until the cleanup finishes before installin
   state.setPhase('idle');
   await installing;
   expect(install).toHaveBeenCalledWith({ restartAfterInstall: true });
-  expect(progress).toEqual([0, 99, 100]);
+  /* The check already started the download in the background (install on close, 1.4.2),
+     so the press reuses it - `download` ran once - and the bar starts at its real fraction. */
+  expect(progress).toEqual([99, 100]);
 });
 
 it('defers a restart until the current run settles', async () => {

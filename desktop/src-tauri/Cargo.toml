@@ -34,6 +34,10 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tiny_http = "0.12"
 url = "2"
+# The elevated tail is pushed, never polled (no-polling law, 2026-11-03): a watch
+# on the run folder emits one signal per change (`runwatch.rs`). Default features
+# off - the Windows backend (ReadDirectoryChangesW) needs none of them.
+notify = { version = "8", default-features = false }
 
 # Drive enumeration for the disk picker. Scoped to the one target it means
 # anything on: this app spawns `powershell.exe` and links WebView2, so it is

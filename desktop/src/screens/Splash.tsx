@@ -277,10 +277,10 @@ export function Splash() {
                     <h2 className="t-md wide" id={UPDATE_HEADING_ID}>
                       {t('splash.update.ready', { version: bandVersion })}
                     </h2>
-                    {/* 🔴 The dummy's approved sentence, verbatim. Its first half
-                          describes install-on-close, which this build does not do -
-                          reported for the dummy's owner to settle, never silently
-                          reworded here. */}
+                    {/* 🔴 The dummy's approved sentence, verbatim. "Install it
+                          later" is install-on-close: since 1.4.2 a found build is
+                          downloaded at once and installed when the window closes
+                          (`updater.ts` → `stageForClose`), so the words are true. */}
                     <p className="t-sm ink-3">{t('splash.update.body')}</p>
                     {/* Determinate only when the server said how big it is. A bar
                           drawn from a guess is worse than the pending spinner on the

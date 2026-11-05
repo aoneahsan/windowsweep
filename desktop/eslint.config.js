@@ -39,6 +39,23 @@ const houseRules = {
   ],
 };
 
+/* 🔴 NO POLLING (fleet law 2026-11-03, `aoneahsan-cccs-realtime-not-polling`). Live data is
+   pushed; a timer asks for nothing. A true exception carries its kind and reason on the line:
+   `// eslint-disable-next-line no-restricted-syntax -- polling-exception: <kind> — <reason>`.
+   🔴 These selectors are also spread into the `.tsx` i18n block below: a later config object
+   replaces `no-restricted-syntax` outright, so a second array would silently drop the first. */
+const noPollingMessage =
+  'No polling: push the change and re-read on the signal. A true exception: ' +
+  '// eslint-disable-next-line no-restricted-syntax -- polling-exception: <kind> — <reason>';
+const noPolling = [
+  {
+    selector: 'Property[key.name=/^(refetchInterval|refreshInterval|pollInterval)$/]',
+    message: noPollingMessage,
+  },
+  { selector: "CallExpression[callee.name='setInterval']", message: noPollingMessage },
+  { selector: "CallExpression[callee.property.name='setInterval']", message: noPollingMessage },
+];
+
 export default defineConfig(
   { ignores: ['dist', 'src-tauri/target', 'design/**', 'public/prepaint.js'] },
   {
@@ -75,6 +92,7 @@ export default defineConfig(
         ),
         { object: 'document', property: 'cookie', message: 'Use src/lib/storage.ts for cookies.' },
       ],
+      'no-restricted-syntax': ['error', ...noPolling],
     },
   },
   {
@@ -121,6 +139,7 @@ export default defineConfig(
     rules: {
       'no-restricted-syntax': [
         'error',
+        ...noPolling,
         {
           // Literal text between JSX tags. Punctuation and single symbols are fine.
           selector: 'JSXText[value=/[A-Za-z]{2,}/]',

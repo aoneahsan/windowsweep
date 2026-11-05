@@ -34,6 +34,9 @@ export const EVENTS = {
   'update.check.available': { version: 'string' },
   'update.check.skipped': { reason: 'string' },
   'update.install.failed': { reason: 'string' },
+  /** The found build is downloaded and will install when the window closes. */
+  'update.staged': { version: 'string' },
+  'update.stage.failed': { reason: 'string' },
   tour_hint_shown: { route: 'string' },
   tour_started: { route: 'string' },
   tour_step_viewed: { route: 'string', step: 'number' },

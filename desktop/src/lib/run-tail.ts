@@ -16,8 +16,15 @@
  * 🔴 HOW THE CHILD'S OUTPUT GETS HERE AT ALL. `Invoke-Elevated` passes the parent's
  * whole argument vector to the child, minus `--elevate`, so the child inherits the
  * `--reports-dir` and `--logs-dir` the Rust side pointed at THIS run's folder. Both
- * processes therefore write into one folder, which is what makes a poll possible
+ * processes therefore write into one folder, which is what makes a tail possible
  * and is also the trap this module's one rule exists for.
+ *
+ * 🔴 PUSHED, NEVER POLLED (no-polling law, 2026-11-03). This module used to re-read
+ * the folder every 700 ms. Now `src-tauri/src/runwatch.rs` watches the folder and
+ * sends a signal per file written; a signal starts a sweep, and a signal arriving
+ * mid-sweep runs exactly one more. Nothing here runs on a timer. The sweep right
+ * after the watch starts reads whatever was written before it, and `finish()`
+ * sweeps once more, so a missed signal costs a moment of latency, never a line.
  *
  * 🔴 THE RULE: THE FIRST LOG FILE OBSERVED IS THE PARENT'S, AND IT IS NEVER TAILED.
  * The parent's stdout is already in the pane, line for line, so tailing its log
@@ -30,10 +37,14 @@
  * is duplicated.
  */
 
-import { listRunFiles, readReport } from './engine';
-
-/** Slow enough to cost nothing, fast enough that the pane reads as live. */
-const POLL_MS = 700;
+import {
+  listRunFiles,
+  onRunFilesChanged,
+  readReport,
+  unwatchRunFiles,
+  watchRunFiles,
+} from './engine';
+import { errorText, logger } from './logger';
 
 /** `lib/log.ps1:24` writes this header line into every log it opens. */
 const ELEVATED_HEADER = '# Elevated: yes';
@@ -213,15 +224,48 @@ export function tailElevatedRun(
 ): RunTail {
   const state: TailState = { emitted: new Map(), parentLog: null, running: true };
 
-  const timer = window.setInterval(() => {
+  /* One sweep at a time. A signal during a sweep asks for exactly one more, because
+     the lines it announces may have landed after that sweep read the file. */
+  let sweeping: Promise<void> | null = null;
+  let again = false;
+  const signal = (): void => {
     if (!state.running) return;
-    void sweep(runId, state, onLine);
-  }, POLL_MS);
+    if (sweeping) {
+      again = true;
+      return;
+    }
+    sweeping = sweep(runId, state, onLine).finally(() => {
+      sweeping = null;
+      if (again && state.running) {
+        again = false;
+        signal();
+      }
+    });
+  };
+
+  /* Listen first, then watch, then read once: a line written between the watch
+     starting and the first signal is still picked up by that first read. */
+  const unlisten = onRunFilesChanged(runId, signal).catch((error: unknown) => {
+    logger.warn('run tail could not listen for folder changes', { error: errorText(error) });
+    return null;
+  });
+  const watching = unlisten
+    .then(() => watchRunFiles(runId))
+    .then(signal, (error: unknown) => {
+      /* No timer stands in for a failed watch: `finish()` still sweeps, so the
+         lines arrive at the end instead of as they are written. */
+      logger.warn('run tail could not watch the run folder', { error: errorText(error) });
+    });
 
   return {
     finish: async () => {
       state.running = false;
-      window.clearInterval(timer);
+      await watching;
+      (await unlisten)?.();
+      await unwatchRunFiles(runId).catch((error: unknown) => {
+        logger.warn('run tail could not stop its folder watch', { error: errorText(error) });
+      });
+      await sweeping;
       await sweep(runId, state, onLine);
       return quoteReport(runId, state, onLine, reportLine);
     },

@@ -105,6 +105,7 @@ export function SyncBand({ user }: { user: AuthUser | null }) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     if (!live) return;
+    // eslint-disable-next-line no-restricted-syntax -- polling-exception: local-timer — ages the "synced N minutes ago" line; asks for no data
     const tick = window.setInterval(() => {
       setNow(Date.now());
     }, TICK_MS);

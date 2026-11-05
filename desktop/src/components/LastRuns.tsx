@@ -117,6 +117,7 @@ export function LastRuns({ history }: { history: HistoryEntry[] }) {
   const lastAt = last?.startedAt ?? null;
   useEffect(() => {
     if (lastAt === null) return;
+    // eslint-disable-next-line no-restricted-syntax -- polling-exception: local-timer — ages the last run's relative time; asks for no data
     const tick = window.setInterval(() => {
       setNow(Date.now());
     }, 30_000);

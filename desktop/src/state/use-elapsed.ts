@@ -22,6 +22,7 @@ export function useElapsedMs(log: RunLogLine[], phase: RunPhase): number | null 
   const [clock, setClock] = useState(() => Date.now());
   useEffect(() => {
     if (phase !== 'running') return;
+    // eslint-disable-next-line no-restricted-syntax -- polling-exception: local-timer — the running clock beside a run; asks for no data
     const tick = window.setInterval(() => {
       setClock(Date.now());
     }, 1000);

@@ -36,14 +36,14 @@ It is the Windows member of a family with [linux-cleanup](https://github.com/aon
 
 | | |
 |---|---|
-| **Version** | `1.4.1` |
+| **Version** | `1.4.2` |
 | **License** | MIT |
 | **Node** | `>=14` (launcher only) |
 | **Runtime** | Windows PowerShell 5.1 (built in) or PowerShell 7 |
 | **Platforms** | Windows 10 (1809+) and Windows 11 |
 | **Install size** | ~167 kB packed · ~560 kB unpacked · 53 files · no dependencies |
 | **Undo** | Recycle Bin for personal files; none for caches (they regenerate) |
-| **Status** | Stable · 1.4.1, released 2026-11-03 |
+| **Status** | Stable · 1.4.2, released 2026-11-05 |
 
 <a id="table-of-contents"></a>
 ## 🧭 Table of Contents&nbsp;[#](#table-of-contents)
@@ -202,7 +202,7 @@ section with `a` run / `s` skip / `q` quit and a running total.
 
 ### The sections
 
-This table describes version 1.4.1.
+This table describes version 1.4.2.
 
 **Tier** says what happens to the data: *report* deletes nothing, *rebuilds* comes back on its own, *slow*
 comes back but costs minutes, *Recycle Bin* is recoverable until you empty it (`--list` shows this tier as
@@ -459,9 +459,10 @@ More: [FAQ](https://windowsweep-docs.aoneahsan.com/faq).
 <a id="changelog"></a>
 ## 🔄 Changelog&nbsp;[#](#changelog)
 
-Latest release: **`1.4.1`** - the 1.4 scanner searches Downloads and folders you add for large or old files;
+Latest release: **`1.4.2`** - the desktop app adds page tours and a seven-step walkthrough, and installs a
+found update when you close it. The 1.4 scanner searches Downloads and folders you add for large or old files;
 you choose individual files for the Recycle Bin. The uninstall and leftover-folder sections require explicit
-selection. This patch corrects release documentation and adds the desktop release notice and update gate.
+selection.
 Full history: [CHANGELOG.md](https://github.com/aoneahsan/windowsweep/blob/main/CHANGELOG.md).
 
 <a id="contributing"></a>

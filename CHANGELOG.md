@@ -9,6 +9,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.4.2] - 2026-11-05
+
+### Added
+
+- **Desktop tours.** Each main screen has **Tour this page** in the header. Its steps name the controls on that
+  screen, skip any that are hidden in your current state, and close before a run starts. **Walk through
+  windowsweep** shows the path from scan to report in seven screens captured from 1.4.1. Neither starts a
+  cleanup or spends a real-run claim.
+
+### Changed
+
+- **The desktop app installs its updates.** When the update check finds a newer build, the app downloads it in the
+  background and installs it when you close the window, so the next start is the new version. **Install and
+  restart** still installs at once. A run in progress is never interrupted for an update.
+- **An elevated run's log reaches the window as it is written.** The app watches the run folder instead of
+  re-reading it every 0.7 seconds.
+
+### Fixed
+
+- **Release notices follow the newest record.** A notice the app stored no longer outranks a newer, lower release
+  record, so a corrected release takes effect on the next check, and a record at or below the running version
+  clears the notice.
+- The command-line tool is unchanged in this release. It moves to 1.4.2 so the CLI and the desktop app stay on one
+  version.
+
 ## [1.4.1] - 2026-11-03
 
 ### Fixed

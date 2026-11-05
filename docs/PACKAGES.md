@@ -77,7 +77,7 @@ logs, reports, bundles.
 ```powershell
 npm pack --dry-run                                   # the allowlist only
 npm run version:check                                # package.json == VERSION == lib/constants.ps1
-node bin/windowsweep.js --self-test --no-color       # 160 checks
+node bin/windowsweep.js --self-test --no-color       # 223 checks in 1.4.2
 ```
 
 

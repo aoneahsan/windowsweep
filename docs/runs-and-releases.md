@@ -109,6 +109,17 @@ relaunched 1.3.2 added none. The same session's proofs before the tag - the sign
 the CSP on a production-protocol build and the 1.3.1 baseline where every crash report was refused - are in
 `../gate4-evidence/signin-1.3.2/` and `../gate4-evidence/task020/` (DONE-020, DONE-021).
 
+### 2026-11-05 - the in-app updater proved 1.4.1 -> 1.4.2 on this machine, and the installed tours
+
+Evidence in `../site-evidence/updater-1.4.2/` (isolated `WEBVIEW2_USER_DATA_FOLDER`, DevTools port 9795, no dev build
+running). The installed per-user 1.4.1 drew *"Version 1.4.2 is ready"* with *Later* and *Install and restart*; one press at
+18:47:44Z, the download ran 10 → 84 %, the installer replaced the app and relaunched it at 18:47:50Z. Afterwards the HKCU
+`DisplayVersion`, the exe `FileVersion` and `plugin:app|version` all read **1.4.2**. In the installed 1.4.2 the page tour
+(hint once, *Step 1 of 3*, arrow keys, Escape returns focus to *Tour this page*) and the seven-screen walkthrough (real
+captures, `?step=N`, *Open Home*) pass at 1440 and 760 with no horizontal scroll. Its step numerals sat 14 px left of
+centre; fixed in `0b03d92` for 1.4.3. 🔴 Install-on-close (1.4.2 source) is proved only by the next release: an installed
+1.4.2 must stage 1.4.3 in the background and install it when the window closes.
+
 ### 2026-09-28 - the owner's own Google sign-in and one dry-run, on the installed 1.3.2 (row 31)
 
 The first real desktop sign-in to complete. The owner did it in his own browser, on the install the proof above put
@@ -285,4 +296,13 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
   render-checked, deployed, 76 of 76 served files equal to the build) and the docs (`4aafc01`, Pages run
   36421121161, the live site equal to its artifact, 209 of 209 files) followed with no other site deploy between (O3').
 
-Last Updated: 2026-09-28 (the owner's own sign-in and dry-run on the installed 1.3.2, read back from the server - row 31. Earlier the same day: CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)
+- 2026-11-05: **1.4.2** (1.4.0 and 1.4.1 are recorded in `../machine-evidence/p52-2026-11-02/REPORT.md`), built and signed on this machine from `1bb895c` (tags `desktop-v1.4.2` Latest and `v1.4.2`
+  `--latest=false`). NSIS `windowsweep_1.4.2_x64-setup.exe` 3,889,480 B sha256 `1148c02a…1c8b` (also as
+  `windowsweep-setup.exe`), MSI 4,648,960 B `46d78658…2b4a`; both `.sig` files verify against the shipped public key
+  (file and trusted comment; a one-byte tamper fails). `windowsweep@1.4.2` on npm, its tarball byte-identical to the
+  candidate (sha256 `fad7ff2d…5eb5`). 🔴 The locally written `latest.json` of 1.4.1 and 1.4.2 listed only
+  `windows-x86_64-nsis`, so an MSI install found no update (the plugin tries `windows-x86_64-msi`, then
+  `windows-x86_64`). The 1.4.2 `latest.json` and `SHA256SUMS` were replaced the same day with all three keys, the
+  1.2.0 layout (generic and `-msi` → the MSI). Every later `latest.json` carries all three.
+
+Last Updated: 2026-11-06 (1.4.2: the installed updater proof and the release record, including the restored MSI entry of `latest.json`). Earlier 2026-09-28 (the owner's own sign-in and dry-run on the installed 1.3.2, read back from the server - row 31. Earlier the same day: CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)

@@ -311,9 +311,10 @@
       'everyone, and there is no switch for it.'));
     g.appendChild(note);
 
+    /* N-016 (D64): no session replay in the desktop window, so its row is gone;
+       the other three and "Never sent" stay. */
     [['Product analytics', 'Which screens and which buttons.'],
      ['Behaviour analytics', 'The same events, in a second analytics tool.'],
-     ['Session replay', 'This window, with all text masked.'],
      ['Crash reports', 'Stack traces with paths stripped.']].forEach(function (p) {
       g.appendChild(row(p[0], p[1], el('span', 'badge badge-outline', 'on'), ''));
     });
@@ -323,8 +324,8 @@
       'contents of anything.', el('span', 'badge badge-ok', 'refused'), ''));
 
     /* A BUILD fact, not a setting (GATE 4 round 17): a build with NO destination configured says so under the
-       rows. Every release carries all four keys and never shows it; `?nokeys=1` draws that build. A build with
-       one key set still sends to that one, so no sentence is drawn for it. */
+       rows. Every release carries all three keys (four until D64 took Clarity out) and never shows it;
+       `?nokeys=1` draws that build. A build with one key set still sends to that one, so no sentence is drawn. */
     if (new URLSearchParams(location.search).get('nokeys') === '1') {
       var noKeys = el('p', 't-sm ink-3',
         'No destination is configured in this build, so nothing is actually sent from it.');

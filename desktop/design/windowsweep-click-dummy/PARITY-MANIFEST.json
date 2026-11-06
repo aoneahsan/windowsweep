@@ -50,13 +50,36 @@
     { "dummy": "walkthrough.html?step=4", "state": "protected-path walkthrough step" }
   ],
   "sharedSurfaces": [
-    { "source": "app.js:609", "name": "legal bar", "preview": "plans.html?legal=1", "status": "in review" },
+    { "source": "app.js buildNotices (the decision) + legal-bar.js (the bar, loaded on demand)", "name": "legal bar", "preview": "index.html?legal=1", "strings": "notices-1.4.0 N-001", "firstRun": "the first non-task page after Splash; the Consent screen is retired (N-016)", "seenKeys": ["strata:wsdummy:legalSeen:device", "strata:wsdummy:legalSeen:account:<email>"], "behaviour": "role=status, aria-live=polite; seen when drawn; either key teaches the other; 10 s, hover/focus hold, leaving restarts; Okay and Escape close; never on run, picker, elevation, splash or consent; a release surface takes priority", "status": "in review (AMENDMENTS-3.md, 2026-11-06)" },
+    { "source": "wire.js renderConsent + page-settings.js privacy()", "name": "destinations without Clarity", "preview": "settings.html (Privacy tab)", "strings": "notices-1.4.0 N-016: GA4, Amplitude and Sentry rows and Never sent", "status": "in review (AMENDMENTS-3.md, 2026-11-06)" },
     { "source": "app.js:609", "name": "normal update notice", "preview": "plans.html?release=notice", "status": "in review" },
     { "source": "app.js:609", "name": "urgent update block", "preview": "plans.html?release=urgent", "status": "in review" },
     { "source": "app.js:609", "name": "next-start update block", "preview": "plans.html?release=next", "status": "in review" },
     { "source": "tours.js", "name": "page tours", "preview": "index.html?tour=1", "status": "approved 2026-11-03" },
     { "source": "walkthrough.js", "name": "seven-step walkthrough", "preview": "walkthrough.html?step=4", "status": "approved 2026-11-03" }
   ],
+  "emails": {
+    "dummy": "emails.html",
+    "script": "page-emails.js",
+    "strings": "docs/story/drafts/emails-1.4.0.md",
+    "layoutStyleBlock": "style#wsm-layout-style",
+    "logo": "https://windowsweep.aoneahsan.com/email/windowsweep-logo@2x.png",
+    "widths": [600, 390],
+    "modes": ["light", "dark"],
+    "textPart": "generated from the data-part markers in reading order",
+    "templates": [
+      { "specimen": "email-welcome", "fileshub": "windowsweep-welcome" },
+      { "specimen": "email-plan-confirmed", "fileshub": "windowsweep-plan-confirmed" },
+      { "specimen": "email-referral-confirmed", "fileshub": "windowsweep-referral-confirmed" },
+      { "specimen": "email-payment-returned", "fileshub": "windowsweep-payment-returned" },
+      { "specimen": "email-plan-granted", "fileshub": "windowsweep-plan-granted" },
+      { "specimen": "email-plan-request-open", "fileshub": "windowsweep-plan-request-open" },
+      { "specimen": "email-team-invite", "fileshub": "windowsweep-team-invite" },
+      { "specimen": "email-release-140", "fileshub": "FilesHub Letterhead (marketing), release newsletter email 1" }
+    ],
+    "notDrawn": ["newsletter confirmation email: no approved words"],
+    "status": "in review (AMENDMENTS-3.md, 2026-11-06)"
+  },
   "storage": {
     "source": "app.js:21",
     "package": "strata-storage@3.1.3",

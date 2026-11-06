@@ -107,3 +107,55 @@ The owner reviewed the 1440 and 760 px page-tour and seven-step walkthrough capt
 **“Approve desktop tours and walkthrough.”** The shared titlebar Tour button, step controls and
 walkthrough composition are approved for production implementation. The seven dummy fixture
 images must be replaced with fresh 1.4.1 app captures before the live walkthrough is verified.
+
+## Amendment - 2026-11-06: the legal bar is the first-run surface (N-001, N-016)
+
+The Consent screen is retired (N-016) and nothing routes to it; `consent.html` stays as the 1.3.2 reference the
+contents page already marks retired. The first-run surface is now the legal bar, on the first non-task page after
+Splash (Home, on a first launch), in N-001's words: the fixed sentence with both policy links, which open the website
+in the browser; the one analytics line; and Okay. It is `role="status"`, takes no focus, and the window stays usable
+under it. Four changes to the 2026-10-31 bar, each to meet `legal-notice.md`:
+
+1. **Seen on this PC and on the account.** The two keys teach each other, so a second machine or a later sign-in never
+   brings it back; until now it kept one key or the other, and a sign-in showed it again.
+2. **Escape closes it**, as Okay does, and a keyboard user is handed back to the rail's current item, or to Menu when
+   the rail is folded away.
+3. **Hover and focus hold the 10 seconds and leaving restarts them**; a one-second poll only paused them.
+4. **The law's size, about 36rem, in the bottom-right corner** the release notice uses. The two never show together
+   (the release surface takes priority), and the corner clears the rail and the middle of the work; it was a 66rem
+   strip across the window, over the rail's foot at 1440.
+
+The decision stays in `app.js`; the bar itself moved to `legal-bar.js`, loaded on demand as `tours.js` is, and it marks
+itself seen only once it is drawn (`app.js` is three lines shorter than before). N-016: Clarity leaves the window, so
+Home's destinations ledger and Settings, Privacy list Google Analytics 4, Amplitude and Sentry with their approved
+lines, and *Never sent* stays in both. Checked at 1440 and at the 760 px native minimum: above the status bar, no
+sideways scroll, nothing on Run, Picker, Elevation or Splash, and no key written on those pages.
+
+Rejected: a first-run screen in front of Home (it gates the app on a notice the law says must never block) and a
+bottom-centre strip (at 1440 it lands on the rail). The owner still needs to review this in writing; app parity is a
+separate Gate 4.
+
+## Amendment - 2026-11-06: the emails, drawn once (`emails.html`)
+
+`emails.html` is rewritten as the one review page for every message windowsweep sends: the seven FilesHub templates
+(`windowsweep-welcome`, `-plan-confirmed`, `-referral-confirmed`, `-payment-returned`, `-plan-granted`,
+`-plan-request-open`, `-team-invite`) and release newsletter email 1, each at 600 and 390 px with its plain-text part.
+Words come only from `emails-1.4.0.md`; facts and formats from the senders and CONTRACTS.md §14 (en-GB long dates,
+`$4.00`, plan display names, never keys).
+
+1. **The layout is drawn once**, at the top of the page: the shell (hidden preheader, logo tile, eyebrow, heading,
+   intro, facts, one bulletproof button with its raw link under it, footer), the brand hex in light and dark taken
+   from the lime tokens (button text 5.35:1 light, 11.17:1 dark), and the style block every message ships. That block
+   sits inert on the page (`media="not all"`) and `page-emails.js` replays it as container queries on each canvas, so
+   the gallery's own width and theme never restyle a specimen.
+2. **The plain-text part is generated from the same markup**, in reading order, so the two cannot drift; a link whose
+   text is its own address prints the address once.
+3. **The logo is the live site's absolute https PNG** with explicit width and height. Over `file://` the preview shows
+   the repository's mark instead; the specimen markup keeps the real URL.
+4. **The release email uses FilesHub's Letterhead**: ten blocks, the button straight after the lede and again at the
+   end, image slots drawn as images-off frames carrying their approved alt text until fresh app captures exist, and the
+   signed unsubscribe link. No postal address is printed in this public repository.
+
+Not drawn: the newsletter confirmation email has no approved words. Rejected: eight separate files (the layout would
+be retyped eight times) and live media queries on the page (the reviewer's window would restyle the mail). The owner
+still needs to review this in writing.

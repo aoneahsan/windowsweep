@@ -491,7 +491,8 @@
         privacy notice may only say what can be checked, so it now says the
         thing that can: the same events go to a second tool. */
      ['Behaviour analytics', 'Amplitude', 'The same events, in a second analytics tool.'],
-     ['Session replay', 'Microsoft Clarity', 'A recording of this window with every piece of text masked.'],
+     /* N-016 (D64): Clarity leaves the desktop window, and its session-replay row
+        leaves with it. Three destinations, each with its approved line. */
      ['Crash reports', 'Sentry', 'A stack trace when something breaks, with file paths stripped out.']]
       .forEach(function (p) {
         var row = el('div');

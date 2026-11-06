@@ -618,33 +618,30 @@
     var here = currentPage();
     var release = q.get('release');
     if (release === 'clear') { store.set('releaseNoticeDismissed:1.4.0', false); return; }
+    /* THE LEGAL BAR (N-001) is the first-run surface: the Consent screen is retired
+       (N-016) and nothing routes to it. Seen THE MOMENT IT SHOWS on this PC
+       (`legalSeen:device`) and on the signed-in account (`legalSeen:account:<email>`,
+       the stand-in for mark_legal_notice_seen()); either side teaches the other, so a
+       second machine or a later sign-in never shows it again. Never on a task page,
+       and such a page marks nothing. `?legal=1` previews it and marks nothing. */
     var legalPreview = q.get('legal') === '1';
     var taskPage = ['run.html', 'picker.html', 'elevation.html', 'splash.html', 'consent.html'].indexOf(here) !== -1;
     var account = window.wsdb && window.wsdb.facts.signedIn && window.wsdb.facts.email;
-    var legalKey = account ? 'legalSeen:account:' + String(account).toLowerCase() : 'legalSeen:browser';
-    if (!release && !taskPage && (legalPreview || !store.get(legalKey, false))) {
-      if (!document.querySelector('[data-ws-legal]')) {
-        var bar = el('aside', 'ws-legal'); bar.setAttribute('data-ws-legal', ''); bar.setAttribute('role', 'status');
-        var copy = el('div', 'ws-legal-copy');
-        var first = el('p', null, 'By using windowsweep, you agree to our ');
-        var privacy = el('a', 'lnk', 'Privacy Policy'); privacy.href = 'https://windowsweep.aoneahsan.com/privacy'; privacy.target = '_blank'; privacy.rel = 'noopener';
-        privacy.appendChild(el('span', 'visually-hidden', ' (opens in a new tab)'));
-        var terms = el('a', 'lnk', 'Terms of Service'); terms.href = 'https://windowsweep.aoneahsan.com/terms'; terms.target = '_blank'; terms.rel = 'noopener';
-        terms.appendChild(el('span', 'visually-hidden', ' (opens in a new tab)'));
-        first.appendChild(privacy); first.appendChild(document.createTextNode(' and ')); first.appendChild(terms); first.appendChild(document.createTextNode('.'));
-        copy.appendChild(first);
-        copy.appendChild(el('p', 't-sm ink-3', 'windowsweep collects usage data to improve the product for everyone. Never a file path, never the contents of anything.'));
-        var okay = el('button', 'btn btn-sm', 'Okay'); okay.type = 'button'; okay.addEventListener('click', function () { bar.remove(); });
-        bar.appendChild(copy); bar.appendChild(okay); document.body.appendChild(bar);
-        if (!legalPreview) store.set(legalKey, true);
-        var elapsed = 0;
-        var timer = setInterval(function () {
-          if (!bar.isConnected) { clearInterval(timer); return; }
-          if (bar.matches(':hover') || bar.contains(document.activeElement)) return;
-          elapsed += 1000;
-          if (elapsed >= 10000) { bar.remove(); clearInterval(timer); }
-        }, 1000);
-      }
+    var accountKey = account ? 'legalSeen:account:' + String(account).toLowerCase() : null;
+    var seenDevice = store.get('legalSeen:device', null), seenAccount = accountKey ? store.get(accountKey, null) : null;
+    if (accountKey && seenDevice && !seenAccount) store.set(accountKey, seenDevice);
+    if (seenAccount && !seenDevice) store.set('legalSeen:device', seenAccount);
+    if (!release && !taskPage && (legalPreview || !(seenDevice || seenAccount)) && !document.querySelector('[data-ws-legal]')) {
+      /* drawn by legal-bar.js, loaded only now (as tours.js is), which marks it seen once it is drawn */
+      var markSeen = legalPreview ? null : function () {
+        var seenAt = new Date().toISOString();
+        store.set('legalSeen:device', seenAt);
+        if (accountKey) store.set(accountKey, seenAt);
+      };
+      var legalJs = document.createElement('script');
+      legalJs.src = 'legal-bar.js';
+      legalJs.onload = function () { if (window.wsLegal) window.wsLegal.show(markSeen); };
+      document.head.appendChild(legalJs);
     }
 
     if (!release || document.querySelector('[data-ws-release]')) return;

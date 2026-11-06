@@ -926,15 +926,24 @@ body::after {
 
 /* 1.4.0 shared notices. The legal bar never prevents a task. The release gate
    occupies the window until its required version is installed. */
+/* 2026-11-06: the legal bar is the notice law's size (about 36rem) and sits in the
+   bottom-right corner the release notice uses - the two never show together, the
+   release taking priority - so it clears the rail and the centre of the work. */
 .ws-legal {
-  position:fixed; inset-inline:var(--sp-4); bottom:calc(var(--sp-4) + 1.75rem * var(--density)); z-index:70;
-  display:flex; align-items:center; justify-content:space-between; gap:var(--sp-4);
-  max-width:66rem; margin-inline:auto; padding:var(--sp-3) var(--sp-4);
+  position:fixed; inset-inline-end:var(--sp-4); bottom:calc(var(--sp-4) + 1.75rem * var(--density)); z-index:70;
+  width:min(calc(100% - var(--sp-8)), 36rem);
+  display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:center; gap:var(--sp-3) var(--sp-4);
+  padding:var(--sp-4) var(--sp-4) var(--sp-4) var(--sp-5);
   background:var(--c-panel); color:var(--c-ink); border:1px solid var(--c-line-strong);
   border-radius:var(--r-lg); box-shadow:var(--wm-raise-shadow);
+  animation: ws-legal-in var(--d-mod) var(--ease-enter) both;
 }
-.ws-legal-copy { display:flex; flex-direction:column; gap:var(--sp-1); }
-.ws-legal .btn { flex:none; }
+.ws-legal-copy { display:flex; flex-direction:column; gap:var(--sp-1); min-width:0; }
+.ws-legal-copy p { margin:0; }
+.ws-legal-sentence { font-size:var(--fs-sm); font-weight:560; }
+.ws-legal .btn { flex:none; min-width:calc(var(--u) * 18); }
+@keyframes ws-legal-in { from { opacity:0; transform:translateY(var(--sp-3)); } to { opacity:1; transform:none; } }
+[data-motion='reduced'] .ws-legal { animation:none; }
 .ws-release-notice {
   position:fixed; inset-inline-end:var(--sp-4); bottom:calc(var(--sp-4) + 1.75rem * var(--density)); z-index:75;
   width:min(31rem, calc(100% - var(--sp-8)));
@@ -946,4 +955,4 @@ body::after {
 .ws-release-box { display:flex; flex-direction:column; align-items:start; gap:var(--sp-3); width:min(100%, 35rem); }
 .ws-release-reason { padding:var(--sp-3) var(--sp-4); border-inline-start:2px solid var(--c-accent); background:var(--c-well); border-radius:var(--r-sm); }
 .ws-release-actions { display:flex; flex-wrap:wrap; gap:var(--sp-2); margin-block:var(--sp-2); }
-@media(max-width:600px) { .ws-legal { align-items:start; flex-direction:column; } .ws-legal .btn { align-self:end; } }
+@media(max-width:600px) { .ws-legal { grid-template-columns:minmax(0, 1fr); } .ws-legal .btn { justify-self:end; } }

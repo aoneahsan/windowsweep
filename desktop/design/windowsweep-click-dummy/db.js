@@ -28,7 +28,7 @@
     tempRoots: [],
     dataReason: 'all',    // scanner view only, never an action preset
     dataSort: 'size',     // scanner view only
-    consent: null,         // null = never asked; otherwise {ga4,amplitude,clarity,sentry}
+    consent: null,         // legacy: the retired Consent screen's record (1.3.2 reference); 1.4.0's legal bar keeps legalSeen:* instead
     signedIn: false,
     email: null,
     schedule: false,

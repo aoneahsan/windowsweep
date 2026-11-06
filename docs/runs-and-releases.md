@@ -328,5 +328,11 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
       Home with no update notice.
   - **Production.** The two launches created no user or device row on production (read back: 0 since 14:40 UTC).
   - **Evidence:** `../site-evidence/updater-1.4.3/`.
+- 2026-11-06: **the branded account emails on production** (D92). The `[TEST]` welcome, rendered by the composer and
+  sent with the server key, was accepted at 15:29:05 UTC (FilesHub email `01M6RQKA36BJ2M3RQ3QQVGC4DN`, status sent).
+  Only then were `account-welcome`, `admin`, `polar-webhook` and `team` deployed to `nlmetjyytgwaxcliusuo`, all four
+  reading v6 ACTIVE at 15:31:18 UTC. The other functions stayed at v5. Each answered its preflight with 204 and refused
+  an unauthenticated call (401, 401 and 403; `team` with a valid action, 401). Receipt in the inbox is
+  `docs/MANUAL-TASKS.md` row 37.
 
-Last Updated: 2026-11-06 (1.4.3: the release record and its installed updater proof). Earlier the same day (1.4.2: the installed updater proof and the release record, including the restored MSI entry of `latest.json`). Earlier 2026-09-28 (the owner's own sign-in and dry-run on the installed 1.3.2, read back from the server - row 31. Earlier the same day: CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)
+Last Updated: 2026-11-06 (the branded account emails on production, D92). Earlier the same day (1.4.3: the release record and its installed updater proof). Earlier the same day (1.4.2: the installed updater proof and the release record, including the restored MSI entry of `latest.json`). Earlier 2026-09-28 (the owner's own sign-in and dry-run on the installed 1.3.2, read back from the server - row 31. Earlier the same day: CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)

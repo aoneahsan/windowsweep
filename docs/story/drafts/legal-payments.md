@@ -294,6 +294,8 @@ the matching change to row 18.
 }
 ```
 
+**Post-approval correction, 2026-11-06 (main session, flagged to the owner):** the shipped `updater` sentence drops *"every six hours while it is open,"*. The no-polling law of 2026-11-03 removed that timer, and 1.4.2 checks on start and when the window comes back into view, so the approved wording had become false. It reads: *"The desktop app fetches <mono>latest.json</mono> from the release page on every start and when it comes back into view, to see whether an update exists."*
+
 The title stops counting because a third request arrives with the release record, whose contents have no personal
 field even though a signed-in session may accompany the request. Publication checks the final client path.
 

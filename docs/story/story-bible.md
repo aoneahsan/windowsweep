@@ -1,6 +1,6 @@
 # Story Bible - windowsweep
 
-Status: **APPROVED at GATE 1, 2026-09-05** · Slug: `windowsweep` · Language: en-GB · Last updated: 2026-11-03
+Status: **APPROVED at GATE 1, 2026-09-05** · Slug: `windowsweep` · Language: en-GB · Last updated: 2026-11-06
 (the owner approved the section 19 continuity correction; the 2026-09-07 corrections to commitments 2 and 3 remain)
 
 Built from repository evidence on 2026-09-05 and **approved as drafted** by the owner the same day: asked to
@@ -128,6 +128,8 @@ lower-case, even at the start of a sentence, and never "WindowSweep" or "Window 
 | your machine | the disk the product cleans, and the files on it - never the browser's own storage, which `/privacy` discloses. So *"Nothing on your machine was touched"* is true of an error page, and the approved `error.lede` and both deletion bands already use it this way (added 2026-09-25, keeper) | your computer, your device, your system |
 | machine | the sync noun: *this machine*, *another machine*. Never a machine name or host name - neither is ever synced. "PC" only inside the account-deletion band (added 2026-09-25, keeper) | device, computer, laptop |
 | the windowsweep team | who makes the product (owner decisions D45 and D46, 2026-09-25: a product speaks as its team, never as one person). *The windowsweep team* standing alone - a label, a heading, a schema `name`, a meta `content`, a footer column title; *the windowsweep team* inside a sentence; *the team* only where the same sentence or its heading names windowsweep; *the same team* only on this product's own roster credits, which name a shared maker without claiming the other products (added 2026-09-25, team-voice) | the developer, the author, a person's name, we |
+| Admin (the screen) | the desktop rail item `nav.elevation` and the screen behind it; prose names it *Admin*, as the rail does (`app.js:178`, `shell.json:26`). *Elevation* stays the word for the Windows permission (`--elevate`, the AI guide's *Elevation* heading, the `admin-and-elevation` page) and the surface's internal name in §4, §8, §10 and content-map row 12 (added 2026-11-06, keeper record of d91-strings) | the Elevation screen |
+| in one click | the unsubscribe fact, as the approved release email's footer has it: *Unsubscribe in one click from this message* (row 26). The fingerprint's never-list already bans the hyphenated form (added 2026-11-06, keeper record of d91-strings) | one-click |
 
 **Numbers are always exact and always sourced.** The tool never estimates in prose; `--scan` measures, and
 the copy points at it. **Never state a gigabyte figure as a promise.**

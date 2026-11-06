@@ -320,9 +320,9 @@ windowsweep `30b5466` (the bar and the hint) and `0b03d92` (the numerals). There
 
 One bar at the bottom right replaces the full-screen first-run notice, and the window stays usable under it. The one-time Tour this page hint waits until that bar has closed, so two notes never stack. The walkthrough's step numbers now sit in the centre of their circles.
 
-The bar holds the Privacy Policy and Terms of Service sentence, the usage-data line and **Okay**; the policy links open in your browser. The usage line ends "Never a file path, never the contents of anything." It closes by itself after 10 seconds; hover or keyboard focus holds it, and **Okay** or Escape closes it. A machine that has shown it never shows it again, and a signed-in account that saw it on one machine is not shown it on another. It never appears on the start screen, on the Run, Choose and Admin screens, or beside an update notice or block.
+That bar holds the Privacy Policy and Terms of Service sentence, the usage-data line and **Okay**; the policy links open in your browser. The usage line ends "Never a file path, never the contents of anything." It closes by itself after 10 seconds. Hover or keyboard focus holds it. **Okay** or Escape closes it. A machine that has shown it never shows it again, and a signed-in account that saw it on one machine is not shown it on another. It never appears on the start screen, on the Run, Choose and Admin screens, or beside an update notice or block.
 
-The **Tour this page** hint also waits while an update notice or block is on screen.
+While an update notice or block is on screen, the **Tour this page** hint also waits.
 
 The installers are signed for the app's updater but are not Windows code signed, so SmartScreen may show a warning. The `SHA256SUMS` asset lists hashes for both installers, `latest.json` and the stable `windowsweep-setup.exe` download.
 ```
@@ -332,7 +332,7 @@ The installers are signed for the app's updater but are not Windows code signed,
 ```markdown
 # windowsweep CLI 1.4.3
 
-The command-line tool is unchanged in this release: the 30 sections, their targets and their safety checks are the same as in 1.4.2. It moves to 1.4.3 so the CLI and the desktop app stay on one version. The desktop changes are in the `desktop-v1.4.3` release.
+The command-line tool is unchanged. The 30 sections, their targets and their safety checks are the same as in 1.4.2. It moves to 1.4.3 so the CLI and the desktop app stay on one version; the desktop changes are in the `desktop-v1.4.3` release.
 
 Run `npx windowsweep@1.4.3 --list` to see the sections. Start with `--dry-run` to review candidates before selecting anything.
 ```
@@ -347,7 +347,7 @@ Run `npx windowsweep@1.4.3 --list` to see the sections. Start with `--dry-run` t
 - **One bar replaces the full-screen first-run notice.** In the desktop app it sits at the bottom right and holds the
   Privacy Policy and Terms of Service sentence, the usage-data line and **Okay**; the policy links open in the
   browser. The usage line ends "Never a file path, never the contents of anything." The window stays usable under
-  the bar, which closes by itself after 10 seconds; hover or keyboard focus holds it, and **Okay** or Escape closes
+  the bar, which closes by itself after 10 seconds; hover or keyboard focus holds it. **Okay** or Escape closes
   it. A machine that has shown it never shows it again, and a signed-in account that saw it on one machine is not
   shown it on another. It never appears on the start screen, on the Run, Choose and Admin screens, or beside an update
   notice or block.
@@ -473,7 +473,7 @@ confirmation emails per address a day. S8's added sentence carries the answer, a
 | The drawer knows a Team member: `users.view` returns the plan in the `my_plan` shape, whose `source` can be `team` | `CONTRACTS.md:361` (`users.view`), `:164` (`source`) |
 | The dummy resolves a plan from paid periods and grants only | web dummy `db.js` `derive.planAt` |
 | FilesHub answers every signup with 202; *already* means this browser sent the address | the dispatch, S6; docs `src/lib/newsletter.ts` header and `wasSent` |
-| `{{confirm_url}}` is required, and this template uses it alone | FilesHub docs (fileshub-docs.zaions.com/email-marketing): `{{confirm_url}}` is required, and `{{first_name}}` and `{{list_name}}` are optional placeholders. This template uses neither by design: the form collects no name (windowsweep-docs `src/lib/newsletter.ts` sends only the address), and a placeholder with no value fails a send |
+| `{{confirm_url}}` is required, and this template uses it alone | FilesHub docs (fileshub-docs.zaions.com/email-marketing): `{{confirm_url}}` is required, and `{{first_name}}` and `{{list_name}}` are optional placeholders. This template uses neither by design: the form collects no name (windowsweep-docs `src/lib/newsletter.ts` sends only the address), and the copy names the list in fixed words, so `{{list_name}}` is not needed either |
 | The person joins only after confirming on FilesHub's page, and a link scanner cannot confirm | the dispatch, S7; https://fileshub-docs.zaions.com/email-marketing/overview: *"Double opt-in: A public sign-up form confirms by email first; a link scanner cannot confirm for the person."* |
 | Nothing else is sent before confirmation; no release email arrives until then | the dispatch, S7 and S8 |
 | A repeat signup re-submits the address before the `already` state is chosen | docs `src/components/NewsletterSignup/index.tsx:83-90` (`subscribe()` at 84, `setState(known ? 'already' : 'done')` at 90) |
@@ -537,27 +537,35 @@ the reader decides in the second. S10 names the legal sentence instead of quotin
 | `newsletter.done` | 174 | the line it replaces, 74; the extra words say where the confirming happens |
 | `newsletter.already` | 144 | the approved first sentence alone, 73 |
 | `home.chokepoint.traversal`, visible text | 223 | the band's other five items run 92 to 252 |
-| S10 (a) desktop release notes · (b) CLI release notes | 203 · 67 words | 1.4.2's run 175 · 67; (a)'s extra words are the summary paragraph SA-WINDOWSWEEP-012 requires |
-| S10 (c) and (d) the changelog entry | 223 words | 1.4.2's is 217 |
+| S10 (a) desktop release notes · (b) CLI release notes | 202 · 64 words | 1.4.2's run 175 · 67; (a)'s extra words are the summary paragraph SA-WINDOWSWEEP-012 requires |
+| S10 (c) and (d) the changelog entry | 222 words | 1.4.2's is 217 |
 | S10 (e) `v143` items | 105 to 221 | `v142`'s run 105 to 204; `changed.i1` grew by 5 when *machine* replaced *PC* |
 | S10 (f) the README's first sentence | 26 words | 1.4.2's is 23; the two standing sentences unchanged |
-| S10 (g) the one summary, in all three places | 271 characters, 47 words | the 1.4.2 `latest.json` notes, 238 |
+| S10 (g) the one summary, in all three places | 271 characters, 47 words | the 1.4.2 `latest.json` notes, 240 |
 
 ## Self-check
 
 - **Palette.** P carries every string. R lands where row 26 allows it: the email's preheader, its mail-filter sentence
-  and S8's *You can leave the list from any of them*. S9 now opens on row 16's refusal, *refused outright*, and S10
-  quotes N-001's own refusal, *Never a file path, never the contents of anything.* No W, and no humour anywhere.
+  and S8's *you can leave the list from any of them*. S9 opens on row 16's refusal, *refused outright*, and S10 quotes
+  N-001's own refusal, *Never a file path, never the contents of anything.* No W, and no humour anywhere. The finalize
+  pass moved no band.
 - **Rhythm.** Shortest: *Free stays active.*, *Confirm this address.* and *Choose another rank.*, three words each, one
-  under the fingerprint's measured floor of four. They stay. The floor is the range measured across prose paragraphs,
-  and these are a heading and two one-line refusals, where the fingerprint's own specimen *This was a dry-run.* sets
-  the shape. Longest: the bar sentence in S10 (c) at 32 words, inside the ceiling of 34, then S9's resolution sentence
-  at 29 counting the `..`. Each two-sentence message pairs a short clause with a longer one, as `keyTaken` (9 and 12)
-  and `provenanceEmpty` with its Team line (6 and 13) do.
-- **Length.** S1 to S6 and S8 are microcopy, one or two sentences each, 23 to 144 characters. S7 is short: 91 words from
+  under the fingerprint's measured floor of four. They stay, as the keeper accepted. The floor is the range measured
+  across prose paragraphs, and these are a heading and two one-line refusals, where the fingerprint's own specimen
+  *This was a dry-run.* sets the shape. Longest: the bar sentence in S10 (c) at 32 words, inside the ceiling of 34, then
+  S9's resolution sentence at 29 counting the `..`. Each two-sentence message pairs a short clause with a longer one, as
+  `keyTaken` (9 and 12) and `provenanceEmptyTeam` (6 and 13) do. Four pieces are long enough for the rubric's rhythm
+  rows. On their rendered text, with a closing quote ending its sentence, S7's body scores 0.69, S10 (b) 0.55, and (c)
+  and (d) 0.56. Each has a sentence of six words or fewer and one of 25 or more. S10 (a) scores 0.41. It is allowed at
+  finalize: the first paragraph is the shared summary and the last is 1.4.2's, so only the two between them could change.
+- **Length.** S1 to S6 and S8 are microcopy, one or two sentences each, 23 to 174 characters. S7 is short: 91 words from
   eyebrow to sign-off, inside its siblings' 49 to 101. S9 is one label and two sentences, 223 characters against the
-  band's 92 to 252. S10 sits near each 1.4.2 neighbour: (a) 203 words against 175, (c) and (d) 223 against 217, (b) 67
-  against 67.
+  band's 92 to 252. S10 sits near each 1.4.2 neighbour: (a) 202 words against 175, (c) and (d) 222 against 217, (b) 64
+  against 67. Characters are UTF-16 code units; words are whitespace-separated across the whole block, its heading
+  line included.
 - **Unsure.** No NEEDS DECISION is open. One note goes back to the main session: the feed's words sit in `pages.json`,
   not in the (e) entry (S10 (g)), and *Admin* now names the elevation screen, as the main session answered.
-  *Underscores* stays, behind an allow marker, because it names the `_` character.
+  *Underscores* stays, behind an allow marker, because it names the `_` character. Two record cells changed at
+  finalize, both from the keeper's finding 7. The `{{confirm_url}}` row no longer says a placeholder with no value
+  fails a send; FilesHub states that for marketing templates only. The 1.4.2 `latest.json` notes measure 240
+  characters, not 238.

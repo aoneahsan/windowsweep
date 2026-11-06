@@ -1391,3 +1391,45 @@ extended to the 1.4.3 release words under D59, as this run extends rows 24 and 2
 
 **State:** no NEEDS DECISION is open, and no palette, fingerprint, spine or motif changes. Run state: phase
 `finalize`, status `reconciled`, round 1. Next: the finalizer.
+
+## 2026-11-06 - `d91-strings` finalized, GATE 4 under D59, recorded
+
+**Finalizer: READY, FACT-CONSISTENCY PASS, zero NEEDS DECISION.**
+
+- **The two record cells from finding 7.** The `{{confirm_url}}` row no longer says a placeholder with no value
+  fails a send (FilesHub says that of marketing templates only). It now says the copy names the list in fixed
+  words, so `{{list_name}}` is not needed either. The 1.4.2 notes cell reads 240, measured from
+  `release-kit-1.4.2/work/latest.json`.
+- **Shipping strings.** Only three S10 pieces failed a mechanical row; S1-S9, (e), (f), (g) and the feed items are
+  unchanged.
+  - (a): a run of four sentences opening on *The* broken ("That bar holds ..."); the timer sentence split so
+    "**Okay** or Escape closes it." stands alone; the hint sentence reordered.
+  - (b): opens on its verdict, "The command-line tool is unchanged.", matching `cli143` and (e) `fixed.i2`.
+  - (c) = (d): the same split of the timer sentence.
+  - Lengths moved by one or three words: (a) 202, (b) 64, (c)/(d) 222.
+  - (a)'s burstiness (0.41) is allowed. Its first paragraph is the shared summary and its last is 1.4.2's, so only
+    the two between could change; on their own they score 0.52.
+- **The identities, re-checked by the main session.** The shared summary is byte-identical at draft lines 321, 399
+  and 407 (271 characters each, the same SHA-256). The finalizer's S7 proof rebuilt the plain-text part from the
+  HTML part byte for byte.
+- **One process note.** The finalizer ran a read-only `git status` despite its brief. It changed nothing outside
+  the draft, and the diff confirms the draft is the only file touched.
+
+**GATE 4 - approved 2026-11-06 at 13:08 UTC under D59.** The condition is the 2026-09-07 one: fact-consistency PASS
+and zero unanswered NEEDS DECISION. Both hold, so no owner question was owed.
+
+**Recorded, the deferred items of the round-1 block:**
+
+1. Bible §7 gains *Admin (the screen)*: prose names the screen *Admin*, never *the Elevation screen*. *Elevation*
+   stays the word for the Windows permission and the surface's internal name.
+2. Bible §7 gains *in one click*, never *one-click*, for the unsubscribe fact.
+3. `content-map.md`:
+   - an amendment dated 2026-11-06 scopes the row-24 empty-field convention to the plan editor and the badge form,
+     reads rows 26 and 27 more widely for S6-S8 and S10, and places S9 on row 16 and S10 (f) on row 1;
+   - the status cells of rows 1, 16, 24, 26 and 27 name this surface.
+4. The registry entry and its index row; the Bible's *Last updated*; run state `recorded`.
+
+**Not changed:** the palette, the fingerprint, the spine and the motifs.
+
+**Applying:** dummy first (web Amendment 38, desktop `AMENDMENTS-3.md`), then the website, the docs site, the email
+composer and the 1.4.3 release. The applying commits are written into the status cells once they exist.

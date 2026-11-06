@@ -459,9 +459,9 @@ More: [FAQ](https://windowsweep-docs.aoneahsan.com/faq).
 <a id="changelog"></a>
 ## 🔄 Changelog&nbsp;[#](#changelog)
 
-Latest release: **`1.4.2`** - the desktop app adds page tours and a seven-step walkthrough, and installs a
-found update when you close it. The 1.4 scanner searches Downloads and folders you add for large or old files;
-you choose individual files for the Recycle Bin. The uninstall and leftover-folder sections require explicit
+Latest release: **`1.4.3`** - the desktop app replaces its full-screen first-run notice with one bar at the bottom
+right, and the window stays usable under it. The 1.4 scanner searches Downloads and folders you add for large or old
+files; you choose individual files for the Recycle Bin. The uninstall and leftover-folder sections require explicit
 selection.
 Full history: [CHANGELOG.md](https://github.com/aoneahsan/windowsweep/blob/main/CHANGELOG.md).
 

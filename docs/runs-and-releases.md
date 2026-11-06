@@ -305,4 +305,28 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
   `windows-x86_64`). The 1.4.2 `latest.json` and `SHA256SUMS` were replaced the same day with all three keys, the
   1.2.0 layout (generic and `-msi` → the MSI). Every later `latest.json` carries all three.
 
-Last Updated: 2026-11-06 (1.4.2: the installed updater proof and the release record, including the restored MSI entry of `latest.json`). Earlier 2026-09-28 (the owner's own sign-in and dry-run on the installed 1.3.2, read back from the server - row 31. Earlier the same day: CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)
+- 2026-11-06: **1.4.3** (D93).
+  - **Build and tags.** Built and signed on this machine from `d4192a8`, merged into `main` as `6b1073e` with the
+    code paths unchanged: `git diff d4192a8 6b1073e` over `desktop/src`, `desktop/src-tauri`, `lib`, `modules`,
+    `bin`, `windowsweep.ps1`, `VERSION` and `package.json` is empty. Tags: `desktop-v1.4.3` Latest, and `v1.4.3`
+    with `--latest=false`.
+  - **Installers.** NSIS `windowsweep_1.4.3_x64-setup.exe` is 3,892,073 B, sha256 `cd6dd5b4…8513` (also shipped
+    as `windowsweep-setup.exe`). The MSI is 4,653,056 B, sha256 `e6637bd9…523a`. Both `.sig` files verify against
+    the shipped public key (key id `0592190b568569df`), on the file and on the trusted comment, and a one-byte
+    tamper fails.
+  - **Update manifest.** `latest.json` carries all three platform keys and d91-strings S10 (g) as its notes (271
+    characters). `releases/latest/download/latest.json` serves it byte-equal.
+  - **npm.** `windowsweep@1.4.3` is on npm, and its tarball is byte-identical to the gated candidate (sha1
+    `49f7c8c8…2679`). The candidate has 53 files, none lost against 1.4.2; the self-test passes 223 of 223; version
+    parity holds; PSScriptAnalyzer reports 0 findings, and a planted file reports 2.
+  - **Installed updater proof (D93).**
+    - The installed 1.4.2, run on an isolated WebView2 profile, showed *Version 1.4.3 is ready* and staged it in
+      the background.
+    - Pressing the title bar's own Close ended the process at once and installed the update without a restart. The
+      uninstall key read 1.4.3 fourteen seconds later.
+    - The relaunch read 1.4.3 from `plugin:app|version`, from the uninstall key and from the exe FileVersion, on
+      Home with no update notice.
+  - **Production.** The two launches created no user or device row on production (read back: 0 since 14:40 UTC).
+  - **Evidence:** `../site-evidence/updater-1.4.3/`.
+
+Last Updated: 2026-11-06 (1.4.3: the release record and its installed updater proof). Earlier the same day (1.4.2: the installed updater proof and the release record, including the restored MSI entry of `latest.json`). Earlier 2026-09-28 (the owner's own sign-in and dry-run on the installed 1.3.2, read back from the server - row 31. Earlier the same day: CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)

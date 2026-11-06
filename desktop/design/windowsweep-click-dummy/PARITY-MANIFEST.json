@@ -61,7 +61,7 @@
   "emails": {
     "dummy": "emails.html",
     "script": "page-emails.js",
-    "strings": "docs/story/drafts/emails-1.4.0.md",
+    "strings": "docs/story/drafts/emails-1.4.0.md; docs/story/drafts/d91-strings.md S7 (the release list confirmation)",
     "layoutStyleBlock": "style#wsm-layout-style",
     "logo": "https://windowsweep.aoneahsan.com/email/windowsweep-logo@2x.png",
     "widths": [600, 390],
@@ -75,9 +75,10 @@
       { "specimen": "email-plan-granted", "fileshub": "windowsweep-plan-granted" },
       { "specimen": "email-plan-request-open", "fileshub": "windowsweep-plan-request-open" },
       { "specimen": "email-team-invite", "fileshub": "windowsweep-team-invite" },
+      { "specimen": "email-release-confirm", "fileshub": "windowsweep-release-confirm, the release list's double opt-in confirmation_template, rendered by composeReleaseConfirm" },
       { "specimen": "email-release-140", "fileshub": "FilesHub Letterhead (marketing), release newsletter email 1" }
     ],
-    "notDrawn": ["newsletter confirmation email: no approved words"],
+    "notDrawn": [],
     "status": "in review (AMENDMENTS-3.md, 2026-11-06)"
   },
   "storage": {

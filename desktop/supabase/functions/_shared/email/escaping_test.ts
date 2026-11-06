@@ -32,9 +32,16 @@ const NOT_HTTPS = [
   "https://",
   "https://windowsweep.aoneahsan.com/acc ount",
   "https://windowsweep.aoneahsan.com/‮account",
-  // A FilesHub stored-template placeholder is refused until it is vetted by name.
+  // A FilesHub stored-template placeholder is refused unless it is vetted by name for that one
+  // message (VETTED_FOR below); one that is never vetted is refused everywhere.
   "{{confirm_url}}",
+  "{{unsubscribe_url}}",
 ];
+
+/** The one vetted placeholder each message may carry as its button's href, as written. */
+const VETTED_FOR: ReadonlyMap<string, string> = new Map([
+  ["release-confirm", "{{confirm_url}}"],
+]);
 
 const composers = composersByName();
 const pairs: [Specimen, AnyComposer][] = specimensOf(await readDummy())
@@ -74,13 +81,20 @@ function assertInert(document: MarkupElement, what: string): void {
   }
 }
 
-function assertHttpsOnly(document: MarkupElement, what: string): void {
+/** Every href and src is https; a message's vetted placeholder may be the button's href only. */
+function assertHttpsOnly(
+  document: MarkupElement,
+  what: string,
+  vetted?: string,
+): void {
   for (const node of findAll(document, () => true)) {
     for (const name of ["href", "src"]) {
       const value = node.attributes.get(name);
-      if (value !== undefined && !value.startsWith("https://")) {
-        throw new Error(`${what}: ${name}=${JSON.stringify(value)}`);
-      }
+      if (value === undefined || value.startsWith("https://")) continue;
+      const isButton = name === "href" &&
+        node.attributes.get("class") === "wsm-btn-a";
+      if (vetted !== undefined && value === vetted && isButton) continue;
+      throw new Error(`${what}: ${name}=${JSON.stringify(value)}`);
     }
   }
 }
@@ -148,9 +162,23 @@ Deno.test("a typed value cannot start a new line in the text part", () => {
 Deno.test("a link that is not https never becomes an href", () => {
   let refused = 0;
   for (const [specimen, compose] of pairs) {
-    assertHttpsOnly(readMarkup(compose(specimen.data).html), specimen.name);
+    const vetted = VETTED_FOR.get(specimen.name);
+    assertHttpsOnly(
+      readMarkup(compose(specimen.data).html),
+      specimen.name,
+      vetted,
+    );
     for (const field of Object.keys(specimen.data).filter(isLink)) {
       for (const link of NOT_HTTPS) {
+        if (link === vetted) {
+          const { html, text } = compose({ ...specimen.data, [field]: link });
+          if (!html.includes(`href="${link}"`) || !text.includes(link)) {
+            throw new Error(
+              `${specimen.name}.${field} lost its vetted ${link}`,
+            );
+          }
+          continue;
+        }
         if (!refuses(() => compose({ ...specimen.data, [field]: link }))) {
           throw new Error(
             `${specimen.name}.${field} accepted ${JSON.stringify(link)}`,

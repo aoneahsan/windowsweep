@@ -167,6 +167,26 @@ export const catalogue = {
     footer:
       "You received this because a Team owner invited this address to windowsweep. This invitation message cannot be turned off; use the {contact} for help.",
   },
+  /** docs/story/drafts/d91-strings.md S7: FilesHub stores this as the release list's confirmation. */
+  releaseConfirm: {
+    subject: "Confirm this address for windowsweep",
+    preheader: "No release email reaches this address until you do.",
+    eyebrow: "Release notes signup",
+    heading: "Confirm this address.",
+    intro:
+      "This address was entered in the windowsweep release notes signup. It joins the list only after you confirm it on the page linked below.",
+    facts: {
+      releaseNotes: "Release notes",
+      releaseNotesValue: "One email when a windowsweep release is ready",
+      leaving: "Leaving the list",
+      leavingValue: "In one click, from any release email",
+    },
+    button: "Open the confirmation page",
+    body:
+      "If you did not ask for release emails, leave this message alone. The address stays off the list until someone confirms it on that page. A mail filter that opens links cannot do that.",
+    footer:
+      "You received this because this address was entered in the release notes signup, on {changelog} or in the footer of {docs}. Use the {contact} for help.",
+  },
 } as const;
 
 const PLACEHOLDER = /\{(\w+)\}/g;

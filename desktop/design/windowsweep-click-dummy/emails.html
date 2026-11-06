@@ -87,7 +87,7 @@
       <section class="band band-app band-tight"><div class="wrap email-head"><div>
         <p class="caps ink-3">Design dummy · 1.4.0</p>
         <h1 class="t-xl wide">Mail, before it leaves</h1>
-        <p class="lede">Seven account messages and the first release email, each on the one layout below, each at both email widths with its plain-text part.</p>
+        <p class="lede">Seven account messages, the release-notes confirmation and the first release email, each on the one layout below, each at both email widths with its plain-text part.</p>
       </div><span class="badge badge-warn">Specimens · no messages sent</span></div></section>
 
       <section class="band band-well band-tight" aria-labelledby="layout-title"><div class="wrap">
@@ -140,10 +140,11 @@
       </div></section>
     </main>
   </div>
-  <footer class="statusbar"><span class="dot" aria-hidden="true"></span><span>email gallery · eight specimens</span><span class="only-wide">layout, words and text parts</span><span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span></footer>
+  <footer class="statusbar"><span class="dot" aria-hidden="true"></span><span>email gallery · nine specimens</span><span class="only-wide">layout, words and text parts</span><span style="margin-inline-start:auto" data-ws-text="storageMode">storage: -</span></footer>
 </div>
 
-<!-- Each template is one message's <body>. Its words are emails-1.4.0.md's; its data
+<!-- Each template is one message's <body>. Its words are emails-1.4.0.md's (the release-notes
+     confirmation's are d91-strings S7's); its data
      is data-specimen, in the shape the sender passes (desktop/supabase/functions:
      account-welcome, _shared/billing-email.ts, _shared/referral-email.ts,
      admin/grant-email.ts, admin/index.ts, team/index.ts; CONTRACTS.md section 14). -->
@@ -279,6 +280,30 @@
   <p data-part="signoff" class="wsm-ink" style="margin:0 0 24px 0;font-size:16px;line-height:25px;color:#1b1f16;">The windowsweep team</p>
 </td></tr>
 <tr><td data-part="footer" class="wsm-px wsm-muted wsm-rule" style="padding:18px 32px 24px 32px;border-top:1px solid #d7dbd3;text-align:left;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:13px;line-height:20px;color:#565a51;">You received this because a Team owner invited this address to windowsweep. This invitation message cannot be turned off; use the <a class="wsm-link" href="https://windowsweep.aoneahsan.com/contact" style="color:#406600;">site contact form</a> for help.<br>windowsweep · <a class="wsm-link" href="https://windowsweep.aoneahsan.com" style="color:#406600;">windowsweep.aoneahsan.com</a></td></tr>
+</table></td></tr></table>
+</template>
+
+<!-- The release-notes confirmation (d91-strings S7), drawn before it is sent (D90). FilesHub
+     sends it as the release list's double opt-in confirmation_template, so no composer
+     renders it: its one variable, {{confirm_url}}, is FilesHub's own and stays literal in
+     the stored template. No name, date or form is in it, and the footer carries no
+     unsubscribe link, because the address is not on the list yet. -->
+<template id="email-release-confirm" data-specimen='{"confirm_url":"{{confirm_url}}"}' data-subject="Confirm this address for windowsweep" data-preheader="No release email reaches this address until you do." data-label="Release notes signup" data-note="Sent by FilesHub as the release list's double opt-in confirmation_template, after a signup on the website's changelog or in the docs footer. Its one variable, {{confirm_url}}, stays literal here: FilesHub fills it in the button and the raw link when it sends. Nothing else reaches the address until it is confirmed on that page.">
+<div data-part="preheader" style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#f5f7f2;opacity:0;">No release email reaches this address until you do.&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;</div>
+<table role="presentation" class="wsm-canvas" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f5f7f2" style="width:100%;background:#f5f7f2;"><tr><td class="wsm-outer" align="center" style="padding:24px 12px;">
+<table role="presentation" class="wsm-card" width="600" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="width:100%;max-width:600px;background:#ffffff;border:1px solid #d7dbd3;border-radius:12px;">
+<tr><td class="wsm-px" style="padding:28px 32px 8px 32px;text-align:left;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1b1f16;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#ddf0c9" style="background:#ddf0c9;border-radius:8px;padding:6px;"><img data-part="logo" src="https://windowsweep.aoneahsan.com/email/windowsweep-logo@2x.png" width="32" height="32" alt="windowsweep" style="display:block;width:32px;height:32px;border:0;"></td><td data-part="brand" class="wsm-ink" style="padding-left:10px;font-size:18px;line-height:24px;font-weight:700;color:#1b1f16;">windowsweep</td></tr></table>
+  <p data-part="eyebrow" class="wsm-brand" style="margin:28px 0 8px 0;font-size:12px;line-height:16px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#406600;">Release notes signup</p>
+  <h1 data-part="heading" class="wsm-h1 wsm-ink" style="margin:0 0 14px 0;font-size:28px;line-height:34px;font-weight:700;letter-spacing:-0.3px;color:#1b1f16;">Confirm this address.</h1>
+  <p data-part="intro" class="wsm-ink" style="margin:0 0 20px 0;font-size:16px;line-height:25px;color:#1b1f16;">This address was entered in the windowsweep release notes signup. It joins the list only after you confirm it on the page linked below.</p>
+  <table data-part="facts" role="presentation" class="wsm-facts" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#e9ede6" style="width:100%;background:#e9ede6;border-radius:8px;margin:0 0 24px 0;"><tr><th align="left" class="wsm-muted wsm-rule" style="width:42%;padding:12px 16px;border-bottom:1px solid #d7dbd3;font-size:14px;line-height:20px;font-weight:400;color:#565a51;">Release notes</th><td class="wsm-ink wsm-rule" style="padding:12px 16px;border-bottom:1px solid #d7dbd3;font-size:15px;line-height:20px;font-weight:600;color:#1b1f16;">One email when a windowsweep release is ready</td></tr><tr><th align="left" class="wsm-muted" style="width:42%;padding:12px 16px;font-size:14px;line-height:20px;font-weight:400;color:#565a51;">Leaving the list</th><td class="wsm-ink" style="padding:12px 16px;font-size:15px;line-height:20px;font-weight:600;color:#1b1f16;">In one click, from any release email</td></tr></table>
+  <table data-part="button" role="presentation" class="wsm-btn" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 10px 0;"><tr><td class="wsm-btn-cell" bgcolor="#4e7500" style="background:#4e7500;border-radius:8px;"><a class="wsm-btn-a" href="{{confirm_url}}" style="display:inline-block;padding:14px 24px;font-size:16px;line-height:20px;font-weight:600;color:#fcfefb;text-decoration:none;border-radius:8px;">Open the confirmation page</a></td></tr></table>
+  <p data-part="fallback" class="wsm-muted" style="margin:0 0 24px 0;font-size:13px;line-height:19px;color:#565a51;word-break:break-all;">{{confirm_url}}</p>
+  <p data-part="body" class="wsm-ink" style="margin:0 0 16px 0;font-size:16px;line-height:25px;color:#1b1f16;">If you did not ask for release emails, leave this message alone. The address stays off the list until someone confirms it on that page. A mail filter that opens links cannot do that.</p>
+  <p data-part="signoff" class="wsm-ink" style="margin:0 0 24px 0;font-size:16px;line-height:25px;color:#1b1f16;">The windowsweep team</p>
+</td></tr>
+<tr><td data-part="footer" class="wsm-px wsm-muted wsm-rule" style="padding:18px 32px 24px 32px;border-top:1px solid #d7dbd3;text-align:left;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:13px;line-height:20px;color:#565a51;">You received this because this address was entered in the release notes signup, on <a class="wsm-link" href="https://windowsweep.aoneahsan.com/changelog" style="color:#406600;">windowsweep.aoneahsan.com/changelog</a> or in the footer of <a class="wsm-link" href="https://windowsweep-docs.aoneahsan.com" style="color:#406600;">windowsweep-docs.aoneahsan.com</a>. Use the <a class="wsm-link" href="https://windowsweep.aoneahsan.com/contact" style="color:#406600;">site contact form</a> for help.<br>windowsweep · <a class="wsm-link" href="https://windowsweep.aoneahsan.com" style="color:#406600;">windowsweep.aoneahsan.com</a></td></tr>
 </table></td></tr></table>
 </template>
 

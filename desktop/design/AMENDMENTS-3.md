@@ -185,3 +185,26 @@ seconds later, no page error (`site-evidence/session-2026-11-05/desktop-dummy-le
   desktop catalogue's own wording: "1 real run each month", "1 more real run each month", "1 point", "1 confirmed
   friend", "1 month". A referrer's first confirmed friend no longer reads "1 confirmed friends".
 - **Subjects** carry no closing full stop, as drawn here; `emails-1.4.0.md` writes them as sentences.
+
+## Amendment - 2026-11-06: the release-notes confirmation email (D91 S7)
+
+`emails.html` draws the message D90's approval held back: `email-release-confirm`, in `docs/story/drafts/d91-strings.md`
+S7's words, byte for byte (GATE 4 granted 2026-11-06 under D59). Subject *Confirm this address for windowsweep*, with
+no closing full stop, as every subject here is drawn (the D92 amendment above); its preheader, the eyebrow, heading
+and intro, a two-row facts card, *Open the confirmation page*, the mail-filter paragraph, the sign-off and a footer
+with the changelog, docs and contact links. It uses the one layout with no new part, and sits between the Team
+invitation and the release email, because a release email reaches an address only after this one is answered;
+Release 1.4.0 moves to tab 09, and the lede and status bar now count nine specimens.
+
+1. **FilesHub sends it**, as the release list's double opt-in `confirmation_template`, from HTML and text the one
+   composer renders (`composeReleaseConfirm`, so its layout cannot drift from the other seven). Its one variable,
+   `{{confirm_url}}`, stays literal in the button's href and in the raw link under it, and `data-specimen` names it
+   and nothing else. No name, date or form is in it.
+2. **No unsubscribe link in the footer**: the address is not on the list until someone confirms it on that page.
+3. **The plain-text part** `page-emails.js` builds from the markup is S7's text part, line for line.
+
+The composer follows the drawing: `composeReleaseConfirm` in `supabase/functions/_shared/email/` renders this
+specimen, and the parity test compares it as it compares the other seven. Its output, with `{{confirm_url}}` left
+literal, is what FilesHub stores as `windowsweep-release-confirm`. The dummy's `PARITY-MANIFEST.json` and
+`CLICK-DUMMY-INVENTORY-1.4.0.md` now list it. No owner design gate is owed: the words are D91's, approved at GATE 4
+under D59, in the layout the owner approved as D90, with no new part.

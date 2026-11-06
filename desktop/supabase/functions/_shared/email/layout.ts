@@ -106,20 +106,23 @@ export function escapeHtml(value: string): string {
 }
 
 /**
- * FilesHub stored-template placeholders an href may carry as written, matched exactly, each one
- * vetted by name. FilesHub replaces such a token with its own https URL at send time. The set is
- * empty: every href in a composed message is an https URL.
+ * FilesHub stored-template placeholders a message's BUTTON may carry as written, matched exactly,
+ * each one vetted by name. FilesHub replaces such a token with its own https URL when it sends.
+ * Only `{{confirm_url}}`, for the release list's confirmation, which FilesHub itself sends and
+ * fills. A message opts in through `buttonPlaceholder`; `safeHref` never accepts one, so every
+ * other link in every message stays https-only.
  */
-const VETTED_HREF_PLACEHOLDERS: ReadonlySet<string> = new Set<string>();
+const VETTED_BUTTON_PLACEHOLDERS: ReadonlySet<string> = new Set<string>([
+  "{{confirm_url}}",
+]);
 const UNSAFE_URL_CHARACTERS = /[\s\p{Cc}\p{Cf}]/u;
 
 /**
  * The https-only link helper. Returns the URL unchanged when it is an https URL with a host and
  * holds no space, control or format character; refuses every other scheme (javascript:, data:,
- * http:, relative) with EmailDataError, so it is never emitted.
+ * http:, relative) and every placeholder with EmailDataError, so it is never emitted.
  */
 export function safeHref(url: string): string {
-  if (VETTED_HREF_PLACEHOLDERS.has(url)) return url;
   if (
     typeof url !== "string" || !url.startsWith("https://") ||
     UNSAFE_URL_CHARACTERS.test(url)
@@ -163,7 +166,26 @@ export type EmailContent = {
   readonly body: readonly Line[];
   /** Why the reader got it and whether it can be stopped; {contact} becomes the contact link. */
   readonly footer: string;
+  /** More named links the footer sentence carries, beside {contact}; each one stays https-only. */
+  readonly footerLinks?: Readonly<Record<string, Link>>;
+  /**
+   * A vetted FilesHub placeholder the button may carry as written (VETTED_BUTTON_PLACEHOLDERS),
+   * for a message FilesHub stores and fills itself. Any other button href is still https-only.
+   */
+  readonly buttonPlaceholder?: string;
 };
+
+/** The button's href: the message's vetted placeholder as written, or an https URL. */
+function buttonHref(content: EmailContent): string {
+  const placeholder = content.buttonPlaceholder;
+  if (placeholder !== undefined) {
+    if (!VETTED_BUTTON_PLACEHOLDERS.has(placeholder)) {
+      throw new EmailDataError("A button placeholder is not vetted");
+    }
+    if (content.button.href === placeholder) return placeholder;
+  }
+  return safeHref(content.button.href);
+}
 
 type Parts = EmailContent & { readonly footerLine: Line; readonly site: Line };
 
@@ -172,11 +194,9 @@ export function renderEmail(content: EmailContent): EmailMessage {
   const home = website();
   const parts: Parts = {
     ...content,
-    button: {
-      label: content.button.label,
-      href: safeHref(content.button.href),
-    },
+    button: { label: content.button.label, href: buttonHref(content) },
     footerLine: fill(content.footer, {
+      ...content.footerLinks,
       contact: siteLink(catalogue.contactLink, "/contact"),
     }),
     site: fill(catalogue.footerSite, {

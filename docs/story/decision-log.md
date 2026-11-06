@@ -1432,4 +1432,7 @@ and zero unanswered NEEDS DECISION. Both hold, so no owner question was owed.
 **Not changed:** the palette, the fingerprint, the spine and the motifs.
 
 **Applying:** dummy first (web Amendment 38, desktop `AMENDMENTS-3.md`), then the website, the docs site, the email
-composer and the 1.4.3 release. The applying commits are written into the status cells once they exist.
+composer and the 1.4.3 release. The applying commits are written into the status cells once they exist. S7's subject
+ships as *Confirm this address for windowsweep*, without the draft's closing full stop. Every subject in the email
+gallery is drawn that way (the D92 amendment in `desktop/design/AMENDMENTS-3.md`), and the dummy owns the words; no
+other S7 character moved.

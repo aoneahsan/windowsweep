@@ -19,6 +19,7 @@ import {
   safeHref,
   siteLink,
 } from "./layout.ts";
+import { website } from "../email.ts";
 
 /** account-welcome: the two monthly allowances from app_config, and the account page. */
 export type WelcomeData = {
@@ -292,5 +293,48 @@ export function composeTeamInvite(data: TeamInviteData): EmailMessage {
     button: { label: words.button, href: url(data.accept_url, "accept_url") },
     body: [fill(words.body)],
     footer: words.footer,
+  });
+}
+
+/** The docs site, where the release-notes signup also sits (its footer). */
+const DOCS_SITE = "https://windowsweep-docs.aoneahsan.com";
+
+/** A link whose label is its own URL without the scheme, as the footer writes it. */
+function bareLink(href: string): { label: string; href: string } {
+  return { label: safeHref(href).replace(/^https:\/\//, ""), href };
+}
+
+/**
+ * Release notes confirmation: the release list's double opt-in `confirmation_template`. FilesHub
+ * stores this composer's output and fills `{{confirm_url}}` itself when it sends, so the sender
+ * passes the literal placeholder; an https URL is accepted too (a rendered preview), nothing else.
+ */
+export type ReleaseConfirmData = { confirm_url: string };
+
+/** Release notes confirmation: someone entered this address in the release-notes signup. */
+export function composeReleaseConfirm(data: ReleaseConfirmData): EmailMessage {
+  const words = catalogue.releaseConfirm;
+  const placeholder = "{{confirm_url}}";
+  if (typeof data.confirm_url !== "string") {
+    throw new EmailDataError("confirm_url is missing");
+  }
+  return renderEmail({
+    subject: words.subject,
+    preheader: words.preheader,
+    eyebrow: words.eyebrow,
+    heading: fill(words.heading),
+    intro: [fill(words.intro)],
+    facts: [
+      [words.facts.releaseNotes, words.facts.releaseNotesValue],
+      [words.facts.leaving, words.facts.leavingValue],
+    ],
+    button: { label: words.button, href: data.confirm_url },
+    buttonPlaceholder: placeholder,
+    body: [fill(words.body)],
+    footer: words.footer,
+    footerLinks: {
+      changelog: bareLink(website("/changelog")),
+      docs: bareLink(DOCS_SITE),
+    },
   });
 }

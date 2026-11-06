@@ -180,7 +180,9 @@
       "approvedAt": "2026-10-31T15:09:24Z",
       "registryUpdatedAt": "2026-10-31T15:43:00Z",
       "gate4": "Owner approved the D75-revised legal draft including T-04, P-08 and D73 misuse; unshipped GA4 relay removed; website application and live verification pending",
-      "registryUpdate": "Entry updated; index date remains 2026-10-31; no new motif, glossary term, palette or voice change"
+      "registryUpdate": "Entry updated; index date remains 2026-10-31; no new motif, glossary term, palette or voice change",
+      "applied": "web c50fd34 (the 1.4.0 wave, P-01 to P-10) and eaa01c5 (P-06, the emails an account receives)",
+      "live": "2026-11-06: Cloudflare Pages 2405458e; /privacy and /terms read back on the live origin (P-06 heading and newsletter line, referrals, Teams, devices, run counting)"
     },
     {
       "surface": "1.4.0 section 19 story continuity",
@@ -210,7 +212,9 @@
         "Bible section 7 glossary: the unsubscribe fact says in one click, never one-click",
         "content-map.md, which the record dispatch must put in scope: the row 24 amendment for 8a; S10's rows named (row 27 extended to the 1.4.3 release words, row 1's README line); this surface in the status cells of rows 1, 16, 24, 26 and 27",
         "registry entry and index row under the parallel-writer rule; Bible Last updated; run state recorded"
-      ]
+      ],
+      "applied": "product df079af (S7 composer) and 6b1073e (S10 c, f); web eaa01c5 (S1-S6, S8, S9) and 09785f9 (S10 e, g); docs f7c2bd7 (S6, S8, S10 d); release kit 1.4.3 (S10 a, b, g)",
+      "live": "2026-11-06: site 2405458e, docs gh-pages 3db2cf4, desktop-v1.4.3 and its latest.json; the admin strings seen live in the genuine-admin checks (site-evidence/admin-1.4.3/); S7 sent once by the live signup (FilesHub 01M6RQM31YY1ZHB585N6H88GTJ)"
     }
   ],
   "previousRun": "site-terms (content-map row 20, /terms) opened 2026-09-24 on the owner request \"i need terms & conditions page ... do that now first, so i can get google cloud console app in production and approved\". GATE 2 by that request with D31-D34 (Pakistan law and courts; the Google account age where the reader lives; operator Ahsan Mahmood, aoneahsan@gmail.com; the site, the account and the software). A legal SAFETY surface, outside gate4PreAuthorised.scope, so GATE 4 is asked of the owner explicitly. Panel: lean, with humor-emotion mandatory."

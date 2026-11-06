@@ -9,7 +9,8 @@ import {
   textField,
   uuid,
 } from "../_shared/http.ts";
-import { sendTemplate, website } from "../_shared/email.ts";
+import { sendEmail, website } from "../_shared/email.ts";
+import { composeTeamInvite } from "../_shared/email/compose.ts";
 import { caller, rpc, serviceClient } from "../_shared/supabase.ts";
 
 serve(async (request) => {
@@ -71,16 +72,16 @@ serve(async (request) => {
         });
         throw error;
       }
-      const outcome = await sendTemplate(
+      const outcome = await sendEmail(
         args.p_email as string,
-        "windowsweep-team-invite",
-        {
-          team_name: fleet.team.name,
-          invited_by: user.email ?? "windowsweep",
-          accept_url: website(
-            `/account?team_invite=${encodeURIComponent(prepared.invite_id)}`,
-          ),
-        },
+        () =>
+          composeTeamInvite({
+            team_name: fleet.team.name,
+            invited_by: user.email ?? null,
+            accept_url: website(
+              `/account?team_invite=${encodeURIComponent(prepared.invite_id)}`,
+            ),
+          }),
       );
       if (outcome === "accepted") {
         await rpc(serviceClient(), "team_invite_mark_sent", {

@@ -10,7 +10,11 @@ import {
   textField,
   uuid,
 } from "../_shared/http.ts";
-import { sendTemplate, website } from "../_shared/email.ts";
+import { sendEmail, website } from "../_shared/email.ts";
+import {
+  composePlanRequestOpen,
+  intervalLabel,
+} from "../_shared/email/compose.ts";
 import {
   type BillingTemplate,
   sendBillingEmail,
@@ -99,12 +103,13 @@ async function notifyRequests(
       }&seats=${encodeURIComponent(item.seats)}`,
     );
     const outcome = planName
-      ? await sendTemplate(item.user_email, "windowsweep-plan-request-open", {
-        plan_name: planName,
-        interval_label: item.interval === "year" ? "yearly" : "monthly",
-        pay_url: payUrl,
-        pricing_url: website("/pricing"),
-      })
+      ? await sendEmail(item.user_email, () =>
+        composePlanRequestOpen({
+          plan_name: planName,
+          interval_label: intervalLabel(item.interval),
+          pay_url: payUrl,
+          pricing_url: website("/pricing"),
+        }))
       : "refused";
     if (outcome === "accepted") {
       await rpc(client, "admin_request_mark_notified", {

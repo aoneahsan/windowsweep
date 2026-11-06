@@ -172,3 +172,16 @@ comes about 1.2 seconds after the bar closes, the delay the app's `TourControl` 
 `boot()`, knows to wait. A release notice or block still means no hint beside it; the app now holds the hint for one too
 (1.4.3). Measured on `index.html?legal=1` at 1440 and 760: the bar up and no hint, no hint just after Okay, the hint 1.4
 seconds later, no page error (`site-evidence/session-2026-11-05/desktop-dummy-legal-hint/`).
+
+## Amendment - 2026-11-06: the emails leave through one composer (D92), with singular counts
+
+- **Transport.** `emails.html`'s From row now says what ships: each message renders in the Edge Functions through the
+  one composer in `supabase/functions/_shared/email/` and FilesHub raw mode carries the result (D92). The composer's
+  parity test reads every specimen here (markup, inline styles, the style block, visible text and the text part), so
+  this page stays the source; the stored-template slugs survive only as the message keys.
+- **The facts card's dark colour** is `--c-app`'s `#0e100b`, as drawn; the colour table now names both tokens instead
+  of calling the dark value `--c-well` (whose dark conversion is `#070805`). Nothing a reader sees changes.
+- **Singular counts.** The specimens draw plurals only; the composer adds the singular for a count of one, in the
+  desktop catalogue's own wording: "1 real run each month", "1 more real run each month", "1 point", "1 confirmed
+  friend", "1 month". A referrer's first confirmed friend no longer reads "1 confirmed friends".
+- **Subjects** carry no closing full stop, as drawn here; `emails-1.4.0.md` writes them as sentences.

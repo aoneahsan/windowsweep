@@ -432,18 +432,24 @@ true`, `security_manual_linking_enabled: true` (`linkIdentity` needs it), `hook_
 `hook_before_user_created_uri: "pg-functions://postgres/public/hook_before_user_created"`. The email provider stays
 on for the test aliases' password grant; the hook refuses every other email sign-up.
 
-## 14. Emails, as FilesHub templates
+## 14. Emails, rendered by one composer, carried by FilesHub
 
-Every email is a FilesHub template, sent as `template` + `variables` (strings only), never raw HTML. The website
-session supplies the branded templates (one layout); the slugs and variables are fixed here. A definitive provider
-refusal releases the mail claim for an audited retry. A network outcome that might have been accepted stays
-`uncertain` until an admin records `sent` or explicitly allows one retry. No automatic retry can duplicate a message,
-and nothing falls back to a raw email. Mail failure does not reverse the business action.
+Every email renders in the Edge Functions through the one branded layout in `functions/_shared/email/` (owner decision
+D92, 2026-11-06): one composer per message returns its subject, HTML and plain-text part from the click dummy's
+`emails.html`, and FilesHub raw mode only carries the result (`to`, `from_name`, `subject`, `body_html`, `body_text`). A
+parity test holds each composer to its specimen and an escaping test to its data. The keys below name each message
+in `billing_email_deliveries.template` and the composers; the data is fixed here, and a composer refuses a blank or
+missing value rather than mailing one.
 
-| slug | to | when | variables |
+A definitive provider refusal, or a composer that refuses its data, releases the mail claim for an audited retry. A
+network outcome that might have been accepted stays `uncertain` until an admin records `sent` or explicitly allows
+one retry. No automatic retry can duplicate a message, and nothing falls back to an unbranded message. Mail failure
+does not reverse the business action.
+
+| key | to | when | data |
 |---|---|---|---|
 | `windowsweep-welcome` | the account | its first `account-welcome` | `device_runs`, `account_runs`, `app_url` |
-| `windowsweep-referral-confirmed` | the referrer | the friend is confirmed (once) | `points`, `total_points`, `confirmed`, `threshold`, `reward_plan`, `reward_months`, `rewarded` (`yes` or `no`), `reward_line` (server-derived, outcome-specific sentence), `account_url` |
+| `windowsweep-referral-confirmed` | the referrer | the friend is confirmed (once) | `points`, `total_points`, `confirmed`, `threshold`, `reward_line` (server-derived, outcome-specific sentence), `account_url` |
 | `windowsweep-plan-confirmed` | the buyer | `order.paid` granted | `plan_name`, `interval_label`, `amount` (Polar plan subtotal before discounts and tax, not the total charged), `seats`, `period_start`, `period_end`, `account_url` |
 | `windowsweep-payment-returned` | the buyer | `order.refunded` | `plan_name`, `amount_returned`, `plan_now`, `pricing_url` |
 | `windowsweep-plan-granted` | the person | `grants.create` or an audited `emails.grant_send` | `plan_name`, `seats`, `ends_at`, `account_url`, all resolved from the committed grant and plan rows |

@@ -1,9 +1,13 @@
 import {
   dateLabel,
   type EmailOutcome,
-  sendTemplate,
+  sendEmail,
   website,
 } from "../_shared/email.ts";
+import {
+  composePlanGranted,
+  type PlanGrantedData,
+} from "../_shared/email/compose.ts";
 import { logEvent } from "../_shared/http.ts";
 import { rpc, serviceClient } from "../_shared/supabase.ts";
 
@@ -61,9 +65,8 @@ export async function deliverGrantEmail(
   return outcome;
 }
 
-export function grantTemplateVariables(
-  claim: GrantEmailClaim,
-): Record<string, string> {
+/** The plan-granted composer's data, from the committed grant; refuses incomplete rows. */
+export function grantEmailData(claim: GrantEmailClaim): PlanGrantedData {
   if (
     !claim.plan_name?.trim() || !Number.isInteger(claim.seats) ||
     claim.seats < 1 ||
@@ -93,11 +96,8 @@ export async function sendGrantEmail(id: string): Promise<GrantEmailResult> {
       }),
     send: (claim) => {
       try {
-        return sendTemplate(
-          claim.email,
-          "windowsweep-plan-granted",
-          grantTemplateVariables(claim),
-        );
+        const data = grantEmailData(claim);
+        return sendEmail(claim.email, () => composePlanGranted(data));
       } catch {
         logEvent("email.grant_invalid_data");
         return Promise.resolve("refused");

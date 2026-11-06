@@ -1,6 +1,6 @@
 # Emails for 1.4.0 — draft
 
-Surface: content-map row 26. Language: en-GB. The seven templates in `docs/CONTRACTS.md` §14 are transactional. The release message is the first marketing email and must wait for a live 1.4.0 build, real screen captures, a `[TEST]` send to the owner, and his approval before any audience send. Every message uses the one branded FilesHub template layout, with matching HTML and text parts. The layout supplies the product mark, URL fallback, reason-for-email footer, and the appropriate support or unsubscribe link. The sender is `windowsweep`; the sign-off is `The windowsweep team`.
+Surface: content-map row 26. Language: en-GB. The seven templates in `docs/CONTRACTS.md` §14 are transactional. The release message is the first marketing email and must wait for a live 1.4.0 build, real screen captures, a `[TEST]` send to the owner, and his approval before any audience send. Every message renders through the one branded layout in the Edge Functions' composer (`supabase/functions/_shared/email/`, D92, 2026-11-06), with matching HTML and text parts, and FilesHub carries the result. The layout supplies the product mark, URL fallback, reason-for-email footer, and the appropriate support or unsubscribe link. The sender is `windowsweep`; the sign-off is `The windowsweep team`.
 
 ## Welcome email — `windowsweep-welcome`
 

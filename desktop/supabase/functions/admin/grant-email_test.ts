@@ -1,7 +1,7 @@
 import {
   deliverGrantEmail,
   type GrantEmailClaim,
-  grantTemplateVariables,
+  grantEmailData,
 } from "./grant-email.ts";
 
 function assertEquals(actual: unknown, expected: unknown): void {
@@ -34,15 +34,15 @@ const claim: GrantEmailClaim = {
 };
 
 Deno.test("grant mail uses the committed plan, seats and end date", () => {
-  const variables = grantTemplateVariables(claim);
-  assertEquals(variables.plan_name, "Team");
-  assertEquals(variables.seats, "3");
-  assertEquals(variables.ends_at, "1 December 2026");
+  const data = grantEmailData(claim);
+  assertEquals(data.plan_name, "Team");
+  assertEquals(data.seats, "3");
+  assertEquals(data.ends_at, "1 December 2026");
 });
 
 Deno.test("grant mail refuses invalid committed end dates", () => {
   assertThrows(
-    () => grantTemplateVariables({ ...claim, ends_at: "null" }),
+    () => grantEmailData({ ...claim, ends_at: "null" }),
     "Invalid committed grant email data",
   );
 });

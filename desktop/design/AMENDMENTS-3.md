@@ -159,3 +159,7 @@ Words come only from `emails-1.4.0.md`; facts and formats from the senders and C
 Not drawn: the newsletter confirmation email has no approved words. Rejected: eight separate files (the layout would
 be retyped eight times) and live media queries on the page (the reviewer's window would restyle the mail). The owner
 still needs to review this in writing.
+
+## Approval, 2026-11-06 - the legal bar, the destinations without Clarity and the emails (D90)
+
+The owner approved the drawn desktop legal bar (N-001), the destinations without Clarity (N-016) and the eight-email gallery: *"Approve all (Recommended)"*. One main-session call rides with it: on first run the tour hint waits until the legal bar closes, so two notes never stack. The newsletter confirmation email is written through the story system (D91) and drawn before it is sent.

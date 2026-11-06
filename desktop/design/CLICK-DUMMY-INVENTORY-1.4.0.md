@@ -1,6 +1,6 @@
 # 1.4.0 click dummy addendum
 
-Status: **in review**, updated 2026-11-03. This adds to the approved 1.3.2 Reclaim design; the new tour and walkthrough UI awaits owner approval.
+Status: updated 2026-11-06 - tours and walkthrough approved 2026-11-03; the legal bar, the destinations without Clarity and the emails approved by D90 (2026-11-06).
 
 | Kind | Count | Source |
 |---|---:|---|
@@ -16,12 +16,12 @@ Status: **in review**, updated 2026-11-03. This adds to the approved 1.3.2 Recla
 |---|---|---|---|---|---|
 | 12 | Plans | `plans.html` | `/plans` | plan state, real-run allowance, device and account pools, limit, Pro/Team request, referrals, paid state, loading and read failure | 🔄 in review |
 | 12a | Team | `plans.html?tab=team` | `/team` | locked, member, owner, team creation, invite seats and empty fleet report; shares Plans' shell and controls | 🔄 in review |
-| shared | Legal bar | decided by `app.js`, drawn by `legal-bar.js` | every non-task page; the first-run surface after Splash | once per PC and per account (either teaches the other), seen when drawn, policy links, analytics sentence, Okay and Escape, 10 seconds held by hover or focus; `index.html?legal=1` previews it (AMENDMENTS-3.md, 2026-11-06) | 🔄 in review |
-| shared | Destinations without Clarity | `wire.js` (Home) and `page-settings.js` (Settings, Privacy) | `/`, `/settings` | N-016: GA4, Amplitude and Sentry rows; *Never sent* kept in both | 🔄 in review |
+| shared | Legal bar | decided by `app.js`, drawn by `legal-bar.js` | every non-task page; the first-run surface after Splash | once per PC and per account (either teaches the other), seen when drawn, policy links, analytics sentence, Okay and Escape, 10 seconds held by hover or focus; `index.html?legal=1` previews it (AMENDMENTS-3.md, 2026-11-06) | ✅ approved (D90, 2026-11-06) |
+| shared | Destinations without Clarity | `wire.js` (Home) and `page-settings.js` (Settings, Privacy) | `/`, `/settings` | N-016: GA4, Amplitude and Sentry rows; *Never sent* kept in both | ✅ approved (D90, 2026-11-06) |
 | shared | Update notice and block | built by `app.js` | every page | normal notice, urgent/next-start block, offline and failed-update states; preview links on Plans | 🔄 in review |
-| shared | Page tours | `tours.js` | important desktop routes | titlebar Tour button, step controls, URL state and missing-target skip | 🔄 in review |
-| 13 | Walkthrough | `walkthrough.html` | `/walkthrough` | seven fixture-backed steps from scan to report, with step URL state | 🔄 in review |
-| 14 | Emails | `emails.html` (+ `page-emails.js`) | none (FilesHub templates `windowsweep-welcome`, `-plan-confirmed`, `-referral-confirmed`, `-payment-returned`, `-plan-granted`, `-plan-request-open`, `-team-invite`; release newsletter email 1) | the one layout drawn once (shell, style block, brand hex light and dark, absolute https logo); eight specimens at 600 and 390 px with their plain-text parts; the newsletter confirmation email has no approved words and is not drawn (AMENDMENTS-3.md, 2026-11-06) | 🔄 in review |
+| shared | Page tours | `tours.js` | important desktop routes | titlebar Tour button, step controls, URL state and missing-target skip | ✅ approved (2026-11-03, AMENDMENTS-3) |
+| 13 | Walkthrough | `walkthrough.html` | `/walkthrough` | seven fixture-backed steps from scan to report, with step URL state | ✅ approved (2026-11-03, AMENDMENTS-3) |
+| 14 | Emails | `emails.html` (+ `page-emails.js`) | none (FilesHub templates `windowsweep-welcome`, `-plan-confirmed`, `-referral-confirmed`, `-payment-returned`, `-plan-granted`, `-plan-request-open`, `-team-invite`; release newsletter email 1) | the one layout drawn once (shell, style block, brand hex light and dark, absolute https logo); eight specimens at 600 and 390 px with their plain-text parts; the newsletter confirmation email has no approved words and is not drawn (AMENDMENTS-3.md, 2026-11-06) | ✅ approved (D90, 2026-11-06) |
 
 The 1.4.0 design keeps the approved lime/sky/plum palettes, nine appearance axes and default pointer. The new screen uses the existing shell and panel vocabulary. `plans.css` adds layout rules but no colour or type tokens. Every new state is reachable through the review links at the bottom of Plans. These URL switches are preview controls, not account data.
 

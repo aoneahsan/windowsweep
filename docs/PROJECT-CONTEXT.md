@@ -1,6 +1,6 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-11-05 (latest: D85-D89 - the run resumed: the test-only production proofs, release 1.4.2, Polar sandbox then production, the email tests, the shared test Supabase project; sessions 13-20 moved to `PROJECT-CONTEXT-decisions-2026-09.md`). Earlier 2026-10-30 (D55-D61 - the first `/complete-project` run: category, plan set, agents,
+Last Updated: 2026-11-06 (latest: D90-D93 - design gate approved, the seven missing strings, the email functions deploy, release 1.4.3; and the unapplied 1.4.0 legal wave found). Earlier 2026-11-05 (D85-D89 - the run resumed: the test-only production proofs, release 1.4.2, Polar sandbox then production, the email tests, the shared test Supabase project; sessions 13-20 moved to `PROJECT-CONTEXT-decisions-2026-09.md`). Earlier 2026-10-30 (D55-D61 - the first `/complete-project` run: category, plan set, agents,
 the Supabase production set, GATE 4, release 1.4.0, Polar dormant). Earlier 2026-09-28 (row 30 closed on the owner's word - the consent screen published; web row 4's sign-in proved from the server. Earlier the same day: D54 - a development build reports no analytics (DONE-023); row 31 closed by the owner's own sign-in and dry-run on 1.3.2; the site's tables and the eighth migration moved verbatim to `PROJECT-CONTEXT-supabase.md` at the 500-line ceiling. Earlier the same day: D53 - desktop-v1.3.2 and CLI 1.3.2: the desktop sign-in fixed (DONE-021), TASK-020 (DONE-020), TASK-022 (DONE-022), TASK-023 filed; the D28 line corrected. Earlier 2026-09-26: D52 - TASK-020 widens the desktop CSP for Clarity. Earlier the same day: `desktop-v1.3.1` released and proved under D50 - the current-status line. Earlier the same day: D50 - `desktop-v1.3.1` this session - and D51 - the stray `runs$RUNID` folder deleted; TASK-019's generators became Vite plugins. Earlier the same day: D49 - the workspace root backed up on the private site repo's `project-root`
 branch. Earlier 2026-09-25: `desktop-v1.3.0` published as Latest and proved by the in-app updater 1.2.0 -> 1.3.0,
 CLI 1.3.1 on npm with the team's maker lines, rounds 14 and 15 with D47, session 14's decision table moved to
@@ -213,6 +213,25 @@ Asked in one batch when the paused run resumed; each answer is his verbatim opti
   rehearsal target for every production project, leased and wiped after each use (fleet law in
   `~/.claude/rules-detail/supabase-provisioning.md`). This run's restore rehearsal of the release-1.4.1 backup ran
   there.
+- **D90 - design gate "Approve all (Recommended)"** (2026-11-06): the drawn website plan administration (the five
+  capabilities, plan requests, run allowance and referral settings), the one-sentence legal bar on the site and in
+  the desktop window (replacing the full-screen first-run screen), the release-notes signup on the changelog and the
+  docs footer, and the eight drawn emails. Web Amendments 33-36, desktop `AMENDMENTS-3.md`. One main-session call
+  rides with it: on first run the desktop tour hint waits until the legal bar closes, so two notes never stack.
+- **D91 - the seven missing strings "Story system under D59 (Recommended)"**: plan-field limit messages, a plan key
+  that already exists, why Free has no Active switch, a badge key that already exists, an empty plan-source list, an
+  invalid newsletter address, and the newsletter confirmation email - written through the story pipeline under the
+  D59 pre-authorisation; the confirmation email also rides in the D88 `[TEST]` send.
+- **D92 - email functions "Yes, after the [TEST] proof (Recommended)"**: deploy `account-welcome`, `admin`,
+  `polar-webhook` and `team` to production `nlmetjyytgwaxcliusuo` with the branded composer once the parity and
+  escaping tests pass and the `[TEST]` welcome reaches the t1 inbox. Nothing else on production changes.
+- **D93 - "Release 1.4.3 when built (Recommended)"**: the legal bar, the walkthrough numerals and the tour-hint order,
+  through the local kit (`desktop-v1.4.3` Latest, CLI `v1.4.3 --latest=false`, unchanged engine); the installed 1.4.2
+  must stage it in the background and install it when the window closes.
+- Found in the main session on 2026-11-06, not an owner question: the **1.4.0 wave of the approved `legal-payments`
+  draft** (T-01, T-04, P-01, P-02, P-04, P-05, P-07 to P-11; GATE 4 2026-10-31) was never applied to the website, so
+  the live Privacy Policy omits run claims, devices, referrals and Teams that 1.4.0 collects. It is applied in this
+  run, dummy first, with the effective date moved to the day it goes live; P-06 waits for the first email sent.
 - Settled in the main session, not owner questions: the docs site stays on GitHub Pages (fleet law of 2026-11-05,
   which reversed that day's docs move); the website moved to Cloudflare Pages in the fleet pass the same day
   (project `windowsweep`, `www` same site with the canonical on the bare name); Node 24.16.0 replaced 24.13.0 on this

@@ -3,18 +3,18 @@
   "slug": "windowsweep",
   "bibleApproved": true,
   "contentMapApproved": true,
-  "surface": null,
-  "phase": "idle",
-  "status": "approved",
-  "round": 0,
+  "surface": "d91-strings (content-map rows 24 and 26 - the D91 additions and the S8 correction; S9 on row 16, ISSUE-002; S10 the 1.4.3 release words, D93, on rows 27 and 1)",
+  "phase": "finalize",
+  "status": "reconciled",
+  "round": 1,
   "gate": null,
   "openDecisions": [],
   "escalatedAt": null,
   "approvedAt": null,
   "registryUpdatedAt": "2026-10-31T15:43:00Z",
-  "updatedAt": "2026-11-03T09:51:37Z",
-  "lastUpdated": "2026-11-03T09:51:37Z",
-  "currentRun": "Owner-approved 1.4.0 story continuity correction: Bible, fingerprint and content-map question answers 1 and 4 now match section 19 source. No open decision. Historical GATE 4 records remain in parallelRuns. The registry was outside the exclusive scope and its timestamp was not advanced; 1.4.0 publication and live checks remain.",
+  "updatedAt": "2026-11-06T10:39:00Z",
+  "lastUpdated": "2026-11-06T10:39:00Z",
+  "currentRun": "D91 (2026-11-06): the seven strings the D90 drawings left unwritten (plan-field messages, a taken plan key, Free always active, a taken badge key, an empty plan-source list, an invalid newsletter address, the newsletter confirmation email) plus two corrections under D59 (S8 the after-signup line under double opt-in, S9 the chokepoint traversal line, ISSUE-002). Lean panel under the D59 pre-authorisation; GATE 4 pre-authorised on the 2026-09-07 condition. S10, the 1.4.3 release words (D93), joined in the round 1 revision. Round 1 reconciled by the keeper on 2026-11-06 (decision-log.md, the 2026-11-06 block): findings 1-7 accepted against the Bible, writer proposal 8a accepted only for the plan editor and the badge form, 8b homed in the Bible section 7 glossary rather than the fingerprint, zero NEEDS DECISION. Next: the finalizer, which also fixes two record-only cells.",
   "handoff20260913": "HANDOFF 2026-09-13, after the keeper batch. ALL 19 content-map surfaces are written, approved at GATE 4 (the desktop trio 2026-09-05 by the owner, the rest under the pre-authorisation) and applied, and every one is recorded with its applying commit in content-map.md and decision-log.md 2026-09-13 (later). Nothing is in flight. Two items stay open, neither blocking: the voice fingerprint is calibrated:false (it needs one to three samples the owner chooses; /voice-calibrate), and C-091's label waits for the 1.3.0 cascade because it is an engine string (RW-121). The next story work is triggered by a change, not by this run: any new or changed user-visible string goes dummy first and is recorded here; desktop sync (TASK-013) will let S-017/S-019 name their trigger; web TASK-007 needs one line for a cancelled Google sign-in, written through this pipeline once row 15 lands.",
   "notes": "The completion run opened 2026-09-07 under the plan at ../completion-plan-2026-09-07.md. GATE 4 is pre-authorised for the eleven remaining surfaces on a stated condition (gate4PreAuthorised), so a session applies an approved surface without stopping - but a finalizer FAIL or a fresh NEEDS DECISION still pauses that one surface. RED Two defects were found in copy this system had already approved: splash.html promises that the updater checks for a newer build and NOTHING in the app ever called the updater, and tauri.conf.json carried a plugins.updater.dialog key the plugin does not accept. Both were found by grepping for the mechanism rather than for the words, which is the sharpened form of the 2026-09-05 clause about approved artefacts holding claims nobody re-reads. RED And the story lint hook is blind to copy inside a code fence, so on the slot-shaped surfaces - cli-strings, and any .tsx copy - the fact-checker and a human reader are the only real gate; a green hook there is not evidence. | 2026-09-07 later: the analytics opt-out was removed by the owner mid-run, which re-opened a recorded surface - the first time that has happened here. The handling worth repeating: the words were changed in the CLICK DUMMY first and the reason written into the design README beside them (section 10a), so the person who reads the dummy to approve it sees why it changed; only then did the app follow. The voice decision inside that change was to KEEP the \"Never sent\" list against an instruction to keep it to one line, because band R delivers reassurance as a specific refusal and a notice with nothing checkable in it is an announcement. 🔴 And the cli-strings writer PROVED the fenced-copy blindness on its own file rather than citing the precedent: two banned words inside a slot fence went undetected (exit 0), the same two words in the commentary were both named (exit 2). That is a reproducible two-command proof and it belongs in the global record.",
   "gate4PreAuthorised": {
@@ -79,7 +79,7 @@
     "GATE 4 - site-signin-strings (rows 18/19) APPROVED 2026-09-25 under the standing pre-authorisation: finalizer READY with fact-consistency PASS, zero unanswered NEEDS DECISION. Applied dummy first (amendment 23) and in windowsweep-web d72b40c, deployed with sign-in live, verified on the origin.",
     "GATE 4 - desktop-sync-strings (rows 11-13) APPROVED by the owner 2026-09-25, verbatim \"Approve, ship them (Recommended)\", shown the sixteen strings with the dummy captures of every state. Ships in desktop-v1.3.0 with TASK-013."
   ],
-  "panel": "lean, named by the owner 2026-09-24 (\"Lean panel (Recommended)\"); humor-emotion mandatory (legal safety surface)",
+  "panel": "lean under D59 for D91 (2026-11-06): developmental, writer revision, developmental on S10, line, copy, fact-check; humor-emotion not owed because no slot is a Bible section 4 safety surface. The site-terms run's panel is recorded in previousRun.",
   "parallelRuns": [
     {
       "surface": "desktop-sync-strings (content-map rows 11 and 13 - TASK-013)",
@@ -190,6 +190,25 @@
       "approvedAt": "2026-11-03T09:51:37Z",
       "registryUpdatedAt": null,
       "note": "Owner approved the exact personal-file replacement and factual spine alignment. Content-map answers 1 and 4 corrected; 1.4.0 publication and live proof remain. Registry out of scope."
+    },
+    {
+      "surface": "d91-strings (content-map rows 24 and 26 - the D91 additions and the S8 correction; S9 on row 16, ISSUE-002; S10 the 1.4.3 release words, D93, on rows 27 and 1)",
+      "draft": "docs/story/drafts/d91-strings.md",
+      "phase": "finalize",
+      "status": "reconciled",
+      "round": 1,
+      "openedAt": "2026-11-06",
+      "reconciledAt": "2026-11-06T10:39:00Z",
+      "approvedAt": null,
+      "registryUpdatedAt": null,
+      "gate4": "D59 standing pre-authorisation (D91): lean panel, then the finalizer; conditional on fact-consistency PASS and zero NEEDS DECISION",
+      "reconciliation": "Keeper, round 1: findings 1-7 accepted against the Bible; 8a accepted only for the plan editor and the badge form, because as worded it contradicts the approved N-009 reasonRequired and releases.reasonEmpty; 8b already supported by the fingerprint never-list and the approved release-email footer, homed in the Bible section 7 glossary, not the fingerprint; zero NEEDS DECISION. The finalizer fixes two record-only cells: the {{confirm_url}} clause, and 238 -> 240 for the 1.4.2 notes.",
+      "deferredToRecord": [
+        "Bible section 7 glossary: Admin (the screen), the rail item nav.elevation; never the Elevation screen; elevation stays the Windows permission and the internal surface name",
+        "Bible section 7 glossary: the unsubscribe fact says in one click, never one-click",
+        "content-map.md, which the record dispatch must put in scope: the row 24 amendment for 8a; S10's rows named (row 27 extended to the 1.4.3 release words, row 1's README line); this surface in the status cells of rows 1, 16, 24, 26 and 27",
+        "registry entry and index row under the parallel-writer rule; Bible Last updated; run state recorded"
+      ]
     }
   ],
   "previousRun": "site-terms (content-map row 20, /terms) opened 2026-09-24 on the owner request \"i need terms & conditions page ... do that now first, so i can get google cloud console app in production and approved\". GATE 2 by that request with D31-D34 (Pakistan law and courts; the Google account age where the reader lives; operator Ahsan Mahmood, aoneahsan@gmail.com; the site, the account and the software). A legal SAFETY surface, outside gate4PreAuthorised.scope, so GATE 4 is asked of the owner explicitly. Panel: lean, with humor-emotion mandatory."

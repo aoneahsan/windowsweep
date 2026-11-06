@@ -121,7 +121,7 @@ self-contained HTML page without extra tools.
 
 ## Elevation
 
-Sections 12-16 and 20 need Administrator rights. Without them the runner skips each with the exact command
+Sections 12-16, 20, 27 and 29 need Administrator rights. Without them the runner skips each with the exact command
 to run. `--elevate` relaunches the whole run through a UAC prompt: **a new elevated window opens with its own
 log and report**, and the original process waits and returns the child's exit code. That prompt cannot be
 answered by a script, so `--elevate` does not belong in an unattended context.

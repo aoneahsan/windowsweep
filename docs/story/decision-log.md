@@ -1304,3 +1304,90 @@ Existing recorded rows 5, 9, 13, 16 and 19 are historical; their 1.4.0 implement
 against the revised Bible and approved dummy. No new motif or glossary term was added. The global voice
 registry is outside this dispatch's exclusive scope, so its entry was not updated and its timestamp was
 not advanced. No new owner decision remains for this continuity correction.
+
+## 2026-11-06 - `d91-strings` (rows 24 and 26; S9 on row 16; S10 on rows 27 and 1), round 1 reconciled
+
+**Gate and panel:** D91 sends the seven strings the D90 drawings left unwritten, and the S8 and S9 corrections,
+through the lean panel under D59; S10, the 1.4.3 release words (D93), joined in the round 1 revision. Developmental
+review, the writer's revision, a developmental pass on S10, line edit, copy edit and fact-check ran. Humor-emotion
+was not owed: no slot is a §4 safety surface, because every admin refusal leaves nothing saved and S10 describes the
+legal bar and the Admin screen without being either. The draft has no light line. GATE 4 stays pre-authorised only on
+the finalizer's fact-consistency PASS with zero unanswered NEEDS DECISION. Nothing here is recorded as published.
+
+**Findings, each checked against the Bible and the draft:**
+
+1. **Developmental, round 1: accepted; all five changes are in the draft.** S7 opens on the event and S9 on the
+   refusal; S5 splits into `provenanceEmpty` and `provenanceEmptyTeam`; S7's leave-alone paragraph is three
+   sentences; S8 `already` gains the unconfirmed case's action. Decided by row 26's structure (the fact, then what to
+   do next), row 16's guarantees stated as refusals, §4's band R as a specific refusal and the fingerprint's *leave
+   alone*. The Team line rests on `CONTRACTS.md` §8.
+2. **Developmental on S10: accepted; all four changes are in the draft.** One unit per change; the numerals
+   paragraph gone, with the 14 px kept in (c); no repeats; *Admin* for the elevation screen. Decided by the
+   fingerprint's tells and closers (nothing restates what was just said), §7's exact numbers and §8's rule that the
+   click dummy owns the words.
+3. **Does a repeat signup re-send the confirmation? Answered from evidence; not an owner question.** The form
+   re-submits before it chooses `already`: windowsweep-docs `src/components/NewsletterSignup/index.tsx:83`
+   (`wasSent`), `:84` (`subscribe`) and `:90` (`setState(known ? 'already' : 'done')`), read by the keeper. A re-send
+   is only inferred from FilesHub's cap of three confirmations per address a day (the fact recheck), so S8 points at
+   the confirmation email already sent and promises no new one. As on 2026-09-07, behaviour the code answers is not
+   an owner question.
+4. **The elevation screen's public name: *Admin*, a naming call from the approved UI.** The dummy's rail draws it
+   (`app.js:178`, `label: 'Admin'` for `elevation.html`) and the app copies it (`shell.json:26`, `nav.elevation`,
+   beside `nav.run` *Run* at `:20`); §8 gives the dummy the words. No shipped copy calls the screen *Elevation*: a
+   sweep of the README, the product docs, the docs site, the web source and the desktop catalogue found that name
+   only in internal records, code comments and the dummy's page index.
+5. ***PC* in S10: answered by the Bible, which does not change.** §7's *machine* row keeps *PC* inside the
+   account-deletion band, so every reader-facing S10 piece says *machine*. *PC* is left only in three record cells
+   (draft lines 427, 497 and 542), none of them reader-facing.
+6. **Three three-word sentences stay: accepted, with no fingerprint change.** *Free stays active.*, *Confirm this
+   address.* and *Choose another rank.* The 4-34 range sits in the fingerprint's Rhythm section, which describes
+   prose in paragraphs of two to four sentences; row 24 sets microcopy at one sentence and one action, and a heading
+   is a label. Approved precedent agrees: row 24's N-009 `reasonRequired` opens on *Give a reason.* and `saved` on
+   *Saved.*, and row 26's heading *Your referral counted.* has three words.
+7. **Fact-check: accepted.** The first pass found 52 verified, 5 unverifiable and 3 contradictions; the recheck
+   verified all eight. Two record-only cells go to the finalizer: delete *and a placeholder with no value fails a
+   send* from the `{{confirm_url}}` row, and change 238 to 240 for the 1.4.2 notes. The keeper measured
+   `release-kit-1.4.2/work/latest.json` `notes` at 240 characters and 240 bytes, ASCII only, so the Characters column
+   and the 240-byte cell agree once changed, and re-measured the 1.4.3 summary at 271 characters and 47 words. After
+   the deletion that row's reason covers `{{first_name}}` alone; the copy names the list in fixed words, if the
+   finalizer wants the cell whole. No reader-facing string changes.
+
+**Writer proposals for the Bible, PROPOSED and applied only after GATE 4:**
+
+- **8a, an empty admin field (row 24): not voice or palette; accepted only in a narrower form.** As written, *on admin
+  forms, an empty field gets its rule's own message; no separate required message* contradicts two row-24 strings
+  recorded at GATE 4 on 2026-10-31: N-009 `reasonRequired` (*Give a reason. ...*) and the releases form's
+  `reasonEmpty` (*A reason is required. ...*). Rejected in that form. Accepted for D91's own forms: on the plan
+  editor and the badge form an empty field gets the message of the rule it breaks, with no separate required message
+  (S1), and both reason lines stand. Its home is a row-24 amendment to `content-map.md` under D59's GATE 2 for row
+  24, so the record dispatch needs that file in scope. The fleet form rule (required blocks submit, optional never
+  does, the message sits at its field) is untouched.
+- **8b, the unsubscribe fact: already supported, so it needs no owner.** The fingerprint's never-list bans
+  *one-click*, and the release email recorded at GATE 4 (row 26) says *Unsubscribe in one click from this message*;
+  the draft follows both. As a do/don't row in `voice-fingerprint.md` it would be a fingerprint change, and that file
+  has changed only when a specimen became false (2026-09-07) or on the owner's approval (2026-11-03), so it does not
+  go there. Its home is a §7 glossary row, the keeper's remit, as *switch* and *machine* were, beside *dry-run*'s
+  word-form rule. If the fingerprint is wanted as its home after all, that is a GATE 1 question on that file alone,
+  best asked with the open calibration item; d91-strings does not carry it.
+
+**Map coverage, the keeper's own check:** S9 sits on row 16, and S10's changelog entries (c) and (d) on row 27, as
+the draft says. Row 27's recorded release words are 1.4.0's `changelog.md` entry and `llms.txt`, so S10's two release
+bodies, the `latest.json` notes, the feed items and the website's `changelog.json` are named when recorded: row 27
+extended to the 1.4.3 release words under D59, as this run extends rows 24 and 26 without a new row. The README's
+*Latest release:* sentence (f) is row 1's, whose GATE 4 the 2026-09-07 pre-authorisation covers.
+
+**Deferred to the record step, after GATE 4:**
+
+1. Bible §7, a glossary row *Admin (the screen)*: the rail item `nav.elevation` and the screen behind it; prose names
+   it *Admin*, as the rail does; never *the Elevation screen*. *Elevation* stays the word for the Windows permission
+   (`--elevate`, the AI guide's *Elevation* heading, the `admin-and-elevation` page) and the surface's internal name
+   in §4, §8, §10 and row 12; a bare *never Elevation* would contradict the AI guide's approved heading.
+2. Bible §7, a glossary row for the unsubscribe fact: *in one click*, as the release email's footer has it; never
+   *one-click*.
+3. `content-map.md`: the row-24 amendment for 8a, the S10 coverage above, and this surface in the status cells of
+   rows 1, 16, 24, 26 and 27.
+4. The registry entry and index row under the parallel-writer rule, the Bible's *Last updated*, and run state
+   `recorded`.
+
+**State:** no NEEDS DECISION is open, and no palette, fingerprint, spine or motif changes. Run state: phase
+`finalize`, status `reconciled`, round 1. Next: the finalizer.

@@ -7,8 +7,9 @@
  *
  * 🔴 THE DUMMY'S ROWS, NOT THE CONSENT NOTICE'S LIST (D-69, GATE 4 round 16). From 2026-09-07 this tab reused the
  * Consent screen's keys - the vendor badges, the longer lines, "Never sent:" and a closing paragraph - which the dummy
- * never drew here: it draws a note and four `row()`s, each an `h3` and one short line. The Consent screen keeps its own
- * words (`consent.*`); this tab has its own (`settings.privacy.*`), each transcribed from the dummy.
+ * never drew here: it draws a note and four `row()`s, each an `h3` and one short line. The Consent screen is gone
+ * (1.4.3, D90, the legal bar replaced it); the `consent.*` keys it left name the destinations on Home, and this tab
+ * borrows only `consent.badgeOn`. Its own words are `settings.privacy.*`, each transcribed from the dummy.
  *
  * The "Never sent" row stays and is the point of the tab - a notice with nothing checkable in it is an announcement.
  */

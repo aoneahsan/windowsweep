@@ -6,7 +6,7 @@
  * fix is a migration rather than an edit. `track()` takes an `EventName`, so a
  * name that is not here does not compile.
  *
- * 🔴 The first-run notice PROMISES two of these. It says the window sends "which
+ * 🔴 Home's destinations ledger PROMISES two of these. It says the window sends "which
  * screens you opened and which buttons you pressed", and until 2026-09-08 the only
  * `track()` callers in the tree were the three updater events - so a GA4 key would
  * have received `update.check.*` and gtag's own session events, and nothing the
@@ -63,7 +63,6 @@ export const CONTROL_IDS = [
   'sections.runSelected',
   'picker.remove',
   'picker.removePermanently',
-  'consent.continue',
   'account.signIn',
   'elevation.askAndRun',
   'splash.updateNow',

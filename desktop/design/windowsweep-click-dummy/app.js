@@ -638,6 +638,8 @@
         store.set('legalSeen:device', seenAt);
         if (accountKey) store.set(accountKey, seenAt);
       };
+      /* read by boot()'s tour hint, which waits for the bar to close (D90): two notes never stack */
+      window.wsLegalPending = true;
       var legalJs = document.createElement('script');
       legalJs.src = 'legal-bar.js';
       legalJs.onload = function () { if (window.wsLegal) window.wsLegal.show(markSeen); };
@@ -730,26 +732,33 @@
         var accountKey = window.wsdb && window.wsdb.facts.signedIn ? String(window.wsdb.facts.email || 'account').toLowerCase() : 'browser';
         var key = 'tourHint:' + accountKey + ':' + currentPage();
         if (!store.get(key, false)) {
-          store.set(key, true);
-          var hint = el('div', 'ws-tour-hint');
-          hint.setAttribute('role', 'status');
-          hint.appendChild(el('span', null, 'New here? Take the tour.'));
-          var show = el('button', 'btn btn-sm', 'Show me');
-          show.type = 'button';
-          show.addEventListener('click', function () { hint.remove(); tour.click(); });
-          hint.appendChild(show);
-          var close = el('button', 'btn btn-ghost btn-sm', 'Close');
-          close.type = 'button';
-          close.addEventListener('click', function () { hint.remove(); });
-          hint.appendChild(close);
-          host.appendChild(hint);
-          var elapsed = 0;
-          var timer = setInterval(function () {
-            if (!hint.isConnected) { clearInterval(timer); return; }
-            if (hint.matches(':hover') || hint.contains(document.activeElement)) return;
-            elapsed += 1000;
-            if (elapsed >= 8000) { hint.remove(); clearInterval(timer); }
-          }, 1000);
+          var offerHint = function () {
+            store.set(key, true);
+            var hint = el('div', 'ws-tour-hint');
+            hint.setAttribute('role', 'status');
+            hint.appendChild(el('span', null, 'New here? Take the tour.'));
+            var show = el('button', 'btn btn-sm', 'Show me');
+            show.type = 'button';
+            show.addEventListener('click', function () { hint.remove(); tour.click(); });
+            hint.appendChild(show);
+            var close = el('button', 'btn btn-ghost btn-sm', 'Close');
+            close.type = 'button';
+            close.addEventListener('click', function () { hint.remove(); });
+            hint.appendChild(close);
+            host.appendChild(hint);
+            var elapsed = 0;
+            var timer = setInterval(function () {
+              if (!hint.isConnected) { clearInterval(timer); return; }
+              if (hint.matches(':hover') || hint.contains(document.activeElement)) return;
+              elapsed += 1000;
+              if (elapsed >= 8000) { hint.remove(); clearInterval(timer); }
+            }, 1000);
+          };
+          /* D90: while the legal bar is up the hint waits, and comes 1.2 s after it closes,
+             as the app's TourControl does - the two notes never stack */
+          if (window.wsLegalPending) {
+            document.addEventListener('ws-legal-closed', function () { setTimeout(offerHint, 1200); }, { once: true });
+          } else offerHint();
         }
       }
     }

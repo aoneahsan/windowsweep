@@ -51,6 +51,7 @@ import { drainMapTargets, toMapTargets } from '../lib/reclaim';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { HeroFigure } from '../components/HeroFigure';
 import { RunCancel } from '../components/RunCancel';
+import { RunKept } from '../components/RunKept';
 
 export function RunScreen() {
   const { t } = useTranslation();
@@ -427,43 +428,8 @@ export function RunScreen() {
         </section>
       ) : null}
 
-      {/* 🔴 WHAT THE RUN ACTUALLY KEPT, from the engine's own `excluded[]`.
-          This is the outcome, not the intention: the map band on Home counts what
-          was ASKED for, and this counts what the engine turned away when a
-          deletion reached the chokepoint. They can legitimately differ - an
-          excluded folder nothing tried to delete never appears here - and showing
-          the request as though it were the result is exactly the shape of lie this
-          feature exists to prevent. Empty after a `--scan`, always, because a scan
-          never reaches the chokepoint. */}
-      {summary && summary.excluded.length > 0 ? (
-        <section className="band band-app band-tight">
-          <div className="wrap rise">
-            <div className="zone-label">
-              <span className="caps">{t('run.excludedTitle')}</span>
-              <span className="t-sm ink-3" style={{ flex: 'none' }}>
-                {t('run.excludedHint', { count: summary.excluded.length })}
-              </span>
-            </div>
-            <div className="panel pad">
-              <ul
-                style={{
-                  margin: 0,
-                  paddingInlineStart: 'var(--sp-5)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 'var(--sp-1)',
-                }}
-              >
-                {summary.excluded.map((path) => (
-                  <li className="mono t-xs" key={path} style={{ wordBreak: 'break-all' }}>
-                    {path}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </section>
-      ) : null}
+      {/* What the engine turned away, from its own `excluded[]` - the outcome, never the request. */}
+      {summary ? <RunKept excluded={summary.excluded} /> : null}
 
       <section className="band band-app">
         <div className="wrap g12">

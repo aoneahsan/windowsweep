@@ -249,7 +249,7 @@ export function Sections() {
             <div className="disclose-body">
               {/* The four policy names are emphasised inside one sentence, so the
                   markup lives in the catalogue value where a translator can move
-                  it - the same form `consent.lede` uses. */}
+                  it - the same form `legal.sentence` uses. */}
               <p>
                 <Trans
                   i18nKey="sections.policyBody"

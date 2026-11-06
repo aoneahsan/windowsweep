@@ -6,7 +6,9 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from '../components/Icon';
 import { track } from '../lib/analytics';
 import { supabase } from '../lib/auth';
+import { holdsTourHint } from '../lib/consent';
 import { readStored, writeStored } from '../lib/storage';
+import { useNotices } from '../state/notices';
 import { useStore } from '../state/store';
 import { isTourRoute, visibleSteps, type TourRoute } from './registry';
 import './tour.css';
@@ -44,6 +46,9 @@ export function TourControl() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const search: { tour?: unknown } = useSearch({ strict: false });
   const phase = useStore((s) => s.phase);
+  /* D90: on a first run the one-time hint waits until the legal bar has closed - two notes never stack.
+     A release notice or block holds it on every launch, as the dummy's `app.js` gives no hint beside one. */
+  const legalHolds = useNotices((s) => holdsTourHint(s.legal, path) || s.release);
   const userId = useStore((s) => s.user?.uid ?? null);
   const [hint, setHint] = useState(false);
   const [remoteState, setRemoteState] = useState<{
@@ -160,7 +165,7 @@ export function TourControl() {
   );
 
   useEffect(() => {
-    if (!route || blocked || open || !remoteReady) return;
+    if (!route || blocked || open || !remoteReady || legalHolds) return;
     let timer = 0;
     const saved = readStored<Record<string, true>>(HINT_KEY, {});
     const key = `/desktop${route === '/' ? '' : route}`;
@@ -187,7 +192,7 @@ export function TourControl() {
     };
     timer = window.setTimeout(reveal, 1200);
     return () => window.clearTimeout(timer);
-  }, [blocked, open, remoteHints, remoteReady, route, source, userId]);
+  }, [blocked, legalHolds, open, remoteHints, remoteReady, route, source, userId]);
 
   useEffect(() => {
     if (blocked && requested > 0) go(null);

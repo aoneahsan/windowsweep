@@ -18,7 +18,7 @@ applyAllAxes(readPrefs());
 applyDocumentLanguage();
 
 /* 🔴 No consent gate, since the owner removed the opt-out on 2026-09-07: every
-   destination this build has a KEY for starts here, and the first-run screen is a
+   destination this build has a KEY for starts here, and the first-run legal bar is a
    notice rather than a decision. A destination whose key is absent is skipped and
    one that fails to start is swallowed - the window opens either way. A development
    build starts none of them (TASK-023). */

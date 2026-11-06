@@ -145,7 +145,7 @@ function Titlebar({
   drawer,
 }: {
   onOpenTheme: () => void;
-  /** Present on the screens that have a rail; Splash and Consent have none to open. */
+  /** Present on the screens that have a rail; Splash has none to open. */
   drawer?: { open: boolean; onToggle: () => void };
 }) {
   const { t } = useTranslation();
@@ -279,8 +279,6 @@ const FIXED_NOTES: Record<string, string> = {
   /* `settings.html:64` - withheld from round 8 until something synced; TASK-013 made it true
      (D-66, GATE 4 round 14). */
   '/settings': 'status.settings',
-  /* `consent.html:71` - the first-run notice's own note (D-43, GATE 4 round 8). */
-  '/consent': 'status.consent',
 };
 
 interface StatusNote {
@@ -303,8 +301,7 @@ interface StatusNote {
  *              deriving, because it is built from the screen's own choice (D-29)
  *  - History, Report, Picker and Account carry a fixed sentence each - the
  *    dummy's own, owed since the 2026-09-07 amendment and built for round 8 -
- *    and so does Consent, whose note round 8 found missing (D-43), and Settings,
- *    whose note waited for sync to exist (D-66)
+ *    and so does Settings, whose note waited for sync to exist (D-66)
  *
  * 🔴 Each one calls the same function its screen calls. The count comes from
  * `filterSections`, which is what the Sections table itself renders from, and the
@@ -394,11 +391,11 @@ function StatusBar({ note }: { note?: string }) {
 }
 
 /**
- * 🔴 `rail` is how Splash and Consent drop the navigation and keep everything
- * else. They rendered their own bare `.app` + empty `.titlebar` before, which
- * left the theme control - the ONE appearance control, owed on every route at
- * every width - missing on 2 of 11 routes while the dummy carries it on all of
- * them. The rail is what those two screens must not have, because nothing is
+ * 🔴 `rail` is how Splash drops the navigation and keeps everything else. It
+ * (and the Consent screen retired in 1.4.3) rendered a bare `.app` + empty
+ * `.titlebar` before, which left the theme control - the ONE appearance control,
+ * owed on every route at every width - missing while the dummy carries it on
+ * every page. The rail is what Splash must not have, because nothing is
  * navigable yet; the title bar and status bar are not.
  */
 export function Shell({

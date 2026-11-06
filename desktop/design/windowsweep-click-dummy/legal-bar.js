@@ -50,6 +50,9 @@
       var had = bar.contains(document.activeElement);
       bar.remove();
       document.removeEventListener('keydown', onKey);
+      /* the tour hint was holding for this (app.js boot(), D90) */
+      window.wsLegalPending = false;
+      document.dispatchEvent(new Event('ws-legal-closed'));
       /* a keyboard user is handed back to where they are: the rail's current item,
          or the Menu button when the rail is folded away */
       if (had) {

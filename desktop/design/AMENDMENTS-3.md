@@ -163,3 +163,12 @@ still needs to review this in writing.
 ## Approval, 2026-11-06 - the legal bar, the destinations without Clarity and the emails (D90)
 
 The owner approved the drawn desktop legal bar (N-001), the destinations without Clarity (N-016) and the eight-email gallery: *"Approve all (Recommended)"*. One main-session call rides with it: on first run the tour hint waits until the legal bar closes, so two notes never stack. The newsletter confirmation email is written through the story system (D91) and drawn before it is sent.
+
+## Amendment - 2026-11-06: the tour hint waits for the legal bar (D90's main-session call, drawn)
+
+`app.js` now draws what D90's approval recorded in words: while the legal bar is up the one-time tour hint waits, and it
+comes about 1.2 seconds after the bar closes, the delay the app's `TourControl` uses. `legal-bar.js` announces its close
+(`ws-legal-closed`) and `buildNotices()` raises `wsLegalPending` before it loads the bar, so the hint, built later in
+`boot()`, knows to wait. A release notice or block still means no hint beside it; the app now holds the hint for one too
+(1.4.3). Measured on `index.html?legal=1` at 1440 and 760: the bar up and no hint, no hint just after Okay, the hint 1.4
+seconds later, no page error (`site-evidence/session-2026-11-05/desktop-dummy-legal-hint/`).

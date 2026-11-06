@@ -27,7 +27,6 @@ import { Trans, useTranslation } from 'react-i18next';
 
 import { Shell } from '../components/Shell';
 import { useStore } from '../state/store';
-import { readNotice } from '../lib/consent';
 import { checkForUpdate, restartApp, type UpdateHandle } from '../lib/updater';
 import { stateOf } from '../lib/control-state';
 import { PrimaryButton } from '../components/PrimaryButton';
@@ -151,8 +150,9 @@ export function Splash() {
         ? (gate.retried ? RETRIED_NOTE_MS : SKIPPED_NOTE_MS) - NO_ANSWER_MS
         : READY_MS;
     const to = window.setTimeout(() => {
-      // First run shows the notice; after it has been seen, straight to Home.
-      void navigate({ to: readNotice().seen ? '/' : '/consent' });
+      /* Home, on every launch. A first run is met there by the legal bar (N-001), which
+         never stands between the person and the app as the retired Consent screen did. */
+      void navigate({ to: '/' });
     }, ms);
     return () => {
       window.clearTimeout(to);

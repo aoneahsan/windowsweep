@@ -18,6 +18,8 @@ import { openUrl } from '@tauri-apps/plugin-opener';
 const OWNED_HOSTS = new Set([
   'aoneahsan.com',
   'www.aoneahsan.com',
+  'windowsweep.aoneahsan.com',
+  'www.windowsweep.aoneahsan.com',
   'windowsweep-docs.aoneahsan.com',
   'nativeupdate.aoneahsan.com',
   'nativeupdate-docs.aoneahsan.com',

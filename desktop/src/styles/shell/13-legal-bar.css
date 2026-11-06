@@ -1,0 +1,74 @@
+/* The approved desktop legal bar - the dummy's `shared.css` `.ws-legal` block (AMENDMENTS-3,
+   2026-11-06). The notice law's size, about 36rem, in the bottom-right corner the release notice
+   uses: the two never show together, the release taking priority, and the corner clears the rail
+   and the centre of the work. It never prevents a task. */
+.ws-legal {
+  position: fixed;
+  inset-inline-end: var(--sp-4);
+  bottom: calc(var(--sp-4) + 1.75rem * var(--density));
+  z-index: 70;
+  width: min(calc(100% - var(--sp-8)), 36rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--sp-3) var(--sp-4);
+  padding: var(--sp-4) var(--sp-4) var(--sp-4) var(--sp-5);
+  background: var(--c-panel);
+  color: var(--c-ink);
+  border: 1px solid var(--c-line-strong);
+  border-radius: var(--r-lg);
+  box-shadow: var(--wm-raise-shadow);
+  animation: ws-legal-in var(--d-mod) var(--ease-enter) both;
+}
+
+.ws-legal-copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  min-width: 0;
+}
+
+.ws-legal-copy p {
+  margin: 0;
+}
+
+.ws-legal-sentence {
+  font-size: var(--fs-sm);
+  font-weight: 560;
+}
+
+.ws-legal .btn {
+  flex: none;
+  min-width: calc(var(--u) * 18);
+}
+
+@keyframes ws-legal-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--sp-3));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The entrance is off under reduced motion - the axis, or the system setting when the axis
+   follows it - as `.rise` is. */
+[data-motion='reduced'] .ws-legal {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='full']) .ws-legal {
+    animation: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .ws-legal {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ws-legal .btn {
+    justify-self: end;
+  }
+}

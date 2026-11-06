@@ -23,8 +23,8 @@ import {
 } from '@tanstack/react-router';
 
 import { Shell } from './components/Shell';
+import { LegalNotice } from './components/LegalNotice';
 import { ReleaseGate } from './components/ReleaseGate';
-import { Consent } from './screens/Consent';
 import { Splash } from './screens/Splash';
 import { useStore } from './state/store';
 import { loadCatalogue } from './lib/engine';
@@ -115,23 +115,19 @@ function RootLayout() {
     []
   );
 
+  /* The first-run notice is the legal bar (N-001, D90), not a screen: it waits beside the release
+     gate for the first page that can carry it, and never stands between the person and the app. */
   return (
     <>
       <Outlet />
       <ReleaseGate />
+      <LegalNotice />
     </>
   );
 }
 
 const rootRoute = createRootRoute({ component: RootLayout });
 
-/** The consent screen deliberately renders WITHOUT the rail: it is answered before
-    the app is navigable, and offering navigation would let it be skipped silently. */
-const consentRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/consent',
-  component: Consent,
-});
 const splashRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/splash',
@@ -144,10 +140,11 @@ const splashRoute = createRoute({
  * Picker's table, the Report's charts, History's, Settings' ten axis panels and the
  * Elevation screen before anyone had navigated anywhere.
  *
- * 🔴 Consent and Splash stay EAGER, and that is the point rather than an omission:
- * `RootLayout` navigates to `/splash` on boot, so they are the two screens a launch
- * is certain to reach. Deferring the screen the app opens on would move a fetch
- * onto the critical path to save a chunk nothing avoids.
+ * 🔴 Splash stays EAGER, and that is the point rather than an omission: `RootLayout`
+ * navigates to `/splash` on boot, so it is the one screen a launch is certain to
+ * reach. Deferring the screen the app opens on would move a fetch onto the critical
+ * path to save a chunk nothing avoids. (The first-run Consent screen, eager beside
+ * it, was retired for the legal bar in 1.4.3.)
  *
  * 🔴 Named exports, so each import is mapped to a `default` - `lazy` takes a module
  * with one and these screens have none. A default export per screen would work too
@@ -203,7 +200,6 @@ const plansRoute = createRoute({
 });
 
 const routes = [
-  consentRoute,
   splashRoute,
   createRoute({ getParentRoute: () => rootRoute, path: '/', component: withShell(Home) }),
   createRoute({ getParentRoute: () => rootRoute, path: '/run', component: withShell(RunScreen) }),
@@ -249,7 +245,7 @@ declare module '@tanstack/react-router' {
 /**
  * 🔴 ONE place emits a screen view, and it is the router rather than a component.
  *
- * The first-run notice promises "which screens you opened", and nothing in the
+ * Home's destinations ledger promises "which screens you opened", and nothing in the
  * tree emitted it (PENDING-TASKS TASK-005). A `useEffect` in a layout would work
  * too, and would fire twice per route under StrictMode; a router subscription sits
  * outside React entirely, so it reports one navigation as one event in development

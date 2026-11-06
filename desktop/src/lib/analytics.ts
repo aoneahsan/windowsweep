@@ -78,8 +78,8 @@ function register(provider: Provider): void {
  * bracket, so the pattern read "letter, colon, a literal [" and matched nothing;
  * the UNC rule below then caught everything from the first backslash onward and
  * left the drive letter standing, so `C:\Users\PC\x.ts` scrubbed to `C:<unc>`.
- * No folder or user name escaped - but a DRIVE LABEL did, and the consent notice
- * lists a drive label among the things never sent. One character, invisible to
+ * No folder or user name escaped - but a DRIVE LABEL did, and the never-sent list
+ * names a drive label among the things never sent. One character, invisible to
  * typecheck, lint and review because both forms are valid regexes.
  *
  * 🔴 AND THE FIXED RULE ONLY EVER SAW ONE OF THE TWO SLASHES. Re-measured

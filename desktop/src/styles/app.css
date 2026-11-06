@@ -18,9 +18,12 @@
 @import './shell/06-disclosure.css';
 @import './shell/07-actions.css';
 @import './shell/08-forms.css';
-@import './shell/09-navigation-overlays-display.css';
+@import './shell/08-forms-choice.css';
+@import './shell/09-navigation-overlays.css';
+@import './shell/09-display.css';
 @import './shell/10-charts-interaction.css';
 @import './shell/11-history-report.css';
 @import './shell/12-release-gate.css';
+@import './shell/13-legal-bar.css';
 
 @custom-variant light (&:where([data-appearance='light'], [data-appearance='light'] *));

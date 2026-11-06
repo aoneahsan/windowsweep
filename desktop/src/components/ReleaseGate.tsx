@@ -17,6 +17,7 @@ import {
 } from '../lib/release-state';
 import { readStored, removeStored, writeStored } from '../lib/storage';
 import { checkForUpdate, restartApp } from '../lib/updater';
+import { useNotices } from '../state/notices';
 
 const NOTICE_KEY = 'windowsweep:release-notice';
 const RUN_ID = crypto.randomUUID();
@@ -129,9 +130,16 @@ export function ReleaseGate() {
     };
   }, [blocked]);
 
-  if (decision.kind === 'none' || (decision.kind === 'notice' && decision.dismissed)) {
-    return null;
-  }
+  /* The legal bar gives way to either surface, so the gate says when one is up (`state/notices.ts`). */
+  const shown = decision.kind === 'block' || (decision.kind === 'notice' && !decision.dismissed);
+  useEffect(() => {
+    useNotices.getState().setRelease(shown);
+    return () => {
+      useNotices.getState().setRelease(false);
+    };
+  }, [shown]);
+
+  if (!shown) return null;
 
   const release = decision.release;
   const onUpdate = async (): Promise<void> => {

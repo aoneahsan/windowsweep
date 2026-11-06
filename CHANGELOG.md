@@ -9,6 +9,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.4.3] - 2026-11-06
+
+### Changed
+
+- **One bar replaces the full-screen first-run notice.** In the desktop app it sits at the bottom right and holds the
+  Privacy Policy and Terms of Service sentence, the usage-data line and **Okay**; the policy links open in the
+  browser. The usage line ends "Never a file path, never the contents of anything." The window stays usable under
+  the bar, which closes by itself after 10 seconds; hover or keyboard focus holds it. **Okay** or Escape closes
+  it. A machine that has shown it never shows it again, and a signed-in account that saw it on one machine is not
+  shown it on another. It never appears on the start screen, on the Run, Choose and Admin screens, or beside an update
+  notice or block.
+- **The tour hint waits for the bar.** The one-time **Tour this page** hint now waits until that bar has closed, and
+  while an update notice or block is on screen, so two notes never stack.
+
+### Fixed
+
+- **Walkthrough step numbers are centred.** In **Walk through windowsweep**, the step numbers sit in the centre of
+  their circles; in 1.4.2 each sat 14 px left of centre.
+- The command-line tool is unchanged in this release. It moves to 1.4.3 so the CLI and the desktop app stay on one
+  version.
+
 ## [1.4.2] - 2026-11-05
 
 ### Added

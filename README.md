@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/aoneahsan/windowsweep/main/assets/logo/windowsweep-mark.svg" alt="windowsweep logo" width="120" />
+<img src="https://raw.githubusercontent.com/aoneahsan/windowsweep/main/brand-kit/favicon.svg" alt="windowsweep logo" width="120" />
 
 <h1>windowsweep</h1>
 
@@ -482,7 +482,7 @@ bin/              Node launcher used by npx and global install (published)
 lib/              constants, UI, logging, filesystem walker, the safety chokepoint, config, scan, actions
 modules/          one file per section group, plus walkthrough, menu, reports, self-test, crash trap
 docs/             the manual (not shipped in the npm tarball)
-assets/logo/      SVG logo masters
+brand-kit/        logo, favicon, splash and print files, each with the command that made it (not shipped in the npm tarball)
 ```
 
 <a id="support"></a>

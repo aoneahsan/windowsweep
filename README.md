@@ -459,10 +459,9 @@ More: [FAQ](https://windowsweep-docs.aoneahsan.com/faq).
 <a id="changelog"></a>
 ## 🔄 Changelog&nbsp;[#](#changelog)
 
-Latest release: **`1.4.3`** - the desktop app replaces its full-screen first-run notice with one bar at the bottom
-right, and the window stays usable under it. The 1.4 scanner searches Downloads and folders you add for large or old
-files; you choose individual files for the Recycle Bin. The uninstall and leftover-folder sections require explicit
-selection.
+Latest release: **`1.4.4`** - the desktop app's Plans screen opens Polar's checkout for Pro and Team, and a paid plan
+appears there without a restart. The 1.4 scanner searches Downloads and folders you add for large or old files; you
+choose individual files for the Recycle Bin. The uninstall and leftover-folder sections require explicit selection.
 Full history: [CHANGELOG.md](https://github.com/aoneahsan/windowsweep/blob/main/CHANGELOG.md).
 
 <a id="contributing"></a>

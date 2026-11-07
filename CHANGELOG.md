@@ -9,6 +9,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.4.4] - 2026-11-07
+
+### Changed
+
+- **Checkout is open on Plans.** In the desktop app, **Subscribe to Pro** and **Subscribe to Team** stand where
+  **Request Pro** and **Request Team** stood, and a plan request left pending from before no longer disables them.
+  Pro's button is filled and Team's is outlined; in 1.4.3 both were filled. Pressing one creates a checkout for the
+  signed-in account with the Monthly or Yearly choice and the Team seat count, and opens Polar's checkout page in
+  your browser. The app refuses any checkout address that is not on polar.sh. If the checkout does not open, the note
+  under the cards ends "Nothing was charged."
+- **A paid plan appears with no restart and no refresh.** Once Polar confirms the payment, a private signal for that
+  one account tells the window to read the plan again, and so do focus and a returning network. Never on a timer.
+  The note under the cards then names the plan: "Pro is on this account now, with no limit on real runs."
+
+### Fixed
+
+- **The release broadcast reconnects after a network drop.** An update notice or block arrives on that broadcast.
+  In 1.4.3, after a drop, the window stopped listening until the app restarted; meanwhile it read the release record
+  only on focus or when the network came back.
+- The command-line tool is unchanged in this release. It moves to 1.4.4 so the CLI and the desktop app stay on one
+  version.
+
 ## [1.4.3] - 2026-11-06
 
 ### Changed

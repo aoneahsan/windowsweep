@@ -12,3 +12,14 @@ Open defects found while using or documenting windowsweep, one `### ISSUE-NNN` e
   snapshot); "past 400 characters" (code checks > 260); "44 files" (1.3.2 has 46); the developer band shows `[y/N]`
   while the code prints `[Y/n]`; the docs page `developer-mode` repeats its first paragraph.
 - **Fix:** correct the copy in `windowsweep-web` and the docs from the code. **Priority:** medium.
+
+### ISSUE-003 — a subscription cancelled in Polar's portal still reads "renewing on"
+- **Found:** 2026-11-07, while building the website's `/account` plan block (D94, web dummy amendment 42).
+- **What:** `polar-webhook` handles only `order.paid` and `order.refunded`, so a cancellation made in Polar's customer
+  portal never reaches the database; `subscriptions.cancelled_at` is written only by `billing_mark_cancelled` during an
+  account's deletion, and `my_plan()` does not return it. The desktop Plans screen (`plans.paid.renews`) and the site's
+  plan block (`account.plan.renews`) therefore keep saying the plan renews until the paid period ends. Nothing is
+  charged (Polar stops billing) and the plan ends on time; only the word is wrong.
+- **Fix:** subscribe the production webhook to Polar's subscription cancellation event, record it in `cancelled_at`,
+  expose it through `my_plan()`, and draw the approved `account.plan.ends` line (and a desktop counterpart through the
+  story gate). **Priority:** medium. Deferred: it changes the webhook contract and adds a production migration.

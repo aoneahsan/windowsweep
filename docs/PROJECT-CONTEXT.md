@@ -237,6 +237,16 @@ Asked in one batch when the paused run resumed; each answer is his verbatim opti
   (project `windowsweep`, `www` same site with the canonical on the bare name); Node 24.16.0 replaced 24.13.0 on this
   machine without its yarn shims or global CLIs, restored with `corepack enable yarn` and the prior global set.
 
+### Session 24 decision (2026-11-07)
+
+- **D94 - his words**: *"windowsweep polar org is approved get that done, and approve all emails so far, approve all
+  othre work as well, and continue nd finish all remianing work fully now, release everything in production once done"*.
+  Read as: open production checkout (`POLAR_PRODUCTS` set; Polar reads the organization `active`); his approval and
+  receipt of the `[TEST]` emails (MANUAL row 37) and of the 1.4.3 newsletter, released to confirmed subscribers; his
+  approval of the session-23 work; and the remaining work finished and released, which includes desktop 1.4.4 with the
+  Plans screen's checkout-open state (S-005 in `docs/story/drafts/plans-app.md`, built dormant under D61) and the docs'
+  plans page. No real charge: the sandbox proved the paid path, an unpaid production checkout proves the live page.
+
 ### How the frontend UI mandates map to this product
 
 `~/.claude/rules/frontend-ui-standards.md` applies to the desktop app (the CLI has no UI at all). Recorded

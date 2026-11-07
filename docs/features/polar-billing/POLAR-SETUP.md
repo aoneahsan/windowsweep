@@ -5,7 +5,22 @@ on project `nlmetjyytgwaxcliusuo`; the website's `/pricing` and the desktop app'
 names keys, never values. Standard: `aoneahsan-cccs-polar-payments`; decisions D61 (built dormant) and D87
 (sandbox proof, then production), `docs/PROJECT-CONTEXT.md`.
 
-## State on 2026-11-05
+## State on 2026-11-07: checkout is open
+
+- **Polar approved the organization** (status `active`, details submitted 2026-11-06 12:40 UTC). `POLAR_PRODUCTS` was
+  set from `~/.secrets/polar-windowsweep/production-products.json` at 06:57:52 UTC, and `GET polar-checkout` answered
+  `available: true` five seconds later, with no redeploy. `POLAR_SERVER`, `POLAR_ACCESS_TOKEN` and
+  `POLAR_WEBHOOK_SECRET` match the production values by digest; the production webhook targets `polar-webhook` with
+  `order.paid` and `order.refunded`.
+- **The website sells both plans.** `/pricing` draws *Subscribe to Pro / Team* (the served HTML carries the state since
+  web `a51d724`, which reads it at build time), and as a non-admin test account one checkout opened Polar's hosted page
+  at *windowsweep Pro (monthly), $4 / mo*. The quote row read 400 cents; Polar's checkout read `open`, 400 USD, for that
+  account. No payment was made and no Polar customer was created; the account was deleted and its quote went with it.
+  Evidence: root `site-evidence/payments-2026-11-07/`.
+- **The desktop app** asks for plans by request until 1.4.4 builds the Plans screen's checkout-open state (S-005).
+  Requests now complete: an admin's *Email pay links* sends each pending requester a link to pay.
+
+## State on 2026-11-05 (superseded)
 
 - **Production is configured and dormant.** The organization's status is `created`: Polar has not approved it yet.
   The function secrets hold the production token, server and webhook secret. `POLAR_PRODUCTS` is withheld, so
@@ -73,7 +88,7 @@ The test accounts were non-admin, the sandbox window was open 17:35-17:42 UTC, a
 5. **Free limit:** a Free account on a new device was allowed 30 real runs (15 for the device, 15 for the account).
    The 31st was refused with 409 `limit_reached`.
 
-## When Polar approves the organization
+## When Polar approves the organization (done 2026-11-07, above)
 
 1. `GET /v1/organizations/61f0be1b-d74e-4541-ac13-d51ec7f367d3` reads a status other than `created`.
 2. Set `POLAR_PRODUCTS` from `~/.secrets/polar-windowsweep/production-products.json`. `GET polar-checkout` must
@@ -82,4 +97,4 @@ The test accounts were non-admin, the sandbox window was open 17:35-17:42 UTC, a
    Stop there: no payment is made. The sandbox already proved the paid path, so no real charge is asked for
    (`~/.claude/rules/payment-validation.md`).
 
-Last Updated: 2026-11-05
+Last Updated: 2026-11-07 (checkout open after Polar's approval, D94). Earlier 2026-11-05

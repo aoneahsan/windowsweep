@@ -334,5 +334,17 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
   reading v6 ACTIVE at 15:31:18 UTC. The other functions stayed at v5. Each answered its preflight with 204 and refused
   an unauthenticated call (401, 401 and 403; `team` with a valid action, 401). Receipt in the inbox is
   `docs/MANUAL-TASKS.md` row 37.
+- 2026-11-07: **production checkout open** (D94). Polar approved the organization; `POLAR_PRODUCTS` set at 06:57:52 UTC
+  and `GET polar-checkout` read `available: true` 5 s later. One unpaid checkout as a non-admin test account opened
+  Polar's page at *windowsweep Pro (monthly), $4 / mo*; no payment, account deleted. Record:
+  `docs/features/polar-billing/POLAR-SETUP.md`.
+- 2026-11-07: **site deploy `08f40a73`** (web `bb8bc4a`). `/pricing` is served in the state the server reports (read at
+  build time, a build check watched failing on a planted missing seed), and zod runs `jitless`, so no page reports a CSP
+  violation. 12 routes at 1440 and 390 live with cache off: 0 errors, 0 CSP violations, 15 files byte-equal to the build.
+- 2026-11-07: **the 1.4.3 release newsletter released.** `[TEST]` `01M6TE24AEGY6AANYHGS12TYJY` accepted at 07:20 UTC,
+  step approved under D94, marketing on, sequence active: 0 recipients today (the list's one address is unconfirmed).
+- 2026-11-07: **plan creation and a limit edit proven in a rolled-back transaction** as a temporary test admin: both
+  calls returned and wrote their audit rows, Pro read `report_machines` 6 inside the transaction, and afterwards every
+  value read as before (root `site-evidence/admin-1.4.3/07-plan-save-rollback-probe.txt`).
 
-Last Updated: 2026-11-06 (the branded account emails on production, D92). Earlier the same day (1.4.3: the release record and its installed updater proof). Earlier the same day (1.4.2: the installed updater proof and the release record, including the restored MSI entry of `latest.json`). Earlier 2026-09-28 (the owner's own sign-in and dry-run on the installed 1.3.2, read back from the server - row 31. Earlier the same day: CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)
+Last Updated: 2026-11-07 (checkout open, the site deploy, the newsletter released, D94). Earlier 2026-11-06 (the branded account emails on production, D92). Earlier the same day (1.4.3: the release record and its installed updater proof). Earlier the same day (1.4.2: the installed updater proof and the release record, including the restored MSI entry of `latest.json`). Earlier 2026-09-28 (the owner's own sign-in and dry-run on the installed 1.3.2, read back from the server - row 31. Earlier the same day: CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)

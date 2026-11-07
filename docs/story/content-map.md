@@ -101,9 +101,9 @@ model links to the sections page. No page is more than two clicks from `--scan`.
 
 No blog, and therefore no `Article` schema anywhere - this product has no dated content and inventing some
 to feed a feed would be the tail wagging the dog (recorded as RW-046). No landing page beyond the docs front
-door; the npm page and the README carry that load. No comparison page naming competitors: the README's
-comparison table stays generic ("a wipe-everything cleaner") because naming a product invites a claim this
-project cannot verify.
+door; the npm page and the README carry that load. The README's comparison table stays generic ("a wipe-everything cleaner").
+Comparison pages naming competitors now live on the website and docs (owner, 2026-11-07: "research and find at
+least top 10 competitors"), where every claim carries its source and date in `windowsweep-web/docs/comparison-hub/competitors.json`.
 
 ---
 

@@ -3,7 +3,7 @@
   "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md, which since 2026-09-07 lives at the WORKSPACE ROOT one level above this repository, outside it (a clone of this repository does not carry it; since 2026-09-26 the root is its own repository on the private windowsweep-web's project-root branch, D49 - ../RESTORE.md rebuilds it). The method is ../completion-plan-v5-2026-09-24.md (v4 of 2026-09-17, v3 of 2026-09-12 and the two 2026-09-07 plans are history; every decision they record still applies, and v3 sections B0, B1 and B10-B12 are still live reference). This file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-11-06",
+  "lastUpdated": "2026-11-07",
   "activeCompletionRun": {
     "id": "2026-10-30-2224",
     "status": "owner chain: 85/100, all four hard gates pass (2026-11-06)",
@@ -1143,21 +1143,111 @@
       "title": "1.4.0 machine-cleanup features from the 2026-11-02 P52 cleanup (D77-D83)",
       "status": "in_progress",
       "subTasks": [
-        { "id": "P9.decisions", "title": "Record D77-D83 and replace the uninstaller non-goal", "status": "complete", "note": "docs/PROJECT-CONTEXT.md, 2026-11-02", "awaitingUser": false },
-        { "id": "P9.idle-basis", "title": "D82: detect a live last-access per root and fall back to write/creation; the output names the basis", "status": "complete", "note": "DONE 2026-11-02: Test-LastAccessLive in lib/fs.ps1 (20+ old files, 90% read in a day), used by Get-IdleDays, Get-StaleFiles, sections 17/18/19/22; --json access_live_volumes. Self-test 19a-19e + 19g (watched failing on a planted always-false detector: 2 of 6). Real machine: section 17 dry-run on D:\\work\\my-work detected D: live (400 of 400) and listed 4 stale artefacts by write time (../machine-evidence/p52-2026-11-02/ws-p9-d82-s17-dryrun.json).", "awaitingUser": false },
-        { "id": "P9.json-stdout", "title": "Keep --json stdout to one line: capture Delete-DeliveryOptimizationCache and other external output", "status": "complete", "note": "DONE 2026-11-02: the cmdlet's streams go to the log (*>&1), and Invoke-SectionById discards section output ($null = & $sec.Fn); self-test 19f. Evidence of the defect: ../machine-evidence/p52-2026-11-02/ws-a4-admin-run.json.", "awaitingUser": false },
-        { "id": "P9.s23-claims", "title": "Section 23 claim fixes: reverse-DNS ids, Store package names, acronyms, process command lines; never offer the desktop app's own data", "status": "complete", "note": "DONE 2026-11-02: modules/orphaned_appdata.ps1 (initials, 6-char vendor stem, reverse-DNS segments, path-only command-line tokens) and lib/safety.ps1 (the desktop app's two folders protected). Self-test 19h-19l incl. the bare-word negative case. Real machine: the four false positives (com.aoneahsan.windowsweep, DBeaverData, IDM, superpowers) gone, the true orphan vega-desktop-updater still offered (../machine-evidence/p52-2026-11-02/ws-p9-s23-dryrun.json). Found while testing: tokenising whole command lines let a shell mentioning a folder claim it - now only path arguments count.", "awaitingUser": false },
-        { "id": "P9.s26-uninstall", "title": "Section 26: run a selected program's own uninstaller, verify, then a targeted leftover pass", "status": "complete", "note": "DONE 2026-11-03: modules/uninstall.ps1 + catalogue row 26 (permanent, interactive, per-entry admin). Silent forms from the P52 evidence: quiet string, MSI (incl. key-only VMware), Inno, NSIS, Chromium family (copilot_setup.exe too, exit 19), Docker installer, Qt maintenancetool, Adobe HDBox Setup.exe with the base version from the icon folder, WiX bundle, winget portable, rustup, registered-silent; else the vendor window. Strictly serial, waits for helpers and the key. Leftover pass via leftovers.ps1 (second prompt takes only --select-file paths or a console answer). --json candidates gain label. Self-test group [22]; planted defects caught. Real-machine dry-run: 43 programs, Steam -> uninstall.exe /S (ws-p9-s26-dryrun.json). The elevated real run (Steam) is P9.real-run.", "awaitingUser": false },
-        { "id": "P9.s27-leftovers", "title": "Section 27: unclaimed folders outside AppData -> Recycle Bin, fails closed", "status": "complete", "note": "DONE 2026-11-03: modules/leftovers.ps1 + catalogue row 27 (recycle, interactive, admin; elevated walkthrough). Roots: both Program Files, both Common Files, ProgramData, LocalAppData\\Programs (protected: reported only). Claims: installed-program names (index without the judged folders), plus existing paths named by uninstall entries, services, drivers, environment/PATH, Run keys, shortcuts, scheduled tasks and processes; never-offer list; D82 idle gate; fails closed. Reports environment entries naming missing paths. Both Common Files and ProgramData\\Microsoft are now protected roots. Self-test group [23]; planted defects caught. The elevated real run (AVAST Software, MBAE folder) is P9.real-run.", "awaitingUser": false },
-        { "id": "P9.s28-releases", "title": "Section 28: superseded Codex releases, Electron updater downloads, Ollama updates, unpinned nvm Node versions", "status": "complete", "note": "DONE 2026-11-03: modules/tool_releases.ps1, catalogue row 28 (safe batch, dev, deep, walkthrough), D79 Codex exception computed in Initialize-Safety; an exception no longer lifts --exclude-path. Self-test group [20] (182 checks; planted defects caught: a dropped rollback release and the old early return). Real run on the P52 (the held items): Codex 0.163.0 + 0.164.0 removed, 0.165/0.166 kept; vega-desktop-updater installer cleared; Node v24.10.0 removed with nvm, v22.22.0 and v24.13.0 kept; 1.1 GB (../machine-evidence/p52-2026-11-02/ws-p9-s28-run.json).", "awaitingUser": false },
-        { "id": "P9.data-scanner", "title": "Data scanner engine contract (large or old personal files; Downloads by default, user-added roots)", "status": "complete", "note": "ENGINE DONE 2026-11-03 in c327b88 (owner confirmed it for after the P9 sections; contract ../machine-evidence/p52-2026-11-02/codex-data-scanner-brief.md): modules/data_scanner.ps1 replaces section 19. Downloads + --personal-roots / personalRoots (drive roots, the profile, Windows/Program Files/ProgramData/AppData, links and protected folders refused, each verdict in --json personal_roots); large (any age) or old (any size), each once, with reason/age_basis/modified/root/selectable (+skip_reason, index 0 when not selectable); removal by exact path only, never --yes, Recycle Bin default, every file re-checked (size, write time, no link on its path) right before it goes. Self-test group [25], 221 checks; planted defects caught. Real-machine dry-run: Downloads accepted, the C: drive root and the Windows temp folder refused, 500 offered (488 old, 8 large, 4 both, 6.49 GB), age basis write. Desktop side (Picker, dummy, D84 record) is the Codex session.", "awaitingUser": false },
-        { "id": "P9.s29-browserai", "title": "Section 29: Chrome on-device AI model policy (D81)", "status": "complete", "note": "DONE 2026-11-03: modules/browser_ai.ps1 + catalogue row 29 (config, deep, admin; in no batch, profile or walkthrough). Self-test group [21] (187 checks; a planted dry-run-ignoring write caught; the throwaway HKCU key is removed). The elevated real run on the P52 belongs to P9.real-run.", "awaitingUser": false },
-        { "id": "P9.extensions", "title": "D83: section 4 images + dangling AVD .ini, 7 browserProfileRoots, 10 tempRoots, 24 Prefetch last run", "status": "complete", "note": "DONE 2026-11-03. 4: every AVD root (ANDROID_AVD_HOME / _EMULATOR_HOME / _SDK_HOME / _PREFS_ROOT), dangling pointer .ini -> Recycle Bin, images no remaining AVD uses (+ emulator when none is left) via sdkmanager, an interrupted install reported. 7: --browser-profile-roots / browserProfileRoots, D79 exceptions for exactly the cache leaves (Add-CacheLeafExceptions, after the settings merge), a profile held by --user-data-dir skipped. 10: --temp-roots / tempRoots, entries nothing wrote for --temp-days go whole, one named in a live command line stays (Get-IdleDays -WriteOnly). 24: RAN column from Windows Prefetch when elevated. D82 sampler walks until 400 old files or 50,000 seen (P52 %TEMP% had inherited). Self-test group [24] 24a-24h, 213 checks; planted defects caught. Real run (user level): 2 dangling .ini recycled, 51 automation profiles' caches 1.93 GB, 21 C:\\t entries 1.47 GB, %TEMP% 2.6 GB (ws-p9-ext-run.json, ws-p9-s10-temp-run.json). android-34 is an interrupted install sdkmanager does not know: reported; removed by hand (see REPORT). Section 24's RAN column is proven in the elevated run (P9.real-run).", "awaitingUser": false },
-         { "id": "P9.selftest", "title": "Self-test group for every new behaviour (dry-run = real estimate, exceptions exact, --yes never selects, fail closed)", "status": "complete", "note": "DONE 2026-11-03: groups [19]-[26] in modules/self_test_1_4.ps1 and self_test_1_4b.ps1 - 223 checks pass on the P52, including the elevated summary handoff and section 19 Recycle Bin override. Earlier assertions were watched failing on planted defects (../machine-evidence/p52-2026-11-02/REPORT.md section 5).", "awaitingUser": false },
-         { "id": "P9.docs", "title": "sections, cli-reference, safety-model, CONTRACTS, profiles, faq, CHANGELOG, AI guide, README, root inventory; docs site mirror", "status": "complete", "note": "Product docs and public Docusaurus mirror are published for 1.4.1. Docs source 5ac3db8, gh-pages 4f33b2d; typecheck, six release tests and optimized build passed; live /updates at 1440/390 and bundle hash matched.", "awaitingUser": false },
-         { "id": "P9.desktop", "title": "Click dummy first, then sections.json words for 26/27/29 and parity at 1440/760; yarn gates", "status": "complete", "note": "Owner-approved click dummy is implemented in Picker/Settings; DEV fixture parity passed at 1440/760. CLI self-test 223, Rust tests 28 and desktop gates 40 passed. Installed app updated from 1.4.0 to 1.4.1 via signed updater, but final installed Picker visual capture has not been recorded. | CLOSED 2026-11-06: the installed Picker was captured at 1440/760 on 2026-11-04 (../site-evidence/installed-picker-1.4.1/: one isolated 101 MiB file recycled, receipt and protected refusal inspected), and sections 26-29 shipped in 1.4.0 and remain in the installed 1.4.3 (its sidebar lists 30 sections).", "awaitingUser": false },
-        { "id": "P9.real-run", "title": "Prove each new section on the P52 with the held items (list in ../machine-evidence/p52-2026-11-02 and the notebook record)", "status": "complete", "note": "DONE 2026-11-03 on the P52 (evidence ws-p9-*.json in ../machine-evidence/p52-2026-11-02): 28 removed Codex 0.163/0.164, Node v24.10.0, the vega updater installer; 4 recycled the two dangling .ini; 7 cleared 51 automation profiles caches (1.93 GB); 10 removed 21 C:\t entries (1.47 GB) and 2.6 GB of old %TEMP% files; elevated: 26 uninstalled Steam and recycled its AppData folder, 27 recycled AVAST Software (PF + ProgramData) then Common Files Steam/Avast, empty AVAST (x86), Common Files VMware and Piriform; 24 printed RAN for 18 programs; 29 found the policy set. By hand: the interrupted android-34 install. The proof surfaced three section-27 false positives and a Prefetch name collision, fixed in 6ea428f. The MBAE folder stays: its kernel driver ESProtectionDriver is still registered and running and refuses sc delete (Access denied, self-protection) - an owner decision, see REPORT.", "awaitingUser": false },
-        { "id": "P9.release", "title": "Ship in 1.4.0 with the rest of the 1.4.0 programme (activeCompletionRun gates)", "status": "complete", "note": "The 1.4.0 machine-cleanup features shipped on npm, GitHub desktop Latest, website and docs on 2026-11-03. The 1.4.1 desktop and CLI update-flow correction also shipped; installed 1.4.0?1.4.1 signed updater proof, website live-bundle hash and docs live-bundle hash passed. The wider complete-project run remains open.", "awaitingUser": false }
+        {
+          "id": "P9.decisions",
+          "title": "Record D77-D83 and replace the uninstaller non-goal",
+          "status": "complete",
+          "note": "docs/PROJECT-CONTEXT.md, 2026-11-02",
+          "awaitingUser": false
+        },
+        {
+          "id": "P9.idle-basis",
+          "title": "D82: detect a live last-access per root and fall back to write/creation; the output names the basis",
+          "status": "complete",
+          "note": "DONE 2026-11-02: Test-LastAccessLive in lib/fs.ps1 (20+ old files, 90% read in a day), used by Get-IdleDays, Get-StaleFiles, sections 17/18/19/22; --json access_live_volumes. Self-test 19a-19e + 19g (watched failing on a planted always-false detector: 2 of 6). Real machine: section 17 dry-run on D:\\work\\my-work detected D: live (400 of 400) and listed 4 stale artefacts by write time (../machine-evidence/p52-2026-11-02/ws-p9-d82-s17-dryrun.json).",
+          "awaitingUser": false
+        },
+        {
+          "id": "P9.json-stdout",
+          "title": "Keep --json stdout to one line: capture Delete-DeliveryOptimizationCache and other external output",
+          "status": "complete",
+          "note": "DONE 2026-11-02: the cmdlet's streams go to the log (*>&1), and Invoke-SectionById discards section output ($null = & $sec.Fn); self-test 19f. Evidence of the defect: ../machine-evidence/p52-2026-11-02/ws-a4-admin-run.json.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P9.s23-claims",
+          "title": "Section 23 claim fixes: reverse-DNS ids, Store package names, acronyms, process command lines; never offer the desktop app's own data",
+          "status": "complete",
+          "note": "DONE 2026-11-02: modules/orphaned_appdata.ps1 (initials, 6-char vendor stem, reverse-DNS segments, path-only command-line tokens) and lib/safety.ps1 (the desktop app's two folders protected). Self-test 19h-19l incl. the bare-word negative case. Real machine: the four false positives (com.aoneahsan.windowsweep, DBeaverData, IDM, superpowers) gone, the true orphan vega-desktop-updater still offered (../machine-evidence/p52-2026-11-02/ws-p9-s23-dryrun.json). Found while testing: tokenising whole command lines let a shell mentioning a folder claim it - now only path arguments count.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P9.s26-uninstall",
+          "title": "Section 26: run a selected program's own uninstaller, verify, then a targeted leftover pass",
+          "status": "complete",
+          "note": "DONE 2026-11-03: modules/uninstall.ps1 + catalogue row 26 (permanent, interactive, per-entry admin). Silent forms from the P52 evidence: quiet string, MSI (incl. key-only VMware), Inno, NSIS, Chromium family (copilot_setup.exe too, exit 19), Docker installer, Qt maintenancetool, Adobe HDBox Setup.exe with the base version from the icon folder, WiX bundle, winget portable, rustup, registered-silent; else the vendor window. Strictly serial, waits for helpers and the key. Leftover pass via leftovers.ps1 (second prompt takes only --select-file paths or a console answer). --json candidates gain label. Self-test group [22]; planted defects caught. Real-machine dry-run: 43 programs, Steam -> uninstall.exe /S (ws-p9-s26-dryrun.json). The elevated real run (Steam) is P9.real-run.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P9.s27-leftovers",
+          "title": "Section 27: unclaimed folders outside AppData -> Recycle Bin, fails closed",
+          "status": "complete",
+          "note": "DONE 2026-11-03: modules/leftovers.ps1 + catalogue row 27 (recycle, interactive, admin; elevated walkthrough). Roots: both Program Files, both Common Files, ProgramData, LocalAppData\\Programs (protected: reported only). Claims: installed-program names (index without the judged folders), plus existing paths named by uninstall entries, services, drivers, environment/PATH, Run keys, shortcuts, scheduled tasks and processes; never-offer list; D82 idle gate; fails closed. Reports environment entries naming missing paths. Both Common Files and ProgramData\\Microsoft are now protected roots. Self-test group [23]; planted defects caught. The elevated real run (AVAST Software, MBAE folder) is P9.real-run.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P9.s28-releases",
+          "title": "Section 28: superseded Codex releases, Electron updater downloads, Ollama updates, unpinned nvm Node versions",
+          "status": "complete",
+          "note": "DONE 2026-11-03: modules/tool_releases.ps1, catalogue row 28 (safe batch, dev, deep, walkthrough), D79 Codex exception computed in Initialize-Safety; an exception no longer lifts --exclude-path. Self-test group [20] (182 checks; planted defects caught: a dropped rollback release and the old early return). Real run on the P52 (the held items): Codex 0.163.0 + 0.164.0 removed, 0.165/0.166 kept; vega-desktop-updater installer cleared; Node v24.10.0 removed with nvm, v22.22.0 and v24.13.0 kept; 1.1 GB (../machine-evidence/p52-2026-11-02/ws-p9-s28-run.json).",
+          "awaitingUser": false
+        },
+        {
+          "id": "P9.data-scanner",
+          "title": "Data scanner engine contract (large or old personal files; Downloads by default, user-added roots)",
+          "status": "complete",
+          "note": "ENGINE DONE 2026-11-03 in c327b88 (owner confirmed it for after the P9 sections; contract ../machine-evidence/p52-2026-11-02/codex-data-scanner-brief.md): modules/data_scanner.ps1 replaces section 19. Downloads + --personal-roots / personalRoots (drive roots, the profile, Windows/Program Files/ProgramData/AppData, links and protected folders refused, each verdict in --json personal_roots); large (any age) or old (any size), each once, with reason/age_basis/modified/root/selectable (+skip_reason, index 0 when not selectable); removal by exact path only, never --yes, Recycle Bin default, every file re-checked (size, write time, no link on its path) right before it goes. Self-test group [25], 221 checks; planted defects caught. Real-machine dry-run: Downloads accepted, the C: drive root and the Windows temp folder refused, 500 offered (488 old, 8 large, 4 both, 6.49 GB), age basis write. Desktop side (Picker, dummy, D84 record) is the Codex session.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P9.s29-browserai",
+          "title": "Section 29: Chrome on-device AI model policy (D81)",
+          "status": "complete",
+          "note": "DONE 2026-11-03: modules/browser_ai.ps1 + catalogue row 29 (config, deep, admin; in no batch, profile or walkthrough). Self-test group [21] (187 checks; a planted dry-run-ignoring write caught; the throwaway HKCU key is removed). The elevated real run on the P52 belongs to P9.real-run.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P9.extensions",
+          "title": "D83: section 4 images + dangling AVD .ini, 7 browserProfileRoots, 10 tempRoots, 24 Prefetch last run",
+          "status": "complete",
+          "note": "DONE 2026-11-03. 4: every AVD root (ANDROID_AVD_HOME / _EMULATOR_HOME / _SDK_HOME / _PREFS_ROOT), dangling pointer .ini -> Recycle Bin, images no remaining AVD uses (+ emulator when none is left) via sdkmanager, an interrupted install reported. 7: --browser-profile-roots / browserProfileRoots, D79 exceptions for exactly the cache leaves (Add-CacheLeafExceptions, after the settings merge), a profile held by --user-data-dir skipped. 10: --temp-roots / tempRoots, entries nothing wrote for --temp-days go whole, one named in a live command line stays (Get-IdleDays -WriteOnly). 24: RAN column from Windows Prefetch when elevated. D82 sampler walks until 400 old files or 50,000 seen (P52 %TEMP% had inherited). Self-test group [24] 24a-24h, 213 checks; planted defects caught. Real run (user level): 2 dangling .ini recycled, 51 automation profiles' caches 1.93 GB, 21 C:\\t entries 1.47 GB, %TEMP% 2.6 GB (ws-p9-ext-run.json, ws-p9-s10-temp-run.json). android-34 is an interrupted install sdkmanager does not know: reported; removed by hand (see REPORT). Section 24's RAN column is proven in the elevated run (P9.real-run).",
+          "awaitingUser": false
+        },
+        {
+          "id": "P9.selftest",
+          "title": "Self-test group for every new behaviour (dry-run = real estimate, exceptions exact, --yes never selects, fail closed)",
+          "status": "complete",
+          "note": "DONE 2026-11-03: groups [19]-[26] in modules/self_test_1_4.ps1 and self_test_1_4b.ps1 - 223 checks pass on the P52, including the elevated summary handoff and section 19 Recycle Bin override. Earlier assertions were watched failing on planted defects (../machine-evidence/p52-2026-11-02/REPORT.md section 5).",
+          "awaitingUser": false
+        },
+        {
+          "id": "P9.docs",
+          "title": "sections, cli-reference, safety-model, CONTRACTS, profiles, faq, CHANGELOG, AI guide, README, root inventory; docs site mirror",
+          "status": "complete",
+          "note": "Product docs and public Docusaurus mirror are published for 1.4.1. Docs source 5ac3db8, gh-pages 4f33b2d; typecheck, six release tests and optimized build passed; live /updates at 1440/390 and bundle hash matched.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P9.desktop",
+          "title": "Click dummy first, then sections.json words for 26/27/29 and parity at 1440/760; yarn gates",
+          "status": "complete",
+          "note": "Owner-approved click dummy is implemented in Picker/Settings; DEV fixture parity passed at 1440/760. CLI self-test 223, Rust tests 28 and desktop gates 40 passed. Installed app updated from 1.4.0 to 1.4.1 via signed updater, but final installed Picker visual capture has not been recorded. | CLOSED 2026-11-06: the installed Picker was captured at 1440/760 on 2026-11-04 (../site-evidence/installed-picker-1.4.1/: one isolated 101 MiB file recycled, receipt and protected refusal inspected), and sections 26-29 shipped in 1.4.0 and remain in the installed 1.4.3 (its sidebar lists 30 sections).",
+          "awaitingUser": false
+        },
+        {
+          "id": "P9.real-run",
+          "title": "Prove each new section on the P52 with the held items (list in ../machine-evidence/p52-2026-11-02 and the notebook record)",
+          "status": "complete",
+          "note": "DONE 2026-11-03 on the P52 (evidence ws-p9-*.json in ../machine-evidence/p52-2026-11-02): 28 removed Codex 0.163/0.164, Node v24.10.0, the vega updater installer; 4 recycled the two dangling .ini; 7 cleared 51 automation profiles caches (1.93 GB); 10 removed 21 C:\t entries (1.47 GB) and 2.6 GB of old %TEMP% files; elevated: 26 uninstalled Steam and recycled its AppData folder, 27 recycled AVAST Software (PF + ProgramData) then Common Files Steam/Avast, empty AVAST (x86), Common Files VMware and Piriform; 24 printed RAN for 18 programs; 29 found the policy set. By hand: the interrupted android-34 install. The proof surfaced three section-27 false positives and a Prefetch name collision, fixed in 6ea428f. The MBAE folder stays: its kernel driver ESProtectionDriver is still registered and running and refuses sc delete (Access denied, self-protection) - an owner decision, see REPORT.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P9.release",
+          "title": "Ship in 1.4.0 with the rest of the 1.4.0 programme (activeCompletionRun gates)",
+          "status": "complete",
+          "note": "The 1.4.0 machine-cleanup features shipped on npm, GitHub desktop Latest, website and docs on 2026-11-03. The 1.4.1 desktop and CLI update-flow correction also shipped; installed 1.4.0?1.4.1 signed updater proof, website live-bundle hash and docs live-bundle hash passed. The wider complete-project run remains open.",
+          "awaitingUser": false
+        }
       ]
     }
   ],
@@ -1554,6 +1644,33 @@
       "model": "claude-opus-5.5; Claude Code main session (sessions 22-23)",
       "phase": "complete-project resume: D90-D93 surfaces, release 1.4.3, the one site deploy, the docs deploy, D92 and the genuine-admin checks",
       "summary": "Session 22 (to 10:55 UTC): Firebase hosting switched off and its domain deleted, the docs footer signup, the desktop legal bar, the branded composer for the seven transactional emails, 1.4.3 built and signed, the backup runbook proven on the shared test project. Session 23: D91 finalized (GATE 4 under D59) and recorded; the D91 dummies; the website's D90/D91 surfaces with hosting/hosting.json; desktop-v1.4.3 Latest and windowsweep@1.4.3 with the install-on-close proof; the site deploy (a first deploy served no CSP because Pages drops a _headers line over 2,000 characters; rolled back, fixed at the root with a build check, redeployed) and the docs deploy; the [TEST] welcome and the live signup's confirmation accepted by FilesHub; D92 (four functions at v6); the 1.4.3 newsletter built in FilesHub, its [TEST] waiting for the 00:00 UTC mailbox reset; the genuine-admin checks with t1+admin and t1+1, cleaned up to the baseline. Re-scored 85/100 with all four hard gates."
+    },
+    {
+      "date": "2026-11-07",
+      "model": "claude-opus-5.5; Claude Code main session (session 24)",
+      "phase": "complete-project resume: D94 checkout open, release 1.4.4, the site and docs deploys, D95",
+      "summary": "Production checkout opened after Polar approved the organization (D94) and proven with an unpaid production checkout; the 1.4.3 newsletter released; the private plans:<id> broadcast migration applied (20261107073129). Desktop 1.4.4: the Plans screen sells Pro and Team (S-005 state B, dummy first, cb23c4d), the release feed's CLOSED re-entry fixed in desktop and web; signed, released (desktop-v1.4.4 Latest, v1.4.4), npm 1.4.4, the installed 1.4.3 updated itself to 1.4.4 on close. Story run release-1.4.4 (lean panel under D59; legal GATE 4 by the owner, D95) for the release words, the docs plans page and the Terms and Privacy lines. Website (dummy first, amendments 40-42): pay links keep their choices, no pending line with checkout open, the /account plan block with the after-checkout lines on the private signal, the sign-in return; deployed c81058a4 and verified live. Docs deployed b26358b. ISSUE-003, ISSUE-004 and ISSUE-005 recorded. The new Comparison Hub gate (2026-11-07) waits for the owner's vision record.",
+      "commits": {
+        "product": [
+          "b4e0eb8",
+          "cb23c4d",
+          "3151b69",
+          "50125d3",
+          "c0df231",
+          "22aa351"
+        ],
+        "web": [
+          "bb8bc4a",
+          "a51d724",
+          "7390d49",
+          "7cb7aad",
+          "5f1ebc6"
+        ],
+        "docs": [
+          "748e69d",
+          "gh-pages b26358b"
+        ]
+      }
     }
   ],
   "resumeInstructions": "LATEST 2026-11-04 LIVE CHECKPOINT: audit 62/100 after installed 1.4.1 Picker preview, 101 MiB Recycle Bin run, JSON receipt and protected refusal. Website a72c5e3 with phone app view, page tours and guarded /admin/releases is deployed; live 390 touch home, app tabs and tour passed, and the live entry bundle matched the verified build. Authenticated non-admin phone journeys and genuine-admin Releases form remain open. Desktop tours and walkthrough pass 40 source tests and native 1440/760 checks; seven images are now real 1.4.1 captures, but desktop tour source is not packaged or released. Production Supabase nlmetjyytgwaxcliusuo has 24 applied migrations; no release row was published. Resume with authenticated site/RLS and admin proof, a coordinated desktop release and live update-flow proof. Polar webhook secrets/sandbox proof, received email, separate hosted restore target, second-machine P1/P5 and owner P4 records remain open. Read ../machine-evidence/p52-2026-11-02/REPORT.md section 19 and production/windowsweep-complete-project.json in projects-finalization-record before resuming.",

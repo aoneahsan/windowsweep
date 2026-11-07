@@ -23,3 +23,19 @@ Open defects found while using or documenting windowsweep, one `### ISSUE-NNN` e
 - **Fix:** subscribe the production webhook to Polar's subscription cancellation event, record it in `cancelled_at`,
   expose it through `my_plan()`, and draw the approved `account.plan.ends` line (and a desktop counterpart through the
   story gate). **Priority:** medium. Deferred: it changes the webhook contract and adds a production migration.
+
+### ISSUE-004 — "Version {{version}} is ready" shows before the update has finished downloading
+- **Found:** 2026-11-07, in the installed 1.4.3 -> 1.4.4 updater proof (root `site-evidence/updater-1.4.4/logs/run1-closed-mid-download.txt`).
+- **What:** the splash names the update as ready as soon as the check finds it, while `stageForClose` (`desktop/src/lib/updater.ts`)
+  arms the install-on-close hook only once the background download finishes. A window closed in that gap closes without
+  installing; the next start downloads again and the next close installs it, so the update is delayed, not lost.
+- **Fix:** show the notice (or its "ready" wording) once the download is staged, or hold the close until it is, and keep
+  "Install and restart" as it is. **Priority:** low.
+
+### ISSUE-005 — the website runs Clarity session replay on signed-in pages
+- **Found:** 2026-11-07, in the 1.4.4 idle proof on `/account` (two `n.clarity.ms/collect` beacons in 120 s while signed in).
+- **What:** `windowsweep-web/src/lib/analytics.ts` starts Clarity on every page, text masked by `data-clarity-mask`. The fleet
+  law (`~/.claude/rules/legal-notice.md`) says replay tools never run on signed-in or record pages (`/account`, `/admin`,
+  `/contact` and the sign-in return). The Privacy Policy describes masked replay and stays true either way.
+- **Fix:** keep Clarity off on those routes (do not start it on them, and stop it when a public page leads into one),
+  verify with the beacon count on the deployed origin, signed in and out. **Priority:** medium.

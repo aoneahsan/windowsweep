@@ -17,8 +17,12 @@ names keys, never values. Standard: `aoneahsan-cccs-polar-payments`; decisions D
   at *windowsweep Pro (monthly), $4 / mo*. The quote row read 400 cents; Polar's checkout read `open`, 400 USD, for that
   account. No payment was made and no Polar customer was created; the account was deleted and its quote went with it.
   Evidence: root `site-evidence/payments-2026-11-07/`.
-- **The desktop app** asks for plans by request until 1.4.4 builds the Plans screen's checkout-open state (S-005).
-  Requests now complete: an admin's *Email pay links* sends each pending requester a link to pay.
+- **The desktop app sells both plans from 1.4.4** (`desktop-v1.4.4`, 2026-11-07): Subscribe opens Polar's hosted page in the
+  browser for the signed-in account, and the plan reaches the window on the account's private `plans:<id>` signal
+  (migration `20261107073129`), never a timer. Requests made while checkout was closed complete through an admin's
+  *Email pay links*; the link now opens `/pricing` with the requested period and seats chosen (web `7cb7aad`).
+- **After Polar's return**, the website's `/account` says "Polar has the payment. The plan shows on your account once
+  Polar confirms it." until the webhook's row lands, then names the plan (web `7cb7aad`, live 2026-11-07).
 
 ## State on 2026-11-05 (superseded)
 

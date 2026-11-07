@@ -346,5 +346,34 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
 - 2026-11-07: **plan creation and a limit edit proven in a rolled-back transaction** as a temporary test admin: both
   calls returned and wrote their audit rows, Pro read `report_machines` 6 inside the transaction, and afterwards every
   value read as before (root `site-evidence/admin-1.4.3/07-plan-save-rollback-probe.txt`).
+- 2026-11-07: **1.4.4** (D94).
+  - **Build and tags.** Built and signed on this machine from `3151b69` (the cascade on `wip/release-1.4.4`), merged into
+    `main` as `c0df231` with the code paths unchanged: `git diff 3151b69 c0df231` over `desktop/src`, `desktop/src-tauri`,
+    `lib`, `modules`, `bin`, `windowsweep.ps1`, `VERSION` and `package.json` is empty. Tags `desktop-v1.4.4` Latest and
+    `v1.4.4` with `--latest=false`, both annotated on `c0df231`.
+  - **Installers.** NSIS `windowsweep_1.4.4_x64-setup.exe` is 3,894,288 B, sha256 `114dc615…e17f` (also shipped as
+    `windowsweep-setup.exe`); the MSI is 4,653,056 B, sha256 `54c904df…402c`. Both `.sig` files verify against the shipped
+    public key (key id `0592190b568569df`), on the file and on the trusted comment, and a one-byte tamper fails.
+  - **Update manifest.** `latest.json` carries all three platform keys and release-1.4.4 S1 (g) as its notes (272
+    characters). `releases/latest/download/latest.json` served it byte-equal once GitHub's redirect caught up, about a
+    minute after the API already named `desktop-v1.4.4` Latest.
+  - **npm.** `windowsweep@1.4.4` is the gated tarball (sha1 `ed409789…2a24`): 53 files, as 1.4.3, with only CHANGELOG,
+    README, VERSION, `package.json` and `lib/constants.ps1` changed; secret sweep 0; a smoke install runs
+    `windowsweep v1.4.4`; self-test 223 of 223; version parity; PSScriptAnalyzer 0, a planted file 2. The gate caught
+    `VERSION` packed with CRLF (the merge's autocrlf checkout); `.gitattributes` now pins it to LF (`22aa351`).
+  - **Installed updater proof.** The installed 1.4.3, on an isolated WebView2 profile, showed *Version 1.4.4 is ready*.
+    Its title bar's Close, pressed once the background download had finished, ended the process in 1 s, and the
+    uninstall key and the exe FileVersion read 1.4.4 three seconds later. The relaunch read 1.4.4 from
+    `plugin:app|version`, on Home with no update notice. A first attempt closed one second after the notice, while it
+    was still downloading, and installed nothing (ISSUE-004); its anonymous device session was deleted and read back.
+  - **Before the release:** the desktop Plans state B proof on the dev build (root `site-evidence/desktop-1.4.4/`).
+  - **Evidence:** `../site-evidence/updater-1.4.4/`.
+- 2026-11-07: **site deploy `c81058a4`** (web `5f1ebc6`): the 1.4.4 facts; checkout-open pay links and no pending line;
+  the `/account` plan block (S-011) with its return lines; the sign-in return; the release-feed fix; the D95 legal lines.
+  Render-checked on the build and live (24 of 24 each); 133 of 133 served files equal to the build; the plan block
+  proven on the build as a non-admin (733 ms latency, no backend request in 120 s idle, plant and gap); IndexNow 200
+  (root `site-evidence/site-1.4.4/`).
+- 2026-11-07: **docs deploy** `gh-pages` `b26358b` (docs `748e69d`): the plans page answers how to buy Pro or Team, and the
+  changelog lists 1.4.4. 237 of 237 served files equal to the build, render-checked live (8 of 8), IndexNow 200.
 
-Last Updated: 2026-11-07 (checkout open, the site deploy, the newsletter released, D94). Earlier 2026-11-06 (the branded account emails on production, D92). Earlier the same day (1.4.3: the release record and its installed updater proof). Earlier the same day (1.4.2: the installed updater proof and the release record, including the restored MSI entry of `latest.json`). Earlier 2026-09-28 (the owner's own sign-in and dry-run on the installed 1.3.2, read back from the server - row 31. Earlier the same day: CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)
+Last Updated: 2026-11-07 (1.4.4 released and proven installed; the site and docs deploys). Earlier the same day (checkout open, the site deploy, the newsletter released, D94). Earlier 2026-11-06 (the branded account emails on production, D92). Earlier the same day (1.4.3: the release record and its installed updater proof). Earlier the same day (1.4.2: the installed updater proof and the release record, including the restored MSI entry of `latest.json`). Earlier 2026-09-28 (the owner's own sign-in and dry-run on the installed 1.3.2, read back from the server - row 31. Earlier the same day: CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)

@@ -246,6 +246,13 @@
       "when": 1793790583671,
       "tag": "20261104110943_tour_hint_marker",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1794036689901,
+      "tag": "20261107073129_plan_change_broadcast",
+      "breakpoints": true
     }
   ]
 }

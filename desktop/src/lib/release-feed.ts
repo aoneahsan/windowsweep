@@ -55,37 +55,45 @@ export function watchReleaseRecord(onRecord: (record: ReleaseRecord | null) => v
     pending = work;
   };
 
+  /**
+   * 🔴 Clear the field BEFORE removing the channel. With the socket down, the SDK
+   * answers `removeChannel` by firing that channel's CLOSED callback synchronously;
+   * when the field was cleared afterwards, the handler below re-entered `leave` on
+   * the same channel until the stack overflowed (19 RangeErrors in the 1.4.4 gap
+   * proof), no retry was ever scheduled, and the broadcast stayed dead until restart.
+   */
   const leave = (sb: SupabaseClient): void => {
-    if (channel) void sb.removeChannel(channel);
+    const current = channel;
     channel = null;
+    if (current) void sb.removeChannel(current);
   };
 
   const join = (): void => {
     const sb = client;
     if (!active || !sb) return;
     leave(sb);
-    channel = sb
-      .channel(TOPIC)
-      .on('broadcast', { event: 'release' }, read)
-      .subscribe((status) => {
-        if (!active) return;
-        // The SDK types these wire values as a string enum. Convert once so
-        // comparisons do not depend on a transitive package import.
-        const state = String(status);
-        if (state === 'SUBSCRIBED') {
-          backoff = 1_000;
-          read();
-        } else if (state === 'CHANNEL_ERROR' || state === 'TIMED_OUT' || state === 'CLOSED') {
-          leave(sb);
-          if (!retry) {
-            retry = window.setTimeout(() => {
-              retry = null;
-              join();
-            }, backoff);
-            backoff = Math.min(backoff * 2, RETRY_MAX_MS);
-          }
+    const joined = sb.channel(TOPIC);
+    channel = joined;
+    joined.on('broadcast', { event: 'release' }, read).subscribe((status) => {
+      // A channel this watcher already left reports CLOSED; only the live one counts.
+      if (!active || channel !== joined) return;
+      // The SDK types these wire values as a string enum. Convert once so
+      // comparisons do not depend on a transitive package import.
+      const state = String(status);
+      if (state === 'SUBSCRIBED') {
+        backoff = 1_000;
+        read();
+      } else if (state === 'CHANNEL_ERROR' || state === 'TIMED_OUT' || state === 'CLOSED') {
+        leave(sb);
+        if (!retry) {
+          retry = window.setTimeout(() => {
+            retry = null;
+            join();
+          }, backoff);
+          backoff = Math.min(backoff * 2, RETRY_MAX_MS);
         }
-      });
+      }
+    });
   };
 
   const onVisible = (): void => {

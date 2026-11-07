@@ -208,3 +208,31 @@ specimen, and the parity test compares it as it compares the other seven. Its ou
 literal, is what FilesHub stores as `windowsweep-release-confirm`. The dummy's `PARITY-MANIFEST.json` and
 `CLICK-DUMMY-INVENTORY-1.4.0.md` now list it. No owner design gate is owed: the words are D91's, approved at GATE 4
 under D59, in the layout the owner approved as D90, with no new part.
+
+## Amendment - 2026-11-07: Plans draws checkout open (S-005 state B, D94)
+
+Polar approved the organization and checkout opened on 2026-11-07 (D94), so `plans.html` now draws the state its
+request buttons stood in for. `?checkout=open` selects it, and the review band links it with three more states. Every
+word on the screen is S-005's, from `docs/story/drafts/plans-app.md`, approved at GATE 4 under D59.
+
+1. **The buttons.** *Subscribe to Pro* and *Subscribe to Team* stand where *Request Pro* and *Request Team* stood,
+   with the same consent line under each. The current plan still reads *Your plan*. A signed-out window reads *Sign in
+   with Google* on both, and pressing one opens Account. The billing switch and the seat count stay, so the checkout
+   carries exactly what was chosen.
+2. **One note under the cards**, in the request note's place and style. The request note is not drawn while checkout is
+   open, and neither is a pending request: a requester gets a link to pay by email (D94), and the button works for them
+   as for anyone else. A press shows *Opening the checkout in your browser…*, with that button pending and both
+   disabled, then *The checkout is open in your browser. The plan updates here once Polar confirms the payment.* Signed
+   out, the note carries *A plan belongs to an account. Sign in with Google to choose one.*
+3. **A failure** reads *The checkout did not open: Try again in a moment. Nothing was charged.*, as an alert.
+   `{{message}}` takes `plans.team.retry`'s words, the way `plans.team.failed` already fills the same slot on this
+   screen, capital T included. `?open=failed` makes the next press fail.
+4. **The plan arriving.** Polar's webhook grants the plan, never the browser's return. The window only re-reads it:
+   when the account's private plan signal arrives, and when the window regains focus or comes back online, never on a
+   timer. The note then reads *Pro is on this account now, with no limit on real runs.* (or *Team*), and that card
+   turns to *Your plan*. The review band's *Polar confirms the payment* plays that arrival in place while the note is
+   waiting; at any other time it opens `?state=pro&checkout=active`.
+
+Captures at 1440 and 760: `gate4/plans-checkout-*-dummy-1.4.4.png`. The open state is captured full height in light
+and dark, and every other state as the cards section in the default dark appearance. With no `checkout` parameter
+the page is state A, unchanged. The layout is 1.4.0's Plans with no new part, and the words are S-005's.

@@ -1,4 +1,5 @@
 /** Typed client boundary for the plan, request, referral and team contracts. */
+import { openUrl } from '@tauri-apps/plugin-opener';
 import { z } from 'zod';
 
 import { ensureDeviceSession } from './allowance';
@@ -187,6 +188,56 @@ export async function requestPlan(input: {
     seats: input.seats,
   });
   if (error) throw error;
+}
+
+const checkoutStateSchema = z.object({ ok: z.literal(true), available: z.boolean() });
+const checkoutPageSchema = z.object({ ok: z.literal(true), url: z.string() });
+
+/**
+ * Whether Polar takes payments now, read from `GET polar-checkout` when Plans opens.
+ * A failed read throws, so the screen shows its read failure and never guesses
+ * which of the two states it is in.
+ */
+export async function getCheckoutAvailable(): Promise<boolean> {
+  const client = await ensureDeviceSession();
+  const result = await client.functions.invoke('polar-checkout', { method: 'GET' });
+  if (result.error) throw result.error;
+  const payload: unknown = result.data;
+  return checkoutStateSchema.parse(payload).available;
+}
+
+/**
+ * Create a checkout for the signed-in account and open Polar's hosted page in the
+ * system browser. The server picks the product and prices the plan; the plan itself
+ * arrives later through Polar's signed webhook, never from this call's return.
+ */
+export async function openCheckout(input: {
+  planId: string;
+  interval: 'month' | 'year';
+  seats?: number;
+}): Promise<void> {
+  const client = await ensureDeviceSession();
+  const { data: auth, error: authError } = await client.auth.getUser();
+  if (authError) throw authError;
+  if (!auth.user || auth.user.is_anonymous) throw new Error('signed_in_required');
+  const result = await client.functions.invoke('polar-checkout', {
+    method: 'POST',
+    body: {
+      plan_id: input.planId,
+      interval: input.interval,
+      ...(input.seats === undefined ? {} : { seats: input.seats }),
+    },
+  });
+  if (result.error) throw result.error;
+  const payload: unknown = result.data;
+  const page = new URL(checkoutPageSchema.parse(payload).url);
+  if (
+    page.protocol !== 'https:' ||
+    (page.hostname !== 'polar.sh' && !page.hostname.endsWith('.polar.sh'))
+  ) {
+    throw new Error('checkout_not_on_polar');
+  }
+  await openUrl(page.href);
 }
 
 /** Private aggregate: never fetch invitee rows to count them in the window. */

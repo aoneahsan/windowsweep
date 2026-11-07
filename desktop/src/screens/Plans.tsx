@@ -1,7 +1,7 @@
 /** The approved Plans ledger: server counts first, then choices, referrals and Team. */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { useQuery, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useQuery, useQueryClient, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Meter, Label } from 'react-aria-components';
 import { useTranslation } from 'react-i18next';
 
@@ -11,11 +11,13 @@ import { TeamPanel } from '../components/plans/TeamPanel';
 import { getAllowance } from '../lib/allowance';
 import {
   getAccountPoolLimit,
+  getCheckoutAvailable,
   getMyPlan,
   getPlans,
   getRecentRequest,
   getReferral,
 } from '../lib/plans';
+import { watchPlanSignal } from '../lib/plan-signal';
 import { configuredFeatures } from '../lib/config';
 import { FORMAT_LOCALE } from '../lib/format';
 import '../styles/plans.css';
@@ -66,6 +68,21 @@ function PlansContent() {
     queryFn: getRecentRequest,
     enabled: mine.data?.is_anonymous === false,
   });
+  const checkout = useQuery({
+    queryKey: ['plans', 'checkout'],
+    queryFn: getCheckoutAvailable,
+    enabled: configured,
+  });
+  const queryClient = useQueryClient();
+  const signedIn = mine.data?.is_anonymous === false;
+  useEffect(() => {
+    if (!signedIn) return undefined;
+    // Polar's webhook changes the plan; the window learns of it here and re-reads.
+    return watchPlanSignal(() => {
+      void queryClient.invalidateQueries({ queryKey: ['plans', 'mine'] });
+      void queryClient.invalidateQueries({ queryKey: ['plans', 'allowance'] });
+    });
+  }, [signedIn, queryClient]);
   const data = allowance.data;
   const plan = mine.data?.plan;
   const paid = Boolean(plan?.real_runs_unlimited ?? data?.plan.unlimited);
@@ -261,8 +278,12 @@ function PlansContent() {
         plans={registry.data}
         myPlan={mine.data}
         lastRequest={recentRequest.data}
-        failed={registry.isError || mine.isError || !configured}
-        retry={() => void registry.refetch()}
+        checkoutOpen={checkout.data}
+        failed={registry.isError || mine.isError || checkout.isError || !configured}
+        retry={() => {
+          void registry.refetch();
+          if (checkout.isError) void checkout.refetch();
+        }}
       />
       <section
         className="band band-app"

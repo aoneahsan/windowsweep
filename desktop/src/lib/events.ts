@@ -68,6 +68,8 @@ export const CONTROL_IDS = [
   'splash.updateNow',
   'plans.requestPro',
   'plans.requestTeam',
+  'plans.subscribePro',
+  'plans.subscribeTeam',
   'plans.signIn',
   'plans.copyInvite',
   'plans.copyCommand',

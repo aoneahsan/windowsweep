@@ -17,8 +17,15 @@ import { Trans, useTranslation } from 'react-i18next';
 import { z } from 'zod';
 
 import { PrimaryButton } from '../PrimaryButton';
-import { requestPlan, type MyPlan, type Plan, type PlanRequest } from '../../lib/plans';
+import {
+  openCheckout,
+  requestPlan,
+  type MyPlan,
+  type Plan,
+  type PlanRequest,
+} from '../../lib/plans';
 import { FORMAT_LOCALE } from '../../lib/format';
+import { errorText, logger } from '../../lib/logger';
 
 const seatsSchema = z.object({ seats: z.number().int().min(1).max(1000) });
 const money = (cents: number) =>
@@ -37,18 +44,25 @@ interface Props {
   plans: Plan[] | undefined;
   myPlan: MyPlan | undefined;
   lastRequest: PlanRequest | null | undefined;
+  /** `GET polar-checkout`: true is state B (S-005), false state A (S-006), undefined not read yet. */
+  checkoutOpen: boolean | undefined;
   failed: boolean;
   retry: () => void;
 }
 
 /** Prices and seats come from active plan rows; only the explanatory copy is static. */
-export function PlanCards({ plans, myPlan, lastRequest, failed, retry }: Props) {
+export function PlanCards({ plans, myPlan, lastRequest, checkoutOpen, failed, retry }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { billing: interval } = useSearch({ from: '/plans' });
   const queryClient = useQueryClient();
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
+  /** The plan a checkout was opened for, until the plan signal brings it here. */
+  const [waitingFor, setWaitingFor] = useState<string | null>(null);
+  /** The plan that arrived after a checkout; its line shows only while the plan stays. */
+  const [arrivedPlan, setArrivedPlan] = useState<string | null>(null);
+  const [openFailed, setOpenFailed] = useState(false);
   const pro = plans?.find((plan) => plan.id === 'pro');
   const team = plans?.find((plan) => plan.id === 'team');
   const seatsForm = useForm<z.infer<typeof seatsSchema>>({
@@ -74,9 +88,21 @@ export function PlanCards({ plans, myPlan, lastRequest, failed, retry }: Props) 
     },
   });
 
+  const checkoutMutation = useMutation({ mutationFn: openCheckout });
+  const anonymous = myPlan?.is_anonymous === true;
+  const busy = mutation.isPending || checkoutMutation.isPending;
+  // Recorded during render, React's pattern for state that follows a prop: once the
+  // plan read shows the plan a checkout was opened for, the wait is over for good.
+  if (waitingFor !== null && myPlan?.plan.id === waitingFor) {
+    setArrivedPlan(waitingFor);
+    setWaitingFor(null);
+  }
+  const arrived = arrivedPlan !== null && myPlan?.plan.id === arrivedPlan;
+
   async function choose(plan: Plan) {
     setError('');
     setStatus('');
+    setOpenFailed(false);
     if (!myPlan || myPlan.is_anonymous) {
       void navigate({ to: '/account' });
       return;
@@ -86,6 +112,24 @@ export function PlanCards({ plans, myPlan, lastRequest, failed, retry }: Props) 
       seatsForm.setError('seats', {
         message: t('plans.choose.seatsHint', { min: plan.min_seats }),
       });
+      return;
+    }
+    if (checkoutOpen) {
+      setWaitingFor(null);
+      setArrivedPlan(null);
+      try {
+        await checkoutMutation.mutateAsync({
+          planId: plan.id,
+          interval,
+          ...(plan.per_seat ? { seats } : {}),
+        });
+        setWaitingFor(plan.id);
+      } catch (cause) {
+        logger.warn('checkout did not open', { error: errorText(cause) });
+        setOpenFailed(true);
+        // Checkout may have closed since the screen opened; read the state again.
+        await queryClient.invalidateQueries({ queryKey: ['plans', 'checkout'] });
+      }
       return;
     }
     try {
@@ -123,6 +167,15 @@ export function PlanCards({ plans, myPlan, lastRequest, failed, retry }: Props) 
       : '';
   }
   const pending = myPlan?.pending_request;
+  function buttonLabel(plan: Plan, current: boolean): string {
+    if (current) return t('plans.choose.current');
+    if (anonymous) return t('plans.choose.signInAction');
+    if (checkoutOpen === false) {
+      if (mutation.isPending) return t('plans.request.sending');
+      return t(plan.per_seat ? 'plans.request.team' : 'plans.request.pro');
+    }
+    return t(plan.per_seat ? 'plans.choose.subscribeTeam' : 'plans.choose.subscribePro');
+  }
   return (
     <section
       className="band band-well"
@@ -167,6 +220,12 @@ export function PlanCards({ plans, myPlan, lastRequest, failed, retry }: Props) 
               .filter((plan): plan is Plan => Boolean(plan))
               .map((plan) => {
                 const current = myPlan?.plan.id === plan.id;
+                const opening =
+                  checkoutMutation.isPending && checkoutMutation.variables?.planId === plan.id;
+                // A pending request holds the request buttons only; it never holds a checkout.
+                const held =
+                  !anonymous &&
+                  (checkoutOpen === undefined || (checkoutOpen === false && Boolean(pending)));
                 return (
                   <article
                     className="panel pad plan-card"
@@ -228,24 +287,21 @@ export function PlanCards({ plans, myPlan, lastRequest, failed, retry }: Props) 
                     <div className="plan-card-bottom">
                       <PrimaryButton
                         control={
-                          myPlan?.is_anonymous
+                          anonymous
                             ? 'plans.signIn'
-                            : plan.per_seat
-                              ? 'plans.requestTeam'
-                              : 'plans.requestPro'
+                            : checkoutOpen === false
+                              ? plan.per_seat
+                                ? 'plans.requestTeam'
+                                : 'plans.requestPro'
+                              : plan.per_seat
+                                ? 'plans.subscribeTeam'
+                                : 'plans.subscribePro'
                         }
-                        label={
-                          mutation.isPending
-                            ? t('plans.request.sending')
-                            : current
-                              ? t('plans.choose.current')
-                              : myPlan?.is_anonymous
-                                ? t('plans.choose.signInAction')
-                                : t(plan.per_seat ? 'plans.request.team' : 'plans.request.pro')
-                        }
+                        label={buttonLabel(plan, current)}
                         onPress={() => void choose(plan)}
-                        disabled={Boolean(!myPlan || current || pending || mutation.isPending)}
-                        state={mutation.isPending ? 'pending' : 'idle'}
+                        disabled={!myPlan || current || busy || held}
+                        state={mutation.isPending || opening ? 'pending' : 'idle'}
+                        tone={plan.per_seat ? 'secondary' : 'primary'}
                       />
                       {!current ? (
                         <p className="t-xs ink-3 plan-pay-line">
@@ -278,30 +334,51 @@ export function PlanCards({ plans, myPlan, lastRequest, failed, retry }: Props) 
               })}
           </div>
         ) : null}
-        <div className="plan-request-note" role="status">
-          <p className="t-sm">{t('plans.request.closed')}</p>
-          <p className="t-sm ink-3">{t('plans.request.next')}</p>
-          {myPlan?.is_anonymous ? <p className="t-sm">{t('plans.choose.signIn')}</p> : null}
-          {pending ? (
-            <p className="t-sm">
-              {t('plans.request.pending', {
-                plan: plans?.find((p) => p.id === pending.plan_id)?.name ?? pending.plan_id,
-                date: date(pending.created_at),
-              })}
-            </p>
-          ) : null}
-          {!pending && lastRequest?.status === 'notified' && lastRequest.notified_at ? (
-            <p className="t-sm">
-              {t('plans.request.notified', { date: date(lastRequest.notified_at) })}
-            </p>
-          ) : null}
-          {status ? <p className="t-sm">{status}</p> : null}
-          {error ? (
-            <p className="t-sm" role="alert">
-              {error}
-            </p>
-          ) : null}
-        </div>
+        {checkoutOpen ? (
+          <div className="plan-request-note" role="status">
+            {anonymous ? <p className="t-sm">{t('plans.choose.signIn')}</p> : null}
+            {checkoutMutation.isPending ? (
+              <p className="t-sm">{t('plans.choose.opening')}</p>
+            ) : null}
+            {waitingFor && !checkoutMutation.isPending ? (
+              <p className="t-sm">{t('plans.choose.waiting')}</p>
+            ) : null}
+            {arrived ? (
+              <p className="t-sm">{t('plans.choose.active', { plan: myPlan?.plan.name })}</p>
+            ) : null}
+            {openFailed ? (
+              <p className="t-sm" role="alert">
+                {t('plans.choose.openFailed', { message: t('plans.team.retry') })}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+        {checkoutOpen === false ? (
+          <div className="plan-request-note" role="status">
+            <p className="t-sm">{t('plans.request.closed')}</p>
+            <p className="t-sm ink-3">{t('plans.request.next')}</p>
+            {myPlan?.is_anonymous ? <p className="t-sm">{t('plans.choose.signIn')}</p> : null}
+            {pending ? (
+              <p className="t-sm">
+                {t('plans.request.pending', {
+                  plan: plans?.find((p) => p.id === pending.plan_id)?.name ?? pending.plan_id,
+                  date: date(pending.created_at),
+                })}
+              </p>
+            ) : null}
+            {!pending && lastRequest?.status === 'notified' && lastRequest.notified_at ? (
+              <p className="t-sm">
+                {t('plans.request.notified', { date: date(lastRequest.notified_at) })}
+              </p>
+            ) : null}
+            {status ? <p className="t-sm">{status}</p> : null}
+            {error ? (
+              <p className="t-sm" role="alert">
+                {error}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </section>
   );

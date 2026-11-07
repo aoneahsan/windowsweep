@@ -40,8 +40,10 @@ interface CommonProps {
    * `danger` paints the dummy's `btn-danger` in place of `btn-primary` - the
    * destructive action of an alert dialog (`picker.html` `#pick-confirm`). It is
    * still the primary control of its surface, so it is still reported here.
+   * `secondary` paints the dummy's plain `btn`, for a surface's second choice
+   * (`plans.html`'s Team card, beside Pro's `btn-primary`).
    */
-  tone?: 'primary' | 'danger';
+  tone?: 'primary' | 'secondary' | 'danger';
 }
 
 /**
@@ -57,8 +59,8 @@ export function PrimaryButton(props: PrimaryButtonProps) {
   const { control, label, size, state = 'idle', disabled = false, tone = 'primary' } = props;
   const route = useRouterState({ select: (s) => s.location.pathname });
 
-  const toneClass = tone === 'danger' ? 'btn-danger' : 'btn-primary';
-  const className = size ? `btn btn-${size} ${toneClass}` : `btn ${toneClass}`;
+  const toneClass = tone === 'danger' ? ' btn-danger' : tone === 'secondary' ? '' : ' btn-primary';
+  const className = size ? `btn btn-${size}${toneClass}` : `btn${toneClass}`;
 
   return (
     <button

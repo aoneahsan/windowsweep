@@ -46,6 +46,9 @@
     { "dummy": "account.html?device=owned", "state": "sign in to owner account or use this PC as new" },
     { "dummy": "plans.html?state=deviceOwned", "state": "device recovery choice" },
     { "dummy": "plans.html?state=offline", "state": "allowance read unavailable" },
+    { "dummy": "plans.html?checkout=open", "state": "checkout open (S-005 state B): subscribe, opening, waiting" },
+    { "dummy": "plans.html?checkout=open&open=failed", "state": "checkout open; the checkout did not open" },
+    { "dummy": "plans.html?state=pro&checkout=active", "state": "checkout open; Polar confirmed and the plan is on the account" },
     { "dummy": "index.html?tour=1", "state": "Home page tour first step" },
     { "dummy": "walkthrough.html?step=4", "state": "protected-path walkthrough step" }
   ],
@@ -90,7 +93,7 @@
   "noDummy": [],
   "evidence": {
     "widths": [760, 1440],
-    "captures": ["../gate4/plans-*-dummy-1.4.0.png", "../gate4/allowance-*.png", "../gate4/device-owned-*.png", "assets/tour-home-1440.png", "assets/tour-home-760.png", "assets/walkthrough-review-1440.png", "assets/walkthrough-review-760.png", "assets/walkthrough/*-1440.png"],
+    "captures": ["../gate4/plans-*-dummy-1.4.0.png", "../gate4/plans-checkout-*-dummy-1.4.4.png", "../gate4/allowance-*.png", "../gate4/device-owned-*.png", "assets/tour-home-1440.png", "assets/tour-home-760.png", "assets/walkthrough-review-1440.png", "assets/walkthrough-review-760.png", "assets/walkthrough/*-1440.png"],
     "appParityStatus": "not run for 1.4.0"
   }
 }

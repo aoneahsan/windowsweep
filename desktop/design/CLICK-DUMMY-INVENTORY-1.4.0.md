@@ -14,7 +14,7 @@ Status: updated 2026-11-06 - tours and walkthrough approved 2026-11-03; the lega
 
 | # | Page | Dummy file | App route | Covers | Status |
 |---|---|---|---|---|---|
-| 12 | Plans | `plans.html` | `/plans` | plan state, real-run allowance, device and account pools, limit, Pro/Team request, referrals, paid state, loading and read failure | 🔄 in review |
+| 12 | Plans | `plans.html` | `/plans` | plan state, real-run allowance, device and account pools, limit, Pro/Team request, checkout open (subscribe, opening, waiting, did not open, plan arrived; 2026-11-07), referrals, paid state, loading and read failure | 🔄 in review |
 | 12a | Team | `plans.html?tab=team` | `/team` | locked, member, owner, team creation, invite seats and empty fleet report; shares Plans' shell and controls | 🔄 in review |
 | shared | Legal bar | decided by `app.js`, drawn by `legal-bar.js` | every non-task page; the first-run surface after Splash | once per PC and per account (either teaches the other), seen when drawn, policy links, analytics sentence, Okay and Escape, 10 seconds held by hover or focus; `index.html?legal=1` previews it (AMENDMENTS-3.md, 2026-11-06) | ✅ approved (D90, 2026-11-06) |
 | shared | Destinations without Clarity | `wire.js` (Home) and `page-settings.js` (Settings, Privacy) | `/`, `/settings` | N-016: GA4, Amplitude and Sentry rows; *Never sent* kept in both | ✅ approved (D90, 2026-11-06) |

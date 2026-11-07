@@ -13,6 +13,11 @@
   var set = function (s, v) { var n = $(s); if (n) n.textContent = v; };
   var request = ws.store.get('plansRequest', null);
   var team = ws.store.get('plansTeam', null);
+  /* State B (S-005), checkout open: ?checkout=open draws it, ?open=failed makes the next
+     Subscribe fail, and ?checkout=active is the plan arriving once Polar confirms. */
+  var checkoutOpen = q.get('checkout') === 'open' || q.get('checkout') === 'active';
+  var openFails = q.get('open') === 'failed';
+  var waitingFor = null;
 
   function resetDate() {
     var now = new Date();
@@ -61,7 +66,9 @@
       var current = key === 'pro' ? state === 'pro' : state === 'team' || state === 'teamOwner';
       var button = $('[data-request="' + key + '"]');
       button.disabled = current;
-      button.textContent = current ? 'Your plan' : key === 'pro' ? 'Request Pro' : 'Request Team';
+      button.textContent = current ? 'Your plan' : checkoutOpen
+        ? (signedOut ? 'Sign in with Google' : key === 'pro' ? 'Subscribe to Pro' : 'Subscribe to Team')
+        : key === 'pro' ? 'Request Pro' : 'Request Team';
       $('[data-pay-line="' + key + '"]').hidden = current;
     });
     if (state === 'deviceLimit' || state === 'allLimit') renderLimit();
@@ -95,6 +102,45 @@
     if (!request) { status.hidden = true; return; }
     status.hidden = false;
     status.textContent = 'You asked for ' + (request.plan === 'pro' ? 'Pro' : 'Team') + ' on ' + request.date + '. Submitting the request charged nothing and granted nothing. When checkout opens, the windowsweep team emails you a link to pay.';
+  }
+
+  function checkoutLine(text, failed) {
+    var line = $('[data-checkout-status]');
+    var error = $('[data-checkout-error]');
+    line.hidden = Boolean(failed) || !text;
+    line.textContent = failed ? '' : text;
+    error.hidden = !failed;
+    error.textContent = failed ? text : '';
+  }
+
+  function renderCheckout() {
+    $('[data-request-note]').hidden = checkoutOpen;
+    $('[data-checkout-note]').hidden = !checkoutOpen;
+    if (!checkoutOpen) return;
+    $('[data-checkout-signin]').hidden = !signedOut;
+    if (q.get('checkout') === 'active' && paid) {
+      checkoutLine((state === 'pro' ? 'Pro' : 'Team') + ' is on this account now, with no limit on real runs.');
+    }
+  }
+
+  /* The app creates the checkout and opens Polar's page in the system browser; the dummy waits. */
+  function subscribe(target) {
+    var chosen = target.dataset.request;
+    document.querySelectorAll('[data-request]').forEach(function (b) { b.disabled = true; });
+    target.dataset.state = 'pending';
+    target.setAttribute('aria-busy', 'true');
+    checkoutLine('Opening the checkout in your browser…');
+    setTimeout(function () {
+      delete target.dataset.state;
+      target.removeAttribute('aria-busy');
+      renderMeter();
+      if (openFails) {
+        checkoutLine('The checkout did not open: Try again in a moment. Nothing was charged.', true);
+        return;
+      }
+      waitingFor = chosen;
+      checkoutLine('The checkout is open in your browser. The plan updates here once Polar confirms the payment.');
+    }, 900);
   }
 
   function renderReferral() {
@@ -169,8 +215,24 @@
   function bind() {
     document.addEventListener('change', function (event) { if (event.target.name === 'billing') renderPrices(); });
     document.addEventListener('click', function (event) {
-      var target = event.target.closest('[data-request], [data-ref-copy], [data-plan-copy-command], [data-team-create], [data-team-invite], [data-team-remove]');
+      var target = event.target.closest('[data-request], [data-checkout-confirm], [data-ref-copy], [data-plan-copy-command], [data-team-create], [data-team-invite], [data-team-remove]');
       if (!target) return;
+      if (target.hasAttribute('data-checkout-confirm')) {
+        /* Not waiting: the link opens the Pro review state instead. */
+        if (!waitingFor) return;
+        event.preventDefault();
+        state = waitingFor === 'pro' ? 'pro' : 'teamOwner';
+        paid = true;
+        renderMeter(); renderTeam();
+        checkoutLine((waitingFor === 'pro' ? 'Pro' : 'Team') + ' is on this account now, with no limit on real runs.');
+        waitingFor = null;
+        return;
+      }
+      if (target.dataset.request && checkoutOpen) {
+        if (signedOut) { location.href = 'account.html'; return; }
+        subscribe(target);
+        return;
+      }
       if (target.dataset.request) {
         if (signedOut) { location.href = 'account.html'; return; }
         var seats = Math.max(3, Number($('#team-seats').value) || 3);
@@ -214,7 +276,7 @@
   }
 
   window.wsPage = { init: function () {
-    renderMeter(); renderPrices(); renderRequest(); renderReferral(); renderTeam(); bind();
+    renderMeter(); renderPrices(); renderRequest(); renderCheckout(); renderReferral(); renderTeam(); bind();
     if (q.get('tab') === 'team') $('#team').scrollIntoView();
   } };
 })();

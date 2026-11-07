@@ -23,3 +23,5 @@
 # Extensionless, so no rule above reaches them.
 desktop/.husky/* text eol=lf
 .nvmrc text eol=lf
+# The npm tarball ships VERSION with LF (the publish gate); autocrlf would give it CRLF on checkout.
+VERSION text eol=lf

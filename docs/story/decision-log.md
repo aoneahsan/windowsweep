@@ -1436,3 +1436,178 @@ composer and the 1.4.3 release. The applying commits are written into the status
 ships as *Confirm this address for windowsweep*, without the draft's closing full stop. Every subject in the email
 gallery is drawn that way (the D92 amendment in `desktop/design/AMENDMENTS-3.md`), and the dummy owns the words; no
 other S7 character moved.
+
+## 2026-11-07 - `release-1.4.4` (rows 27, 21, 20 and 23; S1 (f) on row 1), round 1 reconciled
+
+**Gate and panel:** D94 (checkout open, 2026-11-07) sends five sections through the lean panel under D59, the panel the
+owner named for D59 surfaces: S1 the 1.4.4 release words (a)-(g), S2 the docs plans page, S3 the Terms meta description,
+S4 four non-legal stale lines and S5 a legal revision. The writer's rounds 1 and 1b, developmental review, the writer's
+revision, line edit, copy edit, fact-check (two rounds) and humor-emotion ran. Humor-emotion was owed: S3 and S5 are
+legal (rows 20 and 23), and every section touches money. GATE 4 for S1, S2 and S4 stays pre-authorised under D59 only
+on the finalizer's fact-consistency PASS with zero unanswered NEEDS DECISION, and S1 (f) under row 1's 2026-09-07
+pre-authorisation. S3 and S5 go to the owner, because D59 sends Terms and Privacy changes to him first. Nothing here is
+recorded as published.
+
+**The keeper's two checks (D91), run first:**
+
+- **Each row's convention against that row's approved strings.** Row 27's approved release words carry standing lines
+  that are not changes. 1.4.3's (S10, GATE 4 2026-11-06) keep the CLI's *The command-line tool is unchanged.* with its
+  run and dry-run line, and the installer paragraph (`release-kit-1.4.3/`); the approved 1.4.0 entry opens on *The
+  command-line engine keeps all 26 sections.* (docs-1.4.0, 2026-10-31). None states a price or another plan-row value:
+  that entry says *Pro and Team add the features described on Pricing*, its draft tells `llms.txt` to *avoid repeating
+  mutable prices and limits*, and the shipped 1.4.0-1.4.3 entries name none. S1 follows both.
+- **Each glossary "never" against its approved uses.** §7's *the windowsweep team* bans *a person's name*, and S3 keeps
+  *Ahsan Mahmood runs windowsweep.* D45 kept the Terms operator of D33 (*"All public surfaces, legal kept"*), and the
+  owner approved this sentence in T-05 at the revised legal GATE 4 (2026-10-31), so it stands; the row does not say so
+  yet (P4). §7's *protected* bans *blocked*, and S1's *update notice or block* is row 24's block screen, as approved
+  1.4.3 (c) has it. §7's *the chokepoint* bans *the safety layer*; (b)'s *their safety checks* is 1.4.3's approved (b).
+  Apart from the D45 sentence, the 100 fenced lines carry no word from the fingerprint's never-list or §7's Never
+  column, and no *we*, *our*, *refund*, *cancel* or em-dash. A control on the same scan found *warning*, *signal*,
+  *broadcast* and *safety checks*, so the scan reads the fences.
+
+**Findings, each checked against the Bible and the draft:**
+
+1. **Developmental: accepted; all three changes are in the draft.** The self-check names its one *warning* instead of
+   claiming a clean fence (draft lines 17 and 464): a self-check is a record, and the 2026-09-08 report-bodies
+   finalizer caught a false "zero" in one. S4 (c) keeps the two versions in one sentence, each beside what it applies
+   to (§4, band P's exact numbers). Team's button reads *filled* against *outlined*, as a reader sees the two cards,
+   in (c) only; (a), (e), (f) and (g) carry what a reader acts on, as D91's finding 2 kept 1.4.3's 14 px in (c).
+2. **The developmental NEEDS DECISION: answered by the brief's author, and the record agrees.** *so SmartScreen may
+   show a warning.* stays word for word. The brief's "no warning words" meant warnings on a pay surface
+   (`payment-copy.md`), and this sentence is about Windows. It is 1.4.3's approved installer paragraph word for word,
+   row 14 has carried a SmartScreen note since its GATE 4 on 2026-09-07, and *warning* is on neither the fingerprint's
+   never-list nor `story-craft/assets/banned-phrases.txt` (102 lines, read by the keeper).
+3. **Line edit: accepted.** Seven sentences and the split of (c)'s Fixed bullet; fact-check round 2 read the result.
+   Its NEEDS DECISION was answered by the main session: *No refund or cancellation word appears in the shipping strings
+   below* stays, because the fence scan confirms it. `payment-copy.md` keeps NO REFUNDS to the Terms and the Privacy
+   Policy, and row 23's T-03 passage is untouched.
+4. **Copy edit: accepted.** One fix, the em-dashes, by the fingerprint's budget; the fences now carry none. Its §7
+   proposal is P2 below.
+5. **Fact-check: accepted.** Round 1's four contradictions (a partial Terms quote, stale line references, a latency
+   number, an apostrophe count) are fixed, and round 2 returned FACT-CONSISTENCY PASS, the git claims answered from the
+   main session's output. One record-only slip goes to the finalizer: the self-check's longest sentence is 31 words,
+   not 33. The keeper counted (a)'s paragraph-4 sentence at 31, a tie with (c)'s first bullet and S2's pay-link
+   sentence. §10 bars a property the product lacks, so the keeper also read S1's three refusals in source:
+   `plans.ts:234-238` refuses a checkout page that is not `https:` on `polar.sh` or a subdomain; `plans.json:53` ends
+   *Nothing was charged.*; and `plan-signal.ts`'s two timers are a 250 ms settle and a capped rejoin backoff, so the
+   plan is re-read on a signal, a rejoin, focus or the network's return, and *Never on a timer.* holds.
+6. **Humor-emotion: accepted, on this basis.** 0 hard flags, 0 misfires; P and R only. Rows 20 and 23 require it. Row
+   21 has no W band, and row 27 only allows one (row 6's *once per page*, which it inherits). Two rules close it:
+   `story-craft/references/safety.md` makes a surface that touches money a safety surface and overrides the palette
+   there, and §4 bans *any joke positioned near an irreversible action*, which a purchase is under NO REFUNDS. No
+   ratio changes; 60/25/15 stands.
+
+**Proposals for the Bible, PROPOSED and applied only after GATE 4:**
+
+- **P1, *release broadcast* against *signal* (writer): naming, not voice or palette; accepted only in a narrower
+  form.** As written, *the two never share a name* (draft line 168) contradicts an approved string: row 24's admin
+  `releases.published` (GATE 4 2026-10-31) reads *Open copies check when the release signal arrives or they return*.
+  *Release broadcasts* has been public since 1.4.1 (`CHANGELOG.md:63`, and `desktop.md:60`'s *a broadcast signals
+  publication*, both `e5b96b8`), but neither went through a story run, so S1 is the first reviewed surface to carry
+  it. The §7 row: *the release broadcast* is the channel an update notice or block arrives on, in the release words
+  and the docs; *a private signal* is the plan channel, `plans:<account id>`, never *broadcast* in prose (the
+  migration name `plan_change_broadcast` is code, as `--purge-all` is for *purge*). The admin line stands, so the row
+  has no "never *signal*" for the release channel. Moving that line to *release broadcast* would be a row-24
+  correction, pre-authorised under D59 on the same condition; this run does not carry it. Line 168's note becomes a
+  record-only fix for the finalizer: the release words never give the two one name, and the admin line stands.
+- **P2, `organization` (copy editor): already decided by §7's en-GB line; accepted in a wider form.** As proposed,
+  *organisation* elsewhere would also catch schema.org's `Organization`, which the site and the docs site carry under
+  the team-voice amendment of 2026-09-25 (rows 19 and 9; web `vite/prerender-html.ts:71`, docs
+  `docusaurus.config.ts:57`). The row: *organisation* in prose; *organization* only inside another system's own name,
+  Polar's organization (the merchant account, D94) and schema.org's `Organization`. No shipping string uses either
+  spelling; the row settles the commentary (draft lines 14 and 428) and the next copy editor's question.
+- **P3, row 27: prices out of the release words (main session).** Content-map amendments are the main session's, so
+  this says only what the Bible supports. **No price: supported, on a wider reason.** §7 makes every number exact and
+  sourced, with the copy pointing at the source, and `safety.md` makes a number on a money surface sourced or absent.
+  A plan-row value can change after a release record is frozen, so the words point at Pricing. The same reason covers
+  the seat minimum, a limit and a referral setting: row 27's own approved text already says *prices and limits*, and
+  its plans page sends the reader to Plans for the referral settings. **"Changes only": the Bible does not decide it,
+  and as worded it contradicts row 27's own approved strings,** the standing lines above. What those strings support
+  is narrower: release words never present unchanged behaviour as a change (S1 leaves out the signed-out label and
+  the consent sentence), and the standing lines stay.
+- **P4, the keeper's own, for Bible accuracy.** §7's *the windowsweep team* row gains D45's legal exception in its
+  Never cell: the Terms operator (D33), the licence and copyright lines and the npm `author` field. It writes down a
+  decision the owner has made; no approved string moves.
+
+**Map coverage, the keeper's own check:** S1 (a)-(e) and (g), S2 and S4 (a) sit on row 27; S4 (c) and (d) on row 21;
+S1 (f) on row 1. S4 (b) edits `docs/intro.md`, row 3's page, whose plans line came with docs `d991917` (1.4.1)
+without a story run; row 3's GATE 4 is pre-authorised on the same condition (2026-09-07), so the gate holds and the
+record names row 3 beside row 27. S3, S5 (e) and S5 (f) touch row 20's strings, and S3 and (e) were last revised in
+row 23's T-05; S5 (a)-(d) are row 23's. Both rows are legal and owner-gated. Row 27's 2026-11-06 amendment names the
+1.4.3 release words, so the record names 1.4.4's under D59, without a new row.
+
+**Deferred to the record step, after GATE 4:**
+
+1. Bible §7: *release broadcast* and *a private signal*, narrowed (P1).
+2. Bible §7: *organisation*, widened (P2).
+3. Bible §7: D45's legal exception in *the windowsweep team* row (P4).
+4. `content-map.md`, which the record dispatch must put in scope: row 27's amendment in a form the Bible supports
+   (P3), and this surface in the status cells of rows 27, 21, 20, 23, 3 and 1.
+5. The registry entry and index row under the parallel-writer rule; the Bible's *Last updated*; run state `recorded`.
+
+**Open, owner-gated, asked with S3 and S5 at their GATE 4 and not resolved here:** (i) whether S3 ships alone or with
+the S5 lines; (ii) whether S5 (b) `terms.plans.team` ships; (iii) whether P-03 `received` keeps its six approved fields
+or widens to the payment record's identifiers. None touches S1, S2 or S4, so their D59 condition holds. All three are
+in `run-state.json` `openDecisions`, as row 23's legal GATE 4 carried its question on 2026-10-31.
+
+**Found outside this run, written down, not worked:** row 27's approved 1.4.0 changelog entry (docs-1.4.0, with
+*Plans and run allowance*) is in no shipped changelog. The released 1.4.0 entry describes the command-line sections
+only, and row 27's status cell still reads *production application ... pending*. The 1.4.1 and 1.4.2 entries predate
+row 27's release-word reading and have no story record.
+
+**State:** this reconciliation raises no NEEDS DECISION and changes no palette, fingerprint, spine or motif. Run
+state: phase `finalize`, status `reconciled`, round 1. Next: the finalizer, with two record-only fixes (31 words, and
+line 168's note).
+
+## 2026-11-07 - `release-1.4.4` finalized, GATE 4 under D59 and from the owner (D95), recorded
+
+**Finalizer: READY, FACT-CONSISTENCY PASS, SEO/AEO pass, zero NEEDS DECISION on S1, S2 and S4.** S3 and S5 stayed
+frozen for the owner.
+
+- **Shipping strings.** Three rhythm edits in rewrite mode:
+  - (a)'s paragraph 4 now ends *In 1.4.4 it reconnects.*;
+  - (e) `changed.i2` gives *Never on a timer.* its own sentence;
+  - (c) = (d) join their two 1.4.3 sentences with a semicolon.
+- **The two record-only fixes from the round-1 block.** The self-check's longest sentences now tie at 31 words.
+  Line 168's note now says the two public nouns stay distinct in these pieces, while row 24's approved
+  `releases.published` (*when the release signal arrives*) stands.
+- **The identity, re-checked by the keeper.** The one summary is byte-identical in (a)'s first paragraph, (g) and the
+  feed item (draft lines 65, 144 and 152; 272 characters, one SHA-256), as row 27's 2026-11-06 amendment requires.
+
+**GATE 4 for S1, S2 and S4 - approved 2026-11-07 at 10:34:41 UTC under D59.** The condition is the 2026-09-07 one:
+fact-consistency PASS and zero unanswered NEEDS DECISION. Both hold, so no owner question was owed. S1 (f) is row 1's
+and S4 (b) row 3's, each under its 2026-09-07 pre-authorisation.
+
+**GATE 4 for S3 and S5 - approved by the owner 2026-11-07 at 10:28:11 UTC (D95, `docs/PROJECT-CONTEXT.md`).** D59
+sends Terms and Privacy wording to him first, so the main session asked through AskUserQuestion. His answers:
+
+- (i) and (ii): *"Approve all six (Recommended)"*. S3 and S5 (a)-(e) ship, and the Terms effective date moves to the
+  deploy day, his rule of 2026-09-24.
+- (iii): *"Name the extra numbers (Recommended)"*. `privacy.plans.received` now reads *"For each payment Polar takes,
+  windowsweep keeps one record: the plan, the period it covers, the seat count, the amount, its status, and Polar’s
+  order, subscription and customer numbers."* The main session set it in the draft.
+
+`openDecisions` is empty, and the three answers are in `resolvedDecisions`.
+
+**Recorded, the deferred items of the round-1 block:**
+
+1. Bible §7 gains *the release broadcast* (never *the update broadcast* or *the release feed*) and *a private signal*
+   (never *broadcast* in prose). Neither row bans *signal* for the release broadcast, because row 24's approved admin
+   line stands (P1).
+2. Bible §7 gains *organisation*; Polar's organization and schema.org's `Organization` keep their spelling (P2).
+3. Bible §7's *the windowsweep team* row names D45's legal exceptions beside *a person's name*: the Terms operator of
+   D33, the licence and copyright lines and the npm `author` field (P4).
+4. The registry entry gains its 2026-11-07 section, and its index row moves to 2026-11-07, under the parallel-writer
+   rule. `git fetch o` ran twice, and no upstream commit since `HEAD` touches the registry. The other session's
+   uncommitted `ahsan-notebook` row in `index.md` is byte-identical to before, and so are its CRLF line ends. The
+   Bible's *Last updated* is 2026-11-07, and run state is `recorded`.
+
+Each new Never word was checked against shipped and approved copy first, and none appears there.
+
+**Left to the main session, as its brief says:** `content-map.md` comes first: the row-27 amendment (*release words
+name what changed and never state a value an admin can change on a plan row; the standing lines stay*), and this
+surface in the status cells of rows 3, 20, 21, 23 and 27, plus row 1 for S1 (f). Then come the applying commits.
+The draft's four conditions under *Before publishing* still hold: the website's pay-link fixes and the `/account`
+plan block ship with S2 and S4, and `desktop-v1.4.4` is published before S2, S4 and S5 (a) go live.
+
+**Not changed:** the palette, the fingerprint, the spine and the motifs.

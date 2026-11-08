@@ -5,9 +5,9 @@
 
 ## The chokepoint
 
-Every file and folder windowsweep removes with its own code passes through one function, `Remove-PathSafe` (or `Send-ToRecycleBin` for personal files), with a declared target root. It refuses, in order:
+Every file and folder windowsweep removes with its own code goes through one of two helpers, `Remove-PathSafe`, or `Send-ToRecycleBin` for personal files, with a declared target root. Both resolve each path to its full form first, then refuse, in order:
 
-1. paths with `..` segments, UNC paths and drive roots;
+1. UNC paths and drive roots, outright. A `..` segment is not refused as text: the resolved path must pass every refusal that follows, containment included;
 2. fifteen declared roots: Windows, System32, SysWOW64, both Program Files folders, ProgramData, `C:\Users` with its Default and Public profiles, your profile root, its AppData folder and the Roaming, Local and LocalLow folders inside it;
 3. 66 protected subtrees, 50 path patterns and 13 file names - the lists below;
 4. the tool's own data folder;

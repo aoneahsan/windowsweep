@@ -236,3 +236,12 @@ word on the screen is S-005's, from `docs/story/drafts/plans-app.md`, approved a
 Captures at 1440 and 760: `gate4/plans-checkout-*-dummy-1.4.4.png`. The open state is captured full height in light
 and dark, and every other state as the cards section in the default dark appearance. With no `checkout` parameter
 the page is state A, unchanged. The layout is 1.4.0's Plans with no new part, and the words are S-005's.
+
+## Amendment - 2026-11-08: a cancelled paid plan reads its end (ISSUE-003)
+
+A subscription cancelled in Polar's customer portal used to read *Renews on* until its period ran out, because the
+cancellation never reached the account. It does now (`polar-webhook` records `subscription.canceled`, `.uncanceled`
+and `.revoked`; `my_plan()` returns `renews`), so the paid card's date line reads S-004's
+`plans.paid.ends` - *Ends on 1 December. Another active subscription, grant or Team seat still applies; otherwise
+Free.* - while the period still runs. The review band's *Pro, cancelled in Polar* (`?state=proEnds`) draws it. The
+layout is unchanged and the words are S-004's, from `docs/story/drafts/plans-app.md`, approved at GATE 4 under D59.

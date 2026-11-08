@@ -27,6 +27,9 @@ const myPlanSchema = z.object({
   }),
   source: z.string(),
   ends_at: z.string().nullable(),
+  /** False once the paid plan was cancelled, here or in Polar's portal (ISSUE-003); null for a
+      source that is not a payment. Absent from a backend older than 1.4.5: read as renewing. */
+  renews: z.boolean().nullable().optional(),
   team: z
     .object({
       id: z.string().uuid(),

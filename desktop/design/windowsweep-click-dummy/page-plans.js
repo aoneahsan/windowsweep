@@ -8,7 +8,8 @@
   var signedOut = state === 'signedOut' || state === 'deviceLimit' || state === 'deviceOwned';
   var used = state === 'deviceLimit' ? 15 : state === 'allLimit' ? 30 : 5;
   var total = signedOut ? 15 : 30;
-  var paid = state === 'pro' || state === 'team' || state === 'teamOwner';
+  /* proEnds: Pro after a cancellation in Polar's portal (ISSUE-003); the period still runs. */
+  var paid = state === 'pro' || state === 'proEnds' || state === 'team' || state === 'teamOwner';
   var $ = function (s) { return document.querySelector(s); };
   var set = function (s, v) { var n = $(s); if (n) n.textContent = v; };
   var request = ws.store.get('plansRequest', null);
@@ -41,14 +42,16 @@
       if (owned) owned.hidden = state !== 'deviceOwned';
       return;
     }
-    set('[data-plan-heading]', state === 'team' || state === 'teamOwner' ? 'Team' : state === 'pro' ? 'Pro' : 'Free');
+    set('[data-plan-heading]', state === 'team' || state === 'teamOwner' ? 'Team' : state === 'pro' || state === 'proEnds' ? 'Pro' : 'Free');
     $('[data-plan-skeleton]').hidden = true;
     $('[data-plan-retry]').hidden = true;
     set('[data-plan-summary]', paid ? 'No monthly limit on real runs.' : 'Dry-runs, scans and reports are never counted.');
     $('[data-plan-portal]').hidden = !paid || state === 'team';
     set('[data-plan-number]', paid ? '∞' : String(Math.max(0, total - used)));
     set('[data-plan-left]', paid ? 'No monthly limit on real runs.' : (Math.max(0, total - used) + ' of ' + total + ' real runs left this month'));
-    set('[data-plan-reset]', paid ? 'Renews on ' + resetDate() + '.' : 'The count starts again on ' + resetDate() + '.');
+    set('[data-plan-reset]', state === 'proEnds'
+      ? 'Ends on ' + resetDate() + '. Another active subscription, grant or Team seat still applies; otherwise Free.'
+      : paid ? 'Renews on ' + resetDate() + '.' : 'The count starts again on ' + resetDate() + '.');
     set('[data-plan-device]', 'This machine: 15 real runs a month, used first.');
     set('[data-plan-account]', signedOut
       ? 'A Free account has 15 extra real runs a month, shared across machines. Sign in to see what remains.'
@@ -63,7 +66,7 @@
     if (state === 'team') set('[data-plan-summary]', 'Team member. Your seat is active.');
     if (state === 'teamOwner') set('[data-plan-summary]', team ? 'You own this team.' : 'Create the team');
     ['pro', 'team'].forEach(function (key) {
-      var current = key === 'pro' ? state === 'pro' : state === 'team' || state === 'teamOwner';
+      var current = key === 'pro' ? state === 'pro' || state === 'proEnds' : state === 'team' || state === 'teamOwner';
       var button = $('[data-request="' + key + '"]');
       button.disabled = current;
       button.textContent = current ? 'Your plan' : checkoutOpen

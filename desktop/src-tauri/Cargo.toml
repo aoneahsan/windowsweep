@@ -1,6 +1,6 @@
 [package]
 name = "windowsweep-desktop"
-version = "1.4.5"
+version = "1.4.6"
 description = "windowsweep - reclaim disk space on Windows"
 authors = ["Ahsan Mahmood <aoneahsan@gmail.com>"]
 edition = "2021"

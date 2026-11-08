@@ -1640,7 +1640,10 @@ term, motif or voice element.
   now*, are quoted.
 - **Facts.** Each claim maps to `e1a3308`, `desktop-v1.4.5`'s `updater.ts`, `desktop-v1.1.0`'s and
   `desktop-v1.4.5`'s `icon.svg`, or ISSUE-006's measurement in root `site-evidence/updater-1.4.5/logs/installed.txt`.
-  The installer's icon is checked on the built setup before release.
+  The first 1.4.6 build showed NSIS's stock icon and Welcome picture on the setup, so the words said the installer
+  wrongly; 1.4.6 now sets `installerIcon`, `uninstallerIcon` and `sidebarImage` (the kit's stacked lockup), the
+  rebuilt setup was checked (its icon, and its Welcome page captured, then cancelled), and (a), (c) and (e) say what
+  the installer showed before.
 - **The identity.** (g) is byte-identical in (a)'s first paragraph, the feed body and `latest.json`; (c) = (d).
 - **Lint.** The story lint passes on the draft, and fails it (exit 2) with four planted phrases appended, removed again.
 

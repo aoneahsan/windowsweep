@@ -39,7 +39,7 @@ Update checks made after the app starts now wait up to 20 seconds for a slow ser
 
 **Update checks.** The app looks for a newer version on its start screen, again when the window comes back into focus or into view or the network comes back, and when Update or Update now is pressed on a required release. In 1.4.5 every one of those checks gave up after 4 seconds. On 2026-11-08 the address that serves updates took 4 to 12 seconds to answer for over an hour, so installed apps skipped check after check until one answer came back in time. Every check after the start screen now waits up to 20 seconds. The start screen's own check keeps its 4 seconds, so starting the app takes no longer than before.
 
-**The icon.** The taskbar, the Start menu and the installer now show the mark from the website's header: two sweep curves at full strength on the dark tile. Every desktop release from 1.1.0 to 1.4.5 drew three strokes of falling weight on a gradient.
+**The icon.** The taskbar and the Start menu now show the mark from the website's header: two sweep curves at full strength on the dark tile, where every desktop release from 1.1.0 to 1.4.5 drew three strokes of falling weight on a gradient. The installer, which showed its build tool's stock icon and pictures, now shows the same icon, and the mark and the name on its Welcome and Finish pages.
 
 The installers are signed for the app's updater but are not Windows code signed, so SmartScreen may show a warning. The `SHA256SUMS` asset lists hashes for both installers, `latest.json` and the stable `windowsweep-setup.exe` download.
 ```
@@ -61,9 +61,10 @@ Run `npx windowsweep@1.4.6 --list` to see the sections. Start with `--dry-run` t
 
 ### Changed
 
-- **The desktop app's icon is the website header's mark.** The taskbar, the Start menu and the installer show two
-  sweep curves at full strength on the dark tile. Every desktop release from 1.1.0 to 1.4.5 drew three strokes of
-  falling weight on a gradient.
+- **The desktop app's icon is the website header's mark.** The taskbar and the Start menu show two sweep curves at
+  full strength on the dark tile, where every desktop release from 1.1.0 to 1.4.5 drew three strokes of falling
+  weight on a gradient. The installer, which showed its build tool's stock icon and pictures, now shows the same
+  icon, and the mark and the name on its Welcome and Finish pages.
 
 ### Fixed
 
@@ -85,7 +86,7 @@ The same entry as (c), word for word, in the same place under `## [Unreleased]`,
 ```json
 "v146": {
   "changed": {
-    "i1": "The desktop app’s icon is now the website header’s mark: two sweep curves on a dark tile, in the taskbar, the Start menu and the installer."
+    "i1": "The desktop app’s icon is now the website header’s mark: two sweep curves on a dark tile, in the taskbar and the Start menu. The installer shows the same icon, and the mark and the name on its Welcome and Finish pages."
   },
   "fixed": {
     "i1": "Desktop update checks made after the start screen now wait up to 20 seconds for a slow server; 1.4.5 gave up on every check after 4 seconds. The start screen’s own check still takes 4 at most.",
@@ -129,7 +130,7 @@ The feed carries it in the site's `pages.json`, inside `feed.items`, beside its 
 | *focus or into view*, *the network comes back* | `watchForUpdates` listens for `focus`, `visibilitychange` to visible and `online`; the first two at most once a minute |
 | *4 to 12 seconds*, *for over an hour* | ISSUE-006's measurement on 2026-11-08. The address is not named: the person needs the effect, and (a) already says what serves updates |
 | *takes no longer than before* | The splash keeps 4000 ms, and joining a longer check under way it still waits 5 seconds at most (`waitAtMost`), the same ceiling as 1.4.5's deadline |
-| *the installer* | The NSIS installer takes its icon from the app's `icon.ico`; checked on the built `windowsweep_1.4.6_x64-setup.exe` before release |
+| *the installer*, *its build tool's stock icon and pictures* | Until 1.4.5 `bundle.windows.nsis` set no `installerIcon` and no `sidebarImage`, so the setup showed NSIS's own icon and Welcome picture (seen on the first 1.4.6 build, before the fix). 1.4.6 sets `installerIcon` and `uninstallerIcon` to `icons/icon.ico` and `sidebarImage` to `installer/sidebar.bmp`, the kit's stacked lockup on the dark ground; both checked on the built `windowsweep_1.4.6_x64-setup.exe` (its extracted icon, and its Welcome page captured, then cancelled) |
 | (a), last paragraph | 1.4.5's, word for word. It names no version |
 | (b) | 1.4.5's with the versions moved |
 | (f) | The version and one clause per change, then the two standing 1.4 scanner sentences, untouched |
@@ -151,6 +152,7 @@ None.
 | The start screen keeps 4 seconds | `Splash.tsx` calls `checkForUpdate()` with the 4000 default; the joiner's cap is the test *lets the splash in on time when it joins a longer check already under way* |
 | 4 to 12 seconds for over an hour, 2026-11-08 | ISSUE-006 and `site-evidence/updater-1.4.5/logs/installed.txt` |
 | The icon is the header's mark on the dark tile | `icon.svg` (`e1a3308`): the kit's `favicon.svg` geometry at 512, `#a1da44` on `#0e100b` |
+| The installer shows the same icon, and the mark and name on its Welcome and Finish pages | `tauri.conf.json` `bundle.windows.nsis` (1.4.6); the generated `installer.nsi` defines `INSTALLERICON` and `SIDEBARIMAGE`; root `site-evidence/updater-1.4.6/installer-welcome.png` |
 | 1.1.0 to 1.4.5 drew three strokes on a gradient | `git show desktop-v1.1.0:desktop/src-tauri/icons/icon.svg` and `desktop-v1.4.5`: strokes 52, 24, 11 over `linearGradient id="depth"` |
 | The CLI is unchanged | `git diff --stat v1.4.5 <release> -- lib modules windowsweep.ps1 bin package.json` shows only the version lines |
 

@@ -10,9 +10,10 @@
     windowsweep/brand-kit/ draws it). This tile is the kit's favicon.svg drawn
     16 times larger: the same 0.82 scale and stroke 3 that keep two strokes apart
     at 16 px, the size the taskbar and the installer ask for most, on the dark
-    page colour with the favicon's corner (7 of 32, here 112 of 512). It replaced
-    the 1.0.0 drawing (three strokes of falling weight on a gradient) in 1.4.6, so
-    the app, the site's tab and every email carry one icon.
+    page colour with the favicon's corner (7 of 32, here 112 of 512). In 1.4.6 it
+    replaced the drawing every desktop release from 1.1.0 carried (three strokes
+    of falling weight on a gradient), so the app, the site's tab and every email
+    carry one icon.
 
     Colours are the registered palette, converted from the OKLCH tokens rather
     than picked by eye:

@@ -9,6 +9,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.4.6] - 2026-11-08
+
+### Changed
+
+- **The desktop app's icon is the website header's mark.** The taskbar, the Start menu and the installer show two
+  sweep curves at full strength on the dark tile. Every desktop release from 1.1.0 to 1.4.5 drew three strokes of
+  falling weight on a gradient.
+
+### Fixed
+
+- **Update checks after the start screen wait for a slow server.** In 1.4.5 every check gave up after 4 seconds, so
+  while the address that serves updates took 4 to 12 seconds to answer, installed apps skipped check after check.
+  The checks made when the window comes back into focus or into view, when the network comes back, and when Update
+  or Update now is pressed on a required release now wait up to 20 seconds. The start screen's own check keeps its
+  4 seconds, so starting the app takes no longer than before.
+- The command-line tool is unchanged in this release. It moves to 1.4.6 so the CLI and the desktop app stay on one
+  version.
+
 ## [1.4.5] - 2026-11-08
 
 ### Fixed

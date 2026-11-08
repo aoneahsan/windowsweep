@@ -9,7 +9,7 @@ Drawn from the live header at `https://windowsweep.aoneahsan.com` (1440 px, chec
 - Header (public site): the two strokes described above, in the page ink.
 - Site favicon (`windowsweep-web/public/favicon.svg`): different curves (`M4 20…`, `M4 25.4…`), stroke 2.6, the lower one at 0.55 opacity, `#a3e635` on `#111a12`. The kit's favicon puts the header's curves on the dark page colour instead.
 - Desktop app icon (`desktop/src-tauri/icons/icon.svg`): three strokes of falling weight (52, 24, 11) with 0.5 and 0.3 opacity, on a gradient tile.
-- Docs site logo and favicon (`windowsweep-docs/static/img/logo.svg`) and `assets/logo/`: an older, unrelated drawing, a single glass pane being wiped with a squeegee, in a sky-blue gradient. It does not match the registered lime palette.
+- Docs site logo and favicon: since 2026-11-08 the header's mark (`windowsweep-docs/static/img/logo.svg` and `logo-dark.svg`, in each appearance's page ink) and this kit's `favicon.svg`. They, `assets/logo/` and both social cards (the site's `public/og/svg/site-card.svg`, the docs' `static/img/social-card.svg`) used to carry an older, unrelated drawing, a single glass pane wiped with a squeegee in a sky-blue gradient; `assets/logo/` is gone and the cards were redrawn with the header's mark the same day.
 
 None of these is changed by this kit. The header mark is drawn for this product (not an icon-library glyph), and it has no window panes in it.
 

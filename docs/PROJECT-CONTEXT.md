@@ -248,6 +248,13 @@ Asked in one batch when the paused run resumed; each answer is his verbatim opti
   plans page. No real charge: the sandbox proved the paid path, an unpaid production checkout proves the live page.
 - **D95 - legal GATE 4 for the checkout-open revision, 2026-11-07** (AskUserQuestion, under D59's rule that Terms and Privacy wording goes to the owner first): *"Approve all six (Recommended)"* - the Terms meta description (S3), `terms.plans.polar` with "from version 1.4.4", `terms.plans.team`, `privacy.plans.polar`, `privacy.plans.received` and the web `llms.txt` Terms line (S5, `docs/story/drafts/release-1.4.4.md`) move to the present tense, and the Terms effective date moves to the deploy day. For `privacy.plans.received`, *"Name the extra numbers (Recommended)"*: "For each payment Polar takes, windowsweep keeps one record: the plan, the period it covers, the seat count, the amount, its status, and Polar’s order, subscription and customer numbers."
 - **D96 - finish everything now, 2026-11-07.** The Comparison Hub runs in this session (AskUserQuestion, queue upkeep: *"Now, in this session"*; `/comparison-hub` joins run 2026-10-30-2224 at order 3; the vision is on record in root `docs/OWNER-VISION.md`). Then, in his words: *"we need to finish this project, please go with best recommendations, make sure to not go for any workarounds, build real solutions, implement best long term solutions and get all remaining work completed now please, only stop once all is done, and do not ask me any questions unless it's really important or you need me to do something manually"*. So ISSUE-002 to ISSUE-005 are fixed at their roots in this run, and a release follows.
+- **D97 - the production actions of ISSUE-003, 2026-11-08,** taken under D94 (*"release everything in production once
+  done"*) and D96's words. Migrations `20261107193543` (the subscription state table) and `20261107193640` (its
+  functions and `my_plan()`'s `renews`) went in with `supabase db push`, after a rehearsal in a rolled-back transaction;
+  `polar-webhook` v8 was deployed (`--use-api`, no Docker, D76); both Polar endpoints, production and sandbox, now also
+  send `subscription.canceled`, `.uncanceled` and `.revoked`. The proof used signed synthetic events for one t1+1
+  test row (root `site-evidence/subscription-cancel-v145/`), removed and read back at zero. No real customer row was
+  touched and no charge was made.
 
 ### How the frontend UI mandates map to this product
 

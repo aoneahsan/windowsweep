@@ -19,7 +19,8 @@
   var narrow = document.getElementById('email-narrow');
   var text = document.getElementById('email-text');
   var note = document.getElementById('email-note');
-  var PREVIEW_LOGO = '../../../assets/logo/windowsweep-mark.png';
+  /* offline preview only: the desktop icon, the same three-stroke drawing the emails' hosted logo shows */
+  var PREVIEW_LOGO = '../../src-tauri/icons/128x128.png';
   if (!templates.length || !tabs) return;
 
   function param(name) { return new URLSearchParams(location.search).get(name); }

@@ -3,7 +3,7 @@
   "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md, which since 2026-09-07 lives at the WORKSPACE ROOT one level above this repository, outside it (a clone of this repository does not carry it; since 2026-09-26 the root is its own repository on the private windowsweep-web's project-root branch, D49 - ../RESTORE.md rebuilds it). The method is ../completion-plan-v5-2026-09-24.md (v4 of 2026-09-17, v3 of 2026-09-12 and the two 2026-09-07 plans are history; every decision they record still applies, and v3 sections B0, B1 and B10-B12 are still live reference). This file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-11-08",
+  "lastUpdated": "2026-11-08T13:23:04Z",
   "activeCompletionRun": {
     "id": "2026-10-30-2224",
     "status": "owner chain: 85/100, all four hard gates pass (2026-11-06)",
@@ -1697,9 +1697,35 @@
           "8434965"
         ]
       }
+    },
+    {
+      "date": "2026-11-08",
+      "model": "claude-opus-5.5; Claude Code main session (session 24, continued; paused at the owner's request)",
+      "phase": "complete-project resume: release 1.4.6 (ISSUE-006, the root TASK-001 brand-kit icon), then a safe pause",
+      "summary": "Release 1.4.6: every check the splash does not make waits 20 s and the splash keeps 4 (ISSUE-006); the app icon, the setup and uninstaller icon and the installer Welcome and Finish pictures come from the brand kit, and the site's favicon, .ico, touch icon and email logo follow (root TASK-001). Built and signed here, tagged on 42baf79, desktop-v1.4.6 Latest and v1.4.6 on GitHub, windowsweep@1.4.6 on npm (the gated tarball), proven on a slow local channel and on the installed copy (1.4.5 to 1.4.6, read three ways). Site 71d1a89c and docs d6bc128 deployed and verified live. The two anonymous users the 1.4.5 proofs had created were deleted (D98). Paused here at the owner's request; resume point in the root remaining-work-summary.md.",
+      "commits": {
+        "product": [
+          "e1a3308",
+          "8ee0a78",
+          "8887db3",
+          "f661d16",
+          "0e51613",
+          "42baf79"
+        ],
+        "web": [
+          "07a53bf",
+          "2c7b355"
+        ],
+        "docs": [
+          "82aa975"
+        ],
+        "docsPages": [
+          "d6bc128"
+        ]
+      }
     }
   ],
-  "resumeInstructions": "LATEST 2026-11-04 LIVE CHECKPOINT: audit 62/100 after installed 1.4.1 Picker preview, 101 MiB Recycle Bin run, JSON receipt and protected refusal. Website a72c5e3 with phone app view, page tours and guarded /admin/releases is deployed; live 390 touch home, app tabs and tour passed, and the live entry bundle matched the verified build. Authenticated non-admin phone journeys and genuine-admin Releases form remain open. Desktop tours and walkthrough pass 40 source tests and native 1440/760 checks; seven images are now real 1.4.1 captures, but desktop tour source is not packaged or released. Production Supabase nlmetjyytgwaxcliusuo has 24 applied migrations; no release row was published. Resume with authenticated site/RLS and admin proof, a coordinated desktop release and live update-flow proof. Polar webhook secrets/sandbox proof, received email, separate hosted restore target, second-machine P1/P5 and owner P4 records remain open. Read ../machine-evidence/p52-2026-11-02/REPORT.md section 19 and production/windowsweep-complete-project.json in projects-finalization-record before resuming.",
+  "resumeInstructions": "LATEST 2026-11-08 PAUSE POINT (session 24, paused at the owner's request): 1.4.6 is live everywhere and proven; ISSUE-002 to ISSUE-006 are resolved and none is open. What is left is close-out only, in the order written in the root remaining-work-summary.md under Resume point: root TASK-001 to DONE, the record repo re-score and state, the notebook kit mirror and lessons, the project memory, /context-fix-project, temp cleanup, then the one owner question (MANUAL-TASKS row 38, the Comparison Hub words). LATEST 2026-11-04 LIVE CHECKPOINT: audit 62/100 after installed 1.4.1 Picker preview, 101 MiB Recycle Bin run, JSON receipt and protected refusal. Website a72c5e3 with phone app view, page tours and guarded /admin/releases is deployed; live 390 touch home, app tabs and tour passed, and the live entry bundle matched the verified build. Authenticated non-admin phone journeys and genuine-admin Releases form remain open. Desktop tours and walkthrough pass 40 source tests and native 1440/760 checks; seven images are now real 1.4.1 captures, but desktop tour source is not packaged or released. Production Supabase nlmetjyytgwaxcliusuo has 24 applied migrations; no release row was published. Resume with authenticated site/RLS and admin proof, a coordinated desktop release and live update-flow proof. Polar webhook secrets/sandbox proof, received email, separate hosted restore target, second-machine P1/P5 and owner P4 records remain open. Read ../machine-evidence/p52-2026-11-02/REPORT.md section 19 and production/windowsweep-complete-project.json in projects-finalization-record before resuming.",
   "auditPlanFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-humming-snowflake.md (the 2026-09-12 audit); the 2026-09-05 audit was please-audit-the-whole-streamed-nest.md",
   "planCopy": "../completion-plan-v4-2026-09-17.md",
   "planFileV3": "C:/Users/PC/.claude/plans/please-audit-the-whole-humming-snowflake.md",

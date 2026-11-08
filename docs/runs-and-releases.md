@@ -416,5 +416,44 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
 - 2026-11-08: **docs deploys** `gh-pages` `886aa7b`, then `eabbd60` (docs `3818091`, then `8434965`): the changelog lists
   1.4.5; the safety model's chokepoint paragraph corrected (ISSUE-002); the navbar logo, favicon and social card in the
   current mark. 270 of 270 served files equal to the build, render-checked live (12 of 12), IndexNow 200.
+- 2026-11-08: **1.4.6** (ISSUE-006, the root's TASK-001; words `docs/story/drafts/release-1.4.6.md`).
+  - **Code.** `e1a3308`: every check the splash does not make waits 20 s (`LATER_CHECK_TIMEOUT_MS`), the splash keeps
+    4 s, and a joining caller waits no longer than its own deadline; two tests watched failing on their plants. The app
+    icon is the brand kit's `favicon.svg` drawn at 512, re-exported with `yarn tauri icon`. `0e51613`: the setup and
+    uninstaller carry `icons/icon.ico` and the Welcome and Finish pages `installer/sidebar.bmp` (the kit's stacked
+    lockup; the first 1.4.6 build still showed NSIS's stock icon and picture, so the words were corrected first).
+  - **Build and tags.** Built and signed on this machine from the tree of `0e51613`; `wip/release-1.4.6` merged into
+    `main` as `42baf79` (tree identical); tags `desktop-v1.4.6` Latest and `v1.4.6` with `--latest=false`, annotated on
+    `42baf79`. Self-test 223 of 223, version parity, PSScriptAnalyzer 0 with a planted file caught (1), `yarn gates`
+    49 tests, 0 warnings.
+  - **Installers.** NSIS `windowsweep_1.4.6_x64-setup.exe` 3,880,427 B, sha256 `bc617b4c…`; MSI 4,640,768 B, sha256
+    `e0b3e3ca…`. Both `.sig` files verify against the shipped key, file and trusted comment; a one-byte tamper fails.
+    The setup's extracted icon is the new mark, and its Welcome page was captured, then cancelled with nothing
+    installed (root `site-evidence/updater-1.4.6/installer-welcome.png`).
+  - **Update manifest.** `latest.json` has three platform keys and S1 (g) as its notes (218 characters, equal to (a)'s
+    first paragraph and the feed item); `releases/latest/download/latest.json` served the kit's file byte-equal at once.
+  - **npm.** `windowsweep@1.4.6` is the gated tarball (sha1 `16afcc5d…f060`): 53 files, the same list as 1.4.5, with
+    only CHANGELOG, README, VERSION, `package.json` and `lib/constants.ps1` changed; secret sweep 0; VERSION LF; a smoke
+    install prints `windowsweep v1.4.6`. The registry listed it about ten minutes after the publish.
+  - **ISSUE-006 proof.** A build of the 1.4.6 code labelled 1.4.5 on a local channel that held `latest.json` 10 s: the
+    splash's check gave up at 4.0 s and the start screen let the person in; a focus a minute later waited 10.0 s, found
+    1.4.6 and downloaded the installer; killed, never closed, so the installed copy stayed 1.4.5 (`update-wait.txt`).
+  - **Installed updater proof.** The installed 1.4.5 showed *Version 1.4.6 is ready* on its start screen 3.5 s after
+    launch; Later, then the title bar's Close: the process ended in 1.6 s and the installer ran. The uninstall key, the
+    exe FileVersion and `plugin:app|version` after relaunch read 1.4.6, and the installed exe's icon is the new mark
+    (`installed.txt`).
+  - **Production.** Both proofs reused profiles that already held a session, so they created no user. The two
+    anonymous users the 1.4.5 proofs had created on fresh profiles (`540b657d`, `68bfc5ff`, matched to the profiles'
+    Local Storage) were deleted with their device rows and read back at 0 (`production-cleanup.txt`, D98).
+- 2026-11-08: **site deploy `71d1a89c`** (web `07a53bf` and its sitemap commit `2c7b355`): the 1.4.6 facts and words;
+  the brand kit's favicon, `.ico` and touch icon (before, `/favicon.ico` and `/apple-touch-icon.png` answered the 404
+  page) and `theme-color` on the kit's dark page colour; the email logo is the app's new `64x64.png`. Gates 109 tests,
+  0 warnings, first load 240,137 B gzip under 246,000 B; render-checked on the build and live (28 of 28 each, the four
+  brand files byte-equal); 155 of 155 served files equal to the build; IndexNow 200 for the five changed URLs (root
+  `site-evidence/site-1.4.6/`).
+- 2026-11-08: **docs deploy** `gh-pages` `d6bc128` (docs `82aa975`): the changelog lists 1.4.6 (equal to the root entry
+  byte for byte) and the tool version reads 1.4.6. 270 of 270 served files equal to the build. The first live render
+  check sampled `/` and `/desktop` at 390 empty, most likely while the profile's 1.4.5 service worker handed over to the
+  new build; the re-run passed 12 of 12 (both logs kept).
 
-Last Updated: 2026-11-08 (1.4.5 released and proven installed; ISSUE-003 to ISSUE-005 live; the site and docs deploys). Earlier 2026-11-07 (1.4.4 released and proven installed; the site and docs deploys). Earlier the same day (checkout open, the site deploy, the newsletter released, D94). Earlier 2026-11-06 (the branded account emails on production, D92). Earlier the same day (1.4.3: the release record and its installed updater proof). Earlier the same day (1.4.2: the installed updater proof and the release record, including the restored MSI entry of `latest.json`). Earlier 2026-09-28 (the owner's own sign-in and dry-run on the installed 1.3.2, read back from the server - row 31. Earlier the same day: CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)
+Last Updated: 2026-11-08 (1.4.6 released and proven installed; ISSUE-006 resolved; the brand kit on the app, installer, site and emails). Earlier 2026-11-08 (1.4.5 released and proven installed; ISSUE-003 to ISSUE-005 live; the site and docs deploys). Earlier 2026-11-07 (1.4.4 released and proven installed; the site and docs deploys). Earlier the same day (checkout open, the site deploy, the newsletter released, D94). Earlier 2026-11-06 (the branded account emails on production, D92). Earlier the same day (1.4.3: the release record and its installed updater proof). Earlier the same day (1.4.2: the installed updater proof and the release record, including the restored MSI entry of `latest.json`). Earlier 2026-09-28 (the owner's own sign-in and dry-run on the installed 1.3.2, read back from the server - row 31. Earlier the same day: CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)

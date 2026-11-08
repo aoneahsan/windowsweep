@@ -64,3 +64,22 @@ Fixed entries moved from `docs/REPORTED-ISSUES.md`, with the date and the versio
   verify with the beacon count on the deployed origin, signed in and out. **Priority:** medium.
 - **Resolved:** 2026-11-08. Clarity is never loaded on a visit that starts on `/account`, `/admin`, `/contact` or an OAuth or checkout return, is stopped on the router's `onBeforeNavigate` before the new URL is written (Clarity's own pushState wrapper restarts it after a URL change), restarts on `onResolved` on a public page, and sends nothing while stopped (web `3de6b82`, `88c05b6`). Beacon counts on the deployed origin, signed out and signed in as t1+1: 0 tags and 0 beacons in 30 s from a visit starting on `/account`; beacons on `/`; 0 in 45 s after an in-app move to `/contact` and 0 in 30 s after one to `/account`; beacons again back on `/` (`site-evidence/site-1.4.5/live/replay-proof-*.txt`).
 - **Fixed in:** website, Cloudflare Pages `d16a8762` (web `4caa72a` and the sitemap commit after it).
+
+### ISSUE-006 — background update checks are held to the splash's 4-second deadline
+- **Found:** 2026-11-08, in the installed 1.4.4 -> 1.4.5 proof (root `site-evidence/updater-1.4.5/logs/installed.txt`).
+- **What:** GitHub's release-download endpoint answered in 4-12 s, often with a 504, for over an hour while its API
+  answered in a second. Every check, the splash's and the ones `watchForUpdates` runs on focus, resume and reconnect,
+  uses `UPDATE_CHECK_TIMEOUT_MS` (4000) plus a 1 s deadline (`desktop/src/lib/updater.ts`), so the installed apps skipped
+  check after check; the update staged only when one answer happened to come in under 4 s. Nothing waits on a
+  background check, so the splash's deadline does not need to bind it.
+- **Fix:** give the focus, resume and reconnect checks their own, longer deadline (about 20 s) and keep 4 s for the
+  splash; prove it on the local test channel with a delayed manifest. Ships with the next desktop release.
+- **Priority:** low (the update is delayed while GitHub is slow, never lost).
+- **Resolved:** 2026-11-08. Every check the splash does not make (focus, a return into view, a returning network,
+  and a press on the release gate's Update or Update now) waits `LATER_CHECK_TIMEOUT_MS` = 20 s; the splash keeps
+  4 s, and a caller that joins a check under way waits no longer than its own deadline (`desktop/src/lib/updater.ts`,
+  `e1a3308`; two tests, each watched failing on its plant). Proved on a local test channel that held `latest.json`
+  10 s and served the real signed 1.4.6 manifest and installer: the splash's check gave up at 4.0 s, a focus a minute
+  later waited 10.0 s, found 1.4.6 and downloaded it, and the installed copy was untouched (root
+  `site-evidence/updater-1.4.6/logs/update-wait.txt`).
+- **Fixed in:** desktop 1.4.6 (`desktop-v1.4.6`, `42baf79`).

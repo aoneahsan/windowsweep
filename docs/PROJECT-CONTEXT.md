@@ -255,6 +255,11 @@ Asked in one batch when the paused run resumed; each answer is his verbatim opti
   send `subscription.canceled`, `.uncanceled` and `.revoked`. The proof used signed synthetic events for one t1+1
   test row (root `site-evidence/subscription-cancel-v145/`), removed and read back at zero. No real customer row was
   touched and no charge was made.
+- **D98 - release 1.4.6 and the proof-user cleanup, 2026-11-08,** taken under D96 (*"get all remaining work
+  completed now"*). 1.4.6 was cut the same day as 1.4.5 because ISSUE-006 and the root's TASK-001 (the app icon and
+  installer pictures from the brand kit) reach people only in a desktop release. In production, the two anonymous
+  users the 1.4.5 proofs had created on fresh WebView2 profiles were deleted with their device rows and read back
+  absent. A proof launch now reuses a profile that already holds a session, so it creates no user.
 
 ### How the frontend UI mandates map to this product
 

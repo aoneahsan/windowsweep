@@ -15,6 +15,7 @@
 
 import { sql } from 'drizzle-orm';
 import {
+  boolean,
   check,
   index,
   integer,
@@ -173,5 +174,37 @@ export const billingEmailDeliveries = pgTable(
     index('billing_email_uncertain_idx')
       .on(t.uncertainAt, t.eventId)
       .where(sql`${t.uncertainAt} is not null`),
+  ]
+).enableRLS();
+
+/**
+ * Whether each Polar subscription will renew (ISSUE-003). One row per Polar
+ * subscription, holding the state of the NEWEST `subscription.canceled`,
+ * `subscription.uncanceled` or `subscription.revoked` delivery: a delivery whose
+ * `modified_at` is not newer than the row's is ignored, so a retried, older event can
+ * never undo a cancellation or its withdrawal.
+ *
+ * Kept apart from `subscriptions` on purpose. That table holds one row per paid
+ * ORDER; a cancellation belongs to the subscription and may arrive before the order
+ * that started it has been recorded. `my_plan()` reads it to say "renewing on" or
+ * "until", and no client reads it directly.
+ */
+export const billingSubscriptionStates = pgTable(
+  'billing_subscription_states',
+  {
+    polarSubscriptionId: text('polar_subscription_id').primaryKey().notNull(),
+    status: text('status').notNull(),
+    cancelAtPeriodEnd: boolean('cancel_at_period_end').notNull(),
+    canceledAt: timestamp('canceled_at', { withTimezone: true }),
+    endedAt: timestamp('ended_at', { withTimezone: true }),
+    modifiedAt: timestamp('modified_at', { withTimezone: true }).notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    check(
+      'billing_subscription_states_id_len',
+      sql`char_length(${t.polarSubscriptionId}) between 1 and 200`
+    ),
+    check('billing_subscription_states_status_len', sql`char_length(${t.status}) between 1 and 40`),
   ]
 ).enableRLS();

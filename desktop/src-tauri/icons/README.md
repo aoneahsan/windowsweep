@@ -33,3 +33,10 @@ The four `tauri.conf.json` references - `32x32.png`, `128x128.png`,
 `128x128@2x.png`, `icon.ico` - plus `64x64.png` and `icon.png` are what the build
 actually reads. If an MSIX or macOS target is ever added, re-run the export and
 keep that platform's files rather than restoring them by hand.
+
+## The installer's own pictures
+
+`bundle.windows.nsis` gives the setup and its uninstaller this folder's `icon.ico`,
+and the Welcome and Finish pages the picture in `../installer/sidebar.bmp`
+(164 x 314, exported from `sidebar.svg` beside it; the command is in that file).
+Before 1.4.6 the setup showed NSIS's stock icon and stock picture.

@@ -54,7 +54,10 @@
         "installMode": "currentUser",
         "languages": [
           "English"
-        ]
+        ],
+        "installerIcon": "icons/icon.ico",
+        "uninstallerIcon": "icons/icon.ico",
+        "sidebarImage": "installer/sidebar.bmp"
       },
       "webviewInstallMode": {
         "type": "downloadBootstrapper"

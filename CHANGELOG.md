@@ -13,9 +13,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
-- **The desktop app's icon is the website header's mark.** The taskbar, the Start menu and the installer show two
-  sweep curves at full strength on the dark tile. Every desktop release from 1.1.0 to 1.4.5 drew three strokes of
-  falling weight on a gradient.
+- **The desktop app's icon is the website header's mark.** The taskbar and the Start menu show two sweep curves at
+  full strength on the dark tile, where every desktop release from 1.1.0 to 1.4.5 drew three strokes of falling
+  weight on a gradient. The installer, which showed its build tool's stock icon and pictures, now shows the same
+  icon, and the mark and the name on its Welcome and Finish pages.
 
 ### Fixed
 

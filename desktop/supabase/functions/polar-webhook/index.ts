@@ -1,7 +1,12 @@
 import { webhooks } from "@polar-sh/sdk/2026-10";
 import { answer, ApiError, requireMethod, serve } from "../_shared/http.ts";
 import { sendBillingEmail } from "../_shared/billing-email.ts";
-import { isPlanEvent } from "../_shared/polar-event.ts";
+import {
+  isPlanEvent,
+  isSubscriptionEvent,
+  type PolarSubscriptionState,
+  subscriptionStateArgs,
+} from "../_shared/polar-event.ts";
 import { rpc, serviceClient } from "../_shared/supabase.ts";
 
 type Order = {
@@ -38,6 +43,22 @@ serve(async (request) => {
       throw new ApiError(403, "forbidden");
     }
     throw new ApiError(400, "invalid_request");
+  }
+  // ISSUE-003: a cancellation made in Polar's customer portal, its withdrawal, or an
+  // ended subscription. Recorded as the subscription's state, which decides whether
+  // my_plan() says "renewing on" or "until"; no paid period moves.
+  if (isSubscriptionEvent(event.type)) {
+    const data = event.data as PolarSubscriptionState;
+    if (!isPlanEvent(data.metadata)) {
+      return answer({ ok: true, ignored: true }, 202);
+    }
+    const deliveryId = request.headers.get("webhook-id");
+    const args = deliveryId && deliveryId.length <= 200
+      ? subscriptionStateArgs(deliveryId, event.type, data, event.timestamp)
+      : null;
+    if (!args) throw new ApiError(400, "invalid_request");
+    await rpc(serviceClient(), "billing_record_subscription_state", args);
+    return answer({ ok: true });
   }
   if (event.type !== "order.paid" && event.type !== "order.refunded") {
     return answer({ ok: true, ignored: true }, 202);

@@ -178,7 +178,10 @@ function PlansContent() {
                   ) : null}
                   {paid && mine.data?.source === 'payment' && mine.data.ends_at ? (
                     <p className="t-sm ink-3">
-                      {t('plans.paid.renews', { date: formattedDate(mine.data.ends_at) })}
+                      {/* A cancelled plan reads its end (ISSUE-003; the dummy's `proEnds`). */}
+                      {mine.data.renews === false
+                        ? t('plans.paid.ends', { date: formattedDate(mine.data.ends_at) })
+                        : t('plans.paid.renews', { date: formattedDate(mine.data.ends_at) })}
                     </p>
                   ) : null}
                 </>

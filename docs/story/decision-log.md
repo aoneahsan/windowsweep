@@ -1611,3 +1611,21 @@ The draft's four conditions under *Before publishing* still hold: the website's 
 plan block ship with S2 and S4, and `desktop-v1.4.4` is published before S2, S4 and S5 (a) go live.
 
 **Not changed:** the palette, the fingerprint, the spine and the motifs.
+
+## 2026-11-08 - `release-1.4.5` (row 27; (f) on row 1) finalized, GATE 4 under D59, recorded
+
+**Finalizer: READY, FACT-CONSISTENCY PASS, zero NEEDS DECISION.** Draft: `drafts/release-1.4.5.md`.
+
+- **What ships.** Two Fixed bullets and the CLI line, in 1.4.4's shapes: a plan cancelled in Polar's customer portal
+  reads *Ends on* on Plans (ISSUE-003), and a close during the update download still installs the update, with the
+  one-minute ceiling told (ISSUE-004). No Changed group, because both repair 1.4.4.
+- **Facts.** Each claim maps to `cd875bf`, `fab450b`, `desktop-v1.4.4`'s `Plans.tsx` and `updater.ts`, or the signed
+  live proof in root `site-evidence/subscription-cancel-v145/webhook-proof.txt` (cancel, duplicate, stale retry,
+  withdrawal, forged signature; test rows removed and read back at zero).
+- **The identity.** (g) is byte-identical in (a)'s first paragraph, the feed body and `latest.json`; (c) = (d).
+- **Lint.** The story lint flagged the self-check's own list of banned words; the section now names the list
+  without spelling its words, and the lint passes.
+
+**GATE 4 - approved 2026-11-08T09:24:42Z under D59.** Fact-consistency PASS and zero NEEDS DECISION; no piece is a legal surface.
+(f) is row 1's, under its 2026-09-07 pre-authorisation. No Bible §7 row and no registry change: the pieces add no
+term, motif or voice element.

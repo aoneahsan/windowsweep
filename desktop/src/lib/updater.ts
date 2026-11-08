@@ -182,22 +182,40 @@ let closeHookFor: Update | null = null;
  * runs with no restart, so the next start is the new build and nothing interrupts
  * a person mid-task. A run in progress is never cut short - its close goes ahead
  * on the old build, and the download waits for the next close or the next start.
+ *
+ * 🔴 THE CLOSE HOOK IS ARMED WHEN THE UPDATE IS FOUND, NOT WHEN ITS DOWNLOAD ENDS
+ * (ISSUE-004). The splash calls the version ready the moment the check finds it, so
+ * a window closed while the download was still running closed without installing,
+ * and the installed 1.4.3 proved it: the update came one start late. A close now
+ * waits for the download already under way (`armCloseInstall`).
  */
 async function stageForClose(update: Update): Promise<void> {
   if (stagedVersion === update.version) return;
   stagedVersion = update.version;
+  closeHookFor = update;
+  // Started before the hook is armed, so a press on "Install and restart" always finds
+  // this download already running and reuses it.
+  const downloading = downloaderOf(update).download();
   try {
-    await downloaderOf(update).download();
-    closeHookFor = update;
     await armCloseInstall();
+    await downloading;
     track('update.staged', { version: update.version });
   } catch (error) {
     stagedVersion = null;
+    if (closeHookFor === update) closeHookFor = null;
     track('update.stage.failed', {
       reason: error instanceof Error ? error.message : String(error),
     });
   }
 }
+
+/**
+ * How long a close waits for a download it finds under way. The window has already
+ * gone; past this the app closes without installing, and the next start downloads
+ * again, as it did before 1.4.5. An update is a few megabytes, so the ceiling is for
+ * a stalled network, not a slow one.
+ */
+const CLOSE_WAIT_MS = 60 * 1000;
 
 let closeHookArmed = false;
 async function armCloseInstall(): Promise<void> {
@@ -210,8 +228,16 @@ async function armCloseInstall(): Promise<void> {
     if (!update || useStore.getState().phase === 'running') return;
     event.preventDefault();
     try {
-      // On Windows the installer takes this process with it; no relaunch is asked for.
-      await update.install({ restartAfterInstall: false });
+      // The window goes at once, as asked; a download still under way finishes behind
+      // it. The same promise the splash's progress reads, so nothing downloads twice.
+      await win.hide();
+      const downloaded = await withDeadline(downloaderOf(update).download(), CLOSE_WAIT_MS);
+      if (downloaded === TIMED_OUT) {
+        track('update.close.deadline', { version: update.version });
+      } else {
+        // On Windows the installer takes this process with it; no relaunch is asked for.
+        await update.install({ restartAfterInstall: false });
+      }
     } catch (error) {
       track('update.install.failed', {
         reason: error instanceof Error ? error.message : String(error),

@@ -37,6 +37,8 @@ export const EVENTS = {
   /** The found build is downloaded and will install when the window closes. */
   'update.staged': { version: 'string' },
   'update.stage.failed': { reason: 'string' },
+  /** A close waited for the download it found under way, and the ceiling came first (ISSUE-004). */
+  'update.close.deadline': { version: 'string' },
   tour_hint_shown: { route: 'string' },
   tour_started: { route: 'string' },
   tour_step_viewed: { route: 'string', step: 'number' },

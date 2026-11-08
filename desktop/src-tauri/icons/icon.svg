@@ -5,34 +5,25 @@
     by `yarn tauri icon src-tauri/icons/icon.svg`, and it is re-exported rather
     than hand-edited.
 
-    The mark is the product's one visual metaphor - the sweep, three strokes of
-    decreasing weight wiping a pane clean along a diagonal - taken from the hero
-    of the approved click dummy so the installer, the taskbar and the home screen
-    all carry the same shape.
+    The mark is the website header's: two sweep curves at full strength, round caps
+    (`BrandMark` in windowsweep-web/src/components/ui/Icon.tsx, as
+    windowsweep/brand-kit/ draws it). This tile is the kit's favicon.svg drawn
+    16 times larger: the same 0.82 scale and stroke 3 that keep two strokes apart
+    at 16 px, the size the taskbar and the installer ask for most, on the dark
+    page colour with the favicon's corner (7 of 32, here 112 of 512). It replaced
+    the 1.0.0 drawing (three strokes of falling weight on a gradient) in 1.4.6, so
+    the app, the site's tab and every email carry one icon.
 
     Colours are the registered palette, converted from the OKLCH tokens rather
     than picked by eye:
-      background  oklch(0.168 0.010 128)  #0e100b
-      accent      oklch(0.820 0.185 128)  #a1da44   (hue 128, the registered one)
+      background  oklch(0.168 0.010 128)  #0e100b   (the c-app token, dark)
+      accent      oklch(0.820 0.185 128)  #a1da44   (the c-accent token, dark; hue 128)
+    (No double hyphen anywhere in this comment: XML forbids it, and the export
+    refuses the file.)
   -->
-  <defs>
-    <clipPath id="round">
-      <rect x="0" y="0" width="512" height="512" rx="112" ry="112"/>
-    </clipPath>
-    <linearGradient id="depth" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#141810"/>
-      <stop offset="1" stop-color="#0b0d08"/>
-    </linearGradient>
-  </defs>
-
-  <g clip-path="url(#round)">
-    <rect width="512" height="512" fill="url(#depth)"/>
-
-    <!-- the sweep: same three curves as the home hero, scaled to the tile -->
-    <g fill="none" stroke="#a1da44" stroke-linecap="round">
-      <path d="M56 348 C 190 348, 202 132, 268 132 S 380 268, 470 168" stroke-width="52"/>
-      <path d="M56 414 C 196 414, 210 236, 288 236 S 396 350, 470 258" stroke-width="24" opacity=".5"/>
-      <path d="M56 462 C 202 462, 216 330, 306 330 S 410 414, 470 336" stroke-width="11" opacity=".3"/>
-    </g>
+  <rect width="512" height="512" rx="112" fill="#0e100b"/>
+  <g transform="translate(256 256) scale(13.12) translate(-16 -18.5)" fill="none" stroke="#a1da44" stroke-width="3" stroke-linecap="round">
+    <path d="M2 22C7 22 8 9 14 9s7 9 16 3"/>
+    <path d="M2 28C8 28 9 17 15 17s7 7 15 2"/>
   </g>
 </svg>

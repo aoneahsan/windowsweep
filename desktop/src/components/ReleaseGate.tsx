@@ -16,7 +16,7 @@ import {
   type StoredReleaseNotice,
 } from '../lib/release-state';
 import { readStored, removeStored, writeStored } from '../lib/storage';
-import { checkForUpdate, restartApp } from '../lib/updater';
+import { checkForUpdate, LATER_CHECK_TIMEOUT_MS, restartApp } from '../lib/updater';
 import { useNotices } from '../state/notices';
 
 const NOTICE_KEY = 'windowsweep:release-notice';
@@ -146,7 +146,8 @@ export function ReleaseGate() {
     setStatus('checking');
     setProgress(null);
     try {
-      const outcome = await checkForUpdate();
+      // A press is asked for and watched, so it waits as long as a background check (ISSUE-006).
+      const outcome = await checkForUpdate(LATER_CHECK_TIMEOUT_MS);
       if (outcome.kind !== 'available') {
         setStatus(outcome.kind === 'skipped' && !navigator.onLine ? 'offline' : 'failed');
         return;

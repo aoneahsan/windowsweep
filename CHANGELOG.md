@@ -9,6 +9,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.4.5] - 2026-11-08
+
+### Fixed
+
+- **A plan cancelled in Polar's customer portal reads its end on Plans.** The desktop app said "Renews on" until the
+  paid period ran out, because the cancellation never reached the account. It does now, and Plans reads "Ends on"
+  with the period's last day; if the cancellation is withdrawn, "Renews on" comes back. Polar stops charging a
+  cancelled subscription, and the plan runs to the end of its period either way.
+- **Closing the window during an update download installs the update.** The install on close took effect only once
+  the download had finished, so a window closed straight after start closed without installing, and the update came
+  one start late. A close during the download now hides the window, lets the download finish for up to a minute,
+  then runs the installer. Past that minute the app closes, and the next start downloads the update again.
+- The command-line tool is unchanged in this release. It moves to 1.4.5 so the CLI and the desktop app stay on one
+  version.
+
 ## [1.4.4] - 2026-11-07
 
 ### Changed

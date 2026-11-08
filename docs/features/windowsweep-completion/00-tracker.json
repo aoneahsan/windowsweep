@@ -3,7 +3,7 @@
   "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md, which since 2026-09-07 lives at the WORKSPACE ROOT one level above this repository, outside it (a clone of this repository does not carry it; since 2026-09-26 the root is its own repository on the private windowsweep-web's project-root branch, D49 - ../RESTORE.md rebuilds it). The method is ../completion-plan-v5-2026-09-24.md (v4 of 2026-09-17, v3 of 2026-09-12 and the two 2026-09-07 plans are history; every decision they record still applies, and v3 sections B0, B1 and B10-B12 are still live reference). This file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-11-07",
+  "lastUpdated": "2026-11-08",
   "activeCompletionRun": {
     "id": "2026-10-30-2224",
     "status": "owner chain: 85/100, all four hard gates pass (2026-11-06)",
@@ -1669,6 +1669,32 @@
         "docs": [
           "748e69d",
           "gh-pages b26358b"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-08",
+      "model": "claude-opus-5.5; Claude Code main session (session 24, continued)",
+      "phase": "complete-project resume: the Comparison Hub's vision gaps and brand kit, ISSUE-002 to ISSUE-005 fixed at their roots, release 1.4.5",
+      "summary": "Vision gaps recorded beside the owner's words (trackers are not cleared; Pro carries three features Free does not). Brand kit built from the header mark (536db41), then superseded on main by another session's fuller kit with the four-colourway print set and jersey mockups (0199f83, b231b7c). ISSUE-003: polar-webhook v8 records Polar's subscription events, my_plan() returns renews (migrations 20261107193543, 20261107193640, D97); the site and the desktop draw the approved until/ends lines. ISSUE-004: install-on-close armed at discovery, a close mid-download waits for it (proved on a local test channel). ISSUE-005: Clarity never runs on /account, /admin, /contact or a return page, stopped before the router writes the URL (beacon counts live, signed in and out). ISSUE-002: the docs chokepoint paragraph corrected. Release 1.4.5: signed, desktop-v1.4.5 Latest, v1.4.5, npm 1.4.5, the installed 1.4.4 updated itself on close. Site d16a8762 then 50a8ae17 (release facts, the lazy changelog and feed catalogues, first load 240,142 B gzip, the release gate on GitHub's API, the social card in the current mark); docs eabbd60 (changelog, safety model, logo, favicon, card). ISSUE-006 filed (background update checks held to the splash's 4 s deadline).",
+      "commits": {
+        "product": [
+          "536db41",
+          "cd875bf",
+          "fab450b",
+          "aee6a46",
+          "49756e6",
+          "447992a"
+        ],
+        "web": [
+          "3de6b82",
+          "c51b464",
+          "88c05b6",
+          "4caa72a"
+        ],
+        "docs": [
+          "3818091",
+          "8434965"
         ]
       }
     }

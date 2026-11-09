@@ -3,25 +3,17 @@
   "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md, which since 2026-09-07 lives at the WORKSPACE ROOT one level above this repository, outside it (a clone of this repository does not carry it; since 2026-09-26 the root is its own repository on the private windowsweep-web's project-root branch, D49 - ../RESTORE.md rebuilds it). The method is ../completion-plan-v5-2026-09-24.md (v4 of 2026-09-17, v3 of 2026-09-12 and the two 2026-09-07 plans are history; every decision they record still applies, and v3 sections B0, B1 and B10-B12 are still live reference). This file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-11-09T10:56:12Z",
+  "lastUpdated": "2026-11-09T19:35:00Z",
   "activeCompletionRun": {
-    "id": "2026-10-30-2224",
-    "status": "complete: 100/100 and 5 of 5 hard gates (D99, 2026-11-09)",
-    "latest": "2026-11-09: The owner approved the live Comparison Hub words in D99 (MANUAL-TASKS row 38). All five completion gates pass. Release 1.4.6 remains live on desktop, npm, website and docs; the rewritten docs comparison guides were published as gh-pages f26cbe5 and all 14 comparison pages matched the build byte for byte. Other manual rows are separate owner follow-ups.",
+    "id": "2026-11-10-0028",
+    "status": "in progress",
+    "latest": "2026-11-09T19:35:00Z: run opened after the 2026-10-30-2224 run closed at 100/100 and 5 of 5 gates (D99). Plan-mode findings G1-G11; owner answers D100-D103.",
     "category": "desktop app + CLI",
-    "scoreBefore": 8,
+    "scoreBefore": 100,
     "branch": "main",
-    "plan": "D:/work/my-work/projects-finalization-record/production/windowsweep-complete-project-plan.md",
-    "resumePlan": "../../../../completion-plan-v6-2026-11-04.md",
+    "plan": "C:/Users/PC/.claude/plans/full-rustling-giraffe.md",
     "record": "D:/work/my-work/projects-finalization-record/production/windowsweep-complete-project.json",
-    "audit": "D:/work/my-work/projects-finalization-record/product-audits/windowsweep/2026-10-30-2224/findings.json",
-    "migrationCount": 24,
-    "migrationManifestSha256": "5529F0105AC4794CD688B054DEAE7D797D3A37E1E4C91D024E873D72BDECDA33",
-    "migration22Sha256": "CA76B224D130C20E1D9DEC1F9DDB126148B19D4EDBC817CE2FEAEEF192F8A4F2",
-    "migrationState": "The earlier 22-file production set and the separately approved tour-hint migrations 23/24 (20261104110814_tour_hint_column.sql and 20261104110943_tour_hint_marker.sql) are applied to Supabase nlmetjyytgwaxcliusuo; post-apply dry run reported up to date and the remote ledger lists both. Migration 22 followed a full dump and private FilesHub upload, manifest 01M6GTYTMDT7B6M1QRBFJTT3AN, read back byte-for-byte (SHA-256 A5548EB770D3B2EADB35CF8AACCD0B9461AD6D2F54CAA0443E7DA7310E2183A2). The six-scenario referral probe passed inside rollback and its three temporary Auth users were deleted. Anonymous sign-in, Auth hook and manual linking are enabled; seven Edge Functions are ACTIVE; FILESHUB_API_KEY is present. Polar payment account exists in FilesHub but webhook secrets and checkout proof remain open. A separate hosted restore rehearsal remains open.",
-    "contentState": "The 1.4.1 CLI, desktop, website and public docs copy is live. The approved personal-file promise says section 19 scans Downloads and user-added folders, requires exact selections and always uses the Recycle Bin; section 26 invokes the selected program uninstaller. Website release notice and block use the owner-approved click dummy and i18n. Payment checkout remains dormant while POLAR_* credentials are absent.",
-    "designState": "The approved desktop Picker, tours and plan surfaces were verified in the installed release; the website phone app view and docs comparison pages were verified live. The owner approved the Comparison Hub words in D99 on 2026-11-09.",
-    "releaseState": "Release 1.4.6 is live: desktop-v1.4.6 Latest and v1.4.6 CLI on GitHub, windowsweep@1.4.6 on npm, site Cloudflare Pages 71d1a89c, and docs gh-pages f26cbe5 (comparison rewrite from main c22d008). The installed desktop updated itself from 1.4.5 to 1.4.6; the two-layer update gate was verified."
+    "previous": "2026-10-30-2224 (complete 2026-11-09)"
   },
   "planFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-functional-canyon.md",
   "overview": "docs/features/windowsweep-completion/00-overview.md",
@@ -1249,6 +1241,118 @@
           "awaitingUser": false
         }
       ]
+    },
+    {
+      "id": "P10",
+      "title": "/complete-project run 2026-11-10-0028: re-audit at 100 plus the 2026-11-09 standards (house ads, FilesHub readiness, store package) and release 1.4.7",
+      "status": "in_progress",
+      "subTasks": [
+        {
+          "id": "P10.setup",
+          "title": "Run setup: state file, D100-D103 recorded (PROJECT-CONTEXT split at the 500-line ceiling), skills, search-records clone",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.audit-finalize",
+          "title": "Finalize re-audit: 12 rows and 5 gates with fresh live evidence",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.audit-product",
+          "title": "Product audit run: manifest, coverage, security, experience and discoverability lanes, findings",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.audit-search",
+          "title": "Search audit run on every surface, including the 28 /compare URLs",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.audit-stack",
+          "title": "Stack audit and package currency; majors adopted across the codebase",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.schema",
+          "title": "G1: SCHEMA.md gains billing_subscription_states and the 2026-11-07 functions; seeded non-admin proof covers the table",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.ads",
+          "title": "G2-G5, G10: plain ads words (D101), hub row relabel (D100), roster re-vendor, clickable desktop cards (D102)",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.yandex",
+          "title": "G11: integrate the prepared Yandex verification tags on the site and docs; owner presses Verify",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.fileshub",
+          "title": "G6: FilesHub platforms add npm, project links, Polar payment account link",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.records-fixes",
+          "title": "G7 store set NA line, G8 manual row 15, G9 portfolio-info refresh",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.update-flow",
+          "title": "Gate 4: layer 2 re-proved on the test channel (D103-3); layer 1 installed 1.4.6 -> 1.4.7",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.release",
+          "title": "Release 1.4.7: desktop Latest, CLI tag, npm from the gated tarball",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.deploy",
+          "title": "One site deploy and one docs deploy, live verification, IndexNow",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.records",
+          "title": "Per-command records in queue order, context-fix-project last, memory",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.confirm",
+          "title": "Confirmation gate: every command against its close criteria",
+          "status": "pending",
+          "note": "",
+          "awaitingUser": false
+        }
+      ]
     }
   ],
   "runHistory": [
@@ -1742,7 +1846,7 @@
       }
     }
   ],
-  "resumeInstructions": "The 2026-10-30-2224 completion run is complete: 100/100 points and 5 of 5 hard gates after the owner's D99 Comparison Hub wording approval. No agent completion work remains. Manual rows 33-36 and Search Console/Bing ownership remain separate owner follow-ups; the notebook's original checkout has concurrent uncommitted work, so its full machine sync awaits a safe clean checkout. See the record repo's production/windowsweep-complete-project.json for the final state.",
+  "resumeInstructions": "Run 2026-11-10-0028 is in progress (phase P10). Resume from the record repo's production/windowsweep-complete-project.json -> lastStep, then the first pending P10 sub-task. Plan: C:/Users/PC/.claude/plans/full-rustling-giraffe.md.",
   "auditPlanFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-humming-snowflake.md (the 2026-09-12 audit); the 2026-09-05 audit was please-audit-the-whole-streamed-nest.md",
   "planCopy": "../completion-plan-v4-2026-09-17.md",
   "planFileV3": "C:/Users/PC/.claude/plans/please-audit-the-whole-humming-snowflake.md",

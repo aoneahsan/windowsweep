@@ -260,6 +260,10 @@ Asked in one batch when the paused run resumed; each answer is his verbatim opti
   installer pictures from the brand kit) reach people only in a desktop release. In production, the two anonymous
   users the 1.4.5 proofs had created on fresh WebView2 profiles were deleted with their device rows and read back
   absent. A proof launch now reuses a profile that already holds a session, so it creates no user.
+- **D99 - Comparison Hub words approved, 2026-11-09.** After the live hub, CCleaner example and docs hub were
+  presented for MANUAL-TASKS row 38, the owner replied *"approve all, finish all remainign work fully now"*.
+  This approves the WindowSweep Comparison Hub words once and closes completion hard gate 5. It does not record
+  completion of the separate manual device, account, token or archive checks in rows 33-36.
 
 ### How the frontend UI mandates map to this product
 

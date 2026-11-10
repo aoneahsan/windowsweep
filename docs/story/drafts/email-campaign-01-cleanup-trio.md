@@ -43,3 +43,22 @@ assign one available pool batch (`POST /email-batches/{id}/assign`, dry run firs
 **Approved 2026-11-10:** the owner typed "approve" after the `[TEST]`. The sequence is active. Pool batch 109
 (`01M4CN6QFNXXPMKBKX2AZ3YKJ3`) is assigned: 952 enrolled, 40 stopped addresses left out. The daily cap is now 50,
 with a warm-up ramp from 10 (+3 a day) inside 09:00–18:00 UTC.
+
+## 2026-11-10: A2 and A3 written and scheduled (owner: "i approve, do/write second and more emails now, schedule as best as possible")
+
+- **Restructured.** A running FilesHub sequence cannot take new steps, and a separate follow-up sequence would wait out
+  the 20-day cross-campaign gap. The one-step sequence `01M72C4S0DZZPTXWQSBEJV1R9S` was paused and finished with
+  **0 sent**. The same list is now enrolled in **`01M72CXFSPQDKM8NABC2EEZQ31`**, "Cleanup tools — campaign 01
+  (A1–A3)": 952 people, A1 → A2 after 96 h → A3 after 168 h. Pool batch 109's assignment record still names the
+  finished sequence.
+- **A1 link change (owner-approved):** linux-cleanup now links to `https://www.npmjs.com/package/linux-cleanup`. Its
+  GitHub README still opens with the frozen banner.
+- **A2, `windowsweep-mkt-a2`**: "Keep the caches your next build needs" (319 words). It covers the idle window
+  (100 days), a tier on every row, the engine's own log and JSON report, and linux-cleanup's 100-day default. Images:
+  map `01M72CQQ5PH67CZVSMA3HA3SP7`, developer mode `01M72CQN777QSVG8YA66MSNQSK`, log `01M72CQP6J6CK2H7D4P5FT9EPG`,
+  plus A1's sections shot. Sources: README lede and warning, voice line 6, the live app shots.
+- **A3, `windowsweep-mkt-a3`**: "The big folders are yours to pick" (330 words). It covers sections 17, 18, 19 and 23
+  (interactive, never in a safe run), the Recycle Bin for picks, the app's "documents, photos, keys and saved
+  passwords are never touched" line, macleanup's Trash, linux-cleanup's personal-directory refusal, and the section 26
+  uninstall warning. A1's images are reused.
+- `[TEST]` copies of A2 and A3 went to aoneahsan@gmail.com on 2026-11-10.

@@ -1,6 +1,6 @@
 # WindowSweep database schema
 
-The Drizzle source is `desktop/src/db/schema/*.ts`. `desktop/supabase/migrations/` is the ordered SQL output. The hosted project serves development and production; migrations through `20261104110943_tour_hint_marker.sql` are applied there. The view `latest_app_releases` exposes the latest public release per platform and channel without the publishing admin's id.
+The Drizzle source is `desktop/src/db/schema/*.ts`. `desktop/supabase/migrations/` is the ordered SQL output. The hosted project serves development and production; migrations through `20261107193640_v145_subscription_state_functions.sql` are applied there. The view `latest_app_releases` exposes the latest public release per platform and channel without the publishing admin's id.
 
 ## Diagram
 
@@ -33,6 +33,7 @@ erDiagram
   REFERRALS ||--o| REFERRAL_BADGE_AWARDS : awards
   BADGE_CATALOGUE ||--o{ REFERRAL_BADGE_AWARDS : names
   AUTH_USERS ||--o{ REFERRAL_BADGE_AWARDS : earns
+  SUBSCRIPTIONS }o--o| BILLING_SUBSCRIPTION_STATES : polar_state
 
   AUTH_USERS { uuid id PK }
   PROFILES { uuid user_id PK text email text platform_role text referral_code jsonb tour_hinted }
@@ -49,6 +50,7 @@ erDiagram
   SUBSCRIPTIONS { uuid id PK uuid user_id FK text plan_id FK text polar_order_id }
   CHECKOUT_QUOTES { text polar_checkout_id PK uuid user_id FK text plan_id FK }
   WEBHOOK_EVENTS { text id PK text order_id text type }
+  BILLING_SUBSCRIPTION_STATES { text polar_subscription_id PK text status boolean cancel_at_period_end timestamptz ended_at timestamptz modified_at }
   BILLING_EMAIL_DELIVERIES { text event_id PK text template PK timestamptz sent_at timestamptz uncertain_at }
   REFERRALS { uuid id PK uuid referrer_id FK uuid invitee_id FK }
   BADGE_CATALOGUE { text key PK text name text family }
@@ -61,6 +63,12 @@ erDiagram
 ```
 
 `run_claims.device_id` deliberately has no foreign key. A forgotten PC or deleted account must not reset that random install id's monthly count. On account deletion, `run_claims.user_id` becomes null and the row keeps no exact timestamp. `admin_audit`, `app_releases`, and `webhook_events` outlive account deletion; they do not store the person's words.
+
+`billing_subscription_states` holds Polar's own state for each subscription (one row per Polar subscription id, linked to the `subscriptions` periods by that id, with no foreign key because a state event can arrive before the paid order). `polar-webhook` forwards `subscription.canceled`, `.uncanceled` and `.revoked` to `billing_record_subscription_state`; the newest `modified_at` wins and an older or repeated delivery changes nothing. `my_plan()` reads it through `private.subscription_renews` to say whether a paid plan renews, so both clients choose "renewing on" or "until" from one answer.
+
+Every insert or update on `subscriptions` and `plan_grants` fires `private.broadcast_plan_change()`, which sends an invalidation only (no plan data) on the account's private Realtime topic `plans:<user id>`; the `realtime.messages` policy "plans topic: own account only" lets each signed-in account join only its own topic. The clients re-read `my_plan()` on that signal.
+
+`fileshub-project-status-check` in `public` is not part of this schema: it is FilesHub's keepalive table, which FilesHub's linked-project check writes to (`desktop/supabase/README.md`). It has RLS on, no policy and no client grant; never revoke or drop it.
 
 `billing_email_deliveries` is keyed by webhook event and template. A successful paid event and every valid signed return event write a pending mail row in the same transaction. Mail can be claimed separately without reapplying payment. The ledger stores no address or user id. A return before its paid event resolves the recipient from the signed Polar subscription id and an earlier paid period, or from the signed checkout id and its quote. If neither resolves to a live profile, the row becomes `recipient_missing`. Unknown send outcomes and unresolved claims block retry until an admin checks the FilesHub job and reconciles them; `unavailable` is terminal.
 
@@ -95,6 +103,7 @@ Admin grant mail uses four nullable delivery columns on `plan_grants` instead of
 | `team_members` | One membership per account; `user_id`. | Definer only. Up to active Team seats. |
 | `team_invites` | Email-address invitations; team owns row. | Definer only. Open invite uniqueness per team/email; email index. Sending uses a token-checked lease and indexed uncertain state. |
 | `app_releases` | Immutable admin-published update record; no row owner. | Definer write, no client grant. Public latest view only. Few per platform/channel. |
+| `billing_subscription_states` | Polar's current state per subscription (status, cancel at period end, canceled, ended, Polar's modified time); no row owner, reached through `subscriptions`. | Definer only: every privilege revoked from public, anon, authenticated and service_role; read by `my_plan()`, written by `billing_record_subscription_state`. One row per Polar subscription; primary-key lookups. |
 
 ## Change log
 
@@ -102,6 +111,8 @@ All 1.4.0 changes are generated from Drizzle into `20261031082151_v140_schema.sq
 
 | Date and change | Need, existing home checked, decision | Access, index and deletion |
 |---|---|---|
+| 2026-11-07 · `billing_subscription_states` and `my_plan().renews` (ISSUE-003) | A plan cancelled in Polar's customer portal kept reading "renewing on". `subscriptions` holds one row per paid period, so a later state change has no period to land on, and rewriting paid rows would mix payment history with Polar's live state. A table keyed by the Polar subscription id keeps the newest state once, ordered by Polar's `modified_at`. | No client privilege at all; definer write from the signed webhook only, definer read inside `my_plan()`. Primary key on the Polar subscription id; no account column, so nothing to cascade, and the matching `subscriptions` periods go with the account. Applied with `supabase db push` after a rolled-back rehearsal (D97); rollbacks in `desktop/supabase/rollbacks/`. |
+| 2026-11-07 · `private.broadcast_plan_change` trigger and the `plans:<user id>` topic | The website and the desktop must show a plan change without polling (no-polling law, 2026-11-03). No existing table or channel carried a per-account signal; a trigger on the two plan sources sends an invalidation on the account's private topic. | Invalidation only, no plan data; `realtime.messages` SELECT policy limits each authenticated account to its own `plans:` topic. No table, column or index change; nothing stored. |
 | 2026-11-04 · `profiles.tour_hinted` and marker RPC | The guided-tour hint must show once per page per browser and account. The existing profile is the account-owned row; a separate table would add a second lifecycle for small boolean marks. Atomic JSONB merge keeps simultaneous devices from overwriting each other. | Authenticated caller marks only its own profile via a bounded security-definer RPC; no direct column update grant. Existing owner/admin read policies and account cascade apply. No index: every read filters by user id. Both migrations were applied under the owner's exact current-session approval; the post-apply dry run was up to date. |
 | 2026-10-31 · referral same-transaction boundary fix | A reward whose start equals the transaction timestamp has consumed no time. The original reflow treated it as started, so a second reward confirmed in the same transaction could overlap instead of stacking. The forward migration replaces only `private.reflow_referral_grants` and keeps the applied migration immutable. | Existing definer privileges and revocations remain; no table, index, policy or deletion change. The companion restores the old function only as a reviewed manual rollback and would reintroduce this defect. |
 | 2026-10-31 · admin grant email columns and RPCs | A successful grant must not be repeated because FilesHub is unavailable or its response is unknown. Four nullable columns on the existing grant row keep its one notification beside its durable business record; an extra table would add a second lifetime and key. | Service-role claim/mark RPCs only; authenticated admin list, audited resend request and reconciliation. Partial `(created_at,id)` review index, account cascade, no stored recipient address. A reviewed rollback refuses while any delivery state exists. |

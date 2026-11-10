@@ -47,6 +47,29 @@ a.card:focus-visible,
   outline: 2px solid var(--c-accent);
   outline-offset: 2px;
 }
+/* A pressable card (the About tab's house promotions, D102): a native button laid
+   out as a card, answering at the card the way .btn does. The dummy's
+   components.css carries the same four rules. */
+button.card {
+  font: inherit;
+  text-align: start;
+  padding: 0;
+  width: 100%;
+  cursor: pointer;
+}
+button.card .card-bd > span {
+  display: block;
+}
+.card[data-state='pending'] {
+  cursor: progress;
+  border-color: var(--c-accent);
+}
+.card[data-state='done'] {
+  border-color: var(--c-ok);
+}
+button.card:disabled {
+  cursor: default;
+}
 
 .stat {
   display: flex;

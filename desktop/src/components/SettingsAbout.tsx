@@ -33,7 +33,8 @@ import { openExternal } from '../lib/links';
 import { controlState, stateOf } from '../lib/control-state';
 
 /** The two external links the About tab offers. */
-type Link = 'source' | 'support';
+/** `source`, `support`, or the id of a promoted product: whichever control is handing its address over. */
+type Link = string;
 
 export function SettingsAbout() {
   const { t } = useTranslation();
@@ -155,16 +156,27 @@ export function SettingsAbout() {
       </div>
       {/* LAYER 2 - the display resolver drops this project's id again, so a roster
           re-vendored without layer 1 still cannot promote this app to its own
-          users. The cards are not interactive: the dummy's are `div.card`, and a
-          link out of a desktop webview is a different decision from a promotion. */}
+          users. Each card hands its product's page to the system browser exactly as
+          Source and Support do (the dummy's `button.card`, D102); nothing counts the
+          press. */}
       <div className="promo">
         {promotedProducts().map((product) => (
-          <div className="card" key={product.id}>
-            <div className="card-bd">
-              <p className="wide">{product.name}</p>
-              <p className="t-sm ink-3">{product.tagline}</p>
-            </div>
-          </div>
+          <button
+            className="card"
+            type="button"
+            tabIndex={0}
+            key={product.id}
+            onClick={() => {
+              openLink(product.id, product.url);
+            }}
+            disabled={opening !== null}
+            {...controlState(stateOf(opening === product.id, opened === product.id))}
+          >
+            <span className="card-bd">
+              <span className="wide">{product.name}</span>
+              <span className="t-sm ink-3">{product.tagline}</span>
+            </span>
+          </button>
         ))}
       </div>
     </div>

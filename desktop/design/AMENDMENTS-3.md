@@ -245,3 +245,21 @@ and `.revoked`; `my_plan()` returns `renews`), so the paid card's date line read
 `plans.paid.ends` - *Ends on 1 December. Another active subscription, grant or Team seat still applies; otherwise
 Free.* - while the period still runs. The review band's *Pro, cancelled in Polar* (`?state=proEnds`) draws it. The
 layout is unchanged and the words are S-004's, from `docs/story/drafts/plans-app.md`, approved at GATE 4 under D59.
+
+## Amendment - 2026-11-10: the house promotions open their products and say they are ads (D101, D102)
+
+The owner's 2026-11-09 rule puts house ads in every product and asks for them to be disclosed plainly. Settings ->
+About already promoted the team's other tools, as plain cards, under a note that called them "the team's own
+tools, not an advertising network". Two changes, drawn here first:
+
+- **Each card opens its product.** `page-settings.js` draws every promotion as `button.card` (`components.css`:
+  native button laid out as the card, pending at the card while the address is handed over, then the ok border),
+  with the product's address in `data-href`. It behaves exactly as Source and Support above it: every card waits
+  while one is handed over, that one ticks, then idle. The dummy opens nothing; the app hands the address to the
+  system browser through the guarded opener. No press is counted anywhere.
+- **The note says what they are.** *"These are ads for the team's own tools, not an advertising network - nothing
+  here is sold, tracked or third-party, and windowsweep never appears in its own list."* The owner approved these
+  words in D101; they ran through the story system's lean panel (`docs/story/drafts/ads-plain-2026-11-10.md`).
+
+The roster is re-vendored from the fleet file at notebook `7180f5bc` (2026-11-10): Trizlink's casing, windowsweep's
+own row, and each product's `primaryUrl`. Both exclusion layers and `wsPromoAudit()` are unchanged.

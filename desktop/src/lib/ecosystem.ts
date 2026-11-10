@@ -4,10 +4,10 @@
  * 🔴 VENDORED, never hand-written. The single source of truth is the fleet roster
  * at `~/.claude/rules/ecosystem-products.json`, which says so itself: "never copy a
  * product's details into a project by hand; vendor this file with its provenance".
- * Re-vendored 2026-09-08 from that file's `lastUpdated: 2026-09-08`, 16 products - the
- * three sibling tools (linux-cleanup, macleanup, strata-storage) were missing from the
- * fleet roster entirely and were added there rather than hand-written here.
- * Each row is `id`, `name` and the roster's own `tagline` - nothing invented here.
+ * Re-vendored 2026-11-10 from that file at notebook 7180f5bc (`lastUpdated: 2026-11-10`), 16
+ * products; the first vendoring, 2026-09-08, added the three sibling tools to the fleet
+ * roster rather than hand-writing them here. Each row is `id`, `name`, the roster's own
+ * `tagline` and its `primaryUrl` - nothing invented here.
  *
  * 🔴 A PROJECT NEVER ADVERTISES ITSELF, and it is TWO layers or it is not done:
  *   LAYER 1  the vendoring drop  - this project's id leaves the roster as it is taken in
@@ -33,6 +33,8 @@ export interface EcosystemProduct {
   name: string;
   /** The roster's own one-line tagline. Not this project's words to rewrite. */
   tagline: string;
+  /** The roster's `primaryUrl`: the page a press opens in the system browser. */
+  url: string;
 }
 
 /** This project's own id, as the fleet roster spells it. */
@@ -44,54 +46,98 @@ export const ROSTER_SOURCE: readonly EcosystemProduct[] = [
     id: 'video-controls-plus',
     name: 'Video Controls Plus',
     tagline: 'Take complete control of any HTML5 video.',
+    url: 'https://chromewebstore.google.com/detail/video-controls-plus/ihafdbecgnhendhckoknblmcminoikdb',
   },
   {
     id: 'ztools',
     name: 'ZTools',
     tagline: 'A toolbox of developer and creator utilities, one click away.',
+    url: 'https://ztools.zaions.com',
   },
-  { id: 'clearhire', name: 'ClearHire', tagline: 'Build a sharper resume and get discovered.' },
-  { id: 'lifewell', name: 'LifeWell', tagline: 'Track your health, your way.' },
-  { id: 'labflow', name: 'LabFlow', tagline: 'Run your diagnostic lab end to end.' },
-  { id: 'pregnancy-pal', name: 'PregnancyPal', tagline: 'A calm companion through every week.' },
+  {
+    id: 'clearhire',
+    name: 'ClearHire',
+    tagline: 'Build a sharper resume and get discovered.',
+    url: 'https://clearhire.aoneahsan.com',
+  },
+  {
+    id: 'lifewell',
+    name: 'LifeWell',
+    tagline: 'Track your health, your way.',
+    url: 'https://lifewell.aoneahsan.com',
+  },
+  {
+    id: 'labflow',
+    name: 'LabFlow',
+    tagline: 'Run your diagnostic lab end to end.',
+    url: 'https://labflow.aoneahsan.com',
+  },
+  {
+    id: 'pregnancy-pal',
+    name: 'PregnancyPal',
+    tagline: 'A calm companion through every week.',
+    url: 'https://pregnancypal.aoneahsan.com',
+  },
   {
     id: 'sms-mobile-app',
     name: 'SMS App',
     tagline: 'Send SMS at scale from your own Android device.',
+    url: 'https://smsapp.aoneahsan.com',
   },
   {
     id: 'native-update',
     name: 'Native Update',
     tagline: 'Ship Capacitor app updates without the store wait.',
+    url: 'https://nativeupdate.aoneahsan.com',
   },
   {
     id: 'aoneahsan-portfolio',
     name: 'Meet the Developer',
     tagline: 'The developer behind these tools.',
+    url: 'https://aoneahsan.com',
   },
   {
     id: 'files-hub',
     name: 'FilesHub',
     tagline: 'File storage and 70+ developer utilities behind one API key.',
+    url: 'https://fileshub.zaions.com',
   },
-  { id: 'habitforge', name: 'HabitForge', tagline: 'Turns consistency into a rope you can see.' },
-  { id: 'trizlink', name: 'TrizLink', tagline: 'Short links, link-in-bio and click analytics.' },
+  {
+    id: 'habitforge',
+    name: 'HabitForge',
+    tagline: 'Turns consistency into a rope you can see.',
+    url: 'https://habitforge.aoneahsan.com',
+  },
+  {
+    id: 'trizlink',
+    name: 'Trizlink',
+    tagline: 'Short links, link-in-bio and click analytics.',
+    url: 'https://trizlink.com',
+  },
   {
     id: 'windowsweep',
     name: 'windowsweep',
     tagline:
-      'Developer-aware Windows cleanup CLI: dry-run first, personal folders refused, zero install via npx.',
+      'Windows cleanup CLI: dry-run first, personal files chosen row by row, zero install via npx.',
+    url: 'https://windowsweep.aoneahsan.com',
   },
   {
     id: 'linux-cleanup',
     name: 'linux-cleanup',
     tagline: 'Safe, developer-aware Linux disk and cache cleanup.',
+    url: 'https://github.com/aoneahsan/linux-cleanup',
   },
-  { id: 'macleanup', name: 'macleanup', tagline: 'Safe-by-default macOS cleanup and maintenance.' },
+  {
+    id: 'macleanup',
+    name: 'macleanup',
+    tagline: 'Safe-by-default macOS cleanup and maintenance.',
+    url: 'https://github.com/aoneahsan/macleanup',
+  },
   {
     id: 'strata-storage',
     name: 'Strata Storage',
     tagline: 'One storage API over localStorage, IndexedDB, cookies and native.',
+    url: 'https://github.com/aoneahsan/strata-storage',
   },
 ];
 

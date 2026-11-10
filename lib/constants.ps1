@@ -4,7 +4,7 @@
 # Single source of truth for the version is package.json: the Node launcher exports it as
 # WINDOWSWEEP_VERSION. A direct checkout falls back to this literal; the version:check script
 # asserts the two never drift.
-$Script:WS_VERSION_FALLBACK = '1.4.6'
+$Script:WS_VERSION_FALLBACK = '1.4.7'
 
 $Script:WS_NAME = 'windowsweep'
 $Script:WS_TAGLINE = 'Windows cleanup CLI: dry-run first, personal files chosen row by row, zero install via npx.'

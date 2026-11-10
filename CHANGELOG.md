@@ -9,6 +9,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.4.7] - 2026-11-10
+
+### Changed
+
+- **Settings → About opens the team's other tools.** Each card under *More from the same team* now hands its
+  product's page to your browser, the way Source and Support do: the card waits while the address is handed over,
+  then ticks. Nothing counts the press. The note above the cards now says what they are: ads for the team's own
+  tools, never an advertising network, and windowsweep never appears in its own list.
+- The desktop app's libraries move to their current releases, Tauri 2.12 among them.
+
+### Fixed
+
+- **Trizlink's name.** The list of the team's tools spelled it TrizLink.
+- The command-line tool is unchanged in this release. It moves to 1.4.7 so the CLI and the desktop app stay on one
+  version.
+
 ## [1.4.6] - 2026-11-08
 
 ### Changed

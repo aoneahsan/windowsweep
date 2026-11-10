@@ -519,6 +519,14 @@
 a.card, .card[tabindex] { text-decoration: none; color: inherit; transition: transform var(--d-quick) var(--ease-mech), border-color var(--d-quick) var(--ease-mech); }
 @media (hover: hover) { a.card:hover, .card[tabindex]:hover { transform: translateY(-2px); border-color: var(--c-accent); } }
 a.card:focus-visible, .card[tabindex]:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+/* A pressable card (the About tab's house promotions, D102): a native button laid out as a card. It answers
+   at the card the way .btn does - pending while the address is handed over, then the ok border - and its
+   text blocks keep the card's own type styles. */
+button.card { font: inherit; text-align: start; padding: 0; width: 100%; cursor: pointer; }
+button.card .card-bd > span { display: block; }
+.card[data-state="pending"] { cursor: progress; border-color: var(--c-accent); }
+.card[data-state="done"] { border-color: var(--c-ok); }
+button.card:disabled { cursor: default; }
 
 .stat { display: flex; flex-direction: column; gap: var(--sp-1); }
 .stat-v { font-family: var(--ff-display); font-weight: 700; font-size: var(--fs-xl); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }

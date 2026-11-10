@@ -11,29 +11,30 @@
      never renders. A project never advertises itself. */
   var SELF = 'windowsweep';
 
-  /* The ecosystem roster as it is vendored from the shared product list. It carries EVERY product,
+  /* The ecosystem roster as it is vendored from the shared product list (re-vendored 2026-11-10 from
+     ~/.claude/rules/ecosystem-products.json at notebook 7180f5bc, lastUpdated 2026-11-10). It carries EVERY product,
      windowsweep included - that is what makes the two exclusion layers below load-bearing rather than
      decorative. An earlier version hand-omitted windowsweep here, which left both filters matching
      nothing: removing either one changed the rendered list not at all, so the "prove each layer with the
      other removed" check passed in both directions while proving nothing. A filter that cannot match is
      indistinguishable from a filter that works. */
   var ROSTER_SOURCE = [
-    { id: 'video-controls-plus', name: 'Video Controls Plus', blurb: 'Take complete control of any HTML5 video.' },
-    { id: 'ztools', name: 'ZTools', blurb: 'A toolbox of developer and creator utilities, one click away.' },
-    { id: 'clearhire', name: 'ClearHire', blurb: 'Build a sharper resume and get discovered.' },
-    { id: 'lifewell', name: 'LifeWell', blurb: 'Track your health, your way.' },
-    { id: 'labflow', name: 'LabFlow', blurb: 'Run your diagnostic lab end to end.' },
-    { id: 'pregnancy-pal', name: 'PregnancyPal', blurb: 'A calm companion through every week.' },
-    { id: 'sms-mobile-app', name: 'SMS App', blurb: 'Send SMS at scale from your own Android device.' },
-    { id: 'native-update', name: 'Native Update', blurb: 'Ship Capacitor app updates without the store wait.' },
-    { id: 'aoneahsan-portfolio', name: 'Meet the Developer', blurb: 'The developer behind these tools.' },
-    { id: 'files-hub', name: 'FilesHub', blurb: 'File storage and 70+ developer utilities behind one API key.' },
-    { id: 'habitforge', name: 'HabitForge', blurb: 'Turns consistency into a rope you can see.' },
-    { id: 'trizlink', name: 'TrizLink', blurb: 'Short links, link-in-bio and click analytics.' },
-    { id: 'windowsweep', name: 'windowsweep', blurb: 'This app. It must never appear in its own promotion list.' },
-    { id: 'linux-cleanup', name: 'linux-cleanup', blurb: 'Safe, developer-aware Linux disk and cache cleanup.' },
-    { id: 'macleanup', name: 'macleanup', blurb: 'Safe-by-default macOS cleanup and maintenance.' },
-    { id: 'strata-storage', name: 'Strata Storage', blurb: 'One storage API over localStorage, IndexedDB, cookies and native.' }
+    { id: 'video-controls-plus', name: 'Video Controls Plus', blurb: 'Take complete control of any HTML5 video.', url: 'https://chromewebstore.google.com/detail/video-controls-plus/ihafdbecgnhendhckoknblmcminoikdb' },
+    { id: 'ztools', name: 'ZTools', blurb: 'A toolbox of developer and creator utilities, one click away.', url: 'https://ztools.zaions.com' },
+    { id: 'clearhire', name: 'ClearHire', blurb: 'Build a sharper resume and get discovered.', url: 'https://clearhire.aoneahsan.com' },
+    { id: 'lifewell', name: 'LifeWell', blurb: 'Track your health, your way.', url: 'https://lifewell.aoneahsan.com' },
+    { id: 'labflow', name: 'LabFlow', blurb: 'Run your diagnostic lab end to end.', url: 'https://labflow.aoneahsan.com' },
+    { id: 'pregnancy-pal', name: 'PregnancyPal', blurb: 'A calm companion through every week.', url: 'https://pregnancypal.aoneahsan.com' },
+    { id: 'sms-mobile-app', name: 'SMS App', blurb: 'Send SMS at scale from your own Android device.', url: 'https://smsapp.aoneahsan.com' },
+    { id: 'native-update', name: 'Native Update', blurb: 'Ship Capacitor app updates without the store wait.', url: 'https://nativeupdate.aoneahsan.com' },
+    { id: 'aoneahsan-portfolio', name: 'Meet the Developer', blurb: 'The developer behind these tools.', url: 'https://aoneahsan.com' },
+    { id: 'files-hub', name: 'FilesHub', blurb: 'File storage and 70+ developer utilities behind one API key.', url: 'https://fileshub.zaions.com' },
+    { id: 'habitforge', name: 'HabitForge', blurb: 'Turns consistency into a rope you can see.', url: 'https://habitforge.aoneahsan.com' },
+    { id: 'trizlink', name: 'Trizlink', blurb: 'Short links, link-in-bio and click analytics.', url: 'https://trizlink.com' },
+    { id: 'windowsweep', name: 'windowsweep', blurb: 'Windows cleanup CLI: dry-run first, personal files chosen row by row, zero install via npx.', url: 'https://windowsweep.aoneahsan.com' },
+    { id: 'linux-cleanup', name: 'linux-cleanup', blurb: 'Safe, developer-aware Linux disk and cache cleanup.', url: 'https://github.com/aoneahsan/linux-cleanup' },
+    { id: 'macleanup', name: 'macleanup', blurb: 'Safe-by-default macOS cleanup and maintenance.', url: 'https://github.com/aoneahsan/macleanup' },
+    { id: 'strata-storage', name: 'Strata Storage', blurb: 'One storage API over localStorage, IndexedDB, cookies and native.', url: 'https://github.com/aoneahsan/strata-storage' }
   ];
 
   /* OFF EVERY PRODUCT ROSTER - owner decision D46 (2026-09-25): the personal-portfolio entry. A product
@@ -392,19 +393,41 @@
        LAYER 2 - the display resolver drops the id again, so a roster re-vendored without layer 1 still
        cannot promote this app to its own users. Each layer is proved by removing the other; the harness
        is window.wsPromoAudit below. */
+    /* Each card hands its product's page to the system browser (D102, 2026-11-10), exactly as Source and
+       Support do above: every card waits while one is handed over, that one ticks, then idle. A card is a
+       button, not a link - inside a desktop window an address opens in the browser, never in the app. The
+       dummy opens nothing; `data-href` names the address the app opens. No click is counted anywhere. */
     var promo = el('div', 'promo');
+    var cards = [];
     ROSTER.filter(function (p) { return p.id !== SELF; }).forEach(function (p) {
-      var card = el('div', 'card');
-      var bd = el('div', 'card-bd');
-      bd.appendChild(el('p', 't-base wide', p.name));
-      bd.appendChild(el('p', 't-sm ink-3', p.blurb));
+      var card = el('button', 'card');
+      card.type = 'button';
+      card.tabIndex = 0;
+      card.dataset.href = p.url;
+      var bd = el('span', 'card-bd');
+      bd.appendChild(el('span', 't-base wide', p.name));
+      bd.appendChild(el('span', 't-sm ink-3', p.blurb));
       card.appendChild(bd);
       promo.appendChild(card);
+      cards.push(card);
+    });
+    cards.forEach(function (c) {
+      c.addEventListener('click', function () {
+        cards.forEach(function (x) { x.disabled = true; });
+        c.dataset.state = 'pending';
+        c.setAttribute('aria-busy', 'true');
+        setTimeout(function () {
+          c.removeAttribute('aria-busy');
+          cards.forEach(function (x) { x.disabled = false; });
+          c.dataset.state = 'done';
+          setTimeout(function () { delete c.dataset.state; }, 900);
+        }, 300);
+      });
     });
     var h = el('div');
     h.appendChild(el('h3', 't-md wide', 'More from the same team'));
     h.appendChild(el('p', 't-sm ink-3',
-      'These are the team\u2019s own tools, not an advertising network \u2013 nothing here is sold, ' +
+      'These are ads for the team\u2019s own tools, not an advertising network \u2013 nothing here is sold, ' +
       'tracked or third-party, and windowsweep never appears in its own list.'));
     h.style.marginTop = 'var(--sp-4)';
     g.appendChild(h);

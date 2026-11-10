@@ -165,6 +165,9 @@ the copy points at it. **Never state a gigabyte figure as a promise.**
 - **Elevation and consent copy carries no humor** and states exactly what the second window will do.
 - The desktop app's privacy copy promises no advertising network. 🔴 That promise binds: it means no ad
   network may be added later without changing the copy first.
+- 🔴 The house promotions are ads, and every line that describes them says so (the owner's rule of 2026-11-09; D101,
+  2026-11-10). The no-ad-network promise above stands beside that: the ads are the team's own tools, never a third
+  party's.
 
 ## 11. Decision log and language
 

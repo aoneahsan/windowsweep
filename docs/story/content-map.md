@@ -305,3 +305,12 @@ UTC on the finalizer's FACT-CONSISTENCY PASS with zero NEEDS DECISION; the owner
 - **Row 3** carries S4 (b), the intro table's plans row; **row 21** S4 (c) and (d), the website's `llms.txt` and
   `pricing.md`; **row 20** S3, the Terms description; **row 23** S5, the Terms and Privacy lines; **row 1** S1 (f),
   the README's *Latest release:* sentence, under its 2026-09-07 pre-authorisation.
+
+## Amendment - 2026-11-10: ads-plain-2026-11-10 (rows 16 and 13; the Comparison Hub row label)
+
+- **Row 16** carries S1, band 12's lede, which now names the house promotions as ads (D101); its last two sentences
+  are the approved originals.
+- **Row 13** carries S2, Settings → About's note under *More from the same team* (D101), with its approved second half.
+- **The Comparison Hub** row label is *States no third-party ads or bundled offers* (D100) on both hosts, in the hub
+  record and in the docs guides' prose. Draft and panel: `drafts/ads-plain-2026-11-10.md`. No row's awareness, tone
+  band or gate changes.

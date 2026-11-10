@@ -3,11 +3,11 @@
   "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md, which since 2026-09-07 lives at the WORKSPACE ROOT one level above this repository, outside it (a clone of this repository does not carry it; since 2026-09-26 the root is its own repository on the private windowsweep-web's project-root branch, D49 - ../RESTORE.md rebuilds it). The method is ../completion-plan-v5-2026-09-24.md (v4 of 2026-09-17, v3 of 2026-09-12 and the two 2026-09-07 plans are history; every decision they record still applies, and v3 sections B0, B1 and B10-B12 are still live reference). This file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-11-09T19:35:00Z",
+  "lastUpdated": "2026-11-10T08:10:00Z",
   "activeCompletionRun": {
     "id": "2026-11-10-0028",
-    "status": "in progress",
-    "latest": "2026-11-09T19:35:00Z: run opened after the 2026-10-30-2224 run closed at 100/100 and 5 of 5 gates (D99). Plan-mode findings G1-G11; owner answers D100-D103.",
+    "status": "paused at a safe point (owner request, 2026-11-10 ~13:10 +0500)",
+    "latest": "2026-11-10 13:10 +0500: paused at the owner's request. Audits done; fixes for G1-G12 committed and pushed; release 1.4.7 cascaded (b874432) and built, not published. Resume: the record repo state file -> resume.next_steps_in_order.",
     "category": "desktop app + CLI",
     "scoreBefore": 100,
     "branch": "main",
@@ -1250,106 +1250,106 @@
         {
           "id": "P10.setup",
           "title": "Run setup: state file, D100-D103 recorded (PROJECT-CONTEXT split at the 500-line ceiling), skills, search-records clone",
-          "status": "pending",
-          "note": "",
+          "status": "complete",
+          "note": "Run opened 2026-11-10 00:28 +0500; D100-D104 recorded (product bd13ad4); session 21 decisions moved verbatim to PROJECT-CONTEXT-decisions-2026-10.md; state file in the record repo.",
           "awaitingUser": false
         },
         {
           "id": "P10.audit-finalize",
           "title": "Finalize re-audit: 12 rows and 5 gates with fresh live evidence",
-          "status": "pending",
-          "note": "",
+          "status": "in_progress",
+          "note": "Live evidence gathered (render-2026-11-10.json, live-crawl.json, catalog, seeded proofs). The per-row re-score of production/windowsweep.md is not written yet: do it in records after the release and deploys.",
           "awaitingUser": false
         },
         {
           "id": "P10.audit-product",
           "title": "Product audit run: manifest, coverage, security, experience and discoverability lanes, findings",
-          "status": "pending",
-          "note": "",
+          "status": "complete",
+          "note": "product-audits/windowsweep/2026-11-10-0028: MANIFEST, coverage (security 41/44, experience 29/37, discoverability 31/34), three lane files, findings.json (14). REPORT, RESUME and fix-ledger are owed at records.",
           "awaitingUser": false
         },
         {
           "id": "P10.audit-search",
           "title": "Search audit run on every surface, including the 28 /compare URLs",
-          "status": "pending",
-          "note": "",
+          "status": "in_progress",
+          "note": "Full crawl of both hosts, www, npm, GitHub and the functions host: every SA pattern PASS except G11 (Yandex tags not deployed). Evidence in code-folder-root p51 evidence/2026-11-10-0028/live-crawl.json. Report, STATUS.json, IndexNow and the learning inbox are owed after the deploys.",
           "awaitingUser": false
         },
         {
           "id": "P10.audit-stack",
           "title": "Stack audit and package currency; majors adopted across the codebase",
-          "status": "pending",
-          "note": "",
+          "status": "complete",
+          "note": "ncu read-only on desktop, web, docs; majors: i18next 27 / react-i18next 18 (released 2026-11-07) wait recorded, adopt by 2026-11-21; TypeScript 7 ledger pin (typescript-eslint peers <6.1).",
           "awaitingUser": false
         },
         {
           "id": "P10.schema",
           "title": "G1: SCHEMA.md gains billing_subscription_states and the 2026-11-07 functions; seeded non-admin proof covers the table",
-          "status": "pending",
-          "note": "",
+          "status": "complete",
+          "note": "SCHEMA.md gains billing_subscription_states, the broadcast trigger, the 2026-11-07 functions and the FilesHub keepalive note (b874432); drizzle-kit check fine; the seeded non-admin proof covered the new table (403/401).",
           "awaitingUser": false
         },
         {
           "id": "P10.ads",
           "title": "G2-G5, G10: plain ads words (D101), hub row relabel (D100), roster re-vendor, clickable desktop cards (D102)",
-          "status": "pending",
-          "note": "",
+          "status": "in_progress",
+          "note": "Code and words done and pushed: desktop cards open products (b874432), website lede and roster (web 2a405f0), hub row relabel on website record and 13 docs guides (docs f2fcd90), Polar brief (root), story record (ads-plain-2026-11-10). Live only after the 1.4.7 release and the two deploys.",
           "awaitingUser": false
         },
         {
           "id": "P10.yandex",
           "title": "G11: integrate the prepared Yandex verification tags on the site and docs; owner presses Verify",
-          "status": "pending",
-          "note": "",
+          "status": "in_progress",
+          "note": "Fast-forwarded onto main: web dd6ff9f, docs c13c940 (pushed). Ships in the next site and docs deploys; then the owner presses Verify (MANUAL row 40).",
           "awaitingUser": false
         },
         {
           "id": "P10.fileshub",
           "title": "G6: FilesHub platforms add npm, project links, Polar payment account link",
-          "status": "pending",
-          "note": "",
+          "status": "complete",
+          "note": "Platforms desktop, web, npm; links website, docs, releases, npm, repo; readiness 11/12. The Polar account link has no API (GET/HEAD only): MANUAL row 39. Record map updated.",
           "awaitingUser": false
         },
         {
           "id": "P10.records-fixes",
           "title": "G7 store set NA line, G8 manual row 15, G9 portfolio-info refresh",
-          "status": "pending",
-          "note": "",
+          "status": "in_progress",
+          "note": "Row 15 moved to Completed; rows 39 and 40 added; GitHub repo description and the fleet roster row corrected (notebook 7180f5bc); 30 proof run claims deleted. Owed: the store-set NA line in production/windowsweep.md and the portfolio-info refresh (product root + notebook).",
           "awaitingUser": false
         },
         {
           "id": "P10.update-flow",
           "title": "Gate 4: layer 2 re-proved on the test channel (D103-3); layer 1 installed 1.4.6 -> 1.4.7",
           "status": "pending",
-          "note": "",
+          "note": "Layer 2 test-channel re-proof (D103-3) on the final source; layer 1 installed 1.4.6 -> 1.4.7 after the publish.",
           "awaitingUser": false
         },
         {
           "id": "P10.release",
           "title": "Release 1.4.7: desktop Latest, CLI tag, npm from the gated tarball",
-          "status": "pending",
-          "note": "",
+          "status": "in_progress",
+          "note": "Cascade committed and pushed as b874432 (main). CLI gates: self-test 223/223, version parity 1.4.7, PSScriptAnalyzer 0 (plant 2), pack 53 files. Desktop gates green (52 tests). Signed build started 2026-11-10 ~13:05 +0500 from b874432; artifacts in desktop/src-tauri/target/release/bundle. NOT published: no tag, no GitHub release, no npm publish yet.",
           "awaitingUser": false
         },
         {
           "id": "P10.deploy",
           "title": "One site deploy and one docs deploy, live verification, IndexNow",
           "status": "pending",
-          "note": "",
+          "note": "One site deploy after the release facts (download.ts, changelog, feed, home note, JSON-LD version, dummy pages, sitemap fixed point); one docs deploy (changelog 1.4.7, intro version) with the D100 guides and the Yandex tag.",
           "awaitingUser": false
         },
         {
           "id": "P10.records",
           "title": "Per-command records in queue order, context-fix-project last, memory",
           "status": "pending",
-          "note": "",
+          "note": "Per-command records in queue order, context-fix-project last, memory.",
           "awaitingUser": false
         },
         {
           "id": "P10.confirm",
           "title": "Confirmation gate: every command against its close criteria",
           "status": "pending",
-          "note": "",
+          "note": "Confirmation gate per command.",
           "awaitingUser": false
         }
       ]
@@ -1844,9 +1844,32 @@
           "f26cbe5"
         ]
       }
+    },
+    {
+      "date": "2026-11-10",
+      "model": "Opus 5.5 main session",
+      "phase": "complete-project run 2026-11-10-0028: audits, fixes, release 1.4.7 cascade (paused before publish)",
+      "summary": "New run after the 2026-10-30-2224 close. Plan-mode findings G1-G12; owner answers D100-D104. Audits: security 41/44, experience 29/37, discoverability 31/34, search crawl clean except the undeployed Yandex tag, stack updates. Fixed and pushed: SCHEMA.md, house ads named plainly (website, desktop, hub, docs, Polar brief), clickable desktop promotions, roster re-vendor, pricing CLS, tour hint after the legal bar, package updates (Tauri 2.12), FilesHub readiness 11/12, GitHub description, proof claims cleanup. Paused before the 1.4.7 publish at the owner's request.",
+      "commits": {
+        "product": [
+          "bd13ad4",
+          "b874432"
+        ],
+        "web": [
+          "dd6ff9f",
+          "2a405f0"
+        ],
+        "docs": [
+          "c13c940",
+          "f2fcd90"
+        ],
+        "notebook": [
+          "7180f5bc"
+        ]
+      }
     }
   ],
-  "resumeInstructions": "Run 2026-11-10-0028 is in progress (phase P10). Resume from the record repo's production/windowsweep-complete-project.json -> lastStep, then the first pending P10 sub-task. Plan: C:/Users/PC/.claude/plans/full-rustling-giraffe.md.",
+  "resumeInstructions": "Run 2026-11-10-0028 is PAUSED (P10). FIRST: publish release 1.4.7 from b874432 (the README and CHANGELOG on main already say 1.4.7). The full ordered list is in the record repo production/windowsweep-complete-project.json -> resume.next_steps_in_order, and the root remaining-work-summary.md \"Resume point\".",
   "auditPlanFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-humming-snowflake.md (the 2026-09-12 audit); the 2026-09-05 audit was please-audit-the-whole-streamed-nest.md",
   "planCopy": "../completion-plan-v4-2026-09-17.md",
   "planFileV3": "C:/Users/PC/.claude/plans/please-audit-the-whole-humming-snowflake.md",

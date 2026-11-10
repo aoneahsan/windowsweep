@@ -1,4 +1,4 @@
-# Email campaign 01 — A1, the cleanup family (draft, `[TEST]` sent 2026-11-10, waiting for the owner)
+# Email campaign 01 — A1, the cleanup family (approved by the owner 2026-11-10, sending since the same day)
 
 **Surface:** a cold marketing email in FilesHub email marketing, project `windowsweep`, template `windowsweep-mkt-a1`,
 layout `marketing`. FilesHub adds the brand header, the footer, the postal address and the unsubscribe link.
@@ -39,3 +39,7 @@ number is on the screen shown or in a README. No price or plan claim.
 `[TEST]` email `01M72C5677W0N39ZF4ZNC4CSZV` went to aoneahsan@gmail.com. **On approval:** approve A1, activate,
 assign one available pool batch (`POST /email-batches/{id}/assign`, dry run first), and raise the daily cap from
 10 to 50.
+
+**Approved 2026-11-10:** the owner typed "approve" after the `[TEST]`. The sequence is active. Pool batch 109
+(`01M4CN6QFNXXPMKBKX2AZ3YKJ3`) is assigned: 952 enrolled, 40 stopped addresses left out. The daily cap is now 50,
+with a warm-up ramp from 10 (+3 a day) inside 09:00–18:00 UTC.

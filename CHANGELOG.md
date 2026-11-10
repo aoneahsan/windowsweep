@@ -9,6 +9,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.4.7] - 2026-11-10
+
+### Changed
+
+- **Settings → About opens the team's other tools.** Each card under *More from the same team* now hands its
+  product's page to your browser, the way Source and Support do: the card waits while the address is handed over,
+  then ticks. Nothing counts the press. The note above the cards now says what they are: ads for the team's own
+  tools, never an advertising network, and windowsweep never appears in its own list.
+- The desktop app's libraries move to their current releases, Tauri 2.12 among them.
+
+### Fixed
+
+- **Trizlink's name.** The list of the team's tools spelled it TrizLink.
+- The command-line tool is unchanged in this release. It moves to 1.4.7 so the CLI and the desktop app stay on one
+  version.
+
+## [1.4.6] - 2026-11-08
+
+### Changed
+
+- **The desktop app's icon is the website header's mark.** The taskbar and the Start menu show two sweep curves at
+  full strength on the dark tile, where every desktop release from 1.1.0 to 1.4.5 drew three strokes of falling
+  weight on a gradient. The installer, which showed its build tool's stock icon and pictures, now shows the same
+  icon, and the mark and the name on its Welcome and Finish pages.
+
+### Fixed
+
+- **Update checks after the start screen wait for a slow server.** In 1.4.5 every check gave up after 4 seconds, so
+  while the address that serves updates took 4 to 12 seconds to answer, installed apps skipped check after check.
+  The checks made when the window comes back into focus or into view, when the network comes back, and when Update
+  or Update now is pressed on a required release now wait up to 20 seconds. The start screen's own check keeps its
+  4 seconds, so starting the app takes no longer than before.
+- The command-line tool is unchanged in this release. It moves to 1.4.6 so the CLI and the desktop app stay on one
+  version.
+
 ## [1.4.5] - 2026-11-08
 
 ### Fixed

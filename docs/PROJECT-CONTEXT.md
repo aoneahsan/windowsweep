@@ -1,6 +1,6 @@
 # Project Context - windowsweep
 
-Last Updated: 2026-11-06 (latest: D90-D93 - design gate approved, the seven missing strings, the email functions deploy, release 1.4.3; and the unapplied 1.4.0 legal wave found). Earlier 2026-11-05 (D85-D89 - the run resumed: the test-only production proofs, release 1.4.2, Polar sandbox then production, the email tests, the shared test Supabase project; sessions 13-20 moved to `PROJECT-CONTEXT-decisions-2026-09.md`). Earlier 2026-10-30 (D55-D61 - the first `/complete-project` run: category, plan set, agents,
+Last Updated: 2026-11-10 (latest: D100-D103 - the second `/complete-project` run: the hub ads row relabelled, the plain ads words, clickable desktop promotions with release 1.4.7, and this session's production touches; session 21's D55-D84 moved verbatim to `PROJECT-CONTEXT-decisions-2026-10.md`). Earlier 2026-11-06 (D90-D93 - design gate approved, the seven missing strings, the email functions deploy, release 1.4.3; and the unapplied 1.4.0 legal wave found). Earlier 2026-11-05 (D85-D89 - the run resumed: the test-only production proofs, release 1.4.2, Polar sandbox then production, the email tests, the shared test Supabase project; sessions 13-20 moved to `PROJECT-CONTEXT-decisions-2026-09.md`). Earlier 2026-10-30 (D55-D61 - the first `/complete-project` run: category, plan set, agents,
 the Supabase production set, GATE 4, release 1.4.0, Polar dormant). Earlier 2026-09-28 (row 30 closed on the owner's word - the consent screen published; web row 4's sign-in proved from the server. Earlier the same day: D54 - a development build reports no analytics (DONE-023); row 31 closed by the owner's own sign-in and dry-run on 1.3.2; the site's tables and the eighth migration moved verbatim to `PROJECT-CONTEXT-supabase.md` at the 500-line ceiling. Earlier the same day: D53 - desktop-v1.3.2 and CLI 1.3.2: the desktop sign-in fixed (DONE-021), TASK-020 (DONE-020), TASK-022 (DONE-022), TASK-023 filed; the D28 line corrected. Earlier 2026-09-26: D52 - TASK-020 widens the desktop CSP for Clarity. Earlier the same day: `desktop-v1.3.1` released and proved under D50 - the current-status line. Earlier the same day: D50 - `desktop-v1.3.1` this session - and D51 - the stray `runs$RUNID` folder deleted; TASK-019's generators became Vite plugins. Earlier the same day: D49 - the workspace root backed up on the private site repo's `project-root`
 branch. Earlier 2026-09-25: `desktop-v1.3.0` published as Latest and proved by the in-app updater 1.2.0 -> 1.3.0,
 CLI 1.3.1 on npm with the team's maker lines, rounds 14 and 15 with D47, session 14's decision table moved to
@@ -89,103 +89,11 @@ Moved **verbatim** on 2026-11-05, when this file passed its 500-line ceiling: th
 13, 16, 17, 19 and 20 (D13-D54, 2026-09-12 to 2026-09-28). Nothing was reworded; read
 [`PROJECT-CONTEXT-decisions-2026-09.md`](PROJECT-CONTEXT-decisions-2026-09.md) for any of them.
 
-### Session 21 decisions (2026-10-30) - the first `/complete-project` run
+### Session 21 decisions (D55-D84) - moved to `PROJECT-CONTEXT-decisions-2026-10.md`
 
-Asked in one batch at the start of the run; each answer is his verbatim option. The run's state file is
-`projects-finalization-record/production/windowsweep-complete-project.json`.
-
-- **D55 - category "Desktop app + CLI (Recommended)"**: the column he set for macleanup the same day. No store, so
-  no store-listing set; AI and FilesHub storage NA; Android and a browser extension do not apply; iOS 0.
-- **D56 - plan set "Mirror macleanup exactly (Recommended)"**: Free (every section, unlimited previews, 15 real
-  runs per PC a month + 15 more signed in) · Pro $4 a month or $36 a year (unlimited real runs, synced history on
-  up to 5 PCs, schedules, exports) · Team $3 a seat a month or $30 a year, minimum 3 seats (+ shared fleet
-  reports) · referral 10 points per confirmed friend, one Pro month per 3, at most 4 a year. Every figure is an admin
-  field. The npm CLI stays free, MIT and unlimited. **Supersedes the 2026-09-05 no-pricing
-  decision and its old §13 admin declaration.** The current scope is recorded below.
-- **D57 - agents "Up to 4 (Recommended)"**: at most four custom agents at once, resource-checked before each dispatch.
-- **D58 - Supabase "Approve the set (Recommended)"**: on `nlmetjyytgwaxcliusuo`, each rehearsed in
-  `BEGIN ... ROLLBACK` first - additive Drizzle migrations (release records + public latest view + admin publish RPC;
-  plans, plan fields, `app_config`, billing and Polar events, referral, teams and invites, admin RPCs and audit, the
-  legal-notice seen flag, devices and run claims); the Google-only `before_user_created` hook (Google + the `t1`
-  test aliases); anonymous sign-ins on; the Edge Functions `polar-checkout`, `polar-webhook`, `admin`, `team`,
-  `account-welcome` and `allowance`; secrets `FILESHUB_API_KEY` and `POLAR_*`.
-- **D59 - GATE 4 "Extend the pre-authorisation (Recommended)"** to this run's new non-legal surfaces (pricing and
-  plan screens, the legal bar, tours and the walkthrough, the update notice and block screens, admin pages, the
-  welcome email) on the 2026-09-07 condition. Terms and Privacy changes and every marketing `[TEST]` go to him first.
-- **D60 - release "Yes, 1.4.0 this run (Recommended)"**: desktop and CLI 1.4.0 through the release kit; the
-  second-machine items (RW-064/065/066) move to 1.5.0.
-- **D61 - Polar "Build it dormant now (Recommended)"**: checkout, webhook and products built and tested; a plan
-  request replaces the pay button until his windowsweep Polar organization exists as a FilesHub payment account.
-- Mid-run, the same day: he asked for the "What is windowsweep" and LinkedIn company page documents so he can create
-  the Polar organization; they live in the notebook's `linkedin-social-content/windowsweep/`.
-- **D62 - "Free keeps them (Recommended)"** (2026-10-31): Free keeps 1.3.2's signed-in run-summary sync,
-  cross-machine History and Markdown/HTML per-run export. Pro adds reports across 5 machines (5 per Team seat),
-  history export, schedules and unlimited real runs. D56 changes the desktop weekly schedule and monthly real-run
-  limits; the CLI keeps `--install-task` and `--export`.
-- **D63 - "Yes, ship them early (Recommended)"** (2026-10-31): ahead of 1.4.0, deploy `/pricing` for Polar review
-  (plans arriving with 1.4.0; checkout dormant, plan requests instead of pay buttons) and the Terms/Privacy payment
-  clauses after his GATE 4. This requires an extra site deploy before the release deploy.
-- **D64 - desktop analytics "Bundled analytics only (Recommended)"** (2026-10-31, from the security lane's F-SEC-003):
-  Amplitude and Sentry stay bundled; Clarity leaves the desktop window and stays on the website. Its GA4
-  Measurement Protocol choice and `script-src 'self'` narrowing are superseded by D75.
-- **D65 - database hardening "Yes, both (Recommended)"**: SSL enforcement on and the legacy JWT API keys disabled, each
-  checked first (nothing may still use a legacy key; FilesHub's keepalive is checked first) and read back after.
-- **D66 - "1.4.0 removes it"**: a Free user's weekly task from 1.3.2 is removed on the first start of 1.4.0, said once,
-  with Pro and the command line's free `--install-task` named as the alternatives.
-- **D67 - "They keep their price (Recommended)"**: a running subscription renews at the price it started with until
-  cancelled; an admin price change applies to new purchases.
-- **D68 - "Pay link when checkout opens (Recommended)"**: a plan request grants nothing; when checkout opens, the team
-  emails each open request a link to pay, and the request closes.
-- **D69 - "Each member's run summaries (Recommended)"**: the Team fleet report shows, per member and machine, date,
-  mode, sections run and bytes reclaimed - never a path, file name, machine name or user name.
-- **D70 - "Cancel it server-side first (Recommended)"**: deleting an account first cancels its Polar subscription
-  through the server, then deletes; this approves one Edge Function beyond D58's six (`delete-account`).
-- **D71 - "Keep the anonymous counts (Recommended)"**: after a deletion a machine's run claims keep only the random
-  install id, the month, the pool and the section numbers; the Privacy Policy says so.
-- **D72 - "Approve it (Recommended)"**: `security_manual_linking_enabled` turned on in the same Auth update as D58's
-  hook and anonymous sign-ins, so "Sign in with Google" links onto the device session.
-- **D73 - "Keep the clause (recommended)"** (2026-10-31): the Terms may state that deliberate run-limit evasion or
-  referral-account farming can lead to account deletion and referral voiding. Legal GATE 4 remains pending.
-- **D74 - GA4 relay proposal, superseded by D75** (2026-10-31): a server-side Measurement Protocol relay and
-  daily counters were drafted but never applied or deployed. The owner questioned the extra secret and chose D75.
-- **D75 - "Use existing Measurement ID (Recommended)"** (2026-10-31): keep the desktop's existing public GA4
-  Measurement ID and `gtag.js` path, with its scrubbed event vocabulary. No Measurement Protocol API secret,
-  `analytics-ingest` function or daily telemetry-count tables are needed. Amplitude and Sentry remain bundled;
-  Clarity remains website-only. The desktop CSP allows the GA4 tag and collection hosts.
-- **D76 - no Docker for WindowSweep** (2026-10-31): the owner forbids starting or using Docker because of its
-  system load. The Supabase CLI's `db dump` path is excluded; backups use a standalone PostgreSQL client.
-- **D77 - uninstalling selected programs is in scope** (2026-11-02, owner: "get rid of all softwares which i do
-  not need from this system fully ... get all that implemented as features in this software"): new section 26 runs
-  the selected program's own registered uninstaller. Interactive only, never batch; `--yes` never selects. It
-  replaces the old non-goal "running an uninstaller (section 24 only reports)".
-- **D78 - leftovers outside AppData** (2026-11-02): new section 27 offers unclaimed top-level folders in Program
-  Files, ProgramData, Common Files, `%LOCALAPPDATA%\Programs`, profile dot-folders and drive-root folders; Recycle
-  Bin, interactive, fails closed. A leftover inside a protected subtree is reported, never removed.
-- **D79 - two narrow protection exceptions, computed at start-up** (2026-11-02): Codex standalone releases other
-  than the `current` junction target and the newest previous one; and the allowlisted Chromium cache leaves inside
-  a user-declared browser-profile root (`browserProfileRoots`). Everything else in `.codex` and `.local` stays protected.
-- **D80 - these ship in 1.4.0** (2026-11-02, "Ship as 1.4.0 when gates pass"): they join the 1.4.0 programme and
-  its existing gates; the second-machine candidate rows RW-064/065/066 move to 1.5.0.
-- **D81 - browser AI model** (2026-11-02): section 29 sets Chrome's `GenAILocalFoundationalModelSettings = 1`
-  (HKLM). Chrome then deletes `OptGuideOnDeviceModel` itself (seen on the P52 that day: 4 GB gone with Chrome
-  running). It shows "Managed by your organization"; the undo is documented.
-- **D82 - idle basis** (2026-11-02, "Auto-detect, then write time (Recommended)"): where last-access is live on a
-  root (a sample shows most files read within a day but written long before), the idle gate ignores last-access
-  and uses write/creation; elsewhere it stays the newest of the three. The output names the basis used.
-- **D83 - 1.4.0 section extensions** (2026-11-02, from the P52 cleanup): 4 adds system images no AVD uses and
-  dangling AVD `.ini` files (`sdkmanager --uninstall`); 7 adds `browserProfileRoots`; 10 adds `tempRoots`; 24
-  adds a last-run column from Prefetch when elevated; 23's claim logic learns reverse-DNS app ids, Store package
-  names, acronyms and process command lines, and never offers the desktop app's own data folder.
-- **D84 - personal data scanner roots** (2026-11-03, owner: "Downloads by default; users add folders"):
-  section 19 searches Downloads and only the extra folders a person adds. The desktop stores those extra
-  roots locally and passes them explicitly, including an empty list. Large or old describes a file, not
-  whether it is needed. Selection is row by row; removal defaults to the Recycle Bin, and a file changed
-  since the scan is refused.
-- Settled in the main session the same day, not owner questions: the release form warns when a version is ABOVE the
-  deployed build (a record above every build would block everyone; the update-flow skill's wording is corrected);
-  `devices` stores no machine name, host name or Windows version (the product's "never a machine name" promise); the
-  plan record, invite code, referrals and team seat are deleted with the account; an admin's plan change is audited
-  without any of the person's words.
+Moved **verbatim** on 2026-11-10, before this file reached its 500-line ceiling: the decision block of session 21
+(D55-D84, 2026-10-30 to 2026-11-03). Nothing was reworded; read
+[`PROJECT-CONTEXT-decisions-2026-10.md`](PROJECT-CONTEXT-decisions-2026-10.md) for any of them.
 
 ### Session 22 decisions (2026-11-05) - resuming the `/complete-project` run
 
@@ -248,6 +156,61 @@ Asked in one batch when the paused run resumed; each answer is his verbatim opti
   plans page. No real charge: the sandbox proved the paid path, an unpaid production checkout proves the live page.
 - **D95 - legal GATE 4 for the checkout-open revision, 2026-11-07** (AskUserQuestion, under D59's rule that Terms and Privacy wording goes to the owner first): *"Approve all six (Recommended)"* - the Terms meta description (S3), `terms.plans.polar` with "from version 1.4.4", `terms.plans.team`, `privacy.plans.polar`, `privacy.plans.received` and the web `llms.txt` Terms line (S5, `docs/story/drafts/release-1.4.4.md`) move to the present tense, and the Terms effective date moves to the deploy day. For `privacy.plans.received`, *"Name the extra numbers (Recommended)"*: "For each payment Polar takes, windowsweep keeps one record: the plan, the period it covers, the seat count, the amount, its status, and Polar’s order, subscription and customer numbers."
 - **D96 - finish everything now, 2026-11-07.** The Comparison Hub runs in this session (AskUserQuestion, queue upkeep: *"Now, in this session"*; `/comparison-hub` joins run 2026-10-30-2224 at order 3; the vision is on record in root `docs/OWNER-VISION.md`). Then, in his words: *"we need to finish this project, please go with best recommendations, make sure to not go for any workarounds, build real solutions, implement best long term solutions and get all remaining work completed now please, only stop once all is done, and do not ask me any questions unless it's really important or you need me to do something manually"*. So ISSUE-002 to ISSUE-005 are fixed at their roots in this run, and a release follows.
+- **D97 - the production actions of ISSUE-003, 2026-11-08,** taken under D94 (*"release everything in production once
+  done"*) and D96's words. Migrations `20261107193543` (the subscription state table) and `20261107193640` (its
+  functions and `my_plan()`'s `renews`) went in with `supabase db push`, after a rehearsal in a rolled-back transaction;
+  `polar-webhook` v8 was deployed (`--use-api`, no Docker, D76); both Polar endpoints, production and sandbox, now also
+  send `subscription.canceled`, `.uncanceled` and `.revoked`. The proof used signed synthetic events for one t1+1
+  test row (root `site-evidence/subscription-cancel-v145/`), removed and read back at zero. No real customer row was
+  touched and no charge was made.
+- **D98 - release 1.4.6 and the proof-user cleanup, 2026-11-08,** taken under D96 (*"get all remaining work
+  completed now"*). 1.4.6 was cut the same day as 1.4.5 because ISSUE-006 and the root's TASK-001 (the app icon and
+  installer pictures from the brand kit) reach people only in a desktop release. In production, the two anonymous
+  users the 1.4.5 proofs had created on fresh WebView2 profiles were deleted with their device rows and read back
+  absent. A proof launch now reuses a profile that already holds a session, so it creates no user.
+- **D99 - Comparison Hub words approved, 2026-11-09.** After the live hub, CCleaner example and docs hub were
+  presented for MANUAL-TASKS row 38, the owner replied *"approve all, finish all remainign work fully now"*.
+  This approves the WindowSweep Comparison Hub words once and closes completion hard gate 5. It does not record
+  completion of the separate manual device, account, token or archive checks in rows 33-36.
+
+### Session 25 decisions (2026-11-10) - the second `/complete-project` run
+
+Asked in one batch in plan mode, after the pre-audit found the 2026-11-09 house-ads rule unmet in three places; each
+answer is his option. The run's state file is `projects-finalization-record/production/windowsweep-complete-project.json`
+(run `2026-11-10-0028`).
+
+- **D100 - the Comparison Hub ads row "Relabel the row (Recommended)"**: the row "States no ads or bundled offers"
+  becomes "States no third-party ads or bundled offers" on all 13 rival pages and both hubs. windowsweep keeps Yes,
+  cited to the code (no ad network, nothing bundled); every rival cell stays as sourced, since a page that says "no
+  ads" also rules out third-party ads. The docs guides' prose names the row the same way.
+- **D101 - the plain ads words "Approve as written (Recommended)"**: the website home band lede becomes "These are ads,
+  for the same team's own projects and nothing else. There is no ad network on this site. That sentence is the
+  promise: adding one would mean deleting it first. Which is the only kind of promise worth writing down."; the
+  desktop Settings → About note becomes "These are ads for the team’s own tools, not an advertising network – nothing
+  here is sold, tracked or third-party, and windowsweep never appears in its own list."; the Polar brief's "No
+  advertising space" line becomes "Ads: only the windowsweep team's own other tools, in the desktop app and on the
+  website. No advertising network, and no space is sold." Dummy first; published only if the lean story panel's fact
+  consistency passes with no NEEDS DECISION (the 2026-09-07 condition).
+- **D102 - desktop promotions "Clickable cards + 1.4.7 (Recommended)"**: each card in Settings → About opens its
+  product's page in the system browser through the existing guarded opener, with no click tracking; the roster is
+  re-vendored (Trizlink's casing); the D101 note. Desktop, CLI tag and npm 1.4.7 are released once proven, and the
+  installed 1.4.6 must update itself to 1.4.7. Package updates the stack audit adopts ride along.
+- **D103 - production touches "Approve all four (Recommended)"** on `nlmetjyytgwaxcliusuo`, this session: (1)
+  read-only catalog queries (RLS on every public table including `billing_subscription_states`, grants, SECURITY
+  DEFINER exposure, the auth user count); (2) the seeded non-admin proof: `aoneahsan.apps.t1+1` and `t1+2` created
+  through the Auth admin API, one owned and one forbidden row each, cross-account read, update, delete and forged
+  insert, `t1+1` walking `/account` and `/pricing` live, both deleted and read back to the baseline of 8 users; (3)
+  the layer-2 update-flow re-proof on the `test` channel, `t1+admin` publishing normal, urgent and equal rows through
+  the audited RPC for desktop, website and docs, the rows ending at `0.0.0`, `t1+admin` deleted after; (4) any
+  anonymous user or device row a proof launch leaves, matched to its WebView2 profile first, deleted and read back.
+- **D104 - his words, 2026-11-10 00:30 (+0500)**: *"I'M TAKING OFF NOW, I WILL BE BACK TOMORROW, I NEED YOU TO FINISH
+  ALL REMAINING WORK FULLY AS BEST AS POSSIBLE BEFORE I GET BACK TOMORROW PLEASE GO WITH BEST RECOMMENDATIONS, I APPROVE
+  ALL PLEASE DO NOT STOP ON ANYTHING YOU NEED FROM ME FINISH WHAT YOU CAN WITHOUT ME, FULLY AS BEST AS POSSIBLE, YOU HAVE
+  THIS WHOLE SYSTEM, PLEASE GET THE TASK/PROMPT GIVEN TO YOU FULLY, GET ALL WORK AS BEST AS POSSIBLE COMPLETED, CONFIRMED
+  AND PUSHED, DEPLOYED AND FINALIZED PLEASE DO NOT STOP UNTIL ALL THAT YOU CAN DO IS DONE, AND AS I SAID, GO WITH BEST
+  RECOMMENTDATIONS, I APPROVE ALL"*. Read as: every question this run raises takes its recommended option, recorded as
+  it is taken (D105 on); anything only he can do becomes a MANUAL-TASKS row instead of a pause. It names no rule it
+  excuses and no sub-agent, so it is not an owner-typed exception and the run stays in the main context.
 
 ### How the frontend UI mandates map to this product
 

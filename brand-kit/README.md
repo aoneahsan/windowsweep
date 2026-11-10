@@ -4,14 +4,14 @@ Drawn from the live header at `https://windowsweep.aoneahsan.com` (1440 px, chec
 
 **The line** on the tagline files is the console strapline, word for word: `names every path before it touches one`. It was recorded as the short strapline in `docs/story/decision-log.md` (the `Write-Banner` decision, beside the GATE 4 tagline entry) and is the live hero heading in sentence form ("It names every path before it touches one.", `home.hero.title`). It is set in JetBrains Mono 500 from `windowsweep-web/public/fonts/jetbrainsmono-latin.woff2`, because it is the line the CLI prints, and sized so its ink is exactly as wide as the name. The 99-character listing tagline (GATE 4, surface 2) was not used: it is written to be read cold in a search list, not on a shirt.
 
-**Three marks are live; this kit follows the header.**
+**One mark is live, the header's, and this kit draws it.** From 1.4.6 (2026-11-08) every place below carries it; three of them used to draw their own.
 
 - Header (public site): the two strokes described above, in the page ink.
-- Site favicon (`windowsweep-web/public/favicon.svg`): different curves (`M4 20…`, `M4 25.4…`), stroke 2.6, the lower one at 0.55 opacity, `#a3e635` on `#111a12`. The kit's favicon puts the header's curves on the dark page colour instead.
-- Desktop app icon (`desktop/src-tauri/icons/icon.svg`): three strokes of falling weight (52, 24, 11) with 0.5 and 0.3 opacity, on a gradient tile.
-- Docs site logo and favicon (`windowsweep-docs/static/img/logo.svg`) and `assets/logo/`: an older, unrelated drawing, a single glass pane being wiped with a squeegee, in a sky-blue gradient. It does not match the registered lime palette.
+- Site favicon (`windowsweep-web/public/favicon.svg`, with `favicon.ico` and `apple-touch-icon.png` beside it): this kit's three files, from 1.4.6. Before that the favicon drew other curves (`M4 20…`, `M4 25.4…`), stroke 2.6, the lower one at 0.55 opacity, `#a3e635` on `#111a12`, and the site had no `.ico` or touch icon.
+- Desktop app icon (`desktop/src-tauri/icons/icon.svg`): this kit's `favicon.svg` drawn at 512, from 1.4.6, exported by `yarn tauri icon`. Its `64x64.png` is also the email logo (`windowsweep-web/public/email/windowsweep-logo@2x.png`, shown at 32 px). Before that, three strokes of falling weight (52, 24, 11) with 0.5 and 0.3 opacity, on a gradient tile, in the app and in every email.
+- Docs site logo and favicon: since 2026-11-08 the header's mark (`windowsweep-docs/static/img/logo.svg` and `logo-dark.svg`, in each appearance's page ink) and this kit's `favicon.svg`. They, `assets/logo/` and both social cards (the site's `public/og/svg/site-card.svg`, the docs' `static/img/social-card.svg`) used to carry an older, unrelated drawing, a single glass pane wiped with a squeegee in a sky-blue gradient; `assets/logo/` is gone and the cards were redrawn with the header's mark the same day.
 
-None of these is changed by this kit. The header mark is drawn for this product (not an icon-library glyph), and it has no window panes in it.
+The header mark is drawn for this product (not an icon-library glyph), and it has no window panes in it.
 
 | File | Use | Command |
 | --- | --- | --- |

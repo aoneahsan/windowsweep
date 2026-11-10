@@ -98,6 +98,67 @@ it('defers a restart until the current run settles', async () => {
   expect(state.relaunch).toHaveBeenCalledOnce();
 });
 
+/* A server that answers in 10 seconds, as GitHub's release-download address did for an hour
+   on 2026-11-08 while its API answered in one (ISSUE-006). */
+function slowServer() {
+  state.check.mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        setTimeout(() => resolve(null), 10_000);
+      })
+  );
+}
+
+it('waits 20 seconds on the checks the splash does not make, and 4 on the splash', async () => {
+  vi.useFakeTimers();
+  browser();
+  vi.stubEnv('DEV', false);
+  slowServer();
+  const { checkForUpdate, watchForUpdates } = await import('./updater');
+
+  const splash = checkForUpdate();
+  await vi.advanceTimersByTimeAsync(10_000);
+  expect(await splash).toEqual({ kind: 'skipped', reason: 'deadline' });
+  expect(state.check).toHaveBeenLastCalledWith({ timeout: 4000 });
+
+  const outcomes: string[] = [];
+  const stop = watchForUpdates((outcome) => outcomes.push(outcome.kind));
+  await vi.advanceTimersByTimeAsync(10_000);
+  expect(state.check).toHaveBeenLastCalledWith({ timeout: 20_000 });
+  expect(outcomes).toEqual(['none']);
+  stop();
+});
+
+it('lets the splash in on time when it joins a longer check already under way', async () => {
+  vi.useFakeTimers();
+  const { events } = browser();
+  vi.stubEnv('DEV', false);
+  slowServer();
+  const { checkForUpdate, watchForUpdates } = await import('./updater');
+  const outcomes: string[] = [];
+  // A normal start: the watcher leaves the first check to the splash, and the window's first
+  // focus starts one before the splash asks.
+  const stop = watchForUpdates((outcome) => outcomes.push(outcome.kind), false);
+  events.dispatchEvent(new Event('focus'));
+  await vi.advanceTimersByTimeAsync(0);
+  expect(state.check).toHaveBeenCalledTimes(1);
+
+  let splashSettled = false;
+  const splash = checkForUpdate().then((outcome) => {
+    splashSettled = true;
+    return outcome;
+  });
+  await vi.advanceTimersByTimeAsync(5_000);
+  expect(splashSettled).toBe(true);
+  expect(await splash).toEqual({ kind: 'skipped', reason: 'deadline' });
+  // The splash joined the check under way rather than sending a second request...
+  expect(state.check).toHaveBeenCalledTimes(1);
+  // ...and that check carried on and answered.
+  await vi.advanceTimersByTimeAsync(5_000);
+  expect(outcomes).toEqual(['none']);
+  stop();
+});
+
 it('shares the startup check and rechecks on resume and reconnect without a timer', async () => {
   vi.useFakeTimers();
   vi.setSystemTime(new Date('2026-10-31T12:00:00Z'));

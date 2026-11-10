@@ -1629,3 +1629,35 @@ plan block ship with S2 and S4, and `desktop-v1.4.4` is published before S2, S4 
 **GATE 4 - approved 2026-11-08T09:24:42Z under D59.** Fact-consistency PASS and zero NEEDS DECISION; no piece is a legal surface.
 (f) is row 1's, under its 2026-09-07 pre-authorisation. No Bible §7 row and no registry change: the pieces add no
 term, motif or voice element.
+
+## 2026-11-08 - `release-1.4.6` (row 27; (f) on row 1) finalized, GATE 4 under D59, recorded
+
+**Finalizer: READY, FACT-CONSISTENCY PASS, zero NEEDS DECISION.** Draft: `drafts/release-1.4.6.md`.
+
+- **What ships.** One Changed bullet and two Fixed bullets, in 1.4.5's shapes with 1.4.4's Changed-then-Fixed order:
+  the desktop icon is the website header's mark (root TASK-001), and every update check after the start screen waits
+  up to 20 seconds while the start screen keeps its 4 (ISSUE-006). The gate's own button words, *Update* and *Update
+  now*, are quoted.
+- **Facts.** Each claim maps to `e1a3308`, `desktop-v1.4.5`'s `updater.ts`, `desktop-v1.1.0`'s and
+  `desktop-v1.4.5`'s `icon.svg`, or ISSUE-006's measurement in root `site-evidence/updater-1.4.5/logs/installed.txt`.
+  The first 1.4.6 build showed NSIS's stock icon and Welcome picture on the setup, so the words said the installer
+  wrongly; 1.4.6 now sets `installerIcon`, `uninstallerIcon` and `sidebarImage` (the kit's stacked lockup), the
+  rebuilt setup was checked (its icon, and its Welcome page captured, then cancelled), and (a), (c) and (e) say what
+  the installer showed before.
+- **The identity.** (g) is byte-identical in (a)'s first paragraph, the feed body and `latest.json`; (c) = (d).
+- **Lint.** The story lint passes on the draft, and fails it (exit 2) with four planted phrases appended, removed again.
+
+**GATE 4 - approved 2026-11-08T12:11:00Z under D59.** Fact-consistency PASS and zero NEEDS DECISION; no piece is a legal surface.
+(f) is row 1's, under its 2026-09-07 pre-authorisation. No Bible §7 row and no registry change: the pieces add no
+term, motif or voice element.
+
+## 2026-11-10 - `ads-plain-2026-11-10` (rows 16 and 13, the Comparison Hub row label, the Polar brief) finalized, GATE 4 from the owner (D100, D101), recorded
+
+The owner's 2026-11-09 rule names house promotions as ads and asks for a plain disclosure. Band 12's "Not advertising."
+and the hub row "States no ads or bundled offers: Yes" became untrue. The main session wrote the replacement lines from
+the approved originals (S1 keeps two approved sentences, S2 its approved second half), ran the lean panel itself -
+fact-check of every claim against the code and the fleet roster at notebook `7180f5bc`, the banned-list and humanize
+floor - with no NEEDS DECISION. GATE 4 from the owner in plan mode: D101 (the three lines as written) and D100 (the row
+label "States no third-party ads or bundled offers"). The Bible gains one constraint: the promotions are named as ads
+wherever they are described, and the no-ad-network promise stands beside that. No motif, palette or fingerprint change.
+Draft: `drafts/ads-plain-2026-11-10.md`.

@@ -36,14 +36,14 @@ It is the Windows member of a family with [linux-cleanup](https://github.com/aon
 
 | | |
 |---|---|
-| **Version** | `1.4.5` |
+| **Version** | `1.4.7` |
 | **License** | MIT |
 | **Node** | `>=14` (launcher only) |
 | **Runtime** | Windows PowerShell 5.1 (built in) or PowerShell 7 |
 | **Platforms** | Windows 10 (1809+) and Windows 11 |
 | **Install size** | ~167 kB packed · ~560 kB unpacked · 53 files · no dependencies |
 | **Undo** | Recycle Bin for personal files; none for caches (they regenerate) |
-| **Status** | Stable · 1.4.5, released 2026-11-08 |
+| **Status** | Stable · 1.4.7, released 2026-11-10 |
 
 <a id="table-of-contents"></a>
 ## 🧭 Table of Contents&nbsp;[#](#table-of-contents)
@@ -202,7 +202,7 @@ section with `a` run / `s` skip / `q` quit and a running total.
 
 ### The sections
 
-This table describes version 1.4.5.
+This table describes version 1.4.7.
 
 **Tier** says what happens to the data: *report* deletes nothing, *rebuilds* comes back on its own, *slow*
 comes back but costs minutes, *Recycle Bin* is recoverable until you empty it (`--list` shows this tier as
@@ -459,10 +459,10 @@ More: [FAQ](https://windowsweep-docs.aoneahsan.com/faq).
 <a id="changelog"></a>
 ## 🔄 Changelog&nbsp;[#](#changelog)
 
-Latest release: **`1.4.5`** - the desktop app's Plans screen shows the day a cancelled plan ends, and an update found
-at start installs even when the window closes before its download finishes. The 1.4 scanner searches Downloads and
-folders you add for large or old files; you choose individual files for the Recycle Bin. The uninstall and
-leftover-folder sections require explicit selection.
+Latest release: **`1.4.7`** - the cards in the desktop app's Settings → About open the team's other tools in your
+browser, and the note above them says they are ads for those tools. The 1.4 scanner searches Downloads and folders you add for
+large or old files; you choose individual files for the Recycle Bin. The uninstall and leftover-folder sections
+require explicit selection.
 Full history: [CHANGELOG.md](https://github.com/aoneahsan/windowsweep/blob/main/CHANGELOG.md).
 
 <a id="contributing"></a>

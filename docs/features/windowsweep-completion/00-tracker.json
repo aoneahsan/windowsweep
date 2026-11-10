@@ -3,25 +3,17 @@
   "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md, which since 2026-09-07 lives at the WORKSPACE ROOT one level above this repository, outside it (a clone of this repository does not carry it; since 2026-09-26 the root is its own repository on the private windowsweep-web's project-root branch, D49 - ../RESTORE.md rebuilds it). The method is ../completion-plan-v5-2026-09-24.md (v4 of 2026-09-17, v3 of 2026-09-12 and the two 2026-09-07 plans are history; every decision they record still applies, and v3 sections B0, B1 and B10-B12 are still live reference). This file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-11-07",
+  "lastUpdated": "2026-11-10T08:10:00Z",
   "activeCompletionRun": {
-    "id": "2026-10-30-2224",
-    "status": "owner chain: 85/100, all four hard gates pass (2026-11-06)",
-    "latest": "2026-11-06 session 23: release 1.4.3 (desktop-v1.4.3 Latest, npm 1.4.3, install-on-close proof), the one 1.4.3 site deploy and the docs deploy, D92 (account-welcome, admin, polar-webhook, team at v6), the [TEST] welcome and the live signup's confirmation accepted, the 1.4.3 newsletter built in FilesHub (its [TEST] waits for the 00:00 UTC mailbox reset), genuine-admin checks cleaned up to the baseline. Open: Polar's organization review (MANUAL row 32) and the owner's receipt of the [TEST] emails (row 37). Master record: projects-finalization-record/production/windowsweep-complete-project.json.",
+    "id": "2026-11-10-0028",
+    "status": "paused at a safe point (owner request, 2026-11-10 ~13:10 +0500)",
+    "latest": "2026-11-10 13:10 +0500: paused at the owner's request. Audits done; fixes for G1-G12 committed and pushed; release 1.4.7 cascaded (b874432) and built, not published. Resume: the record repo state file -> resume.next_steps_in_order.",
     "category": "desktop app + CLI",
-    "scoreBefore": 8,
+    "scoreBefore": 100,
     "branch": "main",
-    "plan": "D:/work/my-work/projects-finalization-record/production/windowsweep-complete-project-plan.md",
-    "resumePlan": "../../../../completion-plan-v6-2026-11-04.md",
+    "plan": "C:/Users/PC/.claude/plans/full-rustling-giraffe.md",
     "record": "D:/work/my-work/projects-finalization-record/production/windowsweep-complete-project.json",
-    "audit": "D:/work/my-work/projects-finalization-record/product-audits/windowsweep/2026-10-30-2224/findings.json",
-    "migrationCount": 24,
-    "migrationManifestSha256": "5529F0105AC4794CD688B054DEAE7D797D3A37E1E4C91D024E873D72BDECDA33",
-    "migration22Sha256": "CA76B224D130C20E1D9DEC1F9DDB126148B19D4EDBC817CE2FEAEEF192F8A4F2",
-    "migrationState": "The earlier 22-file production set and the separately approved tour-hint migrations 23/24 (20261104110814_tour_hint_column.sql and 20261104110943_tour_hint_marker.sql) are applied to Supabase nlmetjyytgwaxcliusuo; post-apply dry run reported up to date and the remote ledger lists both. Migration 22 followed a full dump and private FilesHub upload, manifest 01M6GTYTMDT7B6M1QRBFJTT3AN, read back byte-for-byte (SHA-256 A5548EB770D3B2EADB35CF8AACCD0B9461AD6D2F54CAA0443E7DA7310E2183A2). The six-scenario referral probe passed inside rollback and its three temporary Auth users were deleted. Anonymous sign-in, Auth hook and manual linking are enabled; seven Edge Functions are ACTIVE; FILESHUB_API_KEY is present. Polar payment account exists in FilesHub but webhook secrets and checkout proof remain open. A separate hosted restore rehearsal remains open.",
-    "contentState": "The 1.4.1 CLI, desktop, website and public docs copy is live. The approved personal-file promise says section 19 scans Downloads and user-added folders, requires exact selections and always uses the Recycle Bin; section 26 invokes the selected program uninstaller. Website release notice and block use the owner-approved click dummy and i18n. Payment checkout remains dormant while POLAR_* credentials are absent.",
-    "designState": "The approved Picker was inspected in installed 1.4.1 at 1440/760; its selected 101 MiB Recycle Bin run and receipt, plus a protected-path refusal, are recorded in site-evidence/installed-picker-1.4.1. The approved phone app view, page tours and /admin/releases source are deployed on the website; live signed-out phone and guarded admin routes were checked, while authenticated journeys remain open. Desktop tours and walkthrough pass source gates and native 1440/760 parity; seven labelled review fixtures were replaced by real 1.4.1 captures. Desktop tour source is not packaged or released.",
-    "releaseState": "Published npm windowsweep@1.4.1 and GitHub CLI v1.4.1; desktop-v1.4.1 is GitHub Latest with signed NSIS/MSI updater assets. The installed 1.4.0 app accepted and installed 1.4.1, confirmed in registry and restarted window. Website source 8120652 is live on Firebase Hosting with matching entry-bundle hash and no-cache worker; docs source 5ac3db8 and gh-pages 4f33b2d are live with a matching bundle hash. 1.4.0 was also published earlier on 2026-11-03. Live production release-record publication and its end-to-end gate probe remain open."
+    "previous": "2026-10-30-2224 (complete 2026-11-09)"
   },
   "planFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-functional-canyon.md",
   "overview": "docs/features/windowsweep-completion/00-overview.md",
@@ -1249,6 +1241,118 @@
           "awaitingUser": false
         }
       ]
+    },
+    {
+      "id": "P10",
+      "title": "/complete-project run 2026-11-10-0028: re-audit at 100 plus the 2026-11-09 standards (house ads, FilesHub readiness, store package) and release 1.4.7",
+      "status": "in_progress",
+      "subTasks": [
+        {
+          "id": "P10.setup",
+          "title": "Run setup: state file, D100-D103 recorded (PROJECT-CONTEXT split at the 500-line ceiling), skills, search-records clone",
+          "status": "complete",
+          "note": "Run opened 2026-11-10 00:28 +0500; D100-D104 recorded (product bd13ad4); session 21 decisions moved verbatim to PROJECT-CONTEXT-decisions-2026-10.md; state file in the record repo.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.audit-finalize",
+          "title": "Finalize re-audit: 12 rows and 5 gates with fresh live evidence",
+          "status": "in_progress",
+          "note": "Live evidence gathered (render-2026-11-10.json, live-crawl.json, catalog, seeded proofs). The per-row re-score of production/windowsweep.md is not written yet: do it in records after the release and deploys.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.audit-product",
+          "title": "Product audit run: manifest, coverage, security, experience and discoverability lanes, findings",
+          "status": "complete",
+          "note": "product-audits/windowsweep/2026-11-10-0028: MANIFEST, coverage (security 41/44, experience 29/37, discoverability 31/34), three lane files, findings.json (14). REPORT, RESUME and fix-ledger are owed at records.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.audit-search",
+          "title": "Search audit run on every surface, including the 28 /compare URLs",
+          "status": "in_progress",
+          "note": "Full crawl of both hosts, www, npm, GitHub and the functions host: every SA pattern PASS except G11 (Yandex tags not deployed). Evidence in code-folder-root p51 evidence/2026-11-10-0028/live-crawl.json. Report, STATUS.json, IndexNow and the learning inbox are owed after the deploys.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.audit-stack",
+          "title": "Stack audit and package currency; majors adopted across the codebase",
+          "status": "complete",
+          "note": "ncu read-only on desktop, web, docs; majors: i18next 27 / react-i18next 18 (released 2026-11-07) wait recorded, adopt by 2026-11-21; TypeScript 7 ledger pin (typescript-eslint peers <6.1).",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.schema",
+          "title": "G1: SCHEMA.md gains billing_subscription_states and the 2026-11-07 functions; seeded non-admin proof covers the table",
+          "status": "complete",
+          "note": "SCHEMA.md gains billing_subscription_states, the broadcast trigger, the 2026-11-07 functions and the FilesHub keepalive note (b874432); drizzle-kit check fine; the seeded non-admin proof covered the new table (403/401).",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.ads",
+          "title": "G2-G5, G10: plain ads words (D101), hub row relabel (D100), roster re-vendor, clickable desktop cards (D102)",
+          "status": "in_progress",
+          "note": "Code and words done and pushed: desktop cards open products (b874432), website lede and roster (web 2a405f0), hub row relabel on website record and 13 docs guides (docs f2fcd90), Polar brief (root), story record (ads-plain-2026-11-10). Live only after the 1.4.7 release and the two deploys.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.yandex",
+          "title": "G11: integrate the prepared Yandex verification tags on the site and docs; owner presses Verify",
+          "status": "in_progress",
+          "note": "Fast-forwarded onto main: web dd6ff9f, docs c13c940 (pushed). Ships in the next site and docs deploys; then the owner presses Verify (MANUAL row 40).",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.fileshub",
+          "title": "G6: FilesHub platforms add npm, project links, Polar payment account link",
+          "status": "complete",
+          "note": "Platforms desktop, web, npm; links website, docs, releases, npm, repo; readiness 11/12. The Polar account link has no API (GET/HEAD only): MANUAL row 39. Record map updated.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.records-fixes",
+          "title": "G7 store set NA line, G8 manual row 15, G9 portfolio-info refresh",
+          "status": "in_progress",
+          "note": "Row 15 moved to Completed; rows 39 and 40 added; GitHub repo description and the fleet roster row corrected (notebook 7180f5bc); 30 proof run claims deleted. Owed: the store-set NA line in production/windowsweep.md and the portfolio-info refresh (product root + notebook).",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.update-flow",
+          "title": "Gate 4: layer 2 re-proved on the test channel (D103-3); layer 1 installed 1.4.6 -> 1.4.7",
+          "status": "pending",
+          "note": "Layer 2 test-channel re-proof (D103-3) on the final source; layer 1 installed 1.4.6 -> 1.4.7 after the publish.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.release",
+          "title": "Release 1.4.7: desktop Latest, CLI tag, npm from the gated tarball",
+          "status": "in_progress",
+          "note": "Cascade committed and pushed as b874432 (main). CLI gates: self-test 223/223, version parity 1.4.7, PSScriptAnalyzer 0 (plant 2), pack 53 files. Desktop gates green (52 tests). Signed build started 2026-11-10 ~13:05 +0500 from b874432; artifacts in desktop/src-tauri/target/release/bundle. NOT published: no tag, no GitHub release, no npm publish yet.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.deploy",
+          "title": "One site deploy and one docs deploy, live verification, IndexNow",
+          "status": "pending",
+          "note": "One site deploy after the release facts (download.ts, changelog, feed, home note, JSON-LD version, dummy pages, sitemap fixed point); one docs deploy (changelog 1.4.7, intro version) with the D100 guides and the Yandex tag.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.records",
+          "title": "Per-command records in queue order, context-fix-project last, memory",
+          "status": "pending",
+          "note": "Per-command records in queue order, context-fix-project last, memory.",
+          "awaitingUser": false
+        },
+        {
+          "id": "P10.confirm",
+          "title": "Confirmation gate: every command against its close criteria",
+          "status": "pending",
+          "note": "Confirmation gate per command.",
+          "awaitingUser": false
+        }
+      ]
     }
   ],
   "runHistory": [
@@ -1671,9 +1775,101 @@
           "gh-pages b26358b"
         ]
       }
+    },
+    {
+      "date": "2026-11-08",
+      "model": "claude-opus-5.5; Claude Code main session (session 24, continued)",
+      "phase": "complete-project resume: the Comparison Hub's vision gaps and brand kit, ISSUE-002 to ISSUE-005 fixed at their roots, release 1.4.5",
+      "summary": "Vision gaps recorded beside the owner's words (trackers are not cleared; Pro carries three features Free does not). Brand kit built from the header mark (536db41), then superseded on main by another session's fuller kit with the four-colourway print set and jersey mockups (0199f83, b231b7c). ISSUE-003: polar-webhook v8 records Polar's subscription events, my_plan() returns renews (migrations 20261107193543, 20261107193640, D97); the site and the desktop draw the approved until/ends lines. ISSUE-004: install-on-close armed at discovery, a close mid-download waits for it (proved on a local test channel). ISSUE-005: Clarity never runs on /account, /admin, /contact or a return page, stopped before the router writes the URL (beacon counts live, signed in and out). ISSUE-002: the docs chokepoint paragraph corrected. Release 1.4.5: signed, desktop-v1.4.5 Latest, v1.4.5, npm 1.4.5, the installed 1.4.4 updated itself on close. Site d16a8762 then 50a8ae17 (release facts, the lazy changelog and feed catalogues, first load 240,142 B gzip, the release gate on GitHub's API, the social card in the current mark); docs eabbd60 (changelog, safety model, logo, favicon, card). ISSUE-006 filed (background update checks held to the splash's 4 s deadline).",
+      "commits": {
+        "product": [
+          "536db41",
+          "cd875bf",
+          "fab450b",
+          "aee6a46",
+          "49756e6",
+          "447992a"
+        ],
+        "web": [
+          "3de6b82",
+          "c51b464",
+          "88c05b6",
+          "4caa72a"
+        ],
+        "docs": [
+          "3818091",
+          "8434965"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-08",
+      "model": "claude-opus-5.5; Claude Code main session (session 24, continued; paused at the owner's request)",
+      "phase": "complete-project resume: release 1.4.6 (ISSUE-006, the root TASK-001 brand-kit icon), then a safe pause",
+      "summary": "Release 1.4.6: every check the splash does not make waits 20 s and the splash keeps 4 (ISSUE-006); the app icon, the setup and uninstaller icon and the installer Welcome and Finish pictures come from the brand kit, and the site's favicon, .ico, touch icon and email logo follow (root TASK-001). Built and signed here, tagged on 42baf79, desktop-v1.4.6 Latest and v1.4.6 on GitHub, windowsweep@1.4.6 on npm (the gated tarball), proven on a slow local channel and on the installed copy (1.4.5 to 1.4.6, read three ways). Site 71d1a89c and docs d6bc128 deployed and verified live. The two anonymous users the 1.4.5 proofs had created were deleted (D98). Paused here at the owner's request; resume point in the root remaining-work-summary.md.",
+      "commits": {
+        "product": [
+          "e1a3308",
+          "8ee0a78",
+          "8887db3",
+          "f661d16",
+          "0e51613",
+          "42baf79"
+        ],
+        "web": [
+          "07a53bf",
+          "2c7b355"
+        ],
+        "docs": [
+          "82aa975"
+        ],
+        "docsPages": [
+          "d6bc128"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-09",
+      "model": "Codex main session",
+      "phase": "complete-project: owner approval and fifth hard gate",
+      "summary": "D99 records the owner's approval of the live Comparison Hub words. MANUAL-TASKS row 38 moved to completed. Both hubs and sample rival pages returned 200, both sitemaps list 14 comparison URLs, and the source data has 13 rivals checked 2026-11-07. The completion audit closes at 100/100 and 5 of 5 gates. Notebook lessons were already pushed at 83a2daf7; its original checkout has unrelated dirty work and remains unsynced.",
+      "commits": {
+        "product": [
+          "ebc0045"
+        ],
+        "docs": [
+          "c22d008"
+        ],
+        "docsPages": [
+          "f26cbe5"
+        ]
+      }
+    },
+    {
+      "date": "2026-11-10",
+      "model": "Opus 5.5 main session",
+      "phase": "complete-project run 2026-11-10-0028: audits, fixes, release 1.4.7 cascade (paused before publish)",
+      "summary": "New run after the 2026-10-30-2224 close. Plan-mode findings G1-G12; owner answers D100-D104. Audits: security 41/44, experience 29/37, discoverability 31/34, search crawl clean except the undeployed Yandex tag, stack updates. Fixed and pushed: SCHEMA.md, house ads named plainly (website, desktop, hub, docs, Polar brief), clickable desktop promotions, roster re-vendor, pricing CLS, tour hint after the legal bar, package updates (Tauri 2.12), FilesHub readiness 11/12, GitHub description, proof claims cleanup. Paused before the 1.4.7 publish at the owner's request.",
+      "commits": {
+        "product": [
+          "bd13ad4",
+          "b874432"
+        ],
+        "web": [
+          "dd6ff9f",
+          "2a405f0"
+        ],
+        "docs": [
+          "c13c940",
+          "f2fcd90"
+        ],
+        "notebook": [
+          "7180f5bc"
+        ]
+      }
     }
   ],
-  "resumeInstructions": "LATEST 2026-11-04 LIVE CHECKPOINT: audit 62/100 after installed 1.4.1 Picker preview, 101 MiB Recycle Bin run, JSON receipt and protected refusal. Website a72c5e3 with phone app view, page tours and guarded /admin/releases is deployed; live 390 touch home, app tabs and tour passed, and the live entry bundle matched the verified build. Authenticated non-admin phone journeys and genuine-admin Releases form remain open. Desktop tours and walkthrough pass 40 source tests and native 1440/760 checks; seven images are now real 1.4.1 captures, but desktop tour source is not packaged or released. Production Supabase nlmetjyytgwaxcliusuo has 24 applied migrations; no release row was published. Resume with authenticated site/RLS and admin proof, a coordinated desktop release and live update-flow proof. Polar webhook secrets/sandbox proof, received email, separate hosted restore target, second-machine P1/P5 and owner P4 records remain open. Read ../machine-evidence/p52-2026-11-02/REPORT.md section 19 and production/windowsweep-complete-project.json in projects-finalization-record before resuming.",
+  "resumeInstructions": "Run 2026-11-10-0028 is PAUSED (P10). FIRST: publish release 1.4.7 from b874432 (the README and CHANGELOG on main already say 1.4.7). The full ordered list is in the record repo production/windowsweep-complete-project.json -> resume.next_steps_in_order, and the root remaining-work-summary.md \"Resume point\".",
   "auditPlanFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-humming-snowflake.md (the 2026-09-12 audit); the 2026-09-05 audit was please-audit-the-whole-streamed-nest.md",
   "planCopy": "../completion-plan-v4-2026-09-17.md",
   "planFileV3": "C:/Users/PC/.claude/plans/please-audit-the-whole-humming-snowflake.md",

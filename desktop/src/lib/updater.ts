@@ -48,8 +48,19 @@ export interface UpdateHandle {
   downloadAndInstall: (onProgress: (percent: number | null) => void) => Promise<void>;
 }
 
-/** A few seconds. Long enough for a slow answer, short enough to never feel stuck. */
+/**
+ * The splash's check. A start waits on it, so a few seconds: long enough for a slow answer,
+ * short enough to never feel stuck.
+ */
 export const UPDATE_CHECK_TIMEOUT_MS = 4000;
+/**
+ * Every check the splash does not make (ISSUE-006): the ones focus, resume and reconnect
+ * start, which nobody waits on, and a press on the release gate's Update, which a person asked
+ * for and is watching. GitHub's release-download address has answered in 4 to 12 seconds for an
+ * hour at a time while its API answered in one, and held to the splash's 4 seconds the
+ * installed apps skipped check after check.
+ */
+export const LATER_CHECK_TIMEOUT_MS = 20 * 1000;
 const RESUME_CHECK_MIN_GAP_MS = 60 * 1000;
 
 let lastCheckStartedAt = 0;
@@ -301,11 +312,18 @@ async function performUpdateCheck(
   }
 }
 
-/** Share one network request between Splash and lifecycle events. */
+/**
+ * Share one network request between Splash and lifecycle events.
+ *
+ * 🔴 A caller that finds a check under way waits for it no longer than its own deadline. A
+ * focus event can start a 20-second check before the splash asks for its 4-second one, and the
+ * splash must still let the person in on time; the check it joined carries on, and stages the
+ * update if it finds one.
+ */
 export function checkForUpdate(
   timeoutMs: number = UPDATE_CHECK_TIMEOUT_MS
 ): Promise<UpdateOutcome> {
-  if (pendingCheck) return pendingCheck;
+  if (pendingCheck) return waitAtMost(pendingCheck, timeoutMs + 1000);
   lastCheckStartedAt = Date.now();
   const work = performUpdateCheck(timeoutMs);
   pendingCheck = work;
@@ -314,6 +332,12 @@ export function checkForUpdate(
   };
   void work.then(clearPending, clearPending);
   return work;
+}
+
+/** Wait for a check already under way, up to a deadline; it is reported once, by its starter. */
+async function waitAtMost(work: Promise<UpdateOutcome>, ms: number): Promise<UpdateOutcome> {
+  const outcome = await withDeadline(work, ms);
+  return outcome === TIMED_OUT ? { kind: 'skipped', reason: 'deadline' } : outcome;
 }
 
 /**
@@ -326,7 +350,7 @@ export function watchForUpdates(
 ): () => void {
   let active = true;
   const checkAndReport = () => {
-    void checkForUpdate().then((outcome) => {
+    void checkForUpdate(LATER_CHECK_TIMEOUT_MS).then((outcome) => {
       if (active) onOutcome(outcome);
     });
   };

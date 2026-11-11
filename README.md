@@ -43,7 +43,7 @@ It is the Windows member of a family with [linux-cleanup](https://github.com/aon
 | **Platforms** | Windows 10 (1809+) and Windows 11 |
 | **Install size** | ~167 kB packed · ~560 kB unpacked · 53 files · no dependencies |
 | **Undo** | Recycle Bin for personal files; none for caches (they regenerate) |
-| **Status** | Stable · 1.4.7, released 2026-11-10 |
+| **Status** | Stable · 1.4.7, released 2026-11-11 |
 
 <a id="table-of-contents"></a>
 ## 🧭 Table of Contents&nbsp;[#](#table-of-contents)

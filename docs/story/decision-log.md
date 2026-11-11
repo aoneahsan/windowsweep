@@ -1661,3 +1661,13 @@ floor - with no NEEDS DECISION. GATE 4 from the owner in plan mode: D101 (the th
 label "States no third-party ads or bundled offers"). The Bible gains one constraint: the promotions are named as ads
 wherever they are described, and the no-ad-network promise stands beside that. No motif, palette or fingerprint change.
 Draft: `drafts/ads-plain-2026-11-10.md`.
+
+## 2026-11-11 - `release-1.4.7` (rows 27 and 1) recorded under D59
+
+The 1.4.7 changelog, the desktop About card action and the CLI package were checked against the draft at
+`drafts/release-1.4.7.md`. The shared desktop summary is the same in the release kit and updater manifest. The
+main-session lean panel found no invented claim or unanswered decision; story lint passed after the rhythm
+edit. FACT-CONSISTENCY PASS and finalizer READY satisfy D59's GATE 4 condition for row 27, with row 1's
+earlier pre-authorisation covering the README date. The desktop and CLI GitHub releases were published on
+2026-11-11. Website, docs and npm publication still depend on their remaining gates. The words add no
+Bible term, motif or palette change, so the voice registry needs no edit.

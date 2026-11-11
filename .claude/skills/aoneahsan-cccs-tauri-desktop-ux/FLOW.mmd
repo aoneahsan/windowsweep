@@ -1,0 +1,49 @@
+%% Tauri desktop UX — full flow
+%% Pure Mermaid. No Markdown fence.
+
+flowchart TD
+    trigger([Designing or reviewing a desktop surface]) --> surface{What is being added?}
+
+    surface -->|A window| win
+    surface -->|A menu| menu
+    surface -->|Tray or close behaviour| close
+    surface -->|A global shortcut| short
+    surface -->|Theme handling| theme
+
+    win[Set minWidth/minHeight a real<br/>layout survives — users WILL make<br/>it narrow]
+    win --> persist[Persist size and position<br/>via the Window State plugin]
+    persist --> multi{More than one window?}
+    multi -->|yes| percap[One purpose per window<br/>+ its OWN capability entry]
+    multi -->|no| kb
+    percap --> kb
+
+    menu[Native menus with CmdOrCtrl accelerators]
+    menu --> osdiff{Which OS conventions?}
+    osdiff -->|macOS| mac[App menu at the SCREEN top<br/>About/Quit expected<br/>app survives last window close]
+    osdiff -->|Windows / Linux| winlin[Menu inside the window<br/>quitting with the last window is normal]
+    mac --> kb
+    winlin --> kb
+
+    close{What should the close button do?}
+    close -->|Document or editor app| closewin[Close the window<br/>quit on last close, except macOS]
+    close -->|Background utility, sync, monitor| tray[Hide to tray AND TELL THE USER<br/>the first time — a silent vanish<br/>reads as a crash]
+    tray --> quit[Tray menu ALWAYS offers a real Quit]
+    closewin --> kb
+    quit --> kb
+
+    short[Register sparingly]
+    short --> conf[Make it user-configurable —<br/>a fixed hotkey collides silently<br/>with other apps. Unregister on exit.]
+    conf --> kb
+
+    theme[Follow the OS light/dark preference<br/>allow a user override]
+    theme --> kb
+
+    kb{Fully keyboard operable?<br/>Logical order, visible focus,<br/>Escape closes, Enter confirms}
+    kb -->|no| fixkb[Fix focus and key handling]
+    fixkb --> kb
+    kb -->|yes| done([Done: behaves like a native app])
+
+    classDef gate fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    class surface,multi,osdiff,close,kb gate
+    class trigger,done terminal

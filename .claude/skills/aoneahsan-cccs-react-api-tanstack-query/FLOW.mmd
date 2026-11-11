@@ -1,0 +1,62 @@
+%% aoneahsan-cccs-react-api-tanstack-query — full flow
+flowchart TD
+    trigger([Data needed from a server]) --> how{How is it being fetched?}
+    how -->|useEffect + useState| migrate[Migrate to useQuery —<br/>you are hand-rolling caching,<br/>dedup, retry and refetch]
+    how -->|stored in zustand| move[Move it. Query owns server data]
+    how -->|useQuery| key
+    migrate --> key
+    move --> key
+
+    key[Query key from a per-domain factory —<br/>never an inline string array]
+    key --> deps{Is EVERY value the query<br/>depends on in the key?}
+    deps -->|no| addkey[Add it — a missing filter serves<br/>stale results for the WRONG filter]
+    deps -->|yes| shape
+    addkey --> shape
+
+    shape{Is this a LIST read?}
+    shape -->|yes| budget[/🔴 DATA-FETCH BUDGET/]
+    budget --> lim{Explicit limit set?}
+    lim -->|no| bounded{Structurally bounded<br/>enum-like collection?}
+    bounded -->|yes| comment["Allowed — add // bounded: reason"]
+    bounded -->|no| bug[THIS IS A BUG. Collections grow.<br/>Default 20, hard max 50.<br/>An unbounded read took production<br/>down for a day]
+    bug --> setlimit[Set the limit]
+    lim -->|yes| server
+    setlimit --> server
+    comment --> server
+
+    server{Filtering, sorting<br/>or counting?}
+    server -->|filter/sort| serverside[Do it SERVER-side via query + index.<br/>Client-side only within one<br/>already-limited page]
+    server -->|count| agg[Aggregation or a counter field.<br/>NEVER read the docs to count them]
+    server -->|no| pages
+    serverside --> pages
+    agg --> pages
+    pages{More than one page?}
+    pages -->|yes| cursor[Cursor/keyset pagination.<br/>Never offset loops,<br/>never 'load 500 show 20']
+    pages -->|no| stale
+    cursor --> stale
+
+    shape -->|no, single record| stale
+    stale{How often does<br/>this actually change?}
+    stale -->|rarely| longstale[staleTime >= 5 min,<br/>refetchOnWindowFocus: false]
+    stale -->|must be live| livestale[Short staleTime, or a SCOPED<br/>listener — single doc or limited query,<br/>detached on unmount]
+
+    longstale --> states
+    livestale --> states
+    states[Render loading, EMPTY and error<br/>as distinct states —<br/>an empty list shown as a spinner<br/>reads as broken]
+
+    states --> mutate{Mutating?}
+    mutate -->|yes| invalidate[Invalidate the affected keys.<br/>Do not hand-patch the cache]
+    invalidate --> optimistic{Is the latency<br/>actually felt?}
+    optimistic -->|yes| snapshot[Optimistic update with an<br/>onMutate snapshot + onError rollback]
+    optimistic -->|no| plain[Plain invalidate is enough]
+    mutate -->|no| done
+    snapshot --> done
+    plain --> done
+    done([Verified against the budget])
+
+    classDef gateNode fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    classDef warn fill:#fef2f2,stroke:#dc2626,color:#7f1d1d
+    class how,deps,shape,lim,bounded,server,pages,stale,mutate,optimistic gateNode
+    class trigger,done terminal
+    class bug,budget warn

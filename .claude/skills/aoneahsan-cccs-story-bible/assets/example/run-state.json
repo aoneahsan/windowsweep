@@ -1,0 +1,21 @@
+{
+  "schema": "story-run-state/1",
+  "project": "example-steady-habits",
+  "bibleApproved": true,
+  "surface": "onboarding",
+  "phase": "write",
+  "status": "in-progress",
+  "round": 0,
+  "gate": null,
+  "openDecisions": [],
+  "approvedAt": null,
+  "escalatedAt": null,
+  "registryUpdatedAt": null,
+  "updatedAt": "2026-08-27T12:00:00Z",
+  "history": [
+    {"at": "2026-08-27T11:00:00Z", "phase": "bible", "status": "awaiting-approval", "note": "Discover complete (assumed answers); GATE 1 asked"},
+    {"at": "2026-08-27T11:05:00Z", "phase": "bible", "status": "approved", "note": "GATE 1 — approved by construction for the worked example"},
+    {"at": "2026-08-27T11:20:00Z", "phase": "map", "status": "approved", "note": "GATE 2 — six rows, question map with sources labelled"},
+    {"at": "2026-08-27T12:00:00Z", "phase": "write", "status": "in-progress", "note": "writer dispatched for onboarding"}
+  ]
+}

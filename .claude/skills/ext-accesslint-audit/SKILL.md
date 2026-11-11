@@ -1,7 +1,7 @@
 ---
 name: ext-accesslint-audit
 description: Find and fix WCAG 2.2 accessibility issues. Two modes — report (sweep a codebase or page, produce a prioritized written report, no edits) and fix (audit→edit→verify loop on a target). Prefers direct-CDP live-DOM auditing; falls back to HTML-string audits.
-allowed-tools: Read, Edit, Write, Glob, Grep, Bash, Skill, Task, mcp__accesslint__audit_html, mcp__accesslint__audit_live, mcp__accesslint__explain_rule, mcp__accesslint__list_rules
+allowed-tools: Read, Edit, Write, Glob, Grep, Bash, Skill, mcp__accesslint__audit_html, mcp__accesslint__audit_live, mcp__accesslint__explain_rule, mcp__accesslint__list_rules
 ---
 
 You audit accessibility and optionally fix what's broken.
@@ -13,24 +13,24 @@ You audit accessibility and optionally fix what's broken.
 
 If unsure, ask. Don't default-to-fix when the user only asked for an audit.
 
-For very large sweeps where main-thread context cost matters, you can be invoked via `Task` (general-purpose agent) for context isolation. The recipe is the same either way.
+Work in the main session. Project-local skills do not authorize a subagent.
 
 ## Picking a flow
 
-Two flows, in order of preference.
+Use the available flow that respects the approved browser and tools.
 
-1. **`audit_live`** — try first for any URL. Ensures a debuggable Chrome (auto-launches one headless if none is reachable — no user setup needed), then audits the live DOM. Single call; the audit engine never enters your context. Use `selector` to scope to one component and `wait_for` to gate on async content.
+1. **`audit_live`** — use only when the AccessLint connector is available and attached to the project's approved automation browser. Never let it launch system Chrome. Use `selector` to scope to one component and `wait_for` to gate on async content.
 2. **`audit_html`** — for raw HTML strings, files (`Read` first, then `audit_html`), or JSX you've rendered to a string.
 
-For non-URL targets, use flow 2. For URLs, use flow 1; if Chrome can't be launched (no system Chrome and download disabled), fall back to flow 2 with a note that live-DOM coverage is limited.
+For non-URL targets, use flow 2 when the connector is available; otherwise inspect the source manually. For URLs, use flow 1 only when the approved browser and connector are available. Otherwise, inspect the rendered page through the approved automation browser and report that AccessLint's live rule coverage was unavailable. Do not treat a source or HTML-string check as equivalent to a live DOM audit.
 
-Auditing a user's **already-open, authenticated** session isn't a separate flow anymore: have them start a headed debuggable Chrome (`npx @accesslint/chrome ensure --headed`), sign in there, then call `audit_live({ url, port })` — it attaches to that Chrome instead of launching its own.
+For an authenticated session, use the project's non-admin test identity in the approved automation browser. Attach AccessLint only if its connector supports that existing browser; never launch another Chrome profile.
 
 ## Scope handling (report mode)
 
 - **Directory path** — analyze all relevant files within.
 - **Multiple files** — analyze the listed files plus imports they reach.
-- **A URL** — audit it. If it's a dev-server URL, that's flow 1.
+- **A URL** — audit it through the approved browser. A dev-server URL also needs that browser.
 - **No arguments** — ask the user to narrow scope. Whole-codebase sweeps are rarely the right thing.
 
 State the scope explicitly at the start of your report.
@@ -79,7 +79,7 @@ For each pattern:
 What the codebase does well — short, factual, reinforces practices to keep.
 ```
 
-Include rule IDs in every entry. Quote the `Fix:` directive verbatim for `mechanical` rules. For `visual` / `contextual`, leave a `TODO` with the rule ID; don't invent content.
+Include rule IDs in every engine finding. Quote the `Fix:` directive verbatim for `mechanical` rules. For `visual` or `contextual` findings, record the question in the task record and resolve it before closing; do not invent content.
 
 ## Recipe (fix mode)
 
@@ -87,7 +87,7 @@ Include rule IDs in every entry. Quote the `Fix:` directive verbatim for `mechan
 2. **Plan + apply.** For each violation:
    - `Source:` line present → open that file at that line. If multiple are listed (separated by `←`), the first is the JSX literal; the rest are enclosing components. Use `Symbol` to disambiguate.
    - No `Source:` → grep stable hooks (`data-testid`, `id`, `aria-label`), then visible text, then tree position.
-   - The violation's `Fixability:` and `Fix:` fields are authoritative — apply mechanical fixes verbatim, leave `TODO`s with the rule ID for `contextual` / `visual`. Never invent content.
+   - Treat the violation's `Fixability:` and `Fix:` fields as evidence to verify against the actual component. Resolve contextual and visual findings in the task record before closing; never invent content.
    - Group same-file edits into one operation.
    - Confirm scope with the user before touching files outside the obvious target, or before more than ~10 mechanical fixes.
 3. **Verify.** Re-run the same audit and compare against your before-list: confirm every targeted violation is gone and no new one appeared. For URL targets that need a rigorous new-vs-fixed-vs-preexisting diff against an actual baseline, use the `accesslint:diff` skill (snapshot-based) instead of eyeballing.
@@ -98,9 +98,9 @@ When unsure about a rule, call `explain_rule({ id: "<rule-id>" })` for guidance 
 
 ## When to bail (fix mode)
 
-- A violation has no `Fix:` directive — leave a `TODO`, don't guess.
+- A violation has no `Fix:` directive — investigate the rule and ask for an owner decision only if the correct outcome remains ambiguous.
 - Verification fails (a new violation appeared, or a targeted one is still present) — name it and stop. Do not iterate silently.
 
 ## Output (fix mode)
 
-Per cycle: flow used, violations by impact, what was applied (file + rule), what was deferred (`TODO`s + reasons), and the before/after violation counts.
+Per cycle: flow used, violations by impact, what was applied (file + rule), unresolved findings and their owners, and the before/after violation counts.

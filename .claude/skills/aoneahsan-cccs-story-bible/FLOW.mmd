@@ -1,0 +1,28 @@
+%% aoneahsan-cccs-story-bible — Discover to GATE 1
+flowchart TD
+    trigger([/story-init or a content request<br/>with no approved Bible]) --> evidence[Read bounded evidence:<br/>package.json · README headings · UI strings ·<br/>PROJECT-CONTEXT · palette registry slug]
+    evidence --> infer[Show a one-paragraph inference:<br/>nature · audience · current voice]
+    infer --> batch[Interview, ≤ 4 questions per batch:<br/>nature → audience → promise → palette →<br/>surfaces → language → safety → samples]
+    batch --> answered{Owner answered?}
+    answered -->|yes| fill[Answers replace the inference]
+    answered -->|no| mark[Section carries the inference<br/>marked inferred — confirm]
+    fill --> samples{Samples supplied?}
+    mark --> samples
+    samples -->|yes| fp[Fingerprint from samples:<br/>rhythm · diction · punctuation · stance ·<br/>8–12 sentences + do/don't]
+    samples -->|no| fpprov[Provisional fingerprint<br/>calibrated: false<br/>+ NEEDS DECISION to calibrate]
+    fp --> reg
+    fpprov --> reg[aoneahsan-cccs-story-voice-registry:<br/>register + uniqueness check]
+    reg --> collide{Collision?}
+    collide -->|yes| diff[Show it with a<br/>differentiation proposal]
+    collide -->|no| folder
+    diff --> folder[Create docs/story/ from templates:<br/>bible · fingerprint · content-map · decision-log ·<br/>run-state.json · drafts/]
+    folder --> g1{{GATE 1: approve / change sections / calibrate first}}
+    g1 -->|change| batch
+    g1 -->|approve| done([bibleApproved: true → content map])
+
+    evidence -.consult if present.-> law[(~/.claude/rules/storytelling-content.md)]
+
+    classDef gate fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    class answered,samples,collide,g1 gate
+    class trigger,done terminal

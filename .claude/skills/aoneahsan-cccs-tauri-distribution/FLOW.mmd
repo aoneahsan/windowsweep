@@ -1,0 +1,47 @@
+%% Tauri distribution — full flow
+%% Pure Mermaid. No Markdown fence.
+
+flowchart TD
+    trigger([Preparing a Tauri release]) --> version[Bump the version in ONE place<br/>package.json inherited by tauri.conf.json<br/>cascade to changelog + download page]
+
+    version --> icons[tauri icon from a PNG exported<br/>from the ONE master SVG<br/>direct CLI, no script files]
+
+    icons --> updater{Should the app self-update?}
+
+    updater -->|yes| keys{Does a minisign keypair exist?}
+    keys -->|no| gen[tauri signer generate<br/>PRIVATE key to ~/.secrets/tauri/<br/>+ a row in INDEX.md]
+    keys -->|yes| conf
+    gen --> conf
+
+    conf[tauri.conf.json:<br/>createUpdaterArtifacts true<br/>PUBLIC key only · endpoints]
+    conf --> env[TAURI_SIGNING_PRIVATE_KEY in the<br/>build environment — without it<br/>you get installers with NO .sig<br/>and verification silently impossible]
+    env --> prompt[Prompt before installing —<br/>never restart a user mid-work<br/>unless the update is mandatory]
+    prompt --> build
+
+    updater -->|no| build
+
+    build[tauri build on EACH target OS —<br/>one machine cannot build them all]
+
+    build --> sign{Which platform?}
+
+    sign -->|Linux| linux[No signing needed.<br/>AppImage / deb / rpm ship cleanly.]
+    sign -->|Windows| windows[Certificate COSTS MONEY and there<br/>is none. Ship unsigned and DOCUMENT<br/>the SmartScreen warning users will see.<br/>Do not promise a signed build.]
+    sign -->|macOS| macos[Signing + notarization need an Apple<br/>Developer account, which does not exist.<br/>Gatekeeper blocks unsigned builds.<br/>USER-ONLY if an account is obtained.]
+
+    linux --> publish
+    windows --> publish
+    macos --> publish
+
+    publish[Publish to GitHub Releases —<br/>the free channel. Serve the update<br/>manifest: version + per-platform<br/>url and signature.]
+
+    publish --> verify{Installers present for each target?<br/>.sig files beside them if updating?<br/>No private key in the repo?}
+    verify -->|fails| fix[Fix, then re-check]
+    fix --> verify
+    verify -->|passes| done([Done: released honestly, updatable])
+
+    gen -.secrets store rule.-> reg[(../rules/project-config.md)]
+
+    classDef gate fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    class updater,keys,sign,verify gate
+    class trigger,done terminal

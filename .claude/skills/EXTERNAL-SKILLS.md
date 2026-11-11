@@ -1,27 +1,19 @@
-# External skills copied into this project
+# External skills in the WindowSweep product repo
 
-Copied from the machine-local cloned-skills library (`D:/work/git-cloned-skills/_reviewed`, machine
-`windows-p52`). Full catalog + vetting rules: `aoneahsan-cccs-cloned-skills-library`.
-**These are FORKS - they do not auto-update.**
+Last Updated: 2026-11-11
 
-Copied 2026-09-04, at the start of the desktop click dummy's second direction. This is the
-**mandatory core UI/UX set plus the click-dummy addition** - `recipes.md` requires it before any
-design phase begins, and its absence is a recorded cause of the rejection that made this rework
-necessary: *"the HabitForge rejection proved `-design-process` + `-cloned-skills-library` are not
-ceremony: those were the two omitted bodies, and the otherwise complete page came back generic."*
+These are vetted forks of the reviewed library at `D:/work/git-cloned-skills/_reviewed` on this machine. They do not update automatically. Project guidance and the globally installed `aoneahsan-cccs-*` skills own stack and workflow decisions. Re-vet a source before refreshing any copy.
 
-| Skill folder | Source repo | Why | Fixups applied |
+| Skill folder | Source repo and commit | Why it is here | Project fixups |
 |---|---|---|---|
-| `ext-uiuxpm-ui-ux-pro-max` | nextlevelbuilder/ui-ux-pro-max-skill | 192 palettes, 84 styles, 74 font pairings, 98 UX guidelines, queryable per stack | folder renamed, `name:` rewritten, `CLAUDE_PLUGIN_ROOT` -> relative, `python` -> `python3`; **query verified to return real data** |
-| `ext-bencium-ui-typography` | bencium-marketplace | Butterick's rules in enforcement mode | folder renamed, `name:` rewritten |
-| `ext-accesslint-audit` | accesslint-skills | checks the built result; React Aria only guarantees behaviour | folder renamed, `name:` rewritten |
-| `ext-anthropic-theme-factory` | anthropics/skills | coherent palette generation, pairs with the house palette registry | folder renamed, `name:` rewritten |
-| `ext-taste-design-taste-frontend` | taste-skill | brief inference + the variance/motion/density dials - the skill that catches a wrong design read | folder renamed, 🔴 `name:` was **`design-taste-frontend`**, not the folder name - the exact silent-discovery-failure the procedure warns about |
-| `ext-cds-motion-framer` | claudedesignskills | the desktop app is React; the dummy's motion spec translates into it | folder renamed, `name:` rewritten. ⚠️ that repo is stale - verify version claims independently |
+| `ext-uiuxpm-ui-ux-pro-max` | `ui-ux-pro-max-skill` `3b5df75` | Searchable design data for desktop and web | Name and plugin paths fixed earlier; Python search verified; the painted custom cursor style was removed from its data; seventeen cross-stack React rows removed. |
+| `ext-bencium-ui-typography` | `bencium-marketplace` `0e3ba07` | Text setting and readability | Name fixed earlier; reference paths corrected; approved type and copy take precedence. |
+| `ext-accesslint-audit` | `accesslint-skills` `ceb3fa8` | Structured accessibility checks | Name fixed earlier; system Chrome launch, default subagent and placeholder directions removed. Its optional connector is unavailable in this Codex session, so live rule coverage cannot be claimed here. |
+| `ext-anthropic-theme-factory` | `skills` `b29e7cf` | Palette coherence reference | Name fixed earlier; presets are references only, with the approved WindowSweep palette authoritative. |
+| `ext-taste-design-taste-frontend` | `taste-skill` `e988add` | Design read and variance, motion and density dials | Name fixed; narrowed to its craft contribution; upstream stack, package and placeholder directions removed. |
+| `ext-vercel-vercel-react-best-practices` | `vercel-labs-agent-skills` `7c180d9` | React rendering and bundle craft | Selected fourteen Vite-compatible rules; Next.js, SWR and direct storage guidance excluded. |
+| `ext-devkit-zod-validation-utilities` | `developer-kit` `306f428` | Zod v4 boundary examples | Name fixed; boolean parsing and error-tree examples corrected; project validation and i18n rules take precedence. |
 
-**Verified**, not assumed: every `name:` equals its folder, `grep -rn CLAUDE_PLUGIN_ROOT` returns
-nothing in any of the six, no `.env`/`.pem`/`.key` came along, and `search.py "desktop utility app
-dark" --design-system` returns a full design system rather than an error.
+The desktop app has no Motion dependency, so its old `ext-cds-motion-framer` copy was removed. Use the globally installed `aoneahsan-cccs-motion` guidance for desktop CSS motion.
 
-**Re-sync:** `git -C D:/work/git-cloned-skills/_reviewed/<repo> pull`, re-vet per `security.md`,
-re-copy, re-apply the fixups above.
+To verify a refreshed copy, match every `name:` to its folder, scan instructions and retained files against `aoneahsan-cccs-cloned-skills-library/references/security.md`, run any retained executable, and confirm the project-local Codex link resolves to the same folder. The UI design search is `python3 .claude/skills/ext-uiuxpm-ui-ux-pro-max/scripts/search.py "Windows cleanup desktop utility" --design-system`.

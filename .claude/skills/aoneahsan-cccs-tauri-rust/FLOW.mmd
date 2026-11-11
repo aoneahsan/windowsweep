@@ -1,0 +1,50 @@
+%% Rust for Tauri — full flow
+%% Pure Mermaid. No Markdown fence.
+
+flowchart TD
+    trigger([Writing Rust in src-tauri]) --> what{What is being added?}
+
+    what -->|A command| cmd
+    what -->|Shared state| state
+    what -->|Startup work| setup
+    what -->|A dependency| dep
+
+    cmd{Does it wait on IO?}
+    cmd -->|yes| async[async fn — take OWNED params<br/>&str is not supported directly]
+    cmd -->|no| sync[Plain fn]
+
+    async --> blocking{Does it do CPU-heavy<br/>or blocking work?}
+    blocking -->|yes| spawn[tauri::async_runtime::spawn_blocking<br/>otherwise the runtime stalls]
+    blocking -->|no| errors
+    spawn --> errors
+    sync --> errors
+
+    errors[Return Result, never panic —<br/>a panic can take down the PROCESS<br/>where a JS exception would be caught]
+    errors --> errtype{Does a serialisable<br/>error type exist?}
+    errtype -->|no| make[thiserror enum + manual Serialize<br/>use #from so ? works]
+    errtype -->|yes| lock
+    make --> lock
+
+    state[app.manage in setup — no Arc needed]
+    state --> mutex{Is it read from an<br/>ASYNC command?}
+    mutex -->|yes| tokio[tokio Mutex — .lock await<br/>a std guard held across await deadlocks]
+    mutex -->|no| stdm[std::sync::Mutex]
+    tokio --> lock
+    stdm --> lock
+
+    setup[.setup hook: seed state, open a db,<br/>register a tray, start background work<br/>Err here means the app will not start]
+    setup --> lock
+
+    dep[Minimal features:<br/>default-features = false + what you need]
+    dep --> size[Watch lib.rs size —<br/>split into src/commands/ modules<br/>before the 500-line ceiling]
+    size --> lock
+
+    lock{cargo fmt --check<br/>cargo clippy -- -D warnings}
+    lock -->|fails| fix[Fix, then re-run]
+    fix --> lock
+    lock -->|passes| done([Done: no panics, correct locking, lint-clean])
+
+    classDef gate fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    class what,cmd,blocking,errtype,mutex,lock gate
+    class trigger,done terminal

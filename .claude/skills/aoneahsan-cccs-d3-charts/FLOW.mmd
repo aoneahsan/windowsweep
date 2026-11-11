@@ -1,0 +1,51 @@
+%% D3 charts — full flow
+%% Pure Mermaid. No Markdown fence.
+
+flowchart TD
+    trigger([Building a chart]) --> data{How many marks?}
+
+    data -->|"more than ~1000"| canvas[Draw to CANVAS.<br/>D3 still owns the scales;<br/>SVG creates a DOM node per mark]
+    data -->|fewer| svg[SVG rendered by REACT]
+
+    canvas --> boundary
+    svg --> boundary
+
+    boundary{Who touches the DOM?}
+    boundary -->|"D3 .append / .attr on React nodes"| clash[🔴 The chart vanishes on re-render.<br/>React owns the DOM;<br/>D3 owns scales and layout maths]
+    clash --> boundary
+    boundary -->|"React renders, D3 calculates"| colour
+
+    colour{Colours from theme tokens?}
+    colour -->|"hardcoded hex"| hex[Invisible in dark mode, and it<br/>tracks no palette or rebrand.<br/>Use var--color-accent]
+    hex --> colour
+    colour -->|tokens| size
+
+    size[Size from a ResizeObserver on the CONTAINER<br/>— not a window listener; a sidebar opening<br/>changes the container, not the window]
+
+    size --> zero{width greater than 0?}
+    zero -->|no| wait[Render nothing yet.<br/>A chart drawn at zero width<br/>produces NaN paths]
+    wait --> zero
+
+    zero -->|yes| force{Is it a force simulation?}
+    force -->|yes| stop["Return sim.stop in the effect cleanup.<br/>🔴 Otherwise it ticks forever,<br/>setStates after unmount,<br/>and holds the graph in memory"]
+    force -->|no| states
+    stop --> states
+
+    states{Empty and single-point<br/>states designed?}
+    states -->|no| add[Empty = a designed state, never blank axes.<br/>One point = a dot with its value,<br/>because a line of one datum draws nothing]
+    add --> states
+
+    states -->|yes| a11y{Accessible?}
+    a11y -->|"no table fallback"| tbl[Add it — the table IS the accessible<br/>representation, not a consolation prize.<br/>Plus role=img + a meaningful label]
+    a11y -->|"colour is the only encoding"| enc[Pair it with shape, pattern or<br/>direct labels — red vs green is unreadable<br/>for the most common deficiency]
+    tbl --> a11y
+    enc --> a11y
+
+    a11y -->|passes| done([Done: re-themes with the app,<br/>readable by screen reader,<br/>no simulation left running])
+
+    classDef gate fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    classDef stopnode fill:#fef2f2,stroke:#dc2626,color:#7f1d1d
+    class data,boundary,colour,zero,force,states,a11y gate
+    class trigger,done terminal
+    class clash stopnode

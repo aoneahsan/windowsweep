@@ -1,0 +1,53 @@
+%% Tauri plugins — full flow
+%% Pure Mermaid. No Markdown fence.
+
+flowchart TD
+    trigger([A native capability is needed]) --> own{Is this the app's own logic,<br/>or a platform capability?}
+
+    own -->|own logic| command[Write a plain #tauri::command —<br/>simpler, no permission plumbing]
+    own -->|platform capability| pick{Which plugin?}
+
+    pick -->|Settings / small KV| store[Store]
+    pick -->|Relational data| sql[SQL]
+    pick -->|Secrets or credentials| strong[Stronghold — NEVER Store]
+    pick -->|Open a file or URL| opener[Opener — not Shell]
+    pick -->|Run a program| shell[Shell]
+    pick -->|Something else| cat[Check the catalogue]
+
+    store --> support
+    sql --> support
+    strong --> support
+    opener --> support
+    shell --> support
+    cat --> support
+
+    support{Does the target platform<br/>support this plugin?}
+    support -->|desktop-only, app also ships mobile| degrade[Design the feature to DEGRADE<br/>on mobile — dialogs, shell, tray,<br/>global shortcuts are desktop-only]
+    support -->|yes| wire
+    degrade --> wire
+
+    wire[Wire it in THREE places:<br/>1. Rust crate  2. JS package<br/>3. capability permission]
+
+    wire --> third{Is the capability permission added?}
+    third -->|no| runtimefail[It compiles and then FAILS AT RUNTIME<br/>with a permission error. Add it.]
+    third -->|yes| scope
+    runtimefail --> third
+
+    scope{Is this fs or shell?}
+    scope -->|fs| fsscope[Scope allow paths to what the app owns —<br/>unscoped fs:default is read access<br/>to the user's whole disk]
+    scope -->|shell| shscope[Allowlist SPECIFIC commands with fixed<br/>arguments — never let the frontend<br/>choose the binary]
+    scope -->|neither| verify
+    fsscope --> verify
+    shscope --> verify
+
+    command --> verify
+
+    verify{Call succeeds at runtime?<br/>Permission is the narrowest that works?}
+    verify -->|denied| third
+    verify -->|too broad| scope
+    verify -->|good| done([Done: wired, scoped, least-privilege])
+
+    classDef gate fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    class own,pick,support,third,scope,verify gate
+    class trigger,done terminal

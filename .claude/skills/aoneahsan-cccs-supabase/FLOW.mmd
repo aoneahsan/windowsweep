@@ -1,0 +1,63 @@
+%% aoneahsan-cccs-supabase — full flow
+flowchart TD
+    trigger([Supabase work]) --> task{What are you doing?}
+
+    task -->|choosing a backend| fit{Does the feature need joins,<br/>relational queries or<br/>real text search?}
+    fit -->|yes| choose[Supabase is the right fit —<br/>Firestore has none of these]
+    fit -->|no| firebase[Firebase is likely simpler.<br/>See the firebase skill]
+    choose --> resolve
+
+    task -->|anything touching the database| resolve{Which hosted project<br/>is this codebase?}
+    resolve -->|PROJECT-CONTEXT.md ref| verify
+    resolve -->|.env VITE_SUPABASE_URL| verify
+    resolve -->|only a name match| confirm[Confirm with the owner ONCE,<br/>then record it.<br/>linkedin-automation vs<br/>linkedin-automation-app]
+    resolve -->|nothing| blocked
+    confirm --> verify
+    verify["GET /supabase-projects/ref<br/>must return 200.<br/>A recorded ref that 404s is STALE"] --> gate
+
+    gate{Which gate does the<br/>NEXT step need?}
+    gate -->|app reads or writes| g1{G1: endpoints.api +<br/>config.publishable_key?}
+    gate -->|migration / db push / SQL| g2{G2: has.db_password +<br/>has.db_url_session_pooler?}
+    gate -->|functions deploy / secrets / link| g3{G3: the ACCOUNT's<br/>personal_access_token?}
+
+    g1 -->|no| blocked
+    g2 -->|no| blocked
+    g3 -->|no| blocked
+    blocked[🔴 BLOCK. I NEED THIS FROM YOU:<br/>name the gate, the exact call and<br/>what it returned, options,<br/>recommendation — then PAUSE.<br/>Never create a project yourself.<br/>Block the STEP, not the session]
+
+    g1 -->|yes| runtime[Wire the app.<br/>Publishable key in the client;<br/>secret key server-only]
+    g2 -->|yes| migrate["supabase migration new,<br/>then supabase db push.<br/>Forward-only, idempotent, additive"]
+    g3 -->|yes| platform[Feed the PAT via<br/>SUPABASE_ACCESS_TOKEN env —<br/>never a --flag]
+
+    migrate --> destructive{Does it drop, truncate,<br/>widely delete, or lose a type?}
+    destructive -->|yes| ownerask[🔴 OWNER DECISION.<br/>dev IS prod — there is<br/>no local copy to restore]
+    destructive -->|no| push[Apply via the SESSION POOLER.<br/>db.ref.supabase.co is IPv6-only]
+
+    task -->|table or policy work| rls{Is RLS enabled<br/>on this table?}
+    rls -->|no| enable[🔴 ENABLE IT. Without RLS the<br/>publishable key reads everything —<br/>and it ships in the browser]
+    rls -->|yes| policies[Write policies per operation:<br/>select, insert, update, delete]
+    enable --> policies
+    policies --> probe[Prove it: 403-vs-200 probe<br/>as a NON-ADMIN. Seed first —<br/>200 with 0 rows proves nothing.<br/>Read-only unless a write is the point]
+
+    task -->|querying| budget{Explicit limit set?}
+    budget -->|no| addlimit[Default 20, hard max 50 —<br/>the read budget applies unchanged]
+    budget -->|yes| keyset["Keyset pagination:<br/>WHERE id > cursor LIMIT n.<br/>NEVER OFFSET"]
+    addlimit --> keyset
+    keyset --> countq["Counts via COUNT(*), server-side.<br/>Never count rows client-side"]
+
+    firebase --> done
+    runtime --> done
+    push --> done
+    ownerask --> done
+    platform --> done
+    probe --> done
+    countq --> done
+    blocked --> done
+    done(["🔴 NEVER: supabase db reset, start,<br/>stop, 127.0.0.1:54321, seed.sql wipes.<br/>Storage and email go to FilesHub.<br/>Auth stays Google-only"])
+
+    classDef gateNode fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    classDef warn fill:#fef2f2,stroke:#dc2626,color:#7f1d1d
+    class task,fit,resolve,gate,g1,g2,g3,rls,keys,budget,destructive gateNode
+    class trigger,done terminal
+    class enable,blocked,ownerask warn

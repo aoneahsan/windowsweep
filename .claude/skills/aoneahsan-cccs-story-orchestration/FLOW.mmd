@@ -1,0 +1,37 @@
+%% aoneahsan-cccs-story-orchestration — the state machine with its four gates
+flowchart TD
+    req([Content request]) --> hasBible{Approved Bible<br/>in docs/story/?}
+    hasBible -->|no| discover[Discover → Bible → fingerprint<br/>→ registry + uniqueness]
+    discover --> g1{{GATE 1<br/>approve the Bible}}
+    g1 -->|no| discover
+    g1 -->|yes| mapped
+    hasBible -->|yes| mapped{Surface has a<br/>content-map row?}
+    mapped -->|no| cmap[Content map + question map]
+    cmap --> g2{{GATE 2<br/>approve the plan}}
+    g2 -->|no| cmap
+    g2 -->|yes| write
+    mapped -->|yes| write[writer opus → draft + self-check]
+    write --> nd1{NEEDS DECISION?}
+    nd1 -->|yes| ask1[Ask the owner verbatim, this turn] --> write
+    nd1 -->|no| dev[dev-editor fable]
+    dev --> revise[writer revises] --> line[line-editor] --> copy[copy-editor]
+    copy --> par[fact-checker · seo-aeo · hook · humor<br/>parallel, read-only]
+    par --> keeper[bible-keeper reconciles<br/>against the Bible]
+    keeper --> agreed{Agreed?}
+    agreed -->|no, round 1| revise
+    agreed -->|no, after round 2| g3{{GATE 3<br/>both positions logged<br/>owner decides}}
+    g3 --> fin
+    agreed -->|yes| fin[finalizer: humanize +<br/>fact + AEO checks]
+    fin --> g4{{GATE 4<br/>approve publish}}
+    g4 -->|no| revise
+    g4 -->|yes| record[keeper: Bible · decision log ·<br/>registry · run-state recorded]
+    record --> done([Published])
+
+    write -.stamps.-> rs[(docs/story/run-state.json)]
+    keeper -.stamps.-> rs
+    rs -.read by.-> hooks[(SessionStart banner ·<br/>Stop gate)]
+
+    classDef gate fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    class hasBible,mapped,nd1,agreed,g1,g2,g3,g4 gate
+    class req,done terminal

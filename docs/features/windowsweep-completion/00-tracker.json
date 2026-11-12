@@ -3,7 +3,7 @@
   "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md, which since 2026-09-07 lives at the WORKSPACE ROOT one level above this repository, outside it (a clone of this repository does not carry it; since 2026-09-26 the root is its own repository on the private windowsweep-web's project-root branch, D49 - ../RESTORE.md rebuilds it). The method is ../completion-plan-v5-2026-09-24.md (v4 of 2026-09-17, v3 of 2026-09-12 and the two 2026-09-07 plans are history; every decision they record still applies, and v3 sections B0, B1 and B10-B12 are still live reference). This file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-11-12T18:04:31.945Z",
+  "lastUpdated": "2026-11-12T18:28:46.650Z",
   "activeCompletionRun": {
     "id": "2026-11-10-0028",
     "status": "in progress: 1.4.8 published and installed; final controlled performance proof pending",
@@ -1257,9 +1257,9 @@
         {
           "id": "P10.audit-finalize",
           "title": "Finalize re-audit: 12 rows and 5 gates with fresh live evidence",
-          "status": "in_progress",
-          "note": "Fresh live 1.4.8 rescore written: 92/100; 8 marketing points withheld until valid controlled performance proof. Five hard gates pass.",
-          "awaitingUser": false
+          "status": "blocked",
+          "note": "Fresh live 1.4.8 rescore written: 92/100; 8 marketing points withheld until valid controlled performance proof. Five hard gates pass. MANUAL row 42 contains the pending browser approval.",
+          "awaitingUser": true
         },
         {
           "id": "P10.audit-product",
@@ -1271,8 +1271,8 @@
         {
           "id": "P10.audit-search",
           "title": "Search audit run on every surface, including the 28 /compare URLs",
-          "status": "in_progress",
-          "note": "Final crawl 59/59, Yandex code live, IndexNow HTTP 200 for 23+36 URLs; current report and STATUS written on code-folder-root p51. Console-only rows remain owner tasks.",
+          "status": "complete",
+          "note": "Final crawl 59/59, Yandex code live, IndexNow HTTP 200 for 23+36 URLs; current report and STATUS written on code-folder-root p51. Console-only rows remain owner tasks. Pushed p51 388b73d and notebook 69daf3fd. Owner console evidence is MANUAL rows 40-41.",
           "awaitingUser": false
         },
         {
@@ -1306,9 +1306,9 @@
         {
           "id": "P10.fileshub",
           "title": "G6: FilesHub platforms add npm, project links, Polar payment account link",
-          "status": "complete",
+          "status": "blocked",
           "note": "Distribution links/platforms fixed. Readiness 12/12 includes Polar waiver; actual Polar account linkage remains owner row 39.",
-          "awaitingUser": false
+          "awaitingUser": true
         },
         {
           "id": "P10.records-fixes",
@@ -1341,8 +1341,8 @@
         {
           "id": "P10.records",
           "title": "Per-command records in queue order, context-fix-project last, memory",
-          "status": "pending",
-          "note": "Current audit report, fix ledger, search report, scorecard and portfolio written; final context and repository checkpoint pending.",
+          "status": "complete",
+          "note": "Current records written and checkpointed, search p51 and notebook pushed; context gates pass with unchanged optimization dates. Final performance findings keep run confirmation blocked at MANUAL row 42.",
           "awaitingUser": false
         },
         {

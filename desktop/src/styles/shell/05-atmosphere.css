@@ -227,7 +227,7 @@ body::after {
 }
 .readout > div:first-of-type {
   flex: 1 1 22rem;
-  min-width: 0;
+  min-width: min-content;
 }
 .hero-actions {
   display: flex;

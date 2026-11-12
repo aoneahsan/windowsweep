@@ -425,3 +425,8 @@ means running `../RESTORE.md`, whose first line clones the root's own `project-r
   RW-065 and RW-066) and the P1 verification runs (rows 1, 2, 3, 6, 7, 8, 9, 10, 19, 21); then CLI 1.4.0 if
   those verify. CLI 1.3.0 shipped here instead (D23), and `desktop-v1.3.0` was cut, published and proved here (D26, 2026-09-25). The handoff is
   section B11 of `../completion-plan-v3-2026-09-12.md`.
+
+## 2026-11-12 continuation decisions
+
+- **D105:** Under D104, the recommended fix for the two layout findings is applied dummy first and prepared as 1.4.8, preserving published 1.4.7 tags and assets. The desktop readout uses intrinsic minimum width; the website editor keeps Save and its result outside the scrolling body. No cleanup-engine behaviour changes.
+- **D106:** Asked whether to recreate `aoneahsan.apps.t1+admin@gmail.com` as an administrator on production `nlmetjyytgwaxcliusuo`, inspect the corrected plan editor without saving plan changes, then delete it and return to eight users. The owner answered **"Approve this temporary admin verification (Recommended)"**. The proof completed: zero plan writes; the exact tagged identity was demoted/deleted, its browser session removed, and eight users read back.

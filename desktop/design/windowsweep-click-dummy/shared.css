@@ -783,7 +783,7 @@ body::after {
    Now it is a three-part cluster: the readout, its actions beneath it, and the
    capacity ring holding the right. */
 .readout { align-items: center; gap: var(--sp-6) var(--sp-8); }
-.readout > div:first-of-type { flex: 1 1 22rem; min-width: 0; }
+.readout > div:first-of-type { flex: 1 1 22rem; min-width: min-content; }
 .hero-actions {
   display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center;
   flex: 0 1 auto;

@@ -263,3 +263,7 @@ tools, not an advertising network". Two changes, drawn here first:
 
 The roster is re-vendored from the fleet file at notebook `7180f5bc` (2026-11-10): Trizlink's casing, windowsweep's
 own row, and each product's `primaryUrl`. Both exclusion layers and `wsPromoAudit()` are unchanged.
+
+## Amendment - 2026-11-12: the unmeasured readout keeps its width
+
+The readout column keeps its intrinsic minimum width. At the default 1000 px window, the Scan actions move onto the next row before the unmeasured figure can intersect them. The existing wrapping layout and type tokens govern 760 and 1440 px too. No words or controls change.

@@ -9,6 +9,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.4.8] - 2026-11-12
+
+### Fixed
+
+- The desktop Home screen keeps the unmeasured readout clear of its action buttons at the default window size.
+- The website plan editor keeps Save and its result visible while its fields scroll.
+- The command-line tool is unchanged. It moves to 1.4.8 so the CLI and the desktop app stay on one version.
+
 ## [1.4.7] - 2026-11-11
 
 ### Changed

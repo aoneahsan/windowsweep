@@ -1671,3 +1671,8 @@ edit. FACT-CONSISTENCY PASS and finalizer READY satisfy D59's GATE 4 condition f
 earlier pre-authorisation covering the README date. The desktop and CLI GitHub releases were published on
 2026-11-11. Website, docs and npm publication still depend on their remaining gates. The words add no
 Bible term, motif or palette change, so the voice registry needs no edit.
+
+
+## 2026-11-12 — release-1.4.8 recorded
+
+Rows 27 and 1, draft release-1.4.8.md: main-session lean checks and finalizer found fact consistency PASS and no unanswered decision under D59. Product 93de163, website 546c300 and docs 67e99ca are published. The desktop readout and pinned Save facts were exercised, including actual protected New/Edit forms without plan writes. The registry entry records continuity; no new Bible term, motif, palette or fingerprint change.

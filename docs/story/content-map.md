@@ -1,6 +1,6 @@
 # Content map - windowsweep
 
-Status: **APPROVED at GATE 2, 2026-09-05** · Bible: approved 2026-09-05 · Last updated: **2026-11-11** (row 27 carries the 1.4.7 release words and their pending website and docs application; earlier 2026-11-08, the 1.4.5 and 1.4.6 release words; the 1.4.5 note had been written after the row's closing pipe, outside the table, and is moved into the cell). Earlier **2026-11-06**
+Status: **APPROVED at GATE 2, 2026-09-05** · Bible: approved 2026-09-05 · Last updated: **2026-11-12** (row 27 carries the 1.4.7 release words and their pending website and docs application; earlier 2026-11-08, the 1.4.5 and 1.4.6 release words; the 1.4.5 note had been written after the row's closing pipe, outside the table, and is moved into the cell). Earlier **2026-11-06**
 (row 20, `site-terms`, added on the owner's request - the amendment at the end. Earlier 2026-09-13,
 the keeper batch: every status cell carries its applying commit; row 12, row 19's schema and question row 7
 corrected - each a map-accuracy correction forced by an owner decision or a release, recorded in
@@ -314,3 +314,8 @@ UTC on the finalizer's FACT-CONSISTENCY PASS with zero NEEDS DECISION; the owner
 - **The Comparison Hub** row label is *States no third-party ads or bundled offers* (D100) on both hosts, in the hub
   record and in the docs guides' prose. Draft and panel: `drafts/ads-plain-2026-11-10.md`. No row's awareness, tone
   band or gate changes.
+
+
+## Amendment — 2026-11-12: release-1.4.8 recorded
+
+Row 27 carries the 1.4.8 release words, with the README release line on row 1 under its earlier pre-authorisation. D59 conditions passed in the main session; product 93de163, web 546c300 and docs 67e99ca are published and verified. No awareness, palette, framework, motif or glossary change. Draft: drafts/release-1.4.8.md. The preceding 1.4.7 website, docs and npm publication is also complete.

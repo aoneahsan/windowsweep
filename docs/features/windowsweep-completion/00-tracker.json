@@ -3,11 +3,11 @@
   "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md, which since 2026-09-07 lives at the WORKSPACE ROOT one level above this repository, outside it (a clone of this repository does not carry it; since 2026-09-26 the root is its own repository on the private windowsweep-web's project-root branch, D49 - ../RESTORE.md rebuilds it). The method is ../completion-plan-v5-2026-09-24.md (v4 of 2026-09-17, v3 of 2026-09-12 and the two 2026-09-07 plans are history; every decision they record still applies, and v3 sections B0, B1 and B10-B12 are still live reference). This file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-11-11T11:30:00Z",
+  "lastUpdated": "2026-11-12T18:04:31.945Z",
   "activeCompletionRun": {
     "id": "2026-11-10-0028",
-    "status": "in progress 2026-11-11: GitHub 1.4.7 published; browser-dependent gates open",
-    "latest": "2026-11-10 13:10 +0500: paused at the owner's request. Audits done; fixes for G1-G12 committed and pushed; release 1.4.7 cascaded (b874432) and built, not published. Resume: the record repo state file -> resume.next_steps_in_order.",
+    "status": "in progress: 1.4.8 published and installed; final controlled performance proof pending",
+    "latest": "2026-11-12: source and live layout fixes verified; protected New/Edit plan forms verified without saving, identity cleaned to eight users. Website and docs exact final builds published. Records rescore 92/100 while performance remains unverified.",
     "category": "desktop app + CLI",
     "scoreBefore": 100,
     "branch": "main",
@@ -1258,7 +1258,7 @@
           "id": "P10.audit-finalize",
           "title": "Finalize re-audit: 12 rows and 5 gates with fresh live evidence",
           "status": "in_progress",
-          "note": "Live evidence gathered (render-2026-11-10.json, live-crawl.json, catalog, seeded proofs). The per-row re-score of production/windowsweep.md is not written yet: do it in records after the release and deploys.",
+          "note": "Fresh live 1.4.8 rescore written: 92/100; 8 marketing points withheld until valid controlled performance proof. Five hard gates pass.",
           "awaitingUser": false
         },
         {
@@ -1272,7 +1272,7 @@
           "id": "P10.audit-search",
           "title": "Search audit run on every surface, including the 28 /compare URLs",
           "status": "in_progress",
-          "note": "Full crawl of both hosts, www, npm, GitHub and the functions host: every SA pattern PASS except G11 (Yandex tags not deployed). Evidence in code-folder-root p51 evidence/2026-11-10-0028/live-crawl.json. Report, STATUS.json, IndexNow and the learning inbox are owed after the deploys.",
+          "note": "Final crawl 59/59, Yandex code live, IndexNow HTTP 200 for 23+36 URLs; current report and STATUS written on code-folder-root p51. Console-only rows remain owner tasks.",
           "awaitingUser": false
         },
         {
@@ -1292,65 +1292,65 @@
         {
           "id": "P10.ads",
           "title": "G2-G5, G10: plain ads words (D101), hub row relabel (D100), roster re-vendor, clickable desktop cards (D102)",
-          "status": "in_progress",
-          "note": "Code and words done and pushed: desktop cards open products (b874432), website lede and roster (web 2a405f0), hub row relabel on website record and 13 docs guides (docs f2fcd90), Polar brief (root), story record (ads-plain-2026-11-10). Live only after the 1.4.7 release and the two deploys.",
+          "status": "complete",
+          "note": "D100/D101/D102 shipped on installed 1.4.8 and final websites. About 14 working other-product buttons; all 26 rival pages scoped correctly and nofollow.",
           "awaitingUser": false
         },
         {
           "id": "P10.yandex",
           "title": "G11: integrate the prepared Yandex verification tags on the site and docs; owner presses Verify",
-          "status": "in_progress",
-          "note": "Fast-forwarded onto main: web dd6ff9f, docs c13c940 (pushed). Ships in the next site and docs deploys; then the owner presses Verify (MANUAL row 40).",
-          "awaitingUser": false
+          "status": "blocked",
+          "note": "Exactly one Yandex verification meta on both final live homepages; owner Verify still MANUAL row 40.",
+          "awaitingUser": true
         },
         {
           "id": "P10.fileshub",
           "title": "G6: FilesHub platforms add npm, project links, Polar payment account link",
           "status": "complete",
-          "note": "Platforms desktop, web, npm; links website, docs, releases, npm, repo; readiness 11/12. The Polar account link has no API (GET/HEAD only): MANUAL row 39. Record map updated.",
+          "note": "Distribution links/platforms fixed. Readiness 12/12 includes Polar waiver; actual Polar account linkage remains owner row 39.",
           "awaitingUser": false
         },
         {
           "id": "P10.records-fixes",
           "title": "G7 store set NA line, G8 manual row 15, G9 portfolio-info refresh",
-          "status": "in_progress",
-          "note": "Row 15 moved to Completed; rows 39 and 40 added; GitHub repo description and the fleet roster row corrected (notebook 7180f5bc); 30 proof run claims deleted. Owed: the store-set NA line in production/windowsweep.md and the portfolio-info refresh (product root + notebook).",
+          "status": "complete",
+          "note": "Store-set category NA line written; manual row 15 completed earlier. Portfolio refreshed as WINDOWSWEEP_portfolio-info_2026-11-12.md, product/notebook bytes identical.",
           "awaitingUser": false
         },
         {
           "id": "P10.update-flow",
           "title": "Gate 4: layer 2 re-proved on the test channel (D103-3); layer 1 installed 1.4.6 -> 1.4.7",
-          "status": "pending",
-          "note": "Layer 2 test-channel re-proof (D103-3) on the final source; layer 1 installed 1.4.6 -> 1.4.7 after the publish.",
+          "status": "complete",
+          "note": "Installed 1.4.6 to 1.4.7 and 1.4.7 to 1.4.8 updates passed. Final-source layer 2 normal/next-start/urgent/equal/offline passed on all three test channels; rows neutral 0.0.0; baseline eight users.",
           "awaitingUser": false
         },
         {
           "id": "P10.release",
           "title": "Release 1.4.7: desktop Latest, CLI tag, npm from the gated tarball",
-          "status": "in_progress",
-          "note": "Desktop-v1.4.7 is GitHub Latest and v1.4.7 is the CLI release, both tagged on b874432. Seven desktop asset digests match the private kit; the three-key manifest and signatures verify. CLI self-test 223/223, 53-file pack, no lost files or secret pattern, VERSION LF; desktop gates green (52 tests). npm remains 1.4.6: the README's npmjs.com link returns 403 to shell requests and the connected browser is unavailable, so the publication gate is open.",
+          "status": "complete",
+          "note": "GitHub desktop-v1.4.8 Latest and v1.4.8 CLI published from 93de163. npm exact gated tarball SHA1 312ba9b009c42f314814fe46584ed3495f4bda0d; 53 files; self-test 223; desktop gates 52. Signature/tamper checks passed for both installers.",
           "awaitingUser": false
         },
         {
           "id": "P10.deploy",
           "title": "One site deploy and one docs deploy, live verification, IndexNow",
-          "status": "in_progress",
-          "note": "Website 1.4.7 facts updated in the dummy, download, changelog, feed and i18n; typecheck, lint and production build pass against GitHub Latest. Docs changelog mirrors product byte for byte, intro says 1.4.7 and production gates pass. Browser host is unavailable and automatic approval review rejected the dedicated Chrome launch, so the required build render proof, deploys and live checks remain open.",
+          "status": "complete",
+          "note": "Final site 546c300 / Pages 20a69d4e, docs 67e99ca / gh-pages f83f4d8; built and rendered before and after, 156/156 and 271/271 bytes match; IndexNow accepted.",
           "awaitingUser": false
         },
         {
           "id": "P10.records",
           "title": "Per-command records in queue order, context-fix-project last, memory",
           "status": "pending",
-          "note": "Per-command records in queue order, context-fix-project last, memory.",
+          "note": "Current audit report, fix ledger, search report, scorecard and portfolio written; final context and repository checkpoint pending.",
           "awaitingUser": false
         },
         {
           "id": "P10.confirm",
           "title": "Confirmation gate: every command against its close criteria",
-          "status": "pending",
-          "note": "Confirmation gate per command.",
-          "awaitingUser": false
+          "status": "blocked",
+          "note": "Complete-project stays open: performance check awaits explicit temporary automation Chrome approval; owner rows remain separately recorded.",
+          "awaitingUser": true
         }
       ]
     }
@@ -1872,9 +1872,15 @@
       "date": "2026-11-11",
       "phase": "complete-project run 2026-11-10-0028: GitHub 1.4.7 published, web and docs built",
       "summary": "The CLI and desktop GitHub releases are live from b874432. Local website and docs release facts pass their production builds. Browser access is still unavailable, so npm link verification, build render proof, deploys, installed update flow and final audit records remain open."
+    },
+    {
+      "date": "2026-11-12",
+      "phase": "P10 release and live verification",
+      "summary": "1.4.7 and 1.4.8 published; installed updates and all three layer 2 test channels verified; actual admin plan layout tested without writes, temporary identity deleted. Final website/docs render and all served-byte checks pass; records updated, performance approval remains open.",
+      "commit": "93de163 / 546c300 / 67e99ca"
     }
   ],
-  "resumeInstructions": "Run 2026-11-10-0028 remains in progress (P10). Restore the connected browser, verify the npm README URL and rendered website/docs builds, then publish npm and deploy from the verified builds. The full ordered list is in the record repo production/windowsweep-complete-project.json -> resume.next_steps_in_order and the root remaining-work-summary.md.",
+  "resumeInstructions": "Resume the existing complete-project run at the explicit temporary Chrome performance approval, then measure three valid controlled runs, fix any demonstrated issue, reconcile F-PERF-001/002 and the 8 withheld marketing points, and repeat command confirmation/context last. Do not redo published 1.4.8 releases or recreate the deleted admin without exact approval. Canonical state: record repo production/windowsweep-complete-project.json.",
   "auditPlanFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-humming-snowflake.md (the 2026-09-12 audit); the 2026-09-05 audit was please-audit-the-whole-streamed-nest.md",
   "planCopy": "../completion-plan-v4-2026-09-17.md",
   "planFileV3": "C:/Users/PC/.claude/plans/please-audit-the-whole-humming-snowflake.md",

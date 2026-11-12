@@ -3,7 +3,7 @@
   "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md, which since 2026-09-07 lives at the WORKSPACE ROOT one level above this repository, outside it (a clone of this repository does not carry it; since 2026-09-26 the root is its own repository on the private windowsweep-web's project-root branch, D49 - ../RESTORE.md rebuilds it). The method is ../completion-plan-v5-2026-09-24.md (v4 of 2026-09-17, v3 of 2026-09-12 and the two 2026-09-07 plans are history; every decision they record still applies, and v3 sections B0, B1 and B10-B12 are still live reference). This file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-11-12T18:28:46.650Z",
+  "lastUpdated": "2026-11-13",
   "activeCompletionRun": {
     "id": "2026-11-10-0028",
     "status": "in progress: 1.4.8 published and installed; final controlled performance proof pending",
@@ -1257,9 +1257,9 @@
         {
           "id": "P10.audit-finalize",
           "title": "Finalize re-audit: 12 rows and 5 gates with fresh live evidence",
-          "status": "blocked",
-          "note": "Fresh live 1.4.8 rescore written: 92/100; 8 marketing points withheld until valid controlled performance proof. Five hard gates pass. MANUAL row 42 contains the pending browser approval.",
-          "awaitingUser": true
+          "status": "complete",
+          "note": "100/100; five hard gates pass. Three final controlled Home/Pricing runs meet median budgets; performance-final-2026-11-13.json.",
+          "awaitingUser": false
         },
         {
           "id": "P10.audit-product",
@@ -1342,15 +1342,15 @@
           "id": "P10.records",
           "title": "Per-command records in queue order, context-fix-project last, memory",
           "status": "complete",
-          "note": "Current records written and checkpointed, search p51 and notebook pushed; context gates pass with unchanged optimization dates. Final performance findings keep run confirmation blocked at MANUAL row 42.",
+          "note": "Audit findings/coverage and scorecard reconciled after performance deployment47b6804/86858da9; final context and pushes recorded in canonical record.",
           "awaitingUser": false
         },
         {
           "id": "P10.confirm",
           "title": "Confirmation gate: every command against its close criteria",
-          "status": "blocked",
-          "note": "Complete-project stays open: performance check awaits explicit temporary automation Chrome approval; owner rows remain separately recorded.",
-          "awaitingUser": true
+          "status": "complete",
+          "note": "All agent findings closed. finalize/comparison/stack/context complete; product audit owner-blocked39 and search owner-blocked40–41. No pending Chrome approval.",
+          "awaitingUser": false
         }
       ]
     }
@@ -1878,9 +1878,17 @@
       "phase": "P10 release and live verification",
       "summary": "1.4.7 and 1.4.8 published; installed updates and all three layer 2 test channels verified; actual admin plan layout tested without writes, temporary identity deleted. Final website/docs render and all served-byte checks pass; records updated, performance approval remains open.",
       "commit": "93de163 / 546c300 / 67e99ca"
+    },
+    {
+      "date": "2026-11-13",
+      "phase": "P10 performance closeout",
+      "summary": "Explicit temporary Chrome approval exercised. Home blocking998→95ms, LCP1988ms and CLS.03978; Pricing2128ms/.00640/169ms. Full gates109, exact156/156 served files, dummy/build/live render, nativeAX/keyboard/print/anchors/app-view verified. Score100; five hard gates pass. Owner rows39–41 remain.",
+      "commits": {
+        "website": "47b6804"
+      }
     }
   ],
-  "resumeInstructions": "Resume the existing complete-project run at the explicit temporary Chrome performance approval, then measure three valid controlled runs, fix any demonstrated issue, reconcile F-PERF-001/002 and the 8 withheld marketing points, and repeat command confirmation/context last. Do not redo published 1.4.8 releases or recreate the deleted admin without exact approval. Canonical state: record repo production/windowsweep-complete-project.json.",
+  "resumeInstructions": "Agent work in run2026-11-10-0028 is complete. Owner actions are MANUAL rows33–36 and39–41. Canonical command dispositions and final context evidence live in record production/windowsweep-complete-project.json. Do not republish1.4.8 or recreate test identities for owner-console work.",
   "auditPlanFile": "C:/Users/PC/.claude/plans/please-audit-the-whole-humming-snowflake.md (the 2026-09-12 audit); the 2026-09-05 audit was please-audit-the-whole-streamed-nest.md",
   "planCopy": "../completion-plan-v4-2026-09-17.md",
   "planFileV3": "C:/Users/PC/.claude/plans/please-audit-the-whole-humming-snowflake.md",

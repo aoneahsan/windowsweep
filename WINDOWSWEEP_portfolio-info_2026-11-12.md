@@ -152,7 +152,7 @@ Primary topics: Windows cleanup, developer caches, dry-run cleanup, PowerShell, 
 
 ## Known Constraints (honest framing)
 
-Windows only. Reclaimable space depends on the disk. Admin sections require Windows permission. The installer has no Windows code-signing certificate; updater signatures and SHA-256 checksums serve different purposes. The desktop window and website send disclosed usage analytics and crash reports. The command-line engine sends nothing. Final controlled website performance measurement remains open in the current audit; no 100-percent completion claim follows from these release checks.
+Windows only. Reclaimable space depends on the disk. Admin sections require Windows permission. The installer has no Windows code-signing certificate; updater signatures and SHA-256 checksums serve different purposes. The desktop window and website send disclosed usage analytics and crash reports. The command-line engine sends nothing. The final controlled website check passed on 13 November: Home medians 1.99 s LCP, .0398 CLS and 95 ms long-task blocking; Pricing 2.13 s, .0064 and 169 ms. These are three-run lab medians; field data and console ownership remain unconfirmed.
 
 ## Generic Hashtags (always include in posts)
 

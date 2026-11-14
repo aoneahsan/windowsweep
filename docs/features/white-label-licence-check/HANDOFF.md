@@ -28,7 +28,7 @@ to build and test.
 |---|---|
 | Build env | `VITE_WHITE_LABEL_KEY` — empty in our builds (add it to `desktop/.env.example` as an empty, documented name) |
 | Key prefix | `WINDOWSWEEP-WL-…` |
-| Verify call | `GET https://fileshub.zaions.com/api/licensing/v1/licenses/verify?key=<key>` → ``data.verdict`: `valid`, `pending_setup`, `revoked`, `not_found` or `invalid_format`` |
+| Verify call | `GET https://fileshub.zaions.com/api/licensing/v1/licenses/verify?key=<key>` → `data.verdict` is `valid`, `pending_setup`, `revoked`, `not_found` or `invalid_format` |
 | No `host` | the desktop webview has no domain of its own, so the key alone is the proof |
 | Inactive verdicts | `revoked`, `not_found`, `invalid_format` → show the inactive view |
 | Fail open | offline, timeout (5 s), a 5xx or an unreadable body → the app keeps working; the next start tries again |

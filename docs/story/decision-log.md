@@ -1690,3 +1690,12 @@ pass under D113's lean terms. Adds "update sections" to the working vocabulary; 
 ## 2026-11-14 — release-1.5.0 recorded under D113
 
 Rows 27 and 1 (draft `drafts/release-1.5.0.md`) and docs rows 3-6: the main-session lean panel read every claim against the 1.5.0 engine and the P52 evidence. Two claims were corrected before publication: registry wording narrowed to removals (sections 13, 29 and 31 still set named values), and every mention of the PC maker's updater left the copy after D114, when Lenovo System Update queued firmware past its driver-only switch on the P52. FACT-CONSISTENCY PASS, zero NEEDS DECISION, finalizer READY; D113's GATE 4 condition holds. New working term: “update sections”. The glossary's section range is 0-32 and its PC rule names the restart line and “PC maker”; no palette or fingerprint change beyond specimen 12's count.
+
+## 2026-11-14 - `white-label-2026-11-14` (white-label pages, docs section, Terms and Privacy clauses) GATE 4 from the owner, recorded
+
+The owner's 2026-11-13 rule sells every production product as a white-label licence; for windowsweep, public under
+MIT, he chose "Managed white-label only": no buyout, non-exclusive, the licence buys our build-and-release work and
+the right to the name and mark. The pages, the docs section and the legal clauses were drawn in the click dummy first
+(amendment 46), then built in `windowsweep-web` and `windowsweep-docs`. Every price, group and renewal is read from the
+licensing catalogue; refund wording stays in the Terms and Privacy Policy only. GATE 4, in his words on 2026-11-14:
+"approve windowsweep gate 4". The words add no Bible term, motif, palette or fingerprint change.

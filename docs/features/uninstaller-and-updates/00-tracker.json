@@ -1,14 +1,15 @@
 {
   "module": "uninstaller-and-updates",
   "createdAt": "2026-11-13",
-  "lastUpdated": "2026-11-13",
+  "lastUpdated": "2026-11-14",
   "overview": "Release 1.5.0. The owner asked on 2026-11-13 for a full software uninstaller and a system/driver updater in WindowSweep, and for his P52 to be cleaned of software he no longer needs and brought up to date using the product itself. Section 26 becomes the full uninstaller (desktop programs, Store apps, broken entries, RAN column, uninstall history); section 27 adds registry keys, Start-menu shortcuts, startup entries and scheduled tasks left behind; new sections 30 winupdate, 31 drivers and 32 appupdates (tier update, interactive, never BIOS or firmware). Plan: C:/Users/PC/.claude/plans/plan-and-update-this-glistening-scott.md.",
   "userDecisions": [
     "D109 (2026-11-13): section 26 is the full uninstaller - Store apps for the current account, broken entries cleared after a .reg backup, and leftover registry keys, shortcuts, startup entries and tasks of uninstalled programs; registry removals only through lib/registry.ps1 with a .reg backup first. Amends the 'registry cleaning out of scope' non-goal for leftovers of uninstalled programs only.",
     "D110 (2026-11-13): sections 30-32 update Windows, drivers and apps; the engine promise is re-scoped (owner chose 'Opt-in sections, reworded'): cleanup never touches the network; only 30-32, for rows a person picks, hand downloads to Windows Update or winget; windowsweep itself sends nothing. Self-test check [9] stays.",
     "D111 (2026-11-13): never BIOS or firmware, in the product and on the owner's machines (his words: 'do not try to fuck with bios or firmware').",
     "D112 (2026-11-13): the P52 removal list and keep list as answered (see the plan); any further removal is asked first.",
-    "D113 (2026-11-13): new 1.5.0 prose gets a lean story review plus the finalizer, GATE 4 pre-authorised on fact-consistency PASS and zero NEEDS DECISION, as in the 2026-09-07 grant; approved with the plan."
+    "D113 (2026-11-13): new 1.5.0 prose gets a lean story review plus the finalizer, GATE 4 pre-authorised on fact-consistency PASS and zero NEEDS DECISION, as in the 2026-09-07 grant; approved with the plan.",
+    "D114 (2026-11-14): the engine never runs a PC maker's update tool; section 31 names it and leaves its choices to the person (Lenovo System Update queued firmware past its driver-only switch on the P52)."
   ],
   "knownRisks": [
     "Proved on the P52 (2026-11-14): Lenovo System Update ignored -packagetypes 1,2 and queued IR-camera firmware (type 4); the engine therefore never runs a PC maker's tool (D114).",
@@ -20,22 +21,22 @@
     {
       "id": "P1",
       "title": "CLI engine: full uninstaller (26/27) and registry chokepoint",
-      "status": "in_progress",
-      "completedAt": null,
+      "status": "complete",
+      "completedAt": "2026-11-14",
       "subTasks": [
         { "id": "P1.1", "title": "lib/registry.ps1 chokepoint (protection, .reg backup, key/value/uninstall-entry removal)", "status": "complete", "note": "11 group-[27] checks, each seen failing on a planted defect" },
         { "id": "P1.2", "title": "section 26: Store apps, broken entries, KIND/RAN columns, uninstall history", "status": "complete", "note": "dry-run on the P52 lists 93 rows (44 desktop, 49 Store)" },
         { "id": "P1.3", "title": "section 27 + section 26 second pass: registry keys, shortcuts, startup entries, tasks", "status": "complete", "note": "" },
-        { "id": "P1.4", "title": "catalogue rows 30-32, tier update, help text, self-test wiring", "status": "in_progress", "note": "remove the Get-Command guard in self_test_extra.ps1 once groups 27 and 28 both exist" }
+        { "id": "P1.4", "title": "catalogue rows 30-32, tier update, help text, self-test wiring", "status": "complete", "note": "Get-Command guard removed; self-test 256/256" }
       ]
     },
     {
       "id": "P2",
       "title": "CLI engine: sections 30 winupdate, 31 drivers, 32 appupdates",
-      "status": "in_progress",
-      "completedAt": null,
+      "status": "complete",
+      "completedAt": "2026-11-14",
       "subTasks": [
-        { "id": "P2.1", "title": "updates_windows.ps1, updates_drivers.ps1, updates_apps.ps1 + self-test group [28]", "status": "in_progress", "note": "agent A" }
+        { "id": "P2.1", "title": "updates_windows.ps1, updates_drivers.ps1, updates_apps.ps1 + self-test group [28]", "status": "complete", "note": "agent A; D114 removed the maker-tool hand-off; session-0 services not counted as open; winget user-scope and no-network codes mapped" }
       ]
     },
     {
@@ -44,47 +45,52 @@
       "status": "in_progress",
       "completedAt": null,
       "subTasks": [
-        { "id": "P3.1", "title": "click dummy AMENDMENTS-4", "status": "in_progress", "note": "agent B" },
-        { "id": "P3.2", "title": "desktop app mirrors the dummy; gates; parity 1440/760", "status": "pending", "note": "" }
+        { "id": "P3.1", "title": "click dummy AMENDMENTS-4", "status": "complete", "note": "A4-01..A4-15" },
+        { "id": "P3.2", "title": "desktop app mirrors the dummy; gates", "status": "complete", "note": "69 tests, clean typecheck; installed 1.5.0 launched and read back" },
+        { "id": "P3.3", "title": "dummy-to-app parity captures at 1440/760 for install mode and the new row kinds", "status": "pending", "note": "not captured in the release run; the native window's screenshots time out over UI Automation" }
       ]
     },
     {
       "id": "P4",
       "title": "Docs, docs site, website and story records for 1.5.0",
-      "status": "pending",
-      "completedAt": null,
+      "status": "complete",
+      "completedAt": "2026-11-14",
       "subTasks": [
-        { "id": "P4.1", "title": "product docs + windowsweep-docs mirror", "status": "pending", "note": "" },
-        { "id": "P4.2", "title": "website claims, privacy page, features", "status": "pending", "note": "" },
-        { "id": "P4.3", "title": "Story Bible commitment 3 correction, decision log, run state", "status": "pending", "note": "" }
+        { "id": "P4.1", "title": "product docs + windowsweep-docs mirror", "status": "complete", "note": "docs 667bb5c, then c99827a (version facts, signup guard)" },
+        { "id": "P4.2", "title": "website claims, privacy page, features", "status": "complete", "note": "web 2038f4b + sitemap; comparison hub lines" },
+        { "id": "P4.3", "title": "Story Bible commitment 3 correction, decision log, run state", "status": "complete", "note": "drafts/release-1.5.0.md, lint passes" }
       ]
     },
     {
       "id": "P5",
       "title": "The P52: uninstall the approved list, leftovers, Windows/app/driver updates (real-machine evidence)",
-      "status": "pending",
+      "status": "in_progress",
       "completedAt": null,
       "subTasks": [
-        { "id": "P5.1", "title": "dry-run evidence; select files", "status": "pending", "note": "" },
-        { "id": "P5.2", "title": "elevated run 1: removals, Windows updates, app updates, Lenovo System Update install", "status": "pending", "note": "needs the owner's UAC click" },
-        { "id": "P5.3", "title": "elevated runs 2-3: leftovers and drivers", "status": "pending", "note": "needs the owner's UAC click" },
-        { "id": "P5.4", "title": "restart Windows; update Windows Terminal, Git and Claude", "status": "blocked", "awaitingUser": true, "note": "they host the running session" }
+        { "id": "P5.1", "title": "dry-run evidence; select files", "status": "complete", "note": "root machine-evidence/p52-2026-11-13/" },
+        { "id": "P5.2", "title": "elevated run 1: removals, Windows updates, app updates", "status": "complete", "note": "39 of 40 picked programs and 32 Store packages removed (AChat in pass 3); KB890830 and KB5131096; 12 winget updates elevated plus stripe unelevated" },
+        { "id": "P5.3", "title": "elevated runs 2-3: leftovers and drivers", "status": "complete", "note": "8 folders (326 MB), 4 registry keys with .reg backups, 2 dead shortcuts, the Malwarebytes Run entry; ELAN, Lenovo thermal/PM, Synaptics, Fn-key drivers; no firmware; Lenovo System Update uninstalled" },
+        { "id": "P5.4", "title": "restart Windows; update Windows Terminal, Git and Claude; OBS via the Store; FDM after Chrome closes", "status": "blocked", "awaitingUser": true, "note": "they host the running session, or need the owner's apps closed" }
       ]
     },
     {
       "id": "P6",
       "title": "Release 1.5.0 (CLI, npm, desktop, website, docs) and records",
-      "status": "pending",
+      "status": "in_progress",
       "completedAt": null,
       "subTasks": [
-        { "id": "P6.1", "title": "version cascade, gates, npm publish, v1.5.0 + desktop-v1.5.0, release record", "status": "pending", "note": "" },
-        { "id": "P6.2", "title": "website + docs deploy and live proof", "status": "pending", "note": "" },
-        { "id": "P6.3", "title": "PROJECT-CONTEXT D109-D113, CHANGELOG, runs-and-releases, root summary, memory", "status": "pending", "note": "" }
+        { "id": "P6.1", "title": "version cascade, gates, v1.5.0 + desktop-v1.5.0, installed updater proof", "status": "complete", "note": "4c6e03a; installed 1.4.8 took 1.5.0 on close" },
+        { "id": "P6.2", "title": "website + docs deploy and live proof", "status": "complete", "note": "site fa31a4b9 (then the white-label deploy of main); docs gh-pages 360d090, 290/290 byte-equal" },
+        { "id": "P6.3", "title": "PROJECT-CONTEXT D109-D114, CHANGELOG, runs-and-releases, root summary, memory", "status": "complete", "note": "" },
+        { "id": "P6.4", "title": "npm windowsweep@1.5.0: approve the staged publish with 2FA, then verify from the registry", "status": "blocked", "awaitingUser": true, "note": "npm 11.20 staged the publish; sha1 a938bab193d1e6581edf224bc645cfc445924be3" },
+        { "id": "P6.5", "title": "account-welcome v8 on production (owner-approved single deploy)", "status": "complete", "note": "preflight 204, unauthenticated 401, other functions unchanged" }
       ]
     }
   ],
   "runHistory": [
-    { "date": "2026-11-13", "phase": "P1-P3", "summary": "Plan approved; registry chokepoint, full section 26/27 and group [27] written and proved (11/11 plants caught); agents A (sections 30-32) and B (dummy) dispatched.", "commit": null }
+    { "date": "2026-11-13", "phase": "P1-P3", "summary": "Plan approved; registry chokepoint, full section 26/27 and group [27] written and proved (11/11 plants caught); agents A (sections 30-32) and B (dummy) dispatched.", "commit": null },
+    { "date": "2026-11-14", "phase": "P1-P5", "summary": "Engine, desktop, docs and site finished; the P52 runs removed the approved software, cleared leftovers with backups, installed Windows, driver and app updates; Lenovo System Update queued firmware, so D114 removed every maker-tool run.", "commit": "4c6e03a" },
+    { "date": "2026-11-14", "phase": "P6", "summary": "1.5.0 released (GitHub, desktop Latest, npm staged); site deploy fa31a4b9 without the white-label pages then held for GATE 4; docs 360d090 restored the footer signup the white-label publish dropped; installed update 1.4.8 to 1.5.0 proved; account-welcome v8.", "commit": null }
   ],
   "resumeInstructions": "1) Read this tracker. 2) Find the first pending or in_progress sub-task. 3) Read the plan file named in overview. 4) Invoke skills per RULE #0. 5) Complete, mark complete, append a runHistory row, bump lastUpdated. 6) Commit per the project's git rules, never with AI attribution."
 }

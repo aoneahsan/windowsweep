@@ -466,4 +466,26 @@ path on a machine with PowerShell 7. Record each here with numbers when it happe
   typecheck green. The story record is `docs/story/drafts/release-1.4.7.md`.
   The npm publish, site/docs deploys, installed updater and test-channel checks still await their gates.
 
-Last Updated: 2026-11-11 (1.4.7 GitHub releases; npm, deploys and installed proof pending). Earlier 2026-11-08 (1.4.6 released and proven installed; ISSUE-006 resolved; the brand kit on the app, installer, site and emails). Earlier 2026-11-08 (1.4.5 released and proven installed; ISSUE-003 to ISSUE-005 live; the site and docs deploys). Earlier 2026-11-07 (1.4.4 released and proven installed; the site and docs deploys). Earlier the same day (checkout open, the site deploy, the newsletter released, D94). Earlier 2026-11-06 (the branded account emails on production, D92). Earlier the same day (1.4.3: the release record and its installed updater proof). Earlier the same day (1.4.2: the installed updater proof and the release record, including the restored MSI entry of `latest.json`). Earlier 2026-09-28 (the owner's own sign-in and dry-run on the installed 1.3.2, read back from the server - row 31. Earlier the same day: CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)
+- 2026-11-14: **1.5.0** (D109-D114; words `docs/story/drafts/release-1.5.0.md`): the full uninstaller and
+  sections 30-32, dogfooded on the P52 first (root `machine-evidence/p52-2026-11-13/`).
+  - **Build and tags.** `desktop-v1.5.0` Latest and `v1.5.0` `--latest=false` on `4c6e03a`. NSIS 3,996,935 B
+    (`d6d63647…07d7`, also `windowsweep-setup.exe`), MSI 4,792,320 B (`86d042e8…a73e`); both `.sig` verify against
+    the shipped key and a tamper fails. `latest.json` has all three keys and is served byte-equal. CLI self-test
+    256/256, analyzer 0; desktop 69 tests and clean typecheck; website 109; docs gates. Kit: root `release-kit-1.5.0/`.
+  - **npm.** `windowsweep@1.5.0` (sha1 `a938bab1…4be3`, 61 files) went in as a STAGED publish (npm 11.20): the
+    registry stays at 1.4.8 until the owner approves it with 2FA (`docs/MANUAL-TASKS.md`).
+  - **Site deploy `fa31a4b9`** from `wip/site-1.5.0` (`2661941` = `2038f4b` + its sitemap lastmods), leaving out the
+    white-label pages then held for GATE 4: 26 local and 26 live loads at 1440/390 clean (three first live loads
+    hit `ERR_QUIC_PROTOCOL_ERROR` in the automation Chrome; the retry over h3 passed), 155 of 155 files byte-equal,
+    IndexNow 200. The white-label session's deploy of `main` after GATE 4 superseded it; the 1.5.0 facts re-read live.
+  - **Docs.** `gh-pages` `d152a06` (docs `667bb5c`); the white-label publish `4aa8807` then shipped every page
+    without the footer signup (its `.env.local` lacked the newsletter pair) and still said 1.4.8; `360d090` (docs
+    `c99827a`) restored both, and a production build now refuses without that pair (planted blank id: refused).
+    290 of 290 files byte-equal live, 20 live loads clean with no gate overlay, IndexNow 200.
+  - **Installed updater.** The installed 1.4.8, on the default profile, read *Version 1.5.0 is ready* after 7 s;
+    closing the window installed it, the uninstall key read 1.5.0 two seconds later, the exe reports 1.5.0 and the
+    relaunch shows 1.5.0 with no offer (root `site-evidence/release-1.5.0/installed-update.json`).
+  - **`account-welcome` v8** (owner approval this session; the welcome's network sentence): 08:46:41 UTC, every other
+    function unchanged, preflight 204, unauthenticated call 401.
+
+Last Updated: 2026-11-14 (1.5.0 released, deployed and proven installed; npm staged for the owner). Earlier 2026-11-11 (1.4.7 GitHub releases; npm, deploys and installed proof pending). Earlier 2026-11-08 (1.4.6 released and proven installed; ISSUE-006 resolved; the brand kit on the app, installer, site and emails). Earlier 2026-11-08 (1.4.5 released and proven installed; ISSUE-003 to ISSUE-005 live; the site and docs deploys). Earlier 2026-11-07 (1.4.4 released and proven installed; the site and docs deploys). Earlier the same day (checkout open, the site deploy, the newsletter released, D94). Earlier 2026-11-06 (the branded account emails on production, D92). Earlier the same day (1.4.3: the release record and its installed updater proof). Earlier the same day (1.4.2: the installed updater proof and the release record, including the restored MSI entry of `latest.json`). Earlier 2026-09-28 (the owner's own sign-in and dry-run on the installed 1.3.2, read back from the server - row 31. Earlier the same day: CLI 1.3.2, `desktop-v1.3.2` and its updater proof 1.3.1 -> 1.3.2 with the first desktop replay. Earlier 2026-09-26: `desktop-v1.3.1` and its updater proof 1.3.0 -> 1.3.1, isolated, with the telemetry's own version and TASK-020's finding. Earlier 2026-09-25: RW-132: created from `docs/PROJECT-CONTEXT.md`, every line moved verbatim; later the same day `windowsweep@1.3.1`, `desktop-v1.3.0` and the updater proof 1.2.0 -> 1.3.0)

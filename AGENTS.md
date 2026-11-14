@@ -1,6 +1,6 @@
 # WindowSweep product — active guide
 
-**Last Updated:** 2026-11-13
+**Last Updated:** 2026-11-14
 **Context pass:** 2026-11-13; next routine optimization eligible 2026-12-13.
 
 This public repository is the Windows PowerShell cleanup CLI, Node launcher, Tauri desktop app, shared schema, product docs and story records. It is nested inside `../windowsweep-root/`, an independent private Git checkout on `project-root`. The full September guide is preserved at `docs/context/product-guide-2026-09-28.md`; search it for a named invariant rather than loading it in full. The current state and every phase/subtask live in `docs/features/windowsweep-completion/00-tracker.json`. Start with the parent `../remaining-work-summary.md`; read exact rows of `../remaining-work.md` and `../completion-plan-v5-2026-09-24.md` only when working on them. The parent root and website use separate Git histories.
@@ -8,7 +8,7 @@ This public repository is the Windows PowerShell cleanup CLI, Node launcher, Tau
 ## Routing and release state
 
 - CLI source: `windowsweep.ps1`, `lib/`, `modules/`, `bin/`. Windows PowerShell 5.1 behavior is binding. The package has no runtime dependencies or JS build. `node bin/windowsweep.js --self-test --no-color` requires Windows and must not be claimed passed from Linux. `desktop/` contains the Tauri 2 app, its approved click dummy, source, tests and Drizzle schema. `docs/story/` carries the approved Bible/map and gate state. The docs site is `../windowsweep-docs/`; its content mirrors this repo's `docs/`. The private marketing/web app is `../windowsweep-web/`.
-- CLI 1.4.8 and desktop-v1.4.8 are published from 93de163; the installed update is verified. `../release-kit-1.4.8/` preserves the exact publication artifacts. Consult the root summary and product tracker before another release. Historical guidance is archived at `docs/context/product-guide-2026-11-12.md`.
+- CLI 1.5.0 and desktop-v1.5.0 are released from 4c6e03a; the installed update 1.4.8 to 1.5.0 is verified. The npm publish is staged: the registry serves 1.4.8 until the owner approves it (`docs/MANUAL-TASKS.md` row 44). `../release-kit-1.5.0/` preserves the exact publication artifacts. Consult the root summary and product tracker before another release. Historical guidance is archived at `docs/context/product-guide-2026-11-12.md`.
 - The website and desktop share an owner-created Supabase project. Agent Supabase operations are DEV-only by default, with an explicit DEV ref. Production actions require exact current-session owner approval and a pinned target. No old Firebase backend work belongs to this maintenance pass. The website is hosted on Cloudflare Pages; Firebase is no longer used for hosting or backend. GA4 uses its public measurement identifier.
 - AI fallback task DONE-024 closed on 2026-10-31: source inventory found no AI model call in the CLI, desktop, website or docs; the fleet AI rules apply if a model call is added.
 - Owner decision D76 (2026-10-31): do not start or use Docker for WindowSweep work. Database backups use a standalone PostgreSQL client; Supabase CLI `db dump` is excluded because it starts a container.
@@ -38,7 +38,7 @@ Before stopping, commit every legitimate change and work-progress checkpoint in 
 |---|---|
 | Last optimized | 2026-11-13 |
 | Next routine optimization eligible | 2026-12-13 |
-| Guide bytes | 6,121 B |
+| Guide bytes | 6,249 B |
 | Covered subtree | This repository; parent windowsweep-root measured separately |
 | Method | Due review: compact project-specific guidance retained; mirrors, routing, task headings and inherited root checked; current release facts corrected where needed |
 | Fleet record | code/docs/tracking/project-context-budget-tracker.json |

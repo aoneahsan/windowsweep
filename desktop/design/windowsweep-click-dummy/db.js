@@ -228,7 +228,12 @@
       if (!m[c.section]) m[c.section] = { section: c.section, bytes: 0, count: 0 };
       m[c.section].bytes += c.bytes; m[c.section].count++;
     });
-    return S.INTERACTIVE.map(function (id) {
+    /* 1.5.0: Home's cards are space waiting on a person. Sections 30-32 add software
+       instead of reclaiming space, so they are chosen on the Choose screen and never
+       drawn here as "0 B waiting". */
+    return S.INTERACTIVE.filter(function (id) {
+      return !section[id] || section[id].tier !== 'update';
+    }).map(function (id) {
       return m[id] || { section: id, bytes: 0, count: 0 };
     });
   }

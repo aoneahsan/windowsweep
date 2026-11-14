@@ -164,8 +164,8 @@
   var NAV = [
     { group: 'Reclaim' },
     { href: 'index.html',     label: 'Home',      icon: 'home' },
-    { href: 'sections.html',  label: 'Sections',  icon: 'list',  badge: '26' },
-    { href: 'picker.html',    label: 'Choose',    icon: 'user',  badge: '4' },
+    { href: 'sections.html',  label: 'Sections',  icon: 'list',  count: 'sections' },
+    { href: 'picker.html',    label: 'Choose',    icon: 'user',  count: 'interactive' },
     { href: 'run.html',       label: 'Run',       icon: 'play' },
     { group: 'Records' },
     { href: 'history.html',   label: 'History',   icon: 'clock' },
@@ -241,7 +241,11 @@
       a.href = item.href;
       a.appendChild(svgIcon(item.icon));
       a.appendChild(el('span', null, item.label));
-      if (item.badge) a.appendChild(el('span', 'rail-badge', item.badge));
+      /* 1.5.0: counted from seed.js as Shell.tsx counts the engine's catalogue; the
+         literals here had stayed at 1.1.0's 26 and 4. */
+      var S = window.wsSeed;
+      if (item.count && S) a.appendChild(el('span', 'rail-badge', String(item.count === 'sections' ? S.SECTIONS.length
+        : S.SECTIONS.filter(function (s) { return s.batch === 'interactive'; }).length)));
       if (item.soon) {
         a.appendChild(el('span', 'rail-badge', 'soon'));
         a.setAttribute('aria-disabled', 'true');

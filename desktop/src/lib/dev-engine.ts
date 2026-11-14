@@ -29,11 +29,14 @@
 import type { RunFinished } from './engine';
 import type { DriveInfo } from './drives';
 import type { ScheduleStatus } from './schedule';
+import { DEV_DRIVER_REPORT, DEV_UPDATE_CANDIDATES } from './dev-engine-seed';
 
 const DEV_MARKER = 'windowsweep-dev-fallback-not-the-real-engine';
 
 /**
- * The real catalogue, captured from `windowsweep --list --json` at the 1.4.1 source head.
+ * The real catalogue, captured from `windowsweep --list --json` on the 1.5.0 working tree
+ * (2026-11-14, after A4-15: 33 sections, the `update` tier for 30-32). `version` is the release it ships in -
+ * the tree's VERSION reads the same.
  *
  * Deliberately a captured artefact rather than a hand-written fixture: a
  * hand-written one drifts from the engine and then the screens are laid out
@@ -48,9 +51,72 @@ const DEV_MARKER = 'windowsweep-dev-fallback-not-the-real-engine';
  * `protected.categories` IS the engine's own constant, verbatim, because it is
  * fixed text rather than a property of any machine.
  */
-const CATALOGUE_JSON = String.raw`{"tool":"windowsweep","version":"1.4.1","sections":[{"id":0,"key":"health","title":"System health report","tier":"report","admin":false,"batch":"safe","dev":false},{"id":1,"key":"pkg","title":"Package-manager caches (npm, yarn, pnpm, bun, deno, pip, uv, Composer, NuGet, Cargo, Go, pub)","tier":"rebuilds","admin":false,"batch":"safe","dev":true},{"id":2,"key":"build","title":"Build-tool caches (Gradle, Maven, Android, Unity, JetBrains)","tier":"rebuilds","admin":false,"batch":"safe","dev":true},{"id":3,"key":"runners","title":"Test-runner browsers (Cypress, Playwright, Puppeteer) - keep newest","tier":"rebuilds","admin":false,"batch":"safe","dev":true},{"id":4,"key":"avd","title":"Android emulators (AVDs) idle N+ days","tier":"slow","admin":false,"batch":"optin","dev":true},{"id":5,"key":"docker","title":"Docker: dangling images, build cache, unused images older than N days","tier":"rebuilds","admin":false,"batch":"safe","dev":true},{"id":6,"key":"editors","title":"Editor caches (VS Code, Cursor, Windsurf, Visual Studio) + superseded extensions","tier":"rebuilds","admin":false,"batch":"safe","dev":false},{"id":7,"key":"browsers","title":"Browser caches (Chrome, Edge, Brave, Vivaldi, Opera, Chromium, Firefox)","tier":"rebuilds","admin":false,"batch":"safe","dev":false},{"id":8,"key":"apps","title":"Desktop app caches (Discord, Slack, Teams, Zoom, Spotify, Postman, Figma, ...)","tier":"rebuilds","admin":false,"batch":"safe","dev":false},{"id":9,"key":"wincaches","title":"Windows user caches (INetCache, WER, crash dumps, shader caches, UWP temp)","tier":"rebuilds","admin":false,"batch":"safe","dev":false},{"id":10,"key":"temp","title":"User temp files older than N days","tier":"rebuilds","admin":false,"batch":"safe","dev":false},{"id":11,"key":"recycle","title":"Empty the Recycle Bin - PERMANENT","tier":"permanent","admin":false,"batch":"deep","dev":false},{"id":12,"key":"wu","title":"Windows Update + system temp (SoftwareDistribution, Delivery Optimization, Windows\\Temp, CBS logs)","tier":"rebuilds","admin":true,"batch":"safe","dev":false},{"id":13,"key":"cleanmgr","title":"Windows Disk Cleanup engine (cleanmgr, curated handlers)","tier":"rebuilds","admin":true,"batch":"safe","dev":false},{"id":14,"key":"dism","title":"Component store cleanup (DISM StartComponentCleanup) - slow","tier":"rebuilds","admin":true,"batch":"optin","dev":false},{"id":15,"key":"hiberfil","title":"Hibernation file (off / reduced)","tier":"config","admin":true,"batch":"deep","dev":false},{"id":16,"key":"eventlogs","title":"Clear Windows Event Logs - PERMANENT","tier":"permanent","admin":true,"batch":"deep","dev":false},{"id":17,"key":"projects","title":"Stale project build artefacts (node_modules, dist, .next, target, ...)","tier":"rebuilds","admin":false,"batch":"interactive","dev":true},{"id":18,"key":"partials","title":"Partial / orphan downloads -\u003e Recycle Bin","tier":"recycle","admin":false,"batch":"interactive","dev":false},{"id":19,"key":"large","title":"Large or old personal files (Downloads and folders you add) -\u003e Recycle Bin","tier":"recycle","admin":false,"batch":"interactive","dev":false},{"id":20,"key":"vhdx","title":"Docker Desktop / WSL disk image compaction (stops Docker + WSL)","tier":"config","admin":true,"batch":"deep","dev":true},{"id":21,"key":"diskusage","title":"Disk usage report (largest entries, drives, disk images)","tier":"report","admin":false,"batch":"safe","dev":false},{"id":22,"key":"globals","title":"Globally installed packages audit (npm, pnpm, yarn, bun, deno) - report only","tier":"report","admin":false,"batch":"safe","dev":false},{"id":23,"key":"orphaned","title":"Orphaned application data under AppData -\u003e Recycle Bin","tier":"recycle","admin":false,"batch":"interactive","dev":false},{"id":24,"key":"programs","title":"Installed programs not modified for N+ days - report only","tier":"report","admin":false,"batch":"safe","dev":false},{"id":25,"key":"startup","title":"Startup items audit (Run keys, Startup folders, logon tasks) - report only","tier":"report","admin":false,"batch":"safe","dev":false},{"id":26,"key":"uninstall","title":"Uninstall programs you pick, each with its own uninstaller, then the folders they left -\u003e Recycle Bin","tier":"permanent","admin":false,"batch":"interactive","dev":false},{"id":27,"key":"leftovers","title":"Folders uninstalled programs left in Program Files, Common Files and ProgramData -\u003e Recycle Bin","tier":"recycle","admin":true,"batch":"interactive","dev":false},{"id":28,"key":"releases","title":"Superseded tool releases and old downloaded updates (Codex, Electron updaters, Ollama, unrequested Node) - current kept","tier":"rebuilds","admin":false,"batch":"safe","dev":false},{"id":29,"key":"browserai","title":"Chrome on-device AI model - set the policy that removes it (Chrome shows \"Managed by your organization\")","tier":"config","admin":true,"batch":"deep","dev":false}],"safe_batch":[0,1,2,3,5,6,7,8,9,10,21,28],"safe_batch_admin":[12,13],"protected":{"subtrees":["C:\\Users\\example\\Documents","C:\\Users\\example\\Desktop","C:\\Users\\example\\Pictures","C:\\Users\\example\\.ssh","C:\\Users\\example\\.gnupg","C:\\Users\\example\\AppData\\Roaming\\npm","C:\\Windows\\System32\\config","C:\\Windows\\Installer","C:\\Windows\\WinSxS","C:\\$Recycle.Bin"],"categories":["every drive root, Windows, System32, Program Files, ProgramData, the user profile root and AppData roots","browser profile data (Local Storage, IndexedDB, cookies, history, bookmarks, extensions, PWA CacheStorage)","editor user data (settings, globalStorage, local History); UWP LocalState; toolchains (nvm, npm globals, corepack, ...)","NTUSER.DAT, UsrClass.dat, hiberfil/pagefile/swapfile (only powercfg touches hiberfil), Prefetch, Windows\\Installer, WinSxS (DISM only)"]},"profiles":{"system":[12,13,14],"minimal":[7,8,9,10],"deep":[0,1,2,3,5,6,7,8,9,10,12,13,14,21,28],"cache-only":[1,2,3,6,7,8,9],"dev":[1,2,3,4,5,6,17,28],"audit":[0,21,22,24,25]},"walkthrough":[1,2,3,4,5,6,7,8,9,10,28,11,17,18,19,23],"walkthrough_admin":[12,13,14,27]}`;
+const CATALOGUE_JSON = String.raw`{"tool":"windowsweep","version":"1.5.0","sections":[{"id":0,"key":"health","title":"System health report","tier":"report","admin":false,"batch":"safe","dev":false},{"id":1,"key":"pkg","title":"Package-manager caches (npm, yarn, pnpm, bun, deno, pip, uv, Composer, NuGet, Cargo, Go, pub)","tier":"rebuilds","admin":false,"batch":"safe","dev":true},{"id":2,"key":"build","title":"Build-tool caches (Gradle, Maven, Android, Unity, JetBrains)","tier":"rebuilds","admin":false,"batch":"safe","dev":true},{"id":3,"key":"runners","title":"Test-runner browsers (Cypress, Playwright, Puppeteer) - keep newest","tier":"rebuilds","admin":false,"batch":"safe","dev":true},{"id":4,"key":"avd","title":"Android emulators (AVDs) idle N+ days","tier":"slow","admin":false,"batch":"optin","dev":true},{"id":5,"key":"docker","title":"Docker: dangling images, build cache, unused images older than N days","tier":"rebuilds","admin":false,"batch":"safe","dev":true},{"id":6,"key":"editors","title":"Editor caches (VS Code, Cursor, Windsurf, Visual Studio) + superseded extensions","tier":"rebuilds","admin":false,"batch":"safe","dev":false},{"id":7,"key":"browsers","title":"Browser caches (Chrome, Edge, Brave, Vivaldi, Opera, Chromium, Firefox)","tier":"rebuilds","admin":false,"batch":"safe","dev":false},{"id":8,"key":"apps","title":"Desktop app caches (Discord, Slack, Teams, Zoom, Spotify, Postman, Figma, ...)","tier":"rebuilds","admin":false,"batch":"safe","dev":false},{"id":9,"key":"wincaches","title":"Windows user caches (INetCache, WER, crash dumps, shader caches, UWP temp)","tier":"rebuilds","admin":false,"batch":"safe","dev":false},{"id":10,"key":"temp","title":"User temp files older than N days","tier":"rebuilds","admin":false,"batch":"safe","dev":false},{"id":11,"key":"recycle","title":"Empty the Recycle Bin - PERMANENT","tier":"permanent","admin":false,"batch":"deep","dev":false},{"id":12,"key":"wu","title":"Windows Update + system temp (SoftwareDistribution, Delivery Optimization, Windows\\Temp, CBS logs)","tier":"rebuilds","admin":true,"batch":"safe","dev":false},{"id":13,"key":"cleanmgr","title":"Windows Disk Cleanup engine (cleanmgr, curated handlers)","tier":"rebuilds","admin":true,"batch":"safe","dev":false},{"id":14,"key":"dism","title":"Component store cleanup (DISM StartComponentCleanup) - slow","tier":"rebuilds","admin":true,"batch":"optin","dev":false},{"id":15,"key":"hiberfil","title":"Hibernation file (off / reduced)","tier":"config","admin":true,"batch":"deep","dev":false},{"id":16,"key":"eventlogs","title":"Clear Windows Event Logs - PERMANENT","tier":"permanent","admin":true,"batch":"deep","dev":false},{"id":17,"key":"projects","title":"Stale project build artefacts (node_modules, dist, .next, target, ...)","tier":"rebuilds","admin":false,"batch":"interactive","dev":true},{"id":18,"key":"partials","title":"Partial / orphan downloads -> Recycle Bin","tier":"recycle","admin":false,"batch":"interactive","dev":false},{"id":19,"key":"large","title":"Large or old personal files (Downloads and folders you add) -> Recycle Bin","tier":"recycle","admin":false,"batch":"interactive","dev":false},{"id":20,"key":"vhdx","title":"Docker Desktop / WSL disk image compaction (stops Docker + WSL)","tier":"config","admin":true,"batch":"deep","dev":true},{"id":21,"key":"diskusage","title":"Disk usage report (largest entries, drives, disk images)","tier":"report","admin":false,"batch":"safe","dev":false},{"id":22,"key":"globals","title":"Globally installed packages audit (npm, pnpm, yarn, bun, deno) - report only","tier":"report","admin":false,"batch":"safe","dev":false},{"id":23,"key":"orphaned","title":"Orphaned application data under AppData -> Recycle Bin","tier":"recycle","admin":false,"batch":"interactive","dev":false},{"id":24,"key":"programs","title":"Installed programs not modified for N+ days - report only","tier":"report","admin":false,"batch":"safe","dev":false},{"id":25,"key":"startup","title":"Startup items audit (Run keys, Startup folders, logon tasks) - report only","tier":"report","admin":false,"batch":"safe","dev":false},{"id":26,"key":"uninstall","title":"Uninstall programs and Store apps you pick, each with its own uninstaller, then what they left (folders, registry keys, shortcuts, startup entries)","tier":"permanent","admin":false,"batch":"interactive","dev":false},{"id":27,"key":"leftovers","title":"Leftovers of uninstalled programs: folders, registry keys (.reg backup first), Start-menu shortcuts, dead startup entries -> Recycle Bin","tier":"recycle","admin":true,"batch":"interactive","dev":false},{"id":28,"key":"releases","title":"Superseded tool releases and old downloaded updates (Codex, Electron updaters, Ollama, unrequested Node) - current kept","tier":"rebuilds","admin":false,"batch":"safe","dev":false},{"id":29,"key":"browserai","title":"Chrome on-device AI model - set the policy that removes it (Chrome shows \"Managed by your organization\")","tier":"config","admin":true,"batch":"deep","dev":false},{"id":30,"key":"winupdate","title":"Windows updates you pick (security, quality, Defender, malware tool) via Windows Update - never restarts your PC","tier":"update","admin":false,"batch":"interactive","dev":false},{"id":31,"key":"drivers","title":"Driver updates you pick from Windows Update, and old driver packages - never BIOS or firmware","tier":"update","admin":false,"batch":"interactive","dev":false},{"id":32,"key":"appupdates","title":"App updates you pick, one at a time, via winget","tier":"update","admin":false,"batch":"interactive","dev":false}],"safe_batch":[0,1,2,3,5,6,7,8,9,10,21,28],"safe_batch_admin":[12,13],"protected":{"subtrees":["C:\\Users\\example\\Documents","C:\\Users\\example\\Desktop","C:\\Users\\example\\Pictures","C:\\Users\\example\\.ssh","C:\\Users\\example\\.gnupg","C:\\Users\\example\\AppData\\Roaming\\npm","C:\\Windows\\System32\\config","C:\\Windows\\Installer","C:\\Windows\\WinSxS","C:\\$Recycle.Bin"],"categories":["every drive root, Windows, System32, Program Files, ProgramData, the user profile root and AppData roots","browser profile data (Local Storage, IndexedDB, cookies, history, bookmarks, extensions, PWA CacheStorage)","editor user data (settings, globalStorage, local History); UWP LocalState; toolchains (nvm, npm globals, corepack, ...)","NTUSER.DAT, UsrClass.dat, hiberfil/pagefile/swapfile (only powercfg touches hiberfil), Prefetch, Windows\\Installer, WinSxS (DISM only)"]},"profiles":{"system":[12,13,14],"minimal":[7,8,9,10],"deep":[0,1,2,3,5,6,7,8,9,10,12,13,14,21,28],"cache-only":[1,2,3,6,7,8,9],"dev":[1,2,3,4,5,6,17,28],"audit":[0,21,22,24,25]},"walkthrough":[1,2,3,4,5,6,7,8,9,10,28,11,17,18,19,23],"walkthrough_admin":[12,13,14,27]}`;
 
 const SAFE = [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 21, 28];
+
+/** The interactive sections, from the captured catalogue's own `batch` - never a list kept here. */
+const INTERACTIVE: ReadonlySet<number> = new Set(
+  (JSON.parse(CATALOGUE_JSON) as { sections: { id: number; batch: string }[] }).sections
+    .filter((section) => section.batch === 'interactive')
+    .map((section) => section.id)
+);
+
+/** Section 31, whose rehearsal also publishes the two report blocks. */
+const DRIVER_SECTION = 31;
+
+/** The 17-23 rows the stand-in has always offered; 26-32 come from `dev-engine-seed.ts`. */
+const CLEANUP_CANDIDATES = [
+  {
+    section: 17,
+    index: 1,
+    path: 'C:\\dev\\old-api\\node_modules',
+    bytes: 1.9e9,
+    idle_days: 214,
+    project: 'old-api',
+  },
+  {
+    section: 17,
+    index: 2,
+    path: 'C:\\dev\\prototype\\node_modules',
+    bytes: 8.2e8,
+    idle_days: 402,
+    project: 'prototype',
+  },
+  {
+    section: 18,
+    index: 1,
+    path: 'C:\\Users\\example\\Downloads\\installer.part',
+    bytes: 4.1e8,
+    idle_days: 61,
+    project: null,
+  },
+  {
+    section: 19,
+    index: 1,
+    path: 'C:\\Users\\example\\Downloads\\old-archive.zip',
+    bytes: 1.2e9,
+    idle_days: 214,
+    project: null,
+    reason: 'both',
+    age_basis: 'write',
+    root: 'C:\\Users\\example\\Downloads',
+    selectable: true,
+  },
+  {
+    section: 19,
+    index: 2,
+    path: 'C:\\Users\\example\\Downloads\\kept-photo.jpg',
+    bytes: 2.1e8,
+    idle_days: 300,
+    project: null,
+    reason: 'old',
+    age_basis: 'write+access',
+    root: 'C:\\Users\\example\\Downloads',
+    selectable: false,
+    skip_reason: 'excluded by the person',
+  },
+];
 
 /** Plausible sizes, so a treemap and a table have real proportions to lay out. */
 const BYTES: Record<number, number> = {
@@ -147,7 +213,7 @@ export async function devRun(
       })
     : SAFE;
 
-  emit('clean:log', `windowsweep 1.1.0 - ${DEV_MARKER}`);
+  emit('clean:log', `windowsweep 1.5.0 - ${DEV_MARKER}`);
   emit('clean:log', 'nothing on this machine is read, measured or deleted by this stand-in');
 
   let total = 0;
@@ -166,7 +232,7 @@ export async function devRun(
 
   const summary = {
     tool: 'windowsweep',
-    version: '1.4.1',
+    version: '1.5.0',
     mode: scan ? 'scan' : 'all',
     // 🔴 Always a rehearsal. This stand-in has no path that reports a real deletion.
     dry_run: true,
@@ -176,85 +242,16 @@ export async function devRun(
     estimated_bytes: total,
     sections: sections.map((id) => ({
       section: id,
-      status: [17, 18, 19, 23, 26, 27].includes(id)
-        ? 'dry-run'
-        : (BYTES[id] ?? 0) > 0
-          ? 'dry-run'
-          : 'skipped',
+      status: INTERACTIVE.has(id) ? 'dry-run' : (BYTES[id] ?? 0) > 0 ? 'dry-run' : 'skipped',
       freed_bytes: 0,
     })),
-    candidates:
-      only && sections.some((s) => [17, 18, 19, 23, 26, 27].includes(s))
-        ? [
-            {
-              section: 17,
-              index: 1,
-              path: 'C:\\dev\\old-api\\node_modules',
-              bytes: 1.9e9,
-              idle_days: 214,
-              project: 'old-api',
-            },
-            {
-              section: 17,
-              index: 2,
-              path: 'C:\\dev\\prototype\\node_modules',
-              bytes: 8.2e8,
-              idle_days: 402,
-              project: 'prototype',
-            },
-            {
-              section: 18,
-              index: 1,
-              path: 'C:\\Users\\example\\Downloads\\installer.part',
-              bytes: 4.1e8,
-              idle_days: 61,
-              project: null,
-            },
-            {
-              section: 19,
-              index: 1,
-              path: 'C:\\Users\\example\\Downloads\\old-archive.zip',
-              bytes: 1.2e9,
-              idle_days: 214,
-              project: null,
-              reason: 'both',
-              age_basis: 'write',
-              root: 'C:\\Users\\example\\Downloads',
-              selectable: true,
-            },
-            {
-              section: 19,
-              index: 2,
-              path: 'C:\\Users\\example\\Downloads\\kept-photo.jpg',
-              bytes: 2.1e8,
-              idle_days: 300,
-              project: null,
-              reason: 'old',
-              age_basis: 'write+access',
-              root: 'C:\\Users\\example\\Downloads',
-              selectable: false,
-              skip_reason: 'excluded by the person',
-            },
-            {
-              section: 26,
-              index: 1,
-              path: 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\ExampleTool',
-              bytes: 0,
-              idle_days: null,
-              project: null,
-              label: 'Example Tool',
-            },
-            {
-              section: 27,
-              index: 1,
-              path: 'C:\\Program Files\\Example Leftover',
-              bytes: 2.3e8,
-              idle_days: 90,
-              project: null,
-              label: 'Example Leftover',
-            },
-          ]
-        : [],
+    /* Only the asked sections' rows, as the engine offers only what it ran. */
+    candidates: only
+      ? [...CLEANUP_CANDIDATES, ...DEV_UPDATE_CANDIDATES].filter((row) =>
+          sections.includes(Number(row.section))
+        )
+      : [],
+    ...(sections.includes(DRIVER_SECTION) ? { driver_report: DEV_DRIVER_REPORT } : {}),
     /* Deterministic, and each section's parts sum back to its own total, so
        `estimated_bytes` and the map's total cannot disagree. */
     targets: sections.flatMap((id) => {

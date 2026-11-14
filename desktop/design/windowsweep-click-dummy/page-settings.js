@@ -307,9 +307,12 @@
     var note = el('div', 'note note-info');
     note.appendChild(el('span', null, 'i'));
     note.appendChild(el('span', null,
-      'The cleanup engine makes zero network calls, and its own test suite asserts that. Everything ' +
-      'below is about this desktop window only. windowsweep collects it to improve the product for ' +
-      'everyone, and there is no switch for it.'));
+      /* 1.5.0 (D110): scoped - cleanup never reaches the network, 30-32 hand downloads to
+         other tools, and the engine itself still sends nothing (check [9]). */
+      'Cleanup never touches the network. Only sections 30–32, for the rows you pick, ask Windows ' +
+      'Update or winget to download; the engine itself sends nothing, and its ' +
+      'own test suite asserts that. Everything below is about this desktop window only. windowsweep ' +
+      'collects it to improve the product for everyone, and there is no switch for it.'));
     g.appendChild(note);
 
     /* N-016 (D64): no session replay in the desktop window, so its row is gone;

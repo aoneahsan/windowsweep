@@ -11,6 +11,8 @@
  * `Get-CatalogueJson`, and from `Get-MachineProgressLine`.
  */
 
+import { readCandidate, readDriverReport } from './candidate-extras';
+
 /** One section's outcome inside a run summary. */
 export interface RunSectionResult {
   section: number;
@@ -18,7 +20,19 @@ export interface RunSectionResult {
   freed_bytes: number;
 }
 
-/** A row an interactive section offers for selection (17/18/19/23/26/27). */
+/**
+ * A row an interactive section offers for selection (17-19, 23, 26, 27 and, from 1.5.0, 30-32).
+ *
+ * 🔴 Normalised on the way in by `readCandidate` (`lib/candidate-extras.ts`), never passed through:
+ * every field below has the type it claims or is absent, `idle_days` is `null` rather than the
+ * engine's `-1` for "no age", and an extra the engine sends with the wrong type is dropped rather
+ * than reaching a screen as `undefined` text.
+ *
+ * 🔴 `bytes` MEANS DIFFERENT THINGS BY KIND, exactly as the engine sends it: space a row frees for
+ * every section that removes, the DOWNLOAD SIZE for a Windows Update row (30, and 31's driver
+ * installs), 0 for an app update. Never sum it directly across an install-mode list -
+ * `reclaimOf` and `downloadOf` are the two readings.
+ */
 export interface Candidate {
   section: number;
   index: number;
@@ -33,6 +47,74 @@ export interface Candidate {
   root?: string;
   selectable?: boolean;
   skip_reason?: string;
+
+  /* --- 1.5.0 extras (`Add-JsonCandidate -Extra`), each optional ------------------------------- */
+  /** 26: desktop | store | broken. 27: registry | shortcut | startup | task (a folder sends none).
+   *  30-32: windows-update | driver-update | driver-package | app-update (no maker's tool, A4-15). */
+  kind?: string;
+  /** The row needs Windows' permission (26 machine-wide entries, 27 HKLM keys and tasks, 30, 31). */
+  needs_admin?: boolean;
+  /** 26: how the program is removed (msi, exe, store, clear entry, ...). */
+  strategy?: string;
+  /** 26: days since Windows last saw it start - `12d`, `none` (no run on record), `-` (unknown). */
+  ran?: string;
+  /** 26 and 32: the publisher's name / 26: DisplayVersion, 32: the installed version. */
+  publisher?: string;
+  version?: string;
+  /** 26 broken entry: the uninstaller file that is gone. Not yet in the 1.5.0 engine's `--json`. */
+  uninstaller?: string;
+  /** 27 startup entry: the program it would start, which is gone. Not yet in the 1.5.0 engine's `--json`. */
+  target?: string;
+  /** 30: KB number(s), classification, MSRC severity, whether a restart may follow. */
+  kb?: string;
+  category?: string;
+  severity?: string;
+  reboot_likely?: boolean;
+  /** 31 driver update: Windows Update's own driver fields; BrowseOnly drivers are `optional`. */
+  driver_class?: string;
+  driver_provider?: string;
+  driver_date?: string;
+  optional?: boolean;
+  /** 31 old driver package: its provider, class and date (`yyyy-MM-dd`). */
+  provider?: string;
+  class?: string;
+  date?: string;
+  /** 32: the winget package id, the version available, and the source (`winget`, `msstore`). */
+  id?: string;
+  available?: string;
+  source?: string;
+  /** 32: the app is running, so the engine will skip it. Not yet in the 1.5.0 engine's `--json`. */
+  running?: boolean;
+}
+
+/** One device Device Manager flags (section 31, report only). */
+export interface DriverProblem {
+  name: string;
+  code: number;
+  /** The problem code in words, as the engine words it. */
+  problem: string;
+}
+
+/** One of the oldest third-party drivers in use (section 31, report only). */
+export interface OldDriver {
+  device: string;
+  provider: string;
+  version: string;
+  /** `yyyy-MM-dd`. */
+  date: string;
+}
+
+/**
+ * Section 31's two report blocks - listed for reading, never offered (AMENDMENTS-4 A4-10).
+ *
+ * 🔴 PROPOSED, NOT YET EMITTED: the 1.5.0 engine prints both lists only to its human log
+ * (`modules/updates_drivers.ps1` -> `Show-ProblemDevices`, `Show-OldDrivers`), so a real summary
+ * carries no `driver_report` and the Picker draws no report blocks. Shaped from the fields those
+ * two functions already read, so publishing them is one ordered hashtable in `Get-JsonSummary`.
+ */
+export interface DriverReport {
+  problems: DriverProblem[];
+  oldest: OldDriver[];
 }
 
 export interface PersonalRootVerdict {
@@ -98,6 +180,8 @@ export interface RunSummary {
   excluded: string[];
   access_live_volumes: string[];
   personal_roots: PersonalRootVerdict[];
+  /** Section 31's report blocks, or `null` when the run did not publish them (see `DriverReport`). */
+  driver_report: DriverReport | null;
   log_file: string | null;
   report_file: string | null;
 }
@@ -209,7 +293,14 @@ export function parseRunSummary(stdout: string): RunSummary {
     freed_bytes: Number(doc.freed_bytes ?? 0),
     estimated_bytes: Number(doc.estimated_bytes ?? 0),
     sections: Array.isArray(doc.sections) ? doc.sections : [],
-    candidates: Array.isArray(doc.candidates) ? doc.candidates : [],
+    /* 🔴 Read field by field (`readCandidate`): a row without a path or a section cannot be
+       chosen or matched by a selection file, so it is dropped rather than drawn. */
+    candidates: Array.isArray(doc.candidates)
+      ? doc.candidates.flatMap((raw: unknown) => {
+          const row = readCandidate(raw);
+          return row ? [row] : [];
+        })
+      : [],
     /* 🔴 Mapped rather than passed through, so `newest_write_utc` is `string` or
        `null` and never `undefined`. The bundled engine always emits it, but an
        absent field would otherwise reach the idle derivation as `undefined` and
@@ -221,6 +312,7 @@ export function parseRunSummary(stdout: string): RunSummary {
       ? doc.access_live_volumes.map(String)
       : [],
     personal_roots: Array.isArray(doc.personal_roots) ? doc.personal_roots : [],
+    driver_report: readDriverReport(doc.driver_report),
     log_file: doc.log_file ?? null,
     report_file: doc.report_file ?? null,
   };

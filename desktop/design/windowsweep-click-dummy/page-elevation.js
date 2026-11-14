@@ -153,13 +153,63 @@
     return c;
   }
 
+  /* The app's formatIdRanges (lib/format.ts): runs of ids as ranges, en-GB list. */
+  function idRanges(ids) {
+    var pieces = [], first = null, last = null;
+    var close = function () { if (first !== null) pieces.push(first === last ? String(first) : first + '–' + last); };
+    ids.slice().sort(function (a, b) { return a - b; }).forEach(function (id) {
+      if (last !== null && id === last + 1) { last = id; return; }
+      close(); first = id; last = id;
+    });
+    close();
+    return new Intl.ListFormat('en-GB', { type: 'conjunction' }).format(pieces);
+  }
+
+  /* 1.5.0 (D110): 30 and 31 list without permission and install with it. Picked on the
+     Choose screen, so the card links there; it has no switch of its own. */
+  var PICKED = {
+    30: ['Listing needs no permission. Installing the updates you pick does.', 'Choose updates'],
+    31: ['Driver updates list without permission; old driver packages list only in an elevated window. Installing a driver or removing a package needs permission.', 'Choose drivers']
+  };
+
+  function pickedCard(s) {
+    var c = el('div', 'card');
+    var bd = el('div', 'card-bd');
+    var top = el('div');
+    top.style.cssText = 'display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap';
+    top.appendChild(el('span', 'num t-sm ink-3', String(s.id)));
+    var k = el('span', 't-base'); k.style.fontWeight = '600'; k.textContent = s.key;
+    top.appendChild(k);
+    top.appendChild(el('span', 'badge badge-danger', 'admin'));
+    bd.appendChild(top);
+    bd.appendChild(el('p', 't-sm ink-3', s.title));
+    var line = el('p', 't-sm', PICKED[s.id][0]);
+    line.style.marginTop = 'var(--sp-3)';
+    bd.appendChild(line);
+    /* Home's "Choose items" is the same move into the Choose screen, drawn the same way. */
+    var go = el('button', 'btn btn-sm', PICKED[s.id][1]);
+    go.type = 'button';
+    go.style.marginTop = 'var(--sp-3)';
+    go.addEventListener('click', function () { location.href = 'picker.html?section=' + s.id; });
+    bd.appendChild(go);
+    c.appendChild(bd);
+    return c;
+  }
+
   window.wsPage = {
     init: function () {
       var admin = S.SECTIONS.filter(function (s) { return s.admin && s.batch !== 'interactive'; });
       admin.forEach(function (s) { chosen[s.id] = !isDeep(s); });
+      var ids = admin.map(function (s) { return s.id; });
+      window.wsWire.setText('elevEyebrow', (ids.length === 1 ? 'Section ' : 'Sections ') + idRanges(ids));
+      window.wsWire.setText('elevTitle', ids.length + (ids.length === 1 ? ' section needs' : ' sections need') +
+        ' Windows to ask your permission.');
 
       var host = document.querySelector('[data-ws-elevated]');
       if (host) admin.forEach(function (s) { host.appendChild(card(s)); });
+      var picked = document.querySelector('[data-ws-elevated-picked]');
+      if (picked) S.SECTIONS.filter(function (s) { return PICKED[s.id]; })
+        .forEach(function (s) { picked.appendChild(pickedCard(s)); });
 
       var ok = document.querySelector('[data-ws-deep-ok]');
       if (ok) {

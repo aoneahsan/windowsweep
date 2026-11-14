@@ -28,10 +28,10 @@ $Script:WS = @{
   SelectQueue = @(); SelectPaths = @(); SelectActive = $false; LastSelectionScripted = $false
   Candidates = @(); ScanTargets = @()
   TotalFreed = [long]0; TotalEstimated = [long]0; SectionFreed = [long]0
-  Refusals = @(); Hints = @(); ExitCode = 0; Finished = $false; AllowOwnData = $false
+  Refusals = @(); Hints = @(); ExitCode = 0; Finished = $false; AllowOwnData = $false; DriverReport = $null
 }
 
-foreach ($lib in @('constants', 'ui', 'log', 'fs', 'safety', 'external', 'config', 'scan', 'actions')) {
+foreach ($lib in @('constants', 'ui', 'log', 'fs', 'safety', 'registry', 'external', 'config', 'scan', 'actions')) {
   . (Join-Path $Script:WS_ROOT "lib\$lib.ps1")
 }
 foreach ($m in (Get-ChildItem -LiteralPath (Join-Path $Script:WS_ROOT 'modules') -Filter '*.ps1' | Sort-Object Name)) {
@@ -73,7 +73,8 @@ OPTIONS
       --dry-run         Delete nothing; show what would go and how much it frees
   -y, --yes             Auto-confirm regenerable-cache steps (never personal files)
       --i-understand-deep  Allow deep sections (11 Recycle Bin, 15 hibernation, 16 event logs,
-                        20 disk-image compaction) to run unattended with --yes
+                        20 disk-image compaction, 29 Chrome AI model policy) to run unattended
+                        with --yes
       --elevate         Relaunch elevated (UAC prompt) so admin sections can run
   -d, --days N          Idle threshold for caches (default 100). A file goes only when its newest
                         timestamp (write, access, creation) is at least N days old
@@ -91,7 +92,8 @@ OPTIONS
       --select L        Pre-answer the next interactive selection, e.g. --select 1,3-5. Repeatable: the
                         lists are consumed in the order the prompts appear
       --select-file P   UTF-8 file of one full path per line, matched against each prompt's candidates.
-                        Either flag lets sections 17/18/19/23 run unattended - a person did choose
+                        Either flag lets the pick-it-yourself sections (17-19, 23, 26, 27, 30-32)
+                        run unattended - a person did choose
       --notify          Show a Windows notification when the run ends
       --logs-dir P / --reports-dir P / --no-report / --cleanup-logs
       --json            One-line JSON summary on stdout (everything else on stderr)
@@ -100,9 +102,12 @@ OPTIONS
 SAFETY
   Every deletion passes one chokepoint that refuses drive roots, Windows, Program Files, your
   profile root, Documents/Pictures/Desktop, credentials, toolchains and browser/editor state, and
-  that never follows a junction or symlink. Sections 17, 18, 19 and 23 ask you to pick item by
-  item; 18, 19 and 23 send what you pick to the Recycle Bin. --scan and --dry-run delete nothing,
-  though both still write a log and a report. No network calls, ever.
+  that never follows a junction or symlink; registry entries it removes go to a .reg file first.
+  Sections 17-19, 23, 26, 27 and 30-32 ask you to pick item by item; 18, 19 and 23 send what you
+  pick to the Recycle Bin. --scan and --dry-run delete and install nothing, though both still write
+  a log and a report. Cleanup never touches the network. Only sections 30-32, when you run them, ask
+  Windows Update or winget what is available, and download only the rows you
+  pick; windowsweep itself sends nothing.
 
 OUTPUT
   Logs:    $($Script:WS.LogsDir)

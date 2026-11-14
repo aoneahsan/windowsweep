@@ -3,7 +3,8 @@
   'use strict';
   var G = window.G, el = G.el, db = window.wsdb;
 
-  var TIERS = ['report', 'rebuilds', 'slow', 'recycle', 'permanent', 'config'];
+  /* 1.5.0 adds `update` (30-32): the ring, the one tier that adds rather than reclaims. */
+  var TIERS = ['report', 'rebuilds', 'slow', 'recycle', 'permanent', 'config', 'update'];
 
   window.wsPlayground.register('stat', {
     title: 'Stat card',

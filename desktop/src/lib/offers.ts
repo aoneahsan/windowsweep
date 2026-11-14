@@ -24,7 +24,14 @@
  */
 
 import type { Catalogue } from './catalogue';
-import type { Candidate, RunSummary } from './cli';
+import type { Candidate, DriverReport, RunSummary } from './cli';
+
+/**
+ * The section whose report blocks travel with its rows (A4-10). Keyed by id, which IRON rule 4
+ * freezes. The report is part of what 31 offered, so it is established and spent with 31's list -
+ * never with whichever run happened to be last, which would empty it the moment 30 is asked.
+ */
+const DRIVER_SECTION = 31;
 
 export interface Offers {
   /** Every row an interactive section has offered that nothing has spent since. */
@@ -38,6 +45,8 @@ export interface Offers {
    * need different words, and only the first may say the section found nothing.
    */
   offeredSections: number[];
+  /** Section 31's report blocks from the rehearsal that offered its rows, or null. */
+  driverReport: DriverReport | null;
 }
 
 /** The interactive sections, from the catalogue's own `batch` - never a list kept here. */
@@ -84,5 +93,10 @@ export function mergeOffers(
       ...previous.offeredSections.filter((id) => !changed.has(id)),
       ...established,
     ].sort((a, b) => a - b),
+    driverReport: established.has(DRIVER_SECTION)
+      ? summary.driver_report
+      : spent.has(DRIVER_SECTION)
+        ? null
+        : previous.driverReport,
   };
 }

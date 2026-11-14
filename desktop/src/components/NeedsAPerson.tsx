@@ -1,10 +1,12 @@
 /**
  * Home zone 6 - these need a person. `index.html:164-172`, `wire.js:316-352`.
  *
- * One card per interactive section, always all four of them, because "nothing
- * offered yet" is information too - the dummy renders the section even when its
- * count is zero (`db.js:116-125`). The sections come from the catalogue's own
- * `batch === 'interactive'`, never from a list kept here.
+ * One card per interactive section that reclaims space, always every one of them,
+ * because "nothing offered yet" is information too - the dummy renders the section
+ * even when its count is zero (`db.js` `needsAPerson`). The sections come from the
+ * catalogue's own `batch === 'interactive'`, never from a list kept here, less the
+ * install sections 30-32 (`reclaimPickSections`, A4-04): they add software, so a
+ * card reading "0 B waiting" would be noise; they are chosen on the Choose screen.
  *
  * The figures come from the candidates the engine offered, which `finishRun`
  * records from every run. `--yes` never answers these sections, which is what the

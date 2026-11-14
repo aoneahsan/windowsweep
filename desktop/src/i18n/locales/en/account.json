@@ -43,7 +43,7 @@
   "settings.promoTitle": "More from the same team",
   "settings.promoNote": "These are ads for the team’s own tools, not an advertising network – nothing here is sold, tracked or third-party, and windowsweep never appears in its own list.",
   "settings.noKeys": "No destination is configured in this build, so nothing is actually sent from it.",
-  "settings.privacy.note": "The cleanup engine makes zero network calls, and its own test suite asserts that. Everything below is about this desktop window only. windowsweep collects it to improve the product for everyone, and there is no switch for it.",
+  "settings.privacy.note": "Cleanup never touches the network. Only sections 30–32, for the rows you pick, ask Windows Update or winget to download; the engine itself sends nothing, and its own test suite asserts that. Everything below is about this desktop window only. windowsweep collects it to improve the product for everyone, and there is no switch for it.",
   "settings.privacy.productAnalytics": "Product analytics",
   "settings.privacy.productAnalyticsDesc": "Which screens and which buttons.",
   "settings.privacy.behaviourAnalytics": "Behaviour analytics",

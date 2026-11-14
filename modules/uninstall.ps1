@@ -1,5 +1,7 @@
 # uninstall.ps1 - section 26: uninstall programs you pick, each with its own registered uninstaller (D77), then
-# offer the folders they left (leftovers.ps1). Interactive only; --yes never selects. One program at a time:
+# offer what they left (leftovers.ps1, leftovers_more.ps1). Since 1.5.0 (D109) the same list also carries Store
+# apps for this account (store_apps.ps1) and broken entries whose uninstaller is gone (cleared through
+# lib\registry.ps1 after a .reg backup). Interactive only; --yes never selects. One program at a time:
 # some uninstallers hand the work to a helper, and a second one started meanwhile fails (Adobe's "Failed to
 # acquire Bootstrapper Lock", P52 2026-11-02). The silent forms below are the ones that worked on the P52 that
 # day. ASCII only.
@@ -118,9 +120,52 @@ function Test-UninstallOffered {
   return $true
 }
 
+function Test-UninstallEntryBroken {
+  <# .SYNOPSIS Pure: true when an entry's own uninstaller file is gone (its drive present), so running it can only
+     fail and the entry can only be cleared. An MSI entry is never judged this way: msiexec is always there. #>
+  param([pscustomobject] $Command)
+  if ($Command.Strategy -in 'msi', 'none', 'winget') { return $false }
+  return (Test-FileGone ([string]$Command.FilePath))
+}
+
 function Get-UninstallCandidates {
-  <# .SYNOPSIS Programs section 26 may offer, largest first, one row per registry key. #>
-  return @(Get-InstalledProgramRows | Where-Object { Test-UninstallOffered $_ } | Sort-Object { [long]$_.EstimatedSizeKb } -Descending)
+  <# .SYNOPSIS Everything section 26 may offer, largest first: desktop programs (one row per registry key),
+     entries whose uninstaller is gone (Kind = stale, cleared after a .reg backup) and Store apps for this
+     account (Kind = store, removed with Remove-AppxPackage). #>
+  $rows = @()
+  foreach ($r in @(Get-InstalledProgramRows | Where-Object { Test-UninstallOffered $_ })) {
+    $kind = 'program'
+    if (Test-UninstallEntryBroken (Get-UninstallCommand $r)) { $kind = 'stale' }
+    $r | Add-Member -NotePropertyName Kind -NotePropertyValue $kind -Force
+    $rows += $r
+  }
+  $rows += @(Get-StoreAppRows)
+  return @($rows | Sort-Object { [long]$_.EstimatedSizeKb } -Descending)
+}
+
+function Get-UninstallKindLabel {
+  param([string] $Kind)
+  switch ($Kind) { 'store' { return 'store' } 'stale' { return 'broken' } default { return 'desktop' } }
+}
+
+function Invoke-UninstallRow {
+  <# .SYNOPSIS Remove one picked row the way its kind needs, and record a real removal in the uninstall history. #>
+  param([pscustomobject] $Row)
+  $result = 'failed'
+  $strategy = ''
+  switch ([string]$Row.Kind) {
+    'store' { $result = Invoke-StoreAppRemoval -Row $Row; $strategy = 'store' }
+    'stale' {
+      Write-Note "$($Row.DisplayName) - its uninstaller is gone, so only its entry in Apps can be cleared"
+      $r = Remove-RegistryKeySafe -Path $Row.KeyPath -Kind 'uninstall' -Label "the broken uninstall entry of $($Row.DisplayName)"
+      $strategy = 'clear-entry'
+      $result = $r
+      if ($r -eq 'absent') { $result = 'removed' }
+    }
+    default { $result = Invoke-ProgramUninstall -Row $Row; $strategy = (Get-UninstallCommand $Row).Strategy }
+  }
+  if ($result -eq 'removed' -and -not $Script:WS.DryRun) { Add-UninstallHistory -Row $Row -Strategy $strategy }
+  return $result
 }
 
 function Wait-UninstallDone {
@@ -189,44 +234,81 @@ function Invoke-ProgramUninstall {
 }
 
 function Get-Targets26 {
-  return @((New-Target 26 'Installed programs (uninstall hives)' 'HKLM + HKCU Uninstall hives' -Kind cmd -Note 'you pick; each runs its own uninstaller, one at a time; its leftover folders are offered after'))
+  return @((New-Target 26 'Installed programs and Store apps' 'HKLM + HKCU Uninstall hives | Store apps for this account' -Kind cmd -Note 'you pick; each goes its own way, one at a time; what it left is offered after'))
+}
+
+function Get-UninstallRanText {
+  <# .SYNOPSIS The RAN column: days since Windows Prefetch saw one of the program's files run, 'none' when no run is
+     on record, '-' when unknown (not elevated, or no install folder). #>
+  param([pscustomobject] $Row, [hashtable] $Prefetch)
+  if ($Prefetch.Count -eq 0 -or -not $Row.InstallLocation) { return '-' }
+  $d = Get-LastRunDays -ExeNames @(Get-InstallLocationExeNames -Location $Row.InstallLocation) -Prefetch $Prefetch
+  if ($d -ge 0) { return "${d}d" }
+  return 'none'
 }
 
 function Invoke-Section26 {
   $ws = $Script:WS
   Write-SectionIntro @(
-    'Programs you pick are removed with their own uninstaller, one at a time. Windows parts, runtimes, drivers and',
-    'build kits are never listed. Programs installed for all users need an elevated run. After a real uninstall, the',
-    'folders a program left are offered for the Recycle Bin. Nothing here runs without your selection.'
+    'Programs and Store apps you pick are removed one at a time: a program with its own uninstaller, a Store app for',
+    'this Windows account, a broken entry (its uninstaller is gone) by clearing it from Apps after a .reg backup.',
+    'Windows parts, runtimes, drivers, hardware apps and build kits are never listed. After a real removal, what the',
+    'programs left - folders, registry keys, Start-menu shortcuts, startup entries - is offered. Nothing runs unpicked.'
   )
   $rows = @(Get-UninstallCandidates)
   if ($rows.Count -eq 0) { Write-Info 'no program can be offered'; return }
-  Write-UiLine ("  {0,3}  {1,10}  {2,-46} {3,-12} {4}" -f '#', 'SIZE', 'PROGRAM', 'HOW', 'NEEDS') 'White'
+  $prefetch = Get-PrefetchLastRun
+  if ($prefetch.Count -gt 0) { Write-Note 'RAN = days since Windows last saw the program run; "none" = no run on record' }
+  else { Write-Note 'RAN (when each program last ran) needs an elevated run: windowsweep --only 26 --elevate' }
+  Write-UiLine ("  {0,3}  {1,10}  {2,-7} {3,-44} {4,-12} {5,5}  {6}" -f '#', 'SIZE', 'KIND', 'PROGRAM', 'HOW', 'RAN', 'NEEDS') 'White'
   $i = 1
   foreach ($r in $rows) {
-    $cmd = Get-UninstallCommand $r
-    $needs = ''
+    $how = 'store'; $needs = ''
+    if ($r.Kind -eq 'stale') { $how = 'clear entry' }
+    elseif ($r.Kind -ne 'store') { $how = (Get-UninstallCommand $r).Strategy }
     if ($r.Machine) { $needs = 'admin' }
     $size = 'unknown'
     if ($r.EstimatedSizeKb -gt 0) { $size = Format-Bytes ([long]$r.EstimatedSizeKb * 1024) }
-    $name = "$($r.DisplayName) $($r.DisplayVersion)".Trim()
-    if ($name.Length -gt 46) { $name = $name.Substring(0, 45) + '~' }
-    Write-UiLine ("  {0,3}  {1,10}  {2,-46} {3,-12} {4}" -f $i, $size, $name, $cmd.Strategy, $needs) 'Gray'
-    Add-JsonCandidate -Section 26 -Index $i -Path $r.KeyPath -Bytes ([long]$r.EstimatedSizeKb * 1024) -IdleDays -1 -Label $r.DisplayName
+    $name = [string]$r.DisplayName
+    # "Linear 1.32.8" already carries its version: never print it twice.
+    if ($r.DisplayVersion -and $name.IndexOf([string]$r.DisplayVersion, [StringComparison]::OrdinalIgnoreCase) -lt 0) { $name = "$name $($r.DisplayVersion)" }
+    if ($name.Length -gt 44) { $name = $name.Substring(0, 43) + '~' }
+    $ran = Get-UninstallRanText -Row $r -Prefetch $prefetch
+    Write-UiLine ("  {0,3}  {1,10}  {2,-7} {3,-44} {4,-12} {5,5}  {6}" -f $i, $size, (Get-UninstallKindLabel $r.Kind), $name, $how, $ran, $needs) 'Gray'
+    $extra = [ordered]@{ kind = (Get-UninstallKindLabel $r.Kind); strategy = $how; needs_admin = [bool]$r.Machine; ran = $ran; publisher = [string]$r.Publisher; version = [string]$r.DisplayVersion }
+    if ($r.Kind -eq 'stale') { $extra.uninstaller = [string](Get-UninstallCommand $r).FilePath }
+    Add-JsonCandidate -Section 26 -Index $i -Path $r.KeyPath -Bytes ([long]$r.EstimatedSizeKb * 1024) -IdleDays -1 -Label $r.DisplayName -Extra $extra
     $i++
   }
   $picks = @(Read-MultiSelect -Total $rows.Count -NoAutoYes -Candidates @($rows | ForEach-Object { $_.KeyPath }))
   if ($picks.Count -eq 0) { Write-Info 'nothing selected'; return }
   if (-not $ws.DryRun) {
-    if (-not (Confirm-Ui -Prompt "Uninstall $($picks.Count) program(s), one at a time?" -Default 'n' -NoAutoYes -ScriptedOk)) { Write-Info 'skipped'; return }
+    if (-not (Confirm-Ui -Prompt "Remove $($picks.Count) program(s) and app(s), one at a time?" -Default 'n' -NoAutoYes -ScriptedOk)) { Write-Info 'skipped'; return }
   }
   $removed = @()
   foreach ($k in $picks) {
     $row = $rows[$k - 1]
-    if ((Invoke-ProgramUninstall -Row $row) -eq 'removed') { $removed += $row }
+    if ((Invoke-UninstallRow -Row $row) -eq 'removed') { $removed += $row }
   }
-  if ($ws.DryRun) { Write-Note 'the folders a program leaves are offered after a real uninstall'; return }
-  if ($removed.Count -eq 0) { return }
+  if ($ws.DryRun) { Write-Note 'what a program leaves behind is offered after a real removal'; return }
+  $programs = @($removed | Where-Object { $_.Kind -eq 'program' })
+  if ($programs.Count -eq 0) { return }
   Write-Section 'Folders the removed programs left'
-  Invoke-LeftoverChoice -Rows @(Find-ProgramLeftovers -Programs $removed) -Section 26 -PathsOrConsoleOnly
+  Invoke-LeftoverChoice -Rows @(Find-ProgramLeftovers -Programs $programs) -Section 26 -PathsOrConsoleOnly
+  Write-Section 'Registry keys, shortcuts and startup entries the removed programs left'
+  Invoke-ExtraLeftoverChoice -Rows @(Find-RemovedProgramExtras -Programs $programs) -Section 26 -PathsOrConsoleOnly
+}
+
+function Find-RemovedProgramExtras {
+  <# .SYNOPSIS Section 26's second pass for the programs just removed: their registry keys, Start-menu shortcuts,
+     and the startup entries and tasks that ran a file inside their install folders. #>
+  param([pscustomobject[]] $Programs)
+  $locs = @($Programs | ForEach-Object { ([string]$_.InstallLocation).Trim().Trim('"').TrimEnd('\') } | Where-Object { $_ -match '^[A-Za-z]:\\.+' -and -not (Get-ProtectionReason $_) } | ForEach-Object { $_ + '\' })
+  $index = Get-InstalledProgramIndex -IgnorePaths @($locs | ForEach-Object { $_.TrimEnd('\') })
+  $rows = @(Find-RegistryLeftovers -Programs $Programs -Index $index)
+  $rows += @(Find-ShortcutLeftovers -Programs $Programs)
+  foreach ($r in @(Find-DeadStartupEntries) + @(Find-DeadScheduledTasks)) {
+    if (@($locs | Where-Object { ([string]$r.Target).StartsWith($_, [StringComparison]::OrdinalIgnoreCase) }).Count -gt 0) { $rows += $r }
+  }
+  return $rows
 }

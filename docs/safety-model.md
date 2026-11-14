@@ -24,6 +24,20 @@ Refusal 4 has two doors and both are windowsweep's own housekeeping. `--prune-hi
 
 A browser or editor target is not a path; it is a layout. windowsweep resolves it to the cache folders inside every profile it finds, and each resolved folder must also pass `Test-KnownCacheLeaf`, an allowlist of cache folder names in `lib/actions.ps1`. Anything else is refused by name with `REFUSE (not a known cache folder for a chromium layout)`. So a profile folder, a `Local Storage` folder or an extension folder is refused twice: once by the pattern list, and once because it is not on the allowlist.
 
+## The registry chokepoint
+
+Every registry key or value windowsweep removes passes a chokepoint of its own, `lib/registry.ps1`: a removed program's own keys, a broken uninstall entry, a startup entry whose program file is gone. Only sections 26 and 27 reach it. It checks each change against a protection table before anything else, in a dry-run too. A key outside `HKEY_CURRENT_USER` and `HKEY_LOCAL_MACHINE` is refused, and so is one that is not exactly the kind its section declared:
+
+| Kind | Allowed only |
+|---|---|
+| A program's own key | under `HKCU\Software` or `HKLM\SOFTWARE`, the 32-bit view included; never a Software root itself, and never under Microsoft, Windows, Classes, Policies or another shared platform key, a hardware maker, a toolchain, a browser or windowsweep's own name |
+| A broken uninstall entry | directly under one of the three Uninstall hives |
+| A startup entry | one value in one of the six `Run` and `RunOnce` keys |
+
+A change that passes is exported first, with Windows' own `reg.exe export`, to `<reports folder>\registry-backups\<run stamp>\` as a `.reg` file; double-click the file to put the key back. For a startup entry the whole `Run` key is exported, so the backup brings the value back too. A scheduled task is saved in the same folder as XML before it is unregistered, and Task Scheduler > Import Task puts it back; a task under `\Microsoft\` is never removed. If a backup cannot be written, the key or task is kept. A key under `HKEY_LOCAL_MACHINE` needs an elevated run. `--prune-history` deletes only files directly in the reports folder, so these backups stay until `--uninstall-data` removes them with the rest of `%USERPROFILE%\.windowsweep`.
+
+Two sections write a setting rather than remove one, and neither goes through this chokepoint: section 13 marks Disk Cleanup's handlers and clears the marks afterwards, and section 29 sets a Chrome policy that stays until you remove it.
+
 ## Your own exclusions, and the machine-readable list
 
 `--exclude-path P` (repeatable, or `excludePaths` in the config file) names a tree you want left alone. It is
@@ -42,8 +56,12 @@ console does.
 
 ## What the tools it runs do on their own
 
-windowsweep makes no network call. Self-test check [9] greps the whole source for HTTP and socket calls and
-fails the build if one appears, and there is no update check anywhere in it.
+Cleanup never touches the network, and the engine's own code holds no network call: self-test check [9]
+greps the whole source for HTTP and socket calls and fails the build if one appears. Only sections 30, 31
+and 32, for the rows you pick, ask Windows Update or winget to download; windowsweep itself sends nothing,
+and it never checks for a newer windowsweep. It never starts a PC maker's driver tool either: on a
+ThinkPad, Lenovo System Update queued a firmware package past its driver-only switch, so section 31 only
+names the tool.
 
 The tools it runs for you keep their own habits: `winget` and `npm` may check their own sources and
 send their own telemetry; the engine itself never does.
@@ -51,7 +69,10 @@ send their own telemetry; the engine itself never does.
 Concretely: section 24 runs `winget list` to read what is installed, and winget refreshes its own package
 sources when they are more than a few minutes old and reports its own usage to Microsoft by default.
 Sections 1 and 22 run `npm` commands, and npm checks the registry for a newer npm unless you have set
-`update-notifier=false`. Section 1 also runs `pnpm store prune` inside the default batch.
+`update-notifier=false`. Section 1 also runs `pnpm store prune` inside the default batch. Sections 30 and
+31 ask Windows Update for their lists, and it contacts its update server; section 32 asks `winget upgrade`,
+which reads its sources. That happens whenever one of those three runs, a dry-run included, and no update
+is downloaded or installed until its row is picked.
 
 None of that is windowsweep talking. It is the difference between a program that phones home and a program
 that runs one which does, and it is worth knowing before you read a firewall log and blame the wrong tool.
@@ -77,9 +98,10 @@ that runs one which does, and it is worth knowing before you read a firewall log
 | **Report** - reads and prints, deletes nothing in any mode | 0, 21, 22, 24, 25 | Nothing is removed |
 | **Rebuilds** - caches and temp files the tool or Windows recreates on next use | 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 14, 17, 28 | No undo. Nothing is copied first; a cache comes back because the tool that made it makes it again. Not everything in 12, 13 and 14 does - see below |
 | **Slow to rebuild** - Android emulator images, recreated in Android Studio | 4 | No undo. Recreating one takes minutes and no download while its system image is still installed - but everything installed or saved inside the emulator, and its snapshots, are gone. The per-AVD idle gate exists for that reason |
-| **Recycle Bin** - personal files or leftover folders you selected | 18, 19, 23, 27; section 26's second leftover pass | The Recycle Bin, until you empty it. Section 19 always recycles selected files; `--permanent` can bypass recycling for supported other sections |
-| **Permanent** | 11 (empty the Recycle Bin), 16 (event logs), 26 (a program's own uninstaller) | No undo |
+| **Recycle Bin** - personal files, leftover folders and shortcuts you selected | 18, 19, 23, 27; section 26's leftover lists | The Recycle Bin, until you empty it. Section 19 always recycles selected files; `--permanent` can bypass recycling for supported other sections. Registry keys and startup entries in 26 and 27 are exported to a `.reg` file instead, and tasks to XML |
+| **Permanent** | 11 (empty the Recycle Bin), 16 (event logs), 26 (a program's own uninstaller, or `Remove-AppxPackage` for a Store app) | No undo |
 | **Configuration** - hibernation off or reduced, disk images compacted, a Chrome AI policy | 15 (hibernation), 20 (disk-image compaction), 29 (Chrome AI model policy) | The setting persists until you change it; section 15 removes `hiberfil.sys` and `powercfg /hibernate on` puts it back |
+| **Update** - installs the updates you pick | 30 (Windows Update), 31 (Windows Update drivers, old driver packages), 32 (winget) | No undo from windowsweep, which keeps no copy of what an update replaces. Old driver packages removed in 31 are gone, but the newest two copies of each driver stay, so Device Manager's Roll Back keeps working |
 
 Sections 13 and 14 hand their work to Windows' own cleanup and component-store tools, and some of what
 those remove does not come back: a previous Windows installation, superseded drivers and components, and
@@ -108,9 +130,9 @@ The saved developer answer changes seven sections, in two ways. Sections 1, 2, 3
 | safe | 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 21, 28 (+12, 13 when elevated); 22, 24, 25 are read-only and safe but are not in `--all` | run with `--yes` |
 | opt-in | 4, 14 | run only when named in `--only` or a profile, with `--yes` |
 | deep | 11, 15, 16, 20, 29 | refused without `--i-understand-deep`; `--dry-run` previews are allowed |
-| interactive | 17, 18, 19, 23, 26, 27 | never, unless a selection was supplied; they need a person choosing items |
+| interactive | 17, 18, 19, 23, 26, 27, 30, 31, 32 | never, unless a selection was supplied; they need a person choosing items |
 
-`--yes` never applies to personal files, project files or programs: interactive sections show their selection prompt
+`--yes` never applies to personal files, project files, programs or updates: interactive sections show their selection prompt
 even with `--yes`, default to none, and ask a final question `--yes` does not answer. Section 20's disk
 picker is the documented exception (deep-gated, `--yes` selects every disk).
 
@@ -136,13 +158,17 @@ the `\\?\` prefix. The self-test proves both with a real junction and a 400+ cha
 ## Dry-run
 
 `--dry-run` short-circuits every deletion helper and every destructive external command (`docker`, `cleanmgr`,
-`Dism`, `powercfg`, `wevtutil`, `diskpart`, service stop/start, registry writes), printing what would happen and
-tallying an estimate. The self-test compares a fixture tree's file names, sizes, write times and directories
-before and after a dry-run to check that it did not change.
+`Dism`, `powercfg`, `wevtutil`, `diskpart`, service stop/start, registry writes, uninstallers,
+`Remove-AppxPackage`, `pnputil`, Windows Update installs and `winget upgrade`), printing what would happen
+and tallying an estimate. The registry chokepoint still checks every key against its
+protection table, so a refused key is refused in the rehearsal too. Sections 30 to 32 still ask Windows
+Update and winget for their lists; they download and install nothing. The self-test compares a fixture
+tree's file names, sizes, write times and directories before and after a dry-run to check that it did not
+change.
 
 ## No undo
 
-Sections 11 and 16 have no undo of any kind: they empty the Recycle Bin and clear the Windows event logs. Both require `--i-understand-deep`. Section 26 also has no undo when you select a program to uninstall. `--permanent` can delete supported selected leftovers outright, but section 19 always sends selected personal files to the Recycle Bin. The rebuild tiers are one-way as well. There is no copy, no staging folder and no restore command: a cache is gone the moment it is removed, and it comes back only because the tool that made it makes it again. The session log records three shapes rather than one. `Remove-PathSafe` and `Send-ToRecycleBin` write a line per path with its size. A prune writes one line per folder instead: how many files went, how many bytes, and from where. An external command writes the command and the code it exited with. The JSON report records every section's outcome. All of it is a record of what happened, not a way to reverse it.
+Sections 11 and 16 have no undo of any kind: they empty the Recycle Bin and clear the Windows event logs. Both require `--i-understand-deep`. Section 26 also has no undo when you select a program or Store app to remove, and sections 30 to 32 keep no copy of what an update replaces. `--permanent` can delete supported selected leftovers outright, but section 19 always sends selected personal files to the Recycle Bin. The rebuild tiers are one-way as well. For files there is no copy, no staging folder and no restore command: a cache is gone the moment it is removed, and it comes back only because the tool that made it makes it again. The registry is the one exception: every key and startup entry sections 26 and 27 remove is exported to a `.reg` file first, and every task to XML, as [the registry chokepoint](#the-registry-chokepoint) describes. The session log records three shapes rather than one. `Remove-PathSafe` and `Send-ToRecycleBin` write a line per path with its size. A prune writes one line per folder instead: how many files went, how many bytes, and from where. An external command writes the command and the code it exited with. The JSON report records every section's outcome. All of it is a record of what happened, not a way to reverse it.
 
 ## Inspect before you trust
 
@@ -153,4 +179,4 @@ windowsweep --scan            # sizes, read-only
 windowsweep --dry-run --all --yes
 ```
 
-Last Updated: 2026-11-03
+Last Updated: 2026-11-14

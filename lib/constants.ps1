@@ -4,7 +4,7 @@
 # Single source of truth for the version is package.json: the Node launcher exports it as
 # WINDOWSWEEP_VERSION. A direct checkout falls back to this literal; the version:check script
 # asserts the two never drift.
-$Script:WS_VERSION_FALLBACK = '1.4.8'
+$Script:WS_VERSION_FALLBACK = '1.5.0'
 
 $Script:WS_NAME = 'windowsweep'
 $Script:WS_TAGLINE = 'Windows cleanup CLI: dry-run first, personal files chosen row by row, zero install via npx.'
@@ -40,7 +40,8 @@ $Script:WS_PROTECT_CATEGORIES = @(
 
 # Section catalogue. Numbering is a public contract frozen at 1.0.0: a section may be retired
 # (kept as a no-op that says so) but a number is never reused for something else.
-#   Tier:  report | rebuilds | slow | recycle | permanent | config
+#   Tier:  report | rebuilds | slow | recycle | permanent | config | update
+#          (update = installs what Windows Update or winget fetches; 30-32 only)
 #   Batch: safe (in --all) | optin (--only/--profile with --yes) | deep (needs --i-understand-deep)
 #          | interactive (never batch; dry-run/report allowed)
 $Script:WS_SECTIONS = @(
@@ -70,10 +71,16 @@ $Script:WS_SECTIONS = @(
   @{ Id = 23; Key = 'orphaned';   Title = 'Orphaned application data under AppData -> Recycle Bin';   Tier = 'recycle';   Admin = $false; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section23' }
   @{ Id = 24; Key = 'programs';   Title = 'Installed programs not modified for N+ days - report only'; Tier = 'report';   Admin = $false; Batch = 'safe';        Dev = $false; Fn = 'Invoke-Section24' }
   @{ Id = 25; Key = 'startup';    Title = 'Startup items audit (Run keys, Startup folders, logon tasks) - report only'; Tier = 'report'; Admin = $false; Batch = 'safe'; Dev = $false; Fn = 'Invoke-Section25' }
-  @{ Id = 26; Key = 'uninstall';  Title = 'Uninstall programs you pick, each with its own uninstaller, then the folders they left -> Recycle Bin'; Tier = 'permanent'; Admin = $false; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section26' }
-  @{ Id = 27; Key = 'leftovers';  Title = 'Folders uninstalled programs left in Program Files, Common Files and ProgramData -> Recycle Bin'; Tier = 'recycle'; Admin = $true; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section27' }
+  @{ Id = 26; Key = 'uninstall';  Title = 'Uninstall programs and Store apps you pick, each with its own uninstaller, then what they left (folders, registry keys, shortcuts, startup entries)'; Tier = 'permanent'; Admin = $false; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section26' }
+  @{ Id = 27; Key = 'leftovers';  Title = 'Leftovers of uninstalled programs: folders, registry keys (.reg backup first), Start-menu shortcuts, dead startup entries -> Recycle Bin'; Tier = 'recycle'; Admin = $true; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section27' }
   @{ Id = 28; Key = 'releases';  Title = 'Superseded tool releases and old downloaded updates (Codex, Electron updaters, Ollama, unrequested Node) - current kept'; Tier = 'rebuilds'; Admin = $false; Batch = 'safe'; Dev = $false; Fn = 'Invoke-Section28' }
   @{ Id = 29; Key = 'browserai';  Title = 'Chrome on-device AI model - set the policy that removes it (Chrome shows "Managed by your organization")'; Tier = 'config'; Admin = $true; Batch = 'deep'; Dev = $false; Fn = 'Invoke-Section29' }
+  # 30-32 (1.5.0, D110): the only sections that reach the network, and only through Windows Update or winget
+  # when they are run; only rows a person picked are installed. Listing works unelevated; a row that installs
+  # machine-wide says it needs admin. Never in the safe batch, a profile or the walkthrough.
+  @{ Id = 30; Key = 'winupdate';  Title = 'Windows updates you pick (security, quality, Defender, malware tool) via Windows Update - never restarts your PC'; Tier = 'update'; Admin = $false; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section30' }
+  @{ Id = 31; Key = 'drivers';    Title = 'Driver updates you pick from Windows Update, and old driver packages - never BIOS or firmware'; Tier = 'update'; Admin = $false; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section31' }
+  @{ Id = 32; Key = 'appupdates'; Title = 'App updates you pick, one at a time, via winget'; Tier = 'update'; Admin = $false; Batch = 'interactive'; Dev = $false; Fn = 'Invoke-Section32' }
 )
 
 # The safe batch run by --all. Admin sections 12 and 13 join it only when already elevated.

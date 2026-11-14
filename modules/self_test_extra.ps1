@@ -198,7 +198,7 @@ function Invoke-SelfTestExtra {
     foreach ($s in $Script:WS_SECTIONS) {
       if (-not $ids.Add([int]$s.Id)) { $bad += "duplicate id $($s.Id)" }
       if (-not (Get-Command $s.Fn -ErrorAction SilentlyContinue)) { $bad += "section $($s.Id): no function $($s.Fn)" }
-      if ($s.Tier -notin 'report', 'rebuilds', 'slow', 'recycle', 'permanent', 'config') { $bad += "section $($s.Id): unknown tier $($s.Tier)" }
+      if ($s.Tier -notin 'report', 'rebuilds', 'slow', 'recycle', 'permanent', 'config', 'update') { $bad += "section $($s.Id): unknown tier $($s.Tier)" }
       if ($s.Batch -notin 'safe', 'optin', 'deep', 'interactive') { $bad += "section $($s.Id): unknown batch $($s.Batch)" }
     }
     if ($bad.Count -eq 0) { Write-Ok "$($Script:WS_SECTIONS.Count) catalogue rows: unique ids, existing functions, known tier and batch" } else { Write-Err ("catalogue is wrong: " + ($bad -join '; ')); $fails++ }
@@ -362,6 +362,8 @@ function Invoke-SelfTestExtra {
     $g21 = Invoke-SelfTest21
     $checks += $g21.Checks; $fails += $g21.Fails
     foreach ($g in @((Invoke-SelfTest22 -Fixture $fx), (Invoke-SelfTest23 -Fixture $fx), (Invoke-SelfTest24 -Fixture $fx), (Invoke-SelfTest25 -Fixture $fx), (Invoke-SelfTest26 -Fixture $fx))) { $checks += $g.Checks; $fails += $g.Fails }
+    # [27] the 1.5.0 uninstaller (registry chokepoint, Store apps, leftovers) and [28] the update sections 30-32.
+    foreach ($g in @((Invoke-SelfTest27 -Fixture $fx), (Invoke-SelfTest28 -Fixture $fx))) { $checks += $g.Checks; $fails += $g.Fails }
 
   } catch {
     & $unmute

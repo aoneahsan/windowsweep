@@ -47,8 +47,10 @@ Three supporting commitments, in the order the reader cares about them:
 1. **Personal folders stay protected; section 19 scans Downloads and folders you add, and only removes files you select.**
 2. **A dry-run that writes nothing of yours** - two files of its own, and nothing else - so the rehearsal and
    the performance are the same command minus one word.
-3. **The engine makes no network calls at all** - not telemetry, not an update check - and a test that fails
-   the build if any appear.
+3. **The engine sends nothing anywhere** - no telemetry, no update check of its own - and a test fails the
+   build if network code appears in it. Cleanup never touches the network; only sections 30-32, when you run
+   them, ask Windows Update or winget what is available, and download only the rows
+   you pick.
 
 > 🔴 **Both of those were corrected on 2026-09-07, and neither was a wording preference.** Commitment 2 said
 > *"genuinely writes nothing"*, which is false: a dry-run is not one of the quiet modes
@@ -68,6 +70,14 @@ Three supporting commitments, in the order the reader cares about them:
 > `Remove-PathSafe` and `Send-ToRecycleBin` both check the declared root and protection rules;
 > section 19 also rechecks the file immediately before removal. The owner approved the replacement sentence
 > above for 1.4.0. This describes 1.4.0 source, not the currently published 1.3.2 release.
+
+> **2026-11-13 correction to commitment 3 (D110):** 1.5.0 adds sections 30-32, which update Windows, drivers
+> and apps for the rows a person picks. Asked how that fits this promise, the owner chose "Opt-in sections,
+> reworded". The old sentence, *"makes no network calls at all"*, would be false the first time someone installs
+> an update, so it now says what stays true: the engine's own code holds no network call (check [9] still fails
+> the build on one), cleanup never reaches the network, and the three update sections hand the download to
+> Windows Update or winget. "Sends nothing anywhere" is the strong claim, and it is
+> still earned.
 
 ## 4. Emotional palette
 
@@ -117,7 +127,7 @@ lower-case, even at the start of a sentence, and never "WindowSweep" or "Window 
 
 | Term | Use | Never |
 |---|---|---|
-| section | a numbered unit of work (0-29 in 1.4.0 source), a frozen public contract | module, task, job |
+| section | a numbered unit of work (0-32 since 1.5.0), a frozen public contract | module, task, job |
 | target | one declared path a section can reach | location, item |
 | the chokepoint | `Remove-PathSafe` / `Send-ToRecycleBin` | the safety layer, the guard rail |
 | dry-run | the rehearsal, always hyphenated | simulation, preview, test mode |
@@ -127,7 +137,7 @@ lower-case, even at the start of a sentence, and never "WindowSweep" or "Window 
 | developer mode | the answer to the first-run question | dev mode, pro mode |
 | switch | what the analytics does not have: *"There is no switch."* The desktop window and the site send usage events and crash reports, and the first-run screen is a notice, not a request (added 2026-09-13, keeper) | opt-out, opt out, turn off tracking |
 | your machine | the disk the product cleans, and the files on it - never the browser's own storage, which `/privacy` discloses. So *"Nothing on your machine was touched"* is true of an error page, and the approved `error.lede` and both deletion bands already use it this way (added 2026-09-25, keeper) | your computer, your device, your system |
-| machine | the sync noun: *this machine*, *another machine*. Never a machine name or host name - neither is ever synced. "PC" only inside the account-deletion band (added 2026-09-25, keeper) | device, computer, laptop |
+| machine | the sync noun: *this machine*, *another machine*. Never a machine name or host name - neither is ever synced. "PC" only inside the account-deletion band (added 2026-09-25, keeper), in the update sections' "never restarts your PC" and in the noun "PC maker" (added 2026-11-13, D110) | device, computer, laptop |
 | the windowsweep team | who makes the product (owner decisions D45 and D46, 2026-09-25: a product speaks as its team, never as one person). *The windowsweep team* standing alone - a label, a heading, a schema `name`, a meta `content`, a footer column title; *the windowsweep team* inside a sentence; *the team* only where the same sentence or its heading names windowsweep; *the same team* only on this product's own roster credits, which name a shared maker without claiming the other products (added 2026-09-25, team-voice) | the developer, the author, a person's name (except the legal identities D45 keeps: the Terms operator of D33, the licence and copyright lines and the npm `author` field; noted 2026-11-07, keeper record of release-1.4.4), we |
 | Admin (the screen) | the desktop rail item `nav.elevation` and the screen behind it; prose names it *Admin*, as the rail does (`app.js:178`, `shell.json:26`). *Elevation* stays the word for the Windows permission (`--elevate`, the AI guide's *Elevation* heading, the `admin-and-elevation` page) and the surface's internal name in §4, §8, §10 and content-map row 12 (added 2026-11-06, keeper record of d91-strings) | the Elevation screen |
 | in one click | the unsubscribe fact, as the approved release email's footer has it: *Unsubscribe in one click from this message* (row 26). The fingerprint's never-list already bans the hyphenated form (added 2026-11-06, keeper record of d91-strings) | one-click |

@@ -107,6 +107,35 @@ export function formatDuration(ms: number): string {
 }
 
 /**
+ * A plain list the way the dummy joins one - `17, 23 and 26` (`picker-install.js` `kept`, an en-GB
+ * conjunction list). Unlike `formatIdRanges` it never folds a run into a range.
+ */
+export function formatList(items: readonly (string | number)[]): string {
+  return new Intl.ListFormat(FORMAT_LOCALE, { type: 'conjunction' }).format(
+    items.map((item) => (typeof item === 'number' ? formatCount(item) : item))
+  );
+}
+
+/**
+ * A date-only stamp the engine writes as `yyyy-MM-dd`, the way the dummy prints one: `9 Aug 2021`.
+ *
+ * 🔴 Formatted in UTC. `new Date('2021-08-09')` is midnight UTC, and formatting that in a zone west
+ * of Greenwich prints the 8th - a driver's date that moves with the reader's clock. Anything that
+ * is not a date-only stamp is returned as it came, never reinterpreted.
+ */
+export function formatDay(isoDate: string): string {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return isoDate;
+  const at = new Date(`${isoDate}T00:00:00Z`);
+  if (Number.isNaN(at.getTime())) return isoDate;
+  return new Intl.DateTimeFormat(FORMAT_LOCALE, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(at);
+}
+
+/**
  * Section ids the way the dummy writes them: a run of consecutive ids becomes a
  * range, and the pieces are joined as a list - `[12, 13, 14, 15, 16, 20]` reads
  * "12–16 and 20" (`elevation.html:25`). Derived from the ids it is given, so a

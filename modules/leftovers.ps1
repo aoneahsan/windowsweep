@@ -1,5 +1,6 @@
 # leftovers.ps1 - section 27: folders uninstalled programs left in Program Files, Common Files and ProgramData
 # (D78), and the finder section 26 runs right after an uninstall. Section 23 owns the top level of AppData.
+# Registry keys, shortcuts, startup entries and tasks left behind live in leftovers_more.ps1 (1.5.0, D109).
 # A folder is offered only when no installed program's name claims it, nothing registered still points into it
 # (an uninstall entry, a service or driver, an environment variable or PATH entry, a Run entry, a shortcut, a
 # scheduled task or a running process) and - in section 27 - it has been idle --days. An unreadable registry
@@ -369,17 +370,32 @@ function Get-DeadPathEntries {
 
 function Get-Targets27 {
   $P = $Script:P
-  return @((New-Target 27 'Leftover program folders' "$($P.PF) | $($P.PF86) | Common Files | $($P.PD)" -Kind cmd -Note 'you pick; idle --days; nothing installed, registered or running uses them'))
+  return @(
+    (New-Target 27 'Leftover program folders' "$($P.PF) | $($P.PF86) | Common Files | $($P.PD)" -Kind cmd -Note 'you pick; idle --days; nothing installed, registered or running uses them'),
+    (New-Target 27 'Leftover registry keys, shortcuts, startup entries and tasks' 'HKCU\Software | HKLM\SOFTWARE | Start menu | Run keys | Task Scheduler' -Kind cmd -Note 'you pick; .reg or XML backup first; shortcuts to the Recycle Bin')
+  )
 }
 
 function Invoke-Section27 {
   $ws = $Script:WS
   Write-SectionIntro @(
-    'Uninstallers often leave folders in Program Files, Common Files and ProgramData. This lists the top-level',
-    'folders there that no installed program, service, driver, PATH entry, shortcut, task or running process uses',
-    "and that nothing has touched for $($ws.Days)+ days. You pick what goes; it lands in the Recycle Bin."
+    'Uninstallers often leave things behind. First the top-level folders in Program Files, Common Files and',
+    'ProgramData that no installed program, service, driver, PATH entry, shortcut, task or running process uses',
+    "and that nothing has touched for $($ws.Days)+ days (they go to the Recycle Bin). Then registry keys of programs",
+    'windowsweep removed earlier, and Start-menu shortcuts, startup entries and scheduled tasks whose file is gone:',
+    'registry entries are exported to a .reg file and tasks saved as XML before they go. You pick every row.'
   )
-  Invoke-LeftoverChoice -Rows @(Find-MachineLeftovers -Days $ws.Days) -Section 27
+  $gone = @(Get-RemovedHistoryPrograms)
+  $rows = @(Find-MachineLeftovers -Days $ws.Days)
+  if ($gone.Count -gt 0) {
+    # Programs windowsweep removed earlier: their folders are known leftovers, offered without the idle wait.
+    $seen = New-Object System.Collections.Generic.HashSet[string]([StringComparer]::OrdinalIgnoreCase)
+    foreach ($r in $rows) { $null = $seen.Add($r.Path) }
+    foreach ($r in @(Find-ProgramLeftovers -Programs $gone)) { if ($seen.Add($r.Path)) { $rows += $r } }
+  }
+  Invoke-LeftoverChoice -Rows $rows -Section 27
+  Write-Section 'Registry keys, shortcuts, startup entries and tasks left behind'
+  Invoke-ExtraLeftoverChoice -Rows @(Find-EarlierRemovalExtras -Gone $gone) -Section 27
   $dead = @(Get-DeadPathEntries)
   if ($dead.Count -eq 0) { return }
   Write-Section 'Environment entries naming something that no longer exists (report only)'

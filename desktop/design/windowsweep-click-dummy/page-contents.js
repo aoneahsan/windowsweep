@@ -7,16 +7,16 @@
 
   var SCREENS = [
     ['1', 'Home', 'index.html', 'The Reclaim Map, the readout, and fourteen zones.', 'moment'],
-    ['2', 'Sections', 'sections.html', 'All 30, filterable, selectable, expandable.', 'cockpit'],
+    ['2', 'Sections', 'sections.html', 'All 33, filterable, selectable, expandable.', 'cockpit'],
     ['3', 'Run', 'run.html', 'Determinate progress from the engine\u2019s own ##windowsweep lines.', 'moment'],
     ['4', 'Splash', 'splash.html', 'Boot and the update gate.', 'moment'],
     ['5', 'Legacy consent', 'consent.html', '1.3.2 reference; the 1.4.0 legal bar replaces this screen.', 'retired'],
-    ['6', 'Picker', 'picker.html', 'Sections 17, 18, 19, 23, 26 and 27; section 19 scans Downloads and folders you add.', 'cockpit'],
+    ['6', 'Picker', 'picker.html', 'Sections 17–19, 23, 26 and 27, and 30–32 in install mode; section 19 scans Downloads and folders you add.', 'cockpit'],
     ['7', 'History', 'history.html', 'Local runs in full, cloud runs as summaries.', 'cockpit'],
     ['8', 'Report', 'report.html', 'One run, rendered from its JSON.', 'cockpit'],
     ['9', 'Account', 'account.html', 'Optional sign-in, for sync only.', 'moment'],
     ['10', 'Settings', 'settings.html', 'Five tabs, every control a real engine flag.', 'cockpit'],
-    ['11', 'Elevation', 'elevation.html', 'What needs a UAC click, and the SmartScreen note.', 'moment'],
+    ['11', 'Elevation', 'elevation.html', 'What needs a UAC click, installing updates and drivers included, and the SmartScreen note.', 'moment'],
     ['12', 'Plans', 'plans.html', 'Run allowance, Pro and Team requests, referrals and Team status.', 'cockpit']
   ];
 

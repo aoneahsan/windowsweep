@@ -54,16 +54,16 @@ npx windowsweep --all --yes
 
 ## 5. The admin step
 
-Sections 12, 13, 14, 15, 16 and 20 change things only an administrator may change. The `system` profile covers
-12, 13 and 14:
+Sections 12, 13, 14, 15, 16, 20, 27 and 29 change things only an administrator may change, and installing in
+sections 30 and 31 needs an elevated run too. The `system` profile covers 12, 13 and 14:
 
 ```powershell
 npx windowsweep --profile system --yes --elevate
 ```
 
-The other three are deep sections, and the profile leaves them out: 15 is the hibernation file, 16 is the event
-logs and permanent, 20 stops Docker and WSL. A batch run refuses a deep section without `--i-understand-deep`.
-Name the ones you want with `--only`. Details and the hibernation decision: [Admin sections and
-elevation](./admin-and-elevation.md).
+The profile leaves the rest out. 15, 16, 20 and 29 are deep sections: 15 is the hibernation file, 16 is the
+event logs and permanent, 20 stops Docker and WSL, 29 sets a Chrome policy. A batch run refuses a deep section
+without `--i-understand-deep`. 27, 30 and 31 ask you to pick rows. Name the ones you want with `--only`.
+Details and the hibernation decision: [Admin sections and elevation](./admin-and-elevation.md).
 
-Last Updated: 2026-09-03
+Last Updated: 2026-11-13

@@ -319,3 +319,8 @@ UTC on the finalizer's FACT-CONSISTENCY PASS with zero NEEDS DECISION; the owner
 ## Amendment — 2026-11-12: release-1.4.8 recorded
 
 Row 27 carries the 1.4.8 release words, with the README release line on row 1 under its earlier pre-authorisation. D59 conditions passed in the main session; product 93de163, web 546c300 and docs 67e99ca are published and verified. No awareness, palette, framework, motif or glossary change. Draft: drafts/release-1.4.8.md. The preceding 1.4.7 website, docs and npm publication is also complete.
+
+
+## Amendment — 2026-11-14: release-1.5.0 recorded
+
+Row 27 carries the 1.5.0 release words (CHANGELOG 1.5.0, the desktop and CLI release notes, the updater line), row 1 the README release line and table, and rows 3-6 the docs pages that state the scoped network promise and sections 0-32. Under D113 the main session ran the lean checks: fact consistency PASS against the code (Store apps, broken entries, leftovers with backups, sections 30-32, never BIOS or firmware, the maker's tool named and never run after D114), zero NEEDS DECISION. Adds the working term “update sections”; the glossary's section range is 0-32 and its PC rule covers the restart line and “PC maker”. No palette, framework or motif change. Draft: drafts/release-1.5.0.md.

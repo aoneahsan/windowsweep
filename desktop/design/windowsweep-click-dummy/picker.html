@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>windowsweep - Choose what goes</title>
-<meta name="description" content="windowsweep desktop, click dummy - the candidate picker for sections 17, 18, 19 and 23.">
+<meta name="description" content="windowsweep desktop, click dummy - the picker for sections 17-19, 23, 26 and 27, and the install mode for sections 30-32.">
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="shared.css">
 <link rel="stylesheet" href="components.css">
@@ -30,8 +30,8 @@
               <p class="t-sm ink-3" data-ws-text="pickLede">Nothing here is chosen for you.</p>
             </div>
             <div style="margin-inline-start:auto;text-align:end">
-              <p class="num t-xl wide accent-ink" data-ws-text="pickChosen">0 B</p>
-              <p class="t-sm ink-3"><span class="num" data-ws-text="pickCount">0</span> of
+              <p class="num t-xl wide accent-ink" data-ws-text="pickChosen" data-ws-pick-figure>0 B</p>
+              <p class="t-sm ink-3"><span data-ws-pick-reclaim-label="head" hidden>to reclaim &#183; </span><span class="num" data-ws-text="pickCount">0</span> of
                 <span class="num" data-ws-text="pickTotal">0</span> chosen</p>
             </div>
           </div>
@@ -50,6 +50,14 @@
             <button class="fchip" data-ws-pick="23" aria-pressed="false">23 &#183; orphaned data</button>
             <button class="fchip" data-ws-pick="26" aria-pressed="false">26 &#183; uninstall</button>
             <button class="fchip" data-ws-pick="27" aria-pressed="false">27 &#183; leftovers</button>
+            <!-- 1.5.0 (D110): the install mode. Its own label, so the change of bar is expected,
+                 and the group wraps as one so the label never parts from its chips. -->
+            <span style="display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2)">
+              <span class="caps ink-3" style="margin-inline:var(--sp-2)">Updates</span>
+              <button class="fchip" data-ws-pick="30" aria-pressed="false">30 &#183; Windows updates</button>
+              <button class="fchip" data-ws-pick="31" aria-pressed="false">31 &#183; drivers</button>
+              <button class="fchip" data-ws-pick="32" aria-pressed="false">32 &#183; app updates</button>
+            </span>
             <input class="field" type="search" placeholder="Filter by path or project"
                    data-ws-pick-search style="max-width:16rem;margin-inline-start:auto">
           </div>
@@ -95,16 +103,23 @@
               <span>“Old” means the recorded timestamp passed the idle window. It does not prove the file is unneeded. Nothing is selected until you choose a row.</span>
             </div>
           </div>
+          <!-- 1.5.0 (D109): why 26's Ran column is a dash, said where the dashes are. -->
+          <div class="note note-info" data-ws-ran-note hidden style="margin-bottom:var(--sp-4)">
+            <span aria-hidden="true">i</span>
+            <span><strong>Ran</strong> counts the days since Windows last saw each program start. Windows
+              tells only an elevated window, so this list shows a dash.</span>
+          </div>
           <div class="panel" style="overflow:visible">
             <div class="xscroll">
             <table class="tbl">
               <thead>
                 <tr>
                   <th style="width:2.4rem"><span class="visually-hidden">Choose</span></th>
-                  <th>Path</th>
-                  <th style="width:9rem" data-ws-data-column="reason">Project</th>
-                  <th style="width:5rem" data-ws-data-column="age">Idle</th>
-                  <th style="width:6.5rem" class="num-cell">Size</th>
+                  <!-- Each section names its own columns (picker-columns.js HEAD). -->
+                  <th data-ws-col="1">Path</th>
+                  <th style="width:9rem" data-ws-col="2">Project</th>
+                  <th style="width:5rem" data-ws-col="3">Idle</th>
+                  <th style="width:6.5rem" class="num-cell" data-ws-col="4">Size</th>
                 </tr>
               </thead>
               <tbody data-ws-pick-rows></tbody>
@@ -112,16 +127,37 @@
             </div>
           </div>
 
+          <!-- 1.5.0 (D110, D111): 31's two report blocks. Listed for reading; no row here is
+               ever offered, and BIOS and firmware are never offered at all. -->
+          <div data-ws-driver-report hidden style="margin-top:var(--sp-4)">
+            <div style="display:flex;flex-wrap:wrap;gap:var(--sp-4)">
+              <div class="panel pad" style="flex:1 1 18rem">
+                <p class="caps ink-3">Report only &#183; section 31</p>
+                <h2 class="t-md wide">Devices with problems</h2>
+                <ul data-ws-driver-problems style="margin:var(--sp-3) 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:var(--sp-3)"></ul>
+              </div>
+              <div class="panel pad" style="flex:1 1 18rem">
+                <p class="caps ink-3">Report only &#183; section 31</p>
+                <h2 class="t-md wide">Oldest third-party drivers</h2>
+                <ul data-ws-driver-oldest style="margin:var(--sp-3) 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:var(--sp-3)"></ul>
+              </div>
+            </div>
+            <p class="t-sm ink-3" style="margin-top:var(--sp-3)">Both lists are for reading. Section 31 changes
+              nothing in them; Device Manager shows the same devices and drivers.</p>
+          </div>
+
           <div class="note note-info" style="margin-top:var(--sp-4)">
             <span aria-hidden="true">i</span>
-            <span><strong>Nothing here is pre-selected, on purpose.</strong> These six sections refuse to
+            <span><strong>Nothing here is pre-selected, on purpose.</strong> These nine sections refuse to
               act on <code class="mono">--yes</code> alone &#8211; the prompt still appears, the default is
               none, and the final question is never auto-answered. A scripted selection
               (<code class="mono">--select</code> or <code class="mono">--select-file</code>) counts as a
               person choosing, and only then does the run go ahead unattended.</span>
           </div>
 
-          <details class="disclose" style="margin-top:var(--sp-4)">
+          <!-- 1.5.0: not drawn for 30-32 - the selection file's line format for an update
+               (a KB number, a winget id) is the engine's to settle first. -->
+          <details class="disclose" style="margin-top:var(--sp-4)" data-ws-pick-filebox>
             <summary>
               <span class="disclose-line">Drive this from a file instead</span>
               <span class="disclose-more">Details</span>
@@ -169,7 +205,9 @@
         </div>
       </section>
 
-      <div style="height:var(--sp-16)"></div>
+      <!-- 1.5.0: room under the last block for the bar, sized to the bar while it shows
+           (page-picker.js fitRoom). A fixed spacer let a wrapped bar cover the note at 760. -->
+      <div style="height:var(--sp-16)" data-ws-pick-room></div>
     </main>
   </div>
 
@@ -194,20 +232,25 @@
     <span class="num t-md wide" data-ws-text="pickCount2">0</span>
     <span class="t-sm ink-2">chosen</span>
     <span class="tb-sep"></span>
-    <span class="num t-md wide accent-ink" data-ws-text="pickChosen2">0 B</span>
+    <!-- 1.5.0: the accent figure is space reclaimed, so install mode hides it unless 31's
+         old packages are chosen; the download is said in words beside it. -->
+    <span class="num t-md wide accent-ink" data-ws-text="pickChosen2" data-ws-pick-bytes>0 B</span>
+    <span class="t-sm ink-2" data-ws-pick-reclaim-label="bar" hidden>to reclaim</span>
+    <span class="t-sm ink-2" data-ws-pick-mode="install" data-ws-text="pickDownload" hidden>nothing to download</span>
     <span class="t-xs ink-3 only-wide" data-ws-text="pickWhere"></span>
     <div style="margin-inline-start:auto;display:flex;gap:var(--sp-2);align-items:center">
-      <div class="seg" role="radiogroup" aria-label="How to delete">
+      <div class="seg" role="radiogroup" aria-label="How to delete" data-ws-pick-mode="remove">
         <label class="seg-opt"><input type="radio" name="pick-mode" value="recycle" checked><span>Recycle Bin</span></label>
         <label class="seg-opt"><input type="radio" name="pick-mode" value="permanent"><span>Permanent</span></label>
       </div>
       <button class="btn btn-sm" data-ws-action="pickClear">Clear</button>
+      <!-- Remove these, or in install mode the verb built from the rows (picker-install.js). -->
       <button class="btn btn-sm btn-primary" data-ws-action="pickGo">Remove these</button>
     </div>
     <!-- GATE 4 round 8, D-49 (decided with D-48): section 17's artefacts go through
          Remove-PathSafe whichever mode is set (modules/projects.ps1:157), so when one of its
          rows is chosen the bar says what the choice governs. -->
-    <p class="t-sm ink-3" style="flex-basis:100%">The Recycle Bin can be emptied later. Permanent has no undo.<span data-ws-pick-17 hidden> Section 17's rows are deleted outright whichever you choose.</span><span data-ws-pick-26 hidden> Uninstalling a program is permanent whichever mode you choose. Its leftover folders are offered separately after uninstalling.</span><span data-ws-pick-27 hidden> Section 27 needs administrator permission before it can move chosen folders to the Recycle Bin.</span></p>
+    <p class="t-sm ink-3" style="flex-basis:100%"><span data-ws-pick-mode="remove">The Recycle Bin can be emptied later. Permanent has no undo.<span data-ws-pick-17 hidden> Section 17's rows are deleted outright whichever you choose.</span><span data-ws-pick-26 hidden> Uninstalling is permanent whichever mode you choose, and a broken entry is cleared from Apps after a .reg backup. A second list then offers what the removed programs left.</span><span data-ws-pick-27 hidden> Section 27 needs administrator permission. Registry keys and startup entries are backed up to .reg files in the run's registry-backups folder first, and a key whose backup cannot be written is kept.</span></span><span data-ws-pick-mode="install" hidden><span data-ws-pick-line="wu" hidden>Windows updates come from Windows Update, one at a time. </span><span data-ws-pick-line="drivers" hidden>Drivers come from Windows Update, one at a time. </span><span data-ws-pick-line="old" hidden>Old driver packages leave the driver store; the newest two of each driver stay. </span><span data-ws-pick-line="winget" hidden>App updates come from each publisher through winget, one at a time; a running app is skipped. </span><span data-ws-pick-line="elevated" hidden>Windows asks for your permission first. </span>windowsweep never restarts your PC; Windows says when a restart is due.</span><span data-ws-pick-kept hidden></span></p>
   </div>
 
   <!-- GATE 4 round 8, D-48 (decided 2026-09-13, docs/story/decision-log.md): a Permanent
@@ -221,12 +264,48 @@
         <div class="dlg-icon" aria-hidden="true">!</div>
         <div><h2 class="t-md wide" id="pick-confirm-t" data-ws-text="pickConfirmTitle">Remove 2 items permanently?</h2></div>
       </div>
-      <div class="dlg-bd">
-        <p class="t-sm" id="pick-confirm-d">They do not go to the Recycle Bin. Permanent has no undo.</p>
+      <!-- 1.5.0 (D109): the same dialog asks before an uninstall, whichever mode is set,
+           in words true of desktop programs, Store apps and broken entries. Only the lines
+           about rows actually chosen are shown (picker-install.js paintUninstall). -->
+      <div class="dlg-bd" id="pick-confirm-d" style="display:flex;flex-direction:column;gap:var(--sp-2)">
+        <p class="t-sm" data-ws-confirm-line="permanent">They do not go to the Recycle Bin. Permanent has no undo.</p>
+        <p class="t-sm" data-ws-confirm-line="desktop" hidden>Each desktop program runs its own uninstaller, one at a time. One without a silent form opens its own window; finish it there.</p>
+        <p class="t-sm" data-ws-confirm-line="store" hidden>Store apps are removed for this Windows account only.</p>
+        <p class="t-sm" data-ws-confirm-line="broken" hidden>A broken entry&#8217;s uninstaller is gone, so the entry is cleared from Apps after a .reg backup.</p>
+        <p class="t-sm" data-ws-confirm-line="uninstall" hidden>None of this goes to the Recycle Bin. A second list then offers what the programs left.</p>
+        <p class="t-sm" data-ws-confirm-line="others" hidden>The other rows you chose follow the choice in the bar.</p>
       </div>
       <div class="dlg-ft">
         <button class="btn" type="button" data-w-close data-autofocus>Cancel</button>
-        <button class="btn btn-danger" type="button" data-ws-action="pickGoPermanent">Remove permanently</button>
+        <button class="btn btn-danger" type="button" data-ws-action="pickGoPermanent" data-ws-text="pickConfirmVerb">Remove permanently</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.5.0 (D110, D111): an install always asks first. Not the destructive dialog - nothing
+       of yours is lost - but Cancel is still focused first and Escape is Cancel, because
+       the work reaches beyond this machine and this window cannot undo it. The title and the
+       button are the bar's verb; each line shows only for work actually chosen. -->
+  <div class="scrim" id="pick-install-confirm" hidden>
+    <div class="dlg" role="alertdialog" aria-modal="true"
+         aria-labelledby="pick-install-t" aria-describedby="pick-install-d">
+      <div class="dlg-hd">
+        <div><h2 class="t-md wide" id="pick-install-t" data-ws-text="pickInstallTitle">Install 2 updates?</h2></div>
+      </div>
+      <div class="dlg-bd" id="pick-install-d" style="display:flex;flex-direction:column;gap:var(--sp-2)">
+        <p class="t-sm" data-ws-install-line="wu" hidden>Windows Update downloads each update, one at a time.</p>
+        <p class="t-sm" data-ws-install-line="firmware" hidden>BIOS and firmware updates are never offered.</p>
+        <!-- A4-15: the engine never runs the PC maker's own driver tool; on a ThinkPad its command line
+             queued firmware past a driver-only switch. It is named in the log, and said here. -->
+        <p class="t-sm" data-ws-install-line="makertool" hidden>Your PC maker&#8217;s own driver tool is named in the log, never run.</p>
+        <p class="t-sm" data-ws-install-line="winget" hidden>winget fetches each app update from its publisher, one at a time. An app that is running is skipped, and an installer that changes the whole PC may show its own Windows permission prompt.</p>
+        <p class="t-sm" data-ws-install-line="old" hidden>Old driver packages are deleted from the driver store, not moved to the Recycle Bin. The newest two of each driver always stay, so Device Manager&#8217;s Roll Back keeps working.</p>
+        <p class="t-sm" data-ws-install-line="admin" hidden>Windows updates and drivers need an elevated window, so Windows asks for your permission first.</p>
+        <p class="t-sm" data-ws-install-line="restart">windowsweep never restarts your PC. When an update needs a restart, Windows says so.</p>
+      </div>
+      <div class="dlg-ft">
+        <button class="btn" type="button" data-w-close data-autofocus>Cancel</button>
+        <button class="btn btn-primary" type="button" data-ws-action="pickInstallGo" data-ws-text="pickInstallVerb">Install 2 updates</button>
       </div>
     </div>
   </div>
@@ -253,6 +332,8 @@
 <script src="db.js"></script>
 <script src="reclaim-map.js"></script>
 <script src="widgets.js"></script>
+<script src="picker-columns.js"></script>
+<script src="picker-install.js"></script>
 <script src="page-picker.js"></script>
 <script src="wire.js"></script>
 <script src="demo.js"></script>

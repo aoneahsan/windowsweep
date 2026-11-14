@@ -36,7 +36,7 @@
   "home.idleWindowHint": "Lower it to include more caches.",
   "home.assure": "Personal folders stay protected; section 19 scans Downloads and folders you add, and only removes files you select.",
   "home.privacySummary": "What leaves this machine, and what never does.",
-  "home.privacyIntro": "The cleanup engine makes no network calls at all — its own tests check that. The window sends usage and crash reports, which is how windowsweep gets better for everyone:",
+  "home.privacyIntro": "Cleanup never touches the network. Only sections 30–32, for the rows you pick, ask Windows Update or winget to download; the engine itself sends nothing, and its own tests check that. The window sends usage and crash reports, which is how windowsweep gets better for everyone:",
   "home.privacySignIn": "Signing in is optional. It syncs your settings and a summary of each run, and nothing else.",
   "home.engineErrorTitle": "The engine did not answer.",
   "home.mapTitle": "The reclaim map",

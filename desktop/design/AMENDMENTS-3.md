@@ -267,3 +267,7 @@ own row, and each product's `primaryUrl`. Both exclusion layers and `wsPromoAudi
 ## Amendment - 2026-11-12: the unmeasured readout keeps its width
 
 The readout column keeps its intrinsic minimum width. At the default 1000 px window, the Scan actions move onto the next row before the unmeasured figure can intersect them. The existing wrapping layout and type tokens govern 760 and 1440 px too. No words or controls change.
+
+---
+
+**Continued in [`AMENDMENTS-4.md`](AMENDMENTS-4.md)** from 2026-11-13 (release 1.5.0). New amendments go there.

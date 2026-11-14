@@ -75,7 +75,7 @@ import { rehearsalFrom } from '../lib/rehearsal';
 import { formatBytes } from '../lib/format';
 import { scanArgs, safeBatchArgs } from '../lib/engine';
 import { useEngineRun } from '../state/use-engine-run';
-import { safeRunSections } from '../lib/catalogue';
+import { reclaimPickSections, safeRunSections } from '../lib/catalogue';
 import { controlState, stateOf } from '../lib/control-state';
 import { ReclaimMapBand } from '../components/ReclaimMapBand';
 import { SafeRunLadder, type LadderRow } from '../components/SafeRunLadder';
@@ -306,7 +306,7 @@ export function Home() {
     return rows;
   }, [catalogue, figures, measuredCounts]);
 
-  const interactive = (catalogue?.sections ?? []).filter((s) => s.batch === 'interactive');
+  const interactive = reclaimPickSections(catalogue);
   const adminSections = (catalogue?.sections ?? []).filter((s) => s.admin);
 
   if (engineError) {

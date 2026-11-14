@@ -25,13 +25,15 @@ formal SLA; critical issues are triaged ahead of feature work.
 - Anything in `windowsweep.ps1`, `lib/` or `modules/` that could delete outside the target its section
   declared, bypass the `--dry-run` guarantee, follow a reparse point, run an unintended elevated command, or
   leak personal data into a log, report or bundle that the user did not opt into.
+- A registry key or startup entry removed without passing `lib/registry.ps1` and its `.reg` backup, an update
+  installed in sections 30-32 that nobody picked, or any BIOS or firmware update offered at all.
 - The Node launcher (`bin/windowsweep.js`) and the `.cmd` launcher.
 
 ## Out of scope
 
-- Files the user selected and confirmed in sections 17, 18 or 19.
+- Files, programs and leftovers the user selected and confirmed (sections 17-19, 23, 26 and 27), and updates they picked in sections 30-32.
 - Access-denied errors when running admin sections without elevation.
-- Behaviour of the third-party tools the script invokes (`docker`, `npm`, `cleanmgr`, `Dism`, ...).
+- Behaviour of the third-party tools the script invokes (`docker`, `npm`, `cleanmgr`, `Dism`, `winget`, Windows Update, ...).
 - A forked or edited copy of the script.
 
 ## Coordinated disclosure
@@ -42,5 +44,5 @@ patch is released. Credit, if wanted, lands in the matching `CHANGELOG.md` entry
 ## Defensive guidance for users
 
 - Run `--self-test`, then `--scan`, then `--dry-run` before the first real run on any machine.
-- Keep a backup before running any cleanup tool. Sections 11, 15, 16 and 20 are deliberately gated.
+- Keep a backup before running any cleanup tool. Sections 11, 15, 16, 20 and 29 are deliberately gated. A removed registry key or startup entry comes back by double-clicking its `.reg` file in `~\.windowsweep\reports\registry-backups\`.
 - Read the session log under `~\.windowsweep\logs\` when anything surprises you; every deletion is recorded.

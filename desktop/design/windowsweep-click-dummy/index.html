@@ -342,8 +342,13 @@
               <span class="disclose-more">Details</span>
             </summary>
             <div class="disclose-body">
-              <p>The cleanup engine makes no network calls at all &mdash; its own tests check that. The
-                window sends usage and crash reports, which is how windowsweep gets better for everyone:</p>
+              <!-- 1.5.0 (D110): the promise is scoped. Cleanup never reaches the network; 30-32
+                   hand downloads to other tools; check [9] still fails the build on any
+                   network call in the engine's own code. -->
+              <p>Cleanup never touches the network. Only sections 30&#8211;32, for the rows you pick, ask
+                Windows Update or winget to download; the engine itself sends
+                nothing, and its own tests check that. The window sends usage and crash reports, which is how
+                windowsweep gets better for everyone:</p>
               <div style="display:flex;flex-direction:column;gap:var(--sp-3)" data-ws-consent></div>
               <p><strong>Never sent:</strong> a file path, a folder name, a drive label, your user name,
                 your machine name, or the contents of anything.</p>

@@ -1,8 +1,9 @@
 # Supabase for the desktop app
 
-Sign-in and sync are the only things in this product that touch a network. The
-command-line engine makes no network calls at all, and the desktop window makes
-none until a person signs in or accepts a telemetry destination.
+Sign-in, sync and the monthly run allowance reach this backend from the desktop
+window, which also sends usage and crash reports. The command-line engine's cleanup
+never touches the network; only its update sections (30-32), for rows a person
+picks, hand downloads to Windows Update or winget.
 
 **Supabase replaced Firebase on 2026-09-05**, on the owner's standing directive
 that Supabase is the default backend for every new project

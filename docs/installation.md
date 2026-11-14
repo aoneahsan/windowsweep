@@ -10,7 +10,7 @@ windowsweep is a PowerShell engine with a thin Node launcher. Installing it adds
 | Windows PowerShell | 5.1 (built in) | The engine targets 5.1; PowerShell 7 also works (`--pwsh`) |
 | Node.js | 14+ | Only for the `npx` / `npm install -g` paths |
 
-Nothing else is installed. The package has no dependencies, and the command-line tool makes no network calls of its own.
+Nothing else is installed, and the package has no dependencies. Cleanup never touches the network, and the engine's own code holds no network call (the self-test fails the build if one appears). Only sections 30, 31 and 32, for the rows you pick, ask Windows Update or winget to download; windowsweep itself sends nothing.
 
 ## Zero install with npx
 
@@ -79,4 +79,4 @@ npm uninstall -g windowsweep
 [Quick start](./quick-start.md) is four commands in order. The first is `--self-test`, which proves the
 guards on this machine before anything is deleted.
 
-Last Updated: 2026-09-08
+Last Updated: 2026-11-14

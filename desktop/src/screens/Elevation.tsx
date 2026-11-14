@@ -49,6 +49,7 @@ import { formatBytes, formatIdRanges } from '../lib/format';
 import { tailElevatedRun } from '../lib/run-tail';
 import { controlState, stateOf } from '../lib/control-state';
 import { PrimaryButton } from '../components/PrimaryButton';
+import { ElevationPicked } from '../components/ElevationPicked';
 import { DEV_GATED_SECTIONS, type Section } from '../lib/catalogue';
 
 /** What section 15 may be told to do. `keep` is "not chosen", so it is never sent. */
@@ -472,6 +473,8 @@ export function Elevation() {
           ) : null}
         </div>
       </section>
+
+      <ElevationPicked catalogue={catalogue} />
 
       <section className="band band-app band-tight">
         <div className="wrap">

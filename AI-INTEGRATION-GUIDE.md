@@ -3,7 +3,7 @@
 This is the contract an automated caller can rely on: what windowsweep promises, what it refuses, what it
 prints, and what it returns. It is written for an agent or a script rather than a person. For what the tool
 *is*, read the [README](https://github.com/aoneahsan/windowsweep#readme); for what each section touches, read
-[Sections 0-29](https://github.com/aoneahsan/windowsweep/blob/main/docs/sections.md).
+[Sections 0-32](https://github.com/aoneahsan/windowsweep/blob/main/docs/sections.md).
 
 **windowsweep deletes files.** Every command below that is not marked read-only can remove data. There is no
 undo for caches. Treat a real run as an irreversible operation and preview it first.
@@ -27,14 +27,14 @@ already elevated.
 
 | Never covered by `--yes` | Behaviour |
 |---|---|
-| Sections 17, 18, 19, 23, 26, 27 | The selection prompt appears even with `--yes` and defaults to none. With no console attached nothing is selected, and each asks a final question `--yes` does not answer. Only `--select` / `--select-file` supply a choice (see below) |
+| Sections 17, 18, 19, 23, 26, 27, 30, 31, 32 | The selection prompt appears even with `--yes` and defaults to none. With no console attached nothing is selected, and each asks a final question `--yes` does not answer. Only `--select` / `--select-file` supply a choice (see below) |
 | Sections 11, 15, 16, 20, 29 | Deep. Refused in batch mode unless `--i-understand-deep` is also passed |
 | `--uninstall-data` | Always asks; `--yes` does not answer it |
 | `--purge-all` | From a console it asks for a typed `purge` once per run. In a batch run `--yes` is the confirmation |
 
-In batch mode (`--all`, `--only`, `--profile`) sections 17, 18, 19, 23, 26 and 27 are refused outright and reported as
-`refused`, unless a `--select` or `--select-file` choice was supplied. They need a person choosing items -
-in advance is fine, absent is not.
+In batch mode (`--all`, `--only`, `--profile`) sections 17, 18, 19, 23, 26, 27, 30, 31 and 32 are refused outright
+and reported as `refused`, unless a `--select` or `--select-file` choice was supplied. They need a person choosing
+items - in advance is fine, absent is not.
 
 ## Exit codes
 
@@ -60,7 +60,7 @@ in advance is fine, absent is not.
 | `--developer`, `--not-developer` | Override the saved developer answer for this run |
 | `--scan-roots "P1;P2"`, `--exclude-path P` | Section 17 roots and exclusions |
 | `--logs-dir P`, `--reports-dir P` | Redirect this run's output |
-| `--select L`, `--select-file P` | Supply an interactive section's selection in advance, by index or by full path. The only way sections 17/18/19/23 run unattended |
+| `--select L`, `--select-file P` | Supply an interactive section's selection in advance, by index or by the row's own path. The only way sections 17-19, 23, 26, 27 and 30-32 run unattended |
 | `--notify` | A Windows notification when the run ends. Never changes the exit code, never writes to stdout |
 | `--list --json` | Print the section catalogue as one JSON line instead of the human table |
 | `--pwsh` | Launcher only: run the engine on PowerShell 7 |
@@ -87,8 +87,9 @@ choice, and says so.
 | `freed_bytes` | Real bytes removed. `0` in a dry-run |
 | `estimated_bytes` | What a dry-run says a real run would remove. `0` in a real run |
 | `sections[]` | One entry per section attempted: `section`, `status`, `freed_bytes` |
-| `candidates[]` | What an interactive section offered: `section`, `index`, `path`, `bytes`, `idle_days`, `project`. Always present, empty when none were collected |
+| `candidates[]` | What an interactive section offered: `section`, `index`, `path`, `bytes`, `idle_days`, `project`, and an optional `label`. Sections 19, 26, 27 and 30-32 add their own fields, such as `kind` and `needs_admin`, listed in the [CLI reference](https://github.com/aoneahsan/windowsweep/blob/main/docs/cli-reference.md#machine-readable-output). Always present, empty when none were collected |
 | `targets[]` | Scan mode only: `section`, `label`, `path`, `bytes`, `newest_write_utc`. Always present, empty otherwise |
+| `driver_report` | Section 31's two reports: `problems[]` (`name`, `code`, `problem`) and `oldest[]` (`device`, `provider`, `version`, `date`). `null` unless section 31 ran |
 | `refusals[]` | Human-readable reasons a section was refused in batch mode, plus one `excluded: <path>` line per honoured `--exclude-path` |
 | `excluded[]` | Every path an exclusion actually kept, listed once each. Empty means "nothing was excluded", never "not reported" |
 | `log_file`, `report_file` | Absolute paths, or `null` under `--no-report` |
@@ -108,6 +109,8 @@ emitted only under `--json`, because computing it needs the file walk that `--js
 | JSON reports and exports | `%USERPROFILE%\.windowsweep\reports\` |
 | Debug and crash bundles | `%USERPROFILE%\.windowsweep\feedback\` |
 | Settings | `%USERPROFILE%\.windowsweep\config.json` |
+| Uninstall history (section 26) | `%USERPROFILE%\.windowsweep\uninstalled.jsonl` |
+| Registry and task backups (sections 26, 27) | `<reports folder>\registry-backups\<run stamp>\` |
 
 Override the root with `WINDOWSWEEP_HOME`, or the two folders with `--logs-dir` / `--reports-dir`
 (`WINDOWSWEEP_LOG_DIR` / `WINDOWSWEEP_REPORTS_DIR`). `WINDOWSWEEP_NO_COLOR`, `NO_COLOR` and
@@ -122,18 +125,22 @@ self-contained HTML page without extra tools.
 ## Elevation
 
 Sections 12-16, 20, 27 and 29 need Administrator rights. Without them the runner skips each with the exact command
-to run. `--elevate` relaunches the whole run through a UAC prompt: **a new elevated window opens with its own
-log and report**, and the original process waits and returns the child's exit code. That prompt cannot be
+to run. Three more need it for part of their work: section 26 for a program installed for all users, and
+sections 30 and 31 to install. An unelevated real run of 30 or 31 lists its rows, then refuses before asking.
+Section 32 needs no elevation, but an installer that writes for every user may show its own UAC prompt.
+`--elevate` relaunches the whole run through a UAC prompt: **a new elevated window opens with its own
+log and report**, and the original process waits and returns the child's exit code. No UAC prompt can be
 answered by a script, so `--elevate` does not belong in an unattended context.
 
 ## Guarantees
 
-- - **No network calls of its own**. Self-test check [9] greps every source file for `Invoke-WebRequest`, `Invoke-RestMethod`, `Net.WebClient`, `HttpClient`, `Sockets.TcpClient`, `curl.exe` and `wget`, and fails the run if it finds one. There is no telemetry and no update check. `--report-issue` and `--feedback` hand a URL to the user's browser after they confirm, and neither belongs in an unattended run.
-- - **Every deletion of anything on the user's machine passes one chokepoint** with a declared root, and is refused if it falls outside it. windowsweep's own logs, reports and fixtures are the exception, reachable only through `--cleanup-logs`, `--prune-history` and `--uninstall-data`.
-- - **Protected paths are refused regardless of flags**: every drive root, fifteen declared roots (Windows, System32, SysWOW64, both Program Files folders, ProgramData, `C:\Users` with Default and Public, the profile root, and the AppData Roaming, Local and LocalLow folders), 66 protected subtrees, 50 path patterns and 13 file names. Two paths are declared exceptions - `%LOCALAPPDATA%\Android\Sdk\.temp` and `.downloadIntermediates` - and there are no others. No flag bypasses any of it.
+- **Nothing sent, and no network call of its own.** Cleanup never touches the network, and the engine's own code holds no network call: self-test check [9] greps every source file for `Invoke-WebRequest`, `Invoke-RestMethod`, `Net.WebClient`, `HttpClient`, `Sockets.TcpClient`, `curl.exe` and `wget`, and fails the build if it finds one. Only sections 30, 31 and 32, for the rows you pick, ask Windows Update or winget to download; windowsweep itself sends nothing. There is no telemetry and no update check of its own, and no PC maker's driver tool is ever started: section 31 only names it, because on a ThinkPad Lenovo System Update queued a firmware package past its driver-only switch. Listing in those three sections already has Windows Update contact its update server, or winget read its sources, a dry-run included. `--report-issue` and `--feedback` hand a URL to the user's browser after they confirm, and neither belongs in an unattended run.
+- **Every deletion of anything on the user's machine passes one chokepoint** with a declared root, and is refused if it falls outside it. windowsweep's own logs, reports and fixtures are the exception, reachable only through `--cleanup-logs`, `--prune-history` and `--uninstall-data`.
+- **A registry key or startup entry is exported to a `.reg` file before it is removed**, to `<reports folder>\registry-backups\<run stamp>\`, and a scheduled task is saved there as XML first. Only sections 26 and 27 remove either. A shared key (Microsoft, Classes, Policies, hardware makers, toolchains, browsers) is refused, in a dry-run too, and a failed backup keeps the key.
+- **Protected paths are refused regardless of flags**: every drive root, fifteen declared roots (Windows, System32, SysWOW64, both Program Files folders, ProgramData, `C:\Users` with Default and Public, the profile root, and the AppData Roaming, Local and LocalLow folders), 66 protected subtrees, 50 path patterns and 13 file names. Two paths are declared exceptions - `%LOCALAPPDATA%\Android\Sdk\.temp` and `.downloadIntermediates` - and there are no others. No flag bypasses any of it.
 - **Junctions and symlinks are removed as links, never followed.**
-- **`--dry-run` and `--scan` write nothing** but the log and the report.
-- **Section numbers are a public contract.** 0-29 in the current source; a section may be retired as a no-op, and a number is
+- **`--dry-run` and `--scan` write nothing** but the log and the report, and remove or install nothing.
+- **Section numbers are a public contract.** 0-32 in the current source; a section may be retired as a no-op, and a number is
   never reused. Read `--list --json` rather than hard-coding the set.
 - **Zero runtime dependencies.** The package is PowerShell plus a Node launcher that uses only built-in
   modules.
@@ -144,16 +151,16 @@ answered by a script, so `--elevate` does not belong in an unattended context.
   local package and the command fails. Run it from anywhere else.
 - Do not schedule `npx windowsweep` as a task action. The npx cache is evicted and the task breaks; install
   globally and use `--install-task`, which refuses under npx for this reason.
-- Do not pipe `y` into the tool to force a personal section. Sections 17, 18, 19, 23, 26 and 27 are interactive by
-  design and a piped answer selects nothing - pass `--select` or `--select-file` instead, which is the
-  supported way and names exactly what goes.
+- Do not pipe `y` into the tool to force a personal section. Sections 17, 18, 19, 23, 26, 27 and 30-32 are
+  interactive by design and a piped answer selects nothing - pass `--select` or `--select-file` instead, which
+  is the supported way and names exactly what goes.
 - Do not treat a green `--dry-run` as proof that a real run frees the same amount: an app that is open at run
   time keeps its caches.
 
 ## Driving the interactive sections (1.1.0+)
 
-Sections 17, 18, 19, 23, 26 and 27 refuse to run unattended, because they delete things a person should choose. Two
-flags supply that choice in advance, and either one lifts the refusal:
+Sections 17, 18, 19, 23, 26, 27 and 30-32 refuse to run unattended, because they delete or install things a
+person should choose. Two flags supply that choice in advance, and either one lifts the refusal:
 
 ```powershell
 # 1. list what the section would offer - deletes nothing
@@ -172,6 +179,13 @@ Rules a caller can rely on:
 - The scripted selection also answers that section's final confirmation, so the run does not stall.
 - `--select` is repeatable and consumed one list per prompt; `--select-file` is offered to every prompt, so
   a line that matches nothing in a given section is reported once and skipped.
+- A `--select-file` line is exactly the `path` that `--dry-run --json` reports for the row in
+  `candidates[]`: a full path, a registry key, or a row key such as `appx:<PackageFullName>`,
+  `wu:<UpdateID>` or `winget:<PackageId>`. Every shape is listed in the
+  [CLI reference](https://github.com/aoneahsan/windowsweep/blob/main/docs/cli-reference.md#lines-in-a-selection-file).
+- Section 26's lists of what a removal left appear only after a real removal, so a dry-run cannot preview
+  them and a queued `--select` never answers them. A later run of section 27, which is elevated, offers
+  whatever of it is still there, read from the uninstall history.
 - Neither flag reaches a path the deletion chokepoint would otherwise refuse.
 
 ## Reading the catalogue and following progress

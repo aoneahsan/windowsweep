@@ -5,16 +5,32 @@ Every run writes under `%USERPROFILE%\.windowsweep`, never inside the npm cache 
 ```text
 %USERPROFILE%\.windowsweep\
   config.json                          the developer answer and default windows
+  uninstalled.jsonl                    every removal section 26 really made, one JSON object per line
   logs\windowsweep-<stamp>.log         one log per run, every action recorded
   reports\report-<stamp>.json          one canonical report per run (schema 1)
   reports\report-<stamp>.md|.html      exports, on demand
   reports\stale-builds-<stamp>.txt     section 17 candidate list (also in dry-run)
   reports\disk-usage-<stamp>.txt       section 21 output
+  reports\registry-backups\<stamp>\    .reg files and task XML, written before sections 26 and 27 remove one
   feedback\debug-bundle-<stamp>.zip    --debug-bundle
   feedback\crash-<stamp>.zip           written on an unexpected exit
 ```
 
 `<stamp>` is `yyyy-MM-dd_HHmmss-<pid>`, so concurrent runs never share a file.
+
+## Registry backups and the uninstall history
+
+Before section 26 or 27 removes a registry key or a startup entry, it exports the key with Windows' own
+`reg.exe` to `reports\registry-backups\<stamp>\` as a `.reg` file; double-click one to put that key back. A
+scheduled task is saved in the same folder as XML before it is unregistered, and Task Scheduler > Import
+Task puts it back. If a backup cannot be written, that key or task is kept. `--prune-history` leaves these
+folders alone; `--uninstall-data` removes them with everything else.
+
+`uninstalled.jsonl` holds one line for each program, Store app or broken entry section 26 really removed,
+and never one for a dry-run: `date`, `name`, `version`, `publisher`, `kind` (`program`, `store` or
+`stale`, the KIND column's `desktop`, `store` and `broken`), `key`, `install_location` and `strategy`.
+Section 27 reads the desktop programs in it to find what they left: their folders, without the idle wait,
+and their registry keys.
 
 ## The log
 
@@ -56,7 +72,7 @@ The HTML export is a single self-contained file that follows the system light/da
 
 ## Privacy
 
-Logs and reports contain paths from your machine and a snapshot of cache sizes. Nothing is transmitted: the command-line tool makes no network calls of its own. Review a bundle before attaching it to an issue: the paths in it include your user name and your project folders.
+Logs and reports contain paths from your machine and a snapshot of cache sizes. Nothing is transmitted: cleanup never touches the network, and the engine's own code holds no network call (the self-test fails the build if one appears). Only sections 30, 31 and 32, for the rows you pick, ask Windows Update or winget to download; windowsweep itself sends nothing. Review a bundle before attaching it to an issue: the paths in it include your user name and your project folders.
 
 ## `targets[]` in a `--json` scan
 
@@ -76,4 +92,4 @@ a zero date that would sort as though it were real.
 It costs no extra work: under `--json` the size pass already enumerates every file, so the timestamp comes
 out of that same enumeration. A human `--scan` keeps the faster path and does not compute it.
 
-Last Updated: 2026-09-08
+Last Updated: 2026-11-14

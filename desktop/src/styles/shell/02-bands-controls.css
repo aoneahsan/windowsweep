@@ -362,6 +362,14 @@
 .tier-permanent {
   --tier-c: var(--c-tier-permanent);
 }
+.tier-update {
+  --tier-c: var(--c-tier-update);
+}
+/* 1.5.0: the one tier that adds rather than reclaims says so by shape too - a ring, not a fill */
+.tier-update::before {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--tier-c);
+}
 /* second channel for the one tier that cannot be undone */
 .tier-permanent::before {
   background-image: repeating-linear-gradient(

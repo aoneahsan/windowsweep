@@ -121,7 +121,11 @@ export const useStore = create<StoreState>()((set, get) => ({
        is the one place they all pass through. A ticked row that is no longer on
        offer is unticked with it, so "Remove these" can never carry a path the
        list no longer shows. */
-    const before = { candidates: get().candidates, offeredSections: get().offeredSections };
+    const before = {
+      candidates: get().candidates,
+      offeredSections: get().offeredSections,
+      driverReport: get().driverReport,
+    };
     const offers = mergeOffers(before, summary, interactiveSectionIds(get().catalogue));
     if (offers !== before) {
       const onOffer = new Set(offers.candidates.map((row) => row.path));
@@ -194,6 +198,7 @@ export const useStore = create<StoreState>()((set, get) => ({
 
   candidates: [],
   offeredSections: [],
+  driverReport: null,
   selectedPaths: new Set<string>(),
   toggleCandidate: (path) => {
     const next = new Set(get().selectedPaths);

@@ -323,6 +323,9 @@ button, [role='button'] {
 .tier-slow      { --tier-c: var(--c-tier-slow); }
 .tier-recycle   { --tier-c: var(--c-tier-recycle); }
 .tier-permanent { --tier-c: var(--c-tier-permanent); }
+.tier-update    { --tier-c: var(--c-tier-update); }
+/* 1.5.0: the one tier that adds rather than reclaims says so by shape too - a ring, not a fill */
+.tier-update::before { background: transparent; box-shadow: inset 0 0 0 2px var(--tier-c); }
 /* second channel for the one tier that cannot be undone */
 .tier-permanent::before { background-image: repeating-linear-gradient(45deg, transparent 0 2px, oklch(0 0 0 / .45) 2px 3px); }
 

@@ -6,7 +6,7 @@
 
 import type { Catalogue } from '../lib/catalogue';
 import type { Rehearsal } from '../lib/rehearsal';
-import type { Candidate, ProgressEvent, RunSummary, ScanTarget } from '../lib/cli';
+import type { Candidate, DriverReport, ProgressEvent, RunSummary, ScanTarget } from '../lib/cli';
 import type { AuthUser } from '../lib/auth';
 import type { AxisPrefs } from '../lib/theme';
 
@@ -96,6 +96,8 @@ export interface StoreState {
      `lib/offers.ts` for why that is per section and never per run. */
   candidates: Candidate[];
   offeredSections: number[];
+  /** Section 31's report blocks, established and spent with 31's rows (`lib/offers.ts`). */
+  driverReport: DriverReport | null;
   selectedPaths: Set<string>;
   toggleCandidate: (path: string) => void;
   setSelection: (paths: string[]) => void;

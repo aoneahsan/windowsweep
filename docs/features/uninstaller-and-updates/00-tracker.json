@@ -1,0 +1,90 @@
+{
+  "module": "uninstaller-and-updates",
+  "createdAt": "2026-11-13",
+  "lastUpdated": "2026-11-13",
+  "overview": "Release 1.5.0. The owner asked on 2026-11-13 for a full software uninstaller and a system/driver updater in WindowSweep, and for his P52 to be cleaned of software he no longer needs and brought up to date using the product itself. Section 26 becomes the full uninstaller (desktop programs, Store apps, broken entries, RAN column, uninstall history); section 27 adds registry keys, Start-menu shortcuts, startup entries and scheduled tasks left behind; new sections 30 winupdate, 31 drivers and 32 appupdates (tier update, interactive, never BIOS or firmware). Plan: C:/Users/PC/.claude/plans/plan-and-update-this-glistening-scott.md.",
+  "userDecisions": [
+    "D109 (2026-11-13): section 26 is the full uninstaller - Store apps for the current account, broken entries cleared after a .reg backup, and leftover registry keys, shortcuts, startup entries and tasks of uninstalled programs; registry removals only through lib/registry.ps1 with a .reg backup first. Amends the 'registry cleaning out of scope' non-goal for leftovers of uninstalled programs only.",
+    "D110 (2026-11-13): sections 30-32 update Windows, drivers and apps; the engine promise is re-scoped (owner chose 'Opt-in sections, reworded'): cleanup never touches the network; only 30-32, for rows a person picks, hand downloads to Windows Update or winget; windowsweep itself sends nothing. Self-test check [9] stays.",
+    "D111 (2026-11-13): never BIOS or firmware, in the product and on the owner's machines (his words: 'do not try to fuck with bios or firmware').",
+    "D112 (2026-11-13): the P52 removal list and keep list as answered (see the plan); any further removal is asked first.",
+    "D113 (2026-11-13): new 1.5.0 prose gets a lean story review plus the finalizer, GATE 4 pre-authorised on fact-consistency PASS and zero NEEDS DECISION, as in the 2026-09-07 grant; approved with the plan."
+  ],
+  "knownRisks": [
+    "Proved on the P52 (2026-11-14): Lenovo System Update ignored -packagetypes 1,2 and queued IR-camera firmware (type 4); the engine therefore never runs a PC maker's tool (D114).",
+    "winget's table is parsed by column position; a localized or truncated table can hide a row (truncated ids are skipped and reported).",
+    "Remove-AppxPackage removes an app for the current account only; Windows can restore inbox apps for new accounts or after a feature update.",
+    "Updating Windows Terminal, Git or Claude would end the session that runs this work; those three are left to the owner."
+  ],
+  "phases": [
+    {
+      "id": "P1",
+      "title": "CLI engine: full uninstaller (26/27) and registry chokepoint",
+      "status": "in_progress",
+      "completedAt": null,
+      "subTasks": [
+        { "id": "P1.1", "title": "lib/registry.ps1 chokepoint (protection, .reg backup, key/value/uninstall-entry removal)", "status": "complete", "note": "11 group-[27] checks, each seen failing on a planted defect" },
+        { "id": "P1.2", "title": "section 26: Store apps, broken entries, KIND/RAN columns, uninstall history", "status": "complete", "note": "dry-run on the P52 lists 93 rows (44 desktop, 49 Store)" },
+        { "id": "P1.3", "title": "section 27 + section 26 second pass: registry keys, shortcuts, startup entries, tasks", "status": "complete", "note": "" },
+        { "id": "P1.4", "title": "catalogue rows 30-32, tier update, help text, self-test wiring", "status": "in_progress", "note": "remove the Get-Command guard in self_test_extra.ps1 once groups 27 and 28 both exist" }
+      ]
+    },
+    {
+      "id": "P2",
+      "title": "CLI engine: sections 30 winupdate, 31 drivers, 32 appupdates",
+      "status": "in_progress",
+      "completedAt": null,
+      "subTasks": [
+        { "id": "P2.1", "title": "updates_windows.ps1, updates_drivers.ps1, updates_apps.ps1 + self-test group [28]", "status": "in_progress", "note": "agent A" }
+      ]
+    },
+    {
+      "id": "P3",
+      "title": "Desktop app: click dummy amendment then app (install mode, Store/stale rows, tier update)",
+      "status": "in_progress",
+      "completedAt": null,
+      "subTasks": [
+        { "id": "P3.1", "title": "click dummy AMENDMENTS-4", "status": "in_progress", "note": "agent B" },
+        { "id": "P3.2", "title": "desktop app mirrors the dummy; gates; parity 1440/760", "status": "pending", "note": "" }
+      ]
+    },
+    {
+      "id": "P4",
+      "title": "Docs, docs site, website and story records for 1.5.0",
+      "status": "pending",
+      "completedAt": null,
+      "subTasks": [
+        { "id": "P4.1", "title": "product docs + windowsweep-docs mirror", "status": "pending", "note": "" },
+        { "id": "P4.2", "title": "website claims, privacy page, features", "status": "pending", "note": "" },
+        { "id": "P4.3", "title": "Story Bible commitment 3 correction, decision log, run state", "status": "pending", "note": "" }
+      ]
+    },
+    {
+      "id": "P5",
+      "title": "The P52: uninstall the approved list, leftovers, Windows/app/driver updates (real-machine evidence)",
+      "status": "pending",
+      "completedAt": null,
+      "subTasks": [
+        { "id": "P5.1", "title": "dry-run evidence; select files", "status": "pending", "note": "" },
+        { "id": "P5.2", "title": "elevated run 1: removals, Windows updates, app updates, Lenovo System Update install", "status": "pending", "note": "needs the owner's UAC click" },
+        { "id": "P5.3", "title": "elevated runs 2-3: leftovers and drivers", "status": "pending", "note": "needs the owner's UAC click" },
+        { "id": "P5.4", "title": "restart Windows; update Windows Terminal, Git and Claude", "status": "blocked", "awaitingUser": true, "note": "they host the running session" }
+      ]
+    },
+    {
+      "id": "P6",
+      "title": "Release 1.5.0 (CLI, npm, desktop, website, docs) and records",
+      "status": "pending",
+      "completedAt": null,
+      "subTasks": [
+        { "id": "P6.1", "title": "version cascade, gates, npm publish, v1.5.0 + desktop-v1.5.0, release record", "status": "pending", "note": "" },
+        { "id": "P6.2", "title": "website + docs deploy and live proof", "status": "pending", "note": "" },
+        { "id": "P6.3", "title": "PROJECT-CONTEXT D109-D113, CHANGELOG, runs-and-releases, root summary, memory", "status": "pending", "note": "" }
+      ]
+    }
+  ],
+  "runHistory": [
+    { "date": "2026-11-13", "phase": "P1-P3", "summary": "Plan approved; registry chokepoint, full section 26/27 and group [27] written and proved (11/11 plants caught); agents A (sections 30-32) and B (dummy) dispatched.", "commit": null }
+  ],
+  "resumeInstructions": "1) Read this tracker. 2) Find the first pending or in_progress sub-task. 3) Read the plan file named in overview. 4) Invoke skills per RULE #0. 5) Complete, mark complete, append a runHistory row, bump lastUpdated. 6) Commit per the project's git rules, never with AI attribution."
+}

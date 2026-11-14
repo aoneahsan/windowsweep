@@ -23,8 +23,10 @@
 
       <section class="band band-app band-tight">
         <div class="wrap">
-          <p class="caps ink-3">Sections 12&#8211;16 and 20</p>
-          <h1 class="t-xl wide">Six sections need Windows to ask your permission.</h1>
+          <!-- 1.5.0: both counted from the catalogue, as the app counts them; the static
+               "Six" and "12-16 and 20" had missed section 29 since 1.4.0. -->
+          <p class="caps ink-3" data-ws-text="elevEyebrow">Sections 12&#8211;16, 20 and 29</p>
+          <h1 class="t-xl wide" data-ws-text="elevTitle">7 sections need Windows to ask your permission.</h1>
           <p class="lede">windowsweep <strong>never elevates itself</strong>. When you ask for one of
             these, it opens a second, elevated window that does that work and writes its own report.
             This window keeps running, unelevated, and shows you the log as it arrives.</p>
@@ -124,6 +126,22 @@
           <!-- D-28 (GATE 4 round 7): "Measure without elevating" answers here, beside the
                control, as a polite status note - not in a toast. -->
           <p class="note note-info" role="status" style="margin-top:var(--sp-3)" data-ws-measured hidden></p>
+        </div>
+      </section>
+
+      <!-- 1.5.0 (D110): installing what 30 and 31 list needs the same elevated window.
+           Listing does not, and their rows are picked on the Choose screen, so these cards
+           link there instead of carrying a switch (27's rule, AMENDMENTS-3 2026-11-03).
+           Section 32 needs no elevated window, and says so under the cards. -->
+      <section class="band band-app band-tight">
+        <div class="wrap">
+          <h2 class="t-md wide">Installing Windows updates and drivers needs permission too</h2>
+          <p class="t-sm ink-3" style="margin-top:var(--sp-2);max-width:44rem">Sections 30 and 31 list what
+            is available without asking. You pick rows on the Choose screen, and installing them runs in an
+            elevated window, the way the steps above describe.</p>
+          <div class="cards" style="margin-top:var(--sp-4)" data-ws-elevated-picked></div>
+          <p class="t-sm ink-3" style="margin-top:var(--sp-3);max-width:44rem">App updates in section 32 run
+            without one. An installer that changes the whole PC shows its own Windows permission prompt.</p>
         </div>
       </section>
 

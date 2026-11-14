@@ -27,7 +27,13 @@ import { Trans, useTranslation } from 'react-i18next';
 
 import { useStore } from '../state/store';
 import { useIncludedScanTargets, useRunPreferences } from '../state/derived';
-import { filterSections, SECTION_FILTERS, type SectionFilter } from '../lib/catalogue';
+import {
+  filterSections,
+  isInstallSection,
+  SECTION_FILTERS,
+  type SectionFilter,
+} from '../lib/catalogue';
+import { reclaimOf } from '../lib/candidate-extras';
 import { newRunId, run, safeBatchArgs } from '../lib/engine';
 import { formatBytes } from '../lib/format';
 import { SectionsTable } from '../components/SectionsTable';
@@ -45,6 +51,10 @@ export function Sections() {
      row still counting a target the run will refuse is the estimate contradicting
      the run. The map on Home is the only surface that reads the whole scan. */
   const scanTargets = useIncludedScanTargets();
+  /* An install section (30-32) has no target on disk: what it reclaims - 31's old driver
+     packages only - is read from the rows it offered (A4-02). */
+  const candidates = useStore((s) => s.candidates);
+  const offeredSections = useStore((s) => s.offeredSections);
   const excludedPaths = useStore((s) => s.excludedPaths);
   const selection = useStore((s) => s.sectionSelection);
   const toggleSectionSelection = useStore((s) => s.toggleSectionSelection);
@@ -72,11 +82,18 @@ export function Sections() {
 
   const bytesOf = useCallback(
     (id: number): number | null => {
+      const section = all.find((s) => s.id === id);
+      if (section && isInstallSection(section)) {
+        if (!offeredSections.includes(id)) return null;
+        return candidates
+          .filter((c) => c.section === id)
+          .reduce((sum, c) => sum + reclaimOf(c, true), 0);
+      }
       const targets = scanTargets.filter((x) => x.section === id);
       if (targets.length === 0) return null;
       return targets.reduce((sum, x) => sum + x.bytes, 0);
     },
-    [scanTargets]
+    [all, candidates, offeredSections, scanTargets]
   );
 
   const total = useMemo(() => scanTargets.reduce((sum, x) => sum + x.bytes, 0), [scanTargets]);
@@ -228,6 +245,7 @@ export function Sections() {
               <SectionsTable
                 rows={rows}
                 scanTargets={scanTargets}
+                candidates={candidates}
                 selection={selection}
                 onToggleSelect={toggleSectionSelection}
               />

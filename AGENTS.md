@@ -15,7 +15,7 @@ This public repository is the Windows PowerShell cleanup CLI, Node launcher, Tau
 
 ## Safety and build gates
 
-Every user-data deletion goes through `Remove-PathSafe` or `Send-ToRecycleBin` with a declared `-Within` root; no bare `Remove-Item` on user data. Dry-run never changes data. Protected paths only grow. Section numbers are add-only and targets need real-machine evidence. No network call from the CLI. Preserve PowerShell 5.1 syntax and ASCII source. The public repo contains no secrets. Owner-created client packages, including `@perkforce/tool-kit`, are forbidden.
+Every user-data deletion goes through `Remove-PathSafe` or `Send-ToRecycleBin` with a declared `-Within` root; no bare `Remove-Item` on user data. Dry-run never changes data. Protected paths only grow. Section numbers are add-only and targets need real-machine evidence. No network code in the engine: cleanup never touches the network, and only sections 30-32 hand picked rows to Windows Update or winget (D110); every registry removal goes through `lib/registry.ps1` with a `.reg` backup first (D109); never BIOS or firmware (D111). Preserve PowerShell 5.1 syntax and ASCII source. The public repo contains no secrets. Owner-created client packages, including `@perkforce/tool-kit`, are forbidden.
 
 For CLI changes, use the Windows self-test, version parity, PSScriptAnalyzer and package allowlist gates in `docs/context/product-guide-2026-09-28.md`; run these gates locally on Windows before release. The desktop app uses `yarn gates` and `yarn typecheck:clean` after dependency changes. Never change signed releases, tags, npm publication or store assets as part of a context pass. CLI GitHub Releases use `--latest=false`; only a desktop release can be Latest because the updater reads its `latest.json`. The updater signing key, password and public key are backed up as FilesHub `general_files.bk_windowsweep_tauri_updater_key`, `_key_password` and `_key_pub`; the local, download and header checksums matched on 2026-10-31. Prove a restored-key signature against the shipped public key before release.
 
@@ -38,7 +38,7 @@ Before stopping, commit every legitimate change and work-progress checkpoint in 
 |---|---|
 | Last optimized | 2026-11-13 |
 | Next routine optimization eligible | 2026-12-13 |
-| Guide bytes | 5,887 B |
+| Guide bytes | 6,121 B |
 | Covered subtree | This repository; parent windowsweep-root measured separately |
 | Method | Due review: compact project-specific guidance retained; mirrors, routing, task headings and inherited root checked; current release facts corrected where needed |
 | Fleet record | code/docs/tracking/project-context-budget-tracker.json |

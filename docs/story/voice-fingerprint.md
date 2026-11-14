@@ -26,7 +26,7 @@ These are the target. A writer imitates the rhythm and the stance, not the subje
 10. The idle gate keeps anything you have used in the last hundred days, which is the point: the next
     install should still be fast.
 11. Emptying the Recycle Bin is permanent. That section is behind its own flag for exactly that reason.
-12. Thirty sections, and the numbers never change meaning — a section number is a promise.
+12. Thirty-three sections, and the numbers never change meaning — a section number is a promise.
 
 ## Rhythm
 
@@ -122,3 +122,6 @@ claim about personal files is false when section 19 offers files from Downloads 
 Specimen 2 now describes the two guarded removal paths. `docs/sections.md` lists sections 0-29, eight with
 an admin requirement, so specimens 5 and 12 use those counts. These are source-accuracy corrections; the
 60/25/15 palette, stance and rhythm rules are unchanged. The 1.4.0 source is not yet the published release.
+
+2026-11-13 (D110): 1.5.0 adds sections 30-32, so specimen 12 counts thirty-three. None of the three needs
+admin to list (installing in 30 and 31 does), so specimen 5's eight admin sections still hold.

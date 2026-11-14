@@ -1,9 +1,11 @@
-/* Picker - sections 17, 18, 19, 23, 26 and 27. The one screen whose entire point is
-   that NOTHING is chosen for you: --yes never selects here, the default is
-   none, and the final question is never auto-answered. */
+/* Picker - sections 17-19, 23, 26 and 27 (what goes) and, from 1.5.0, 30-32 (what is
+   installed: picker-install.js; the columns of each: picker-columns.js). The one screen
+   whose entire point is that NOTHING is chosen for you: --yes never selects here, the
+   default is none, and the final question is never auto-answered. */
 (function () {
   'use strict';
   var ws = window.ws, db = window.wsdb, S = window.wsSeed, el = ws.el, fmt = db.fmt;
+  var cols = window.wsPickCols, inst = window.wsPickInstall;
 
   /* D-37 (GATE 4 round 7): 18 and 19 were described the wrong way round against
      this dummy's own seed.js and the engine's catalogue (18 partials, 19 large).
@@ -17,8 +19,12 @@
     18: ['Partial downloads', 'Half-finished downloads left behind by browsers and download managers. Only Downloads \u2013 never Desktop, never Documents.'],
     19: ['Large or old files', 'Downloads first. You can add folders, inspect each result, and choose what goes to the Recycle Bin.'],
     23: ['Orphaned application data', 'AppData folders belonging to programs that are no longer installed. Fails closed: if the registry cannot be read, nothing is offered.'],
-    26: ['Uninstall programs you pick', 'Each chosen program runs its own uninstaller. That is permanent. A second list offers any folders it left behind.'],
-    27: ['Leftover program folders', 'Folders in Program Files, Common Files and ProgramData that no installed program claims. Needs administrator permission. Chosen folders go to the Recycle Bin.']
+    26: ['Uninstall programs and Store apps you pick', 'Desktop programs run their own uninstallers, one at a time; Store apps are removed for this Windows account. Both are permanent, and a second list then offers what they left behind.'],
+    27: ['Leftovers of uninstalled programs', 'What uninstalled programs left where nothing installed, registered or running still uses it. Needs administrator permission. Folders and shortcuts go to the Recycle Bin; everything else is backed up first.'],
+    /* 1.5.0 (D110, D111): the install mode. */
+    30: ['Windows updates you pick', 'Security, quality and Defender updates and the malicious software removal tool, as Windows Update lists them for this PC. Windows Update fetches each one; windowsweep never restarts your PC.'],
+    31: ['Driver updates and old driver packages', 'Driver updates from Windows Update, and old packages left in the driver store. The newest two of each driver always stay, so Device Manager’s Roll Back keeps working. BIOS and firmware updates are never offered, and your PC maker’s own driver tool is named, never run.'],
+    32: ['App updates you pick', 'winget fetches each update from its publisher, one at a time. An app that is running is skipped, and an installer that changes the whole PC may show its own Windows permission prompt.']
   };
 
   /* Home's "Choose items" opens picker.html?section=N (wire.js renderNeeds), and this
@@ -26,6 +32,8 @@
   var params = new URLSearchParams(location.search);
   var wanted = Number(params.get('section'));
   var current = META[wanted] ? wanted : 17, chosen = {}, search = '';
+  /* 26's Ran column is read only by an elevated window: ?elevated=1 draws that list. */
+  var elevated = params.get('elevated') === '1';
   var dataRoots = Array.isArray(db.facts.dataRoots) ? db.facts.dataRoots.filter(function (r) {
     return r === 'D:\\Archive' || r === 'D:\\Media';
   }) : [];
@@ -70,8 +78,19 @@
       if (current === 19 && dataReason !== 'all' && reason !== dataReason && reason !== 'both') return false;
       return !search || (c.path + ' ' + (c.label || c.project || '') + ' ' + reason).toLowerCase().indexOf(search) !== -1;
     }).sort(function (a, b) {
+      /* Install rows keep the order their tool lists them in: install, run, remove. */
+      if (cols.isInstall(current)) return 0;
       return current === 19 && dataSort === 'age' ? b.idle - a.idle : b.bytes - a.bytes;
     });
+  }
+
+  /* The rows the bar acts on: those chosen in the mode in view (install or remove). */
+  function modeRows(install) {
+    return Object.keys(chosen).map(function (k) { return chosen[k]; })
+      .filter(function (c) { return cols.isInstall(c.section) === install; });
+  }
+  function toggle(sel, on) {
+    document.querySelectorAll(sel).forEach(function (n) { n.hidden = !on; });
   }
 
   function paintRoots() {
@@ -108,10 +127,20 @@
     window.wsWire.setText('pickOnly', String(current));
     var scanner = document.querySelector('[data-ws-data-scanner]');
     if (scanner) scanner.hidden = current !== 19;
-    var reasonHead = document.querySelector('[data-ws-data-column="reason"]');
-    var ageHead = document.querySelector('[data-ws-data-column="age"]');
-    if (reasonHead) reasonHead.textContent = current === 19 ? 'Reason' : 'Project';
-    if (ageHead) ageHead.textContent = current === 19 ? 'Age' : 'Idle';
+    var head = cols.head(current), install = cols.isInstall(current);
+    document.querySelectorAll('[data-ws-col]').forEach(function (th) {
+      th.textContent = head[Number(th.dataset.wsCol) - 1];
+    });
+    /* 1.5.0: the accent figure is space reclaimed, so it stands only where a row can
+       reclaim some - every remove section, and 31 for its old packages. */
+    var reclaims = offered(current).some(function (c) { return c.bytes > 0; });
+    toggle('[data-ws-pick-figure]', !install || reclaims);
+    toggle('[data-ws-pick-reclaim-label="head"]', install && reclaims);
+    toggle('[data-ws-ran-note]', current === 26 && !elevated);
+    toggle('[data-ws-driver-report]', current === 31);
+    toggle('[data-ws-pick-filebox]', !install);
+    var searchBox = document.querySelector('[data-ws-pick-search]');
+    if (searchBox) searchBox.placeholder = install ? 'Filter by name' : 'Filter by path or project';
     if (current === 19) {
       paintRoots();
       var thresholds = document.querySelector('[data-ws-data-thresholds]');
@@ -145,8 +174,11 @@
         var ask = el('button', 'btn btn-sm', 'Dry-run');
         ask.type = 'button';
         ask.dataset.wsAction = 'pickAsk';
+        /* 27 asks for permission even to look; 30-32 list without it and install nothing. */
         tb.appendChild(emptyRow('Nothing has been offered yet.',
-          'A dry-run costs nothing and deletes nothing.', ask));
+          current === 27 ? 'A dry-run of these leftovers asks Windows for administrator permission. Declining scans nothing, and nothing is removed.'
+            : install ? 'A dry-run lists what is available. Nothing is installed until you choose rows and confirm.'
+            : 'A dry-run costs nothing and deletes nothing.', ask));
       }
     } else if (!list.length) {
       tb.appendChild(emptyRow(search || current === 19 && dataReason !== 'all' ? 'Nothing matches that' : 'Nothing to choose here',
@@ -155,48 +187,10 @@
     }
 
     list.forEach(function (c) {
-      var on = !!chosen[c.path];
-      var tr = el('tr');
-      tr.setAttribute('data-selected', on ? 'true' : 'false');
-
-      var tdS = el('td');
-      if (!c.protected) {
-        var sw = el('button', 'switch');
-        sw.type = 'button';
-        sw.style.setProperty('--sw-w', 'calc(1.9rem * var(--density))');
-        sw.setAttribute('role', 'switch');
-        sw.setAttribute('aria-checked', on ? 'true' : 'false');
-        sw.setAttribute('aria-label', 'Choose ' + c.path);
-        sw.addEventListener('ws:toggle', function (e2) {
-          if (e2.detail.on) chosen[c.path] = c; else delete chosen[c.path];
-          tr.setAttribute('data-selected', e2.detail.on ? 'true' : 'false');
-          bar();
-        });
-        tdS.appendChild(sw);
-      } else {
-        var refused = el('span', 'badge badge-outline', 'Refused');
-        refused.title = c.protected;
-        tdS.appendChild(refused);
-      }
-      tr.appendChild(tdS);
-
-      var tdP = el('td');
-      var p = el('div', 'mono t-sm', c.path);
-      p.style.cssText = 'max-width:38rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
-      tdP.appendChild(p);
-      if (current === 19) {
-        var detail = el('p', 't-xs ink-3', 'Root: ' + c.root + ' · ' + c.idle + ' days since last ' + c.basis + (c.protected ? ' · ' + c.protected : ''));
-        detail.style.marginTop = 'var(--sp-1)';
-        tdP.appendChild(detail);
-      }
-      tr.appendChild(tdP);
-
-      var reason = current === 19 ? dataReasonFor(c) : '';
-      tr.appendChild(el('td', 't-sm ink-3', current === 19 ?
-        (reason === 'both' ? 'Large + old' : reason === 'large' ? 'Large' : 'Old') : (c.label || c.project || '—')));
-      tr.appendChild(el('td', 'num t-sm ink-3', c.idle < 0 ? '—' : c.idle + 'd'));
-      tr.appendChild(el('td', 'num-cell t-sm accent-ink', fmt.bytes(c.bytes)));
-      tb.appendChild(tr);
+      tb.appendChild(cols.row(c, {
+        on: !!chosen[c.path], elevated: elevated, reason: current === 19 ? dataReasonFor(c) : '',
+        onToggle: function (row, on) { if (on) chosen[row.path] = row; else delete chosen[row.path]; bar(); }
+      }));
     });
 
     window.wsWidgets.boot(tb);
@@ -208,27 +202,46 @@
      rows of the section in view, so two rows ticked in 17 read "2 of 2 chosen" over
      section 18. */
   function bar() {
-    var keys = Object.keys(chosen);
-    var total = keys.reduce(function (a, k) { return a + chosen[k].bytes; }, 0);
-    var here = keys.filter(function (k) { return chosen[k].section === current; });
+    var install = cols.isInstall(current);
+    var mine = modeRows(install), other = modeRows(!install);
+    var sum = function (rows) { return rows.reduce(function (a, c) { return a + (c.bytes || 0); }, 0); };
+    var here = mine.filter(function (c) { return c.section === current; });
     window.wsWire.setText('pickCount', String(here.length));
     window.wsWire.setText('pickTotal', String(offered(current).filter(function (c) { return !c.protected; }).length));
-    window.wsWire.setText('pickChosen', fmt.bytes(here.reduce(function (a, k) { return a + chosen[k].bytes; }, 0)));
+    window.wsWire.setText('pickChosen', fmt.bytes(sum(here)));
     var b = document.querySelector('[data-ws-pickbar]');
-    if (b) b.hidden = keys.length === 0;
-    window.wsWire.setText('pickCount2', String(keys.length));
-    window.wsWire.setText('pickChosen2', fmt.bytes(total));
+    if (b) b.hidden = mine.length === 0;
+    window.wsWire.setText('pickCount2', String(mine.length));
+    window.wsWire.setText('pickChosen2', fmt.bytes(sum(mine)));
     var secs = {};
-    keys.forEach(function (k) { secs[chosen[k].section] = 1; });
+    mine.forEach(function (c) { secs[c.section] = 1; });
     window.wsWire.setText('pickWhere', 'across section' + (Object.keys(secs).length > 1 ? 's ' : ' ') +
       Object.keys(secs).join(', '));
+    /* 1.5.0: one bar, two modes. Install has no Recycle Bin choice and no reclaim figure
+       unless 31's old packages are chosen; its verb is built from the rows chosen. */
+    toggle('[data-ws-pick-mode="remove"]', !install);
+    toggle('[data-ws-pick-mode="install"]', install);
+    toggle('[data-ws-pick-bytes]', !install || sum(mine) > 0);
+    toggle('[data-ws-pick-reclaim-label="bar"]', install && sum(mine) > 0);
+    var go = document.querySelector('[data-ws-action="pickGo"]');
+    if (install) { var t = inst.tally(mine); inst.paintBar(t); if (go) go.textContent = inst.verb(t); }
+    else if (go) go.textContent = 'Remove these';
     /* D-49: 17's rows are deleted outright whichever mode is chosen. */
-    var line17 = document.querySelector('[data-ws-pick-17]');
-    if (line17) line17.hidden = !secs[17];
-    var line26 = document.querySelector('[data-ws-pick-26]');
-    if (line26) line26.hidden = !secs[26];
-    var line27 = document.querySelector('[data-ws-pick-27]');
-    if (line27) line27.hidden = !secs[27];
+    toggle('[data-ws-pick-17]', !!secs[17]);
+    toggle('[data-ws-pick-26]', !!secs[26]);
+    toggle('[data-ws-pick-27]', !!secs[27]);
+    var keptLine = document.querySelector('[data-ws-pick-kept]');
+    if (keptLine) { keptLine.textContent = inst.kept(other); keptLine.hidden = !other.length; }
+    fitRoom();
+  }
+
+  /* 1.5.0: the page keeps room under its last block for the bar, as tall as the bar is
+     while it shows. Install mode wraps it to five lines at 760, and a fixed spacer let
+     it cover the note under the table (measured: 88 px at 760; 28 px for 17 before). */
+  function fitRoom() {
+    var room = document.querySelector('[data-ws-pick-room]');
+    var b = document.querySelector('[data-ws-pickbar]');
+    if (room && b) room.style.height = b.hidden ? 'var(--sp-16)' : 'calc(' + b.offsetHeight + 'px + var(--sp-4))';
   }
 
   /* ---- the selection file ---------------------------------------------------
@@ -334,6 +347,10 @@
 
   window.wsPage = {
     init: function () {
+      inst.paintReport(S.DRIVER_REPORT);
+      /* The bar's height also moves with the text-size and density axes and the width. */
+      var pickbar = document.querySelector('[data-ws-pickbar]');
+      if (pickbar && window.ResizeObserver) new ResizeObserver(fitRoom).observe(pickbar);
       choose(current);
       document.querySelectorAll('[data-ws-pick]').forEach(function (b) {
         b.addEventListener('click', function () { choose(Number(b.dataset.wsPick)); });
@@ -428,8 +445,9 @@
         if (a === 'pickClear') {
           /* Acknowledged where it happened - every switch goes off and the bar slides
              away - rather than by a toast (the D-28 rule: a result lands at the
-             control, and a toast is the fallback). */
-          chosen = {};
+             control, and a toast is the fallback). It clears what the bar shows: the
+             other mode's rows were never in it (1.5.0). */
+          modeRows(cols.isInstall(current)).forEach(function (c) { delete chosen[c.path]; });
           paint();
         }
         if (a === 'pickFile') {
@@ -437,22 +455,27 @@
           if (inp) inp.click();
         }
         if (a === 'pickGo') {
-          var mode = document.querySelector('input[name="pick-mode"]:checked');
-          var n = Object.keys(chosen).length;
-          if (!n) return;
-          /* D-48 (GATE 4 round 8, decided): Permanent asks first, in the gallery's
-             destructive alert dialog. The toast that stood here promised that
-             confirmation without providing it. */
-          if (mode && mode.value === 'permanent') {
-            window.wsWire.setText('pickConfirmTitle', 'Remove ' + n + ' item' + (n === 1 ? '' : 's') +
-              ' permanently?');
-            window.wsWidgets.openDialog('pick-confirm');
+          var install = cols.isInstall(current), mine = modeRows(install);
+          if (!mine.length) return;
+          /* 1.5.0: an install always asks first - it reaches beyond this machine. */
+          if (install) {
+            inst.paintConfirm(inst.tally(mine));
+            window.wsWidgets.openDialog('pick-install-confirm');
             return;
           }
-          startRemoval();
+          /* D-48 (GATE 4 round 8, decided): Permanent asks first, in the gallery's
+             destructive alert dialog. Any 26 row asks too, whichever mode is set: an
+             uninstall is permanent either way (the app has asked since 1.4.0; 1.5.0
+             draws it here, in words true of Store apps and broken entries). */
+          var mode = document.querySelector('input[name="pick-mode"]:checked');
+          var rows26 = mine.filter(function (c) { return c.section === 26; });
+          if (rows26.length) inst.paintUninstall(rows26, mine.length - rows26.length);
+          else if (mode && mode.value === 'permanent') inst.paintPermanent(mine.length);
+          else { startRemoval(); return; }
+          window.wsWidgets.openDialog('pick-confirm');
         }
-        if (a === 'pickGoPermanent') {
-          window.wsWidgets.closeDialog('pick-confirm');
+        if (a === 'pickGoPermanent' || a === 'pickInstallGo') {
+          window.wsWidgets.closeDialog(a === 'pickGoPermanent' ? 'pick-confirm' : 'pick-install-confirm');
           startRemoval();
         }
       });

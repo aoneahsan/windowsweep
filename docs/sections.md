@@ -1,4 +1,4 @@
-# Sections 0-29
+# Sections 0-32
 
 Every cleanup operation lives in one numbered section. Numbers are a public contract: a section may be
 retired as a no-op, never renumbered. `windowsweep --list` prints the table; `--list-targets` prints every
@@ -32,12 +32,15 @@ path each section can reach on your machine.
 | 23 | Orphaned application data | Recycle Bin | - | interactive |
 | 24 | Installed programs not modified for N+ days | report | - | safe, audit only |
 | 25 | Startup items audit | report | - | safe, audit only |
-| 26 | Uninstall selected programs | permanent | per program | interactive |
-| 27 | Leftover program folders | Recycle Bin | admin | interactive |
+| 26 | Uninstall programs and Store apps | permanent | per program | interactive |
+| 27 | Leftovers of uninstalled programs | Recycle Bin | admin | interactive |
 | 28 | Superseded tool releases | rebuilds | - | safe |
 | 29 | Chrome on-device AI model policy | config | admin | deep |
+| 30 | Windows updates you pick | update | to install | interactive |
+| 31 | Driver updates you pick from Windows Update, and old driver packages | update | to install or remove | interactive |
+| 32 | App updates you pick (winget) | update | - | interactive |
 
-"Developer-gated" means the idle gate applies when the developer answer is yes; otherwise the cache is cleared completely. "Developer-only" means the section does not run at all when the answer is no ([Developer mode](./developer-mode.md)). Every section honours `--dry-run`. Tier `recycle` means the item goes to the Recycle Bin (`--list` shows `recycle`).
+"Developer-gated" means the idle gate applies when the developer answer is yes; otherwise the cache is cleared completely. "Developer-only" means the section does not run at all when the answer is no ([Developer mode](./developer-mode.md)). Every section honours `--dry-run`. Tier `recycle` means the item goes to the Recycle Bin (`--list` shows `recycle`). Tier `update`, in 30-32 only, installs what Windows Update or winget downloads for the rows you pick.
 
 ## 0 - System health report
 
@@ -128,7 +131,7 @@ written for the temp window and no running program uses it.
 
 `Clear-RecycleBin -Force` on every drive after a separate confirmation. Permanent. Deep-gated.
 
-Not touched: nothing is spared. This is the one section whose whole purpose is to remove what the Recycle Bin was holding for you, including anything sections 18, 19 and 23 put there. It asks a question of its own, and `--yes` does not answer it.
+Not touched: nothing is spared. This is the one section whose whole purpose is to remove what the Recycle Bin was holding for you, including anything sections 18, 19, 23, 26 and 27 put there. It asks a question of its own, and `--yes` does not answer it.
 
 ## 12 - Windows Update and system temp (admin)
 
@@ -252,7 +255,7 @@ Read-only. Reads the three uninstall hives and lists non-system programs, larges
 their install location have not been modified for `--days`+ days, each with the command that removes it -
 `winget uninstall --id <id>` when one `winget list` call resolves it, otherwise the program's own
 `UninstallString`. Store apps are listed separately with `Remove-AppxPackage` hints. This report never runs
-an uninstaller; section 26 does that only for a program you select.
+an uninstaller; section 26 does that only for a program or Store app you select.
 
 The number is **"not modified", not "not used"**: Windows keeps no reliable last-launched record. It is
 measured from last-write times only, because last-access is live on many systems and would report every
@@ -271,22 +274,72 @@ Startup, where you can undo it.
 The enabled/disabled state comes from Explorer's `StartupApproved` record, and specifically from the disable
 timestamp it stores: a value carrying a real timestamp was switched off, one whose timestamp is zero is on. A
 value too short to read is reported as `unknown` rather than guessed. Writes `startup-items-<stamp>.txt`.
-Part of the `audit` profile.
+Part of the `audit` profile. A startup entry whose program file is gone is offered in section 27, with a
+`.reg` backup first.
 
-## 26 - Uninstall selected programs
+## 26 - Uninstall programs and Store apps
 
-Interactive only. The first list names installed programs, and each selected program runs its own
-registered uninstaller, silently when that uninstaller supports it. A machine-wide program may require
-elevation. Uninstalling is permanent and can remove the program's settings. After a real uninstall,
-a second list offers folders it left; only folders selected in that second list go to the Recycle Bin.
-`--yes` never selects a program or leftover folder.
+Interactive only. One list, largest first, with a KIND column:
 
-## 27 - Leftover program folders
+| KIND | The row | What picking it does |
+|---|---|---|
+| `desktop` | a program in Apps, one row per uninstall entry | runs its own registered uninstaller, silently when a known silent form exists; otherwise its own window opens and you finish there |
+| `store` | a Store app installed for your Windows account | Windows' own `Remove-AppxPackage`, for this account only |
+| `broken` | an entry whose uninstaller file is gone, so running it could only fail | clears the entry from Apps after a `.reg` backup |
 
-Interactive and elevated. Finds folders uninstalled programs left under Program Files, Common Files and
-ProgramData. Installed programs, services, drivers, tasks and Run entries can claim a folder and keep it.
-If the installed-program registry cannot be read, no folder is offered. Protected and excluded folders
-are reported with their reason. Only chosen folders go to the Recycle Bin.
+HOW names the method. NEEDS says `admin` for a program installed for all users, which only an elevated
+run can remove. RAN is how many days ago Windows last saw the program run, or `none` when no run is on
+record; only an elevated run can read it. Rows go one at a time, and a program or app that is running is
+skipped until you close it.
+
+Never listed: Windows parts, runtimes, drivers, the apps that drive your hardware, build kits, frameworks,
+codecs, the Store and winget, WSL, and windowsweep itself. Windows may put an inbox Store app back for a
+new account or after a feature update.
+
+Uninstalling is permanent and can remove the program's settings. Every real removal is recorded in
+`%USERPROFILE%\.windowsweep\uninstalled.jsonl`, which section 27 reads later; a dry-run records nothing.
+
+Right after a real removal of a desktop program, a second list offers what it left: folders (its install
+folder, and folders named like it, AppData included), its own registry keys, Start-menu shortcuts, and
+startup entries and scheduled tasks that ran a file from its folder and now point at nothing. Registry
+keys and startup entries are exported to a `.reg` file first and a task is saved as XML first
+([the registry chokepoint](./safety-model.md#the-registry-chokepoint)); folders and shortcuts go to the
+Recycle Bin, or are deleted outright with `--permanent`. A dry-run stops before this list, because nothing
+was removed. `--yes` never selects a row in either list.
+
+On the build machine, a ThinkPad P52 on Windows 10 22H2, one run on 2026-11-13 picked 40 rows and removed
+39 in 2.1 minutes: 8 desktop programs, Camtasia 2022 among them at 21 seconds, and 31 Store apps,
+reclaiming 3.9 GB. The 40th, the AChat Chrome web app, waits on Chrome's own confirmation. The second
+list found 8 folders (TechSmith's data, 180 MB in ProgramData and 107 MB in local AppData; Hubstaff,
+31 MB; calibre's cache) and 4 registry keys (`Adobe\Shockwave 11` and `12`, `Netsoft Holdings`,
+`HWiNFO64`).
+
+## 27 - Leftovers of uninstalled programs
+
+Interactive and elevated. Three lists, and you pick from each:
+
+1. **Folders.** Top-level folders under both Program Files folders, their Common Files, ProgramData and
+   `%LOCALAPPDATA%\Programs` that nothing claims and nothing has touched for `--days`+ days. Installed
+   programs, uninstall entries, services, drivers, environment and PATH entries, Run entries, shortcuts,
+   registered COM servers, scheduled tasks and running processes can claim a folder and keep it. The
+   folders of programs section 26 removed earlier come from the uninstall history and skip the idle wait.
+2. **Registry keys, shortcuts, startup entries and tasks.** The registry keys of programs in the uninstall
+   history that are still gone, and any Start-menu shortcut, startup entry or scheduled task outside
+   `\Microsoft\` whose file is gone, whoever installed it. Registry keys and startup entries are exported
+   to a `.reg` file first and a task is saved as XML first; shortcuts go to the Recycle Bin. A Desktop
+   shortcut is reported, never removed, because the Desktop is protected.
+3. **Environment entries** that name something no longer there, report only. Remove them in System
+   Properties > Environment Variables.
+
+Shared keys are never offered: Microsoft, Classes, Policies, the hardware makers, the toolchains and the
+browsers. A vendor key is offered whole only when everything under it belongs to removed programs and no
+installed program claims the vendor; otherwise only the matching keys under it are. If the
+installed-program registry cannot be read, no folder is offered. Protected and excluded folders are
+reported with their reason. Picked folders and shortcuts go to the Recycle Bin, or are deleted outright
+with `--permanent`.
+
+On the build machine on 2026-11-13, an elevated dry-run of 27 found a "Malwarebytes Anti-Exploit" Run
+entry still pointing at a deleted `mbae.exe`, and two Start-menu shortcuts that point at nothing.
 
 ## 28 - Superseded tool releases
 
@@ -299,6 +352,63 @@ previous Codex release are kept. It can run in `--all`, `dev` and `deep`; dry-ru
 Deep and elevated. Sets Chrome's `GenAILocalFoundationalModelSettings` policy to `1`; Chrome then
 removes its downloaded on-device model. Chrome displays “Managed by your organization” for this
 policy. The policy remains until you remove it; the model may return after that.
+
+## 30 - Windows updates you pick
+
+Interactive. Windows Update is asked what this PC still lacks: security and quality updates, Defender
+definitions and the malware removal tool. Optional updates, the feature upgrades and previews, are left out
+and counted; they install from Settings > Windows Update. The list shows SIZE, KB, TITLE and CATEGORY. A
+size Windows Update does not give shows as `unknown`, and so does one above 20 GB: for a cumulative update
+it reports the whole express payload, more than 100 GB for KB5131096 on the build machine. Each update you
+pick is downloaded and installed by Windows Update itself, one at a time, after you confirm.
+
+Installing needs an elevated run: an unelevated real run lists the updates, then refuses before asking
+you to pick (`windowsweep --only 30 --elevate`). windowsweep never restarts your PC. It says when Windows
+wants a restart, and warns at the start when an earlier update is still waiting for one. A dry-run
+downloads and installs nothing.
+
+On the build machine on 2026-11-13, section 30 listed KB5131096, the November cumulative update, and
+KB890830, the malware removal tool.
+
+## 31 - Driver updates you pick from Windows Update, and old driver packages
+
+Interactive. Three things come first, for reading only: the devices Windows reports a problem with, each
+problem in words; the oldest third-party drivers, older than 3 years, the 15 oldest shown; and your PC
+maker's own driver tool. Old is not wrong; a driver that works can stay. Then one numbered list holds two
+kinds of offer:
+
+- **Windows Update drivers** for this PC. Optional ones are listed too, marked `optional`.
+- **Old third-party driver packages** in the driver store. The newest two copies of each driver always
+  stay, so Device Manager's Roll Back keeps working, and inbox and boot-critical packages are never
+  offered. Removal is Windows' own `pnputil /delete-driver` without `/force`, so Windows keeps a package a
+  device still uses, and the section reports it as kept. Only an elevated run can read the driver store.
+
+Your PC maker's own driver tool is named, never run: Lenovo System Update on a Lenovo, Dell Command | Update
+on a Dell, HP Image Assistant on an HP, each with its winget id and the advice to leave anything marked BIOS
+or firmware unticked. On the build machine on 2026-11-14, a pre-release build of this section did run
+Lenovo System Update with its driver-and-app-only switch (`-packagetypes 1,2`), and System Update still
+queued an IR-camera firmware package (type 4, "Integrated IR Camera Device Firmware"); a Lenovo package it
+started then waited 13 hours behind a prompt nobody could see. The run was stopped before the firmware was
+downloaded, and windowsweep no longer runs any PC maker's tool.
+
+BIOS and firmware are never offered: a Windows Update driver whose class or title names BIOS, UEFI or
+firmware is held back and counted. Installing a driver and removing an old package need an elevated run;
+an unelevated real run lists, then refuses before asking. Nothing here restarts your PC.
+
+On the build machine on 2026-11-13, an elevated run found no device with a problem, no Windows Update
+driver and no driver with more than two copies in the store.
+
+## 32 - App updates you pick
+
+Interactive. winget lists the apps it can update, with the installed version, the available one and the
+source. Each app you pick is upgraded silently from its publisher's package through winget, one at a time,
+after you confirm. An app that is running is skipped until you close it. No elevation is needed, though an
+installer that writes for every user may show its own UAC prompt. An app whose Id winget cut short in its
+table is not offered, because a cut Id cannot name the package; the apps in winget's second list, which it
+updates only when each is named, are counted and not offered. Without winget, which comes with App
+Installer from the Microsoft Store, the section has nothing to ask. A dry-run updates nothing.
+
+On the build machine on 2026-11-13, section 32 listed 20 winget updates.
 
 ## Candidate targets awaiting verification
 
@@ -321,4 +431,4 @@ is exactly what this rule exists to prevent. Each will be added once its folder 
 a hidden `GfxCPLBatchFiles` - driver support content, not installer extraction leftovers. It will not become
 a target.
 
-Last Updated: 2026-11-03
+Last Updated: 2026-11-14

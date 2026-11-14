@@ -236,6 +236,8 @@ function Get-JsonSummary {
     access_live_volumes = @(Get-AccessLiveVolumes)
     # P9: the folders section 19 scanned or refused ({path, accepted, reason}); empty unless it ran.
     personal_roots = @($ws.PersonalRootsReport)
+    # 1.5.0: section 31's report lists ({problems, oldest}); null unless section 31 ran.
+    driver_report = $ws.DriverReport
     log_file = $ws.LogFile; report_file = $ws.ReportFile
   }
 }

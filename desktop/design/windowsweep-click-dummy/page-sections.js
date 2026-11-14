@@ -24,8 +24,19 @@
       return { label: x.label, path: x.path, bytes: x.bytes, idle: x.idle };
     });
     return S.CANDIDATES.filter(function (c) { return c.section === id; }).map(function (c) {
-      return { label: c.project || 'candidate', path: c.path, bytes: c.bytes, idle: c.idle };
+      return { label: c.project || 'candidate', path: c.path, bytes: c.bytes, idle: c.idle, row: c };
     });
+  }
+
+  /* 1.5.0: an update row says what it fetches or reclaims and what it does - it has no
+     path on disk and no idle age. */
+  function updateDetail(grid, c) {
+    var name = el('span', 't-xs', c.label);
+    name.style.overflow = 'hidden'; name.style.textOverflow = 'ellipsis';
+    grid.appendChild(name);
+    grid.appendChild(el('span', 'num t-xs ink-3', c.verb === 'remove' ? 'reclaims ' + fmt.bytes(c.bytes)
+      : c.download ? fmt.bytes(c.download) + ' download' : 'size unknown'));
+    grid.appendChild(el('span', 't-xs ink-3', c.verb));
   }
 
   function matches(s) {
@@ -97,7 +108,12 @@
       if (s.dev) top.appendChild(badgeFor('dev', 'badge-outline'));
       tdName.appendChild(top);
       var ttl = el('div', 't-xs ink-3', s.title);
-      ttl.style.maxWidth = '46rem';
+      /* 1.5.0: the title yields to its cell. The engine's 26-29 titles are long, and a
+         fixed 46rem line pushed Reclaimable off the table at 1440. The full words stay in
+         the cell for assistive tech and in the hover title. */
+      ttl.title = s.title;
+      ttl.style.width = '0';
+      ttl.style.minWidth = '100%';
       ttl.style.overflow = 'hidden';
       ttl.style.textOverflow = 'ellipsis';
       ttl.style.whiteSpace = 'nowrap';
@@ -126,9 +142,9 @@
       else tdNeeds.appendChild(el('span', 't-xs ink-3', '—'));
       tr.appendChild(tdNeeds);
 
-      // bytes
+      // bytes - an update section reclaims only what 31's old packages free (1.5.0)
       var tdB = el('td', 'num-cell t-sm');
-      tdB.textContent = reportOnly ? '—' : fmt.bytes(bytes);
+      tdB.textContent = reportOnly || (s.tier === 'update' && bytes === 0) ? '—' : fmt.bytes(bytes);
       if (!reportOnly && bytes > 0) tdB.classList.add('accent-ink');
       tr.appendChild(tdB);
 
@@ -159,6 +175,7 @@
         grid.style.gridTemplateColumns = 'minmax(0,1fr) auto auto';
         grid.style.gap = 'var(--sp-1) var(--sp-4)';
         list.forEach(function (t) {
+          if (s.tier === 'update') { updateDetail(grid, t.row); return; }
           var p = el('span', 'mono t-xs', t.path);
           p.style.overflow = 'hidden'; p.style.textOverflow = 'ellipsis';
           grid.appendChild(p);
@@ -185,7 +202,7 @@
       td0.style.padding = 'var(--sp-8)';
       td0.style.textAlign = 'center';
       td0.appendChild(el('p', 't-md wide', 'No section matches that.'));
-      td0.appendChild(el('p', 't-xs ink-3', 'All 30 are still there. The filter is narrow.'));
+      td0.appendChild(el('p', 't-xs ink-3', 'All ' + S.SECTIONS.length + ' are still there. The filter is narrow.'));
       tr0.appendChild(td0); tb.appendChild(tr0);
     }
 
@@ -211,6 +228,9 @@
 
   window.wsPage = {
     init: function () {
+      /* Counted from the catalogue, as the app counts the engine's (1.5.0: 33). */
+      window.wsWire.setText('sectionsAll', 'All ' + S.SECTIONS.length);
+      window.wsWire.setText('sectionCount', String(S.SECTIONS.length));
       render();
       paintSelbar();
       window.wsWire.setText('catalogueTotal', fmt.bytes(db.derive.reclaimable()));

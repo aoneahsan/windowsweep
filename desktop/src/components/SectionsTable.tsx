@@ -19,11 +19,48 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { formatBytes } from '../lib/format';
-import type { Section, SectionTier } from '../lib/catalogue';
-import { idleDaysOf, type ScanTarget } from '../lib/cli';
+import { isInstallSection, type Section, type SectionTier } from '../lib/catalogue';
+import { idleDaysOf, type Candidate, type ScanTarget } from '../lib/cli';
+import { downloadOf, installVerb, reclaimOf } from '../lib/candidate-extras';
 
 /** Report-only rows have nothing to select. `page-sections.js:60`. */
 const REPORT_ONLY: ReadonlySet<SectionTier> = new Set<SectionTier>(['report', 'config']);
+
+const VERB_KEY = {
+  install: 'picker.verb.install',
+  remove: 'picker.verb.remove',
+} as const;
+
+/**
+ * An install section's detail (1.5.0, A4-02): what each offered row fetches or reclaims and what it
+ * does - it has no path on disk and no idle age. `page-sections.js` `updateDetail`.
+ */
+function UpdateDetail({ rows }: { rows: Candidate[] }) {
+  const { t } = useTranslation();
+  return (
+    <>
+      {rows.map((row) => {
+        const verb = installVerb(row);
+        const download = downloadOf(row);
+        return (
+          <span key={row.path} style={{ display: 'contents' }}>
+            <span className="t-xs" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {row.label ?? row.path}
+            </span>
+            <span className="num t-xs ink-3">
+              {verb === 'remove'
+                ? t('sections.detailReclaims', { size: formatBytes(row.bytes) })
+                : download === null
+                  ? t('picker.sizeUnknown')
+                  : t('sections.detailDownload', { size: formatBytes(download) })}
+            </span>
+            <span className="t-xs ink-3">{t(VERB_KEY[verb])}</span>
+          </span>
+        );
+      })}
+    </>
+  );
+}
 
 function batchBadgeClass(batch: Section['batch']): string {
   if (batch === 'safe') return 'badge-neutral';
@@ -35,13 +72,36 @@ function batchBadgeClass(batch: Section['batch']): string {
 function DetailRow({
   section,
   targets,
+  offered,
   reportOnly,
 }: {
   section: Section;
   targets: ScanTarget[];
+  /** An install section's offered rows; empty for every other tier. */
+  offered: Candidate[];
   reportOnly: boolean;
 }) {
   const { t } = useTranslation();
+  const grid: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: 'minmax(0,1fr) auto auto',
+    gap: 'var(--sp-1) var(--sp-4)',
+  };
+  if (isInstallSection(section)) {
+    return (
+      <tr className="detail-row">
+        <td colSpan={8}>
+          {offered.length === 0 ? (
+            <p className="t-xs ink-3">{t('sections.detailNothing')}</p>
+          ) : (
+            <div style={grid}>
+              <UpdateDetail rows={offered} />
+            </div>
+          )}
+        </td>
+      </tr>
+    );
+  }
   return (
     <tr className="detail-row">
       <td colSpan={8}>
@@ -50,18 +110,12 @@ function DetailRow({
             {reportOnly ? t('sections.detailReportOnly') : t('sections.detailNothing')}
           </p>
         ) : (
-          <div
-            style={{
-              /* 🔴 THREE columns, which is the dummy's own shape here
-                 (`page-sections.js:159-169`): path, size, and how long it has sat
-                 unused. The third was missing while `--scan` reported no age; the
-                 1.2.0 engine reports `newest_write_utc` per target, so it is the
-                 same measurement the map shades tiles with, printed as a number. */
-              display: 'grid',
-              gridTemplateColumns: 'minmax(0,1fr) auto auto',
-              gap: 'var(--sp-1) var(--sp-4)',
-            }}
-          >
+          /* 🔴 THREE columns, which is the dummy's own shape here
+             (`page-sections.js:159-169`): path, size, and how long it has sat
+             unused. The third was missing while `--scan` reported no age; the
+             1.2.0 engine reports `newest_write_utc` per target, so it is the
+             same measurement the map shades tiles with, printed as a number. */
+          <div style={grid}>
             {targets.map((target) => {
               const idle = idleDaysOf(target.newest_write_utc);
               return (
@@ -93,11 +147,14 @@ function DetailRow({
 export function SectionsTable({
   rows,
   scanTargets,
+  candidates,
   selection,
   onToggleSelect,
 }: {
   rows: Section[];
   scanTargets: ScanTarget[];
+  /** What the interactive sections offered - an install section's rows and reclaim come from here. */
+  candidates: Candidate[];
   selection: number[];
   onToggleSelect: (id: number) => void;
 }) {
@@ -129,7 +186,13 @@ export function SectionsTable({
           const reportOnly = REPORT_ONLY.has(section.tier);
           const selected = selection.includes(section.id);
           const targets = scanTargets.filter((x) => x.section === section.id);
-          const bytes = targets.reduce((sum, x) => sum + x.bytes, 0);
+          /* 🔴 An install section reclaims only what 31's old packages free (A4-02): its
+             figure is the offered rows' `reclaimOf`, never a download, and a dash at zero. */
+          const update = isInstallSection(section);
+          const offered = update ? candidates.filter((c) => c.section === section.id) : [];
+          const bytes = update
+            ? offered.reduce((sum, c) => sum + reclaimOf(c, true), 0)
+            : targets.reduce((sum, x) => sum + x.bytes, 0);
           const isOpen = open.includes(section.id);
 
           return [
@@ -163,10 +226,16 @@ export function SectionsTable({
                     <span className="badge badge-outline">{t('sections.badgeDev')}</span>
                   ) : null}
                 </div>
+                {/* 🔴 The title YIELDS to its cell (1.5.0, A4-02): the engine's 26-32 titles
+                    are long, and a fixed 46rem line pushed Reclaimable and the expander off
+                    the table at 1440. One line, ellipsised; the full words stay in the cell
+                    for assistive tech and in the hover title. */}
                 <div
                   className="t-xs ink-3"
+                  title={section.title}
                   style={{
-                    maxWidth: '46rem',
+                    width: 0,
+                    minWidth: '100%',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
@@ -193,9 +262,9 @@ export function SectionsTable({
                 )}
               </td>
               <td className={`num-cell t-sm${!reportOnly && bytes > 0 ? ' accent-ink' : ''}`}>
-                {reportOnly
+                {reportOnly || (update && bytes === 0)
                   ? '—'
-                  : targets.length === 0
+                  : !update && targets.length === 0
                     ? t('sections.totalUnmeasured')
                     : formatBytes(bytes)}
               </td>
@@ -222,6 +291,7 @@ export function SectionsTable({
                 key={`${String(section.id)}-detail`}
                 section={section}
                 targets={targets}
+                offered={offered}
                 reportOnly={reportOnly}
               />
             ) : null,

@@ -9,6 +9,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-11-14
+
+### Added
+
+- **Store apps in the uninstall list.** Section 26 now lists the Store apps installed for your Windows account
+  beside desktop programs, with a KIND column (`desktop`, `store`, `broken`). A Store app is removed with
+  Windows' own `Remove-AppxPackage`, one at a time, never while it runs. Frameworks, runtimes, codecs, the Store
+  and winget, WSL and the apps that drive your hardware are never listed.
+- **Broken entries.** A program whose uninstaller is gone can only fail to uninstall. Section 26 marks it
+  `broken` and, when you pick it, clears it from Apps after exporting its entry to a `.reg` file.
+- **What an uninstaller leaves behind.** Right after a removal, and later in section 27, windowsweep offers the
+  program's own registry keys, Start-menu shortcuts that point at nothing, and startup entries and scheduled tasks
+  whose program file is gone. A registry key or startup entry is exported to a `.reg` file before it goes
+  (double-click the file to put it back); a task is saved as XML first; shortcuts go to the Recycle Bin. Shared
+  keys (Microsoft, Classes, Policies, hardware makers, toolchains, browsers) are never offered. Section 27 now
+  also offers the folders of programs windowsweep removed earlier without waiting for them to go idle.
+- **A RAN column.** On an elevated run, section 26 shows how many days ago Windows last saw each program run.
+- **Section 30, Windows updates you pick.** Lists what Windows Update offers (security and quality updates,
+  Defender definitions, the malware removal tool) and installs the rows you pick, one at a time. It never
+  restarts your PC; it tells you when Windows wants a restart.
+- **Section 31, driver updates you pick.** Windows Update drivers, devices reporting a problem, the oldest
+  third-party drivers, and old driver packages in the driver store, where the newest two of each driver always
+  stay so Roll Back keeps working. BIOS and firmware are never offered. Your PC maker's own driver tool is named,
+  never run: on a ThinkPad, Lenovo System Update's command line queued a firmware package past its driver-only
+  switch, so windowsweep leaves that tool's choices to you.
+- **Section 32, app updates you pick.** Lists what winget can update and upgrades the rows you pick through winget, one at
+  a time. An app open in your session is skipped until you close it; a background service is not counted as
+  open, since its installer stops it.
+
+### Changed
+
+- **The network promise now names its one exception.** Cleanup never touches the network, and the engine's own
+  code still holds no network call (the self-test fails the build if one appears). Sections 30-32, when you run
+  them, ask Windows Update or winget what is available, and download only the rows you
+  pick. windowsweep itself sends nothing.
+
 ## [1.4.8] - 2026-11-12
 
 ### Fixed

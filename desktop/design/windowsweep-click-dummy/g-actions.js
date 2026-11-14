@@ -224,7 +224,7 @@
       label: 'offline banner', node: (function () {
         var n = el('div', 'note note-warn');
         n.appendChild(el('span', null, '⚠'));
-        n.appendChild(el('span', null, 'You are offline. Cleaning still works – the engine never needed the network. Sync will catch up.'));
+        n.appendChild(el('span', null, 'You are offline. Cleaning still works – it never needed the network. Sync will catch up.'));
         return n;
       })()
     }

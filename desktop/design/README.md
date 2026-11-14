@@ -275,7 +275,9 @@ decision; this is a decision, and an approved artefact outranks a skill default.
 
 ## 8. Consent, privacy, and the account
 
-The CLI makes **zero network calls** and its own test suite asserts it. The desktop app has a Free, Pro and
+Cleanup in the CLI **never touches the network**, and its own test suite asserts the engine sends nothing (check [9],
+kept by D110). Only sections 30-32, for rows a person picks, ask Windows Update or winget to download; section 31
+names the PC maker's own driver tool and never runs it (1.5.0, `AMENDMENTS-4.md` A4-14, A4-15). The desktop app has a Free, Pro and
 Team plan design for 1.4.0. The 15 device runs and 15 signed-in account runs are counted separately; dry-runs,
 scans and reports are never counted. The 1.4.0 design adds a Plans screen, Team status and release notices.
 See `CLICK-DUMMY-INVENTORY-1.4.0.md` and `AMENDMENTS-3.md` for the new scope and its approval state.
@@ -350,6 +352,7 @@ the files it became.
 | 1 | 2026-09-07 (the consent notice) .. 2026-09-13 (round 8: the removal path, and Home before a scan) | [`AMENDMENTS.md`](AMENDMENTS.md) |
 | 2 | 2026-09-13 (latest: History and Report with data) .. 2026-09-25 (the About panel, D-66 and D-67), including GATE 4 rounds 9-15 | [`AMENDMENTS-2.md`](AMENDMENTS-2.md) |
 | 3 | 2026-09-25, after the releases, onwards (TASK-018 first) | [`AMENDMENTS-3.md`](AMENDMENTS-3.md) |
+| 4 | 2026-11-13, release 1.5.0 (A4-01 to A4-15: the full uninstaller and the updaters), onwards | [`AMENDMENTS-4.md`](AMENDMENTS-4.md) |
 
 🔴 **A new amendment goes at the bottom of the LAST part**, and a new part starts when that file would pass
 500 lines. The rule this log exists for is unchanged: a divergence is written into the dummy first, with its

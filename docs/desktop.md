@@ -16,13 +16,13 @@ The catalogue becomes a table you can filter. A run shows the engine's own log a
 
 ## What it does not do
 
-It never raises its own privileges. Eight sections need Windows to ask your permission first, and a machine-wide program uninstall in section 26 may need it too. Ask for an admin section, and a second, elevated window runs only that work and writes its own report, while this one waits unelevated. It does not remove the deep-section gate.
+It never raises its own privileges. Eight sections need Windows to ask your permission first. A machine-wide program uninstall in section 26 may need it too, and so does installing the Windows updates and drivers you pick in sections 30 and 31. Ask for an admin section, and a second, elevated window runs only that work and writes its own report, while this one waits unelevated. It does not remove the deep-section gate.
 
 ## What leaves the machine
 
 Three answers, because three different things are running.
 
-**The engine sends nothing, ever.** No network calls at all, and a self-test check fails the build if one appears.
+**The engine sends nothing.** Cleanup never touches the network, and the engine's own code holds no network call; a self-test check fails the build if one appears. Only sections 30, 31 and 32, for the rows you pick, ask Windows Update or winget to download.
 
 **The window sends usage and crash reports, to improve the product for everyone.** There is no switch. The first-run screen is a notice with one **Continue**. Four destinations - product analytics, behaviour analytics, session replay with every piece of text masked, and crash reports with file paths stripped out. In 1.1.0 no destination was configured in the build, so nothing left the machine. From 1.2.0 all four are, and the reports are sent from the first launch - though until 1.3.2 the window's own security policy refused two of them, the session replay and the crash reports, so only the two analytics destinations received anything.
 
@@ -63,6 +63,6 @@ The signed updater checks on the splash screen and again when the window resumes
 
 Each run gets its own folder under `%LOCALAPPDATA%\com.aoneahsan.windowsweep\runs\`, holding that run's report and log. An elevated run writes a second report beside the first, because two windows each write their own.
 
-See also: [Safety model](./safety-model.md) · [Admin sections and elevation](./admin-and-elevation.md) · [Sections 0-29](./sections.md)
+See also: [Safety model](./safety-model.md) · [Admin sections and elevation](./admin-and-elevation.md) · [Sections 0-32](./sections.md)
 
-Last Updated: 2026-11-03
+Last Updated: 2026-11-14

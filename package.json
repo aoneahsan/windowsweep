@@ -1,6 +1,6 @@
 {
   "name": "windowsweep",
-  "version": "1.4.8",
+  "version": "1.5.0",
   "description": "Windows cleanup CLI: dry-run first, personal files chosen row by row, zero install via npx.",
   "bin": {
     "windowsweep": "bin/windowsweep.js"

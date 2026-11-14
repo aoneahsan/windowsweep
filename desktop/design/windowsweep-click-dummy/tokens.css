@@ -495,6 +495,11 @@
   --c-tier-recycle-hi:   oklch(0.740 0.135 85);
   --c-tier-permanent-lo: oklch(0.300 0.055 27);
   --c-tier-permanent-hi: oklch(0.640 0.170 27);
+  /* 1.5.0 `update` (30-32) reclaims nothing, so no map tile is ever this tier. Neutral hue like
+     config and report (it changes the system, deletes nothing of yours), lifted clear of both;
+     its chip is a ring (shared.css), so colour is never the only channel. */
+  --c-tier-update-lo:    oklch(0.290 0.020 var(--hue-n, 128));
+  --c-tier-update-hi:    oklch(0.700 0.050 var(--hue-n, 128));
 }
 [data-appearance='light'] {
   --c-tier-config-lo:    oklch(0.930 0.008 var(--hue-n, 128));
@@ -509,6 +514,8 @@
   --c-tier-recycle-hi:   oklch(0.830 0.120 85);
   --c-tier-permanent-lo: oklch(0.945 0.030 27);
   --c-tier-permanent-hi: oklch(0.760 0.140 27);
+  --c-tier-update-lo:    oklch(0.930 0.014 var(--hue-n, 128));
+  --c-tier-update-hi:    oklch(0.540 0.050 var(--hue-n, 128));
 }
 
 /* the single-value aliases the badges and the legend read - the tier's identity
@@ -520,6 +527,7 @@
   --c-tier-slow:      var(--c-tier-slow-hi);
   --c-tier-recycle:   var(--c-tier-recycle-hi);
   --c-tier-permanent: var(--c-tier-permanent-hi);
+  --c-tier-update:    var(--c-tier-update-hi);
 }
 
 /* ---------------------------------------------------------------------------

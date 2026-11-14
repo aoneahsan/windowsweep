@@ -18,8 +18,9 @@ You do not need any special access to contribute. Anyone can fork and open a PR.
 
 ## Governance - how changes land
 
-- **`main` is protected.** Every change lands through a **pull request** with one approving review and a green
-  `ci` check. Direct pushes to `main` are restricted to the maintainer.
+- **`main` is protected.** Every change lands through a **pull request** with one approving review. The repository
+  runs no GitHub Actions: the maintainer runs the self-test, PSScriptAnalyzer and the version check locally before a
+  merge. Direct pushes to `main` are restricted to the maintainer.
 - The maintainer (**Ahsan Mahmood** - [@aoneahsan](https://github.com/aoneahsan)) is the only one who pushes to
   `main` directly. Write access does **not** bypass review on `main`.
 
@@ -43,7 +44,7 @@ node bin\windowsweep.js --dry-run --all --yes   # what a safe batch would do on 
 ```
 
 **Requirements:** Windows 10 or 11, Windows PowerShell 5.1 (built in) or PowerShell 7. Node 14+ only for the
-`npx` path. `Install-Module PSScriptAnalyzer` lets you run the same lint CI runs:
+`npx` path. `Install-Module PSScriptAnalyzer` lets you run the same lint the maintainer runs before a release:
 `Invoke-ScriptAnalyzer -Recurse -Path . -Settings PSScriptAnalyzerSettings.psd1`.
 
 ---
@@ -51,7 +52,7 @@ node bin\windowsweep.js --dry-run --all --yes   # what a safe batch would do on 
 ## Coding standards
 
 - **PowerShell 5.1 first.** No ternary operator, no `??`, no `&&`/`||` chains, no `param()` block on the entry
-  script (flags come from `$args`). Test on 5.1; CI also runs 7.
+  script (flags come from `$args`). Test on 5.1; PowerShell 7 must keep working too.
 - **ASCII-only source.** Every `.ps1` and `.js` file contains only bytes below 0x80; glyphs come from
   `[char]` codes in `lib/ui.ps1`. The self-test fails otherwise.
 - **Safety first, no exceptions.** Every deletion goes through `Remove-PathSafe` or `Send-ToRecycleBin` with a
@@ -59,7 +60,10 @@ node bin\windowsweep.js --dry-run --all --yes   # what a safe batch would do on 
   `--self-test`, which asserts no declared target sits inside a protected path. Never add a `Remove-Item`.
 - **Everything honours `--dry-run`.** Destructive external commands go through `Invoke-External -Destructive`.
 - **Section numbers are frozen.** Retire a section as a no-op that says so; never reuse its number.
-- **Files stay under 500 lines**; functions carry a `.SYNOPSIS`; no network code of any kind.
+- **Files stay under 500 lines**; functions carry a `.SYNOPSIS`.
+- **No network code in the engine.** Cleanup never touches the network, and self-test check [9] fails on an
+  HTTP or socket call. An update goes only through Windows Update or winget, for rows a person picked
+  (sections 30-32); the engine never starts a PC maker's driver tool.
 - **Conventional Commits** (`feat:`, `fix:`, `docs:`, `chore:`), one concern per PR.
 
 ---

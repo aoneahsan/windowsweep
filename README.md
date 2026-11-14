@@ -22,13 +22,14 @@
 > behind `--i-understand-deep`, along with the hibernation
 > file and disk-image compaction. Start with `npx windowsweep --scan`, which deletes nothing, then
 > `npx windowsweep --dry-run --all --yes`, which shows exactly what a real run would remove.
-> Uninstalling a program you select in section 26 is permanent too.
+> Removing a program or Store app you select in section 26 is permanent too.
 > **Windows only** - npm refuses to install it elsewhere.
 
 What it reclaims is the disk space that quietly disappears on a Windows machine: package-manager and build caches,
 browser and app caches, Windows temp and update leftovers, stale `node_modules`, half-finished downloads.
 It names every path before it touches one, keeps the caches you used in the last 100 days, never follows a
-junction and makes no network calls at all. One question on the first run decides whether your developer caches
+junction, and its cleanup never touches the network: only sections 30-32, for the rows you pick, ask Windows
+Update or winget to download. One question on the first run decides whether your developer caches
 are pruned on the idle gate or cleared completely. A PowerShell engine sits behind a thin Node launcher, so `npx
 windowsweep` runs it with nothing to install.
 It is the Windows member of a family with [linux-cleanup](https://github.com/aoneahsan/linux-cleanup) and
@@ -36,14 +37,14 @@ It is the Windows member of a family with [linux-cleanup](https://github.com/aon
 
 | | |
 |---|---|
-| **Version** | `1.4.8` |
+| **Version** | `1.5.0` |
 | **License** | MIT |
 | **Node** | `>=14` (launcher only) |
 | **Runtime** | Windows PowerShell 5.1 (built in) or PowerShell 7 |
 | **Platforms** | Windows 10 (1809+) and Windows 11 |
-| **Install size** | ~167 kB packed · ~560 kB unpacked · 53 files · no dependencies |
+| **Install size** | ~201 kB packed · ~676 kB unpacked · 61 files · no dependencies |
 | **Undo** | Recycle Bin for personal files; none for caches (they regenerate) |
-| **Status** | Stable · 1.4.8, released 2026-11-12 |
+| **Status** | Stable · 1.5.0, released 2026-11-14 |
 
 <a id="table-of-contents"></a>
 ## 🧭 Table of Contents&nbsp;[#](#table-of-contents)
@@ -92,14 +93,15 @@ the lot again, and your afternoon is gone. `windowsweep` takes the narrower path
 | **Junctions and symlinks** | never followed | n/a | varies |
 | **Dry-run** | every section, exact estimate | no | sometimes |
 | **Unattended use** | `--all --yes`, Scheduled Task | Storage Sense | GUI-first |
-| **Network calls** | none | Microsoft telemetry | varies |
+| **Network calls** | none of its own; sections 30-32 hand the rows you pick to Windows Update or winget | Microsoft telemetry | varies |
 
 Nothing here can promise a number. How much comes back depends on your disk; `--scan` measures it.
 
 **Not the right tool when** you want a set-and-forget cleaner that runs itself; when you are on Linux or macOS (use
 the siblings); when you want an undo for caches (there is none - they regenerate); or when you are looking for a
-security scanner or a registry cleaner. The rest of what it cannot do is under [Limitations](#limitations). It
-reclaims disk space, nothing else.
+security scanner or a registry cleaner (it removes registry entries only for programs already gone, and only the
+rows you pick). The rest of what it cannot do is under [Limitations](#limitations). It reclaims disk space and
+installs the updates you pick, nothing else.
 
 <a id="features"></a>
 ## ✨ Features&nbsp;[#](#features)
@@ -109,8 +111,8 @@ reclaims disk space, nothing else.
 - **26 numbered sections** - from package-manager caches to Windows Update leftovers, plus three read-only
   audits (global packages, idle programs, startup items) that report and delete nothing. Orphaned application
   data is a fourth 1.1.0 section and is **not** an audit: it asks you to pick, row by row, and what you pick
-  goes to the Recycle Bin. Every section names its paths before it acts, and the numbers are a public
-  contract.
+  goes to the Recycle Bin. Three 1.5.0 sections, 30-32, install the Windows, driver and app updates you
+  pick. Every section names its paths before it acts, and the numbers are a public contract.
 - **One deletion chokepoint** - refuses drive roots, Windows, Program Files, your profile root, personal folders,
 - credentials, toolchains and browser or editor state; asserts every deletion sits inside its declared target; never
 - follows a junction or symlink; handles paths beyond 260 characters; skips files another program has open. Self-test
@@ -126,10 +128,12 @@ reclaims disk space, nothing else.
 - **Running-app guard** - an open browser, editor or app keeps its caches; the tool tells you which to close.
 - **Session reports** - schema-versioned JSON, exportable to Markdown or a self-contained HTML page, plus
   `--json` for scripts.
-- **Self-test** - 223 checks prove the guards on your machine with a real junction, a path longer than 260 characters and
+- **Self-test** - 256 checks prove the guards on your machine with a real junction, a path longer than 260 characters and
   a dry-run fixture before you trust it.
-- **Offline by design** - the command-line tool makes zero network calls: no telemetry, no update check.
-  Self-test check [9] fails the build on an HTTP or socket call in the source. Crash bundles stay on disk.
+- **Sends nothing** - cleanup never touches the network, and the engine's own code holds no network call: no
+  telemetry, no update check of its own. Self-test check [9] fails the build on an HTTP or socket call in the
+  source. Only sections 30-32, for the rows you pick, ask Windows Update or winget to download. Crash bundles
+  stay on disk.
 
 <a id="platform-support"></a>
 ## 📱 Platform Support&nbsp;[#](#platform-support)
@@ -149,8 +153,9 @@ reclaims disk space, nothing else.
 |---|---|---|
 | Windows PowerShell | `5.1` | Ships with Windows 10 and 11; the engine is written for it. PowerShell 7 also works (`--pwsh`) |
 | Node.js | `>=14` | Only for `npx` and `npm install -g`. The `.cmd` launcher and `windowsweep.ps1` need no Node |
-| Administrator rights | optional | Only sections 12-16 and 20 (Windows Update cache, Disk Cleanup engine, DISM, hibernation, event logs, disk-image compaction) |
+| Administrator rights | optional | Sections 12-16, 20, 27 and 29; installing in 30 and 31; a program installed for all users in 26 |
 | `docker` | optional | Section 5 only |
+| `winget` | optional | Section 32; section 24 also reads `winget list` |
 
 `windowsweep --self-test` reports which optional tools are missing on your machine.
 
@@ -202,11 +207,12 @@ section with `a` run / `s` skip / `q` quit and a running total.
 
 ### The sections
 
-This table describes version 1.4.8.
+This table describes version 1.5.0.
 
 **Tier** says what happens to the data: *report* deletes nothing, *rebuilds* comes back on its own, *slow*
 comes back but costs minutes, *Recycle Bin* is recoverable until you empty it (`--list` shows this tier as
-`recycle`), *permanent* is not, *config* changes a setting.
+`recycle`), *permanent* is not, *config* changes a setting, *update* installs what Windows Update or winget
+downloads for the rows you pick.
 
 | # | Section | Tier | Admin | Batch |
 |---|---|---|:-:|---|
@@ -236,16 +242,19 @@ comes back but costs minutes, *Recycle Bin* is recoverable until you empty it (`
 | 23 | Orphaned application data under AppData | Recycle Bin | - | interactive |
 | 24 | Installed programs not modified for N+ days - never uninstalls | report | - | safe · audit only |
 | 25 | Startup items audit - never changes them | report | - | safe · audit only |
-| 26 | Uninstall programs you pick | **permanent** | per program | interactive |
-| 27 | Leftover program folders | Recycle Bin | yes | interactive |
+| 26 | Uninstall programs and Store apps you pick, then what they left | **permanent** | per program | interactive |
+| 27 | Leftovers of uninstalled programs: folders, registry keys (`.reg` backup first), shortcuts, dead startup entries | Recycle Bin | yes | interactive |
 | 28 | Superseded tool releases | rebuilds | - | safe |
 | 29 | Chrome on-device AI model policy | config | yes | deep |
+| 30 | Windows updates you pick (security, quality, Defender, malware tool) - never restarts your PC | update | to install | interactive |
+| 31 | Driver updates you pick from Windows Update, and old driver packages - never BIOS or firmware | update | to install | interactive |
+| 32 | App updates you pick, one at a time, via winget | update | - | interactive |
 
 *Safe* sections run in `--all`; *opt-in* ones run when named in `--only` or a profile; *deep* ones also need
 `--i-understand-deep`; *interactive* ones never run unattended unless you pass a selection. The three
 *audit only* sections are read-only and safe, but stay out of `--all` so a cleanup run is a cleanup run -
 `--profile audit` is where they live. Every section is documented in
-[Sections 0-29](https://windowsweep-docs.aoneahsan.com/sections).
+[Sections 0-32](https://windowsweep-docs.aoneahsan.com/sections).
 
 ### Reclaim interactively
 
@@ -300,7 +309,7 @@ windowsweep [mode] [options]
 |---|---|---|
 | Walkthrough | *(default)* · `-w` | 🔥 Every section, one confirmation per step |
 | Menu | `-m` | 🔥 One section at a time |
-| Safe batch | `-a`, `--all` | 🔥 Sections 0,1,2,3,5,6,7,8,9,10,21 (+12,13 when elevated) |
+| Safe batch | `-a`, `--all` | 🔥 Sections 0,1,2,3,5,6,7,8,9,10,21,28 (+12,13 when elevated) |
 | Only / profile / exclude | `--only L`, `--profile NAME`, `--exclude L` | 🔥 Exactly these sections; profiles `dev`, `minimal`, `cache-only`, `system`, `deep`, `audit` |
 | Scan | `-s`, `--scan` | Read-only: health, sizes, personal-file scanners |
 | List targets | `--list`, `--list-targets` | The catalogue; every path the tool can touch |
@@ -377,7 +386,7 @@ A Tauri window that drives this engine rather than reimplementing it: it runs th
 
 Screen by screen: [Desktop app](https://windowsweep-docs.aoneahsan.com/desktop).
 
-The engine still makes no network calls at all. The window sends usage and crash reports to improve the product for everyone, and there is no switch. Never sent: a file path, a folder name, a drive label, your user name, your machine name, or the contents of anything. Sign-in is separate and optional.
+The engine still sends nothing: its cleanup never touches the network, and only sections 30-32, for the rows you pick, ask Windows Update or winget to download. The window sends usage and crash reports to improve the product for everyone, and there is no switch. Never sent: a file path, a folder name, a drive label, your user name, your machine name, or the contents of anything. Sign-in is separate and optional.
 
 The installer is not signed with a paid code-signing certificate, so SmartScreen warns on first run. Every release publishes a SHA-256 checksum and a minisign signature the app's own updater checks; neither is a code-signing certificate. What to do about the dialog: [Desktop app](https://windowsweep-docs.aoneahsan.com/desktop).
 
@@ -420,8 +429,10 @@ Not from a protected folder, and not without asking. Documents, Desktop, Picture
 hard refusals. Section 17 lists build artefacts in idle projects and removes only what you select.
 
 **Does it phone home?**
-Not the command-line tool. Zero network calls, no telemetry, no update check. The self-test greps the source for
-HTTP and socket calls; `--report-issue` opens your browser at a pre-filled page you submit yourself. The desktop
+Not the command-line tool. Cleanup never touches the network, and the engine's own code holds no network call:
+no telemetry, no update check of its own, and the self-test greps the source for HTTP and socket calls. Only
+sections 30-32, for the rows you pick, ask Windows Update or winget to download.
+`--report-issue` opens your browser at a pre-filled page you submit yourself. The desktop
 window is a separate program and does send usage and crash reports. What it never sends is listed under [Desktop
 app](#desktop-app).
 
@@ -447,7 +458,7 @@ More: [FAQ](https://windowsweep-docs.aoneahsan.com/faq).
 | [Quick start](https://windowsweep-docs.aoneahsan.com/quick-start) | running your first cleanup |
 | [Safety model](https://windowsweep-docs.aoneahsan.com/safety-model) | you want every guarantee spelled out before deleting anything |
 | [Developer mode](https://windowsweep-docs.aoneahsan.com/developer-mode) | you want to know what the first question changes |
-| [Sections 0-29](https://windowsweep-docs.aoneahsan.com/sections) | you want to know precisely what one section touches |
+| [Sections 0-32](https://windowsweep-docs.aoneahsan.com/sections) | you want to know precisely what one section touches |
 | [CLI reference](https://windowsweep-docs.aoneahsan.com/cli-reference) | you need an exact flag, exit code or variable |
 | [Admin sections and elevation](https://windowsweep-docs.aoneahsan.com/admin-and-elevation) | before running the system profile or touching the hibernation file |
 | [Reports and logs](https://windowsweep-docs.aoneahsan.com/reports-and-logs) | parsing the JSON or finding a log |
@@ -459,7 +470,7 @@ More: [FAQ](https://windowsweep-docs.aoneahsan.com/faq).
 <a id="changelog"></a>
 ## 🔄 Changelog&nbsp;[#](#changelog)
 
-Latest release: **`1.4.8`** - the desktop Home screen keeps the unmeasured readout clear of its action buttons.
+Latest release: **`1.5.0`** - one uninstall list for programs and Store apps with what they leave behind, and the Windows, driver and app updates you pick.
 The website plan editor keeps Save visible while its fields scroll. The 1.4 scanner searches Downloads and folders you add for
 large or old files; you choose individual files for the Recycle Bin. The uninstall and leftover-folder sections
 require explicit selection.

@@ -10,7 +10,14 @@
  * Shape transcribed from `modules/runner.ps1` -> `Get-CatalogueJson`.
  */
 
-export type SectionTier = 'report' | 'rebuilds' | 'recycle' | 'permanent' | 'config' | 'slow';
+/**
+ * 🔴 `update` (1.5.0, D110) is the one tier that ADDS rather than reclaims: sections 30-32 install
+ * what Windows Update or winget fetch, for rows a person picks. No map tile
+ * is ever this tier, and its rows never reach a reclaim total (`lib/candidate-extras.ts` ->
+ * `reclaimOf`); its chip is a ring rather than a filled square, so colour is never the only channel.
+ */
+export type SectionTier =
+  'report' | 'rebuilds' | 'recycle' | 'permanent' | 'config' | 'slow' | 'update';
 export type SectionBatch = 'safe' | 'deep' | 'optin' | 'interactive';
 
 export interface Section {
@@ -69,6 +76,29 @@ export const RECYCLE_TIERS: ReadonlySet<SectionTier> = new Set<SectionTier>(['re
  * freezes. Elevation says so on section 20's card and the Picker on section 17's.
  */
 export const DEV_GATED_SECTIONS: ReadonlySet<number> = new Set([4, 17, 20]);
+
+/**
+ * Whether a section brings software in (tier `update`, 30-32) rather than taking space back.
+ *
+ * The Picker draws these in its INSTALL mode - no Recycle Bin choice, a download in place of a
+ * reclaim figure, a verb built from the rows - and Home leaves them out of "these need a person",
+ * whose cards are space waiting on a person (AMENDMENTS-4 A4-04, A4-08). Read from the engine's
+ * own tier, never from a list of ids kept here.
+ */
+export function isInstallSection(section: Pick<Section, 'tier'>): boolean {
+  return section.tier === 'update';
+}
+
+/**
+ * The interactive sections Home's "these need a person" draws: space waiting on a person, so
+ * never an install section - a card reading "0 B, 0 items waiting" for 30-32 would be noise
+ * (AMENDMENTS-4 A4-04; the dummy's `db.js` `needsAPerson`).
+ */
+export function reclaimPickSections(catalogue: Catalogue | null): Section[] {
+  return (catalogue?.sections ?? []).filter(
+    (s) => s.batch === 'interactive' && !isInstallSection(s)
+  );
+}
 
 export function parseCatalogue(stdout: string): Catalogue {
   const line = stdout

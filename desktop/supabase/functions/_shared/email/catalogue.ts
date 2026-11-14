@@ -58,7 +58,7 @@ export const catalogue = {
     button: "Open your account",
     body: {
       remaining:
-        "Your account shows what remains. The command-line engine still makes no network calls; the desktop window checks your allowance and updates separately.",
+        "Your account shows what remains. Cleanup in the command-line engine still never touches the network; the desktop window checks your allowance and updates separately.",
       dryRun:
         "Before a real run, read the target list in a dry-run. Protected folders stay refused. The dry-run removes none of your files.",
     },

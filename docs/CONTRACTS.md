@@ -512,6 +512,19 @@ each declared scanner root as `{ path, accepted, reason }`; `access_live_volumes
 access timestamp was observed to advance. Both arrays are present even when empty. Older summary readers
 may normalize an absent array to `[]`.
 
+**1.5.0 additions (D109, D110).** Every addition is optional for an older reader. `candidates[]` gains `kind`:
+section 26 `desktop` | `store` | `broken` (with `strategy`, `needs_admin`, `ran`, `publisher`, `version`, and for
+`broken` the missing `uninstaller` path); section 27 extras `registry` | `shortcut` | `startup` | `task` (with
+`needs_admin` and, when known, the gone `target`); section 30 `windows-update` (`kb`, `category`, `severity`,
+`reboot_likely`, `needs_admin`); section 31 `driver-update` (`driver_class`, `driver_provider`, `driver_date`,
+`optional`, `needs_admin`) and `driver-package` (`provider`, `class`, `version`, `date`,
+`needs_admin`); section 32 `app-update` (`id`, `version`, `available`, `source`, `needs_admin`, `running`). Row
+paths, which `--select-file` matches: registry key paths and `appx:<PackageFullName>` (26); folder, key and
+shortcut paths, `<RunKey>::<Value>` and `task:<path><name>` (27); `wu:<UpdateID>` (30 and 31's Windows Update
+drivers) and `oem:<oemNN.inf>` (31); `winget:<PackageId>` (32). The summary gains
+`driver_report`, `{ problems: [{ name, code, problem }], oldest: [{ device, provider, version, date }] }`, or
+`null` when section 31 did not run.
+
 The desktop passes `--personal-roots`, `--browser-profile-roots` and `--temp-roots` on every invocation,
 including an empty value. An empty value means no added roots and must not fall through to a saved CLI
 configuration. Section 19 still includes Downloads by default; only user-declared additional roots are

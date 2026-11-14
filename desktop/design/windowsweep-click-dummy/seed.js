@@ -2,7 +2,8 @@
    windowsweep desktop dummy - the deterministic demo dataset
 
    🔴 EVERY section id, key, title, tier, batch policy, admin flag and dev flag
-   below is transcribed from the real catalogue in lib/constants.ps1 (v1.1.0).
+   below is transcribed from the real catalogue in lib/constants.ps1 (1.5.0,
+   compared mechanically on 2026-11-13: 28 and 29 had been shortened in 1.4.0).
    Nothing about the product is invented here.
 
    The BYTES are demo data - a plausible developer machine, marked `demo-data` in
@@ -21,7 +22,10 @@
     { key: 'rebuilds',  label: 'rebuilds',  rank: 2, blurb: 'regenerates on next use' },
     { key: 'slow',      label: 'slow',      rank: 3, blurb: 'regenerates, but slowly' },
     { key: 'recycle',   label: 'recycle',   rank: 4, blurb: 'goes to the Recycle Bin' },
-    { key: 'permanent', label: 'permanent', rank: 5, blurb: 'gone for good' }
+    { key: 'permanent', label: 'permanent', rank: 5, blurb: 'gone for good' },
+    /* 1.5.0, sections 30-32 only. Outside the risk ramp: it adds software rather than
+       reclaiming space, so no map tile is ever this tier and rank 6 only puts it last. */
+    { key: 'update',    label: 'update',    rank: 6, blurb: 'installs what Windows Update or winget fetches' }
   ];
 
   var SECTIONS = [
@@ -51,15 +55,21 @@
     { id:23, key:'orphaned',  tier:'recycle',   batch:'interactive', admin:false, dev:false, title:'Orphaned application data under AppData -> Recycle Bin' },
     { id:24, key:'programs',  tier:'report',    batch:'safe',        admin:false, dev:false, title:'Installed programs not modified for N+ days - report only' },
     { id:25, key:'startup',   tier:'report',    batch:'safe',        admin:false, dev:false, title:'Startup items audit (Run keys, Startup folders, logon tasks) - report only' },
-    { id:26, key:'uninstall', tier:'permanent', batch:'interactive', admin:false, dev:false, title:'Uninstall programs you pick, then offer leftover folders' },
-    { id:27, key:'leftovers', tier:'recycle', batch:'interactive', admin:true, dev:false, title:'Leftover program folders -> Recycle Bin' },
-    { id:28, key:'releases', tier:'rebuilds', batch:'safe', admin:false, dev:false, title:'Superseded tool releases and old downloaded updates' },
-    { id:29, key:'browserai', tier:'config', batch:'deep', admin:true, dev:false, title:'Chrome on-device AI model policy' }
+    { id:26, key:'uninstall', tier:'permanent', batch:'interactive', admin:false, dev:false, title:'Uninstall programs and Store apps you pick, each with its own uninstaller, then what they left (folders, registry keys, shortcuts, startup entries)' },
+    { id:27, key:'leftovers', tier:'recycle', batch:'interactive', admin:true, dev:false, title:'Leftovers of uninstalled programs: folders, registry keys (.reg backup first), Start-menu shortcuts, dead startup entries -> Recycle Bin' },
+    { id:28, key:'releases', tier:'rebuilds', batch:'safe', admin:false, dev:false, title:'Superseded tool releases and old downloaded updates (Codex, Electron updaters, Ollama, unrequested Node) - current kept' },
+    { id:29, key:'browserai', tier:'config', batch:'deep', admin:true, dev:false, title:'Chrome on-device AI model - set the policy that removes it (Chrome shows "Managed by your organization")' },
+    /* 1.5.0 (D110): the only sections that reach the network, through Windows Update or winget,
+       and only for rows a person picks. Listing needs no admin. 31 names the PC maker's own driver
+       tool and never runs it (A4-15). */
+    { id:30, key:'winupdate', tier:'update', batch:'interactive', admin:false, dev:false, title:'Windows updates you pick (security, quality, Defender, malware tool) via Windows Update - never restarts your PC' },
+    { id:31, key:'drivers', tier:'update', batch:'interactive', admin:false, dev:false, title:'Driver updates you pick from Windows Update, and old driver packages - never BIOS or firmware' },
+    { id:32, key:'appupdates', tier:'update', batch:'interactive', admin:false, dev:false, title:'App updates you pick, one at a time, via winget' }
   ];
 
   var SAFE_BATCH = [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 21, 28];
   var SAFE_BATCH_ADMIN = [12, 13];
-  var INTERACTIVE = [17, 18, 19, 23, 26, 27];
+  var INTERACTIVE = [17, 18, 19, 23, 26, 27, 30, 31, 32];
   var PROFILES = {
     dev:        [1, 2, 3, 5, 6, 17, 28],
     minimal:    [7, 9, 10],
@@ -174,11 +184,63 @@
     { section:19, path:'D:\\Media\\raw-footage.mov',                       bytes: 8.42*GB, idle:8,   basis:'modified', root:'D:\\Media' },
     { section:23, path:'%APPDATA%\\OldVendorTool',                          bytes: 214*MB,  idle:503 },
     { section:23, path:'%LOCALAPPDATA%\\DiscontinuedIDE',                   bytes: 688*MB,  idle:441 },
-    { section:26, path:'HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\OldTool', label:'Old Tool', bytes: 320*MB, idle:-1 },
-    { section:26, path:'HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\LegacyEditor', label:'Legacy Editor', bytes: 810*MB, idle:-1 },
-    { section:27, path:'C:\\Program Files\\Old Tool', bytes: 147*MB, idle:390 },
-    { section:27, path:'C:\\ProgramData\\LegacyEditor', bytes: 64*MB, idle:201 }
+    /* 26 (1.5.0, D109): one list of three kinds. The Store rows, their appx: paths and sizes
+       are this PC's own (the P52, read 2026-11-13); the desktop and broken rows are demo data,
+       and `ran` (days since Windows last saw it start, -1 = no record) is demo data on every
+       row. Windows tells only an elevated window, so `ran` shows only with ?elevated=1. */
+    { section:26, kind:'desktop', label:'Legacy Editor', path:'HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\LegacyEditor', bytes: 810*MB, idle:-1, ran:233 },
+    { section:26, kind:'desktop', label:'Old Tool', path:'HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\OldTool', bytes: 320*MB, idle:-1, ran:412 },
+    { section:26, kind:'store', label:'Skype', path:'appx:Microsoft.SkypeApp_15.150.3125.0_x64__kzf8qxf38zg5c', bytes: 334432883, idle:-1, ran:702 },
+    { section:26, kind:'store', label:'Mail and Calendar', path:'appx:microsoft.windowscommunicationsapps_16005.14326.22342.0_x64__8wekyb3d8bbwe', bytes: 216695639, idle:-1, ran:96 },
+    { section:26, kind:'store', label:'Microsoft Solitaire Collection', path:'appx:Microsoft.MicrosoftSolitaireCollection_4.27.9181.0_x64__8wekyb3d8bbwe', bytes: 79516493, idle:-1, ran:388 },
+    { section:26, kind:'store', label:'Paint 3D', path:'appx:Microsoft.MSPaint_6.1907.29027.0_x64__8wekyb3d8bbwe', bytes: 61867093, idle:-1, ran:-1 },
+    { section:26, kind:'store', label:'Xbox Console Companion', path:'appx:Microsoft.XboxApp_48.104.4001.0_x64__8wekyb3d8bbwe', bytes: 11711634, idle:-1, ran:-1 },
+    { section:26, kind:'store', label:'Pinterest', path:'appx:1424566A.147190DF3DE79_1.1.1.0_neutral__5byw4zywtsh80', bytes: 1884414, idle:-1, ran:-1 },
+    { section:26, kind:'store', label:'Cortana', path:'appx:Microsoft.549981C3F5F10_4.2308.1005.0_x64__8wekyb3d8bbwe', bytes: 1633342, idle:-1, ran:-1 },
+    { section:26, kind:'store', label:'Facebook', path:'appx:FACEBOOK.FACEBOOK_2023.531.1.0_x64__8xx8rvfyw5nnt', bytes: 909663, idle:-1, ran:-1 },
+    { section:26, kind:'broken', label:'Android Studio', path:'HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Android Studio', missing:'C:\\Program Files\\Android\\Android Studio\\uninstall.exe', bytes: 0, idle:-1, ran:-1 },
+    /* 27 (1.5.0): five kinds. Folders and shortcuts go to the Recycle Bin; registry keys and
+       startup entries go to a .reg file first (lib/registry.ps1), scheduled tasks to XML. */
+    { section:27, kind:'folder', path:'C:\\Program Files\\Old Tool', bytes: 147*MB, idle:390 },
+    { section:27, kind:'folder', path:'C:\\ProgramData\\LegacyEditor', bytes: 64*MB, idle:201 },
+    { section:27, kind:'shortcut', path:'%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Old Tool\\Old Tool.lnk', bytes: 2*1024, idle:390 },
+    { section:27, kind:'registry', path:'HKEY_CURRENT_USER\\Software\\Old Tool', bytes: 0, idle:-1 },
+    { section:27, kind:'startup', path:'HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\LegacyEditorTray', target:'C:\\Program Files\\Legacy Editor\\tray.exe', bytes: 0, idle:-1 },
+    { section:27, kind:'task', path:'\\LegacyEditor\\Update check', bytes: 0, idle:-1 },
+    /* 30-32 (1.5.0, D110): the install mode. `verb` is what the row does, `download` is what
+       the fetching tool reports (null = size unknown), and `bytes` stays what the row RECLAIMS,
+       so an install row is 0 and can never reach a reclaim total. `admin`: installing it needs
+       Windows' permission. 30's titles and sizes and 32's names and versions are this PC's own
+       on 2026-11-13; MSRT's category, 32's admin flags (installer scope) and all of 31 are demo. */
+    { section:30, verb:'install', path:'KB5131096', label:'2026-11 Cumulative Update for Windows 10 Version 22H2 for x64-based Systems (KB5131096)', category:'Security Updates', download:null, admin:true, bytes:0 },
+    { section:30, verb:'install', path:'KB890830', label:'Windows Malicious Software Removal Tool x64 - v5.147 (KB890830)', category:'Update Rollups', download: 87*MB, admin:true, bytes:0 },
+    { section:31, verb:'install', path:'wu-driver:Intel Corporation - Display - 31.0.101.2135', label:'Intel Corporation - Display - 31.0.101.2135', detail:'Display adapters', download: 448*MB, admin:true, bytes:0 },
+    { section:31, verb:'install', path:'wu-driver:Realtek Semiconductor Corp. - MEDIA - 6.0.9549.1', label:'Realtek Semiconductor Corp. - MEDIA - 6.0.9549.1', detail:'Sound, video and game controllers', download: 21*MB, admin:true, bytes:0 },
+    { section:31, verb:'remove', path:'oem42.inf', label:'NVIDIA display driver 27.21.14.5671', detail:'oem42.inf \u00b7 9 Aug 2021', admin:true, bytes: 1.12*GB },
+    { section:31, verb:'remove', path:'oem57.inf', label:'NVIDIA display driver 30.0.14.7212', detail:'oem57.inf \u00b7 14 Mar 2022', admin:true, bytes: 1.19*GB },
+    { section:31, verb:'remove', path:'oem17.inf', label:'Intel Wireless-AC 9560 22.80.1.1', detail:'oem17.inf \u00b7 19 Oct 2021', admin:true, bytes: 38*MB },
+    { section:32, verb:'install', path:'Git.Git', label:'Git', from:'2.54.0', to:'2.56.0.4', source:'winget', download:null, admin:true, bytes:0 },
+    { section:32, verb:'install', path:'GitHub.cli', label:'GitHub CLI', from:'2.95.0', to:'2.104.0', source:'winget', download:null, admin:true, bytes:0 },
+    { section:32, verb:'install', path:'Oracle.JDK.21', label:'Java SE Development Kit', from:'21.0.10', to:'21.0.12', source:'winget', download:null, admin:true, bytes:0 },
+    { section:32, verb:'install', path:'Gyan.FFmpeg', label:'FFmpeg', from:'8.1.1', to:'9.0.2', source:'winget', download:null, admin:false, bytes:0 },
+    { section:32, verb:'install', path:'RARLab.WinRAR', label:'WinRAR', from:'6.00', to:'7.23.0', source:'winget', download:null, admin:true, bytes:0 },
+    { section:32, verb:'install', path:'SlackTechnologies.Slack', label:'Slack', from:'4.51.180.0', to:'4.53.287', source:'winget', download:null, admin:false, running:true, bytes:0 },
+    { section:32, verb:'install', path:'XPDM1ZW6815MQM', label:'VLC media player', from:'3.0.16', to:'3.0.23', source:'msstore', download:null, admin:false, bytes:0 },
+    { section:32, verb:'install', path:'Microsoft.WindowsTerminal', label:'Windows Terminal', from:'1.24.12741.0', to:'1.25.3131.0', source:'winget', download:null, admin:false, bytes:0 }
   ];
+
+  /* 31's two report blocks - listed for reading, never offered (demo data). */
+  var DRIVER_REPORT = {
+    problems: [
+      { name:'PCI Data Acquisition and Signal Processing Controller', detail:'Code 28 \u00b7 The drivers for this device are not installed.' },
+      { name:'Unknown USB Device (Device Descriptor Request Failed)', detail:'Code 43 \u00b7 Windows has stopped this device because it has reported problems.' }
+    ],
+    oldest: [
+      { name:'Synaptics SMBus Driver', detail:'19.0.12.98 \u00b7 26 Mar 2018' },
+      { name:'Intel Management Engine Interface', detail:'1918.12.0.1274 \u00b7 30 Apr 2019' },
+      { name:'Realtek PCIE CardReader', detail:'10.0.17134.31248 \u00b7 14 Oct 2019' }
+    ]
+  };
 
   /* the protected list only ever grows - these are refused regardless of flags */
   var PROTECTED = [
@@ -234,7 +296,7 @@
     TIERS: TIERS, SECTIONS: SECTIONS, TARGETS: TARGETS, GATED: GATED, CANDIDATES: CANDIDATES,
     PROTECTED: PROTECTED, PROTECT_CATEGORIES: PROTECT_CATEGORIES, DRIVES: DRIVES, RUNS: RUNS, GLOBALS: GLOBALS,
     SAFE_BATCH: SAFE_BATCH, SAFE_BATCH_ADMIN: SAFE_BATCH_ADMIN,
-    INTERACTIVE: INTERACTIVE, PROFILES: PROFILES,
-    ENGINE_VERSION: '1.4.0', APP_VERSION: '1.4.0-design'
+    INTERACTIVE: INTERACTIVE, PROFILES: PROFILES, DRIVER_REPORT: DRIVER_REPORT,
+    ENGINE_VERSION: '1.5.0', APP_VERSION: '1.5.0-design'
   };
 })();

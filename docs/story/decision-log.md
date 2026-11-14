@@ -1676,3 +1676,17 @@ Bible term, motif or palette change, so the voice registry needs no edit.
 ## 2026-11-12 — release-1.4.8 recorded
 
 Rows 27 and 1, draft release-1.4.8.md: main-session lean checks and finalizer found fact consistency PASS and no unanswered decision under D59. Product 93de163, website 546c300 and docs 67e99ca are published. The desktop readout and pinned Save facts were exercised, including actual protected New/Edit forms without plan writes. The registry entry records continuity; no new Bible term, motif, palette or fingerprint change.
+
+## 2026-11-13 - commitment 3 corrected for 1.5.0 (D110)
+
+The Bible's core promise, commitment 3, is rewritten because the 1.5.0 update sections (30 Windows updates, 31
+drivers, 32 app updates) reach the network through Windows Update, winget and the PC maker's own updater.
+Asked how that fits the promise, the owner chose "Opt-in sections, reworded". The new sentence keeps the strong,
+testable claim (the engine sends nothing anywhere; check [9] still fails the build on network code) and scopes
+the network to sections 30-32, for rows a person picks. Every surface that repeats the old sentence (CLI help,
+README, product docs and docs site, website and privacy page, desktop privacy notes) is reworded in the 1.5.0
+pass under D113's lean terms. Adds "update sections" to the working vocabulary; no palette or fingerprint change.
+
+## 2026-11-14 — release-1.5.0 recorded under D113
+
+Rows 27 and 1 (draft `drafts/release-1.5.0.md`) and docs rows 3-6: the main-session lean panel read every claim against the 1.5.0 engine and the P52 evidence. Two claims were corrected before publication: registry wording narrowed to removals (sections 13, 29 and 31 still set named values), and every mention of the PC maker's updater left the copy after D114, when Lenovo System Update queued firmware past its driver-only switch on the P52. FACT-CONSISTENCY PASS, zero NEEDS DECISION, finalizer READY; D113's GATE 4 condition holds. New working term: “update sections”. The glossary's section range is 0-32 and its PC rule names the restart line and “PC maker”; no palette or fingerprint change beyond specimen 12's count.

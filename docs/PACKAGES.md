@@ -2,7 +2,7 @@
 
 The dependency and manifest record for this package. Keep it accurate on every add, removal or upgrade.
 
-Last Updated: 2026-10-31 (`seroval` resolved to 1.7.5 after the security audit; `yarn npm audit --recursive --environment production` has no suggestions in `desktop/`. The self-test count under Verification is 160, the count since 1.3.0). Earlier 2026-09-26 (TASK-019: the build-time generators became Vite plugins in `desktop/vite/` and their four
+Last Updated: 2026-11-16 (Node 26.13.1 pin and latest-stable pass, see the 2026-11-16 note under the desktop section). Previously 2026-10-31 (`seroval` resolved to 1.7.5 after the security audit; `yarn npm audit --recursive --environment production` has no suggestions in `desktop/`. The self-test count under Verification is 160, the count since 1.3.0). Earlier 2026-09-26 (TASK-019: the build-time generators became Vite plugins in `desktop/vite/` and their four
 `package.json` scripts left; earlier the same day the hook line gained `--relative --max-arg-length 8000`. Earlier
 2026-09-25, D37: the desktop manifest at latest stable and on the fleet package baseline. Earlier 2026-09-05: the
 desktop app added a SECOND manifest, deliberately isolated from this one)
@@ -85,7 +85,15 @@ node bin/windowsweep.js --self-test --no-color       # 223 checks in 1.4.2
 
 Added 2026-09-05 with the first application code under `desktop/`; brought to latest stable and the fleet package
 baseline on 2026-09-25 (D37). Installed with **yarn 4.17.1**, `npmMinimalAgeGate: 0`, `nodeLinker: node-modules`;
-Node from `desktop/.nvmrc` (`24.13.0`), `engines.node` `>=22`.
+Node from `desktop/.nvmrc` and the root `.nvmrc` (`26.13.1` since 2026-11-16), `engines.node` `>=26.13.1`. The
+published CLI's `engines.node` stays `>=14` (the install promise to users, not the development pin).
+
+**2026-11-16 (fleet node-26-13-1):** Node 24.13.0 → 26.13.1. `npx -y npm-check-updates -u --reject typescript`, 12
+lines: majors `i18next` 26 → 27.1.3 and `react-i18next` 17 → 18.0.1 (our init already sets `fallbackLng`, no
+catalogue value is `''` and none holds an HTML entity, so the new `returnEmptyString` default and `Trans`'s entity
+decoding change nothing here); `driver.js` 1.11.0 → 1.14.0 (exact); the rest minor and patch. Gates on Node 26.13.1:
+`tsc -b --force`, lint, build, 69/69 tests. `yarn format:check` flags 25 `supabase/functions/**` files with Prettier
+3.9.10 and 3.10.1 alike (pre-existing; not part of `yarn gates`).
 
 | Package | Version | Why |
 |---|---|---|
@@ -106,13 +114,13 @@ Node from `desktop/.nvmrc` (`24.13.0`), `engines.node` `>=22`.
 | `d3-shape` | `^3.2.0` | used by the screens |
 | `d3-time-format` | `^4.1.0` | used by the screens |
 | `drizzle-orm` | `^0.45.3` | The schema at `src/db/schema/` (below) |
-| `driver.js` | `1.10.2` | MIT licensed spotlight for the approved desktop page tours; its popover and controls are replaced by the app's accessible card. Verified against the installed `LICENSE`. |
-| `i18next` | `^26.4.2` | Every user-visible string, from day one |
+| `driver.js` | `1.14.0` | MIT licensed spotlight for the approved desktop page tours; its popover and controls are replaced by the app's accessible card. Verified against the installed `LICENSE`. |
+| `i18next` | `^27.1.3` | Every user-visible string, from day one |
 | `motion` | `^13.4.4` | Entrance and state motion, gated on the `motion` axis AND the OS query |
 | `react` | `^19.3.0` | used by the screens |
 | `react-aria-components` | `^1.21.1` | The interactive primitives. The click dummy specifies the look; RAC owns the DOM |
 | `react-dom` | `^19.3.0` | used by the screens |
-| `react-i18next` | `^17.0.15` | The React binding |
+| `react-i18next` | `^18.0.1` | The React binding |
 | `strata-storage` | `^3.1.3` | Owns desktop browser storage, including preferences, local run history, sync records, legal notice state and the Supabase session. The 1.3.2 physical keys are adopted without a prefix; the pre-paint reader accepts both old and new envelopes |
 | `zustand` | `^5.0.15` | The one store |
 

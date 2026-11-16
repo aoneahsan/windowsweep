@@ -1,6 +1,9 @@
 # WindowSweep product — active guide
 
 **Last Updated:** 2026-11-13
+
+<!-- fleet:node-26-13-1 v1 --> Node 26.13.1 LTS (.nvmrc), packages latest — 2026-11-16
+
 **Context pass:** 2026-11-13; next routine optimization eligible 2026-12-13.
 
 This public repository is the Windows PowerShell cleanup CLI, Node launcher, Tauri desktop app, shared schema, product docs and story records. It is nested inside `../windowsweep-root/`, an independent private Git checkout on `project-root`. The full September guide is preserved at `docs/context/product-guide-2026-09-28.md`; search it for a named invariant rather than loading it in full. The current state and every phase/subtask live in `docs/features/windowsweep-completion/00-tracker.json`. Start with the parent `../remaining-work-summary.md`; read exact rows of `../remaining-work.md` and `../completion-plan-v5-2026-09-24.md` only when working on them. The parent root and website use separate Git histories.

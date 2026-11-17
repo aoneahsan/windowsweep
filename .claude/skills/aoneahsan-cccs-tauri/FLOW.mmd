@@ -1,0 +1,48 @@
+%% Tauri v2 core — full flow
+%% Pure Mermaid. No Markdown fence.
+
+flowchart TD
+    trigger([Tauri work: new app, config,<br/>or a frontend-to-Rust call]) --> new{New project?}
+
+    new -->|yes| scaffold[npm create tauri-app@latest<br/>React + TypeScript + Vite]
+    new -->|no| task
+
+    scaffold --> conf[tauri.conf.json:<br/>identifier — PERMANENT after release<br/>beforeDevCommand + devUrl + frontendDist<br/>window defaults · CSP]
+    conf --> task
+
+    task{What is being added?}
+    task -->|Frontend UI| react[Ordinary React work —<br/>use the house React skills]
+    task -->|A native capability| cmd
+    task -->|A permission| cap
+
+    cmd[Write a #tauri::command function]
+    cmd --> pubcheck{Is it in lib.rs and marked pub?}
+    pubcheck -->|yes| droppub[Remove pub — the generated<br/>macro glue will not compile]
+    pubcheck -->|no| register
+    droppub --> register
+
+    register[Register in ONE generate_handler!<br/>calling invoke_handler twice silently<br/>keeps only the LAST call]
+    register --> args[JS calls with camelCase args<br/>Rust receives snake_case]
+    args --> cap
+
+    cap[Grant the narrowest permission<br/>in src-tauri/capabilities/]
+    cap --> scoped{Is the capability scoped<br/>to specific windows?}
+    scoped -->|no, blanket wildcard| narrow[Scope it — EVERY file in<br/>capabilities/ is enabled by default,<br/>so a broad one is live immediately]
+    scoped -->|yes| gates
+    narrow --> scoped
+
+    react --> gates
+
+    gates{cargo fmt --check · cargo clippy -D warnings<br/>· frontend typecheck and lint<br/>· one-shot tauri build}
+    gates -->|fails| fix[Fix, then re-run]
+    fix --> gates
+    gates -->|passes| seen{Must the change be SEEN running?}
+
+    seen -->|no| done
+    seen -->|yes| dev[tauri dev — run-to-verify only,<br/>then KILL it]
+    dev --> done([Done: built, least-privilege, gated])
+
+    classDef gate fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    class new,task,pubcheck,scoped,gates,seen gate
+    class trigger,done terminal

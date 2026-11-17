@@ -1,0 +1,23 @@
+flowchart TD
+    A[Schema change needed] --> B{Can Drizzle model it?<br/>table, column, index,<br/>enum, view, policy}
+    B -->|No: function, trigger,<br/>grant, comment| C[drizzle-kit generate --custom]
+    B -->|Yes| D[Edit src/db/schema/module.ts]
+    C --> E[Hand-write the SQL]
+    D --> F[drizzle-kit generate<br/>offline, no DB connection]
+    F --> G{New table created?}
+    G -->|Yes| H[Add the paired privilege block<br/>revoke + narrow grant]
+    G -->|No| I[Read the emitted SQL]
+    H --> I
+    E --> I
+    I --> J{Destructive statement?<br/>drop, truncate, lossy type}
+    J -->|Yes| K[STOP - owner decision<br/>ask-the-owner, then pause]
+    J -->|No| L[Write the rollback companion<br/>supabase/rollbacks/name.sql]
+    L --> M{G2 gate passes?<br/>db_password + session pooler}
+    M -->|No| N[BLOCK - I NEED THIS FROM YOU]
+    M -->|Yes| O[supabase db push --linked]
+    O --> P[supabase gen types typescript]
+    P --> Q[Probe as NON-ADMIN<br/>against seeded rows]
+    Q --> R{403/200 as expected?}
+    R -->|No| S[Fix the policy<br/>as a new forward migration]
+    R -->|Yes| T[Gates, tracker, one commit]
+    S --> F

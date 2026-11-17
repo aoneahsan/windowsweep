@@ -1,0 +1,41 @@
+%% Tailwind v4 — full flow
+%% Pure Mermaid. No Markdown fence.
+
+flowchart TD
+    trigger([Styling something, or adding a token]) --> cfg{Does a tailwind.config.* exist?}
+
+    cfg -->|yes| migrate[Migrate it into CSS:<br/>content array to auto-detection + @source<br/>theme.extend to @theme<br/>darkMode:'class' to @custom-variant<br/>then DELETE the file]
+    cfg -->|no| need
+
+    migrate --> need{What is needed?}
+
+    need -->|a value in a component| layer{Does a SEMANTIC token<br/>already name it?}
+    need -->|a new token| where[Declare it in @theme,<br/>NOT :root]
+    need -->|dark mode| dark["@custom-variant dark<br/>(&:where([data-theme=dark], [data-theme=dark] *))<br/>+ set the attribute PRE-PAINT in a head script"]
+    need -->|a reusable utility| util["@utility — composes with variants;<br/>a plain .class does not"]
+
+    layer -->|yes| use[Use it: bg-surface, text-muted]
+    layer -->|no| add[ADD THE TOKEN.<br/>An arbitrary value like w-347px<br/>is a design-system failure, not a shortcut]
+    add --> where
+
+    where --> refs{Does the token reference<br/>another variable?}
+    refs -->|yes| inline["@theme inline — or it resolves<br/>WRONG under nesting"]
+    refs -->|no| plain[Plain @theme]
+
+    inline --> verify
+    plain --> verify
+    use --> verify
+    dark --> verify
+    util --> verify
+
+    verify{Does the utility actually emit CSS?}
+    verify -->|no CSS at all| diag[Check, in order:<br/>1. token in :root instead of @theme<br/>2. class name built by string concatenation<br/>3. source file outside detection — add @source]
+    diag --> verify
+    verify -->|emits| grep{Arbitrary-value grep clean?<br/>No raw hex in components?}
+    grep -->|findings| add
+    grep -->|clean| done([Done: styled entirely from semantic tokens,<br/>both themes from one vocabulary])
+
+    classDef gate fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    class cfg,need,layer,refs,verify,grep gate
+    class trigger,done terminal

@@ -1,0 +1,48 @@
+%% aoneahsan-cccs-react-state-zustand — full flow
+flowchart TD
+    trigger([Some state needs a home]) --> origin{Where does the<br/>data come from?}
+
+    origin -->|a server| query[TanStack Query owns it.<br/>Putting it in zustand means<br/>rebuilding caching + invalidation<br/>+ refetching by hand]
+    origin -->|the client| readers{How many components<br/>read it?}
+
+    readers -->|exactly one| localstate[useState. A store for state<br/>nobody else reads is overhead]
+    readers -->|several, or it must<br/>outlive the component| store[zustand store]
+
+    store --> which{Does a store for this<br/>domain already exist?}
+    which -->|yes| addslice[Add to it]
+    which -->|no| newstore[Create one PER DOMAIN —<br/>authStore, cartStore, themeStore.<br/>Not one global store]
+
+    addslice --> actions
+    newstore --> actions
+    actions[Actions live IN the store beside<br/>the state they mutate]
+    actions --> derived{Is this value computable<br/>from other state?}
+    derived -->|yes| compute[Compute it. A stored derived value<br/>is a second source of truth<br/>that WILL disagree]
+    derived -->|no| persist
+
+    compute --> persist
+    persist{Should it survive a reload?}
+    persist -->|no| consume
+    persist -->|yes| middleware[persist middleware +<br/>a storage adapter — strata-storage,<br/>NEVER raw localStorage]
+    middleware --> hydrate[Gate first paint on rehydration<br/>so the app never flashes<br/>the wrong theme]
+    hydrate --> authed{User signed in?}
+    authed -->|yes| sync[Second layer: same prefs in the<br/>backend. Remote wins on sign-in,<br/>debounce writes]
+    authed -->|no| consume
+    sync --> consume
+
+    consume[Consuming in a component]
+    consume --> selector{How are you reading it?}
+    selector -->|"destructuring<br/>useStore()"| wrong[WRONG — re-renders on EVERY<br/>store change. The usual reason<br/>zustand feels slow]
+    selector -->|"selector<br/>useStore(s => s.items)"| right[Correct. Multiple values:<br/>useShallow or separate selectors]
+    wrong --> right
+
+    query --> done
+    localstate --> done
+    right --> done
+    done([Verify: no unexpected re-renders])
+
+    classDef gateNode fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    classDef warn fill:#fef2f2,stroke:#dc2626,color:#7f1d1d
+    class origin,readers,which,derived,persist,authed,selector gateNode
+    class trigger,done terminal
+    class wrong warn

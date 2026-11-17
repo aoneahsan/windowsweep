@@ -1,0 +1,51 @@
+%% TanStack Router — full flow
+%% Pure Mermaid. No Markdown fence.
+
+flowchart TD
+    trigger([Adding or changing a route]) --> indexed{Does this touch a<br/>PUBLIC, INDEXED URL?}
+
+    indexed -->|yes| frozen[🔴 The URL is FROZEN.<br/>A merged feature KEEPS its public URL —<br/>the redirect is the compatibility layer,<br/>not a deletion]
+    indexed -->|no| state
+
+    frozen --> guard[Ensure yarn verify:routes covers it,<br/>so a future refactor FAILS THE BUILD<br/>instead of losing the traffic silently]
+    guard --> state
+
+    state{Does the route hold UI state?<br/>modal · tab · filter · sort<br/>· page · search · step}
+
+    state -->|yes| search["validateSearch with a Zod schema.<br/>Typed both ways, defaults omitted<br/>from the URL.<br/>NEVER bare useState — a refresh<br/>would lose the view"]
+    state -->|no| data
+
+    search --> lazy{Is the route file .lazy.tsx?}
+    lazy -->|yes| keepout[Keep validateSearch and beforeLoad<br/>in the NON-lazy file — they must run<br/>before the chunk loads, or the guard<br/>never fires]
+    lazy -->|no| data
+    keepout --> data
+
+    data{Where does the data come from?}
+    data -->|"the route cannot render without it"| loader[Loader — blocks the transition,<br/>so the page never flashes empty]
+    data -->|"lists, panels, anything refetching"| query[TanStack Query]
+    data -->|both wanted| hybrid["Loader calls queryClient.ensureQueryData;<br/>components read through Query.<br/>ONE fetch, ONE cache"]
+
+    loader --> auth
+    query --> auth
+    hybrid --> auth
+
+    auth{Does it need authentication?}
+    auth -->|yes| before["beforeLoad on the _app layout route.<br/>Runs BEFORE the loader, so a protected<br/>route never fetches for a signed-out user"]
+    auth -->|no| states
+    before --> states
+
+    states{pendingComponent · errorComponent<br/>· notFoundComponent defined?}
+    states -->|no| inherit[It inherits the root's — which is how<br/>one failing panel blanks a whole page]
+    inherit --> states
+
+    states -->|yes| verify{yarn verify:routes green?}
+    verify -->|"a frozen URL is missing"| restore[Restore it or add the redirect.<br/>This is the guard doing its job]
+    restore --> verify
+    verify -->|green| done([Done: typed URL state, guarded before fetch,<br/>no indexed URL lost])
+
+    classDef gate fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    classDef stopnode fill:#fef2f2,stroke:#dc2626,color:#7f1d1d
+    class indexed,state,lazy,data,auth,states,verify gate
+    class trigger,done terminal
+    class frozen stopnode

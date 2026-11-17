@@ -1,0 +1,24 @@
+%% aoneahsan-cccs-story-voice-registry — register + uniqueness check
+flowchart TD
+    trigger([New or changed voice<br/>before GATE 1]) --> remote[Read the REMOTE index first:<br/>git show '@{u}':…/registry/index.md]
+    remote --> slug[Slug = palette-registry slug<br/>or repo name in kebab-case]
+    slug --> exists{Entry already<br/>exists for this slug?}
+    exists -->|yes| update[Update the entry:<br/>palette · canonical sentence · updated]
+    exists -->|no| create[Create slug.md from the<br/>entry template, status draft]
+    update --> tests
+    create --> tests[Run the three tests against<br/>every non-retired entry]
+    tests --> t1{Test 1 palette:<br/>same dominant band + person,<br/>humor within 10 points?}
+    t1 -->|no| distinct
+    t1 -->|yes| t23{Test 2 diction overlap<br/>OR test 3 side-by-side<br/>indistinguishable?}
+    t23 -->|no| distinct[Uniqueness note:<br/>distinct from nearest slug because …]
+    t23 -->|yes| collide[Uniqueness note: COLLIDES with slug<br/>+ two differentiation proposals]
+    distinct --> row
+    collide --> row[Write the index row<br/>fetch again immediately before writing]
+    row --> gate([Shown at GATE 1 with the Bible;<br/>owner picks; keeper bumps updated after GATE 4])
+
+    remote -.same discipline as.-> pal[(~/.claude/palettes/project-palettes.json)]
+
+    classDef gate fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    class exists,t1,t23 gate
+    class trigger,gate terminal

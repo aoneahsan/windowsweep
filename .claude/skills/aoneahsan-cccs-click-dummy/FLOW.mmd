@@ -1,0 +1,87 @@
+%% aoneahsan-cccs-click-dummy — full flow
+flowchart TD
+    START([design the UI before implementation]) --> INV{"the page inventory<br/>exists?"}
+    INV -- no --> DERIVE[Derive pages from routes BY ARCHETYPE<br/>not one page per route<br/>~35-50 pages, batched]
+    DERIVE --> BRIEF
+    INV -- yes --> NEXT[Read it: first row not approved]
+
+    BRIEF[Write the click-dummy brief<br/>from the template] --> SELFCHECK{"grep aoneahsan-cccs<br/>in the brief == 0?"}
+    SELFCHECK -- no --> FIXBRIEF[Remove every internal reference<br/>the executing model has none]
+    FIXBRIEF --> SELFCHECK
+    SELFCHECK -- yes --> CRAFT
+
+    CRAFT[A0 - scan complete craft set;<br/>load A0/A1 bodies now,<br/>later bodies at their phase boundary] --> EXT{"project has its<br/>ext- design skills copied?"}
+    EXT -- no --> COPYEXT[Copy them first<br/>see aoneahsan-cccs-cloned-skills-library]
+    COPYEXT --> EXT
+    EXT -- yes --> HUE[Claim primaryHue in the palette registry<br/>re-read it immediately before claiming<br/>parallel writers]
+
+    HUE --> A1["A1 - ONE home page, the best you can build<br/>header + footer + 12-15 DISTINCT sections<br/>explore alternatives only as sketches"]
+    A1 --> ARGUE[Record the direction + what you set aside<br/>in the decisions log]
+    ARGUE --> G1{"GATE 1<br/>his OWN WRITTEN words approve it?"}
+
+    G1 -- rejected --> REJ[Move it to _rejected/ FIRST<br/>his words verbatim in its README]
+    REJ --> NEWDIR{"is the replacement a NEW DIRECTION<br/>or just a recolour?"}
+    NEWDIR -- recolour --> REBUILD[Rebuild: new layout system,<br/>type pairing, motion character]
+    REBUILD --> NEWDIR
+    NEWDIR -- new direction --> A1
+
+    G1 -->|keep it but show another| KEPT[Move it to _kept/ - STILL a live candidate<br/>name what the next one carries forward]
+    KEPT --> NEWDIR
+
+    G1 -- approved --> A2[A2 - three colour TREATMENTS at three<br/>DIFFERENT hues, each in light AND dark<br/>= 6 combinations, switchable in the header]
+    A2 --> A3[A3 - the COMPONENT LIBRARY, 8 flat files<br/>typography, actions, forms, tables, display,<br/>navigation, overlays, charts - every state each]
+
+    A3 --> G2{"GATE 2<br/>his OWN WRITTEN words approve it?"}
+    G2 -- no --> A3
+    G2 -- yes --> NEXT
+
+    NEXT --> PAGE[A4+ build the next page<br/>COMPOSED from library components]
+
+    subgraph PAGEBOX ["per page - the definition of done"]
+        PAGE --> LIFE{"marketing page<br/>or product page?"}
+        LIFE -- marketing --> RICH["Live layer: cursor, magnetic hover,<br/>parallax, animated backgrounds<br/>ONE shared script, ONE mount point"]
+        LIFE -- product --> CALM[Hover, focus, skeletons, entrance<br/>+ restrained scroll reveal and counters<br/>no cursor layer, no parallax]
+        RICH --> STATES
+        CALM --> STATES
+        STATES[All states: default, loading skeleton,<br/>empty with real copy, error, dense]
+        STATES --> THEMES[Light AND dark, both designed<br/>spot-checked in all 3 treatments]
+        THEMES --> RESP[320 / 768 / 1920<br/>no horizontal scroll]
+        RESP --> A11Y[Keyboard, visible focus-visible ring,<br/>AA contrast, reduced-motion per pattern]
+        A11Y --> RTE{"any bare textarea?"}
+        RTE -- yes --> MAKERTE[Replace with the rich-text component<br/>capability varies, the component does not]
+        MAKERTE --> RTE
+        RTE -- no --> TOKENS{"grep for arbitrary values<br/>-[ returns nothing?"}
+        TOKENS -- no --> ADDTOKEN[Add the missing TOKEN<br/>never an arbitrary value]
+        ADDTOKEN --> TOKENS
+        TOKENS -- yes --> DOM{"invented any widget's<br/>internal DOM?"}
+        DOM -- yes --> RESTYLE[Strip it back to the behaviour library's<br/>real anatomy - React Aria owns that markup]
+        RESTYLE --> DOM
+        DOM -- no --> HANDBACK[Hand back: files, screenshots 375 + 1440<br/>light + dark, decisions to confirm,<br/>tokens that were missing]
+        HANDBACK --> SUMMARY{"delivery summary complete?<br/>new / modified / unchanged<br/>+ n of total files, r remaining"}
+        SUMMARY -- no --> FILLSUM[Count from the PAGE INVENTORY, not ls<br/>name the source so it is checkable]
+        FILLSUM --> SUMMARY
+    end
+
+    SUMMARY -- yes --> APPROVE
+
+    APPROVE{"his OWN WRITTEN words approve it?<br/>silence and looks-fine are NOT approval"}
+    APPROVE -- no --> PAGE
+    APPROVE -- yes --> MARK[Record it VERBATIM in the decisions log<br/>this session - then mark the row]
+    MARK --> MORE{pages left?}
+    MORE -- yes --> NEXT
+    MORE -- no --> WIRE[Wire every page into ONE prototype<br/>strata-storage over localStorage:<br/>sign in, create, persist, sign out resets]
+
+    WIRE --> PROBE{"probed a real write/read/delete<br/>and the physical key is namespaced?"}
+    PROBE -- no --> FIXNS[Use defineStorage namespace<br/>the adapter prefix is a silent no-op]
+    FIXNS --> PROBE
+    PROBE -- yes --> COVER{"coverage check passes<br/>vs the parity ledger?"}
+    COVER -- no --> DERIVE
+    COVER -- yes --> G3{"GATE 3 - FINAL PHASE APPROVAL<br/>in his own written words?"}
+    G3 -- no --> HOLD([hold - no app code exists yet])
+    G3 -- yes --> PROMOTE[Promote tokens.css into the app<br/>ONCE, ONE DIRECTION<br/>the dummy is now a frozen record]
+    PROMOTE --> DONE(["Phase B wave 0 may begin:<br/>create &lt;project&gt;/ and scaffold it"])
+
+    classDef gateNode fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    class G1,G2,G3,APPROVE,NEWDIR,PROBE,RTE,TOKENS,DOM,SUMMARY,COVER,SELFCHECK,EXT,INV,LIFE,MORE gateNode
+    class START,DONE,HOLD terminal

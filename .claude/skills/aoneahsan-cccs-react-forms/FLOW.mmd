@@ -1,0 +1,42 @@
+%% aoneahsan-cccs-react-forms — full flow
+flowchart TD
+    trigger([Building or touching a form]) --> existing{What is it using now?}
+    existing -->|useState or Formik| migrate[Migrate to RHF + Zod NOW —<br/>a mixed codebase is worse<br/>than either choice alone]
+    existing -->|RHF + Zod| schema
+    migrate --> schema
+
+    schema[Write the Zod schema FIRST]
+    schema --> derive["type FormData = z.infer typeof schema<br/>NEVER hand-write it — it will drift"]
+    derive --> copy[Error messages go IN the schema,<br/>phrased for a reader:<br/>'Enter a valid email address']
+    copy --> resolver[useForm with zodResolver]
+
+    resolver --> fields[Render fields via the shared<br/>form-field wrappers]
+    fields --> required{Is this field required?}
+    required -->|yes| blocks[It may block submit]
+    required -->|no| never[It must NEVER block submit.<br/>Optional-blocking is a bug]
+
+    blocks --> submitbtn
+    never --> submitbtn
+    submitbtn{Disabling the submit button?}
+    submitbtn -->|on !isValid| wrong[WRONG. Let submit run, show errors,<br/>focus the first one.<br/>A dead button explains nothing]
+    submitbtn -->|on isSubmitting| right[Correct — prevents double submission]
+    wrong --> right
+
+    right --> steps{Multi-step form?}
+    steps -->|yes| urlstep["Step lives in a URL query param.<br/>Validate the step with trigger fields<br/>before advancing"]
+    steps -->|no| onsubmit
+    urlstep --> onsubmit
+
+    onsubmit[Submit] --> result{Outcome?}
+    result -->|validation failed| showerr[Inline beside the field +<br/>aria-invalid + aria-describedby.<br/>Focus the first invalid field]
+    result -->|server rejected| setError["setError field-level if you know<br/>which field, else root.<br/>NOT a toast — the user must correct it"]
+    result -->|success| done([Done])
+    showerr --> done
+    setError --> done
+
+    classDef gateNode fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    classDef warn fill:#fef2f2,stroke:#dc2626,color:#7f1d1d
+    class existing,required,submitbtn,steps,result gateNode
+    class trigger,done terminal
+    class wrong,never warn

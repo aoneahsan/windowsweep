@@ -1,0 +1,18 @@
+{
+  "schema": "story-run-state/1",
+  "project": "<slug>",
+  "bibleApproved": false,
+  "surface": null,
+  "phase": "bible",
+  "status": "awaiting-approval",
+  "round": 0,
+  "gate": 1,
+  "openDecisions": [],
+  "approvedAt": null,
+  "escalatedAt": null,
+  "registryUpdatedAt": null,
+  "updatedAt": "YYYY-MM-DDTHH:MM:SSZ",
+  "history": [
+    {"at": "YYYY-MM-DDTHH:MM:SSZ", "phase": "bible", "status": "awaiting-approval", "note": "Discover complete; GATE 1 asked"}
+  ]
+}

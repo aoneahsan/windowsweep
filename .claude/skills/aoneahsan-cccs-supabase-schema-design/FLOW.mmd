@@ -1,0 +1,16 @@
+%% Supabase schema design — full flow
+%% Pure Mermaid.
+
+flowchart TD
+    need([A feature needs to store something]) --> reuse{Can an existing table<br/>or column carry it?}
+    reuse -->|yes| use[Use it; note the choice<br/>in the change log]
+    reuse -->|no| shape{One value per row,<br/>or a list?}
+    shape -->|value| col[New column]
+    shape -->|list| tbl[New table with owner column]
+    col --> rls[RLS + grants + index + on delete]
+    tbl --> rls
+    rls --> record[Change-log row + ERD edit]
+    record --> drizzle[Drizzle schema → generated migration]
+    use --> drizzle
+    drizzle --> gate[Apply to dev; grants and RLS gate]
+    gate --> commit([One commit: migration + SCHEMA.md])

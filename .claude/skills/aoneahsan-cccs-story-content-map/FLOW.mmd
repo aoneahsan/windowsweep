@@ -1,0 +1,20 @@
+%% aoneahsan-cccs-story-content-map — Bible to approved plan
+flowchart TD
+    trigger([GATE 1 passed, or a surface<br/>with no map row]) --> scope[Bible § 8: the in-scope surfaces]
+    scope --> row[For each surface derive the row:<br/>awareness · structure · tone band ·<br/>length · CTA · schema · status planned]
+    row --> indexed{Surface is indexed<br/>blog / docs / landing / portfolio?}
+    indexed -->|yes| evidence[Gather question evidence:<br/>GSC queries · store terms ·<br/>support threads · competitor FAQs]
+    evidence --> qmap[Questions the page purpose supports +<br/>concise answer-first sentence +<br/>query language + truthful freshness,<br/>each with a source]
+    indexed -->|no| oos
+    qmap --> oos[Out-of-scope list with reasons]
+    oos --> g2{{GATE 2: approve / change rows / add a surface}}
+    g2 -->|change| row
+    g2 -->|approve| stamp[run-state: idle / approved<br/>decision-log entry]
+    stamp --> done([Rows ready — /story-write surface])
+
+    evidence -.never invent a volume.-> src[(aoneahsan-cccs-search-indexing)]
+
+    classDef gate fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef terminal fill:#ecfdf5,stroke:#059669,color:#064e3b
+    class indexed,g2 gate
+    class trigger,done terminal

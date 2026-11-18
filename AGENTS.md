@@ -39,9 +39,9 @@ Before stopping, commit every legitimate change and work-progress checkpoint in 
 
 | Field | Value |
 |---|---|
-| Last optimized | 2026-11-13 |
-| Next routine optimization eligible | 2026-12-13 |
-| Guide bytes | 6,249 B |
+| Last optimized | 2026-11-18 |
+| Next routine optimization eligible | 2026-12-18 |
+| Guide bytes | 6,340 B |
 | Covered subtree | This repository; parent windowsweep-root measured separately |
 | Method | Due review: compact project-specific guidance retained; mirrors, routing, task headings and inherited root checked; current release facts corrected where needed |
 | Fleet record | code/docs/tracking/project-context-budget-tracker.json |

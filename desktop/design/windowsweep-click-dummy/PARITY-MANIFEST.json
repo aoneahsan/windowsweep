@@ -24,6 +24,7 @@
     { "dummy": "run.html", "route": "/run", "sections": 6, "bands": ["band-app", "band-app", "band-app", "band-well", "band-app", "band-well"] },
     { "dummy": "splash.html", "route": "/splash", "sections": 3, "bands": ["band-app", "band-well", "band-app"] },
     { "dummy": "consent.html", "route": "/consent", "sections": 3, "bands": ["band-app", "band-app", "band-bleed"], "status": "legacy 1.3.2; retired in 1.4.0" },
+    { "dummy": "licence-inactive.html", "route": "full-window licence guard", "sections": 1, "bands": ["band-app"], "status": "client build only; approved 2026-11-18" },
     { "dummy": "picker.html", "route": "/picker", "sections": 3, "bands": ["band-app", "band-well", "band-app"], "status": "1.5.0 sections 26, 27 and 30-32 in review (AMENDMENTS-4.md A4-05 to A4-12)" },
     { "dummy": "history.html", "route": "/history", "sections": 4, "bands": ["band-app", "band-app", "band-well", "band-app"] },
     { "dummy": "report.html", "route": "/report", "sections": 7, "bands": ["band-app", "band-app", "band-app", "band-app", "band-app", "band-app", "band-well"] },

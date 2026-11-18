@@ -116,5 +116,8 @@
   "release.fallback": "If the retry fails while connected, download the installer from the release page and run it.",
   "release.releasePage": "Open the release page",
   "release.supportHint": "If the installer also fails, open a support issue.",
-  "release.support": "Open support issues"
+  "release.support": "Open support issues",
+  "whiteLabel.inactiveHeading": "This licence is not active",
+  "whiteLabel.inactiveBody": "Key: <1>{{key}}</1> cannot open this client build. Check its status on the verification page.",
+  "whiteLabel.verify": "Verify this licence"
 }

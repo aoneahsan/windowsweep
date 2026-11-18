@@ -1699,3 +1699,13 @@ the right to the name and mark. The pages, the docs section and the legal clause
 (amendment 46), then built in `windowsweep-web` and `windowsweep-docs`. Every price, group and renewal is read from the
 licensing catalogue; refund wording stays in the Terms and Privacy Policy only. GATE 4, in his words on 2026-11-14:
 "approve windowsweep gate 4". The words add no Bible term, motif, palette or fingerprint change.
+
+## 2026-11-18 — desktop white-label inactive map, GATE 2
+
+The owner approved content-map row 28 for a configured client build's inactive licence view. It names the refused key and links to the existing verification page. The desktop dummy and shipping words are next; this approval does not approve their final copy or design.
+
+The draft in `docs/story/drafts/desktop-white-label-inactive.md` follows row 28's verdict, key and verification sequence. The main-session developmental, line, copy, safety and fact-consistency checks pass: `revoked`, `not_found` and `invalid_format` are the inactive responses, the verification page already exists, and the words claim no reason for refusal or payment status. There is no joke or urgency claim. GATE 4 awaits owner review with the four dummy captures.
+
+## 2026-11-18 — desktop white-label inactive dummy and GATE 4
+
+The owner replied "approve" to the pending dummy and GATE 4 copy requests. Row 17.8's four 1440/760 light/dark captures and row 28's exact heading, line and button are approved. The desktop component uses those words through `whiteLabel.*` keys and the dummy's bare-window classes. No new Bible term, motif, palette or fingerprint change. Windows proof: the configured test key returned `invalid_format` from FilesHub and showed only the locked view; a process-only offline proxy opened the normal shell; the no-key WebView2 reload observed 140 requests and zero licence-verifier calls.

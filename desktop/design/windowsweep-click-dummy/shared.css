@@ -111,6 +111,16 @@ button, [role='button'] {
    shell, so the fix is the same one character-for-character in both. */
 .shell-bare { grid-template-columns: minmax(0, 1fr); }
 
+/* A refused client licence is a complete window state, without navigation. */
+.licence-stage { min-height: 100%; display: grid; align-items: center; }
+.licence-panel {
+  width: 100%; padding: var(--sp-8); background: var(--c-panel);
+  border: 1px solid var(--c-line); border-top: 3px solid var(--c-accent);
+  border-radius: var(--r-md);
+}
+.licence-panel .lede { margin-block: var(--sp-4) var(--sp-6); overflow-wrap: anywhere; }
+.licence-panel .btn { text-decoration: none; }
+
 .rail {
   width: calc(13.5rem * var(--density));
   display: flex; flex-direction: column; gap: var(--sp-1);

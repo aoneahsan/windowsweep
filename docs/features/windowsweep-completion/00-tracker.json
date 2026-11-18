@@ -3,11 +3,11 @@
   "description": "Resumable tracker for finishing windowsweep to 100% feature-complete and production-ready. The first phase/sub-task with status 'pending' or 'in_progress' is the next thing to work on. The specification for every RW- item is remaining-work.md, which since 2026-09-07 lives at the WORKSPACE ROOT one level above this repository, outside it (a clone of this repository does not carry it; since 2026-09-26 the root is its own repository on the private windowsweep-web's project-root branch, D49 - ../RESTORE.md rebuilds it). The method is ../completion-plan-v5-2026-09-24.md (v4 of 2026-09-17, v3 of 2026-09-12 and the two 2026-09-07 plans are history; every decision they record still applies, and v3 sections B0, B1 and B10-B12 are still live reference). This file is the ONLY status record.",
   "module": "windowsweep-completion",
   "createdAt": "2026-09-03",
-  "lastUpdated": "2026-11-13",
+  "lastUpdated": "2026-11-18",
   "activeCompletionRun": {
     "id": "2026-11-10-0028",
     "status": "in progress: 1.4.8 published and installed; final controlled performance proof pending",
-    "latest": "2026-11-12: source and live layout fixes verified; protected New/Edit plan forms verified without saving, identity cleaned to eight users. Website and docs exact final builds published. Records rescore 92/100 while performance remains unverified.",
+    "latest": "2026-11-18: desktop client licence check completed after owner dummy and GATE 4 approval. Windows Tauri dev showed the invalid-key lock and offline fallback; no-key WebView2 reload observed 140 requests and zero licence-verifier calls. Desktop gates passed 72 tests. 1.5.0 desktop parity remains open.",
     "category": "desktop app + CLI",
     "scoreBefore": 100,
     "branch": "main",

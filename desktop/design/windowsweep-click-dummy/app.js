@@ -549,6 +549,7 @@
   function buildTitlebar(bar) {
     if (!bar || bar.dataset.built === '1') return;
     bar.dataset.built = '1';
+    var licenceInactive = currentPage() === 'licence-inactive.html';
 
     /* GATE 4 round 8, D-54: the button says what it opens and whether it is open
        (aria-controls, aria-expanded), and Escape closes the drawer, since it covers
@@ -568,7 +569,7 @@
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && document.documentElement.getAttribute('data-drawer') === 'open') setDrawer(false);
     });
-    bar.appendChild(drawer);
+    if (!licenceInactive) bar.appendChild(drawer);
 
     var svgNS = 'http://www.w3.org/2000/svg';
     var mark = document.createElementNS(svgNS, 'svg');
@@ -594,11 +595,13 @@
     ver.setAttribute('data-ws-text', 'engineVersion');
     bar.appendChild(ver);
 
-    bar.appendChild(el('span', 'tb-sep only-wide'));
-    var user = el('span', 'badge badge-neutral only-wide', 'standard user');
-    user.title = 'Admin sections need a Windows permission prompt this window cannot answer.';
-    bar.appendChild(user);
-    bar.appendChild(el('span', 'badge badge-warn only-wide', 'design dummy · demo data'));
+    if (!licenceInactive) {
+      bar.appendChild(el('span', 'tb-sep only-wide'));
+      var user = el('span', 'badge badge-neutral only-wide', 'standard user');
+      user.title = 'Admin sections need a Windows permission prompt this window cannot answer.';
+      bar.appendChild(user);
+      bar.appendChild(el('span', 'badge badge-warn only-wide', 'design dummy · demo data'));
+    }
 
     // the ONE mount point the theme toggle goes into, with ONE name, everywhere
     var actions = el('div', 'wincontrols tb-interactive');
@@ -629,7 +632,7 @@
        second machine or a later sign-in never shows it again. Never on a task page,
        and such a page marks nothing. `?legal=1` previews it and marks nothing. */
     var legalPreview = q.get('legal') === '1';
-    var taskPage = ['run.html', 'picker.html', 'elevation.html', 'splash.html', 'consent.html'].indexOf(here) !== -1;
+    var taskPage = ['run.html', 'picker.html', 'elevation.html', 'splash.html', 'consent.html', 'licence-inactive.html'].indexOf(here) !== -1;
     var account = window.wsdb && window.wsdb.facts.signedIn && window.wsdb.facts.email;
     var accountKey = account ? 'legalSeen:account:' + String(account).toLowerCase() : null;
     var seenDevice = store.get('legalSeen:device', null), seenAccount = accountKey ? store.get(accountKey, null) : null;

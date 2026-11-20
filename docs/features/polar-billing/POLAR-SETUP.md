@@ -102,3 +102,20 @@ The test accounts were non-admin, the sandbox window was open 17:35-17:42 UTC, a
    (`~/.claude/rules/payment-validation.md`).
 
 Last Updated: 2026-11-07 (checkout open after Polar's approval, D94). Earlier 2026-11-05
+
+
+## Acceptable-use pass, 2026-11-20 (owner, 2026-11-19; law `rules/polar-acceptable-use.md`)
+
+Products renamed to **software + plan + period** and described as software access that turns on automatically; test,
+Express and support products archived. Prices untouched (asserted before = after on every PATCH, API readback).
+
+| Env | Product id | Before | After | Price (cents or type) |
+| --- | --- | --- | --- | --- |
+| sandbox | `a1009338-f139-4705-9b00-cd70cf9c49c6` | windowsweep Team (yearly) | windowsweep Team — Windows cleanup software, per seat, yearly | seat_based |
+| sandbox | `6703a6b3-8caa-421a-9208-2ba12512cbc3` | windowsweep Team (monthly) | windowsweep Team — Windows cleanup software, per seat, monthly | seat_based |
+| sandbox | `e1071583-019d-42e7-afa1-2b8933dbcca0` | windowsweep Pro (yearly) | windowsweep Pro — Windows cleanup software, yearly | 3600 |
+| sandbox | `08671d45-9fc9-485a-ab17-d925450fe155` | windowsweep Pro (monthly) | windowsweep Pro — Windows cleanup software, monthly | 400 |
+| production | `b69a7196-b1ad-4dd2-b7fe-2666cb39c3f0` | windowsweep Team (yearly) | windowsweep Team — Windows cleanup software, per seat, yearly | seat_based |
+| production | `26c4b5d3-205c-4660-a3be-5a96850098fe` | windowsweep Team (monthly) | windowsweep Team — Windows cleanup software, per seat, monthly | seat_based |
+| production | `fc566a8e-abb7-4572-a78e-b514006c21f2` | windowsweep Pro (yearly) | windowsweep Pro — Windows cleanup software, yearly | 3600 |
+| production | `4bf48a89-6536-4370-94b9-a7d6e1cd91c9` | windowsweep Pro (monthly) | windowsweep Pro — Windows cleanup software, monthly | 400 |

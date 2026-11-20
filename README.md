@@ -16,6 +16,17 @@
 
 </div>
 
+<a id="available-on"></a>
+## 📦 Available on&nbsp;[#](#available-on)
+
+| Where | Link |
+|---|---|
+| npm | [`windowsweep`](https://www.npmjs.com/package/windowsweep) |
+| Windows desktop app | [windowsweep-setup.exe](https://github.com/aoneahsan/windowsweep/releases/latest/download/windowsweep-setup.exe) |
+| Website | [windowsweep.aoneahsan.com](https://windowsweep.aoneahsan.com) |
+| Docs | [windowsweep-docs.aoneahsan.com](https://windowsweep-docs.aoneahsan.com) |
+| Everything | [All apps](https://windowsweep-docs.aoneahsan.com/apps) |
+
 > [!IMPORTANT]
 > **This tool deletes files.** Most of what it removes are caches that rebuild themselves; personal files it
 > lists go to the Recycle Bin; emptying the Recycle Bin and clearing event logs have no undo. Those two sit
@@ -49,6 +60,7 @@ It is the Windows member of a family with [linux-cleanup](https://github.com/aon
 <a id="table-of-contents"></a>
 ## 🧭 Table of Contents&nbsp;[#](#table-of-contents)
 
+- [📦 Available on](#available-on)
 - [💡 Why windowsweep](#why-windowsweep)
 - [✨ Features](#features)
 - [📱 Platform Support](#platform-support)

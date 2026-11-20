@@ -168,7 +168,7 @@
   "picker.devOff": "Developer mode is off, so the engine skips this one. Turn it on in Settings first.",
   "picker.searchEmptyTitle": "Nothing matches that",
   "picker.searchEmptyBody": "Clear the filter and the candidates come back.",
-  "picker.note": "<1>Nothing here is pre-selected, on purpose.</1> These nine sections refuse to act on <3>--yes</3> alone. A scripted selection (<5>--select</5> or <7>--select-file</7>) counts as a person choosing; a refused row cannot be selected.",
+  "picker.note": "<1>Nothing here is pre-selected, on purpose.</1> These nine sections refuse to act on <3>--yes</3> alone – the prompt still appears, the default is none, and the final question is never auto-answered. A scripted selection (<5>--select</5> or <7>--select-file</7>) counts as a person choosing, and only then does the run go ahead unattended.",
   "picker.fileSummary": "Drive this from a file instead",
   "picker.fileBody": "A plain UTF-8 file with one full path per line is matched, case-insensitively, against the candidates this section offers. A line that matches nothing is warned about individually rather than failing the run.",
   "picker.fileCommand": "windowsweep --only {{id}} --select-file D:\\selections\\artefacts.txt",

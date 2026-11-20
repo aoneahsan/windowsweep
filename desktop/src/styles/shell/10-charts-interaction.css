@@ -241,3 +241,25 @@
 .shell-bare {
   grid-template-columns: minmax(0, 1fr);
 }
+
+/* Promoted from the approved licence-inactive click dummy. */
+.licence-stage {
+  min-height: 100%;
+  display: grid;
+  align-items: center;
+}
+.licence-panel {
+  width: 100%;
+  padding: var(--sp-8);
+  background: var(--c-panel);
+  border: 1px solid var(--c-line);
+  border-top: 3px solid var(--c-accent);
+  border-radius: var(--r-md);
+}
+.licence-panel .lede {
+  margin-block: var(--sp-4) var(--sp-6);
+  overflow-wrap: anywhere;
+}
+.licence-panel .btn {
+  text-decoration: none;
+}

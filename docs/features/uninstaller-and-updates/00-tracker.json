@@ -1,7 +1,7 @@
 {
   "module": "uninstaller-and-updates",
   "createdAt": "2026-11-13",
-  "lastUpdated": "2026-11-14",
+  "lastUpdated": "2026-11-18",
   "overview": "Release 1.5.0. The owner asked on 2026-11-13 for a full software uninstaller and a system/driver updater in WindowSweep, and for his P52 to be cleaned of software he no longer needs and brought up to date using the product itself. Section 26 becomes the full uninstaller (desktop programs, Store apps, broken entries, RAN column, uninstall history); section 27 adds registry keys, Start-menu shortcuts, startup entries and scheduled tasks left behind; new sections 30 winupdate, 31 drivers and 32 appupdates (tier update, interactive, never BIOS or firmware). Plan: C:/Users/PC/.claude/plans/plan-and-update-this-glistening-scott.md.",
   "userDecisions": [
     "D109 (2026-11-13): section 26 is the full uninstaller - Store apps for the current account, broken entries cleared after a .reg backup, and leftover registry keys, shortcuts, startup entries and tasks of uninstalled programs; registry removals only through lib/registry.ps1 with a .reg backup first. Amends the 'registry cleaning out of scope' non-goal for leftovers of uninstalled programs only.",
@@ -47,7 +47,7 @@
       "subTasks": [
         { "id": "P3.1", "title": "click dummy AMENDMENTS-4", "status": "complete", "note": "A4-01..A4-15" },
         { "id": "P3.2", "title": "desktop app mirrors the dummy; gates", "status": "complete", "note": "69 tests, clean typecheck; installed 1.5.0 launched and read back" },
-        { "id": "P3.3", "title": "dummy-to-app parity captures at 1440/760 for install mode and the new row kinds", "status": "pending", "note": "not captured in the release run; the native window's screenshots time out over UI Automation" }
+        { "id": "P3.3", "title": "dummy-to-app parity captures at 1440/760 for install mode and the new row kinds", "status": "pending", "note": "52 paired 1.5.0 browser-render app/dummy captures exist at 1440/760 in light/dark; four elevated Picker states have dummy captures only. A fresh 1440 app render on 2026-11-18 found and corrected the Picker note copy. Native screenshots still time out over UI Automation, so the full parity gate remains open." }
       ]
     },
     {
@@ -82,7 +82,7 @@
         { "id": "P6.1", "title": "version cascade, gates, v1.5.0 + desktop-v1.5.0, installed updater proof", "status": "complete", "note": "4c6e03a; installed 1.4.8 took 1.5.0 on close" },
         { "id": "P6.2", "title": "website + docs deploy and live proof", "status": "complete", "note": "site fa31a4b9 (then the white-label deploy of main); docs gh-pages 360d090, 290/290 byte-equal" },
         { "id": "P6.3", "title": "PROJECT-CONTEXT D109-D114, CHANGELOG, runs-and-releases, root summary, memory", "status": "complete", "note": "" },
-        { "id": "P6.4", "title": "npm windowsweep@1.5.0: approve the staged publish with 2FA, then verify from the registry", "status": "blocked", "awaitingUser": true, "note": "npm 11.20 staged the publish; sha1 a938bab193d1e6581edf224bc645cfc445924be3" },
+        { "id": "P6.4", "title": "npm windowsweep@1.5.0: approve the staged publish with 2FA, then verify from the registry", "status": "complete", "note": "2026-11-18: npm registry serves 1.5.0 with sha1 a938bab193d1e6581edf224bc645cfc445924be3; npm stage list is empty" },
         { "id": "P6.5", "title": "account-welcome v8 on production (owner-approved single deploy)", "status": "complete", "note": "preflight 204, unauthenticated 401, other functions unchanged" }
       ]
     }
@@ -90,7 +90,8 @@
   "runHistory": [
     { "date": "2026-11-13", "phase": "P1-P3", "summary": "Plan approved; registry chokepoint, full section 26/27 and group [27] written and proved (11/11 plants caught); agents A (sections 30-32) and B (dummy) dispatched.", "commit": null },
     { "date": "2026-11-14", "phase": "P1-P5", "summary": "Engine, desktop, docs and site finished; the P52 runs removed the approved software, cleared leftovers with backups, installed Windows, driver and app updates; Lenovo System Update queued firmware, so D114 removed every maker-tool run.", "commit": "4c6e03a" },
-    { "date": "2026-11-14", "phase": "P6", "summary": "1.5.0 released (GitHub, desktop Latest, npm staged); site deploy fa31a4b9 without the white-label pages then held for GATE 4; docs 360d090 restored the footer signup the white-label publish dropped; installed update 1.4.8 to 1.5.0 proved; account-welcome v8.", "commit": null }
+    { "date": "2026-11-14", "phase": "P6", "summary": "1.5.0 released (GitHub, desktop Latest, npm staged); site deploy fa31a4b9 without the white-label pages then held for GATE 4; docs 360d090 restored the footer signup the white-label publish dropped; installed update 1.4.8 to 1.5.0 proved; account-welcome v8.", "commit": null },
+    { "date": "2026-11-18", "phase": "P3/P6", "summary": "Owner approved all seven 1.5.0 dummy rows. The repository holds 52 paired app/dummy browser captures; fresh app rendering found and corrected Picker note copy, while native/elevated parity remains open. npm 1.5.0 registry SHA1 matches the staged candidate, closing P6.4.", "commit": null }
   ],
   "resumeInstructions": "1) Read this tracker. 2) Find the first pending or in_progress sub-task. 3) Read the plan file named in overview. 4) Invoke skills per RULE #0. 5) Complete, mark complete, append a runHistory row, bump lastUpdated. 6) Commit per the project's git rules, never with AI attribution."
 }

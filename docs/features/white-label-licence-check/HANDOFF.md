@@ -5,6 +5,8 @@
 
 ## What is already done
 
+**Windows implementation completed 2026-11-18.** The owner approved the content-map row, the four dummy captures and the GATE 4 words. MANUAL row 43 is complete.
+
 windowsweep is sold as a **managed white-label licence** (owner rule 2026-11-13, "Managed white-label only"):
 
 - The source is public under MIT, so there is **no buyout** and every licence is **non-exclusive**. A licence pays
@@ -16,11 +18,10 @@ windowsweep is sold as a **managed white-label licence** (owner rule 2026-11-13,
   (pricing, updates, licence terms, custom work, `/verify-license`) and `windowsweep-docs.aoneahsan.com/white-label`.
   Terms and Privacy carry the licence clauses. Click-dummy amendment 46 in `windowsweep-web/design/AMENDMENTS-3.md`.
 
-## What is left: the dormant check in `desktop/`
+## The dormant check in `desktop/`
 
 Every licensed build we ship for a buyer must check its key once on start. Our own builds carry no key, so the
-check never runs and no request is made. Nothing was added to `desktop/` yet, because it needs the Windows toolchain
-to build and test.
+check never runs and no request is made. The client-build check is implemented and was proved with the Windows toolchain on 2026-11-18.
 
 ### Contract
 
@@ -59,6 +60,14 @@ to build and test.
 3. A bad key: `VITE_WHITE_LABEL_KEY=WINDOWSWEEP-WL-TEST-0000 yarn tauri dev` → the inactive view appears.
 4. Offline with that key (disconnect the network) → the app opens normally.
 5. Commit and push `main`. The next desktop release carries it; nothing changes for our own users.
+
+### Observed Windows proof, 2026-11-18
+
+- `yarn gates` passed: typecheck, zero-warning lint, production build and 72 tests.
+- With no key, the Tauri window opened the normal shell. A WebView2 DevTools network capture around a reload observed 140 requests, including the local document, and zero `/api/licensing/v1/licenses/verify` calls.
+- FilesHub returned `invalid_format` for `WINDOWSWEEP-WL-TEST-0000`. With that key configured, the Tauri window showed the approved inactive view alone, with the key and verification action.
+- A process-only WebView2 proxy blocked external requests while allowing localhost. With the test key configured, the Tauri window opened the normal shell, confirming fail-open transport behavior without disconnecting the machine.
+- The development windows and servers were stopped after verification. The client check is dormant in the owner's keyless build; it takes effect in a future configured client build.
 
 When done, move row 43 to Completed with the date and commit, and set `clientBuildCheck: true` for windowsweep in
 `projects-finalization-record/production/white-label-status.json`.

@@ -24,6 +24,7 @@
     { "dummy": "run.html", "route": "/run", "sections": 6, "bands": ["band-app", "band-app", "band-app", "band-well", "band-app", "band-well"] },
     { "dummy": "splash.html", "route": "/splash", "sections": 3, "bands": ["band-app", "band-well", "band-app"] },
     { "dummy": "consent.html", "route": "/consent", "sections": 3, "bands": ["band-app", "band-app", "band-bleed"], "status": "legacy 1.3.2; retired in 1.4.0" },
+    { "dummy": "licence-inactive.html", "route": "full-window licence guard", "sections": 1, "bands": ["band-app"], "status": "client build only; approved 2026-11-18" },
     { "dummy": "picker.html", "route": "/picker", "sections": 3, "bands": ["band-app", "band-well", "band-app"], "status": "1.5.0 sections 26, 27 and 30-32 in review (AMENDMENTS-4.md A4-05 to A4-12)" },
     { "dummy": "history.html", "route": "/history", "sections": 4, "bands": ["band-app", "band-app", "band-well", "band-app"] },
     { "dummy": "report.html", "route": "/report", "sections": 7, "bands": ["band-app", "band-app", "band-app", "band-app", "band-app", "band-app", "band-well"] },
@@ -69,9 +70,10 @@
     { "source": "app.js:609", "name": "next-start update block", "preview": "plans.html?release=next", "status": "in review" },
     { "source": "tours.js", "name": "page tours", "preview": "index.html?tour=1", "status": "approved 2026-11-03" },
     { "source": "walkthrough.js", "name": "seven-step walkthrough", "preview": "walkthrough.html?step=4", "status": "approved 2026-11-03" },
-    { "source": "app.js NAV count + buildRail", "name": "rail counts", "preview": "any page", "behaviour": "Sections = catalogue length (33 in 1.5.0), Choose = interactive sections (9 in 1.5.0), both counted, as Shell.tsx counts the engine's catalogue", "status": "1.5.0 in review (AMENDMENTS-4.md A4-03)" }
+    { "source": "app.js NAV count + buildRail", "name": "rail counts", "preview": "any page", "behaviour": "Sections = catalogue length (33 in 1.5.0), Choose = interactive sections (9 in 1.5.0), both counted, as Shell.tsx counts the engine's catalogue", "status": "1.5.0 approved 2026-11-18 (AMENDMENTS-4.md A4-03)" }
   ],
   "tiers150": {
+    "ownerApproved": "2026-11-18: all seven inventory rows and 1440/760 dummy captures approved; app parity still pending",
     "added": "update",
     "sectionsSource": "seed.js SECTIONS, transcribed from lib/constants.ps1 (30 winupdate, 31 drivers, 32 appupdates)",
     "tokens": ["--c-tier-update-lo", "--c-tier-update-hi", "--c-tier-update"],
@@ -187,7 +189,7 @@
       { "specimen": "email-release-140", "fileshub": "FilesHub Letterhead (marketing), release newsletter email 1" }
     ],
     "notDrawn": [],
-    "status": "in review (AMENDMENTS-3.md, 2026-11-06); email-welcome's network sentence in review (AMENDMENTS-4.md A4-14)"
+    "status": "in review (AMENDMENTS-3.md, 2026-11-06); email-welcome's 1.5.0 network sentence approved 2026-11-18 (AMENDMENTS-4.md A4-14)"
   },
   "storage": {
     "source": "app.js:21",
@@ -205,6 +207,6 @@
   "evidence": {
     "widths": [760, 1440],
     "captures": ["../gate4/plans-*-dummy-1.4.0.png", "../gate4/plans-checkout-*-dummy-1.4.4.png", "../gate4/allowance-*.png", "../gate4/device-owned-*.png", "assets/tour-home-1440.png", "assets/tour-home-760.png", "assets/walkthrough-review-1440.png", "assets/walkthrough-review-760.png", "assets/walkthrough/*-1440.png", "../gate4/*-dummy-1.5.0.png"],
-    "appParityStatus": "not run for 1.4.0 or 1.5.0"
+    "appParityStatus": "1.5.0 partial: 52 paired 1440/760 dark/light browser-render app/dummy captures; four elevated Picker app captures and full native comparison remain open (P3.3)"
   }
 }

@@ -140,7 +140,7 @@ function DrawerButton({ open, onToggle }: { open: boolean; onToggle: () => void 
   );
 }
 
-function Titlebar({
+export function Titlebar({
   onOpenTheme,
   drawer,
 }: {

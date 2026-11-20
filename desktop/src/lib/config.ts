@@ -26,6 +26,9 @@ export const supabaseConfig = {
   publishableKey: env.VITE_SUPABASE_PUBLISHABLE_KEY,
 };
 
+/** Empty in our own builds; configured only for a licensed client build. */
+export const whiteLabelKey = env.VITE_WHITE_LABEL_KEY?.trim() ?? '';
+
 /**
  * The version this build was cut at (`desktop/package.json`, injected at build time), so it moves
  * with the version cascade and never goes stale on its own. Analytics and Sentry report it, and the

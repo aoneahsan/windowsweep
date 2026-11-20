@@ -23,6 +23,7 @@ import {
 } from '@tanstack/react-router';
 
 import { Shell } from './components/Shell';
+import { LicenceInactive } from './components/LicenceInactive';
 import { LegalNotice } from './components/LegalNotice';
 import { ReleaseGate } from './components/ReleaseGate';
 import { Splash } from './screens/Splash';
@@ -32,6 +33,8 @@ import { track } from './lib/analytics';
 import { configuredFeatures } from './lib/config';
 import { errorText, logger } from './lib/logger';
 import { watchForUpdates } from './lib/updater';
+import { bindLicenceCheck } from './lib/licence-check';
+import { useLicenceState } from './state/licence';
 
 /**
  * 🔴 THE APP BOOTS THROUGH SPLASH, and until now it did not.
@@ -268,5 +271,7 @@ router.subscribe('onResolved', (event) => {
 });
 
 export function App() {
-  return <RouterProvider router={router} />;
+  const inactive = useLicenceState((state) => state.inactive);
+  useEffect(() => bindLicenceCheck(), []);
+  return inactive ? <LicenceInactive /> : <RouterProvider router={router} />;
 }

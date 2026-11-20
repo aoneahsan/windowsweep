@@ -190,5 +190,17 @@
   "account.deleteWhatStays": "Nothing on this PC is touched. windowsweep deletes no local files here – your reports, your local history and every cleanup feature stay exactly as they are, and all of it keeps working signed out.",
   "account.deleteConfirmLabel": "Type <1>{{word}}</1> to confirm. It must match exactly.",
   "account.deleteAction": "Delete my account",
-  "account.deleteDone": "Your account is gone, and you are signed out here. Nothing on this PC changed."
+  "account.deleteDone": "Your account is gone, and you are signed out here. Nothing on this PC changed.",
+  "settings.getTitle": "Get windowsweep",
+  "settings.getNote": "The same cleanup ships in four places. You are using the Windows app.",
+  "settings.getHere": "You're using it",
+  "settings.getAll": "All places, on the website",
+  "settings.getName.desktop": "Windows app",
+  "settings.getName.npm": "Command line, on npm",
+  "settings.getName.web": "Website",
+  "settings.getName.docs": "Documentation",
+  "settings.getLine.desktop": "This window: the installer from GitHub Releases.",
+  "settings.getLine.npm": "npx windowsweep --scan, with nothing to install.",
+  "settings.getLine.web": "Plans, your account and the download notes.",
+  "settings.getLine.docs": "Every section, flag and protected path."
 }

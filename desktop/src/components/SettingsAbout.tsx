@@ -30,6 +30,7 @@ import { appVersion } from '../lib/engine';
 import { buildVersion, REPO_URL, SUPPORT_URL } from '../lib/config';
 import { promotedProducts } from '../lib/ecosystem';
 import { openExternal } from '../lib/links';
+import { APPS_URL, CURRENT_SURFACE, PLATFORMS } from '../config/platforms';
 import { controlState, stateOf } from '../lib/control-state';
 
 /** The two external links the About tab offers. */
@@ -149,6 +150,54 @@ export function SettingsAbout() {
           </button>
         </div>
       </div>
+
+      {/* "Get windowsweep": every released place (src/config/platforms.ts); this app's own row names itself. */}
+      <div style={{ marginTop: 'var(--sp-4)' }}>
+        <h3 className="t-md wide">{t('settings.getTitle')}</h3>
+        <p className="t-sm ink-3">{t('settings.getNote')}</p>
+      </div>
+      <div className="promo">
+        {PLATFORMS.map((platform) =>
+          platform.id === CURRENT_SURFACE ? (
+            <div className="card" key={platform.id}>
+              <span className="card-bd">
+                <span className="wide">{t(`settings.getName.${platform.id}`)}</span>
+                <span className="t-sm ink-3">{t('settings.getHere')}</span>
+              </span>
+            </div>
+          ) : (
+            <button
+              className="card"
+              type="button"
+              key={platform.id}
+              onClick={() => {
+                openLink(`get-${platform.id}`, platform.href);
+              }}
+              disabled={opening !== null}
+              {...controlState(
+                stateOf(opening === `get-${platform.id}`, opened === `get-${platform.id}`)
+              )}
+            >
+              <span className="card-bd">
+                <span className="wide">{t(`settings.getName.${platform.id}`)}</span>
+                <span className="t-sm ink-3">{t(`settings.getLine.${platform.id}`)}</span>
+              </span>
+            </button>
+          )
+        )}
+      </div>
+      <button
+        className="btn btn-sm"
+        type="button"
+        style={{ marginTop: 'var(--sp-2)' }}
+        onClick={() => {
+          openLink('get-all', APPS_URL);
+        }}
+        disabled={opening !== null}
+        {...controlState(stateOf(opening === 'get-all', opened === 'get-all'))}
+      >
+        <span className="btn-label">{t('settings.getAll')}</span>
+      </button>
 
       <div style={{ marginTop: 'var(--sp-4)' }}>
         <h3 className="t-md wide">{t('settings.promoTitle')}</h3>

@@ -39,4 +39,3 @@ lists, so this is display only).
 **Suggested fix.** Ship desktop 1.5.1, or record in the release notes that a CLI-only patch keeps the desktop on
 1.5.0; hide flags with no value in the status bar.
 
-None open (ISSUE-006, the last one, was resolved on 2026-11-08 in 1.4.6).

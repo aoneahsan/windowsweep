@@ -9,6 +9,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-11-21
+
+### Changed
+
+- README: an "Available on" table lists every place WindowSweep is released (npm, the website, the docs and the
+  desktop app), with a link to the Get WindowSweep page. No code changes.
+
 ## [1.5.0] - 2026-11-14
 
 ### Added
